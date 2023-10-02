@@ -1,0 +1,2 @@
+All this migration which is needed on production are to be added in the folder in the sequential order of their execution.
+All the migration added to this folder will be run on all env including production.

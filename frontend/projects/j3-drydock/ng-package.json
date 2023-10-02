@@ -1,0 +1,7 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/j3-drydock",
+  "lib": {
+    "entryFile": "src/public-api.ts"
+  }
+}

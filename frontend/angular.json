@@ -1,0 +1,43 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "j3-drydock": {
+      "projectType": "library",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/j3-drydock",
+      "sourceRoot": "projects/j3-drydock/src",
+      "prefix": "jb",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/j3-drydock/tsconfig.lib.json",
+            "project": "projects/j3-drydock/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/j3-drydock/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/j3-drydock/src/test.ts",
+            "tsConfig": "projects/j3-drydock/tsconfig.spec.json",
+            "karmaConfig": "projects/j3-drydock/karma.conf.js"
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}

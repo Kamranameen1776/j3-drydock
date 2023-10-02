@@ -1,0 +1,13 @@
+{
+	"ignore": [
+		"node_modules/*"
+	],
+	"watch": [
+		"src/*"
+	],
+	"ext": "js,ts",
+	"delay": "2500",
+	"events": {
+		"restart": ""
+	}
+}

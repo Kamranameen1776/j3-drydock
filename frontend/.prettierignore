@@ -1,0 +1,6 @@
+/dist
+/.vscode
+/.idea
+/local_package
+/e2e
+/coverage
