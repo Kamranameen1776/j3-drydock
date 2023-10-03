@@ -9,6 +9,8 @@ import { ExampleProjectsComponent } from './components/example-projects/example-
 import { ExampleProjectsGridComponent } from './components/example-projects/example-projects-grid/example-projects-grid.component';
 import { ExampleProjectsService } from './infrastructure-layer/api-services/example-projects/ExampleProjectsService';
 import { CreateExampleProjectPopupComponent } from './components/example-projects/example-projects-grid/create-example-project-popup/create-example-project-popup.component';
+import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
+import { ProjectsSpecificationsGridComponent } from './components/projects-main-page/projects-specifications-grid/projects-specifications-grid.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -20,7 +22,7 @@ export function winEnv(): unknown {
 }
 
 @NgModule({
-  declarations: [ExampleProjectsComponent, ExampleProjectsGridComponent, CreateExampleProjectPopupComponent],
+  declarations: [ExampleProjectsComponent, ExampleProjectsGridComponent, CreateExampleProjectPopupComponent, ProjectsMainPageComponent, ProjectsSpecificationsGridComponent],
   imports: [
     CommonModule,
     JibeComponentsModule.forRoot({
