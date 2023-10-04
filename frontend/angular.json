@@ -3,6 +3,167 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
+    "frontend-wrapper": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/frontend-wrapper",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "preserveSymlinks": true,
+            "tsConfig": "tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/jibe-components/assets",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "projects/j3-drydock/src/assets",
+                "output": "/assets/"
+              }
+            ],
+            "styles": [
+              "node_modules/primeng/resources/primeng.min.css",
+              "src/grid.css",
+              "node_modules/jibe-components/assets/css/JiBe-spinner.css",
+              "node_modules/jibe-components/assets/theme/theme-lightblue.css",
+              "node_modules/jibe-components/assets/Icons8/css/styles.css",
+              "node_modules/jibe-components/assets/layout/css/layout-lightblue.css",
+              "node_modules/fullcalendar/dist/fullcalendar.min.css",
+              "node_modules/quill/dist/quill.snow.css",
+              "node_modules/font-awesome/css/font-awesome.min.css",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/jibe-components/assets/Icons8/preview/preview.css",
+              "node_modules/jibe-components/assets/bootstrap.min.css",
+              "node_modules/jibe-components/assets/Site.css",
+              "node_modules/jibe-components/assets/css/JiBe-column-config.css",
+              "node_modules/jibe-components/assets/css/JiBe-datatable.css",
+              "node_modules/jibe-components/assets/css/JiBe-filter-slider.css",
+              "node_modules/jibe-components/assets/css/JiBe-main.css",
+              "node_modules/jibe-components/assets/css/colors.css",
+              "node_modules/jibe-components/assets/css/jb-details-page-figma.scss",
+              "node_modules/jibe-components/assets/css/jb-details-page-vanilla.scss",
+              "node_modules/jibe-components/assets/css/jb-fonts.css",
+              "node_modules/jibe-components/assets/css/JiBe-controls.css",
+              "node_modules/jibe-components/assets/css/ORB-module.css",
+              "node_modules/jibe-components/assets/css/styles.css",
+              "node_modules/primeflex/primeflex.css",
+              "node_modules/jibe-components/assets/css/material.css",
+              "node_modules/ngx-drag-to-select/ngx-drag-to-select.css",
+              "node_modules/jibe-components/assets/css/jibe-thresholds.scss",
+              "node_modules/@fullcalendar/core/main.min.css",
+              "node_modules/@fullcalendar/daygrid/main.min.css",
+              "node_modules/@fullcalendar/timegrid/main.min.css",
+              "node_modules/jibe-components/assets/css/formio-fixes.css"
+            ],
+            "scripts": [
+              "node_modules/moment/moment.js",
+              "node_modules/chart.js/dist/Chart.js",
+              "node_modules/fullcalendar/dist/fullcalendar.js",
+              "node_modules/quill/dist/quill.js",
+              "node_modules/jibe-components/assets/Icons8/preview/preview.js",
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/html2canvas/dist/html2canvas.min.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "preserveSymlinks": true,
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "frontend-wrapper:build",
+            "port": 4301
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "frontend-wrapper:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "frontend-wrapper:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.scss"],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "tsconfig.app.json",
+              "tsconfig.spec.json",
+              "e2e/tsconfig.json"
+            ],
+            "exclude": ["**/node_modules/**"]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "frontend-wrapper:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "frontend-wrapper:serve:production"
+            }
+          }
+        }
+      }
+    },
     "j3-drydock": {
       "projectType": "library",
       "schematics": {
@@ -37,7 +198,13 @@
       }
     }
   },
+  "defaultProject": "frontend-wrapper",
   "cli": {
     "analytics": false
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "style": "scss"
+    }
   }
 }

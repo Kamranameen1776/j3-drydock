@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { DryDockRoutingModule } from './drydock.routing';
 import { DropdownModule, MenuModule, SidebarModule, TieredMenuModule } from 'primeng';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ export function winEnv(): unknown {
 
   return {
     ...window[winEnv],
-    origin: window.location.origin + '/'
+    origin: window.location.origin + '/',
   };
 }
 
@@ -25,7 +25,7 @@ export function winEnv(): unknown {
     CommonModule,
     JibeComponentsModule.forRoot({
       environment: winEnv,
-      theme: JiBeTheme.Figma
+      theme: JiBeTheme.Figma,
     }),
     DryDockRoutingModule,
     ReactiveFormsModule,
@@ -34,10 +34,10 @@ export function winEnv(): unknown {
     SidebarModule,
     FormsModule,
     PrimeNgModule,
-    MenuModule
+    MenuModule,
   ],
-  providers: [ExampleProjectsService],
+  providers: [ExampleProjectsService, DatePipe],
   exports: [],
-  entryComponents: []
+  entryComponents: [],
 })
 export class J3DryDockModule {}
