@@ -1,0 +1,11 @@
+<p>
+  <button (click)="login()">Login</button>
+</p>
+<section style="display: flex; flex-direction: column">
+  <a
+    *ngFor="let link of links$ | async"
+    [routerLink]="[link.path]"
+  >
+    {{ link.name }}
+  </a>
+</section>

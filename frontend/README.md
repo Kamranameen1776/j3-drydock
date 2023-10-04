@@ -4,6 +4,13 @@ The frontend part of DryDock application.
 
 **← back to** [Main README](../README.md)
 
+
+## Start application locally
+
+```sh
+$ npm run start
+```
+
 ## Link with Jibe2Web app
 
 This library needs to be tested with `Jibe2Web`, here are the required setup steps:

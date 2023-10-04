@@ -7,11 +7,10 @@ import { ProjectsMainPageComponent } from './components/projects-main-page/proje
 const routes: Routes = [
   {
     path: '',
-    component: null,
     canActivate: [AuthGuardService],
     children: [
       {
-        path: '',
+        pathMatch: 'full',
         redirectTo: 'projects-main-page'
       },
       {
@@ -34,6 +33,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class DryDockRoutingModule {}

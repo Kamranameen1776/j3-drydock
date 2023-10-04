@@ -1,0 +1,10 @@
+:host {
+  jb-slide-menu[theme="figma"] ::ng-deep .layout-wrapper.layout {
+    &-static .layout-menu-container.jb-menu-container,
+    &-slim .layout-menu-container.jb-menu-container {
+      height: 100%;
+      top: 0px;
+      padding-top: 50px;
+    }
+  }
+}
