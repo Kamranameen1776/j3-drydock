@@ -10,7 +10,7 @@ import { LoginComponent } from './login/login.component';
 
 export const winEnv = () => ({
   ...window['environment'], // eslint-disable-line dot-notation
-  origin: window.location.origin + '/',
+  origin: window.location.origin + '/'
 });
 
 @NgModule({
@@ -21,9 +21,9 @@ export const winEnv = () => ({
     BrowserModule,
     FormsModule,
     JibeComponentsModule.forRoot({ environment: winEnv }),
-    ReactiveFormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

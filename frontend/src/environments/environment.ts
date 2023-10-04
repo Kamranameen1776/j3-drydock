@@ -18,8 +18,8 @@ export const environment = (window['environment'] = {
   j3CrewAccountsAPI: `http://localhost:3003/`,
   drydockAPI: `http://localhost:3020/`, // If you working with new feature update on localhost
   j2: {
-    baseURL: 'http://13.127.79.131/JiBe/',
+    baseURL: 'http://13.127.79.131/JiBe/'
   },
   jibe_user: 'akshayb',
-  jibe_password: '123456',
+  jibe_password: '123456'
 });

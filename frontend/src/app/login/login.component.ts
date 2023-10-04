@@ -15,7 +15,7 @@ interface Link {
 }
 @Component({
   selector: 'jb-app-login',
-  templateUrl: './login.component.html',
+  templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
   public links$: Observable<Link[]>;
@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private cd: ChangeDetectorRef,
     private loginService: LoginService,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
       userName: this.userName,
       password: this.password,
       UserTime: new Date().toLocaleTimeString(),
-      j3WebApp: true,
+      j3WebApp: true
     };
 
     this.loginService
@@ -59,12 +59,12 @@ export class LoginComponent implements OnInit {
             USER_DETAILS,
             JSON.stringify({
               ...this.authDetails,
-              UserRoles: accessRights,
-            }),
+              UserRoles: accessRights
+            })
           );
 
           this.buildLinks();
-        }),
+        })
       )
       .subscribe();
   }
