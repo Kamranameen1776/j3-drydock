@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Route, Router } from '@angular/router';
 import { JbHelpMaterialComponent } from 'jibe-components';
 import { from, Observable } from 'rxjs';
@@ -16,7 +16,6 @@ interface Link {
 @Component({
   selector: 'jb-app-login',
   templateUrl: './login.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit {
   public links$: Observable<Link[]>;
@@ -45,7 +44,6 @@ export class LoginComponent implements OnInit {
       j3WebApp: true,
     };
 
-    // tslint:disable:rxjs-prefer-angular-takeuntil
     this.loginService
       .login(data)
       .pipe(
@@ -79,7 +77,6 @@ export class LoginComponent implements OnInit {
     }
 
     this.links$ = from(this.getRoutePaths(route, ''));
-    this.cd.markForCheck();
   }
 
   private async getRoutePaths(route: Route, parentPath: string | undefined): Promise<Link[]> {
