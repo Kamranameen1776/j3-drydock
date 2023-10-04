@@ -6,26 +6,21 @@ import { ExampleProjectsComponent } from './components/example-projects/example-
 const routes: Routes = [
   {
     path: '',
-    component: null,
     canActivate: [AuthGuardService],
-    children: [
-      {
-        path: '',
-        redirectTo: 'example-projects'
-      },
-      {
-        path: 'example-projects',
-        component: ExampleProjectsComponent,
-        canActivate: [AuthGuardService],
-        runGuardsAndResolvers: 'paramsOrQueryParamsChange',
-        children: []
-      }
-    ]
-  }
+    pathMatch: 'full',
+    redirectTo: 'example-projects',
+  },
+
+  {
+    path: 'example-projects',
+    component: ExampleProjectsComponent,
+    canActivate: [AuthGuardService],
+    runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class DryDockRoutingModule {}
