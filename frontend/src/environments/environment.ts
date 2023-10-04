@@ -1,4 +1,5 @@
-export const environment = (window.environment = {
+// eslint-disable-next-line dot-notation
+export const environment = (window['environment'] = {
   production: false,
   masterAPI: `https://j3-dev.jibe.solutions/api/master/`,
   infraAPI: `https://j3-dev.jibe.solutions/api/infra/`,

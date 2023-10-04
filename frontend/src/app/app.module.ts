@@ -9,7 +9,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 
 export const winEnv = () => ({
-  ...window.environment,
+  ...window['environment'], // eslint-disable-line dot-notation
   origin: window.location.origin + '/',
 });
 
