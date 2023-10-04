@@ -1,6 +1,4 @@
-import { ProjectState } from "bll/drydock/entities/ProjectState";
-
-export class GetProjectsFromMainPageDto {
+export class GetProjectsFromMainPageResultDto {
     public ProjectId: string;
 
     public Code: string;
@@ -21,5 +19,7 @@ export class GetProjectsFromMainPageDto {
 
     public State: string;
 
-    public StartDate: string;
+    public StartDate: Date;
+
+    public EndDate: Date;
 }

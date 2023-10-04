@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 
+import { GetProjectsFromMainPageRequestDto } from '../../../../application-layer/drydock/projects/get-projects-for-main-page/dtos/GetProjectsFromMainPageRequestDto';
 import { GetProjectsFromMainPageQuery } from '../../../../application-layer/drydock/projects/get-projects-for-main-page/GetProjectsFromMainPageQuery';
 import { MiddlewareHandler } from '../../../../controllers/drydock/core/middleware/MiddlewareHandler';
 
@@ -15,7 +16,8 @@ export async function getProjectsForMainPageAction(req: Request, res: Response) 
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
         // Prepare query payload
-        let queryDto: void;
+        const queryDto = new GetProjectsFromMainPageRequestDto();
+        queryDto.odata = req.body.odata;
 
         const query = new GetProjectsFromMainPageQuery();
 

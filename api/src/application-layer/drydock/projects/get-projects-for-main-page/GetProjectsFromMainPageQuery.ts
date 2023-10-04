@@ -1,12 +1,16 @@
-import { ApplicationException } from 'bll/drydock/core/exceptions/ApplicationException';
 import { forEach } from 'lodash';
 
+import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
 import { ProjectsService } from '../../../../bll/drydock/projects/projects-service/ProjectsService';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
-import { GetProjectsFromMainPageDto } from './dtos/GetProjectsFromMainPageDto';
+import { GetProjectsFromMainPageRequestDto } from './dtos/GetProjectsFromMainPageRequestDto';
+import { GetProjectsFromMainPageResultDto } from './dtos/GetProjectsFromMainPageResultDto';
 
-export class GetProjectsFromMainPageQuery extends Query<void, GetProjectsFromMainPageDto[]> {
+export class GetProjectsFromMainPageQuery extends Query<
+    GetProjectsFromMainPageRequestDto,
+    GetProjectsFromMainPageResultDto[]
+> {
     projectsRepository: ProjectsRepository;
     projectsService: ProjectsService;
 
@@ -17,11 +21,15 @@ export class GetProjectsFromMainPageQuery extends Query<void, GetProjectsFromMai
         this.projectsService = new ProjectsService();
     }
 
-    protected async AuthorizationHandlerAsync(): Promise<void> {
+    protected async AuthorizationHandlerAsync(request: GetProjectsFromMainPageRequestDto): Promise<void> {
         return;
     }
 
-    protected async ValidationHandlerAsync(): Promise<void> {
+    protected async ValidationHandlerAsync(request: GetProjectsFromMainPageRequestDto): Promise<void> {
+        if (!request || !request.odata) {
+            throw new ApplicationException('Request odata is required');
+        }
+
         return;
     }
 
@@ -29,13 +37,16 @@ export class GetProjectsFromMainPageQuery extends Query<void, GetProjectsFromMai
      *
      * @returns All example projects, which were created after the latest projects date
      */
-    protected async MainHandlerAsync(): Promise<GetProjectsFromMainPageDto[]> {
+    protected async MainHandlerAsync(
+        request: GetProjectsFromMainPageRequestDto,
+    ): Promise<GetProjectsFromMainPageResultDto[]> {
         const projectTypes = await this.projectsRepository.GetProjectTypes();
         const projectStates = await this.projectsRepository.GetProjectStates();
 
         const projects = await this.projectsRepository.GetProjectsForMainPage();
 
-        const dtos: GetProjectsFromMainPageDto[] = [];
+        const dtos: GetProjectsFromMainPageResultDto[] = [];
+
         forEach(projects, (project) => {
             const code = this.projectsService.GetCode(
                 project.ProjectTypeProjectTypeCode,
@@ -53,7 +64,7 @@ export class GetProjectsFromMainPageQuery extends Query<void, GetProjectsFromMai
                 project.ProjectStateProjectStateCode,
             );
 
-            const dto = new GetProjectsFromMainPageDto();
+            const dto = new GetProjectsFromMainPageResultDto();
 
             dto.ProjectId = project.ProjectId;
             dto.Code = code;
@@ -66,6 +77,8 @@ export class GetProjectsFromMainPageQuery extends Query<void, GetProjectsFromMai
             dto.Vessel = 'Haruko';
 
             dto.Subject = project.Subject;
+            dto.StartDate = project.StartDate;
+            dto.EndDate = project.EndDate;
 
             dtos.push(dto);
         });
