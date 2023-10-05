@@ -6,22 +6,22 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: 'login',
-    pathMatch: 'full',
+    pathMatch: 'full'
   },
   {
     path: 'login',
-    component: LoginComponent,
+    component: LoginComponent
   },
   {
     path: 'j3-drydock',
     loadChildren: () =>
-      import('./../../projects/j3-drydock/src/lib/drydock/drydock.module').then((m) => m.J3DryDockModule),
+      import('./../../projects/j3-drydock/src/lib/drydock/drydock.module').then((m) => m.J3DryDockModule)
   },
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: 'login' }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class AppRoutingModule {}

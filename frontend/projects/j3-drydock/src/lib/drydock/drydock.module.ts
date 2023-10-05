@@ -9,23 +9,29 @@ import { ExampleProjectsComponent } from './components/example-projects/example-
 import { ExampleProjectsGridComponent } from './components/example-projects/example-projects-grid/example-projects-grid.component';
 import { ExampleProjectsService } from './infrastructure-layer/api-services/example-projects/ExampleProjectsService';
 import { CreateExampleProjectPopupComponent } from './components/example-projects/example-projects-grid/create-example-project-popup/create-example-project-popup.component';
+import { StandardJobsMainComponent } from './components/standard-jobs-main/standard-jobs-main.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
 
   return {
     ...window[winEnv],
-    origin: window.location.origin + '/',
+    origin: window.location.origin + '/'
   };
 }
 
 @NgModule({
-  declarations: [ExampleProjectsComponent, ExampleProjectsGridComponent, CreateExampleProjectPopupComponent],
+  declarations: [
+    ExampleProjectsComponent,
+    ExampleProjectsGridComponent,
+    CreateExampleProjectPopupComponent,
+    StandardJobsMainComponent
+  ],
   imports: [
     CommonModule,
     JibeComponentsModule.forRoot({
       environment: winEnv,
-      theme: JiBeTheme.Figma,
+      theme: JiBeTheme.Figma
     }),
     DryDockRoutingModule,
     ReactiveFormsModule,
@@ -34,10 +40,10 @@ export function winEnv(): unknown {
     SidebarModule,
     FormsModule,
     PrimeNgModule,
-    MenuModule,
+    MenuModule
   ],
   providers: [ExampleProjectsService, DatePipe],
   exports: [],
-  entryComponents: [],
+  entryComponents: []
 })
 export class J3DryDockModule {}
