@@ -36,7 +36,7 @@ export class ProjectsRepository {
     public async GetProjectsForMainPage(): Promise<GetProjectsForMainPageResultDto[]> {
         const result = await getManager().query(
             `
-            SELECT [project_id] AS 'ProjectId'
+            SELECT TOP 10 [project_id] AS 'ProjectId'
             ,[project_short_code_id] AS 'ProjectShortCodeId'
             ,[created_at_office] AS 'CreatedAtOffice'
             ,[Lib_Vessels].[Vessel_Name] AS 'VesselName'

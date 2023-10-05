@@ -208,20 +208,20 @@ export class ProjectsSpecificationGridService {
   private filterListsSet: FilterListSet = {
     ProjectTypes: {
       type: eFieldControlType.MultiSelect,
-      odataKey: ''
+      odataKey: 'ProjectTypes'
     },
     ProjectsManages: {
       type: eFieldControlType.MultiSelect,
-      odataKey: ''
+      odataKey: 'ProjectsManages'
     },
     StartDate: {
       type: eFieldControlType.Date,
-      odataKey: '',
+      odataKey: 'StartDate',
       dateMethod: 'ge'
     },
     EndDate: {
       type: eFieldControlType.Date,
-      odataKey: '',
+      odataKey: 'EndDate',
       dateMethod: 'le'
     }
   };
