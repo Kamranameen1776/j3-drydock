@@ -5,7 +5,7 @@ export class GetProjectsForMainPageResultDto {
 
     public CreatedAtOffice: boolean;
 
-    public Lib_VesselsVessel_ID: number;
+    public VesselName: string;
 
     public ProjectTypeProjectTypeCode: string;
 
@@ -13,11 +13,9 @@ export class GetProjectsForMainPageResultDto {
 
     public Subject: string;
 
-    public ProjectManagerLib_UserUid: string;
+    public ProjectManager: string;
 
     public StartDate: Date;
 
     public EndDate: Date;
-
-    public DateOfCreation: Date;
 }

@@ -1,4 +1,5 @@
 import { forEach } from 'lodash';
+import { createQuery } from 'odata-v4-sql';
 
 import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
 import { ProjectsService } from '../../../../bll/drydock/projects/projects-service/ProjectsService';
@@ -40,6 +41,8 @@ export class GetProjectsFromMainPageQuery extends Query<
     protected async MainHandlerAsync(
         request: GetProjectsFromMainPageRequestDto,
     ): Promise<GetProjectsFromMainPageResultDto[]> {
+        let query = createQuery(request.odata);
+
         const projectTypes = await this.projectsRepository.GetProjectTypes();
         const projectStates = await this.projectsRepository.GetProjectStates();
 
@@ -69,12 +72,12 @@ export class GetProjectsFromMainPageQuery extends Query<
             dto.ProjectId = project.ProjectId;
             dto.Code = code;
             dto.ProjectType = projectType.ProjectTypeName;
-            dto.ProjectManager = 'First Second';
+            dto.ProjectManager = project.ProjectManager;
             dto.ShipYard = 'Country ave.Name 123';
             dto.Specification = '330/500';
             dto.State = projectState.ProjectStateName;
             dto.Status = 'Specification overal status';
-            dto.Vessel = 'Haruko';
+            dto.Vessel = project.VesselName;
 
             dto.Subject = project.Subject;
             dto.StartDate = project.StartDate;
