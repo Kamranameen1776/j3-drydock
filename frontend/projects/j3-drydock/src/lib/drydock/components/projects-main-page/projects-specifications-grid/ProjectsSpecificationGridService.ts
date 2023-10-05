@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Column, Filter, FilterListSet, GridButton, eColor, eFieldControlType } from 'jibe-components';
+import { Column, Filter, FilterListSet, GridButton, eColor, eFieldControlType, eGridCellType } from 'jibe-components';
 import { nameOf } from '../../../common/ts-helpers/nameOf';
 import { GridInputsWithRequest } from '../../../presentation-layer/jb-components-helpers/grid-inputs';
 import { ProjectsForMainPageGridDto } from './bll/dtos/ProjectsForMainPageGridDto';
@@ -160,7 +160,7 @@ export class ProjectsSpecificationGridService {
       Created_By: null,
       DataType: null,
       DisplayText: 'Project Manager',
-      FieldName: 'ProjectManagers',
+      FieldName: 'ProjectsManages',
       FieldID: 0,
       default: true,
       selectedValues: null,
@@ -183,7 +183,7 @@ export class ProjectsSpecificationGridService {
       minDate: this.minDate,
       maxDate: this.maxDate,
       CoupleID: 1,
-      CoupleLabel: 'Last Verification Date',
+      CoupleLabel: 'Project Date',
       gridName: this.gridName
     },
     {
@@ -200,7 +200,7 @@ export class ProjectsSpecificationGridService {
       minDate: this.minDate,
       maxDate: this.maxDate,
       CoupleID: 1,
-      CoupleLabel: 'Last Verification Date',
+      CoupleLabel: 'Project Date',
       gridName: this.gridName
     }
   ];
