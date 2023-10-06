@@ -155,15 +155,12 @@ export class ProjectsSpecificationGridService {
       Active_Status: true,
       Active_Status_Config_Filter: true,
       ControlType: eFieldControlType.MultiSelect,
-      Created_By: null,
-      DataType: null,
       DisplayText: 'Project Manager',
       FieldName: 'ProjectsManages',
       DisplayCode: 'FullName',
       ValueCode: 'ManagerId',
       FieldID: 0,
       default: true,
-      selectedValues: null,
       CoupleID: 0,
       CoupleLabel: 'Project',
       gridName: this.gridName
@@ -213,7 +210,7 @@ export class ProjectsSpecificationGridService {
     ProjectsManages: {
       webApiRequest: this.projectsService.getProjectsManagersRequest(),
       type: eFieldControlType.MultiSelect,
-      odataKey: 'ProjectsManages'
+      odataKey: 'ManagerId'
     },
     StartDate: {
       type: eFieldControlType.Date,
