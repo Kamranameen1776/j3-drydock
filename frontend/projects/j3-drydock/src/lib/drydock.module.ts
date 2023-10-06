@@ -10,6 +10,8 @@ import { ExampleProjectsComponent } from './components/example-projects/example-
 import { ExampleProjectsGridComponent } from './components/example-projects/example-projects-grid/example-projects-grid.component';
 import { ExampleProjectsService } from './services/ExampleProjectsService';
 import { CreateExampleProjectPopupComponent } from './components/example-projects/example-projects-grid/create-example-project-popup/create-example-project-popup.component';
+import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
+import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -21,7 +23,14 @@ export function winEnv(): unknown {
 }
 
 @NgModule({
-  declarations: [ExampleProjectsComponent, ExampleProjectsGridComponent, CreateExampleProjectPopupComponent, StandardJobsMainComponent],
+  declarations: [
+    ExampleProjectsComponent,
+    ExampleProjectsGridComponent,
+    CreateExampleProjectPopupComponent,
+    StandardJobsMainComponent,
+    UpsertStandardJobPopupComponent,
+    UpsertStandardJobFormComponent
+  ],
   imports: [
     CommonModule,
     JibeComponentsModule.forRoot({

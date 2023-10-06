@@ -1,5 +1,6 @@
+import { StandardJobResult } from './../../models/interfaces/standard-jobs';
 import { Component, OnInit } from '@angular/core';
-import { GridAction } from 'jibe-components';
+import { eGridRefreshType, GridAction, GridService } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { StandardJobsGridService } from './StandardJobsGridService';
 
@@ -12,9 +13,14 @@ import { StandardJobsGridService } from './StandardJobsGridService';
 export class StandardJobsMainComponent implements OnInit {
   public gridInputs: GridInputsWithRequest;
 
-  constructor(private standardJobsGridService: StandardJobsGridService) {}
+  constructor(
+    private standardJobsGridService: StandardJobsGridService,
+    private gridService: GridService
+  ) {}
 
-  public isCreatePopupVisible = false;
+  public isUpsertPopupVisible = false;
+
+  public currentRow: StandardJobResult;
 
   ngOnInit(): void {
     this.gridInputs = this.standardJobsGridService.getGridInputs();
@@ -22,7 +28,16 @@ export class StandardJobsMainComponent implements OnInit {
 
   public onGridAction({ type }: GridAction<string, string>): void {
     if (type === this.gridInputs.gridButton.label) {
-      this.isCreatePopupVisible = true;
+      this.isUpsertPopupVisible = true;
+    }
+  }
+
+  public onCloseUpsertPopup(hasSaved: boolean) {
+    this.isUpsertPopupVisible = false;
+    this.currentRow = undefined;
+
+    if (hasSaved) {
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);
     }
   }
 }

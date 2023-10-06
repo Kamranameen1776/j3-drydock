@@ -1,4 +1,5 @@
 import { IGridCellStyle } from 'jibe-components';
+import { eStandardJobsMainFields } from '../enums/standard-jobs-main.enum';
 
 // TODO fixme all of this
 export interface CreateStandardJob {
@@ -11,11 +12,11 @@ export interface CreateStandardJobResult {
 
 // TODO can change all + need also data fields for create new popup
 export interface StandardJobResult {
-  ItemNumber: string;
-  Subject: Partial<IGridCellStyle>;
-  VesselType: string;
-  ItemCategory: string;
-  Inspection: string;
-  DoneBy: string;
-  MaterialSuppliedBy: string;
+  [eStandardJobsMainFields.ItemNumber]: string;
+  [eStandardJobsMainFields.Subject]: Partial<IGridCellStyle>;
+  [eStandardJobsMainFields.VesselType]: string;
+  [eStandardJobsMainFields.ItemCategory]: string;
+  [eStandardJobsMainFields.Inspection]: string;
+  [eStandardJobsMainFields.DoneBy]: string;
+  [eStandardJobsMainFields.MaterialSuppliedBy]: string;
 }

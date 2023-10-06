@@ -11,3 +11,13 @@ export enum eStandardJobsMainLabels {
   DoneBy = 'Done By',
   MaterialSuppliedBy = 'Material Supplied By'
 }
+
+export enum eStandardJobsMainFields {
+  ItemNumber = 'ItemNumber',
+  Subject = 'Subject',
+  VesselType = 'VesselType',
+  ItemCategory = 'ItemCategory',
+  Inspection = 'Inspection',
+  DoneBy = 'DoneBy',
+  MaterialSuppliedBy = 'MaterialSuppliedBy'
+}

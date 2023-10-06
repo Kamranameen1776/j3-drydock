@@ -6,3 +6,9 @@
   [getStyleByContainer]="true"
   (action)="onGridAction($event)"
 ></jb-grid>
+
+<jb-upsert-standard-job-popup
+  [item]="currentRow"
+  [isOpen]="isUpsertPopupVisible"
+  (closeDialog)="onCloseUpsertPopup($event)"
+></jb-upsert-standard-job-popup>
