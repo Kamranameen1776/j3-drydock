@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Column, Filter, FilterListSet, GridButton, eColor, eCrud, eFieldControlType, eGridCellType } from 'jibe-components';
 import { ProjectsForMainPageGridDto } from './bll/dtos/ProjectsForMainPageGridDto';
-import { of } from 'rxjs';
 import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../shared/jb-components-helpers/grid-inputs';
@@ -168,6 +167,20 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
+      ControlType: eFieldControlType.MultiSelect,
+      DisplayText: 'Ship Yard',
+      FieldName: 'ShipsYards',
+      DisplayCode: 'ShipYardName',
+      ValueCode: 'ShipYardId',
+      FieldID: 0,
+      default: true,
+      CoupleID: 0,
+      CoupleLabel: 'Project',
+      gridName: this.gridName
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
       ControlType: eFieldControlType.Date,
       Created_By: null,
       DataType: null,
@@ -209,6 +222,11 @@ export class ProjectsSpecificationGridService {
     },
     ProjectsManages: {
       webApiRequest: this.projectsService.getProjectsManagersRequest(),
+      type: eFieldControlType.MultiSelect,
+      odataKey: 'ManagerId'
+    },
+    ShipsYards: {
+      webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
       type: eFieldControlType.MultiSelect,
       odataKey: 'ManagerId'
     },

@@ -40,4 +40,16 @@ export class ProjectsService {
     };
     return apiRequest;
   }
+
+  public getProjectsShipsYardsRequest(): WebApiRequest {
+    const apiRequest: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'projects/projects-ships-yards',
+      crud: eCrud.Get,
+      entity: 'drydock'
+    };
+    return apiRequest;
+  }
 }

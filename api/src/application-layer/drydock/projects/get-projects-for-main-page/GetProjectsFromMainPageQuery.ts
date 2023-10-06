@@ -2,7 +2,7 @@ import { forEach } from 'lodash';
 import { createQuery } from 'odata-v4-sql';
 
 import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
-import { ProjectsService } from '../../../../bll/drydock/projects/projects-service/ProjectsService';
+import { ProjectsService } from '../../../../bll/drydock/projects/ProjectsService';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
 import { GetProjectsFromMainPageRequestDto } from './dtos/GetProjectsFromMainPageRequestDto';

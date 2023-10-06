@@ -1,17 +1,14 @@
-import { ProjectsService } from '../../../../bll/drydock/projects/ProjectsService';
-import { GetProjectVesselsResultDto } from '../../../../dal/drydock/projects/dtos/GetProjectVesselsResultDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
+import { ProjectsShipsYardsResultDto } from './ProjectsShipsYardsResultDto';
 
-export class ProjectsVesselsQuery extends Query<void, GetProjectVesselsResultDto[]> {
+export class ProjectsShipsYardsQuery extends Query<void, ProjectsShipsYardsResultDto[]> {
     projectsRepository: ProjectsRepository;
-    projectsService: ProjectsService;
 
     constructor() {
         super();
 
         this.projectsRepository = new ProjectsRepository();
-        this.projectsService = new ProjectsService();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -26,9 +23,13 @@ export class ProjectsVesselsQuery extends Query<void, GetProjectVesselsResultDto
      *
      * @returns All example projects, which were created after the latest projects date
      */
-    protected async MainHandlerAsync(): Promise<GetProjectVesselsResultDto[]> {
-        const projectsManagers = await this.projectsRepository.GetProjectsVessels();
+    protected async MainHandlerAsync(): Promise<ProjectsShipsYardsResultDto[]> {
 
-        return projectsManagers;
+        const dtos = new Array<ProjectsShipsYardsResultDto>();
+
+        dtos.push({ ShipYardId: '1', ShipYardName: 'Shipyard 1' });
+        dtos.push({ ShipYardId: '2', ShipYardName: 'Shipyard 2' });
+
+        return dtos;
     }
 }

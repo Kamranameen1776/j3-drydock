@@ -1,4 +1,4 @@
-import { ExampleProjectsService } from '../../../../bll/drydock/projects/example-projects-service/ExampleProjectsService';
+import { ExampleProjectsService } from '../../../../bll/drydock/example-projects/ExampleProjectsService';
 import { GetExampleProjectsResultDto } from '../../../../dal/drydock/example-projects/dtos/GetExampleProjectsResultDto';
 import { ExampleProjectsRepository } from '../../../../dal/drydock/example-projects/ExampleProjectsRepository';
 import { Query } from '../../core/cqrs/Query';

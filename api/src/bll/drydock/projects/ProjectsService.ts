@@ -1,6 +1,6 @@
-import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
-import { ProjectState } from '../../../../bll/drydock/entities/ProjectState';
-import { ProjectType } from '../../../../bll/drydock/entities/ProjectType';
+import { ApplicationException } from '../core/exceptions/ApplicationException';
+import { ProjectState } from '../entities/ProjectState';
+import { ProjectType } from '../entities/ProjectType';
 
 export class ProjectsService {
     public GetOfficeVesselFirstLetter(createdAtOffice: boolean): string {

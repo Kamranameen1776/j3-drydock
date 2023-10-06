@@ -1,6 +1,6 @@
 import { forEach } from 'lodash';
 
-import { ProjectManagerService } from '../../../../bll/drydock/projects/projects-service/ProjectManagerService';
+import { ProjectManagerService } from '../../../../bll/drydock/projects/ProjectManagerService';
 import { GetProjectManagersResultDto } from '../../../../dal/drydock/projects/dtos/GetProjectManagersResultDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
