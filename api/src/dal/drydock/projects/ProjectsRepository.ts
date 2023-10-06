@@ -64,7 +64,7 @@ export class ProjectsRepository {
             SELECT
 				[Lib_User].[uid] as LibUserUid,
 				[Lib_User].[First_Name] as FirstName,
-				[Lib_User].[Last_Name] as LastName,
+				[Lib_User].[Last_Name] as LastName
         FROM [dry_dock].[project]
 
         INNER JOIN [Lib_User] ON [project_manager_Lib_User_Uid] = [Lib_User].[uid]

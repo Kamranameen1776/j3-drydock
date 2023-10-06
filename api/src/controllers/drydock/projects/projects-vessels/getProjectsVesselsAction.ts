@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { GetProjectsVesselsQuery } from '../../../../application-layer/drydock/projects/get-projects-vessels/GetProjectsVesselsQuery';
+import { ProjectsVesselsQuery } from '../../../../application-layer/drydock/projects/projects-vessels/ProjectsVesselsQuery';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
 /**
@@ -14,7 +14,7 @@ export async function getProjectsVesselsAction(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
-        const query = new GetProjectsVesselsQuery();
+        const query = new ProjectsVesselsQuery();
 
         // Execute query
         const projects = await query.ExecuteAsync();

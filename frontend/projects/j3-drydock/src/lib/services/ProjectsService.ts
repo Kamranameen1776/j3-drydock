@@ -16,4 +16,28 @@ export class ProjectsService {
     };
     return apiRequest;
   }
+
+  public getProjectTypesRequest(): WebApiRequest {
+    const apiRequest: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'projects/project-types',
+      crud: eCrud.Get,
+      entity: 'drydock'
+    };
+    return apiRequest;
+  }
+
+  public getProjectsManagersRequest(): WebApiRequest {
+    const apiRequest: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'projects/projects-managers',
+      crud: eCrud.Get,
+      entity: 'drydock'
+    };
+    return apiRequest;
+  }
 }

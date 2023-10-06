@@ -1,9 +1,9 @@
 import { ProjectsService } from '../../../../bll/drydock/projects/projects-service/ProjectsService';
-import { GetProjectManagersResultDto } from '../../../../dal/drydock/projects/dtos/GetProjectManagersResultDto';
+import { GetProjectVesselsResultDto } from '../../../../dal/drydock/projects/dtos/GetProjectVesselsResultDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
 
-export class GetProjectsManagersQuery extends Query<void, GetProjectManagersResultDto[]> {
+export class ProjectsVesselsQuery extends Query<void, GetProjectVesselsResultDto[]> {
     projectsRepository: ProjectsRepository;
     projectsService: ProjectsService;
 
@@ -26,8 +26,8 @@ export class GetProjectsManagersQuery extends Query<void, GetProjectManagersResu
      *
      * @returns All example projects, which were created after the latest projects date
      */
-    protected async MainHandlerAsync(): Promise<GetProjectManagersResultDto[]> {
-        const projectsManagers = await this.projectsRepository.GetProjectsManagers();
+    protected async MainHandlerAsync(): Promise<GetProjectVesselsResultDto[]> {
+        const projectsManagers = await this.projectsRepository.GetProjectsVessels();
 
         return projectsManagers;
     }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Column, Filter, FilterListSet, GridButton, eColor, eFieldControlType, eGridCellType } from 'jibe-components';
+import { Column, Filter, FilterListSet, GridButton, eColor, eCrud, eFieldControlType, eGridCellType } from 'jibe-components';
 import { ProjectsForMainPageGridDto } from './bll/dtos/ProjectsForMainPageGridDto';
 import { of } from 'rxjs';
 import { nameOf } from '../../../utils/nameOf';
@@ -138,20 +138,18 @@ export class ProjectsSpecificationGridService {
 
   public filters: Filter[] = [
     {
-      Active_Status: true,
       Active_Status_Config_Filter: true,
-      ControlType: eFieldControlType.MultiSelect,
-      Created_By: null,
-      DataType: null,
+      type: eGridCellType.Multiselect,
       DisplayText: 'Project Type',
+      Active_Status: true,
       FieldName: 'ProjectTypes',
+      DisplayCode: 'ProjectTypeName',
+      ValueCode: 'ProjectTypeCode',
       FieldID: 0,
       default: true,
-      selectedValues: null,
       CoupleID: 0,
       CoupleLabel: 'Project',
-      gridName: this.gridName,
-      list: of(this.LoadProjectTypes())
+      gridName: this.gridName
     },
     {
       Active_Status: true,
@@ -161,13 +159,14 @@ export class ProjectsSpecificationGridService {
       DataType: null,
       DisplayText: 'Project Manager',
       FieldName: 'ProjectsManages',
+      DisplayCode: 'FullName',
+      ValueCode: 'ManagerId',
       FieldID: 0,
       default: true,
       selectedValues: null,
       CoupleID: 0,
       CoupleLabel: 'Project',
-      gridName: this.gridName,
-      list: of(this.LoadProjectsManagers())
+      gridName: this.gridName
     },
     {
       Active_Status: true,
@@ -207,10 +206,12 @@ export class ProjectsSpecificationGridService {
 
   private filterListsSet: FilterListSet = {
     ProjectTypes: {
+      webApiRequest: this.projectsService.getProjectTypesRequest(),
       type: eFieldControlType.MultiSelect,
-      odataKey: 'ProjectTypes'
+      odataKey: 'ProjectTypeCode'
     },
     ProjectsManages: {
+      webApiRequest: this.projectsService.getProjectsManagersRequest(),
       type: eFieldControlType.MultiSelect,
       odataKey: 'ProjectsManages'
     },
@@ -237,10 +238,6 @@ export class ProjectsSpecificationGridService {
       request: this.projectsService.getProjectsForMainPageGridRequest(),
       gridButton: this.gridButton
     };
-  }
-
-  private LoadProjectTypes(): string[] {
-    return ['Dry Dock', 'b'];
   }
 
   private LoadProjectsManagers(): string[] {
