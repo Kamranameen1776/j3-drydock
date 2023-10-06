@@ -23,7 +23,7 @@ module.exports = {
         'default-case-last': 'error',
         'default-param-last': 'error',
         'dot-notation': 'error',
-        eqeqeq: 'error',
+        eqeqeq: ['error', 'always', { null: 'ignore' }],
         'grouped-accessor-pairs': 'error',
         'max-depth': 'error',
         'max-lines': 'error',

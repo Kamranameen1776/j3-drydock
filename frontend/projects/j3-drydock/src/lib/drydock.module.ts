@@ -21,12 +21,7 @@ export function winEnv(): unknown {
 }
 
 @NgModule({
-  declarations: [
-    ExampleProjectsComponent,
-    ExampleProjectsGridComponent,
-    CreateExampleProjectPopupComponent,
-    StandardJobsMainComponent
-  ],
+  declarations: [ExampleProjectsComponent, ExampleProjectsGridComponent, CreateExampleProjectPopupComponent, StandardJobsMainComponent],
   imports: [
     CommonModule,
     JibeComponentsModule.forRoot({
