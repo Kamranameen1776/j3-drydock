@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build --project j3-drydock",
     "build:watch": "ng build --project j3-drydock --watch",
-    "prettier": "prettier --write projects/j3-drydock/src/lib/drydock/**/*.{js,ts,json,html,css,scss}",
+    "prettier": "prettier --write projects/j3-drydock/src/lib/**/*.{js,ts,json,html,css,scss}",
     "test": "ng test",
     "lint": "eslint",
     "e2e": "ng e2e"
