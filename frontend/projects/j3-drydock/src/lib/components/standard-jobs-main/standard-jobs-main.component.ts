@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridAction } from 'jibe-components';
-import { GridInputsWithRequest } from '../../presentation-layer/jb-components-helpers/grid-inputs';
+import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { StandardJobsGridService } from './StandardJobsGridService';
 
 @Component({

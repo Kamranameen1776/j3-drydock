@@ -1,10 +1,10 @@
-import { StandardJobsService } from './../../infrastructure-layer/api-services/standard-jobs-main/StandardJobsService';
+import { StandardJobsService } from '../../services/StandardJobsService';
 import { Injectable } from '@angular/core';
 import { Column, GridButton } from 'jibe-components';
-import { GridInputsWithRequest } from '../../presentation-layer/jb-components-helpers/grid-inputs';
-import { nameOf } from '../../common/ts-helpers/nameOf';
-import { eStandardJobsMainLabels } from './enums/standard-jobs-main-labels.enum';
-import { GetStandardJobsMainResultDto } from '../../infrastructure-layer/api-services/standard-jobs-main/dtos/GetStandardJobsResultDto';
+import { nameOf } from '../../utils/nameOf';
+import { eStandardJobsMainLabels } from '../../models/enums/standard-jobs-main.enum';
+import { StandardJobResult } from '../../models/interfaces/standard-jobs';
+import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 
 @Injectable()
 export class StandardJobsGridService {
@@ -14,7 +14,7 @@ export class StandardJobsGridService {
     {
       DisableSort: true,
       DisplayText: eStandardJobsMainLabels.ItemNumber,
-      FieldName: nameOf<GetStandardJobsMainResultDto>((prop) => prop.ItemNumber),
+      FieldName: nameOf<StandardJobResult>((prop) => prop.ItemNumber),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -23,7 +23,7 @@ export class StandardJobsGridService {
     {
       DisableSort: true,
       DisplayText: eStandardJobsMainLabels.Subject,
-      FieldName: nameOf<GetStandardJobsMainResultDto>((prop) => prop.Subject),
+      FieldName: nameOf<StandardJobResult>((prop) => prop.Subject),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
@@ -31,7 +31,7 @@ export class StandardJobsGridService {
     {
       DisableSort: true,
       DisplayText: eStandardJobsMainLabels.VesselType,
-      FieldName: nameOf<GetStandardJobsMainResultDto>((prop) => prop.VesselType),
+      FieldName: nameOf<StandardJobResult>((prop) => prop.VesselType),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
@@ -39,7 +39,7 @@ export class StandardJobsGridService {
     {
       DisableSort: true,
       DisplayText: eStandardJobsMainLabels.ItemCategory,
-      FieldName: nameOf<GetStandardJobsMainResultDto>((prop) => prop.ItemCategory),
+      FieldName: nameOf<StandardJobResult>((prop) => prop.ItemCategory),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
@@ -47,7 +47,7 @@ export class StandardJobsGridService {
     {
       DisableSort: true,
       DisplayText: eStandardJobsMainLabels.Inspection,
-      FieldName: nameOf<GetStandardJobsMainResultDto>((prop) => prop.Inspection),
+      FieldName: nameOf<StandardJobResult>((prop) => prop.Inspection),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
@@ -55,7 +55,7 @@ export class StandardJobsGridService {
     {
       DisableSort: true,
       DisplayText: eStandardJobsMainLabels.DoneBy,
-      FieldName: nameOf<GetStandardJobsMainResultDto>((prop) => prop.DoneBy),
+      FieldName: nameOf<StandardJobResult>((prop) => prop.DoneBy),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
@@ -63,7 +63,7 @@ export class StandardJobsGridService {
     {
       DisableSort: true,
       DisplayText: eStandardJobsMainLabels.MaterialSuppliedBy,
-      FieldName: nameOf<GetStandardJobsMainResultDto>((prop) => prop.MaterialSuppliedBy),
+      FieldName: nameOf<StandardJobResult>((prop) => prop.MaterialSuppliedBy),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true

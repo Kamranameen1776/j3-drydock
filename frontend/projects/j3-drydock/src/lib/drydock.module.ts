@@ -1,3 +1,4 @@
+import { StandardJobsMainComponent } from './components/standard-jobs-main/standard-jobs-main.component';
 import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { DryDockRoutingModule } from './drydock.routing';
@@ -20,7 +21,12 @@ export function winEnv(): unknown {
 }
 
 @NgModule({
-  declarations: [ExampleProjectsComponent, ExampleProjectsGridComponent, CreateExampleProjectPopupComponent],
+  declarations: [
+    ExampleProjectsComponent,
+    ExampleProjectsGridComponent,
+    CreateExampleProjectPopupComponent,
+    StandardJobsMainComponent
+  ],
   imports: [
     CommonModule,
     JibeComponentsModule.forRoot({
