@@ -1,0 +1,1 @@
+This directory contains components and pipes, that can be used everywhere
