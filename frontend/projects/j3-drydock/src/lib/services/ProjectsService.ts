@@ -52,4 +52,16 @@ export class ProjectsService {
     };
     return apiRequest;
   }
+
+  public getProjectsSpecificationsStatusesRequest(): WebApiRequest {
+    const apiRequest: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'projects/projects-specifications-statuses',
+      crud: eCrud.Get,
+      entity: 'drydock'
+    };
+    return apiRequest;
+  }
 }

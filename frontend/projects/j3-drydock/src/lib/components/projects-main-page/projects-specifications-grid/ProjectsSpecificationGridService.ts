@@ -168,6 +168,20 @@ export class ProjectsSpecificationGridService {
       Active_Status: true,
       Active_Status_Config_Filter: true,
       ControlType: eFieldControlType.MultiSelect,
+      DisplayText: 'Status',
+      FieldName: 'ProjectSpecificationStatuses',
+      DisplayCode: 'SpecificationStatusName',
+      ValueCode: 'SpecificationStatusCode',
+      FieldID: 0,
+      default: true,
+      CoupleID: 0,
+      CoupleLabel: 'Project',
+      gridName: this.gridName
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      ControlType: eFieldControlType.MultiSelect,
       DisplayText: 'Ship Yard',
       FieldName: 'ShipsYards',
       DisplayCode: 'ShipYardName',
@@ -228,7 +242,12 @@ export class ProjectsSpecificationGridService {
     ShipsYards: {
       webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
       type: eFieldControlType.MultiSelect,
-      odataKey: 'ManagerId'
+      odataKey: 'ShipYardId'
+    },
+    ProjectSpecificationStatuses: {
+      webApiRequest: this.projectsService.getProjectsSpecificationsStatusesRequest(),
+      type: eFieldControlType.MultiSelect,
+      odataKey: 'SpecificationStatusCode'
     },
     StartDate: {
       type: eFieldControlType.Date,
