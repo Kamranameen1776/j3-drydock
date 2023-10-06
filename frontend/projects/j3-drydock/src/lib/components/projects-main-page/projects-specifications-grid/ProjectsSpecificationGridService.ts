@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Column, Filter, FilterListSet, GridButton, eColor, eFieldControlType, eGridCellType } from 'jibe-components';
-import { nameOf } from '../../../common/ts-helpers/nameOf';
-import { GridInputsWithRequest } from '../../../presentation-layer/jb-components-helpers/grid-inputs';
 import { ProjectsForMainPageGridDto } from './bll/dtos/ProjectsForMainPageGridDto';
-import { ProjectsService } from '../../../infrastructure-layer/api-services/projects/ProjectsService';
 import { of } from 'rxjs';
+import { nameOf } from '../../../utils/nameOf';
+import { ProjectsService } from '../../../services/ProjectsService';
+import { GridInputsWithRequest } from '../../../shared/jb-components-helpers/grid-inputs';
 
 @Injectable()
 export class ProjectsSpecificationGridService {
