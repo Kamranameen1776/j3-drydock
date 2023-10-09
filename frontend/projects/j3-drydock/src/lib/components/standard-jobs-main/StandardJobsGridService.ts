@@ -1,6 +1,6 @@
 import { StandardJobsService } from '../../services/StandardJobsService';
 import { Injectable } from '@angular/core';
-import { Column, GridButton } from 'jibe-components';
+import { Column, Filter, GridButton, FilterListSet } from 'jibe-components';
 import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../../models/enums/standard-jobs-main.enum';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 
@@ -73,6 +73,9 @@ export class StandardJobsGridService {
     show: true
   };
 
+  private gridFilters: Filter[] = [];
+  private gridFilterLists: FilterListSet = {};
+
   constructor(private standardJobsService: StandardJobsService) {}
 
   public getGridInputs(): GridInputsWithRequest {
@@ -80,7 +83,9 @@ export class StandardJobsGridService {
       columns: this.columns,
       gridName: this.gridName,
       request: this.standardJobsService.getStandardJobsRequest(),
-      gridButton: this.gridButton
+      gridButton: this.gridButton,
+      filters: this.gridFilters,
+      filtersLists: this.gridFilterLists
     };
   }
 }
