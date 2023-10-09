@@ -71,7 +71,7 @@ export abstract class FormServiceBase {
   public resetModelValueIfNotInList<T extends { label: unknown; value: unknown }>(formGroup: FormGroup, list: T[], fieldName: string) {
     const control = this.getFormControl(formGroup, fieldName);
     const currentValue = control.value;
-    const isValueInList = !!list.find((it) => it.value === currentValue);
+    const isValueInList = list.some((it) => it.value === currentValue);
     if (currentValue && !isValueInList) {
       control.reset();
     }
