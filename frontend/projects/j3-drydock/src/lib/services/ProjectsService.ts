@@ -53,12 +53,12 @@ export class ProjectsService {
     return apiRequest;
   }
 
-  public getProjectsSpecificationsStatusesRequest(): WebApiRequest {
+  public getProjectStatusesRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
       // TODO:update jibe lib
       // apiBase: eApiBase.DryDockAPI,
       apiBase: 'dryDockAPI',
-      action: 'projects/projects-specifications-statuses',
+      action: 'projects/projects-statuses',
       crud: eCrud.Get,
       entity: 'drydock'
     };
