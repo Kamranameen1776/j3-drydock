@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Column, Filter, FilterListSet, GridButton, eColor, eCrud, eFieldControlType, eGridCellType } from 'jibe-components';
+import { Column, Filter, FilterListSet, GridButton, eColor, eGridCellType, eGridColumnsWidth } from 'jibe-components';
 import { ProjectsForMainPageGridDto } from './bll/dtos/ProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
@@ -33,7 +33,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: '100px'
+      width: eGridColumnsWidth.ShortDescription
     },
     {
       DisableSort: true,
@@ -43,7 +43,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: '100px'
+      width: eGridColumnsWidth.ShortDescription
     },
     {
       DisableSort: true,
@@ -53,7 +53,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: '100px'
+      width: eGridColumnsWidth.LongDescription
     },
     {
       DisableSort: true,
@@ -63,7 +63,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: '100px'
+      width: eGridColumnsWidth.ShortDescription
     },
     {
       DisableSort: true,
@@ -73,7 +73,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: '100px'
+      width: eGridColumnsWidth.ShortDescription
     },
     {
       DisableSort: true,
@@ -83,7 +83,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: '100px'
+      width: eGridColumnsWidth.ShortDescription
     },
     {
       DisableSort: true,
@@ -93,7 +93,18 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: '100px'
+      width: eGridColumnsWidth.ShortDescription
+    },
+
+    {
+      DisableSort: true,
+      DisplayText: 'Status',
+      FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.Status),
+      IsActive: true,
+      IsMandatory: true,
+      IsVisible: true,
+      ReadOnly: true,
+      width: eGridColumnsWidth.ShortDescription
     },
 
     {
@@ -104,7 +115,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: '100px'
+      width: eGridColumnsWidth.ShortDescription
     },
 
     {
@@ -115,7 +126,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: '100px'
+      width: eGridColumnsWidth.Date
     },
     {
       DisableSort: true,
@@ -125,7 +136,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: '100px'
+      width: eGridColumnsWidth.Date
     }
   ];
 
@@ -153,7 +164,7 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      ControlType: eFieldControlType.MultiSelect,
+      type: eGridCellType.Multiselect,  
       DisplayText: 'Project Manager',
       FieldName: 'ProjectsManages',
       DisplayCode: 'FullName',
@@ -167,7 +178,7 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      ControlType: eFieldControlType.MultiSelect,
+      type: eGridCellType.Multiselect,
       DisplayText: 'Status',
       FieldName: 'ProjectStatuses',
       DisplayCode: 'StatusName',
@@ -181,7 +192,7 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      ControlType: eFieldControlType.MultiSelect,
+      type: eGridCellType.Multiselect,
       DisplayText: 'Ship Yard',
       FieldName: 'ShipsYards',
       DisplayCode: 'ShipYardName',
@@ -195,7 +206,7 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      ControlType: eFieldControlType.Date,
+      type: eGridCellType.Date,
       Created_By: null,
       DataType: null,
       DisplayText: 'Start Date',
@@ -212,7 +223,7 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      ControlType: eFieldControlType.Date,
+      type: eGridCellType.Date,
       Created_By: null,
       DataType: null,
       DisplayText: 'End Date',
@@ -231,32 +242,32 @@ export class ProjectsSpecificationGridService {
   private filterListsSet: FilterListSet = {
     ProjectTypes: {
       webApiRequest: this.projectsService.getProjectTypesRequest(),
-      type: eFieldControlType.MultiSelect,
+      type: 'multiselect',
       odataKey: 'ProjectTypeCode'
     },
     ProjectsManages: {
       webApiRequest: this.projectsService.getProjectsManagersRequest(),
-      type: eFieldControlType.MultiSelect,
+      type: 'multiselect',
       odataKey: 'ManagerId'
     },
     ShipsYards: {
       webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
-      type: eFieldControlType.MultiSelect,
+      type: 'multiselect',
       odataKey: 'ShipYardId'
     },
     ProjectStatuses: {
       webApiRequest: this.projectsService.getProjectStatusesRequest(),
-      type: eFieldControlType.MultiSelect,
+      type: 'multiselect',
       odataKey: 'StatusCode'
     },
     StartDate: {
-      type: eFieldControlType.Date,
       odataKey: 'StartDate',
+      type: 'date',
       dateMethod: 'ge'
     },
     EndDate: {
-      type: eFieldControlType.Date,
       odataKey: 'EndDate',
+      type: 'date',
       dateMethod: 'le'
     }
   };
