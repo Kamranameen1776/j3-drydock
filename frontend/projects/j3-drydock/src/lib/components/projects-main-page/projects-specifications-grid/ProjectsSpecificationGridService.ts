@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Column, Filter, FilterListSet, GridButton, eColor, eGridCellType, eGridColumnsWidth } from 'jibe-components';
+import { Column, Filter, FilterListSet, GridButton, eColor, eFieldControlType, eGridCellType, eGridColumnsWidth } from 'jibe-components';
 import { ProjectsForMainPageGridDto } from './bll/dtos/ProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
@@ -149,7 +149,6 @@ export class ProjectsSpecificationGridService {
   public filters: Filter[] = [
     {
       Active_Status_Config_Filter: true,
-      type: eGridCellType.Multiselect,
       DisplayText: 'Project Type',
       Active_Status: true,
       FieldName: 'ProjectTypes',
@@ -164,12 +163,11 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      type: eGridCellType.Multiselect,  
       DisplayText: 'Project Manager',
       FieldName: 'ProjectsManages',
       DisplayCode: 'FullName',
       ValueCode: 'ManagerId',
-      FieldID: 0,
+      FieldID: 1,
       default: true,
       CoupleID: 0,
       CoupleLabel: 'Project',
@@ -178,12 +176,11 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      type: eGridCellType.Multiselect,
       DisplayText: 'Status',
       FieldName: 'ProjectStatuses',
       DisplayCode: 'StatusName',
       ValueCode: 'StatusCode',
-      FieldID: 0,
+      FieldID: 2,
       default: true,
       CoupleID: 0,
       CoupleLabel: 'Project',
@@ -192,12 +189,11 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      type: eGridCellType.Multiselect,
       DisplayText: 'Ship Yard',
       FieldName: 'ShipsYards',
       DisplayCode: 'ShipYardName',
       ValueCode: 'ShipYardId',
-      FieldID: 0,
+      FieldID: 3,
       default: true,
       CoupleID: 0,
       CoupleLabel: 'Project',
@@ -206,12 +202,11 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      type: eGridCellType.Date,
       Created_By: null,
       DataType: null,
       DisplayText: 'Start Date',
       FieldName: 'StartDate',
-      FieldID: 1,
+      FieldID: 4,
       default: true,
       selectedValues: new Date(this.initDate.getFullYear(), this.initDate.getMonth(), 1),
       minDate: this.minDate,
@@ -223,12 +218,11 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      type: eGridCellType.Date,
       Created_By: null,
       DataType: null,
       DisplayText: 'End Date',
       FieldName: 'EndDate',
-      FieldID: 2,
+      FieldID: 5,
       default: true,
       selectedValues: new Date(this.initDate.getFullYear(), this.initDate.getMonth() + 1, 0),
       minDate: this.minDate,
@@ -243,30 +237,40 @@ export class ProjectsSpecificationGridService {
     ProjectTypes: {
       webApiRequest: this.projectsService.getProjectTypesRequest(),
       type: 'multiselect',
-      odataKey: 'ProjectTypeCode'
+      listValueKey: 'ProjectTypeCode',
+      odataKey: 'ProjectTypes',
+      includeFilter: true
     },
     ProjectsManages: {
       webApiRequest: this.projectsService.getProjectsManagersRequest(),
       type: 'multiselect',
-      odataKey: 'ManagerId'
+      listValueKey: 'ManagerId',
+      odataKey: 'Managers',
+      includeFilter: true
     },
     ShipsYards: {
       webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
       type: 'multiselect',
-      odataKey: 'ShipYardId'
+      listValueKey: 'ShipYardId',
+      odataKey: 'ShipYards',
+      includeFilter: true
     },
     ProjectStatuses: {
       webApiRequest: this.projectsService.getProjectStatusesRequest(),
       type: 'multiselect',
-      odataKey: 'StatusCode'
+      odataKey: 'Statuses',
+      listValueKey: 'StatusCode',
+      includeFilter: true
     },
     StartDate: {
       odataKey: 'StartDate',
+      alterKey: 'StartDate',
       type: 'date',
       dateMethod: 'ge'
     },
     EndDate: {
       odataKey: 'EndDate',
+      alterKey: 'EndDate',
       type: 'date',
       dateMethod: 'le'
     }
@@ -283,9 +287,5 @@ export class ProjectsSpecificationGridService {
       request: this.projectsService.getProjectsForMainPageGridRequest(),
       gridButton: this.gridButton
     };
-  }
-
-  private LoadProjectsManagers(): string[] {
-    return ['a', 'b'];
   }
 }

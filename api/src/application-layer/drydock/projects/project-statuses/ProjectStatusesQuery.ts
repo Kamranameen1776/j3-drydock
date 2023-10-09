@@ -30,7 +30,8 @@ export class ProjectStatusesQuery extends Query<void, ProjectStatusesResultDto[]
         // TODO: Get data from database
         dtos.push({ StatusCode: '1', StatusName: 'In Progress' });
         dtos.push({ StatusCode: '2', StatusName: 'Planning' });
-        dtos.push({ StatusCode: '2', StatusName: 'Completed' });
+        dtos.push({ StatusCode: '3', StatusName: 'Completed' });
+        dtos.push({ StatusCode: '4', StatusName: 'Failed' });
 
         return dtos;
     }
