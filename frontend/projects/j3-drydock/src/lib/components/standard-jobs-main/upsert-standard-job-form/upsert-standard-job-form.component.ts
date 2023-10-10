@@ -4,6 +4,7 @@ import { FormModel, FormValues } from 'jibe-components';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { StandardJobUpsertFormService } from '../StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'jb-upsert-standard-job-form',
@@ -35,6 +36,13 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
     this.initFormValues();
   }
 
+  public dispatchForm(event: FormGroup) {
+    this.formGroup = event;
+    // TODO listen to changes and logic to change some fields state
+
+    this.listenFormValid();
+  }
+
   private initFormStructure() {
     this.formStructure = this.popupFormService.formStructure;
   }
@@ -48,8 +56,10 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
     }
   }
 
-  public dispatchForm(event: FormGroup) {
-    this.formGroup = event;
-    // TODO listen to changes and logic to change some fields state
+  private listenFormValid() {
+    this.formGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+      this.isFormValid = this.formGroup.valid;
+      this.formValid.emit(this.isFormValid);
+    });
   }
 }

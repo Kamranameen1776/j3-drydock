@@ -4,12 +4,13 @@ import { getSmallPopup } from '../../../models/constants/popup';
 import { IJbDialog } from 'jibe-components';
 import { UpsertStandardJobFormComponent } from '../upsert-standard-job-form/upsert-standard-job-form.component';
 import { StandardJobUpsertFormService } from '../StandardJobUpsertFormService';
+import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 
 @Component({
   selector: 'jb-upsert-standard-job-popup',
   templateUrl: './upsert-standard-job-popup.component.html'
 })
-export class UpsertStandardJobPopupComponent implements OnChanges {
+export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implements OnChanges {
   @Input() item: StandardJobResult;
   @Input() isOpen: boolean;
   @Output() closeDialog = new EventEmitter<boolean>();
@@ -28,7 +29,9 @@ export class UpsertStandardJobPopupComponent implements OnChanges {
 
   public isSaving: boolean;
 
-  constructor(private formService: StandardJobUpsertFormService) {}
+  constructor(private formService: StandardJobUpsertFormService) {
+    super();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.item) {
