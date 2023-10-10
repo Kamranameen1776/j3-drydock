@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Column, Filter, FilterListSet, GridButton, eColor, eFieldControlType, eGridCellType, eGridColumnsWidth } from 'jibe-components';
+import { Column, Filter, FilterListSet, GridButton, UserService, eColor, eGridColumnsWidth } from 'jibe-components';
 import { ProjectsForMainPageGridDto } from './bll/dtos/ProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
@@ -12,6 +12,8 @@ export class ProjectsSpecificationGridService {
   public readonly maxDate: Date = new Date('2100-01-01');
 
   public readonly gridName: string = 'projectsSpecificationGrid';
+
+  public readonly dateFormat = this.userService.getUserDetails().Date_Format;
 
   initDate: Date = new Date();
 
@@ -28,7 +30,7 @@ export class ProjectsSpecificationGridService {
     {
       DisableSort: true,
       DisplayText: 'Code',
-      FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.Code),
+      FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.ProjectCode),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -58,7 +60,7 @@ export class ProjectsSpecificationGridService {
     {
       DisableSort: true,
       DisplayText: 'Project Type',
-      FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.ProjectType),
+      FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.ProjectTypeName),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -99,7 +101,7 @@ export class ProjectsSpecificationGridService {
     {
       DisableSort: true,
       DisplayText: 'Status',
-      FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.Status),
+      FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.ProjectStatus),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -110,7 +112,7 @@ export class ProjectsSpecificationGridService {
     {
       DisableSort: true,
       DisplayText: 'State',
-      FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.State),
+      FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.ProjectState),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -276,7 +278,10 @@ export class ProjectsSpecificationGridService {
     }
   };
 
-  constructor(private projectsService: ProjectsService) {}
+  constructor(
+    private userService: UserService,
+    private projectsService: ProjectsService
+  ) {}
 
   public getGridInputs(): GridInputsWithRequest {
     return {

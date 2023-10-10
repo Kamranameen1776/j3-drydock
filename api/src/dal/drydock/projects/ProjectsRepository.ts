@@ -10,10 +10,14 @@ export class ProjectsRepository {
     public async GetProjectTypes(): Promise<ProjectType[]> {
         const result = await getManager().query(
             `
-            SELECT [project_type_code] AS 'ProjectTypeCode'
-            ,[project_type_name] AS 'ProjectTypeName'
-        FROM [dry_dock].[project_type]
-        WHERE [date_of_deletion] IS NULL
+            SELECT pt.[project_type_code] AS 'ProjectTypeCode' 
+            ,wt.[Worklist_Type_Display] AS 'ProjectTypeName'
+			,pt.[short_code] as 'ProjectTypeShortCode'
+        FROM [dry_dock].[project_type] as pt
+
+		INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[project_type_code] = wt.Worklist_Type
+
+        WHERE pt.[date_of_deletion] IS NULL
             `,
         );
 
@@ -36,22 +40,22 @@ export class ProjectsRepository {
     public async GetProjectsForMainPage(): Promise<GetProjectsForMainPageResultDto[]> {
         const result = await getManager().query(
             `
-            SELECT TOP 10 [project_id] AS 'ProjectId'
-            ,[project_short_code_id] AS 'ProjectShortCodeId'
-            ,[created_at_office] AS 'CreatedAtOffice'
-            ,[Lib_Vessels].[Vessel_Name] AS 'VesselName'
-            ,[project_type_project_type_code] AS 'ProjectTypeProjectTypeCode'
-            ,[project_state_project_state_code] AS 'ProjectStateProjectStateCode'
-            ,[subject] AS 'Subject'
-            ,[Lib_User].[First_Name] + ' ' + [Lib_User].[Last_Name] AS 'ProjectManager'
-            ,[start_date] AS 'StartDate'
-            ,[end_date] AS 'EndDate'
-        FROM [dry_dock].[project]
+            SELECT pr.[project_id] AS 'ProjectId'
+            ,pr.[project_code] AS 'ProjectCode'
+            ,vessel.[Vessel_Name] AS 'VesselName'
+			,wt.[Worklist_Type_Display] as ProjectTypeName
+            ,pr.[project_state_code] AS 'ProjectStateCode'
+            ,pr.[subject] AS 'Subject'
+            ,usr.[First_Name] + ' ' + usr.[Last_Name] AS 'ProjectManager'
+            ,cast(pr.[start_date] as datetimeoffset) AS 'StartDate'
+            ,cast(pr.[end_date] as datetimeoffset) AS 'EndDate'
+        FROM [dry_dock].[project] as pr
 
-        INNER JOIN [Lib_Vessels] ON [Lib_Vessels_Vessel_ID] = [Lib_Vessels].[Vessel_ID]
-        INNER JOIN [Lib_User] ON [project_manager_Lib_User_Uid] = [Lib_User].[uid]
+        INNER JOIN [Lib_Vessels] as vessel ON [Lib_Vessels_Vessel_ID] = vessel.[Vessel_ID]
+        INNER JOIN [Lib_User] as usr ON [project_manager_Lib_User_Uid] = usr.[uid]
+		INNER JOIN TEC_LIB_Worklist_Type as wt on pr.[project_type_code] = wt.Worklist_Type
 
-        WHERE [date_of_deletion] IS NULL
+        WHERE pr.[date_of_deletion] IS NULL
             `,
         );
 

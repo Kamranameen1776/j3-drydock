@@ -1,15 +1,13 @@
 export class GetProjectsForMainPageResultDto {
     public ProjectId: string;
 
-    public ProjectShortCodeId: number;
-
-    public CreatedAtOffice: boolean;
+    public ProjectCode: string;
 
     public VesselName: string;
 
-    public ProjectTypeProjectTypeCode: string;
+    public ProjectTypeName: string;
 
-    public ProjectStateProjectStateCode: string;
+    public ProjectStateCode: string;
 
     public Subject: string;
 

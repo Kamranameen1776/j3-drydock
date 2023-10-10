@@ -1,13 +1,13 @@
 export class ProjectsForMainPageGridDto {
   public ProjectId: string;
 
-  public Code: string;
+  public ProjectCode: string;
 
   public Vessel: string;
 
   public Subject: string;
 
-  public ProjectType: string;
+  public ProjectTypeName: string;
 
   public ProjectManager: string;
 
@@ -15,9 +15,9 @@ export class ProjectsForMainPageGridDto {
 
   public ShipYard: string;
 
-  public Status: string;
+  public ProjectStatus: string;
 
-  public State: string;
+  public ProjectState: string;
 
   public StartDate: string;
 

@@ -1,17 +1,14 @@
-import { ProjectsService } from '../../../../bll/drydock/projects/ProjectsService';
 import { GetProjectVesselsResultDto } from '../../../../dal/drydock/projects/dtos/GetProjectVesselsResultDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
 
 export class ProjectsVesselsQuery extends Query<void, GetProjectVesselsResultDto[]> {
     projectsRepository: ProjectsRepository;
-    projectsService: ProjectsService;
 
     constructor() {
         super();
 
         this.projectsRepository = new ProjectsRepository();
-        this.projectsService = new ProjectsService();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
