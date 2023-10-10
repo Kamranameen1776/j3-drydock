@@ -1,5 +1,5 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class createStandardJobs1696484959388 implements MigrationInterface {
     tableName = 'standard_jobs';

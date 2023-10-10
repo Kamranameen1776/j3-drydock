@@ -1,4 +1,4 @@
-import { ODataResult } from "../../../shared/interfaces/odata-result.interface";
+import { ODataResult } from '../../../shared/interfaces/odata-result.interface';
 
 export interface GetStandardJobsResult {
     uid: string;
@@ -13,4 +13,4 @@ export interface GetStandardJobsResult {
     vesselType: string;
 }
 
-export interface GetStandardJobsResultDto extends ODataResult<GetStandardJobsResult> {}
+export type GetStandardJobsResultDto = ODataResult<GetStandardJobsResult>;

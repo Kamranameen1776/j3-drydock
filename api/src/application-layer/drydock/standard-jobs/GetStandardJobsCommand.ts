@@ -1,8 +1,8 @@
+import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
+import { RequestWithOData } from '../../../shared/interfaces/request-with-odata.interface';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
-import { GetStandardJobsResultDto } from "./GetStandardJobsResultDto";
-import { RequestWithOData } from "../../../shared/interfaces/request-with-odata.interface";
+import { GetStandardJobsResultDto } from './GetStandardJobsResultDto';
 
 export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandardJobsResultDto> {
     standardJobsRepository: StandardJobsRepository;
@@ -15,6 +15,7 @@ export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandar
         this.uow = new UnitOfWork();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
     protected async AuthorizationHandlerAsync(request: RequestWithOData): Promise<void> {}
 
     protected async ValidationHandlerAsync(request: RequestWithOData): Promise<void> {

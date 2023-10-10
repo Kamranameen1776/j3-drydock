@@ -1,10 +1,11 @@
 import { ODataService } from 'j2utils';
 import { getConnection, getManager } from 'typeorm';
+
 import { GetStandardJobsResultDto } from '../../../application-layer/drydock/standard-jobs/GetStandardJobsResultDto';
 import { RequestWithOData } from '../../../shared/interfaces/request-with-odata.interface';
 
 export class StandardJobsRepository {
-    async getStandardJobs(data: RequestWithOData): Promise<GetStandardJobsResultDto> {
+    public async getStandardJobs(data: RequestWithOData): Promise<GetStandardJobsResultDto> {
         const oDataService = new ODataService(data, getConnection);
 
         const query = getManager()

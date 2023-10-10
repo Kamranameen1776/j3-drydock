@@ -10,7 +10,7 @@ export class StandardJobsService {
       // TODO:update jibe lib
       // apiBase: eApiBase.DryDockAPI,
       apiBase: 'dryDockAPI',
-      action: 'standard-jobs',
+      action: 'standard-jobs/get-standard-jobs',
       crud: eCrud.Post,
       entity: 'drydock'
     };

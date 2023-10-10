@@ -17,14 +17,14 @@ export enum eStandardJobsMainLabels {
 }
 
 export enum eStandardJobsMainFields {
-  ItemNumber = 'ItemNumber',
-  SubjectExtended = 'SubjectExtended',
-  VesselType = 'VesselType',
-  ItemCategory = 'ItemCategory',
+  ItemNumber = 'code',
+  SubjectExtended = 'subject',
+  VesselType = 'vesselType',
+  ItemCategory = 'category',
   Inspection = 'Inspection',
   DoneBy = 'DoneBy',
   MaterialSuppliedBy = 'MaterialSuppliedBy',
-  VesselSpecific = 'VesselSpecific',
+  VesselSpecific = 'vesselTypeSpecific',
 
   Function = 'Function',
   Subject = 'Subject',
