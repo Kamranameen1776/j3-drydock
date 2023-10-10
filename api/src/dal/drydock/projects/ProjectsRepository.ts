@@ -1,13 +1,38 @@
 import { getManager } from 'typeorm';
 
-import { ProjectState } from '../../../bll/drydock/entities/ProjectState';
-import { ProjectType } from '../../../bll/drydock/entities/ProjectType';
 import { GetProjectManagersResultDto } from './dtos/GetProjectManagersResultDto';
 import { GetProjectsForMainPageResultDto } from './dtos/GetProjectsForMainPageResultDto';
 import { GetProjectVesselsResultDto } from './dtos/GetProjectVesselsResultDto';
+import { ProjectStateResultDto } from './dtos/ProjectStateResultDto';
+import { ProjectStatusResultDto } from './dtos/ProjectStatusResultDto';
+import { ProjectTypeResultDto } from './dtos/ProjectTypeResultDto';
 
 export class ProjectsRepository {
-    public async GetProjectTypes(): Promise<ProjectType[]> {
+    public async GetProjectStatuses(): Promise<ProjectStatusResultDto[]> {
+        const result = await getManager().query(
+            `
+SELECT distinct wdetails.[WorkflowType_ID] as ProjectStatusId,
+	wdetails.[status_display_name] as ProjectStatusName,
+	wdetails.Workflow_OrderID
+	
+FROM JMS_DTL_Workflow_config_Details as wdetails
+
+INNER JOIN TEC_LIB_Worklist_Type as wt on wdetails.Config_ID = wt.ID
+INNER JOIN [dry_dock].[project_type] as pt on pt.[project_type_code] = wt.Worklist_Type
+
+WHERE wt.Active_Status=1
+	AND wdetails.Active_Status=1
+	AND pt.[date_of_deletion] IS NULL
+
+ORDER BY wdetails.Workflow_OrderID
+        
+            `,
+        );
+
+        return result;
+    }
+
+    public async GetProjectTypes(): Promise<ProjectTypeResultDto[]> {
         const result = await getManager().query(
             `
             SELECT pt.[project_type_code] AS 'ProjectTypeCode' 
@@ -24,7 +49,7 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async GetProjectStates(): Promise<ProjectState[]> {
+    public async GetProjectStates(): Promise<ProjectStateResultDto[]> {
         const result = await getManager().query(
             `
             SELECT [project_state_code] AS 'ProjectStateCode'
@@ -41,6 +66,7 @@ export class ProjectsRepository {
         const result = await getManager().query(
             `
             SELECT pr.[project_id] AS 'ProjectId'
+            ,pr.[created_at_office] AS 'CreatedAtOffice'
             ,pr.[project_code] AS 'ProjectCode'
             ,vessel.[Vessel_Name] AS 'VesselName'
 			,wt.[Worklist_Type_Display] as ProjectTypeName

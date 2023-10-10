@@ -1,6 +1,8 @@
 export class GetProjectsForMainPageResultDto {
     public ProjectId: string;
 
+    public CreatedAtOffice: boolean;
+
     public ProjectCode: string;
 
     public VesselName: string;

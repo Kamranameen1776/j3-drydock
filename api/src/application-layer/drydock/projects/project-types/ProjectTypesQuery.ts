@@ -1,8 +1,8 @@
-import { ProjectType } from '../../../../bll/drydock/entities/ProjectType';
+import { ProjectTypeResultDto } from '../../../../dal/drydock/projects/dtos/ProjectTypeResultDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
 
-export class ProjectTypesQuery extends Query<void, ProjectType[]> {
+export class ProjectTypesQuery extends Query<void, ProjectTypeResultDto[]> {
     projectsRepository: ProjectsRepository;
 
     constructor() {
@@ -23,7 +23,7 @@ export class ProjectTypesQuery extends Query<void, ProjectType[]> {
      *
      * @returns All example projects, which were created after the latest projects date
      */
-    protected async MainHandlerAsync(): Promise<ProjectType[]> {
+    protected async MainHandlerAsync(): Promise<ProjectTypeResultDto[]> {
         const projectTypes = await this.projectsRepository.GetProjectTypes();
 
         return projectTypes;

@@ -1,4 +1,4 @@
-export class ProjectState {
+export class ProjectStateResultDto {
     ProjectStateCode: string;
 
     ProjectStateName: string;

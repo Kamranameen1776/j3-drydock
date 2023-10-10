@@ -1,8 +1,8 @@
+import { ProjectStatusResultDto } from '../../../../dal/drydock/projects/dtos/ProjectStatusResultDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
-import { ProjectStatusesResultDto } from './ProjectStatusesResultDto';
 
-export class ProjectStatusesQuery extends Query<void, ProjectStatusesResultDto[]> {
+export class ProjectStatusesQuery extends Query<void, ProjectStatusResultDto[]> {
     projectsRepository: ProjectsRepository;
 
     constructor() {
@@ -23,16 +23,9 @@ export class ProjectStatusesQuery extends Query<void, ProjectStatusesResultDto[]
      *
      * @returns All example projects, which were created after the latest projects date
      */
-    protected async MainHandlerAsync(): Promise<ProjectStatusesResultDto[]> {
+    protected async MainHandlerAsync(): Promise<ProjectStatusResultDto[]> {
+        const projectStatuses = this.projectsRepository.GetProjectStatuses();
 
-        const dtos = new Array<ProjectStatusesResultDto>();
-
-        // TODO: Get data from database
-        dtos.push({ StatusCode: '1', StatusName: 'In Progress' });
-        dtos.push({ StatusCode: '2', StatusName: 'Planning' });
-        dtos.push({ StatusCode: '3', StatusName: 'Completed' });
-        dtos.push({ StatusCode: '4', StatusName: 'Failed' });
-
-        return dtos;
+        return projectStatuses;
     }
 }

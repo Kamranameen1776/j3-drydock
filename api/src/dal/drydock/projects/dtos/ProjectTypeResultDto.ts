@@ -1,4 +1,4 @@
-export class ProjectType {
+export class ProjectTypeResultDto {
     ProjectTypeCode: string;
 
     ProjectTypeName: string;
