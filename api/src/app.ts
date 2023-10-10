@@ -20,9 +20,9 @@ declare global {
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 app.use(AccessRights.accessRightsMiddleware);
-app.use(bodyParser.json({ limit: '5mb' }));
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const autoRoutes = require('j3-express-auto-routes')(app);
