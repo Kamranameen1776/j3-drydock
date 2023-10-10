@@ -5,16 +5,16 @@ import { FormModel, FormValues } from 'jibe-components';
 export abstract class FormServiceBase {
   public abstract readonly formId: string;
 
-  protected abstract _formValues: FormValues;
+  protected abstract readonly _formStructure: FormModel;
 
-  protected abstract _formModel: FormModel;
+  protected abstract readonly _formValues: FormValues;
 
   public get formValues() {
-    return _.cloneDeep(this.formValues);
+    return _.cloneDeep(this._formValues);
   }
 
-  public get formModel() {
-    return _.cloneDeep(this.formModel);
+  public get formStructure() {
+    return _.cloneDeep(this._formStructure);
   }
 
   public getFormControlValue<T extends string>(fg: FormGroup, fieldName: T) {

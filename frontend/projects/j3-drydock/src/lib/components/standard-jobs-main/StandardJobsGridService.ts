@@ -21,7 +21,7 @@ export class StandardJobsGridService {
     {
       DisableSort: true,
       DisplayText: eStandardJobsMainLabels.Subject,
-      FieldName: eStandardJobsMainFields.Subject,
+      FieldName: eStandardJobsMainFields.SubjectExtended,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
@@ -69,7 +69,7 @@ export class StandardJobsGridService {
   ];
 
   private readonly gridButton: GridButton = {
-    label: eStandardJobsMainLabels.createNewJob,
+    label: eStandardJobsMainLabels.CreateNewJob,
     show: true
   };
 

@@ -1,7 +1,7 @@
 export enum eStandardJobsMainLabels {
-  createNewJob = 'Create New Job',
-  createNewStandardJob = 'Create New Standard Job',
-  addSubItem = 'Add Sub Item',
+  CreateNewJob = 'Create New Job',
+  CreateNewStandardJob = 'Create New Standard Job',
+  AddSubItem = 'Add Sub Item',
 
   ItemNumber = 'Item No.',
   Subject = 'Subject',
@@ -9,15 +9,30 @@ export enum eStandardJobsMainLabels {
   ItemCategory = 'Item Category',
   Inspection = 'Inspection / Survey',
   DoneBy = 'Done By',
-  MaterialSuppliedBy = 'Material Supplied By'
+  MaterialSuppliedBy = 'Material Supplied By',
+  Function = 'Function',
+  VesselSpecific = 'Vessel Type Specific',
+  Description = 'Description',
+  Scope = 'Scope'
 }
 
 export enum eStandardJobsMainFields {
   ItemNumber = 'ItemNumber',
-  Subject = 'Subject',
+  SubjectExtended = 'SubjectExtended',
   VesselType = 'VesselType',
   ItemCategory = 'ItemCategory',
   Inspection = 'Inspection',
   DoneBy = 'DoneBy',
-  MaterialSuppliedBy = 'MaterialSuppliedBy'
+  MaterialSuppliedBy = 'MaterialSuppliedBy',
+  VesselSpecific = 'VesselSpecific',
+
+  Function = 'Function',
+  Subject = 'Subject',
+  ItemCategoryID = 'ItemCategoryID',
+  InspectionIDs = 'InspectionIDs',
+  MaterialSuppliedByID = 'MaterialSuppliedByID',
+  DoneByID = 'DoneByID',
+  VesselTypeID = 'VesselTypeID',
+  Description = 'Description',
+  Scope = 'Scope'
 }
