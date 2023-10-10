@@ -53,7 +53,7 @@ export class GetProjectsFromMainPageQuery extends Query<
             dto.ProjectManager = project.ProjectManager;
             dto.ShipYard = 'Country ave.Name 123';
             dto.Specification = '330/500';
-            dto.ProjectState = project.ProjectStateCode;
+            dto.ProjectState = project.ProjectStateName;
 
             // TODO: make join on task manager table
             dto.ProjectStatus = 'In progress';

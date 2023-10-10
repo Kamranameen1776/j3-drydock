@@ -9,7 +9,7 @@ export class GetProjectsForMainPageResultDto {
 
     public ProjectTypeName: string;
 
-    public ProjectStateCode: string;
+    public ProjectStateName: string;
 
     public Subject: string;
 

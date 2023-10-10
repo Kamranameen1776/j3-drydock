@@ -3,7 +3,6 @@ import { getManager } from 'typeorm';
 import { GetProjectManagersResultDto } from './dtos/GetProjectManagersResultDto';
 import { GetProjectsForMainPageResultDto } from './dtos/GetProjectsForMainPageResultDto';
 import { GetProjectVesselsResultDto } from './dtos/GetProjectVesselsResultDto';
-import { ProjectStateResultDto } from './dtos/ProjectStateResultDto';
 import { ProjectStatusResultDto } from './dtos/ProjectStatusResultDto';
 import { ProjectTypeResultDto } from './dtos/ProjectTypeResultDto';
 
@@ -49,15 +48,19 @@ ORDER BY wdetails.Workflow_OrderID
         return result;
     }
 
-    public async GetProjectStates(): Promise<ProjectStateResultDto[]> {
+    public async GetProjectStates(): Promise<any[]> {
         const result = await getManager().query(
             `
-            SELECT [project_state_code] AS 'ProjectStateCode'
-            ,[project_state_name] AS 'ProjectStateName'
-        FROM [dry_dock].[project_state]
-        WHERE [date_of_deletion] IS NULL
+        --select [data]
+        --from j2_inf_admin_library as al
+
+        --
+        --                      TODO: pass value from project_type table 
+        --where al.[library_code] = 'tmDdStates'
             `,
         );
+
+        // TODO: map to the dto
 
         return result;
     }
@@ -70,7 +73,7 @@ ORDER BY wdetails.Workflow_OrderID
             ,pr.[project_code] AS 'ProjectCode'
             ,vessel.[Vessel_Name] AS 'VesselName'
 			,wt.[Worklist_Type_Display] as ProjectTypeName
-            ,pr.[project_state_code] AS 'ProjectStateCode'
+            ,pr.[project_state_name] AS 'ProjectStateName'
             ,pr.[subject] AS 'Subject'
             ,usr.[First_Name] + ' ' + usr.[Last_Name] AS 'ProjectManager'
             ,cast(pr.[start_date] as datetimeoffset) AS 'StartDate'
