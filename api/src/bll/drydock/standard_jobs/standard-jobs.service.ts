@@ -9,14 +9,12 @@ export class StandardJobsService {
             if (!standardJob.function || !standardJob.subject) {
                 return standardJob;
             }
-            const lowerCaseFunction = standardJob.function.toLowerCase().replace(' ', '_');
             return {
                 ...standardJob,
                 subject: {
-                    innerHTML: `<span>${standardJob.subject}<br><span class="function-${lowerCaseFunction}">${standardJob.function}</span></span>`,
+                    innerHTML: `<p class="jb_grid_mainText">${standardJob.subject}</p><p class="jb_grid_subText">${standardJob.function}</p>`,
                     value: standardJob.subject,
                     cellStyle: '',
-                    cellClass: `.function-${lowerCaseFunction} { color: '#7886A2'; font-size: 12px; font-weight: 400; }`,
                 },
             };
         });
