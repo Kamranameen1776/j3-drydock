@@ -1,11 +1,14 @@
 import { ODataService } from 'j2utils';
-import { getConnection, getManager } from 'typeorm';
-
-import { GetStandardJobsResultDto } from '../../../application-layer/drydock/standard-jobs/GetStandardJobsResultDto';
-import { RequestWithOData } from '../../../shared/interfaces/request-with-odata.interface';
+import { getConnection, getManager, QueryRunner } from "typeorm";
+import { RequestWithOData } from "../../../shared/interfaces";
+import {
+    CreateStandardJobsRequestDto,
+    GetStandardJobsQueryResult
+} from "../../../application-layer/drydock/standard-jobs";
+import { standard_jobs } from "../../../entity/standard_jobs";
 
 export class StandardJobsRepository {
-    public async getStandardJobs(data: RequestWithOData): Promise<GetStandardJobsResultDto> {
+    public async getStandardJobs(data: RequestWithOData): Promise<GetStandardJobsQueryResult> {
         const oDataService = new ODataService(data, getConnection);
 
         const query = getManager()
@@ -14,9 +17,12 @@ export class StandardJobsRepository {
             .select(
                 'sj.uid as uid,' +
                     'sj.subject as subject,' +
+                    'sj."function" as "function",' +
                     'sj.code as code,' +
                     'sj.category as category,' +
-                    'sj.due_date as dueDate,' +
+                    'sj.done_by as doneBy,' +
+                    'sj.inspection as inspection,' +
+                    'sj.material_supplied_by as materialSuppliedBy,' +
                     'sj.vessel_type_specific as vesselTypeSpecific,' +
                     'sj.description as description,' +
                     'sj.active_status as activeStatus,' +
@@ -27,5 +33,26 @@ export class StandardJobsRepository {
             .getSql();
 
         return oDataService.getJoinResult(query);
+    }
+
+    public async createStandardJob(
+      data: CreateStandardJobsRequestDto,
+      queryRunner: QueryRunner,
+    ): Promise<any> {
+        const standardJob = new standard_jobs();
+        standardJob.subject = data.subject;
+        standardJob.code = data.code;
+        standardJob.category = data.category;
+        standardJob.function = data.function;
+        standardJob.done_by = data.doneBy;
+        standardJob.inspection = data.inspection;
+        standardJob.material_supplied_by = data.materialSuppliedBy;
+        standardJob.vessel_type_specific = data.vesselTypeSpecific;
+        standardJob.description = data.description;
+        standardJob.vessel_type_uid = data.vesselTypeUid;
+
+        const result = await queryRunner.manager.insert(standard_jobs, standardJob);
+
+        return result;
     }
 }

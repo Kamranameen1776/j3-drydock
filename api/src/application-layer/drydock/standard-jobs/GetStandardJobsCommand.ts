@@ -1,18 +1,15 @@
 import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
-import { RequestWithOData } from '../../../shared/interfaces/request-with-odata.interface';
+import { RequestWithOData } from "../../../shared/interfaces";
 import { Command } from '../core/cqrs/Command';
-import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { GetStandardJobsResultDto } from './GetStandardJobsResultDto';
+import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
 
 export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandardJobsResultDto> {
-    standardJobsRepository: StandardJobsRepository;
-    uow: UnitOfWork;
+    standardJobsRepository = new StandardJobsRepository();
+    standardJobsService = new StandardJobsService();
 
     constructor() {
         super();
-
-        this.standardJobsRepository = new StandardJobsRepository();
-        this.uow = new UnitOfWork();
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
@@ -25,6 +22,8 @@ export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandar
     }
 
     protected async MainHandlerAsync(request: RequestWithOData): Promise<GetStandardJobsResultDto> {
-        return this.standardJobsRepository.getStandardJobs(request);
+        const data = await this.standardJobsRepository.getStandardJobs(request);
+
+        return this.standardJobsService.mapStandardJobsDataToDto(data);
     }
 }

@@ -16,6 +16,13 @@ export class standard_jobs {
 
     @Column('varchar', {
         nullable: true,
+        name: 'function',
+        length: 250,
+    })
+    function: string;
+
+    @Column('varchar', {
+        nullable: true,
         name: 'code',
         length: 250,
     })
@@ -28,11 +35,26 @@ export class standard_jobs {
     })
     category: string;
 
-    @Column('datetime', {
+    @Column('varchar', {
         nullable: true,
-        name: 'due_date',
+        name: 'done_by',
+        length: 250,
     })
-    due_date: Date;
+    done_by: string;
+
+    @Column('varchar', {
+        nullable: true,
+        name: 'inspection',
+        length: 250,
+    })
+    inspection: string;
+
+    @Column('varchar', {
+        nullable: true,
+        name: 'material_supplied_by',
+        length: 250,
+    })
+    material_supplied_by: string;
 
     @Column('bit', {
         nullable: true,
@@ -47,7 +69,7 @@ export class standard_jobs {
     })
     readonly vessel_type: LIB_VESSELTYPES;
     @RelationId((entity: standard_jobs) => entity.vessel_type)
-    readonly vessel_type_uid: string;
+    vessel_type_uid: string;
 
     @Column('varchar', {
         nullable: true,
