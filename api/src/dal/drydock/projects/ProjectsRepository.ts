@@ -21,7 +21,7 @@ export class ProjectsRepository {
         
         WHERE wt.Active_Status=1
             AND wdetails.Active_Status=1
-            AND pt.[date_of_deletion] IS NULL
+            AND pt.[deleted_at] IS NULL
         
         ORDER BY wdetails.Workflow_OrderID
         
@@ -41,7 +41,7 @@ export class ProjectsRepository {
 
 		INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[TEC_LIB_Worklist_Type] = wt.Worklist_Type
 
-        WHERE pt.[date_of_deletion] IS NULL
+        WHERE pt.[deleted_at] IS NULL
             `,
         );
 
@@ -57,7 +57,7 @@ export class ProjectsRepository {
       
         -- TODO: pass the project type id as a parameter
         WHERE [project_type_id] = 1 
-        AND [date_of_deletion] IS NULL
+        AND [deleted_at] IS NULL
             `,
         );
 
@@ -69,7 +69,7 @@ export class ProjectsRepository {
     public async GetProjectsForMainPage(): Promise<GetProjectsForMainPageResultDto[]> {
         const result = await getManager().query(
             `
-            SELECT pr.[project_id] AS 'ProjectId'
+            SELECT pr.[uid] AS 'ProjectId'
             ,pr.[created_at_office] AS 'CreatedAtOffice'
             ,pr.[project_code] AS 'ProjectCode'
             ,vessel.[Vessel_Name] AS 'VesselName'
@@ -81,15 +81,15 @@ export class ProjectsRepository {
             ,cast(pr.[end_date] as datetimeoffset) AS 'EndDate'
         FROM [dry_dock].[project] as pr
 
-        INNER JOIN [Lib_Vessels] as vessel ON [Lib_Vessels_Vessel_ID] = vessel.[Vessel_ID]
-        INNER JOIN [Lib_User] as usr ON [project_manager_Lib_User_Uid] = usr.[uid]
+        INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Id] = vessel.[Vessel_ID]
+        INNER JOIN [Lib_User] as usr ON [project_manager_Uid] = usr.[uid]
 		INNER JOIN [dry_dock].[project_type] as pt ON pt.[project_type_id] = pr.[project_type_id]
 		INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[TEC_LIB_Worklist_Type] = wt.Worklist_Type
 		INNER JOIN [dry_dock].[project_state] as ps ON ps.[project_state_id] = pr.[project_state_id] 
 			and pt.[project_type_id] = ps.[project_type_id]
 		
 
-        WHERE pr.[date_of_deletion] IS NULL
+        WHERE pr.[deleted_at] IS NULL
             `,
         );
 
@@ -100,14 +100,14 @@ export class ProjectsRepository {
         const result = await getManager().query(
             `
             SELECT
-				[Lib_User].[uid] as LibUserUid,
-				[Lib_User].[First_Name] as FirstName,
-				[Lib_User].[Last_Name] as LastName
-        FROM [dry_dock].[project]
+				usr.[uid] as LibUserUid,
+				usr.[First_Name] as FirstName,
+				usr.[Last_Name] as LastName
+        FROM [dry_dock].[project] as pr
 
-        INNER JOIN [Lib_User] ON [project_manager_Lib_User_Uid] = [Lib_User].[uid]
+        INNER JOIN [Lib_User] as usr ON pr.[project_manager_Uid] = usr.[uid]
 
-        WHERE [dry_dock].[project].[date_of_deletion] IS NULL
+        WHERE pr.[deleted_at] IS NULL
             `,
         );
 
@@ -118,13 +118,13 @@ export class ProjectsRepository {
         const result = await getManager().query(
             `
             SELECT
-				[Lib_Vessels].[uid] as LibUserUid,
-				[Lib_Vessels].[Name] as Name,
-        FROM [dry_dock].[project]
+                vessel.[uid] as LibUserUid,
+				vessel.[Name] as Name,
+        FROM [dry_dock].[project] as pr
 
-        INNER JOIN [Lib_Vessels] ON [Lib_Vessels_Vessel_ID] = [Lib_Vessels].[Vessel_ID]
+        INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Id] = vessel.[Vessel_ID]
 
-        WHERE [dry_dock].[project].[date_of_deletion] IS NULL
+        WHERE pr.[deleted_at] IS NULL
             `,
         );
 
