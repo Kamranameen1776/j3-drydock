@@ -17,7 +17,7 @@ export class ProjectsRepository {
         FROM JMS_DTL_Workflow_config_Details as wdetails
         
         INNER JOIN TEC_LIB_Worklist_Type as wt on wdetails.Config_ID = wt.ID
-        INNER JOIN [dry_dock].[project_type] as pt on pt.[TEC_LIB_Worklist_Type] = wt.Worklist_Type
+        INNER JOIN [dry_dock].[project_type] as pt on pt.[Worklist_Type] = wt.Worklist_Type
         
         WHERE wt.Active_Status=1
             AND wdetails.Active_Status=1
@@ -34,12 +34,12 @@ export class ProjectsRepository {
     public async GetProjectTypes(): Promise<ProjectTypeResultDto[]> {
         const result = await getManager().query(
             `
-            SELECT pt.[TEC_LIB_Worklist_Type] AS 'ProjectTypeCode' 
+            SELECT pt.[Worklist_Type] AS 'ProjectTypeCode' 
             ,wt.[Worklist_Type_Display] AS 'ProjectTypeName'
 			,pt.[short_code] as 'ProjectTypeShortCode'
         FROM [dry_dock].[project_type] as pt
 
-		INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[TEC_LIB_Worklist_Type] = wt.Worklist_Type
+		INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[Worklist_Type] = wt.Worklist_Type
 
         WHERE pt.[deleted_at] IS NULL
             `,
@@ -51,7 +51,7 @@ export class ProjectsRepository {
     public async GetProjectStates(): Promise<any[]> {
         const result = await getManager().query(
             `
-            SELECT [project_state_id]
+            SELECT [id]
             ,[project_state_name]
         FROM [JIBE_Main].[dry_dock].[project_state]
       
@@ -73,7 +73,7 @@ export class ProjectsRepository {
             ,pr.[created_at_office] AS 'CreatedAtOffice'
             ,pr.[project_code] AS 'ProjectCode'
             ,vessel.[Vessel_Name] AS 'VesselName'
-			,wt.[Worklist_Type_Display] as ProjectTypeName
+			,wt.[Worklist_Type] as ProjectTypeName
             ,ps.[project_state_name] AS 'ProjectStateName'
             ,pr.[subject] AS 'Subject'
             ,usr.[First_Name] + ' ' + usr.[Last_Name] AS 'ProjectManager'
@@ -83,10 +83,10 @@ export class ProjectsRepository {
 
         INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Id] = vessel.[Vessel_ID]
         INNER JOIN [Lib_User] as usr ON [project_manager_Uid] = usr.[uid]
-		INNER JOIN [dry_dock].[project_type] as pt ON pt.[project_type_id] = pr.[project_type_id]
-		INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[TEC_LIB_Worklist_Type] = wt.Worklist_Type
-		INNER JOIN [dry_dock].[project_state] as ps ON ps.[project_state_id] = pr.[project_state_id] 
-			and pt.[project_type_id] = ps.[project_type_id]
+		INNER JOIN [dry_dock].[project_type] as pt ON pt.[id] = pr.[project_type_id]
+		INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[Worklist_Type] = wt.Worklist_Type
+		INNER JOIN [dry_dock].[project_state] as ps ON ps.[id] = pr.[project_state_id] 
+			and pt.[id] = ps.[project_type_id]
 		
 
         WHERE pr.[deleted_at] IS NULL
