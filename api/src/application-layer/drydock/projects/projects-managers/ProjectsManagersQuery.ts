@@ -1,12 +1,9 @@
-import { forEach } from 'lodash';
-
 import { ProjectManagerService } from '../../../../bll/drydock/projects/ProjectManagerService';
-import { GetProjectManagersResultDto } from '../../../../dal/drydock/projects/dtos/GetProjectManagersResultDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
-import { ProjectsManagersResultDto } from './ProjectsManagersResultDto';
+import { IProjectsManagersResultDto } from './IProjectsManagersResultDto';
 
-export class ProjectsManagersQuery extends Query<void, ProjectsManagersResultDto[]> {
+export class ProjectsManagersQuery extends Query<void, IProjectsManagersResultDto[]> {
     projectsRepository: ProjectsRepository;
     projectManagerService: ProjectManagerService;
 
@@ -29,18 +26,16 @@ export class ProjectsManagersQuery extends Query<void, ProjectsManagersResultDto
      *
      * @returns All example projects, which were created after the latest projects date
      */
-    protected async MainHandlerAsync(): Promise<ProjectsManagersResultDto[]> {
+    protected async MainHandlerAsync(): Promise<IProjectsManagersResultDto[]> {
         const projectsManagers = await this.projectsRepository.GetProjectsManagers();
 
-        const dtos = new Array<ProjectsManagersResultDto>();
+        const dtos: IProjectsManagersResultDto[] = projectsManagers.map((projectManager) => {
+            const dto: IProjectsManagersResultDto = {
+                ManagerId: projectManager.LibUserUid,
+                FullName: this.projectManagerService.GetFullName(projectManager.FirstName, projectManager.LastName),
+            };
 
-        forEach(projectsManagers, (projectManager) => {
-            const dto = new ProjectsManagersResultDto();
-
-            dto.ManagerId = projectManager.LibUserUid;
-            dto.FullName = this.projectManagerService.GetFullName(projectManager.FirstName, projectManager.LastName);
-
-            dtos.push(dto);
+            return dto;
         });
 
         return dtos;

@@ -1,4 +1,4 @@
-export class ProjectTypeResultDto {
+export interface IProjectTypeResultDto {
     ProjectTypeCode: string;
 
     ProjectTypeName: string;

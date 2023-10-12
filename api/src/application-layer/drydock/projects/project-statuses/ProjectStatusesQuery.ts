@@ -1,8 +1,8 @@
-import { ProjectStatusResultDto } from '../../../../dal/drydock/projects/dtos/ProjectStatusResultDto';
+import { IProjectStatusResultDto } from '../../../../dal/drydock/projects/dtos/IProjectStatusResultDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
 
-export class ProjectStatusesQuery extends Query<void, ProjectStatusResultDto[]> {
+export class ProjectStatusesQuery extends Query<void, IProjectStatusResultDto[]> {
     projectsRepository: ProjectsRepository;
 
     constructor() {
@@ -23,7 +23,7 @@ export class ProjectStatusesQuery extends Query<void, ProjectStatusResultDto[]> 
      *
      * @returns All example projects, which were created after the latest projects date
      */
-    protected async MainHandlerAsync(): Promise<ProjectStatusResultDto[]> {
+    protected async MainHandlerAsync(): Promise<IProjectStatusResultDto[]> {
         const projectStatuses = this.projectsRepository.GetProjectStatuses();
 
         return projectStatuses;

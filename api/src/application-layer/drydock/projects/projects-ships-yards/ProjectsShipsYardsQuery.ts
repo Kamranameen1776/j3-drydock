@@ -1,8 +1,8 @@
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
-import { ProjectsShipsYardsResultDto } from './ProjectsShipsYardsResultDto';
+import { IProjectsShipsYardsResultDto } from './IProjectsShipsYardsResultDto';
 
-export class ProjectsShipsYardsQuery extends Query<void, ProjectsShipsYardsResultDto[]> {
+export class ProjectsShipsYardsQuery extends Query<void, IProjectsShipsYardsResultDto[]> {
     projectsRepository: ProjectsRepository;
 
     constructor() {
@@ -23,9 +23,8 @@ export class ProjectsShipsYardsQuery extends Query<void, ProjectsShipsYardsResul
      *
      * @returns All example projects, which were created after the latest projects date
      */
-    protected async MainHandlerAsync(): Promise<ProjectsShipsYardsResultDto[]> {
-
-        const dtos = new Array<ProjectsShipsYardsResultDto>();
+    protected async MainHandlerAsync(): Promise<IProjectsShipsYardsResultDto[]> {
+        const dtos: IProjectsShipsYardsResultDto[] = [];
 
         dtos.push({ ShipYardId: '1', ShipYardName: 'Shipyard 1' });
         dtos.push({ ShipYardId: '2', ShipYardName: 'Shipyard 2' });

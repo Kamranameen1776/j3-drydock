@@ -1,15 +1,16 @@
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
+import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager } from 'typeorm';
 
-import { GetProjectManagersResultDto } from './dtos/GetProjectManagersResultDto';
-import { GetProjectsForMainPageResultDto } from './dtos/GetProjectsForMainPageResultDto';
-import { GetProjectVesselsResultDto } from './dtos/GetProjectVesselsResultDto';
-import { ProjectStatusResultDto } from './dtos/ProjectStatusResultDto';
-import { ProjectTypeResultDto } from './dtos/ProjectTypeResultDto';
+import { IProjectManagersResultDto } from './dtos/IProjectManagersResultDto';
+import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
+import { IProjectStatusResultDto } from './dtos/IProjectStatusResultDto';
+import { IProjectTypeResultDto } from './dtos/IProjectTypeResultDto';
+import { IProjectVesselsResultDto } from './dtos/IProjectVesselsResultDto';
 
 export class ProjectsRepository {
-    public async GetProjectStatuses(): Promise<ProjectStatusResultDto[]> {
+    public async GetProjectStatuses(): Promise<IProjectStatusResultDto[]> {
         const result = await getManager().query(
             `
             SELECT distinct wdetails.[WorkflowType_ID] as ProjectStatusId,
@@ -33,7 +34,7 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async GetProjectTypes(): Promise<ProjectTypeResultDto[]> {
+    public async GetProjectTypes(): Promise<IProjectTypeResultDto[]> {
         const result = await getManager().query(
             `
             SELECT pt.[Worklist_Type] AS 'ProjectTypeCode' 
@@ -68,7 +69,7 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async GetProjectsForMainPage(data: Request): Promise<GetProjectsForMainPageResultDto> {
+    public async GetProjectsForMainPage(data: Request): Promise<ODataResult<IProjectsForMainPageRecordDto>> {
         const oDataService = new ODataService(data, getConnection);
 
         const query = `
@@ -102,7 +103,7 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async GetProjectsManagers(): Promise<GetProjectManagersResultDto[]> {
+    public async GetProjectsManagers(): Promise<IProjectManagersResultDto[]> {
         const result = await getManager().query(
             `
             SELECT
@@ -120,7 +121,7 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async GetProjectsVessels(): Promise<GetProjectVesselsResultDto[]> {
+    public async GetProjectsVessels(): Promise<IProjectVesselsResultDto[]> {
         const result = await getManager().query(
             `
             SELECT
