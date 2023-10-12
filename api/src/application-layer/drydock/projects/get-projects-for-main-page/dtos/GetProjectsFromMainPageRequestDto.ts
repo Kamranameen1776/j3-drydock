@@ -1,3 +1,5 @@
+import { ODataRequest } from 'shared/interfaces';
+
 export class GetProjectsFromMainPageRequestDto {
-    public odata: any;
+    odata: ODataRequest;
 }

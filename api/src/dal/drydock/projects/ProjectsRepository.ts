@@ -1,4 +1,6 @@
-import { getManager } from 'typeorm';
+import { ODataService } from 'j2utils';
+import { RequestWithOData } from 'shared/interfaces';
+import { getConnection, getManager } from 'typeorm';
 
 import { GetProjectManagersResultDto } from './dtos/GetProjectManagersResultDto';
 import { GetProjectsForMainPageResultDto } from './dtos/GetProjectsForMainPageResultDto';
@@ -66,10 +68,11 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async GetProjectsForMainPage(): Promise<GetProjectsForMainPageResultDto[]> {
-        const result = await getManager().query(
-            `
-            SELECT pr.[uid] AS 'ProjectId'
+    public async GetProjectsForMainPage(data: RequestWithOData): Promise<GetProjectsForMainPageResultDto> {
+        const oDataService = new ODataService(data, getConnection);
+
+        const query = `
+        SELECT pr.[uid] AS 'ProjectId'
             ,pr.[created_at_office] AS 'CreatedAtOffice'
             ,pr.[project_code] AS 'ProjectCode'
             ,vessel.[Vessel_Name] AS 'VesselName'
@@ -90,8 +93,10 @@ export class ProjectsRepository {
 		
 
         WHERE pr.[deleted_at] IS NULL
-            `,
-        );
+          
+                `;
+
+        const result = await oDataService.getJoinResult(query);
 
         return result;
     }

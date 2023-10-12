@@ -1,4 +1,6 @@
-export class GetProjectsForMainPageResultDto {
+import { ODataResult } from 'shared/interfaces';
+
+export class GetProjectsForMainPageRecord {
     public ProjectId: string;
 
     public CreatedAtOffice: boolean;
@@ -19,3 +21,5 @@ export class GetProjectsForMainPageResultDto {
 
     public EndDate: Date;
 }
+
+export type GetProjectsForMainPageResultDto = ODataResult<GetProjectsForMainPageRecord>;

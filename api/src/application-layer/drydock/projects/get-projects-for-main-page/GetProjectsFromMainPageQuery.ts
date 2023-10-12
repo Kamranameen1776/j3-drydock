@@ -1,16 +1,15 @@
 import { forEach } from 'lodash';
-import { createQuery } from 'odata-v4-sql';
+import { RequestWithOData } from 'shared/interfaces';
 
-import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
+import { GetProjectsForMainPageResultDto } from '../../../../dal/drydock/projects/dtos/GetProjectsForMainPageResultDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
-import { GetProjectsFromMainPageRequestDto } from './dtos/GetProjectsFromMainPageRequestDto';
-import { GetProjectsFromMainPageResultDto } from './dtos/GetProjectsFromMainPageResultDto';
+import {
+    GetProjectsFromMainPageRecord,
+    GetProjectsFromMainPageResultDto,
+} from './dtos/GetProjectsFromMainPageResultDto';
 
-export class GetProjectsFromMainPageQuery extends Query<
-    GetProjectsFromMainPageRequestDto,
-    GetProjectsFromMainPageResultDto[]
-> {
+export class GetProjectsFromMainPageQuery extends Query<RequestWithOData, GetProjectsFromMainPageResultDto> {
     projectsRepository: ProjectsRepository;
 
     constructor() {
@@ -19,14 +18,14 @@ export class GetProjectsFromMainPageQuery extends Query<
         this.projectsRepository = new ProjectsRepository();
     }
 
-    protected async AuthorizationHandlerAsync(request: GetProjectsFromMainPageRequestDto): Promise<void> {
+    protected async AuthorizationHandlerAsync(request: RequestWithOData): Promise<void> {
         return;
     }
 
-    protected async ValidationHandlerAsync(request: GetProjectsFromMainPageRequestDto): Promise<void> {
-        if (!request || !request.odata) {
-            throw new ApplicationException('Request odata is required');
-        }
+    protected async ValidationHandlerAsync(request: RequestWithOData): Promise<void> {
+        // if (!request || !request.odata) {
+        //     throw new ApplicationException('Request odata is required');
+        // }
 
         return;
     }
@@ -35,17 +34,15 @@ export class GetProjectsFromMainPageQuery extends Query<
      *
      * @returns All example projects, which were created after the latest projects date
      */
-    protected async MainHandlerAsync(
-        request: GetProjectsFromMainPageRequestDto,
-    ): Promise<GetProjectsFromMainPageResultDto[]> {
-        let query = createQuery(request.odata);
+    protected async MainHandlerAsync(request: RequestWithOData): Promise<GetProjectsFromMainPageResultDto> {
+        const data = await this.projectsRepository.GetProjectsForMainPage(request);
 
-        const projects = await this.projectsRepository.GetProjectsForMainPage();
+        const result = new GetProjectsFromMainPageResultDto();
+        result.count = data.count;
+        result.records = [];
 
-        const dtos: GetProjectsFromMainPageResultDto[] = [];
-
-        forEach(projects, (project) => {
-            const dto = new GetProjectsFromMainPageResultDto();
+        forEach(data.records, (project) => {
+            const dto = new GetProjectsFromMainPageRecord();
 
             dto.ProjectId = project.ProjectId;
             dto.ProjectCode = project.ProjectCode;
@@ -64,9 +61,9 @@ export class GetProjectsFromMainPageQuery extends Query<
             dto.StartDate = project.StartDate;
             dto.EndDate = project.EndDate;
 
-            dtos.push(dto);
+            result.records.push(dto);
         });
 
-        return dtos;
+        return result;
     }
 }
