@@ -28,7 +28,7 @@ export class ProjectsSpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Code',
       FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.ProjectCode),
       IsActive: true,
@@ -48,7 +48,7 @@ export class ProjectsSpecificationGridService {
       width: eGridColumnsWidth.ShortDescription
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Subject',
       FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.Subject),
       IsActive: true,
@@ -121,7 +121,7 @@ export class ProjectsSpecificationGridService {
     },
 
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Start date',
       FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.StartDate),
       IsActive: true,
@@ -131,7 +131,7 @@ export class ProjectsSpecificationGridService {
       width: eGridColumnsWidth.Date
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'End date',
       FieldName: nameOf<ProjectsForMainPageGridDto>((prop) => prop.EndDate),
       IsActive: true,
@@ -252,12 +252,12 @@ export class ProjectsSpecificationGridService {
       webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
       type: 'multiselect',
       listValueKey: 'ShipYardId',
-      odataKey: 'ShipYards'
+      odataKey: 'ShipYardId'
     },
     ProjectStatuses: {
       webApiRequest: this.projectsService.getProjectStatusesRequest(),
       type: 'multiselect',
-      odataKey: 'Statuses',
+      odataKey: 'StatusId',
       listValueKey: 'StatusCode'
     },
     StartDate: {
@@ -274,6 +274,8 @@ export class ProjectsSpecificationGridService {
     }
   };
 
+  private searchFields: string[] = [nameOf<ProjectsForMainPageGridDto>((prop) => prop.Subject)];
+
   constructor(
     private userService: UserService,
     private projectsService: ProjectsService
@@ -285,6 +287,7 @@ export class ProjectsSpecificationGridService {
       gridName: this.gridName,
       filters: this.filters,
       filtersLists: this.filterListsSet,
+      searchFields: this.searchFields,
       request: this.projectsService.getProjectsForMainPageGridRequest(),
       gridButton: this.gridButton
     };
