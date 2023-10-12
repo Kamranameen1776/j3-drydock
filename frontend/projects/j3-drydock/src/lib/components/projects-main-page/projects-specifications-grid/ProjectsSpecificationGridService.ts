@@ -247,7 +247,7 @@ export class ProjectsSpecificationGridService {
       webApiRequest: this.projectsService.getProjectsManagersRequest(),
       type: 'multiselect',
       listValueKey: 'ManagerId',
-      odataKey: 'Managers',
+      odataKey: 'ProjectManagerUid',
       includeFilter: true
     },
     ShipsYards: {

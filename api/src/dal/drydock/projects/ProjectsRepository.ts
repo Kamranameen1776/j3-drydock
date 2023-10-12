@@ -80,6 +80,7 @@ export class ProjectsRepository {
             ,ps.[project_state_name] AS 'ProjectStateName'
             ,pr.[subject] AS 'Subject'
             ,usr.[First_Name] + ' ' + usr.[Last_Name] AS 'ProjectManager'
+            ,usr.[uid] AS 'ProjectManagerUid'
             ,cast(pr.[start_date] as datetimeoffset) AS 'StartDate'
             ,cast(pr.[end_date] as datetimeoffset) AS 'EndDate'
         FROM [dry_dock].[project] as pr
