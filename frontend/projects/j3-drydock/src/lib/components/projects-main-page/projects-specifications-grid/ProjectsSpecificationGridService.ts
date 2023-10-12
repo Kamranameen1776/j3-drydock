@@ -240,7 +240,7 @@ export class ProjectsSpecificationGridService {
       webApiRequest: this.projectsService.getProjectTypesRequest(),
       type: 'multiselect',
       listValueKey: 'ProjectTypeCode',
-      odataKey: 'ProjectTypes',
+      odataKey: 'ProjectTypeCode',
       includeFilter: true
     },
     ProjectsManages: {

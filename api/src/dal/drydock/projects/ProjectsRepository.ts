@@ -73,28 +73,28 @@ export class ProjectsRepository {
 
         const query = `
         SELECT pr.[uid] AS 'ProjectId'
-            ,pr.[created_at_office] AS 'CreatedAtOffice'
-            ,pr.[project_code] AS 'ProjectCode'
-            ,vessel.[Vessel_Name] AS 'VesselName'
-			,wt.[Worklist_Type] as ProjectTypeName
-            ,ps.[project_state_name] AS 'ProjectStateName'
-            ,pr.[subject] AS 'Subject'
-            ,usr.[First_Name] + ' ' + usr.[Last_Name] AS 'ProjectManager'
-            ,usr.[uid] AS 'ProjectManagerUid'
-            ,cast(pr.[start_date] as datetimeoffset) AS 'StartDate'
-            ,cast(pr.[end_date] as datetimeoffset) AS 'EndDate'
-        FROM [dry_dock].[project] as pr
+        ,pr.[created_at_office] AS 'CreatedAtOffice'
+        ,pr.[project_code] AS 'ProjectCode'
+        ,vessel.[Vessel_Name] AS 'VesselName'
+        ,wt.[Worklist_Type_Display] as ProjectTypeName			
+        ,wt.[Worklist_Type] as ProjectTypeCode
+        ,ps.[project_state_name] AS 'ProjectStateName'
+        ,pr.[subject] AS 'Subject'
+        ,usr.[First_Name] + ' ' + usr.[Last_Name] AS 'ProjectManager'
+        ,usr.[uid] AS 'ProjectManagerUid'
+        ,cast(pr.[start_date] as datetimeoffset) AS 'StartDate'
+        ,cast(pr.[end_date] as datetimeoffset) AS 'EndDate'
+    FROM [dry_dock].[project] as pr
 
-        INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Id] = vessel.[Vessel_ID]
-        INNER JOIN [Lib_User] as usr ON [project_manager_Uid] = usr.[uid]
-		INNER JOIN [dry_dock].[project_type] as pt ON pt.[id] = pr.[project_type_id]
-		INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[Worklist_Type] = wt.Worklist_Type
-		INNER JOIN [dry_dock].[project_state] as ps ON ps.[id] = pr.[project_state_id] 
-			and pt.[id] = ps.[project_type_id]
-		
+    INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Id] = vessel.[Vessel_ID]
+    INNER JOIN [Lib_User] as usr ON [project_manager_Uid] = usr.[uid]
+    INNER JOIN [dry_dock].[project_type] as pt ON pt.[id] = pr.[project_type_id]
+    INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[Worklist_Type] = wt.Worklist_Type
+    INNER JOIN [dry_dock].[project_state] as ps ON ps.[id] = pr.[project_state_id] 
+        and pt.[id] = ps.[project_type_id]
+    
 
-        WHERE pr.[deleted_at] IS NULL
-          
+    WHERE pr.[deleted_at] IS NULL
                 `;
 
         const result = await oDataService.getJoinResult(query);
