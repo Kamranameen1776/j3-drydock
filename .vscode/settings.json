@@ -1,11 +1,15 @@
 {
     "cSpell.words": [
         "cqrs",
+        "datetimeoffset",
         "drydock",
         "dtos",
         "endregion",
         "hemant",
+        "odata",
         "primeng",
-        "typeorm"
+        "typeorm",
+        "wdetails",
+        "Worklist"
     ]
 }

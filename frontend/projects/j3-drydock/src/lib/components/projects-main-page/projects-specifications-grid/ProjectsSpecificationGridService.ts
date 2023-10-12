@@ -240,29 +240,25 @@ export class ProjectsSpecificationGridService {
       webApiRequest: this.projectsService.getProjectTypesRequest(),
       type: 'multiselect',
       listValueKey: 'ProjectTypeCode',
-      odataKey: 'ProjectTypeCode',
-      includeFilter: true
+      odataKey: 'ProjectTypeCode'
     },
     ProjectsManages: {
       webApiRequest: this.projectsService.getProjectsManagersRequest(),
       type: 'multiselect',
       listValueKey: 'ManagerId',
-      odataKey: 'ProjectManagerUid',
-      includeFilter: true
+      odataKey: 'ProjectManagerUid'
     },
     ShipsYards: {
       webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
       type: 'multiselect',
       listValueKey: 'ShipYardId',
-      odataKey: 'ShipYards',
-      includeFilter: true
+      odataKey: 'ShipYards'
     },
     ProjectStatuses: {
       webApiRequest: this.projectsService.getProjectStatusesRequest(),
       type: 'multiselect',
       odataKey: 'Statuses',
-      listValueKey: 'StatusCode',
-      includeFilter: true
+      listValueKey: 'StatusCode'
     },
     StartDate: {
       odataKey: 'StartDate',

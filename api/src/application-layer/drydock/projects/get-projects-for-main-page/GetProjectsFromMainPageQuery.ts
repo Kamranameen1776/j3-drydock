@@ -1,7 +1,7 @@
+import { Request } from 'express';
 import { forEach } from 'lodash';
-import { RequestWithOData } from 'shared/interfaces';
 
-import { GetProjectsForMainPageResultDto } from '../../../../dal/drydock/projects/dtos/GetProjectsForMainPageResultDto';
+import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../../core/cqrs/Query';
 import {
@@ -9,7 +9,7 @@ import {
     GetProjectsFromMainPageResultDto,
 } from './dtos/GetProjectsFromMainPageResultDto';
 
-export class GetProjectsFromMainPageQuery extends Query<RequestWithOData, GetProjectsFromMainPageResultDto> {
+export class GetProjectsFromMainPageQuery extends Query<Request, GetProjectsFromMainPageResultDto> {
     projectsRepository: ProjectsRepository;
 
     constructor() {
@@ -18,14 +18,14 @@ export class GetProjectsFromMainPageQuery extends Query<RequestWithOData, GetPro
         this.projectsRepository = new ProjectsRepository();
     }
 
-    protected async AuthorizationHandlerAsync(request: RequestWithOData): Promise<void> {
+    protected async AuthorizationHandlerAsync(): Promise<void> {
         return;
     }
 
-    protected async ValidationHandlerAsync(request: RequestWithOData): Promise<void> {
-        // if (!request || !request.odata) {
-        //     throw new ApplicationException('Request odata is required');
-        // }
+    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+        if (!request || !request.body || !request.body.odata) {
+            throw new ApplicationException('Request odata is required');
+        }
 
         return;
     }
@@ -34,7 +34,7 @@ export class GetProjectsFromMainPageQuery extends Query<RequestWithOData, GetPro
      *
      * @returns All example projects, which were created after the latest projects date
      */
-    protected async MainHandlerAsync(request: RequestWithOData): Promise<GetProjectsFromMainPageResultDto> {
+    protected async MainHandlerAsync(request: Request): Promise<GetProjectsFromMainPageResultDto> {
         const data = await this.projectsRepository.GetProjectsForMainPage(request);
 
         const result = new GetProjectsFromMainPageResultDto();

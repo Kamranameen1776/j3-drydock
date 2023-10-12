@@ -1,4 +1,4 @@
-import { ODataResult } from "shared/interfaces";
+import { ODataResult } from 'shared/interfaces';
 
 export class GetProjectsFromMainPageRecord {
     public ProjectId: string;
@@ -26,7 +26,7 @@ export class GetProjectsFromMainPageRecord {
     public EndDate: Date;
 }
 
-export class GetProjectsFromMainPageResultDto implements ODataResult<GetProjectsFromMainPageRecord>{
+export class GetProjectsFromMainPageResultDto implements ODataResult<GetProjectsFromMainPageRecord> {
     records: GetProjectsFromMainPageRecord[];
     count?: number | undefined;
 }

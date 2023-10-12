@@ -1,5 +1,5 @@
+import { Request } from 'express';
 import { ODataService } from 'j2utils';
-import { RequestWithOData } from 'shared/interfaces';
 import { getConnection, getManager } from 'typeorm';
 
 import { GetProjectManagersResultDto } from './dtos/GetProjectManagersResultDto';
@@ -68,7 +68,7 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async GetProjectsForMainPage(data: RequestWithOData): Promise<GetProjectsForMainPageResultDto> {
+    public async GetProjectsForMainPage(data: Request): Promise<GetProjectsForMainPageResultDto> {
         const oDataService = new ODataService(data, getConnection);
 
         const query = `

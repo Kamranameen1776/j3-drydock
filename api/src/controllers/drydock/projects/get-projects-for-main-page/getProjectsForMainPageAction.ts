@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { ODataRequest, RequestWithOData } from 'shared/interfaces';
 
 import { GetProjectsFromMainPageQuery } from '../../../../application-layer/drydock/projects/get-projects-for-main-page/GetProjectsFromMainPageQuery';
 import { MiddlewareHandler } from '../../../../controllers/drydock/core/middleware/MiddlewareHandler';
@@ -15,12 +14,10 @@ export async function getProjectsForMainPageAction(req: Request, res: Response) 
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request) => {
-
         const query = new GetProjectsFromMainPageQuery();
-        // request.odata = request.body.odata;
 
         // Execute query
-        const projects = await query.ExecuteAsync(request as RequestWithOData);
+        const projects = await query.ExecuteAsync(request);
 
         return projects;
     });
