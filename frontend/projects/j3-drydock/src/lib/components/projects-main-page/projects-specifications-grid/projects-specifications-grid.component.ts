@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProjectsSpecificationGridService } from './ProjectsSpecificationGridService';
 import { GridAction } from 'jibe-components';
-import { GridInputsWithRequest } from '../../../shared/jb-components-helpers/grid-inputs';
+import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 
 @Component({
   selector: 'jb-projects-specifications-grid',

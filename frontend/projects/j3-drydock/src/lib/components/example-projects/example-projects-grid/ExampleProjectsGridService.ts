@@ -3,7 +3,7 @@ import { Column, GridButton, eColor } from 'jibe-components';
 import { nameOf } from '../../../utils/nameOf';
 import { ExampleProjectsService } from '../../../services/ExampleProjectsService';
 import { ExampleProjectResult } from '../../../models/interfaces/example-projects';
-import { GridInputsWithRequest } from '../../../shared/jb-components-helpers/grid-inputs';
+import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 
 @Injectable()
 export class ExampleProjectsGridService {

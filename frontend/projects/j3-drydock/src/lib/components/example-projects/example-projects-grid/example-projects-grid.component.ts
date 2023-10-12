@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ExampleProjectsGridService } from './ExampleProjectsGridService';
 import { GridAction } from 'jibe-components';
 import { CreateExampleCloseResultDto } from './create-example-project-popup/dtos/CreateExampleCloseResultDto';
-import { GridInputsWithRequest } from '../../../shared/jb-components-helpers/grid-inputs';
+import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 
 @Component({
   selector: 'jb-example-projects-grid',
