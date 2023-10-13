@@ -301,15 +301,11 @@ export class ProjectsSpecificationGridService {
   private gridActions: GridRowActions[] = [
     {
       name: eGridRowActions.Delete,
-      label: 'Delete',
-      color: eColor.JbBlack,
-      icon: eIconNames.Delete
+      label: 'Delete'
     },
     {
       name: eGridRowActions.Edit,
-      label: 'Edit',
-      color: eColor.JbBlack,
-      icon: eIconNames.Delete
+      label: 'Edit'
     }
   ];
 
