@@ -13,7 +13,7 @@ import { SpecificationComponent } from './components/specification/specification
 import { SpecificationService } from './components/specification/specification.service';
 import { SpecificationStatusPipe } from './components/specification/specification-status.pipe';
 import { StatusCodeColorPipe } from './utils/status-code-color.pipe';
-import { JibeTabView } from './components/jb-tabview/jb-tabview.component';
+import { JibeTabViewComponent } from './components/jb-tabview/jb-tabview.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -25,7 +25,15 @@ export function winEnv(): unknown {
 }
 
 @NgModule({
-  declarations: [ExampleProjectsComponent, JibeTabView, SpecificationStatusPipe, StatusCodeColorPipe, ExampleProjectsGridComponent, CreateExampleProjectPopupComponent, SpecificationComponent],
+  declarations: [
+    ExampleProjectsComponent,
+    JibeTabViewComponent,
+    SpecificationStatusPipe,
+    StatusCodeColorPipe,
+    ExampleProjectsGridComponent,
+    CreateExampleProjectPopupComponent,
+    SpecificationComponent
+  ],
   imports: [
     CommonModule,
     JibeComponentsModule.forRoot({
@@ -45,4 +53,4 @@ export function winEnv(): unknown {
   exports: [],
   entryComponents: []
 })
-export class J3DryDockModule { }
+export class J3DryDockModule {}

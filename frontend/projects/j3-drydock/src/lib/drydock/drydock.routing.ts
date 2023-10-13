@@ -9,18 +9,18 @@ const routes: Routes = [
     path: '',
     canActivate: [AuthGuardService],
     pathMatch: 'full',
-    redirectTo: 'example-projects',
+    redirectTo: 'example-projects'
   },
 
   {
     path: 'example-projects',
     component: ExampleProjectsComponent,
     canActivate: [AuthGuardService],
-    runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+    runGuardsAndResolvers: 'paramsOrQueryParamsChange'
   },
   {
     path: 'specification',
-    component: SpecificationComponent,
+    component: SpecificationComponent
     // canActivate: [AuthGuardService],
     // runGuardsAndResolvers: 'paramsOrQueryParamsChange'
   }
@@ -28,6 +28,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class DryDockRoutingModule {}

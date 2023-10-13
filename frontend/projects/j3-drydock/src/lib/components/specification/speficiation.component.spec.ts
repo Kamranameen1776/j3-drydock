@@ -4,24 +4,23 @@ import { SpecificationComponent } from './specification.component';
 import { SpecificationService } from './specification.service';
 
 describe('SpecificationPageComponent', () => {
-    let component: SpecificationComponent;
-    let fixture: ComponentFixture<SpecificationComponent>;
+  let component: SpecificationComponent;
+  let fixture: ComponentFixture<SpecificationComponent>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [SpecificationComponent],
-            providers: [SpecificationService]
-        })
-            .compileComponents();
-    }));
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [SpecificationComponent],
+      providers: [SpecificationService]
+    }).compileComponents();
+  }));
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(SpecificationComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(SpecificationComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

@@ -17,17 +17,22 @@ export function winEnv(): unknown {
 
   return {
     ...window[winEnv],
-    origin: window.location.origin + '/',
+    origin: window.location.origin + '/'
   };
 }
 
 @NgModule({
-  declarations: [ExampleProjectsComponent, ExampleProjectsGridComponent, CreateExampleProjectPopupComponent, SpecificationComponent],
+  declarations: [
+    ExampleProjectsComponent,
+    ExampleProjectsGridComponent,
+    CreateExampleProjectPopupComponent,
+    SpecificationComponent
+  ],
   imports: [
     CommonModule,
     JibeComponentsModule.forRoot({
       environment: winEnv,
-      theme: JiBeTheme.Figma,
+      theme: JiBeTheme.Figma
     }),
     DryDockRoutingModule,
     ReactiveFormsModule,
@@ -36,10 +41,10 @@ export function winEnv(): unknown {
     SidebarModule,
     FormsModule,
     PrimeNgModule,
-    MenuModule,
+    MenuModule
   ],
   providers: [ExampleProjectsService, DatePipe, SpecificationService],
   exports: [],
-  entryComponents: [],
+  entryComponents: []
 })
 export class J3DryDockModule {}
