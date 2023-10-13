@@ -1,0 +1,31 @@
+<jb-tree
+  [staticNodes]="treeData"
+  [showSelectButton]="false"
+  [showSetting]="{ showSearch: true, showButtons: false }"
+  [templateRefSet]="treesection"
+  [pTemplatesTypes]="['default']"
+>
+  <ng-template
+    #treesection
+    let-component
+  >
+    <ng-container [ngSwitch]="component.pTemplateName">
+      <ng-container *ngSwitchCase="'default'">
+        <ng-container *ngIf="component?.node?.data.selectable">
+          <label
+            class="selectable-node"
+            (click)="onGetSelected(component?.node)"
+          >
+            <b>{{ component?.node?.label }}</b>
+          </label>
+        </ng-container>
+
+        <ng-container *ngIf="!component?.node?.data.selectable">
+          <label class="nonselectable-node">
+            {{ component?.node?.label }}
+          </label>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </ng-template>
+</jb-tree>
