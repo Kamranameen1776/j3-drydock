@@ -1,0 +1,34 @@
+<div>
+    <div jb-detail-top-section>
+        <jb-details-top-section [topFieldsConfig]="topFieldsConfig" [detailsData]="detailedData" [canEdit]="canEdit">
+            <div class="header-actions" jb-workflow-section>
+                <jb-grid-advanced-settings></jb-grid-advanced-settings>
+                <jb-button type="NoButton" label="Save"></jb-button>
+                <jb-button label="Complete"></jb-button>
+            </div>
+        </jb-details-top-section>
+    </div>
+    <jb-layout-widget titleIconClass="icons8-more-details-2" size="auto" titleText="Technical Specification">
+        <div class="specs-header-actions" awidget-header-buttons>
+            <jb-button type="NoButton" icon="icons8-anchor" label="Import"></jb-button>
+            <jb-split-button type="NoButton" label="Create new" [model]="createNewItems"></jb-split-button>
+        </div>
+        <div class="specs-content" awidget-content>
+            <jb-tree [nodeAPIReq]="treeData" [showSetting]="{ showSearch: true, showButtons: false }"
+                filterPlaceholder="Search Function / Component"></jb-tree>
+            <jb-tabview [activeIndex]="activeIndex" (activeIndexChange)="activeIndexChange($event)">
+                <p-tabPanel *ngFor="let item of types" [header]="item">
+                    <jb-grid *ngIf="gridData" [gridName]="gridData.gridName" [colData]="gridData.columns"
+                        [tableData]="gridData.data" [setActions]="gridData.gridActions" [filterData]="gridData.filters"
+                        [filterListsSet]="gridData.filterLists" [getStyleByContainer]="true"></jb-grid>
+                </p-tabPanel>
+            </jb-tabview>
+        </div>
+    </jb-layout-widget>
+
+    <ng-template #statusTemplate let-rowData>
+        <jb-current-status [status]="rowData.status"
+            [statusColor]="rowData.status | specificationStatus | statusCodeColor">
+        </jb-current-status>
+    </ng-template>
+</div>

@@ -1,0 +1,22 @@
+.specs-header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.specs-content {
+    display: flex;
+    gap: 12px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+:host ::ng-deep .jb-top-section-status-bar {
+    display: none;
+}
+
+p-tabview {
+    max-width: calc(100% - 270px);
+}
