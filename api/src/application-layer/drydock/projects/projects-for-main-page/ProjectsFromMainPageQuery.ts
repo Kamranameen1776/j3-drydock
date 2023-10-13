@@ -29,8 +29,9 @@ export class ProjectsFromMainPageQuery extends Query<Request, ODataResult<IProje
     }
 
     /**
-     *
-     * @returns All example projects, which were created after the latest projects date
+     * Get projects from main page
+     * @param request Http request
+     * @returns Projects from main page
      */
     protected async MainHandlerAsync(request: Request): Promise<ODataResult<IProjectsFromMainPageRecordDto>> {
         const data = await this.projectsRepository.GetProjectsForMainPage(request);
