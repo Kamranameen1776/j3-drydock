@@ -1,5 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Column, Filter, FilterListSet, GridButton, UserService, eColor, eGridColumnsWidth } from 'jibe-components';
+import {
+  Column,
+  Filter,
+  FilterListSet,
+  GridButton,
+  GridRowActions,
+  UserService,
+  eColor,
+  eGridColumnsWidth,
+  eGridRowActions,
+  eIconNames
+} from 'jibe-components';
 import { IProjectsForMainPageGridDto } from './bll/dtos/IProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
@@ -284,6 +295,21 @@ export class ProjectsSpecificationGridService {
 
   private searchFields: string[] = [nameOf<IProjectsForMainPageGridDto>((prop) => prop.Subject)];
 
+  private gridActions: GridRowActions[] = [
+    {
+      name: eGridRowActions.Delete,
+      label: 'Delete',
+      color: eColor.JbBlack,
+      icon: eIconNames.Delete
+    },
+    {
+      name: eGridRowActions.Edit,
+      label: 'Edit',
+      color: eColor.JbBlack,
+      icon: eIconNames.Delete
+    }
+  ];
+
   constructor(
     private userService: UserService,
     private projectsService: ProjectsService
@@ -297,7 +323,8 @@ export class ProjectsSpecificationGridService {
       filtersLists: this.filterListsSet,
       searchFields: this.searchFields,
       request: this.projectsService.getProjectsForMainPageGridRequest(),
-      gridButton: this.gridButton
+      gridButton: this.gridButton,
+      actions: this.gridActions
     };
   }
 }
