@@ -23,7 +23,7 @@ export class ProjectsManagersQuery extends Query<void, IProjectsManagersResultDt
     }
 
     /**
-     * Get projects managers assigned to projects 
+     * Get projects managers assigned to projects
      * @returns Projects managers
      */
     protected async MainHandlerAsync(): Promise<IProjectsManagersResultDto[]> {

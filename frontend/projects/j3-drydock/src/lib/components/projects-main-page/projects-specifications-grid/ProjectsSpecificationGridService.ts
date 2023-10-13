@@ -11,7 +11,7 @@ import {
   eGridRowActions,
   eIconNames
 } from 'jibe-components';
-import { IProjectsForMainPageGridDto } from './bll/dtos/IProjectsForMainPageGridDto';
+import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
