@@ -38,7 +38,7 @@ in `app-routing.module` in `Jibe2Web` you will need to add:
 You need to add the API Prefix to allow the library to make API calls. In `Jibe2Web` you need to add the following line to `environment.ts`:
 
 ```ts
-    drydockAPI: `http://localhost:<port>`
+    dryDockAPI: `http://localhost:<port>`
 ```
 
 ## Code scaffolding

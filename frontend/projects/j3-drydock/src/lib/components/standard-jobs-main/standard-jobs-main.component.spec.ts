@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProjectsMainPageComponent } from './projects-main-page.component';
+import { StandardJobsMainComponent } from './standard-jobs-main.component';
 
-describe('ProjectsMainPageComponent', () => {
-  let component: ProjectsMainPageComponent;
-  let fixture: ComponentFixture<ProjectsMainPageComponent>;
+describe('StandardJobsComponent', () => {
+  let component: StandardJobsMainComponent;
+  let fixture: ComponentFixture<StandardJobsMainComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ProjectsMainPageComponent]
+      declarations: [StandardJobsMainComponent]
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ProjectsMainPageComponent);
+    fixture = TestBed.createComponent(StandardJobsMainComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
