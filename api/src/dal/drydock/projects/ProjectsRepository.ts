@@ -51,7 +51,7 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async GetProjectStates(): Promise<any[]> {
+    public async GetProjectStates(): Promise<undefined> {
         const result = await getManager().query(
             `
             SELECT [id]

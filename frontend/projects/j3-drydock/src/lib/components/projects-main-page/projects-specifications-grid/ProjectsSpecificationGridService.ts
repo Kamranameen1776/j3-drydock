@@ -128,7 +128,11 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.Date
+      width: eGridColumnsWidth.Date,
+      pipe: {
+        value: 'date',
+        format: this.userService.getUserDetails().Date_Format.toLocaleUpperCase()
+      }
     },
     {
       DisableSort: false,
@@ -138,7 +142,11 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.Date
+      width: eGridColumnsWidth.Date,
+      pipe: {
+        value: 'date',
+        format: this.userService.getUserDetails().Date_Format.toLocaleUpperCase()
+      }
     }
   ];
 
