@@ -293,7 +293,10 @@ export class ProjectsSpecificationGridService {
     }
   };
 
-  private searchFields: string[] = [nameOf<IProjectsForMainPageGridDto>((prop) => prop.Subject)];
+  private searchFields: string[] = [
+    nameOf<IProjectsForMainPageGridDto>((prop) => prop.Subject),
+    nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectCode)
+  ];
 
   private gridActions: GridRowActions[] = [
     {
