@@ -1,5 +1,5 @@
-import { ODataResult } from '../../../shared/interfaces';
-import { HtmlCell } from '../../../shared/interfaces/html-cell.interface';
+import { ODataResult } from '../../../../shared/interfaces';
+import { HtmlCell } from '../../../../shared/interfaces/html-cell.interface';
 
 export interface GetStandardJobsQueryData {
     uid: string;

@@ -1,7 +1,7 @@
 import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
 import { RequestWithOData } from "../../../shared/interfaces";
 import { Command } from '../core/cqrs/Command';
-import { GetStandardJobsResultDto } from './GetStandardJobsResultDto';
+import { GetStandardJobsResultDto } from './dto';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
 
 export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandardJobsResultDto> {

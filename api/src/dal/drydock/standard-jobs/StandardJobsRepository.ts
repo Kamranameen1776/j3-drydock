@@ -1,13 +1,17 @@
 import { ODataService } from 'j2utils';
-import { getConnection, getManager, QueryRunner } from "typeorm";
-import { RequestWithOData } from "../../../shared/interfaces";
+import { getConnection, getManager, QueryRunner } from 'typeorm';
+import { RequestWithOData } from '../../../shared/interfaces';
 import {
     CreateStandardJobsRequestDto,
-    GetStandardJobsQueryResult
-} from "../../../application-layer/drydock/standard-jobs";
-import { standard_jobs } from "../../../entity/standard_jobs";
+    GetStandardJobsQueryResult,
+    UpdateStandardJobsRequestDto,
+} from '../../../application-layer/drydock/standard-jobs/dto';
+import { standard_jobs } from '../../../entity/standard_jobs';
+import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
 
 export class StandardJobsRepository {
+    private standardJobsService = new StandardJobsService();
+
     public async getStandardJobs(data: RequestWithOData): Promise<GetStandardJobsQueryResult> {
         const oDataService = new ODataService(data, getConnection);
 
@@ -37,22 +41,34 @@ export class StandardJobsRepository {
 
     public async createStandardJob(
       data: CreateStandardJobsRequestDto,
-      queryRunner: QueryRunner,
+      createdBy: string,
+      queryRunner: QueryRunner
     ): Promise<any> {
-        const standardJob = new standard_jobs();
-        standardJob.subject = data.subject;
-        standardJob.code = data.code;
-        standardJob.category = data.category;
-        standardJob.function = data.function;
-        standardJob.done_by = data.doneBy;
-        standardJob.inspection = data.inspection;
-        standardJob.material_supplied_by = data.materialSuppliedBy;
-        standardJob.vessel_type_specific = data.vesselTypeSpecific;
-        standardJob.description = data.description;
-        standardJob.vessel_type_uid = data.vesselTypeUid;
+        const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
+        standardJob.created_by = createdBy;
 
-        const result = await queryRunner.manager.insert(standard_jobs, standardJob);
+        return queryRunner.manager.insert(standard_jobs, standardJob);
+    }
 
-        return result;
+    public async updateStandardJob(
+      data: UpdateStandardJobsRequestDto,
+      updatedBy: string,
+      queryRunner: QueryRunner
+    ): Promise<any> {
+        const uid = data.uid;
+        const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
+        const updateStandardJobData = this.standardJobsService.addUpdateStandardJobsFields(standardJob, updatedBy);
+
+        return queryRunner.manager.update(standard_jobs, { uid, active_status: 1 }, updateStandardJobData);
+    }
+
+    public async deleteStandardJob(
+      uid: string,
+      deletedBy: string,
+      queryRunner: QueryRunner
+    ): Promise<any> {
+        const updateStandardJobData = this.standardJobsService.addDeleteStandardJobsFields(deletedBy);
+
+        return queryRunner.manager.update(standard_jobs, { uid, active_status: 1 }, updateStandardJobData);
     }
 }

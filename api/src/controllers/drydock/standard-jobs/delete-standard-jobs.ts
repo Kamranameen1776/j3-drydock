@@ -1,15 +1,15 @@
 import { MiddlewareHandler } from "../core/middleware/MiddlewareHandler";
 import { Request, Response } from "express";
-import { CreateStandardJobsCommand } from "../../../application-layer/drydock/standard-jobs";
+import { DeleteStandardJobsCommand } from "../../../application-layer/drydock/standard-jobs";
 
-async function getStandardJobs(req: Request, res: Response) {
+async function deleteStandardJobs(req: Request, res: Response) {
   const middlewareHandler = new MiddlewareHandler();
 
   await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-    const command = new CreateStandardJobsCommand();
+    const command = new DeleteStandardJobsCommand();
 
     return await command.ExecuteAsync(request);
   });
 }
 
-exports.post = getStandardJobs;
+exports.post = deleteStandardJobs;
