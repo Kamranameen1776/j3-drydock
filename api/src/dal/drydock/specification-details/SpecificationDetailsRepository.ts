@@ -19,9 +19,9 @@ export class GetSpecificationDetailsQueryRepository {
                     'sd.item_source,' +
                     'sd.done_by,' +
                     'sd.item_category,' +
-                    'sd.equipment_description,' +
-                    'sd.active_status as activeStatus,' +
                     'sd.inspection,' +
+                    'sd.equipment_description,' +
+                    'sd.active_status,' +
                     'sd.priority,' +
                     'sd.description,' +
                     'sd.scope,' +
