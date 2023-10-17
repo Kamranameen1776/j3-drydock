@@ -25,6 +25,7 @@ export enum eStandardJobsMainFields {
   DoneBy = 'doneBy',
   MaterialSuppliedBy = 'materialSuppliedBy',
   VesselSpecific = 'vesselTypeSpecific',
+  UID = 'uid',
 
   Function = 'function',
   Subject = 'Subject',

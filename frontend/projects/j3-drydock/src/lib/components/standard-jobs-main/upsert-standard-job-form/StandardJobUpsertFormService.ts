@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 
 import { eFieldControlType, FormModel, FormValues } from 'jibe-components';
-import { standardJobsUpsertFormId } from '../../models/constants/constants';
-import { StandardJobsService } from '../../services/StandardJobsService';
-import { FormServiceBase } from '../../shared/classes/form-service.base';
-import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../../models/enums/standard-jobs-main.enum';
+import { standardJobsUpsertFormId } from '../../../models/constants/constants';
+import { StandardJobsService } from '../../../services/StandardJobsService';
+import { FormServiceBase } from '../../../shared/classes/form-service.base';
+import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../../../models/enums/standard-jobs-main.enum';
 import { BehaviorSubject } from 'rxjs';
-import { FunctionsTreeNode } from '../../models/interfaces/functions-tree-node';
+import { FunctionsTreeNode } from '../../../models/interfaces/functions-tree-node';
 // TODO fixme all
 @Injectable({
   providedIn: 'root'

@@ -19,4 +19,5 @@ export interface StandardJobResult {
   [eStandardJobsMainFields.Inspection]: string;
   [eStandardJobsMainFields.DoneBy]: string;
   [eStandardJobsMainFields.MaterialSuppliedBy]: string;
+  [eStandardJobsMainFields.UID]: string;
 }

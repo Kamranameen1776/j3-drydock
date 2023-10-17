@@ -32,7 +32,7 @@ export class StandardJobsService {
     return apiRequest;
   }
   // TODO check it ( taken form RaisedBY )
-  getDoneByRequest(): WebApiRequest {
+  public getDoneByRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
       apiBase: eApiBase.MasterAPI,
       entity: eEntities.Master,
@@ -45,5 +45,16 @@ export class StandardJobsService {
       }
     };
     return apiRequest;
+  }
+
+  public getJobSubItems(jobUid: string) {
+    const apiRequest: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      action: 'standard-jobs/get-sub-items',
+      crud: eCrud.Get,
+      entity: 'drydock',
+      params: `job_uid=${jobUid}`
+    };
+    return this.apiRequestService.sendApiReq(apiRequest);
   }
 }

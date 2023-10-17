@@ -4,15 +4,16 @@
   (closeDialog)="onClosePopup()"
 >
   <div jb-dialog-body>
-    <p-tabView>
+    <p-tabView *ngIf="isOpen">
       <p-tabPanel header="General Information">
         <jb-upsert-standard-job-form
-          *ngIf="isOpen"
           [item]="item"
           (formValid)="onIsFormValid($event)"
         ></jb-upsert-standard-job-form>
       </p-tabPanel>
-      <p-tabPanel header="Sub Items">Subitems here</p-tabPanel>
+      <p-tabPanel header="Sub Items">
+        <jb-drydock-sub-items [jobUid]="item?.uid"></jb-drydock-sub-items>
+      </p-tabPanel>
       <p-tabPanel header="Attachment">Attachments here</p-tabPanel>
     </p-tabView>
   </div>

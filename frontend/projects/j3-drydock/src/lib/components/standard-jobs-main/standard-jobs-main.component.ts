@@ -13,7 +13,7 @@ import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { StandardJobsGridService } from './StandardJobsGridService';
 import { of } from 'rxjs';
 import { FunctionsTreeNode } from '../../models/interfaces/functions-tree-node';
-import { StandardJobUpsertFormService } from './StandardJobUpsertFormService';
+import { StandardJobUpsertFormService } from './upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 
@@ -26,6 +26,12 @@ import { takeUntil } from 'rxjs/operators';
 export class StandardJobsMainComponent extends UnsubscribeComponent implements OnInit {
   public gridInputs: GridInputsWithRequest;
 
+  public isUpsertPopupVisible = false;
+
+  public currentRow: StandardJobResult;
+
+  public gridRowActions: GridRowActions[] = [];
+
   constructor(
     private standardJobsGridService: StandardJobsGridService,
     private upsertFormService: StandardJobUpsertFormService,
@@ -35,12 +41,6 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
   ) {
     super();
   }
-
-  public isUpsertPopupVisible = false;
-
-  public currentRow: StandardJobResult;
-
-  public gridRowActions: GridRowActions[] = [];
 
   ngOnInit(): void {
     this.setAccessRights();

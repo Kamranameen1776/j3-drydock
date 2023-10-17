@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild 
 import { FormGroup } from '@angular/forms';
 import { FormModel, FormValues } from 'jibe-components';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
-import { StandardJobUpsertFormService } from '../StandardJobUpsertFormService';
+import { StandardJobUpsertFormService } from './StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-main.enum';

@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewC
 import { getSmallPopup } from '../../../models/constants/popup';
 import { IJbDialog } from 'jibe-components';
 import { UpsertStandardJobFormComponent } from '../upsert-standard-job-form/upsert-standard-job-form.component';
-import { StandardJobUpsertFormService } from '../StandardJobUpsertFormService';
+import { StandardJobUpsertFormService } from '../upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 
 @Component({
