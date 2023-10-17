@@ -12,7 +12,11 @@
         ></jb-upsert-standard-job-form>
       </p-tabPanel>
       <p-tabPanel header="Sub Items">
-        <jb-drydock-sub-items [jobUid]="item?.uid"></jb-drydock-sub-items>
+        <!-- TODO change funtionUid to function -->
+        <jb-drydock-sub-items
+          [jobUid]="item?.uid"
+          [functionUid]="jobFormValue?.Subject"
+        ></jb-drydock-sub-items>
       </p-tabPanel>
       <p-tabPanel header="Attachment">Attachments here</p-tabPanel>
     </p-tabView>

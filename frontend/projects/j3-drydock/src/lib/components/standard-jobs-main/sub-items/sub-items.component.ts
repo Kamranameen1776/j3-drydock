@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { of } from 'rxjs';
 import { SubItem } from '../../../models/interfaces/sub-items';
 import { GridAction, GridRowActions, eGridRowActions } from 'jibe-components';
@@ -14,7 +14,7 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./sub-items.component.scss'],
   providers: [SubItemsGridService]
 })
-export class SubItemsComponent extends UnsubscribeComponent implements OnInit {
+export class SubItemsComponent extends UnsubscribeComponent implements OnChanges, OnInit {
   @Input() jobUid: string;
   @Input() functionUid: string;
 
@@ -33,6 +33,11 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnInit {
     private standardJobsService: StandardJobsService
   ) {
     super();
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.functionUid) {
+      this.setGridButton();
+    }
   }
 
   ngOnInit(): void {
@@ -84,6 +89,7 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnInit {
 
   private setGridInputs() {
     this.gridInputs = this.subItemsGridService.getGridInputs();
+    this.setGridButton();
   }
 
   private initSubItems() {
@@ -97,5 +103,14 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnInit {
           this.subItems = res;
         });
     }
+  }
+
+  private setGridButton() {
+    if (!this.gridInputs) {
+      return;
+    }
+
+    this.gridInputs.gridButton.disabled = !this.functionUid;
+    this.gridInputs.gridButton = { ...this.gridInputs.gridButton };
   }
 }

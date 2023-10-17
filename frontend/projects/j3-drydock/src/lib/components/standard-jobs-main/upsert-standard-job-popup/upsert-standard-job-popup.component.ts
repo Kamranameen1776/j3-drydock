@@ -29,6 +29,10 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   public isSaving: boolean;
 
+  public get jobFormValue() {
+    return this.popupForm?.formGroup.getRawValue()[this.formService.formId];
+  }
+
   constructor(private formService: StandardJobUpsertFormService) {
     super();
   }
@@ -67,7 +71,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   private save() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const value = this.popupForm?.formGroup.getRawValue()[this.formService.formId];
+    const value = this.jobFormValue;
 
     // TODO here can be addded validation messages for the form that appear in growl
 
