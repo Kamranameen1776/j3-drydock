@@ -110,7 +110,9 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
       return;
     }
 
-    this.gridInputs.gridButton.disabled = !this.functionUid;
-    this.gridInputs.gridButton = { ...this.gridInputs.gridButton };
+    this.gridInputs.gridButton = {
+      ...this.gridInputs.gridButton,
+      disabled: !this.functionUid
+    };
   }
 }
