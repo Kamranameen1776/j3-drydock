@@ -5,7 +5,7 @@ import { getConnection, getManager } from 'typeorm';
 import { GetSpecificationDetailsResultDto } from './dtos/GetSpecificationDetailsResultDto';
 
 export class GetSpecificationDetailsQueryRepository {
-    public async GetSpecificationDetailsQueryRepository(data: Request): Promise<GetSpecificationDetailsResultDto[]> {
+    public async findOne(data: Request): Promise<GetSpecificationDetailsResultDto[]> {
         const oDataService = new ODataService(data, getConnection);
 
         const query = getManager()
@@ -24,12 +24,6 @@ export class GetSpecificationDetailsQueryRepository {
                     'sd.active_status,' +
                     'sd.priority,' +
                     'sd.description,' +
-                    'sd.scope,' +
-                    'sd.unit,' +
-                    'sd.quantity,' +
-                    'sd.unit_price,' +
-                    'sd.discount,' +
-                    'sd.cost,' +
                     'sd.start_date,' +
                     'sd.estimated_dates,' +
                     'sd.buffer_time,' +
