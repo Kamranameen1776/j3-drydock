@@ -28,12 +28,12 @@ export class createStandardJobs1696484959388 implements MigrationInterface {
             [description]          [varchar](5000)    NULL,
 
             [active_status]        [bit]              NULL DEFAULT 1,
-            [created_by]           [int]              NULL,
-            [date_of_creation]     [datetime]         NULL DEFAULT CURRENT_TIMESTAMP,
-            [modified_by]          [int]              NULL,
-            [date_of_modification] [datetime]         NULL,
-            [deleted_by]           [int]              NULL,
-            [date_of_deletion]     [datetime]         NULL,
+            [created_by]           [uniqueidentifier] NULL,
+            [created_at]           [datetime]         NULL DEFAULT CURRENT_TIMESTAMP,
+            [updated_by]           [uniqueidentifier] NULL,
+            [updated_at]           [datetime]         NULL,
+            [deleted_by]           [uniqueidentifier] NULL,
+            [deleted_at]           [datetime]         NULL,
             PRIMARY KEY CLUSTERED
                 (
                  [uid] ASC
