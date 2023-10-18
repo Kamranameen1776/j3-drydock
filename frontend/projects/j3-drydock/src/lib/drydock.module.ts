@@ -5,7 +5,7 @@ import { DryDockRoutingModule } from './drydock.routing';
 import { DropdownModule, MenuModule, SidebarModule, TieredMenuModule } from 'primeng';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule as PrimeNgModule } from 'primeng';
-import { JiBeTheme, JibeComponentsModule } from 'jibe-components';
+import { JiBeTheme, JibeComponentsModule, UserService } from 'jibe-components';
 import { ExampleProjectsComponent } from './components/example-projects/example-projects.component';
 import { ExampleProjectsGridComponent } from './components/example-projects/example-projects-grid/example-projects-grid.component';
 import { ExampleProjectsService } from './services/ExampleProjectsService';
@@ -53,7 +53,7 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [ExampleProjectsService, DatePipe, ProjectsService],
+  providers: [ExampleProjectsService, DatePipe, ProjectsService, UserService],
   exports: [],
   entryComponents: []
 })

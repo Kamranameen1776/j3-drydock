@@ -19,10 +19,6 @@ export class ProjectsShipsYardsQuery extends Query<void, IProjectsShipsYardsResu
         return;
     }
 
-    /**
-     *
-     * @returns All example projects, which were created after the latest projects date
-     */
     protected async MainHandlerAsync(): Promise<IProjectsShipsYardsResultDto[]> {
         const dtos: IProjectsShipsYardsResultDto[] = [];
 

@@ -20,8 +20,8 @@ export class ProjectsVesselsQuery extends Query<void, IProjectVesselsResultDto[]
     }
 
     /**
-     *
-     * @returns All example projects, which were created after the latest projects date
+     * Get projects vessels assigned to projects
+     * @returns Projects vessels
      */
     protected async MainHandlerAsync(): Promise<IProjectVesselsResultDto[]> {
         const projectsManagers = await this.projectsRepository.GetProjectsVessels();

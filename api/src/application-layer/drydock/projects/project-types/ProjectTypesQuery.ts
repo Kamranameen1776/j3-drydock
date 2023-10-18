@@ -20,8 +20,8 @@ export class ProjectTypesQuery extends Query<void, IProjectTypeResultDto[]> {
     }
 
     /**
-     *
-     * @returns All example projects, which were created after the latest projects date
+     * Get project types
+     * @returns Project types
      */
     protected async MainHandlerAsync(): Promise<IProjectTypeResultDto[]> {
         const projectTypes = await this.projectsRepository.GetProjectTypes();

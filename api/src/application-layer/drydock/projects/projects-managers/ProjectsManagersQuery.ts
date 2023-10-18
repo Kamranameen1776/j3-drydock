@@ -23,8 +23,8 @@ export class ProjectsManagersQuery extends Query<void, IProjectsManagersResultDt
     }
 
     /**
-     *
-     * @returns All example projects, which were created after the latest projects date
+     * Get projects managers assigned to projects
+     * @returns Projects managers
      */
     protected async MainHandlerAsync(): Promise<IProjectsManagersResultDto[]> {
         const projectsManagers = await this.projectsRepository.GetProjectsManagers();

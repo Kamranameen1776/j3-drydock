@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProjectsSpecificationGridService } from './ProjectsSpecificationGridService';
-import { GridAction } from 'jibe-components';
+import { GridAction, eGridRowActions } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 
 @Component({
@@ -27,7 +27,12 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
   //#region Commands
 
   public onGridAction({ type }: GridAction<string, string>): void {
-    if (type === this.gridInputs.gridButton.label) {
+    if (type === eGridRowActions.Delete) {
+      // TODO: show 'Delete Project' popup
+    } else if (type === eGridRowActions.Edit) {
+      // TODO: show 'Edit Project' popup
+    } else if (type === this.gridInputs.gridButton.label) {
+      // TODO: show 'Create New Project' popup
     }
   }
 

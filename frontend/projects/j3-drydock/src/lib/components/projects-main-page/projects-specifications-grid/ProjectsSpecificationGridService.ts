@@ -1,6 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Column, Filter, FilterListSet, GridButton, UserService, eColor, eGridColumnsWidth } from 'jibe-components';
-import { IProjectsForMainPageGridDto } from './bll/dtos/IProjectsForMainPageGridDto';
+import {
+  Column,
+  Filter,
+  FilterListSet,
+  GridButton,
+  GridRowActions,
+  UserService,
+  eColor,
+  eGridColumnsWidth,
+  eGridRowActions,
+  eIconNames
+} from 'jibe-components';
+import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
@@ -128,7 +139,11 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.Date
+      width: eGridColumnsWidth.Date,
+      pipe: {
+        value: 'date',
+        format: this.userService.getUserDetails().Date_Format.toLocaleUpperCase()
+      }
     },
     {
       DisableSort: false,
@@ -138,7 +153,11 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.Date
+      width: eGridColumnsWidth.Date,
+      pipe: {
+        value: 'date',
+        format: this.userService.getUserDetails().Date_Format.toLocaleUpperCase()
+      }
     }
   ];
 
@@ -274,7 +293,21 @@ export class ProjectsSpecificationGridService {
     }
   };
 
-  private searchFields: string[] = [nameOf<IProjectsForMainPageGridDto>((prop) => prop.Subject)];
+  private searchFields: string[] = [
+    nameOf<IProjectsForMainPageGridDto>((prop) => prop.Subject),
+    nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectCode)
+  ];
+
+  private gridActions: GridRowActions[] = [
+    {
+      name: eGridRowActions.Delete,
+      label: 'Delete'
+    },
+    {
+      name: eGridRowActions.Edit,
+      label: 'Edit'
+    }
+  ];
 
   constructor(
     private userService: UserService,
@@ -289,7 +322,8 @@ export class ProjectsSpecificationGridService {
       filtersLists: this.filterListsSet,
       searchFields: this.searchFields,
       request: this.projectsService.getProjectsForMainPageGridRequest(),
-      gridButton: this.gridButton
+      gridButton: this.gridButton,
+      actions: this.gridActions
     };
   }
 }

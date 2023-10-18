@@ -20,8 +20,8 @@ export class ProjectStatusesQuery extends Query<void, IProjectStatusResultDto[]>
     }
 
     /**
-     *
-     * @returns All example projects, which were created after the latest projects date
+     * Get project statuses
+     * @returns Project statuses
      */
     protected async MainHandlerAsync(): Promise<IProjectStatusResultDto[]> {
         const projectStatuses = this.projectsRepository.GetProjectStatuses();

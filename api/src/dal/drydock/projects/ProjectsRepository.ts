@@ -15,6 +15,11 @@ import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/Update
 import { DeleteProjectDto } from 'application-layer/drydock/projects/dtos/DeleteProjectDto';
 
 export class ProjectsRepository {
+    /**
+     * Loads project statuses, that are configured in the Workflow Configurations page
+     * @example In Progress, Completed, Cancelled
+     * @returns Project statuses
+     */
     public async GetProjectStatuses(): Promise<IProjectStatusResultDto[]> {
         const result = await getManager().query(
             `
@@ -39,6 +44,11 @@ export class ProjectsRepository {
         return result;
     }
 
+    /**
+     * Loads project types
+     * @example dry_dock
+     * @returns Project types
+     */
     public async GetProjectTypes(): Promise<IProjectTypeResultDto[]> {
         const result = await getManager().query(
             `
@@ -56,7 +66,12 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async GetProjectStates(): Promise<any[]> {
+    /**
+     * Loads project states
+     * @example Specification, Yard Selection, Report
+     * @returns Project states
+     */
+    public async GetProjectStates(): Promise<undefined> {
         const result = await getManager().query(
             `
             SELECT [id]
@@ -74,6 +89,13 @@ export class ProjectsRepository {
         return result;
     }
 
+    /**
+     * Loads projects for the main page, with information
+     * about the project manager, vessel, project type, project state,
+     * open specifications, start date and end date
+     * @param data Http request object with Odata query
+     * @returns Projects for the main page
+     */
     public async GetProjectsForMainPage(data: Request): Promise<ODataResult<IProjectsForMainPageRecordDto>> {
         const oDataService = new ODataService(data, getConnection);
 
@@ -108,6 +130,10 @@ export class ProjectsRepository {
         return result;
     }
 
+    /**
+     * Loads projects managers, project managers assigned to projects
+     * @returns Project managers
+     */
     public async GetProjectsManagers(): Promise<IProjectManagersResultDto[]> {
         const result = await getManager().query(
             `
@@ -126,6 +152,10 @@ export class ProjectsRepository {
         return result;
     }
 
+    /**
+     * Loads projects vessels, vessels assigned to projects
+     * @returns Project vessels
+     */
     public async GetProjectsVessels(): Promise<IProjectVesselsResultDto[]> {
         const result = await getManager().query(
             `
