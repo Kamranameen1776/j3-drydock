@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities, eJMSFilterDataKeys } from 'jibe-components';
 import { ODataFilterBuilder } from 'odata-filter-builder';
+import { eStandardJobsMainFields } from '../models/enums/standard-jobs-main.enum';
 
 @Injectable({ providedIn: 'root' })
 export class StandardJobsService {
@@ -14,6 +15,21 @@ export class StandardJobsService {
       action: 'standard-jobs/get-standard-jobs',
       crud: eCrud.Post,
       entity: 'drydock'
+    };
+    return apiRequest;
+  }
+
+  public getStandardJobsFiltersRequest(fieldName: eStandardJobsMainFields) {
+    const apiRequest: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'standard-jobs/get-standard-jobs-filters',
+      crud: eCrud.Post,
+      entity: 'drydock',
+      body: {
+        key: fieldName
+      }
     };
     return apiRequest;
   }

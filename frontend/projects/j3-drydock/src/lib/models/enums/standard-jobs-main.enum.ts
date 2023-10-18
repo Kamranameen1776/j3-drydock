@@ -2,6 +2,7 @@ export enum eStandardJobsMainLabels {
   CreateNewJob = 'Create New Job',
   CreateNewStandardJob = 'Create New Standard Job',
   AddSubItem = 'Add Sub Item',
+  Status = 'Status',
 
   ItemNumber = 'Item No.',
   Subject = 'Subject',
@@ -35,5 +36,6 @@ export enum eStandardJobsMainFields {
   DoneByID = 'DoneByID',
   VesselTypeID = 'VesselTypeID',
   Description = 'Description',
-  Scope = 'Scope'
+  Scope = 'Scope',
+  Status = 'Status'
 }
