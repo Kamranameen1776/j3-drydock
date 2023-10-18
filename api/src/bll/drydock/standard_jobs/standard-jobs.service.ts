@@ -1,4 +1,13 @@
-import { GetStandardJobsQueryResult, GetStandardJobsResultDto } from '../../../application-layer/drydock/standard-jobs';
+import {
+    CreateStandardJobsRequestDto,
+    GetStandardJobsQueryResult,
+    GetStandardJobsResultDto
+} from "../../../application-layer/drydock/standard-jobs/dto";
+import { standard_jobs } from "../../../entity/standard_jobs";
+import _ from "lodash";
+import {
+    StandardJobsFiltersAllowedKeys
+} from "../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto";
 
 export class StandardJobsService {
     public mapStandardJobsDataToDto(standardJobs: GetStandardJobsQueryResult): GetStandardJobsResultDto {
@@ -19,5 +28,42 @@ export class StandardJobsService {
             ...standardJobs,
             records,
         };
+    }
+
+    public mapStandardJobsDtoToEntity(data: CreateStandardJobsRequestDto): Partial<standard_jobs> {
+        const standardJob = new standard_jobs();
+        standardJob.subject = data.subject;
+        standardJob.code = data.code;
+        standardJob.category = data.category;
+        standardJob.function = data.function;
+        standardJob.done_by = data.doneBy;
+        standardJob.inspection = data.inspection;
+        standardJob.material_supplied_by = data.materialSuppliedBy;
+        standardJob.vessel_type_specific = data.vesselTypeSpecific;
+        standardJob.description = data.description;
+        standardJob.vessel_type_uid = data.vesselTypeUid;
+
+        return _.omitBy(standardJob, _.isUndefined);
+    }
+
+    public addUpdateStandardJobsFields(data: Partial<standard_jobs>, updatedBy: string): Partial<standard_jobs> {
+        return {
+            ...data,
+            updated_at: new Date(),
+            updated_by: updatedBy,
+        }
+    }
+
+    public addDeleteStandardJobsFields(deletedBy: string): Partial<standard_jobs> {
+        return {
+            active_status: false,
+            deleted_at: new Date(),
+            deleted_by: deletedBy,
+        }
+    }
+
+    public getFilterValues(data: standard_jobs[], key: StandardJobsFiltersAllowedKeys): string[] {
+        const values = data.map((item) => item[key]);
+        return _.uniq(values);
     }
 }

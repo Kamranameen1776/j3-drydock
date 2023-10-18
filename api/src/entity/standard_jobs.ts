@@ -84,39 +84,39 @@ export class standard_jobs {
     })
     active_status: boolean;
 
-    @Column('int', {
+    @Column('uuid', {
         nullable: true,
         name: 'created_by',
     })
-    created_by: number;
+    created_by: string;
 
     @Column('datetime', {
         nullable: true,
-        name: 'date_of_creation',
+        name: 'created_at',
     })
-    date_of_creation: Date;
+    created_at: Date;
 
-    @Column('int', {
+    @Column('uuid', {
         nullable: true,
-        name: 'modified_by',
+        name: 'updated_by',
     })
-    modified_by: number;
+    updated_by: string;
 
     @Column('datetime', {
         nullable: true,
-        name: 'date_of_modification',
+        name: 'updated_at',
     })
-    date_of_modification: Date;
+    updated_at: Date;
 
-    @Column('int', {
+    @Column('uuid', {
         nullable: true,
         name: 'deleted_by',
     })
-    deleted_by: number;
+    deleted_by: string;
 
     @Column('datetime', {
         nullable: true,
-        name: 'date_of_deletion',
+        name: 'deleted_at',
     })
-    date_of_deletion: Date;
+    deleted_at: Date;
 }

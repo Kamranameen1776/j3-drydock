@@ -9,8 +9,8 @@ async function getStandardJobs(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new CreateStandardJobsCommand();
 
-        return await command.ExecuteAsync(request.body);
-    });
+    return await command.ExecuteAsync(request);
+  });
 }
 
 exports.post = getStandardJobs;
