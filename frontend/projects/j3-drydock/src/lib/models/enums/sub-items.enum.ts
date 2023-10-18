@@ -1,6 +1,7 @@
 export enum eSubItemsLabels {
   ItemNumber = 'Item Number',
   Subject = 'Subject',
+  Description = 'Description',
 
   AddSubItem = 'Add Sub Item'
 }

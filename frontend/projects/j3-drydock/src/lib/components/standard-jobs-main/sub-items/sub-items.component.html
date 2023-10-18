@@ -8,3 +8,9 @@
   [isDisplayAdvancedFilter]="false"
   (action)="onGridAction($event)"
 ></jb-grid>
+
+<jb-upsert-sub-item-popup
+  [item]="currentRow"
+  [isOpen]="isUpsertPopupVisible"
+  (closeDialog)="onCloseUpsertPopup($event)"
+></jb-upsert-sub-item-popup>

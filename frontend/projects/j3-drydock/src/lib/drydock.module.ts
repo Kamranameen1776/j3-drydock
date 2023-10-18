@@ -14,6 +14,8 @@ import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main
 import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
 import { FunctionsTreeSelectComponent } from './shared/components/functions-tree-select/functions-tree-select.component';
 import { SubItemsComponent } from './components/standard-jobs-main/sub-items/sub-items.component';
+import { UpsertSubItemFormComponent } from './components/standard-jobs-main/sub-items/upsert-sub-item-form/upsert-sub-item-form.component';
+import { UpsertSubItemPopupComponent } from './components/standard-jobs-main/sub-items/upsert-sub-item-popup/upsert-sub-item-popup.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -33,7 +35,9 @@ export function winEnv(): unknown {
     UpsertStandardJobPopupComponent,
     UpsertStandardJobFormComponent,
     FunctionsTreeSelectComponent,
-    SubItemsComponent
+    SubItemsComponent,
+    UpsertSubItemFormComponent,
+    UpsertSubItemPopupComponent
   ],
   imports: [
     CommonModule,

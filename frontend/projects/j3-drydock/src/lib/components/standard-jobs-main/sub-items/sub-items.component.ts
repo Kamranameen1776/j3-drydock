@@ -34,6 +34,7 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
   ) {
     super();
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.functionUid) {
       this.setGridButton();
@@ -60,6 +61,15 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
         break;
       default:
         break;
+    }
+  }
+
+  public onCloseUpsertPopup(hasSaved: boolean) {
+    this.isUpsertPopupVisible = false;
+    this.currentRow = undefined;
+
+    if (hasSaved) {
+      // TODO insert new subitem to grid
     }
   }
 

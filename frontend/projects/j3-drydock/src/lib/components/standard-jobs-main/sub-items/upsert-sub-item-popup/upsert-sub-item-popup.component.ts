@@ -1,21 +1,22 @@
-import { StandardJobResult } from './../../../models/interfaces/standard-jobs';
+import { subItemUpsertFormId } from './../../../../models/constants/constants';
+import { SubItem } from './../../../../models/interfaces/sub-items';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { getSmallPopup } from '../../../models/constants/popup';
+import { UpsertSubItemFormComponent } from '../upsert-sub-item-form/upsert-sub-item-form.component';
 import { IJbDialog } from 'jibe-components';
-import { UpsertStandardJobFormComponent } from '../upsert-standard-job-form/upsert-standard-job-form.component';
-import { StandardJobUpsertFormService } from '../upsert-standard-job-form/StandardJobUpsertFormService';
-import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
+import { getSmallPopup } from '../../../../models/constants/popup';
+import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 
 @Component({
-  selector: 'jb-upsert-standard-job-popup',
-  templateUrl: './upsert-standard-job-popup.component.html'
+  selector: 'jb-upsert-sub-item-popup',
+  templateUrl: './upsert-sub-item-popup.component.html',
+  styleUrls: ['./upsert-sub-item-popup.component.scss']
 })
-export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implements OnChanges {
-  @Input() item: StandardJobResult;
+export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements OnChanges {
+  @Input() item: SubItem;
   @Input() isOpen: boolean;
   @Output() closeDialog = new EventEmitter<boolean>();
 
-  @ViewChild(UpsertStandardJobFormComponent) popupForm: UpsertStandardJobFormComponent;
+  @ViewChild(UpsertSubItemFormComponent) popupForm: UpsertSubItemFormComponent;
 
   public isPopupValid = false;
 
@@ -29,11 +30,11 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   public isSaving: boolean;
 
-  public get jobFormValue() {
-    return this.popupForm?.formGroup.getRawValue()[this.formService.formId];
+  public get formValue() {
+    return this.popupForm?.formGroup.getRawValue()[subItemUpsertFormId];
   }
 
-  constructor(private formService: StandardJobUpsertFormService) {
+  constructor() {
     super();
   }
 
@@ -57,7 +58,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   }
 
   private setPopupHeader() {
-    this.popupConfig.dialogHeader = !this.isEditing ? 'Create New Standard Job' : 'Update Standard Job';
+    this.popupConfig.dialogHeader = !this.isEditing ? 'Create New Sub Item' : 'Update Sub tem';
   }
 
   private setPopupFooter() {
@@ -71,7 +72,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   private save() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const value = this.jobFormValue;
+    const value = this.formValue;
 
     // TODO here can be addded validation messages for the form that appear in growl
 

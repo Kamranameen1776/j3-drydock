@@ -1,0 +1,23 @@
+<jb-dialog
+  [dialogContent]="popupConfig"
+  [(dialogVisible)]="isOpen"
+  (closeDialog)="onClosePopup()"
+>
+  <div jb-dialog-body>
+    <jb-upsert-sub-item-form
+      [item]="item"
+      (formValid)="onIsFormValid($event)"
+      *ngIf="isOpen"
+    ></jb-upsert-sub-item-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="!isPopupValid || isSaving"
+      [isCancelBtnDisabled]="isSaving"
+      [okBtnLabel]="okLabel"
+      (ok)="onOkPopup()"
+      (cancel)="onClosePopup()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
