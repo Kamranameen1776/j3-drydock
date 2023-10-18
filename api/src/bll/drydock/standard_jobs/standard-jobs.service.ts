@@ -5,6 +5,9 @@ import {
 } from "../../../application-layer/drydock/standard-jobs/dto";
 import { standard_jobs } from "../../../entity/standard_jobs";
 import _ from "lodash";
+import {
+    StandardJobsFiltersAllowedKeys
+} from "../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto";
 
 export class StandardJobsService {
     public mapStandardJobsDataToDto(standardJobs: GetStandardJobsQueryResult): GetStandardJobsResultDto {
@@ -57,5 +60,10 @@ export class StandardJobsService {
             deleted_at: new Date(),
             deleted_by: deletedBy,
         }
+    }
+
+    public getFilterValues(data: standard_jobs[], key: StandardJobsFiltersAllowedKeys): string[] {
+        const values = data.map((item) => item[key]);
+        return _.uniq(values);
     }
 }

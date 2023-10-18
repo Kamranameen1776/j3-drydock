@@ -12,15 +12,6 @@ export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandar
         super();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-    protected async AuthorizationHandlerAsync(request: RequestWithOData): Promise<void> {}
-
-    protected async ValidationHandlerAsync(request: RequestWithOData): Promise<void> {
-        if (!request) {
-            throw new Error('Request is null');
-        }
-    }
-
     protected async MainHandlerAsync(request: RequestWithOData): Promise<GetStandardJobsResultDto> {
         const data = await this.standardJobsRepository.getStandardJobs(request);
 
