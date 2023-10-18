@@ -4,10 +4,13 @@ import { RequestWithOData } from '../../../shared/interfaces';
 import {
     CreateStandardJobsRequestDto,
     GetStandardJobsQueryResult,
-    UpdateStandardJobsRequestDto,
-} from '../../../application-layer/drydock/standard-jobs/dto';
+    UpdateStandardJobsRequestDto
+} from "../../../application-layer/drydock/standard-jobs/dto";
 import { standard_jobs } from '../../../entity/standard_jobs';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
+import {
+    StandardJobsFiltersAllowedKeys
+} from "../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto";
 
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
@@ -70,5 +73,13 @@ export class StandardJobsRepository {
         const updateStandardJobData = this.standardJobsService.addDeleteStandardJobsFields(deletedBy);
 
         return queryRunner.manager.update(standard_jobs, { uid, active_status: 1 }, updateStandardJobData);
+    }
+
+    public async getStandardJobFilters(filterKey: StandardJobsFiltersAllowedKeys): Promise<standard_jobs[]> {
+        return getManager()
+          .createQueryBuilder('standard_jobs', 'sj')
+          .select(`DISTINCT sj.${filterKey} as ${filterKey}`)
+          .where('sj.active_status = 1')
+          .getRawMany();
     }
 }
