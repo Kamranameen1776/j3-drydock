@@ -1,13 +1,18 @@
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
-import { getConnection, getManager } from 'typeorm';
+import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { IProjectManagersResultDto } from './dtos/IProjectManagersResultDto';
 import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
 import { IProjectStatusResultDto } from './dtos/IProjectStatusResultDto';
 import { IProjectTypeResultDto } from './dtos/IProjectTypeResultDto';
 import { IProjectVesselsResultDto } from './dtos/IProjectVesselsResultDto';
+import { CreateProjectDto } from '../../../application-layer/drydock/projects/dtos/CreateProjectDto';
+
+import { ProjectsEntity } from '../../../entity/drydock/project'
+import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/UpdateProjectDto';
+import { DeleteProjectDto } from 'application-layer/drydock/projects/dtos/DeleteProjectDto';
 
 export class ProjectsRepository {
     public async GetProjectStatuses(): Promise<IProjectStatusResultDto[]> {
@@ -126,7 +131,7 @@ export class ProjectsRepository {
             `
             SELECT
                 vessel.[uid] as LibUserUid,
-				vessel.[Name] as Name,
+				vessel.[Name] as Name,       
         FROM [dry_dock].[project] as pr
 
         INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Id] = vessel.[Vessel_ID]
@@ -137,4 +142,35 @@ export class ProjectsRepository {
 
         return result;
     }
+
+    
+    public async CreateProject(data: CreateProjectDto, queryRunner: QueryRunner ): Promise<any> {
+        try {
+            const project = new ProjectsEntity();
+            project.ProjectCode = data.ProjectCode as string;
+            project.CreatedAtOffice = data.CreatedAtOffice as boolean;
+            project.VesselId = data.VesselId;
+            project.ProjectTypeId = data.ProjectTypeId;
+            project.ProjectStateId = data.ProjectStateId as number;
+            project.Subject = data.Subject;
+            project.ProjectManagerUid = data.ProjectManagerUid;
+            project.StartDate = data.StartDate;
+            project.EndDate = data.EndDate;
+            
+            const result = await queryRunner.manager.insert(ProjectsEntity, project)
+            return 
+        } catch (error) {
+            throw new Error(`Method: create / Class: ProjectRepository / Error: ${error}`);
+        }        
+    }
+
+    public async UpdateProject(data: UpdateProjectDto | DeleteProjectDto, queryRunner: QueryRunner ): Promise<any> {
+        try {
+            const result = await queryRunner.manager.update(ProjectsEntity, data.uid, data)
+            return 
+        } catch (error) {
+            throw new Error(`Method: create / Class: ProjectRepository / Error: ${error}`);
+        }        
+    }
+    
 }
