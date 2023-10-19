@@ -7,20 +7,11 @@ import { CentralizedDataService, eAppLocation } from 'jibe-components';
   providedIn: 'root'
 })
 export class NewTabService {
-  private readonly appLocation = eAppLocation.Office;
-  private readonly isURLTokenUsed = false;
-  private readonly j2base = '';
-
   constructor(
     private cds: CentralizedDataService,
     private location: Location,
     private router: Router
-  ) {
-    this.appLocation = cds.userDetails?.AppLocation;
-    this.isURLTokenUsed = cds.userDetails?.isURLTokenUsed;
-    // eslint-disable-next-line dot-notation
-    this.j2base = window['environment']?.j2?.baseURL ?? '';
-  }
+  ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public navigate(commands: any[], extras?: NavigationExtras): boolean {
@@ -33,11 +24,17 @@ export class NewTabService {
       return false;
     }
 
+    const userDetails = this.cds.userDetails;
+    const isURLTokenUsed = !!userDetails.isURLTokenUsed;
+    const appLocation = userDetails.AppLocation;
+
+    // eslint-disable-next-line dot-notation
+    const j2base = window['environment']?.j2?.baseURL ?? '';
     const href = url instanceof UrlTree ? this.router.serializeUrl(url) : url;
 
     const externalUrl =
-      this.appLocation === eAppLocation.Office && this.isURLTokenUsed
-        ? `${this.j2base}account/jibe2App.aspx?url=${href}`
+      appLocation === eAppLocation.Office && isURLTokenUsed
+        ? `${j2base}account/jibe2App.aspx?url=${href}`
         : this.location.prepareExternalUrl(href);
 
     window.open(externalUrl, '_blank', 'noopener');
