@@ -6,10 +6,8 @@ import {
   GridButton,
   GridRowActions,
   UserService,
-  eColor,
   eGridColumnsWidth,
-  eGridRowActions,
-  eIconNames
+  eGridRowActions
 } from 'jibe-components';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
@@ -163,7 +161,6 @@ export class ProjectsSpecificationGridService {
 
   private readonly gridButton: GridButton = {
     label: 'Create new project',
-    color: { background: eColor.JbBlue, text: eColor.JbWhite },
     show: true
   };
 
