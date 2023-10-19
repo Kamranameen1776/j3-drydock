@@ -1,7 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SpecificationComponent } from './specification.component';
-import { SpecificationService } from './specification.service';
+import { SpecificationGridService } from '../../services/specifications/specification.service';
+import { SpecificationTopDetailsService } from '../../services/specifications/specification-top-details.service';
 
 describe('SpecificationPageComponent', () => {
   let component: SpecificationComponent;
@@ -10,7 +11,7 @@ describe('SpecificationPageComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [SpecificationComponent],
-      providers: [SpecificationService]
+      providers: [SpecificationGridService, SpecificationTopDetailsService]
     }).compileComponents();
   }));
 

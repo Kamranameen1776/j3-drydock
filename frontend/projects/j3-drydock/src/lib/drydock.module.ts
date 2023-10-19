@@ -10,10 +10,11 @@ import { ExampleProjectsGridComponent } from './components/example-projects/exam
 import { ExampleProjectsService } from './services/ExampleProjectsService';
 import { CreateExampleProjectPopupComponent } from './components/example-projects/example-projects-grid/create-example-project-popup/create-example-project-popup.component';
 import { SpecificationComponent } from './components/specification/specification.component';
-import { SpecificationService } from './components/specification/specification.service';
+import { SpecificationGridService } from './services/specifications/specification.service';
 import { SpecificationStatusPipe } from './components/specification/specification-status.pipe';
 import { StatusCodeColorPipe } from './utils/status-code-color.pipe';
 import { JibeTabViewComponent } from './components/jb-tabview/jb-tabview.component';
+import { SpecificationTopDetailsService } from './services/specifications/specification-top-details.service';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -49,7 +50,7 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [ExampleProjectsService, DatePipe, SpecificationService],
+  providers: [ExampleProjectsService, DatePipe, SpecificationGridService, SpecificationTopDetailsService],
   exports: [],
   entryComponents: []
 })

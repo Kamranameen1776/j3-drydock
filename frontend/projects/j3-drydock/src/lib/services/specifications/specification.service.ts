@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { GridInputsWithDataObject } from '../../drydock/presentation-layer/jb-components-helpers/grid-inputs';
-import { Column, Filter, GridRowActions, eFieldControlType, eGridAction } from 'jibe-components';
+import { Observable, merge, of } from 'rxjs';
+import { Column, Filter, FilterListSet, GridRowActions, eFieldControlType, eGridAction } from 'jibe-components';
+import { map } from 'rxjs/operators';
+import { GridInputsWithDataObject } from '../../models/interfaces/grid-inputs';
 
 export enum SpecificationType {
   ALL = 'All',
@@ -31,84 +32,79 @@ export interface Specification {
 }
 
 @Injectable()
-export class SpecificationService {
+export class SpecificationGridService {
   // Will be replaced with WebApiRequest later, but will have same interface
   getData(projectId: string, kind: SpecificationType): Observable<Specification[]> {
-    return new Observable((sub) => {
-      Promise.resolve(
-        [
-          {
-            id: 'GA0012',
-            spec: 'SPEC-O-1860',
-            subject: 'Inspection of the Fixed fire fighting system',
-            kind: SpecificationType.STANDARD,
-            category: 'Inspection',
-            done_by: 'Technician',
-            inspection: 'Class',
-            due_date: new Date(),
-            status: SpecificationStatus.RAISED
-          },
-          {
-            id: 'DF0270',
-            spec: 'SPEC-O-1861',
-            subject: 'Hatch Coaming renewal',
-            kind: SpecificationType.ADHOC,
-            category: 'Steel Renewal',
-            done_by: 'Yard',
-            inspection: 'Owner',
-            status: SpecificationStatus.APPROVED
-          },
-          {
-            id: 'DF0345',
-            spec: 'SPEC-O-1863',
-            subject: 'Main Engine Air Cooler Pressure Test',
-            kind: SpecificationType.PMS,
-            category: 'Overhaul',
-            done_by: 'Yard',
-            inspection: 'Manufacturer',
-            status: SpecificationStatus.COMPLETED
-          }
-        ].filter((spec) => {
-          if (kind === SpecificationType.ALL) {
-            return true;
-          }
+    return of(
+      [
+        {
+          id: 'GA0012',
+          spec: 'SPEC-O-1860',
+          subject: 'Inspection of the Fixed fire fighting system',
+          kind: SpecificationType.STANDARD,
+          category: 'Inspection',
+          done_by: 'Technician',
+          inspection: 'Class',
+          due_date: new Date(),
+          status: SpecificationStatus.RAISED
+        },
+        {
+          id: 'DF0270',
+          spec: 'SPEC-O-1861',
+          subject: 'Hatch Coaming renewal',
+          kind: SpecificationType.ADHOC,
+          category: 'Steel Renewal',
+          done_by: 'Yard',
+          inspection: 'Owner',
+          status: SpecificationStatus.APPROVED
+        },
+        {
+          id: 'DF0345',
+          spec: 'SPEC-O-1863',
+          subject: 'Main Engine Air Cooler Pressure Test',
+          kind: SpecificationType.PMS,
+          category: 'Overhaul',
+          done_by: 'Yard',
+          inspection: 'Manufacturer',
+          status: SpecificationStatus.COMPLETED
+        }
+      ].filter((spec) => {
+        if (kind === SpecificationType.ALL) {
+          return true;
+        }
 
-          return spec.kind === kind;
-        }) as Specification[]
-      )
-        .then((res) => sub.next(res))
-        .finally(() => sub.complete());
-    });
+        return spec.kind === kind;
+      }) as Specification[]
+    );
   }
 
   getGridData(projectId: string, kind: SpecificationType): Observable<GridInputsWithDataObject<Specification>> {
-    const gridParams = {
+    const gridParams: GridInputsWithDataObject<Specification> = {
       columns: this.columns,
       gridName: this.gridName,
       data: {
         records: [],
         count: 0
       },
-      gridActiions: this.gridActions,
+      actions: this.gridActions,
       filters: this.filters,
-      filterLists: this.filtersLists
+      filtersLists: this.filtersLists
     };
 
-    return new Observable((sub) => {
-      // sub.next(gridParams)
-
-      this.getData(projectId, kind).subscribe((data) => {
-        sub.next({
-          ...gridParams,
-          data: {
-            records: data,
-            count: data.length
-          }
-        });
-
-        sub.complete();
-      });
-    });
+    return merge(
+      of(gridParams),
+      this.getData(projectId, kind).pipe(
+        map((data) => {
+          return {
+            ...gridParams,
+            data: {
+              records: data,
+              count: data.length
+            }
+          } as GridInputsWithDataObject<Specification>;
+        })
+      )
+    );
   }
 
   public readonly gridName: string = 'specificationGrid';
@@ -232,7 +228,7 @@ export class SpecificationService {
     }
   ];
 
-  private filtersLists = {
+  private filtersLists: FilterListSet = {
     status: {
       list: [
         {

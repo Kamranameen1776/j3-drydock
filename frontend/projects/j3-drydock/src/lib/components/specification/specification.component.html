@@ -1,9 +1,10 @@
-<div>
+<div class="jb-section-DetailPage-figma">
   <div jb-detail-top-section>
     <jb-details-top-section
-      [topFieldsConfig]="topFieldsConfig"
-      [detailsData]="detailedData"
-      [canEdit]="canEdit"
+      *ngIf="topDetailsData"
+      [topFieldsConfig]="topDetailsData.topFieldsConfig"
+      [detailsData]="topDetailsData.detailedData"
+      [canEdit]="topDetailsData.canEdit"
     >
       <div
         class="header-actions"
@@ -60,16 +61,15 @@
             [gridName]="gridData.gridName"
             [colData]="gridData.columns"
             [tableData]="gridData.data"
-            [setActions]="gridData.gridActions"
+            [setActions]="gridData.actions"
             [filterData]="gridData.filters"
-            [filterListsSet]="gridData.filterLists"
+            [filterListsSet]="gridData.filtersLists"
             [getStyleByContainer]="true"
           ></jb-grid>
         </p-tabPanel>
       </jb-tabview>
     </div>
   </jb-layout-widget>
-
   <ng-template
     #statusTemplate
     let-rowData
