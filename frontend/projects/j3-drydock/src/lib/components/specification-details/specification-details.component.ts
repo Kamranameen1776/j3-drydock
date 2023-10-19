@@ -3,19 +3,17 @@ import { Specification, SpecificationGridService, SpecificationType } from '../.
 import { JmsTechApiService, WebApiRequest } from 'jibe-components';
 import { takeUntil } from 'rxjs/operators';
 import { GridInputsWithDataObject } from '../../models/interfaces/grid-inputs';
-import { SpecificationTopDetailsService, TopFieldsData } from '../../services/specifications/specification-top-details.service';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 
 @Component({
-  selector: 'jb-specification-page',
-  templateUrl: './specification.component.html',
-  styleUrls: ['./specification.component.scss']
+  selector: 'jb-specification-details',
+  templateUrl: './specification-details.component.html',
+  styleUrls: ['./specification-details.component.scss']
 })
-export class SpecificationComponent extends UnsubscribeComponent implements OnInit {
+export class SpecificationDetailsComponent extends UnsubscribeComponent implements OnInit {
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
   treeData: WebApiRequest;
   gridData: GridInputsWithDataObject<Specification>;
-  topDetailsData: TopFieldsData;
   activeIndex = 0;
   types = [
     SpecificationType.ALL,
@@ -42,8 +40,7 @@ export class SpecificationComponent extends UnsubscribeComponent implements OnIn
 
   constructor(
     private specsService: SpecificationGridService,
-    private jmsTechService: JmsTechApiService,
-    private specsTopDetailsService: SpecificationTopDetailsService
+    private jmsTechService: JmsTechApiService
   ) {
     super();
   }
@@ -52,12 +49,6 @@ export class SpecificationComponent extends UnsubscribeComponent implements OnIn
     this.treeData = this.jmsTechService.getComponentFunctionTree;
     this.treeData.params = `vesselUid=3EEF2E1B-2533-45C7-82C7-C13D6AA79559`;
     this.callData(SpecificationType.ALL);
-    this.specsTopDetailsService
-      .getTopDetailsData()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((data) => {
-        this.topDetailsData = data;
-      });
   }
 
   activeIndexChange(index: number) {

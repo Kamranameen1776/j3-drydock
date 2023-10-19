@@ -10,15 +10,16 @@ import { ExampleProjectsComponent } from './components/example-projects/example-
 import { ExampleProjectsGridComponent } from './components/example-projects/example-projects-grid/example-projects-grid.component';
 import { ExampleProjectsService } from './services/ExampleProjectsService';
 import { CreateExampleProjectPopupComponent } from './components/example-projects/example-projects-grid/create-example-project-popup/create-example-project-popup.component';
-import { SpecificationComponent } from './components/specification/specification.component';
+import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationGridService } from './services/specifications/specification.service';
-import { SpecificationStatusPipe } from './components/specification/specification-status.pipe';
+import { SpecificationStatusPipe } from './components/specification-details/specification-status.pipe';
 import { StatusCodeColorPipe } from './utils/status-code-color.pipe';
 import { JibeTabViewComponent } from './components/jb-tabview/jb-tabview.component';
 import { SpecificationTopDetailsService } from './services/specifications/specification-top-details.service';
 import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
 import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
 import { FunctionsTreeSelectComponent } from './shared/components/functions-tree-select/functions-tree-select.component';
+import { ProjectHeaderComponent } from './components/project-header/project-header.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -37,11 +38,12 @@ export function winEnv(): unknown {
     StatusCodeColorPipe,
     ExampleProjectsGridComponent,
     CreateExampleProjectPopupComponent,
-    SpecificationComponent,
+    SpecificationDetailsComponent,
     StandardJobsMainComponent,
     UpsertStandardJobPopupComponent,
     UpsertStandardJobFormComponent,
-    FunctionsTreeSelectComponent
+    FunctionsTreeSelectComponent,
+    ProjectHeaderComponent
   ],
   imports: [
     CommonModule,

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuardService } from 'jibe-components';
 import { ExampleProjectsComponent } from './components/example-projects/example-projects.component';
-import { SpecificationComponent } from './components/specification/specification.component';
+import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { StandardJobsMainComponent } from './components/standard-jobs-main/standard-jobs-main.component';
 
 const routes: Routes = [
@@ -21,7 +21,7 @@ const routes: Routes = [
   },
   {
     path: 'specification',
-    component: SpecificationComponent,
+    component: SpecificationDetailsComponent,
     canActivate: [AuthGuardService],
     runGuardsAndResolvers: 'paramsOrQueryParamsChange'
   },
