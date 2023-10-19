@@ -53,7 +53,7 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [ExampleProjectsService, DatePipe, ProjectsService, UserService],
+  providers: [ExampleProjectsService, DatePipe, ProjectsService],
   exports: [],
   entryComponents: []
 })
