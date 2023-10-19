@@ -34,7 +34,7 @@ export class ProjectsRepository {
         
         WHERE wt.Active_Status=1
             AND wdetails.Active_Status=1
-            AND pt.[deleted_at] IS NULL
+            AND pt.[active_status] = 1
         
         ORDER BY wdetails.Workflow_OrderID
         
@@ -59,7 +59,7 @@ export class ProjectsRepository {
 
 		INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[Worklist_Type] = wt.Worklist_Type
 
-        WHERE pt.[deleted_at] IS NULL
+        WHERE pt.[active_status] = 1
             `,
         );
 
@@ -80,7 +80,7 @@ export class ProjectsRepository {
       
         -- TODO: pass the project type id as a parameter
         WHERE [project_type_id] = 1 
-        AND [deleted_at] IS NULL
+        AND [active_status] = 1
             `,
         );
 
@@ -122,7 +122,7 @@ export class ProjectsRepository {
         and pt.[id] = ps.[project_type_id]
     
 
-    WHERE pr.[deleted_at] IS NULL
+    WHERE pr.[active_status] = 1
                 `;
 
         const result = await oDataService.getJoinResult(query);
@@ -145,7 +145,7 @@ export class ProjectsRepository {
 
         INNER JOIN [Lib_User] as usr ON pr.[project_manager_Uid] = usr.[uid]
 
-        WHERE pr.[deleted_at] IS NULL
+        WHERE pr.[active_status] = 1
             `,
         );
 
@@ -166,7 +166,7 @@ export class ProjectsRepository {
 
         INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Id] = vessel.[Vessel_ID]
 
-        WHERE pr.[deleted_at] IS NULL
+        WHERE pr.[active_status] = 1
             `,
         );
 

@@ -50,27 +50,27 @@ export class ProjectsEntity {
     })
     ProjectManagerUid: string;
 
-    @Column('datetime', {
+    @Column('datetime2', {
         nullable: true,
         name: 'start_date',
     })
     StartDate: Date;
 
-    @Column('datetime', {
+    @Column('datetime2', {
         nullable: true,
         name: 'end_date',
     })
     EndDate: Date;
 
-    @Column('datetime', {
+    @Column('datetime2', {
         nullable: true,
         name: 'created_at',
     })
     CreatedAt: Date;
 
-    @Column('datetime', {
+    @Column('bit', {
         nullable: true,
-        name: 'deleted_at',
+        name: 'active_status',
     })
     DeletedAt: Date;
 }

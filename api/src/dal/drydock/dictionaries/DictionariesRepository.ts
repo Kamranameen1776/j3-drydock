@@ -35,9 +35,9 @@ export class DictionariesRepository {
             ,[Worklist_Type]
             ,[short_code]
             ,[created_at]
-            ,[deleted_at]
+            ,[active_status]
         FROM [JIBE_Main].[dry_dock].[project_type]
-        where deleted_at IS NULL;
+        where active_status = 1;
         `
         
         return getManager().query(dbQuery);
