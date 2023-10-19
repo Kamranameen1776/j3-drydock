@@ -1,17 +1,17 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Specification, SpecificationGridService, SpecificationType } from '../../services/specifications/specification.service';
 import { JmsTechApiService, WebApiRequest } from 'jibe-components';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { GridInputsWithDataObject } from '../../models/interfaces/grid-inputs';
 import { SpecificationTopDetailsService, TopFieldsData } from '../../services/specifications/specification-top-details.service';
+import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 
 @Component({
   selector: 'jb-specification-page',
   templateUrl: './specification.component.html',
   styleUrls: ['./specification.component.scss']
 })
-export class SpecificationComponent implements OnInit, OnDestroy {
+export class SpecificationComponent extends UnsubscribeComponent implements OnInit {
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
   treeData: WebApiRequest;
   gridData: GridInputsWithDataObject<Specification>;
@@ -40,13 +40,13 @@ export class SpecificationComponent implements OnInit, OnDestroy {
     }
   ];
 
-  private $destroySubject = new Subject();
-
   constructor(
     private specsService: SpecificationGridService,
     private jmsTechService: JmsTechApiService,
     private specsTopDetailsService: SpecificationTopDetailsService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.treeData = this.jmsTechService.getComponentFunctionTree;
@@ -54,7 +54,7 @@ export class SpecificationComponent implements OnInit, OnDestroy {
     this.callData(SpecificationType.ALL);
     this.specsTopDetailsService
       .getTopDetailsData()
-      .pipe(takeUntil(this.$destroySubject))
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((data) => {
         this.topDetailsData = data;
       });
@@ -68,15 +68,11 @@ export class SpecificationComponent implements OnInit, OnDestroy {
   private callData(type: SpecificationType) {
     this.specsService
       .getGridData('', type)
-      .pipe(takeUntil(this.$destroySubject))
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((data) => {
         this.gridData = data;
         const statusCol = this.gridData.columns.find((col) => col.FieldName === 'status');
         statusCol.cellTemplate = this.statusTemplate;
       });
-  }
-
-  ngOnDestroy(): void {
-    this.$destroySubject.next();
   }
 }
