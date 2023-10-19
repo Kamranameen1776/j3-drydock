@@ -22,6 +22,7 @@ export class ProjectsShipsYardsQuery extends Query<void, IProjectsShipsYardsResu
     protected async MainHandlerAsync(): Promise<IProjectsShipsYardsResultDto[]> {
         const dtos: IProjectsShipsYardsResultDto[] = [];
 
+        // TODO: Replace with real data
         dtos.push({ ShipYardId: '1', ShipYardName: 'Shipyard 1' });
         dtos.push({ ShipYardId: '2', ShipYardName: 'Shipyard 2' });
 
