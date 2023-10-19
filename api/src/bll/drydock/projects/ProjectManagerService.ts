@@ -9,6 +9,6 @@ export class ProjectManagerService {
      * @returns Full name
      */
     public GetFullName(firstName: string, lastName: string): string {
-        return (firstName ?? '') + ' ' + (lastName ?? '');
+        return `${firstName ?? ''} ${lastName ?? ''}`;
     }
 }
