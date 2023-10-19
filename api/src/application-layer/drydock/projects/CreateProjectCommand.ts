@@ -38,10 +38,10 @@ export class CreateProjectCommand extends Command<CreateProjectDto, void> {
     protected async MainHandlerAsync(request: CreateProjectDto): Promise<void> {
         // const result = new CreateProjectResultDto();
         
-        request.CreatedAtOffice = !this.projectsService.IsVessel();
-        request.ProjectCode = this.projectsService.GetProjectCode();
-        request.ProjectStateId = 1,
-
+        request.CreatedAtOffice = await this.projectsService.IsOffice();
+        request.ProjectCode = await this.projectsService.GetProjectCode();
+        request.ProjectStateId = 1;
+        
         await this.uow.ExecuteAsync(async (queryRunner) => {
             
             const projectId = await this.projectsRepository.CreateProject(request, queryRunner);
