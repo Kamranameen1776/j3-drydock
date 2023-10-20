@@ -35,7 +35,7 @@ export class DeleteProjectCommand extends Command<DeleteProjectDto, void> {
      * @returns New created project result
      */
     protected async MainHandlerAsync(request: DeleteProjectDto): Promise<void> {
-        request.DeletedAt = new Date()
+        request.ActiveStatus = false
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const projectId = await this.projectsRepository.UpdateProject(request, queryRunner);
             return projectId;

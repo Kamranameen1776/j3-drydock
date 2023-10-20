@@ -79,7 +79,7 @@ export class ProjectsRepository {
         FROM [JIBE_Main].[dry_dock].[project_state]
       
         -- TODO: pass the project type id as a parameter
-        WHERE [project_type_id] = 1 
+        WHERE [project_type_uid] = '4EED7101-6E90-4F58-9E92-3E5E17C10EFA'
         AND [active_status] = 1
             `,
         );
@@ -114,9 +114,9 @@ export class ProjectsRepository {
         ,cast(pr.[end_date] as datetimeoffset) AS 'EndDate'
     FROM [dry_dock].[project] as pr
 
-    INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Id] = vessel.[Vessel_ID]
+    INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Uid] = vessel.[uid]
     INNER JOIN [Lib_User] as usr ON [project_manager_Uid] = usr.[uid]
-    INNER JOIN [dry_dock].[project_type] as pt ON pt.[id] = pr.[project_type_id]
+    INNER JOIN [dry_dock].[project_type] as pt ON pt.[uid] = pr.[project_type_uid]
     INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[Worklist_Type] = wt.Worklist_Type
     INNER JOIN [dry_dock].[project_state] as ps ON ps.[id] = pr.[project_state_id] 
         and pt.[id] = ps.[project_type_id]
@@ -164,7 +164,7 @@ export class ProjectsRepository {
 				vessel.[Name] as Name,       
         FROM [dry_dock].[project] as pr
 
-        INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Id] = vessel.[Vessel_ID]
+        INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Uid] = vessel.[uid]
 
         WHERE pr.[active_status] = 1
             `,
@@ -178,8 +178,8 @@ export class ProjectsRepository {
             const project = new ProjectsEntity();
             project.ProjectCode = data.ProjectCode as string;
             project.CreatedAtOffice = data.CreatedAtOffice as boolean;
-            project.VesselId = data.VesselId;
-            project.ProjectTypeId = data.ProjectTypeId;
+            project.VesselUid = data.VesselUid;
+            project.ProjectTypeUid = data.ProjectTypeUid;
             project.ProjectStateId = data.ProjectStateId as number;
             project.Subject = data.Subject;
             project.ProjectManagerUid = data.ProjectManagerUid;
@@ -198,7 +198,7 @@ export class ProjectsRepository {
             const result = await queryRunner.manager.update(ProjectsEntity, data.uid, data);
             return;
         } catch (error) {
-            throw new Error(`Method: create / Class: ProjectRepository / Error: ${error}`);
+            throw new Error(`Method: update-delete / Class: ProjectRepository / Error: ${error}`);
         }
     }
 }
