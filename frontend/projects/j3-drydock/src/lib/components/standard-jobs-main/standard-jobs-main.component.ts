@@ -51,16 +51,20 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
 
   public onGridAction({ type, payload }: GridAction<string, unknown>): void {
     switch (type) {
-      case this.gridInputs.gridButton.label:
-        this.isUpsertPopupVisible = true;
-        break;
+      case eGridRowActions.DoubleClick:
       case eGridRowActions.Edit:
         this.isUpsertPopupVisible = true;
         this.currentRow = <StandardJobResult>payload;
         break;
+
+      case this.gridInputs.gridButton.label:
+        this.isUpsertPopupVisible = true;
+        break;
+
       case eGridRowActions.Delete:
         this.delete(<StandardJobResult>payload);
         break;
+
       default:
         break;
     }
@@ -77,6 +81,7 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
 
   private setGridRowActions(): void {
     this.gridRowActions.length = 0;
+    this.gridRowActions.push({ name: eGridRowActions.DoubleClick });
 
     // TODO Access rigths
     this.gridRowActions.push({
