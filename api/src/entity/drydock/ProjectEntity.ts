@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
 @Entity('project', { schema: 'dry_dock' })
-export class ProjectsEntity {
+export class ProjectEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
@@ -72,5 +72,5 @@ export class ProjectsEntity {
         nullable: true,
         name: 'active_status',
     })
-    ActiveStatus: Boolean;
+    ActiveStatus: boolean;
 }

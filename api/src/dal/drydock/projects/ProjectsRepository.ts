@@ -6,7 +6,7 @@ import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { CreateProjectDto } from '../../../application-layer/drydock/projects/dtos/CreateProjectDto';
-import { ProjectsEntity } from '../../../entity/drydock/project';
+import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
 import { IProjectManagersResultDto } from './dtos/IProjectManagersResultDto';
 import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
@@ -135,6 +135,7 @@ export class ProjectsRepository {
      * @returns Project managers
      */
     public async GetProjectsManagers(): Promise<IProjectManagersResultDto[]> {
+        
         const result = await getManager().query(
             `
             SELECT
@@ -175,7 +176,7 @@ export class ProjectsRepository {
 
     public async CreateProject(data: CreateProjectDto, queryRunner: QueryRunner): Promise<any> {
         try {
-            const project = new ProjectsEntity();
+            const project = new ProjectEntity();
             project.ProjectCode = data.ProjectCode as string;
             project.CreatedAtOffice = data.CreatedAtOffice as boolean;
             project.VesselUid = data.VesselUid;
@@ -186,7 +187,7 @@ export class ProjectsRepository {
             project.StartDate = data.StartDate;
             project.EndDate = data.EndDate;
 
-            const result = await queryRunner.manager.insert(ProjectsEntity, project);
+            const result = await queryRunner.manager.insert(ProjectEntity, project);
             return;
         } catch (error) {
             throw new Error(`Method: create / Class: ProjectRepository / Error: ${error}`);
@@ -195,7 +196,7 @@ export class ProjectsRepository {
 
     public async UpdateProject(data: UpdateProjectDto | DeleteProjectDto, queryRunner: QueryRunner): Promise<any> {
         try {
-            const result = await queryRunner.manager.update(ProjectsEntity, data.uid, data);
+            const result = await queryRunner.manager.update(ProjectEntity, data.uid, data);
             return;
         } catch (error) {
             throw new Error(`Method: update-delete / Class: ProjectRepository / Error: ${error}`);
