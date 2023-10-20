@@ -135,20 +135,14 @@ export class ProjectsRepository {
      * @returns Project managers
      */
     public async GetProjectsManagers(): Promise<IProjectManagersResultDto[]> {
-        
-        const result = await getManager().query(
-            `
-            SELECT
-				usr.[uid] as LibUserUid,
-				usr.[First_Name] as FirstName,
-				usr.[Last_Name] as LastName
-        FROM [dry_dock].[project] as pr
+        const projectRepository = getManager().getRepository(ProjectEntity);
 
-        INNER JOIN [Lib_User] as usr ON pr.[project_manager_Uid] = usr.[uid]
-
-        WHERE pr.[active_status] = 1
-            `,
-        );
+        const result = await projectRepository
+            .createQueryBuilder('pr')
+            .select(['usr.[uid] as LibUserUid', 'usr.[First_Name] as FirstName', 'usr.[Last_Name] as LastName'])
+            .innerJoin('Lib_User', 'usr', 'pr.[project_manager_Uid] = usr.[uid]')
+            .where('pr.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .execute();
 
         return result;
     }
