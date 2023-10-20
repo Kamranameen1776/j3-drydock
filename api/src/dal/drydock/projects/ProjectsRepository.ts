@@ -1,18 +1,18 @@
+import { DeleteProjectDto } from 'application-layer/drydock/projects/dtos/DeleteProjectDto';
+import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
+import { CreateProjectDto } from '../../../application-layer/drydock/projects/dtos/CreateProjectDto';
+import { ProjectsEntity } from '../../../entity/drydock/project';
+import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
 import { IProjectManagersResultDto } from './dtos/IProjectManagersResultDto';
 import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
 import { IProjectStatusResultDto } from './dtos/IProjectStatusResultDto';
 import { IProjectTypeResultDto } from './dtos/IProjectTypeResultDto';
 import { IProjectVesselsResultDto } from './dtos/IProjectVesselsResultDto';
-import { CreateProjectDto } from '../../../application-layer/drydock/projects/dtos/CreateProjectDto';
-
-import { ProjectsEntity } from '../../../entity/drydock/project'
-import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/UpdateProjectDto';
-import { DeleteProjectDto } from 'application-layer/drydock/projects/dtos/DeleteProjectDto';
 
 export class ProjectsRepository {
     /**
@@ -50,18 +50,18 @@ export class ProjectsRepository {
      * @returns Project types
      */
     public async GetProjectTypes(): Promise<IProjectTypeResultDto[]> {
-        const result = await getManager().query(
-            `
-            SELECT pt.[Worklist_Type] AS 'ProjectTypeCode' 
-            ,wt.[Worklist_Type_Display] AS 'ProjectTypeName'
-			,pt.[short_code] as 'ProjectTypeShortCode'
-        FROM [dry_dock].[project_type] as pt
+        const projectTypeRepository = getManager().getRepository(ProjectTypeEntity);
 
-		INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[Worklist_Type] = wt.Worklist_Type
-
-        WHERE pt.[active_status] = 1
-            `,
-        );
+        const result = await projectTypeRepository
+            .createQueryBuilder('pt')
+            .select([
+                'pt.Worklist_Type as ProjectTypeCode',
+                'wt.Worklist_Type_Display as ProjectTypeName',
+                'pt.short_code as ProjectTypeShortCode',
+            ])
+            .innerJoin('TEC_LIB_Worklist_Type', 'wt', 'pt.Worklist_Type = wt.Worklist_Type')
+            .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .execute();
 
         return result;
     }
@@ -173,8 +173,7 @@ export class ProjectsRepository {
         return result;
     }
 
-    
-    public async CreateProject(data: CreateProjectDto, queryRunner: QueryRunner ): Promise<any> {
+    public async CreateProject(data: CreateProjectDto, queryRunner: QueryRunner): Promise<any> {
         try {
             const project = new ProjectsEntity();
             project.ProjectCode = data.ProjectCode as string;
@@ -186,21 +185,20 @@ export class ProjectsRepository {
             project.ProjectManagerUid = data.ProjectManagerUid;
             project.StartDate = data.StartDate;
             project.EndDate = data.EndDate;
-            
-            const result = await queryRunner.manager.insert(ProjectsEntity, project)
-            return 
+
+            const result = await queryRunner.manager.insert(ProjectsEntity, project);
+            return;
         } catch (error) {
             throw new Error(`Method: create / Class: ProjectRepository / Error: ${error}`);
-        }        
+        }
     }
 
-    public async UpdateProject(data: UpdateProjectDto | DeleteProjectDto, queryRunner: QueryRunner ): Promise<any> {
+    public async UpdateProject(data: UpdateProjectDto | DeleteProjectDto, queryRunner: QueryRunner): Promise<any> {
         try {
-            const result = await queryRunner.manager.update(ProjectsEntity, data.uid, data)
-            return 
+            const result = await queryRunner.manager.update(ProjectsEntity, data.uid, data);
+            return;
         } catch (error) {
             throw new Error(`Method: create / Class: ProjectRepository / Error: ${error}`);
-        }        
+        }
     }
-    
 }
