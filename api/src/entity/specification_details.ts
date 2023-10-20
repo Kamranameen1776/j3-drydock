@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('specification_details', { schema: 'drydock' })
-export class specification_details {
+@Entity('specification_details', { schema: 'dry_dock' })
+export class SpecificationDetailsEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
@@ -74,11 +74,11 @@ export class specification_details {
     })
     description: string;
 
-    @Column('varchar', {
+    @Column('datetime', {
         nullable: true,
         name: 'start_date',
     })
-    start_date: string;
+    start_date: Date;
 
     @Column('datetime', {
         nullable: true,
