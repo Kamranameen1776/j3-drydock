@@ -119,7 +119,7 @@ export class ProjectsRepository {
     INNER JOIN [dry_dock].[project_type] as pt ON pt.[uid] = pr.[project_type_uid]
     INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[Worklist_Type] = wt.Worklist_Type
     INNER JOIN [dry_dock].[project_state] as ps ON ps.[id] = pr.[project_state_id] 
-        and pt.[id] = ps.[project_type_id]
+        and pt.[uid] = ps.[project_type_uid]
     
 
     WHERE pr.[active_status] = 1
@@ -152,18 +152,14 @@ export class ProjectsRepository {
      * @returns Project vessels
      */
     public async GetProjectsVessels(): Promise<IProjectVesselsResultDto[]> {
-        const result = await getManager().query(
-            `
-            SELECT
-                vessel.[uid] as LibUserUid,
-				vessel.[Name] as Name,       
-        FROM [dry_dock].[project] as pr
+        const projectRepository = getManager().getRepository(ProjectEntity);
 
-        INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Uid] = vessel.[uid]
-
-        WHERE pr.[active_status] = 1
-            `,
-        );
+        const result = await projectRepository
+            .createQueryBuilder('pr')
+            .select(['vessel.[uid] as LibUserUid', 'vessel.[Name] as Name'])
+            .innerJoin('Lib_Vessels', 'vessel', 'pr.[Vessel_Uid] = vessel.[uid]')
+            .where('pr.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .execute();
 
         return result;
     }

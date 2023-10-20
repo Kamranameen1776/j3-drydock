@@ -42,7 +42,7 @@ export class DictionariesRepository {
 
     public async GetProjectTypes(): Promise<any[]> {
         const dbQuery = `
-        SELECT [id]
+        SELECT [uid]
             ,[Worklist_Type]
             ,[short_code]
             ,[created_at]
