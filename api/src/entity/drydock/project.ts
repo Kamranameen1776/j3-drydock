@@ -19,17 +19,17 @@ export class ProjectsEntity {
     })
     CreatedAtOffice: boolean;
 
-    @Column('int',{
+    @Column('uniqueidentifier',{
         nullable: false,
-        name: 'Vessel_Id',
+        name: 'Vessel_Uid',
     })
-    VesselId: number;
+    VesselUid: string;
     
-    @Column('int',{
+    @Column('uniqueidentifier',{
         nullable: false,
-        name: 'project_type_id',
+        name: 'project_type_uid',
     })
-    ProjectTypeId: number;
+    ProjectTypeUid: string;
 
     @Column('int',{
         nullable: false,
@@ -72,5 +72,5 @@ export class ProjectsEntity {
         nullable: true,
         name: 'active_status',
     })
-    DeletedAt: Date;
+    ActiveStatus: Boolean;
 }

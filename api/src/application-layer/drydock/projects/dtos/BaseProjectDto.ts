@@ -1,6 +1,6 @@
 export class BaseProjectDto {
-    public VesselId: number;
-    public ProjectTypeId: number;
+    public VesselUid: string;
+    public ProjectTypeUid: string;
     public Subject: string;
     public ProjectManagerUid: string;
     public StartDate: Date
