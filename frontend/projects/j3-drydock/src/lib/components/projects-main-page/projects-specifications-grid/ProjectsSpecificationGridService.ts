@@ -307,7 +307,7 @@ export class ProjectsSpecificationGridService {
     }
   ];
 
-  private createProjectFormId = 'projectCreate';
+  public createProjectFormId = 'projectCreate';
 
   constructor(
     private userService: UserService,
@@ -333,7 +333,7 @@ export class ProjectsSpecificationGridService {
       label: '',
       type: 'form',
       sections: {
-        projectCreate: {
+        [this.createProjectFormId]: {
           type: 'grid',
           label: '',
           formID: this.createProjectFormId,
@@ -347,7 +347,6 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Dropdown,
               sectionID: this.createProjectFormId,
               enabled: true,
-              readOnly: true,
               validatorRequired: false,
               gridRowStart: 1,
               gridRowEnd: 2,
@@ -364,7 +363,6 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Dropdown,
               sectionID: this.createProjectFormId,
               enabled: true,
-              readOnly: true,
               validatorRequired: false,
               gridRowStart: 2,
               gridRowEnd: 3,
@@ -372,8 +370,8 @@ export class ProjectsSpecificationGridService {
               gridColEnd: 3,
               listRequest: {
                 webApiRequest: this.projectsService.getVesselsRequest(),
-                labelKey: 'Vessel_Name',
-                valueKey: 'uid'
+                labelKey: 'VesselName',
+                valueKey: 'VesselUid'
               }
             },
             [eProjectsCreateFieldNames.ProjectType]: {
@@ -408,7 +406,6 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Dropdown,
               sectionID: this.createProjectFormId,
               enabled: true,
-              readOnly: true,
               validatorRequired: false,
               gridRowStart: 5,
               gridRowEnd: 6,

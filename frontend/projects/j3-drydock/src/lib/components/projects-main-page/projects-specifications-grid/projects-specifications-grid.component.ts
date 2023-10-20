@@ -68,7 +68,7 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
   public saveNewProject() {
     this.saveProjectButtonDisabled$.next(true);
     if (this.createProjectFormGroup.valid) {
-      const values: ProjectCreate = this.createProjectFormGroup.getRawValue();
+      const values: ProjectCreate = this.createProjectFormGroup.getRawValue()[this.projectsGridService.createProjectFormId];
 
       this.projectsService.createProject(values)
         .subscribe(() => {
