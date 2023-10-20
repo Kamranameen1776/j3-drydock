@@ -1,6 +1,17 @@
 import { getManager } from 'typeorm';
+import { LIB_FLEETS } from "../../../entity/LIB_FLEETS";
+import { GetFleetsResult } from "../../../application-layer/drydock/dictionaries/get-fleets/GetFleetsResultDto";
 
 export class DictionariesRepository {
+
+    public async GetFleets(): Promise<GetFleetsResult[]> {
+        return getManager().find(LIB_FLEETS, {
+            select: ['uid', 'FleetName', 'FleetCode'],
+            where: {
+                Active_Status: true
+            }
+        });
+    }
 
     public async GetVessels(): Promise<any[]> {
         const dbQuery = `

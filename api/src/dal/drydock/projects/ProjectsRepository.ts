@@ -54,6 +54,7 @@ export class ProjectsRepository {
             `
             SELECT pt.[Worklist_Type] AS 'ProjectTypeCode' 
             ,wt.[Worklist_Type_Display] AS 'ProjectTypeName'
+            ,wt.[id] AS 'id'
 			,pt.[short_code] as 'ProjectTypeShortCode'
         FROM [dry_dock].[project_type] as pt
 
@@ -173,7 +174,7 @@ export class ProjectsRepository {
         return result;
     }
 
-    
+
     public async CreateProject(data: CreateProjectDto, queryRunner: QueryRunner ): Promise<any> {
         try {
             const project = new ProjectsEntity();
@@ -186,21 +187,21 @@ export class ProjectsRepository {
             project.ProjectManagerUid = data.ProjectManagerUid;
             project.StartDate = data.StartDate;
             project.EndDate = data.EndDate;
-            
+
             const result = await queryRunner.manager.insert(ProjectsEntity, project)
-            return 
+            return
         } catch (error) {
             throw new Error(`Method: create / Class: ProjectRepository / Error: ${error}`);
-        }        
+        }
     }
 
     public async UpdateProject(data: UpdateProjectDto | DeleteProjectDto, queryRunner: QueryRunner ): Promise<any> {
         try {
             const result = await queryRunner.manager.update(ProjectsEntity, data.uid, data)
-            return 
+            return
         } catch (error) {
             throw new Error(`Method: create / Class: ProjectRepository / Error: ${error}`);
-        }        
+        }
     }
-    
+
 }
