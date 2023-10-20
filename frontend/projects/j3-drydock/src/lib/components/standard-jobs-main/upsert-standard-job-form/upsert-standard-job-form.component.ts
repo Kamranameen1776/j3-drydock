@@ -1,10 +1,11 @@
+/* eslint-disable no-console */
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FormModel, FormValues } from 'jibe-components';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { StandardJobUpsertFormService } from './StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
-import { takeUntil } from 'rxjs/operators';
+import { startWith, takeUntil } from 'rxjs/operators';
 import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-main.enum';
 
 @Component({
@@ -46,6 +47,7 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
     this.formGroup = event;
     // TODO listen to changes and logic to change some fields state
     this.listenFormValid();
+    this.listenVesselSpecificChanges();
   }
 
   private initFormStructure() {
@@ -79,5 +81,22 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
     //   inputLabelKey: 'jb_value_label',
     //   dlgConfiguration: { appendTo: '' }
     // };
+  }
+
+  private setFieldEnabledAndRequired(fieldName: eStandardJobsMainFields, isEnabled: boolean) {
+    this.popupFormService.setEnabled(this.formGroup, fieldName, isEnabled);
+    this.popupFormService.setValidationRequired(this.formStructure, fieldName, isEnabled);
+  }
+
+  private listenVesselSpecificChanges() {
+    this.popupFormService
+      .getFormControl(this.formGroup, eStandardJobsMainFields.VesselSpecific)
+      .valueChanges.pipe(
+        startWith(this.popupFormService.getFormControlValue(this.formGroup, eStandardJobsMainFields.VesselSpecific)),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe((value) => {
+        this.setFieldEnabledAndRequired(eStandardJobsMainFields.VesselTypeID, !!value);
+      });
   }
 }
