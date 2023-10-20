@@ -7,12 +7,13 @@ import {
   GridRowActions,
   UserService,
   eGridColumnsWidth,
-  eGridRowActions
-} from 'jibe-components';
+  eGridRowActions, eFieldControlType, FormModel
+} from "jibe-components";
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
+import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from "../../../models/enums/projects-create.enum";
 
 @Injectable()
 export class ProjectsSpecificationGridService {
@@ -306,6 +307,8 @@ export class ProjectsSpecificationGridService {
     }
   ];
 
+  public createProjectFormId = 'projectCreate';
+
   constructor(
     private userService: UserService,
     private projectsService: ProjectsService
@@ -322,5 +325,124 @@ export class ProjectsSpecificationGridService {
       gridButton: this.gridButton,
       actions: this.gridActions
     };
+  }
+
+  public getCreateProjectForm(): FormModel {
+    return {
+      id: 'createNewProject',
+      label: '',
+      type: 'form',
+      sections: {
+        [this.createProjectFormId]: {
+          type: 'grid',
+          label: '',
+          formID: this.createProjectFormId,
+          gridRowStart: 1,
+          gridRowEnd: 14,
+          gridColStart: 1,
+          gridColEnd: 1,
+          fields: {
+            [eProjectsCreateFieldNames.Fleet]: {
+              label: eProjectsCreateDisplayNames.Fleet,
+              type: eFieldControlType.Dropdown,
+              sectionID: this.createProjectFormId,
+              enabled: true,
+              validatorRequired: false,
+              gridRowStart: 1,
+              gridRowEnd: 2,
+              gridColStart: 1,
+              gridColEnd: 3,
+              listRequest: {
+                webApiRequest: this.projectsService.getFleetsRequest(),
+                labelKey: 'FleetName',
+                valueKey: 'uid'
+              }
+            },
+            [eProjectsCreateFieldNames.Vessel]: {
+              label: eProjectsCreateDisplayNames.Vessel,
+              type: eFieldControlType.Dropdown,
+              sectionID: this.createProjectFormId,
+              enabled: true,
+              validatorRequired: false,
+              gridRowStart: 2,
+              gridRowEnd: 3,
+              gridColStart: 1,
+              gridColEnd: 3,
+              listRequest: {
+                webApiRequest: this.projectsService.getVesselsRequest(),
+                labelKey: 'VesselName',
+                valueKey: 'VesselUid'
+              }
+            },
+            [eProjectsCreateFieldNames.ProjectType]: {
+              label: eProjectsCreateDisplayNames.ProjectType,
+              type: eFieldControlType.Dropdown,
+              sectionID: this.createProjectFormId,
+              enabled: true,
+              validatorRequired: true,
+              gridRowStart: 3,
+              gridRowEnd: 4,
+              gridColStart: 1,
+              gridColEnd: 3,
+              listRequest: {
+                webApiRequest: this.projectsService.getProjectTypesRequest(),
+                labelKey: 'Worklist_Type',
+                valueKey: 'id'
+              }
+            },
+            [eProjectsCreateFieldNames.Subject]: {
+              label: eProjectsCreateDisplayNames.Subject,
+              type: eFieldControlType.Text,
+              sectionID: this.createProjectFormId,
+              enabled: true,
+              validatorRequired: true,
+              gridRowStart: 4,
+              gridRowEnd: 5,
+              gridColStart: 1,
+              gridColEnd: 3,
+            },
+            [eProjectsCreateFieldNames.ProjectManager]: {
+              label: eProjectsCreateDisplayNames.ProjectManager,
+              type: eFieldControlType.Dropdown,
+              sectionID: this.createProjectFormId,
+              enabled: true,
+              validatorRequired: false,
+              gridRowStart: 5,
+              gridRowEnd: 6,
+              gridColStart: 1,
+              gridColEnd: 3,
+              listRequest: {
+                webApiRequest: this.projectsService.getProjectsManagersRequest(),
+                labelKey: 'FullName',
+                valueKey: 'ManagerId'
+              }
+            },
+            [eProjectsCreateFieldNames.StartDate]: {
+              label: eProjectsCreateDisplayNames.StartDate,
+              type: eFieldControlType.Date,
+              sectionID: this.createProjectFormId,
+              enabled: true,
+              validatorRequired: true,
+              gridRowStart: 6,
+              gridRowEnd: 7,
+              gridColStart: 1,
+              gridColEnd: 3,
+            },
+            [eProjectsCreateFieldNames.EndDate]: {
+              label: eProjectsCreateDisplayNames.EndDate,
+              type: eFieldControlType.Date,
+              sectionID: this.createProjectFormId,
+              enabled: true,
+              validatorRequired: true,
+              gridRowStart: 7,
+              gridRowEnd: 8,
+              gridColStart: 1,
+              gridColEnd: 3,
+            },
+          }
+        }
+      }
+    };
+
   }
 }
