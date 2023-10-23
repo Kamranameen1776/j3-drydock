@@ -18,4 +18,10 @@ export class TECLIBWorklistTypeEntity {
         length: 50,
     })
     WorklistTypeDisplay: string;
+
+    @Column('bit', {
+        nullable: true,
+        name: 'Active_Status',
+    })
+    ActiveStatus: boolean;
 }

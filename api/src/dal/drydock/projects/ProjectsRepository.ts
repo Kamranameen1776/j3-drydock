@@ -7,6 +7,7 @@ import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { CreateProjectDto } from '../../../application-layer/drydock/projects/dtos/CreateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
+import { JMSDTLWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
 import { TECLIBWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
@@ -28,16 +29,17 @@ export class ProjectsRepository {
         const result = await projectTypeRepository
             .createQueryBuilder('pt')
             .select([
-                'distinct wdetails.[WorkflowType_ID] as ProjectStatusId',
-                'wdetails.[status_display_name] as ProjectStatusName',
-                'wdetails.Workflow_OrderID',
+                'wdetails.WorkflowTypeID as ProjectStatusId',
+                'wdetails.StatusDisplayName as ProjectStatusName',
+                'wdetails.WorkflowOrderID',
             ])
-            .innerJoin('TEC_LIB_Worklist_Type', 'wt', 'pt.[Worklist_Type] = wt.Worklist_Type')
-            .innerJoin('JMS_DTL_Workflow_config_Details', 'wdetails', 'wdetails.Config_ID = wt.ID')
+            .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
+            .innerJoin(className(JMSDTLWorkflowConfigDetailsEntity), 'wdetails', 'wdetails.ConfigId = wt.ID')
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
-            .andWhere('wdetails.Active_Status = :activeStatus', { activeStatus: 1 })
-            .andWhere('wt.Active_Status = :activeStatus', { activeStatus: 1 })
-            .orderBy('wdetails.Workflow_OrderID')
+            .andWhere('wdetails.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .andWhere('wt.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .distinctOn(['wdetails.WorkflowTypeID'])
+            .orderBy('wdetails.WorkflowOrderID')
             .execute();
 
         return result;
