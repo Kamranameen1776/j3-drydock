@@ -7,9 +7,12 @@ export interface GetStandardJobsQueryData {
     function: string;
     code: string;
     category: string;
+    categoryUid: string;
     doneBy: string;
+    doneByUid: string;
     inspection: string;
     materialSuppliedBy: string;
+    materialSuppliedByUid: string;
     vesselTypeSpecific: boolean;
     description: string;
     activeStatus: boolean;

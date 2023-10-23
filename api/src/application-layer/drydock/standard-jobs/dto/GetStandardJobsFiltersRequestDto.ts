@@ -1,9 +1,19 @@
-import { GetStandardJobsQueryData } from "./GetStandardJobsResultDto";
+import { GetStandardJobsQueryData } from './GetStandardJobsResultDto';
 
-export type GetStandardJobsFiltersRequestDto = {
-  key: StandardJobsFiltersAllowedKeys;
-}
+export type StandardJobsFiltersAllowedKeys = keyof Pick<
+    GetStandardJobsQueryData,
+    'inspection' | 'category' | 'doneBy' | 'materialSuppliedBy'
+>;
 
-export type StandardJobsFiltersAllowedKeys = keyof Pick<GetStandardJobsQueryData, 'subject' | 'inspection' | 'category'>;
+export const AllowedStandardJobsFiltersKeys: StandardJobsFiltersAllowedKeys[] = [
+    'inspection',
+    'category',
+    'materialSuppliedBy',
+    'doneBy',
+];
 
-export const AllowedStandardJobsFiltersKeys: StandardJobsFiltersAllowedKeys[] = ['subject', 'inspection', 'category'];
+export const StandardJobsLibraryValuesMap: { [key in StandardJobsFiltersAllowedKeys]?: string } = {
+    category: 'ddItemCategory',
+    doneBy: 'ddDoneBy',
+    materialSuppliedBy: 'materialSuppliedBy',
+};

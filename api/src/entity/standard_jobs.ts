@@ -28,19 +28,17 @@ export class standard_jobs {
     })
     code: string;
 
-    @Column('varchar', {
+    @Column('uuid', {
         nullable: true,
-        name: 'category',
-        length: 250,
+        name: 'category_uid',
     })
-    category: string;
+    category_uid: string;
 
-    @Column('varchar', {
+    @Column('uuid', {
         nullable: true,
-        name: 'done_by',
-        length: 250,
+        name: 'done_by_uid',
     })
-    done_by: string;
+    done_by_uid: string;
 
     @Column('varchar', {
         nullable: true,
@@ -49,12 +47,11 @@ export class standard_jobs {
     })
     inspection: string;
 
-    @Column('varchar', {
+    @Column('uuid', {
         nullable: true,
-        name: 'material_supplied_by',
-        length: 250,
+        name: 'material_supplied_by_uid',
     })
-    material_supplied_by: string;
+    material_supplied_by_uid: string;
 
     @Column('bit', {
         nullable: true,
