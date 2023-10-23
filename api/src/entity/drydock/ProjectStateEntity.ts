@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('project_state', { schema: 'dry_dock' })
-export class ProjectState {
+export class ProjectStateEntity {
     @PrimaryGeneratedColumn()
     id: string;
 
@@ -11,6 +11,12 @@ export class ProjectState {
         length: 250,
     })
     ProjectStateName: string;
+
+    @Column('uniqueidentifier', {
+        nullable: false,
+        name: 'project_type_uid',
+    })
+    ProjectTypeUid: string;
 
     @Column('datetime2', {
         nullable: true,
@@ -22,5 +28,5 @@ export class ProjectState {
         nullable: true,
         name: 'active_status',
     })
-    ActiveStatus: boolean;
+    ActiveStatus: number;
 }

@@ -12,6 +12,7 @@ import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
 import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { TECLIBWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
+import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
 import { IProjectManagersResultDto } from './dtos/IProjectManagersResultDto';
 import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
@@ -85,21 +86,21 @@ export class ProjectsRepository {
                 'pr.uid AS ProjectId',
                 'pr.CreatedAtOffice AS CreatedAtOffice',
                 'pr.ProjectCode AS ProjectCode',
-                'vessel.[Vessel_Name] AS VesselName',
-                'wt.[Worklist_Type_Display] as ProjectTypeName',
-                'wt.[Worklist_Type] as ProjectTypeCode',
+                'vessel.VesselName AS VesselName',
+                'wt.WorklistTypeDisplay as ProjectTypeName',
+                'wt.WorklistType as ProjectTypeCode',
                 'ps.ProjectStateName AS ProjectStateName',
                 'pr.Subject AS Subject',
-                `usr.[First_Name] + ' ' + usr.[Last_Name] AS ProjectManager`,
-                'usr.[uid] AS ProjectManagerUid',
+                `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
+                'usr.uid AS ProjectManagerUid',
                 'cast(pr.StartDate as datetimeoffset) AS StartDate',
                 'cast(pr.EndDate as datetimeoffset) AS EndDate',
             ])
-            .innerJoin('Lib_Vessels', 'vessel', 'pr.[Vessel_Uid] = vessel.[uid]')
-            .innerJoin('Lib_User', 'usr', '[project_manager_Uid] = usr.[uid]')
-            .innerJoin('project_type', 'pt', 'pt.[uid] = pr.[project_type_uid]')
-            .innerJoin('TEC_LIB_Worklist_Type', 'wt', 'pt.[Worklist_Type] = wt.Worklist_Type')
-            .innerJoin('project_state', 'ps', 'ps.[id] = pr.[project_state_id] and pt.[uid] = ps.[project_type_uid]')
+            .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
+            .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
+            .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = pr.ProjectTypeUid')
+            .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
+            .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
             .where('pr.ActiveStatus = 1')
             .getQuery();
 
