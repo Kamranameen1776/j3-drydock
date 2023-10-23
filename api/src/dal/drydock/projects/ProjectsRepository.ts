@@ -6,6 +6,8 @@ import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { CreateProjectDto } from '../../../application-layer/drydock/projects/dtos/CreateProjectDto';
+import { className } from '../../../common/drydock/ts-helpers/className';
+import { TECLIBWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
 import { IProjectManagersResultDto } from './dtos/IProjectManagersResultDto';
@@ -56,7 +58,7 @@ export class ProjectsRepository {
                 'wt.WorklistTypeDisplay as ProjectTypeName',
                 'pt.ShortCode as ProjectTypeShortCode',
             ])
-            .innerJoin('TECLIBWorklistTypeEntity', 'wt', 'pt.WorklistType = wt.WorklistType')
+            .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .execute();
 
