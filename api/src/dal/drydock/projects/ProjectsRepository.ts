@@ -52,11 +52,11 @@ export class ProjectsRepository {
         const result = await projectTypeRepository
             .createQueryBuilder('pt')
             .select([
-                'pt.Worklist_Type as ProjectTypeCode',
-                'wt.Worklist_Type_Display as ProjectTypeName',
-                'pt.short_code as ProjectTypeShortCode',
+                'pt.WorklistType as ProjectTypeCode',
+                'wt.WorklistTypeDisplay as ProjectTypeName',
+                'pt.ShortCode as ProjectTypeShortCode',
             ])
-            .innerJoin('TEC_LIB_Worklist_Type', 'wt', 'pt.Worklist_Type = wt.Worklist_Type')
+            .innerJoin('TECLIBWorklistTypeEntity', 'wt', 'pt.WorklistType = wt.WorklistType')
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .execute();
 
