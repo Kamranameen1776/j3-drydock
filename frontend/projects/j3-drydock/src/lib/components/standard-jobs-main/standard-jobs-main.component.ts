@@ -11,11 +11,12 @@ import {
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { StandardJobsGridService } from './StandardJobsGridService';
-import { of } from 'rxjs';
 import { FunctionsTreeNode } from '../../models/interfaces/functions-tree-node';
 import { StandardJobUpsertFormService } from './upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
+import { getSmallPopup } from '../../models/constants/popup';
+import { StandardJobsService } from '../../services/StandardJobsService';
 
 @Component({
   selector: 'jb-standard-jobs-main',
@@ -28,12 +29,20 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
 
   public isUpsertPopupVisible = false;
 
+  public isConfirmDeleteVisible = false;
+
   public currentRow: StandardJobResult;
 
   public gridRowActions: GridRowActions[] = [];
 
+  public confirmationPopUp = {
+    ...getSmallPopup(),
+    dialogHeader: 'Delete Standard Job'
+  };
+
   constructor(
     private standardJobsGridService: StandardJobsGridService,
+    private standardJobsService: StandardJobsService,
     private upsertFormService: StandardJobUpsertFormService,
     private gridService: GridService,
     private cds: CentralizedDataService,
@@ -53,8 +62,7 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     switch (type) {
       case eGridRowActions.DoubleClick:
       case eGridRowActions.Edit:
-        this.isUpsertPopupVisible = true;
-        this.currentRow = <StandardJobResult>payload;
+        this.editRow(<StandardJobResult>payload);
         break;
 
       case this.gridInputs.gridButton.label:
@@ -62,12 +70,20 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
         break;
 
       case eGridRowActions.Delete:
-        this.delete(<StandardJobResult>payload);
+        this.deleteRow(<StandardJobResult>payload);
         break;
 
       default:
         break;
     }
+  }
+
+  public onConfirmDeleteOk() {
+    this.deleteStandardJob();
+  }
+
+  public onConfirmDeleteCancel() {
+    this.isConfirmDeleteVisible = false;
   }
 
   public onCloseUpsertPopup(hasSaved: boolean) {
@@ -77,6 +93,16 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     if (hasSaved) {
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);
     }
+  }
+
+  private editRow(row: StandardJobResult) {
+    this.currentRow = row;
+    this.isUpsertPopupVisible = true;
+  }
+
+  private deleteRow(row: StandardJobResult) {
+    this.isConfirmDeleteVisible = true;
+    this.currentRow = row;
   }
 
   private setGridRowActions(): void {
@@ -102,13 +128,6 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     //TODO
   }
 
-  private delete(record: StandardJobResult) {
-    // TODO, check status if inActive - return
-    of(record).subscribe(() => {
-      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);
-    });
-  }
-
   private loadFunctionsTree() {
     // TODO fixme to generic request with no vessel_uid
     const vesselUid = this.cds.userDetails?.vessel_uid ?? '3EEF2E1B-2533-45C7-82C7-C13D6AA79559';
@@ -128,5 +147,13 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
         return { ...rec, selectable: rec.isParentComponent === 3 };
       })
     );
+  }
+
+  private deleteStandardJob() {
+    this.standardJobsService.deleteStandardJob(this.currentRow.uid).subscribe(() => {
+      this.isConfirmDeleteVisible = false;
+      this.currentRow = undefined;
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);
+    });
   }
 }

@@ -19,6 +19,19 @@ export class StandardJobsService {
     return apiRequest;
   }
 
+  public deleteStandardJob(uid: string) {
+    const apiReq: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      crud: eCrud.Post,
+      action: 'standard-jobs/delete-standard-jobs',
+      body: {
+        uid
+      }
+    };
+    return this.apiRequestService.sendApiReq(apiReq);
+  }
+
   public getStandardJobsFiltersRequest(fieldName: eStandardJobsMainFields) {
     const apiRequest: WebApiRequest = {
       // TODO:update jibe lib
