@@ -14,8 +14,8 @@ import { TECLIBWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWork
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
-import { IProjectManagersResultDto } from './dtos/IProjectManagersResultDto';
 import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
+import { IProjectsManagersResultDto } from './dtos/IProjectsManagersResultDto';
 import { IProjectStatusResultDto } from './dtos/IProjectStatusResultDto';
 import { IProjectTypeResultDto } from './dtos/IProjectTypeResultDto';
 import { IProjectVesselsResultDto } from './dtos/IProjectVesselsResultDto';
@@ -115,12 +115,12 @@ export class ProjectsRepository {
      * Loads projects managers, project managers assigned to projects
      * @returns Project managers
      */
-    public async GetProjectsManagers(): Promise<IProjectManagersResultDto[]> {
+    public async GetProjectsManagers(): Promise<IProjectsManagersResultDto[]> {
         const projectRepository = getManager().getRepository(ProjectEntity);
 
         const result = await projectRepository
             .createQueryBuilder('pr')
-            .select(['usr.uid as LibUserUid', 'usr.FirstName as FirstName', 'usr.LastName as LastName'])
+            .select(['usr.uid as LibUserUid', `usr.FirstName + ' ' + usr.LastName as FullName`])
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
             .where('pr.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .execute();
