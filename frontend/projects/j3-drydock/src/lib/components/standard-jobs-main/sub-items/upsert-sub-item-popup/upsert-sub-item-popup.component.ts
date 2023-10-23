@@ -62,7 +62,7 @@ export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements
   }
 
   private setPopupFooter() {
-    this.okLabel = this.isEditing ? 'Update' : 'Create';
+    this.okLabel = this.isEditing ? 'Update' : 'Save';
   }
 
   private closePopup(isSaved = false) {
