@@ -65,6 +65,14 @@ export class StandardJobsGridService {
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
+    },
+    {
+      DisableSort: true,
+      DisplayText: eStandardJobsMainLabels.Status,
+      FieldName: eStandardJobsMainFields.Status,
+      IsActive: true,
+      IsMandatory: true,
+      IsVisible: true
     }
   ];
 

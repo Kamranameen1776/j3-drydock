@@ -58,11 +58,11 @@ export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements
   }
 
   private setPopupHeader() {
-    this.popupConfig.dialogHeader = !this.isEditing ? 'Create New Sub Item' : 'Update Sub tem';
+    this.popupConfig.dialogHeader = !this.isEditing ? 'Add Sub Item' : 'Update Sub Item';
   }
 
   private setPopupFooter() {
-    this.okLabel = this.isEditing ? 'Update' : 'Create';
+    this.okLabel = this.isEditing ? 'Update' : 'Save';
   }
 
   private closePopup(isSaved = false) {

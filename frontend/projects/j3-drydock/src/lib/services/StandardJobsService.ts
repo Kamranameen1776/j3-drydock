@@ -19,6 +19,33 @@ export class StandardJobsService {
     return apiRequest;
   }
 
+  public deleteStandardJob(uid: string) {
+    const apiReq: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      crud: eCrud.Post,
+      action: 'standard-jobs/delete-standard-jobs',
+      body: {
+        uid
+      }
+    };
+    return this.apiRequestService.sendApiReq(apiReq);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  upsertStandardJob(uid: string, formValue: any) {
+    const body = this.getUpsertStandardJobBody(uid, formValue);
+    const action = uid ? 'standard-jobs/update-standard-jobs' : 'standard-jobs/create-standard-jobs';
+    const apiReq: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      crud: eCrud.Post,
+      action: action,
+      body: body
+    };
+    return this.apiRequestService.sendApiReq(apiReq);
+  }
+
   public getStandardJobsFiltersRequest(fieldName: eStandardJobsMainFields) {
     const apiRequest: WebApiRequest = {
       // TODO:update jibe lib
@@ -72,5 +99,14 @@ export class StandardJobsService {
       params: `job_uid=${jobUid}`
     };
     return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private getUpsertStandardJobBody(uid: string, formValue: any) {
+    return {
+      ...formValue,
+      [eStandardJobsMainFields.UID]: uid || '',
+      [eStandardJobsMainFields.Status]: uid ? formValue[eStandardJobsMainFields.Status] : true
+    };
   }
 }

@@ -7,6 +7,7 @@ import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SubItemsGridService } from './SubItemsGridService';
 import { StandardJobsService } from '../../../services/StandardJobsService';
 import { takeUntil } from 'rxjs/operators';
+import { getSmallPopup } from '../../../models/constants/popup';
 
 @Component({
   selector: 'jb-drydock-sub-items',
@@ -16,6 +17,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class SubItemsComponent extends UnsubscribeComponent implements OnChanges, OnInit {
   @Input() jobUid: string;
+
   @Input() functionUid: string;
 
   public gridInputs: GridInputsWithData<SubItem>;
@@ -27,6 +29,13 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
   public gridRowActions: GridRowActions[] = [];
 
   public subItems: SubItem[];
+
+  public confirmationPopUp = {
+    ...getSmallPopup(),
+    dialogHeader: 'Delete Sub Item'
+  };
+
+  public isConfirmDeleteVisible = false;
 
   constructor(
     private subItemsGridService: SubItemsGridService,
@@ -53,11 +62,10 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
         this.isUpsertPopupVisible = true;
         break;
       case eGridRowActions.Edit:
-        this.isUpsertPopupVisible = true;
-        this.currentRow = <SubItem>payload;
+        this.editRow(<SubItem>payload);
         break;
       case eGridRowActions.Delete:
-        this.delete(<SubItem>payload);
+        this.deleteRow(<SubItem>payload);
         break;
       default:
         break;
@@ -71,6 +79,24 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
     if (hasSaved) {
       // TODO insert new subitem to grid
     }
+  }
+
+  public onConfirmDeleteOk() {
+    this.delete(this.currentRow);
+  }
+
+  public onConfirmDeleteCancel() {
+    this.isConfirmDeleteVisible = false;
+  }
+
+  private editRow(row: SubItem) {
+    this.currentRow = row;
+    this.isUpsertPopupVisible = true;
+  }
+
+  private deleteRow(row: SubItem) {
+    this.currentRow = row;
+    this.isConfirmDeleteVisible = true;
   }
 
   private delete(record: SubItem) {
