@@ -41,6 +41,7 @@ export class ProjectsRepository {
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('wdetails.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('wt.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .andWhere('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .distinctOn(['wdetails.WorkflowTypeID'])
             .orderBy('wdetails.WorkflowOrderID')
             .execute();
