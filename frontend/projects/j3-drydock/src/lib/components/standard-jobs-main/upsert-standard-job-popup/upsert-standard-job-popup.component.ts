@@ -1,16 +1,17 @@
 import { StandardJobResult } from './../../../models/interfaces/standard-jobs';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { getSmallPopup } from '../../../models/constants/popup';
-import { IJbDialog } from 'jibe-components';
+import { IJbAttachment, IJbDialog, eAttachmentButtonTypes } from 'jibe-components';
 import { UpsertStandardJobFormComponent } from '../upsert-standard-job-form/upsert-standard-job-form.component';
 import { StandardJobUpsertFormService } from '../upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 
 @Component({
   selector: 'jb-upsert-standard-job-popup',
-  templateUrl: './upsert-standard-job-popup.component.html'
+  templateUrl: './upsert-standard-job-popup.component.html',
+  styleUrls: ['./upsert-standard-job-popup.component.scss']
 })
-export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implements OnChanges {
+export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implements OnChanges, OnInit {
   @Input() item: StandardJobResult;
   @Input() isOpen: boolean;
   @Output() closeDialog = new EventEmitter<boolean>();
@@ -32,6 +33,13 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   public get jobFormValue() {
     return this.popupForm?.formGroup.getRawValue()[this.formService.formId];
   }
+  // TODO fixme to relevant values and use them from eModuleCode and eFunctionCode from jibe-components
+  public attachmentConfig: IJbAttachment = { Module_Code: 'j3_drydock', Function_Code: 'standard_jobs' };
+
+  public attachmentButton = {
+    buttonLabel: 'Add New',
+    buttonType: eAttachmentButtonTypes.NoButton
+  };
 
   constructor(private formService: StandardJobUpsertFormService) {
     super();
@@ -44,6 +52,10 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     }
   }
 
+  ngOnInit(): void {
+    this.setAttachmentConfig();
+  }
+
   onClosePopup() {
     this.closePopup();
   }
@@ -54,6 +66,15 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   onIsFormValid(isValid: boolean) {
     this.isPopupValid = isValid;
+  }
+
+  // TODO fixme to relevant values and use them from eModuleCode and eFunctionCode from jibe-components
+  private setAttachmentConfig() {
+    this.attachmentConfig = {
+      Module_Code: 'j3_drydock',
+      Function_Code: 'standard_jobs',
+      Key1: this.item.uid
+    };
   }
 
   private setPopupHeader() {

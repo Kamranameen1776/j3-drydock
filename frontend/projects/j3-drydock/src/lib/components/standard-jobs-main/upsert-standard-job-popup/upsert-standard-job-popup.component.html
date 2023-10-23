@@ -18,7 +18,15 @@
           [functionUid]="jobFormValue?.Subject"
         ></jb-drydock-sub-items>
       </p-tabPanel>
-      <p-tabPanel header="Attachment">Attachments here</p-tabPanel>
+      <p-tabPanel header="Attachment">
+        <jb-attachments
+          class="attachments"
+          [attachConfig]="attachmentConfig"
+          [onUploadBtn]="true"
+          [buttonDesign]="attachmentButton"
+          [defaultActions]="true"
+        ></jb-attachments>
+      </p-tabPanel>
     </p-tabView>
   </div>
 
