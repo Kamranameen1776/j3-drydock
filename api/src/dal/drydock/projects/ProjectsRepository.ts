@@ -8,6 +8,8 @@ import { getConnection, getManager, QueryRunner } from 'typeorm';
 import { CreateProjectDto } from '../../../application-layer/drydock/projects/dtos/CreateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { JMSDTLWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
+import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
+import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { TECLIBWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
@@ -117,8 +119,8 @@ export class ProjectsRepository {
 
         const result = await projectRepository
             .createQueryBuilder('pr')
-            .select(['usr.[uid] as LibUserUid', 'usr.[First_Name] as FirstName', 'usr.[Last_Name] as LastName'])
-            .innerJoin('Lib_User', 'usr', 'pr.[project_manager_Uid] = usr.[uid]')
+            .select(['usr.uid as LibUserUid', 'usr.FirstName as FirstName', 'usr.LastName as LastName'])
+            .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
             .where('pr.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .execute();
 
@@ -134,8 +136,8 @@ export class ProjectsRepository {
 
         const result = await projectRepository
             .createQueryBuilder('pr')
-            .select(['vessel.[uid] as LibUserUid', 'vessel.[Name] as Name'])
-            .innerJoin('Lib_Vessels', 'vessel', 'pr.[Vessel_Uid] = vessel.[uid]')
+            .select(['vessel.uid as VesselUid', 'vessel.VesselName as Name'])
+            .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .where('pr.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .execute();
 
