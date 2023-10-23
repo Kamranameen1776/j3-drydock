@@ -12,26 +12,26 @@ export class ProjectEntity {
     })
     ProjectCode: string;
 
-    @Column('bit',{
+    @Column('bit', {
         name: 'created_at_office',
         default: true,
         nullable: false,
     })
     CreatedAtOffice: boolean;
 
-    @Column('uniqueidentifier',{
+    @Column('uniqueidentifier', {
         nullable: false,
         name: 'Vessel_Uid',
     })
     VesselUid: string;
-    
-    @Column('uniqueidentifier',{
+
+    @Column('uniqueidentifier', {
         nullable: false,
         name: 'project_type_uid',
     })
     ProjectTypeUid: string;
 
-    @Column('int',{
+    @Column('int', {
         nullable: false,
         name: 'project_state_id',
     })
@@ -43,7 +43,7 @@ export class ProjectEntity {
         length: 250,
     })
     Subject: string;
-    
+
     @Column('uniqueidentifier', {
         name: 'project_manager_Uid',
         nullable: false,

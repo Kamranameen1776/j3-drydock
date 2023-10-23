@@ -71,33 +71,33 @@ export class ProjectsRepository {
      * @returns Projects for the main page
      */
     public async GetProjectsForMainPage(data: Request): Promise<ODataResult<IProjectsForMainPageRecordDto>> {
+        const projectRepository = getManager().getRepository(ProjectEntity);
+
+        const query = projectRepository
+            .createQueryBuilder('pr')
+            .select([
+                'pr.uid AS ProjectId',
+                'pr.CreatedAtOffice AS CreatedAtOffice',
+                'pr.ProjectCode AS ProjectCode',
+                'vessel.[Vessel_Name] AS VesselName',
+                'wt.[Worklist_Type_Display] as ProjectTypeName',
+                'wt.[Worklist_Type] as ProjectTypeCode',
+                'ps.ProjectStateName AS ProjectStateName',
+                'pr.Subject AS Subject',
+                `usr.[First_Name] + ' ' + usr.[Last_Name] AS ProjectManager`,
+                'usr.[uid] AS ProjectManagerUid',
+                'cast(pr.StartDate as datetimeoffset) AS StartDate',
+                'cast(pr.EndDate as datetimeoffset) AS EndDate',
+            ])
+            .innerJoin('Lib_Vessels', 'vessel', 'pr.[Vessel_Uid] = vessel.[uid]')
+            .innerJoin('Lib_User', 'usr', '[project_manager_Uid] = usr.[uid]')
+            .innerJoin('project_type', 'pt', 'pt.[uid] = pr.[project_type_uid]')
+            .innerJoin('TEC_LIB_Worklist_Type', 'wt', 'pt.[Worklist_Type] = wt.Worklist_Type')
+            .innerJoin('project_state', 'ps', 'ps.[id] = pr.[project_state_id] and pt.[uid] = ps.[project_type_uid]')
+            .where('pr.ActiveStatus = 1')
+            .getQuery();
+
         const oDataService = new ODataService(data, getConnection);
-
-        const query = `
-        SELECT pr.[uid] AS 'ProjectId'
-        ,pr.[created_at_office] AS 'CreatedAtOffice'
-        ,pr.[project_code] AS 'ProjectCode'
-        ,vessel.[Vessel_Name] AS 'VesselName'
-        ,wt.[Worklist_Type_Display] as ProjectTypeName			
-        ,wt.[Worklist_Type] as ProjectTypeCode
-        ,ps.[project_state_name] AS 'ProjectStateName'
-        ,pr.[subject] AS 'Subject'
-        ,usr.[First_Name] + ' ' + usr.[Last_Name] AS 'ProjectManager'
-        ,usr.[uid] AS 'ProjectManagerUid'
-        ,cast(pr.[start_date] as datetimeoffset) AS 'StartDate'
-        ,cast(pr.[end_date] as datetimeoffset) AS 'EndDate'
-    FROM [dry_dock].[project] as pr
-
-    INNER JOIN [Lib_Vessels] as vessel ON pr.[Vessel_Uid] = vessel.[uid]
-    INNER JOIN [Lib_User] as usr ON [project_manager_Uid] = usr.[uid]
-    INNER JOIN [dry_dock].[project_type] as pt ON pt.[uid] = pr.[project_type_uid]
-    INNER JOIN TEC_LIB_Worklist_Type as wt on pt.[Worklist_Type] = wt.Worklist_Type
-    INNER JOIN [dry_dock].[project_state] as ps ON ps.[id] = pr.[project_state_id] 
-        and pt.[uid] = ps.[project_type_uid]
-    
-
-    WHERE pr.[active_status] = 1
-                `;
 
         const result = await oDataService.getJoinResult(query);
 
