@@ -5,6 +5,9 @@ import { IJbAttachment, IJbDialog, eAttachmentButtonTypes } from 'jibe-component
 import { UpsertStandardJobFormComponent } from '../upsert-standard-job-form/upsert-standard-job-form.component';
 import { StandardJobUpsertFormService } from '../upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
+import { StandardJobsService } from '../../../services/StandardJobsService';
+import { finalize } from 'rxjs/operators';
+import { GrowlMessageService } from '../../../services/GrowlMessageService';
 
 @Component({
   selector: 'jb-upsert-standard-job-popup',
@@ -41,7 +44,11 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     buttonType: eAttachmentButtonTypes.NoButton
   };
 
-  constructor(private formService: StandardJobUpsertFormService) {
+  constructor(
+    private formService: StandardJobUpsertFormService,
+    private standardJobsService: StandardJobsService,
+    private growlMessageService: GrowlMessageService
+  ) {
     super();
   }
 
@@ -98,18 +105,24 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
     this.isSaving = true;
 
-    // this.projectsLibraryService.upsertProjectRecord(this.item?.uid, value).pipe(
-    //   finalize(() => {
-    //     this.isSaving = false;
-    //   })
-    // ).subscribe(res => {
-    //   this.closePopup(true);
-    // }, err => {
-    //   if (err?.status === 422) {
-    //     this.growlMessageService.setValidationErrorMessage(err.error);
-    //   } else {
-    //     this.growlMessageService.setValidationErrorMessage('Server error occured');
-    //   }
-    // });
+    this.standardJobsService
+      .upsertStandardJob(this.item?.uid, value)
+      .pipe(
+        finalize(() => {
+          this.isSaving = false;
+        })
+      )
+      .subscribe(
+        () => {
+          this.closePopup(true);
+        },
+        (err) => {
+          if (err?.status === 422) {
+            this.growlMessageService.setErrorMessage(err.error);
+          } else {
+            this.growlMessageService.setErrorMessage('Server error occured');
+          }
+        }
+      );
   }
 }

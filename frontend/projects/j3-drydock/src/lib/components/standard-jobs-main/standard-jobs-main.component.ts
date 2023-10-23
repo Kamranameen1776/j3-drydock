@@ -17,12 +17,13 @@ import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../models/constants/popup';
 import { StandardJobsService } from '../../services/StandardJobsService';
+import { GrowlMessageService } from '../../services/GrowlMessageService';
 
 @Component({
   selector: 'jb-standard-jobs-main',
   templateUrl: './standard-jobs-main.component.html',
   styleUrls: ['./standard-jobs-main.component.scss'],
-  providers: [StandardJobsGridService]
+  providers: [StandardJobsGridService, GrowlMessageService]
 })
 export class StandardJobsMainComponent extends UnsubscribeComponent implements OnInit {
   public gridInputs: GridInputsWithRequest;
@@ -40,13 +41,16 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     dialogHeader: 'Delete Standard Job'
   };
 
+  public growlMessage$ = this.growlMessageService.growlMessage$;
+
   constructor(
     private standardJobsGridService: StandardJobsGridService,
     private standardJobsService: StandardJobsService,
     private upsertFormService: StandardJobUpsertFormService,
     private gridService: GridService,
     private cds: CentralizedDataService,
-    private techApiSvc: JmsTechApiService
+    private techApiSvc: JmsTechApiService,
+    private growlMessageService: GrowlMessageService
   ) {
     super();
   }
