@@ -21,25 +21,22 @@ export class ProjectsRepository {
      * @returns Project statuses
      */
     public async GetProjectStatuses(): Promise<IProjectStatusResultDto[]> {
-        const result = await getManager().query(
-            `
-            SELECT distinct wdetails.[WorkflowType_ID] as ProjectStatusId,
-            wdetails.[status_display_name] as ProjectStatusName,
-            wdetails.Workflow_OrderID
-            
-        FROM JMS_DTL_Workflow_config_Details as wdetails
-        
-        INNER JOIN TEC_LIB_Worklist_Type as wt on wdetails.Config_ID = wt.ID
-        INNER JOIN [dry_dock].[project_type] as pt on pt.[Worklist_Type] = wt.Worklist_Type
-        
-        WHERE wt.Active_Status=1
-            AND wdetails.Active_Status=1
-            AND pt.[active_status] = 1
-        
-        ORDER BY wdetails.Workflow_OrderID
-        
-            `,
-        );
+        const projectTypeRepository = getManager().getRepository(ProjectTypeEntity);
+
+        const result = await projectTypeRepository
+            .createQueryBuilder('pt')
+            .select([
+                'distinct wdetails.[WorkflowType_ID] as ProjectStatusId',
+                'wdetails.[status_display_name] as ProjectStatusName',
+                'wdetails.Workflow_OrderID',
+            ])
+            .innerJoin('TEC_LIB_Worklist_Type', 'wt', 'pt.[Worklist_Type] = wt.Worklist_Type')
+            .innerJoin('JMS_DTL_Workflow_config_Details', 'wdetails', 'wdetails.Config_ID = wt.ID')
+            .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .andWhere('wdetails.Active_Status = :activeStatus', { activeStatus: 1 })
+            .andWhere('wt.Active_Status = :activeStatus', { activeStatus: 1 })
+            .orderBy('wdetails.Workflow_OrderID')
+            .execute();
 
         return result;
     }
@@ -62,29 +59,6 @@ export class ProjectsRepository {
             .innerJoin('TEC_LIB_Worklist_Type', 'wt', 'pt.Worklist_Type = wt.Worklist_Type')
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .execute();
-
-        return result;
-    }
-
-    /**
-     * Loads project states
-     * @example Specification, Yard Selection, Report
-     * @returns Project states
-     */
-    public async GetProjectStates(): Promise<undefined> {
-        const result = await getManager().query(
-            `
-            SELECT [id]
-            ,[project_state_name]
-        FROM [JIBE_Main].[dry_dock].[project_state]
-      
-        -- TODO: pass the project type id as a parameter
-        WHERE [project_type_uid] = '4EED7101-6E90-4F58-9E92-3E5E17C10EFA'
-        AND [active_status] = 1
-            `,
-        );
-
-        // TODO: map to the dto
 
         return result;
     }
