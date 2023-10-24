@@ -66,15 +66,15 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     this.setAttachmentConfig();
   }
 
-  onClosePopup() {
+  public onClosePopup() {
     this.closePopup();
   }
 
-  onOkPopup() {
+  public onOkPopup() {
     this.save();
   }
 
-  onIsFormValid(isValid: boolean) {
+  public onIsFormValid(isValid: boolean) {
     this.isPopupValid = isValid;
   }
 

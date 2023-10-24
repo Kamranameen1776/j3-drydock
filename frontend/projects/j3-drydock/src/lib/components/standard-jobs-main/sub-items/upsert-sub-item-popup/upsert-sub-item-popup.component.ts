@@ -45,15 +45,15 @@ export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements
     }
   }
 
-  onClosePopup() {
+  public onClosePopup() {
     this.closePopup();
   }
 
-  onOkPopup() {
+  public onOkPopup() {
     this.save();
   }
 
-  onIsFormValid(isValid: boolean) {
+  public onIsFormValid(isValid: boolean) {
     this.isPopupValid = isValid;
   }
 
