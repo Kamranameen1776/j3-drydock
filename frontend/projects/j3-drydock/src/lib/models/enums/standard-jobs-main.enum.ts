@@ -37,5 +37,10 @@ export enum eStandardJobsMainFields {
   VesselTypeID = 'vesselTypeId',
   Description = 'description',
   Scope = 'Scope',
-  Status = 'Status'
+  Status = 'activeStatus'
+}
+
+export enum eStandardJobsMainStatus {
+  Active = 'Active',
+  InActive = 'In Active'
 }

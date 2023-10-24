@@ -187,7 +187,7 @@ export class StandardJobsGridService {
       listValueKey: 'value'
     },
     [eStandardJobsMainFields.Status]: {
-      webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Status),
+      list: this.standardJobsService.getStatusList(),
       type: eFieldControlType.MultiSelect,
       odataKey: eStandardJobsMainFields.Status,
       listValueKey: 'value'

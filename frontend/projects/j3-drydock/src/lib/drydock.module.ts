@@ -16,6 +16,8 @@ import { FunctionsTreeSelectComponent } from './shared/components/functions-tree
 import { SubItemsComponent } from './components/standard-jobs-main/sub-items/sub-items.component';
 import { UpsertSubItemFormComponent } from './components/standard-jobs-main/sub-items/upsert-sub-item-form/upsert-sub-item-form.component';
 import { UpsertSubItemPopupComponent } from './components/standard-jobs-main/sub-items/upsert-sub-item-popup/upsert-sub-item-popup.component';
+import { StandardJobsStatusNamePipe } from './components/standard-jobs-main/pipes/status-name.pipe';
+import { StandardJobsStatusColorPipe } from './components/standard-jobs-main/pipes/status-color.pipe';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -37,7 +39,9 @@ export function winEnv(): unknown {
     FunctionsTreeSelectComponent,
     SubItemsComponent,
     UpsertSubItemFormComponent,
-    UpsertSubItemPopupComponent
+    UpsertSubItemPopupComponent,
+    StandardJobsStatusNamePipe,
+    StandardJobsStatusColorPipe
   ],
   imports: [
     CommonModule,
