@@ -1,7 +1,7 @@
 import { StandardJobResult } from './../../../models/interfaces/standard-jobs';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { getSmallPopup } from '../../../models/constants/popup';
-import { IJbAttachment, IJbDialog, eAttachmentButtonTypes } from 'jibe-components';
+import { FormModel, IJbAttachment, IJbDialog, eAttachmentButtonTypes } from 'jibe-components';
 import { UpsertStandardJobFormComponent } from '../upsert-standard-job-form/upsert-standard-job-form.component';
 import { StandardJobUpsertFormService } from '../upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
@@ -44,10 +44,13 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     buttonType: eAttachmentButtonTypes.NoButton
   };
 
+  public formStructure: FormModel = this.popupFormService.formStructure;
+
   constructor(
     private formService: StandardJobUpsertFormService,
     private standardJobsService: StandardJobsService,
-    private growlMessageService: GrowlMessageService
+    private growlMessageService: GrowlMessageService,
+    private popupFormService: StandardJobUpsertFormService
   ) {
     super();
   }

@@ -16,13 +16,13 @@ import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-mai
 export class UpsertStandardJobFormComponent extends UnsubscribeComponent implements OnInit {
   @Input() item: StandardJobResult;
 
+  @Input() formStructure: FormModel;
+
   @ViewChild('treeTemplate', { static: true }) treeTemplate: TemplateRef<unknown>;
 
   @Output() formValid = new EventEmitter<boolean>();
   // can be used from parent to get formvalue when submitting
   public formGroup: FormGroup;
-
-  public formStructure: FormModel;
 
   public formValues: FormValues;
 
@@ -39,7 +39,6 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
   }
 
   ngOnInit(): void {
-    this.initFormStructure();
     this.initFormValues();
     this.setFunctionConfig();
   }
@@ -57,10 +56,6 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
       this.popupFormService.setEnabled(this.formGroup, eStandardJobsMainFields.Function, false);
       this.popupFormService.setEnabled(this.formGroup, eStandardJobsMainFields.ItemNumber, false);
     }
-  }
-
-  private initFormStructure() {
-    this.formStructure = this.popupFormService.formStructure;
   }
 
   private initFormValues() {

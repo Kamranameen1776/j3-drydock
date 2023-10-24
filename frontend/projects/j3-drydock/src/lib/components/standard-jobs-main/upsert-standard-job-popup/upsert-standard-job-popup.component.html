@@ -8,6 +8,7 @@
       <p-tabPanel header="General Information">
         <jb-upsert-standard-job-form
           [item]="item"
+          [formStructure]="formStructure"
           (formValid)="onIsFormValid($event)"
         ></jb-upsert-standard-job-form>
       </p-tabPanel>
