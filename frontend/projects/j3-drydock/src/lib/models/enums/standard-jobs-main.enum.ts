@@ -19,7 +19,7 @@ export enum eStandardJobsMainLabels {
 
 export enum eStandardJobsMainFields {
   ItemNumber = 'code',
-  SubjectExtended = 'subject',
+  Subject = 'subject',
   VesselType = 'vesselType',
   ItemCategory = 'category',
   Inspection = 'inspection',
@@ -29,7 +29,6 @@ export enum eStandardJobsMainFields {
   UID = 'uid',
 
   Function = 'function',
-  Subject = 'Subject',
   ItemCategoryID = 'categoryUid',
   InspectionID = 'InspectionID',
   MaterialSuppliedByID = 'materialSuppliedByUid',

@@ -21,7 +21,7 @@ export class StandardJobsGridService {
     {
       DisableSort: true,
       DisplayText: eStandardJobsMainLabels.Subject,
-      FieldName: eStandardJobsMainFields.SubjectExtended,
+      FieldName: eStandardJobsMainFields.Subject,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
