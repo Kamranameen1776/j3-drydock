@@ -74,21 +74,6 @@ export class StandardJobsService {
     };
     return apiRequest;
   }
-  // TODO check it ( taken form RaisedBY )
-  public getDoneByRequest(): WebApiRequest {
-    const apiRequest: WebApiRequest = {
-      apiBase: eApiBase.MasterAPI,
-      entity: eEntities.Master,
-      crud: eCrud.Get,
-      action: 'datasource/getDatasource',
-      params: 'dataSourceName=jms_assigner',
-      odata: {
-        filter: ODataFilterBuilder().eq(eJMSFilterDataKeys.ActiveStatus, 1),
-        orderby: 'VALUE'
-      }
-    };
-    return apiRequest;
-  }
 
   public getJobSubItems(jobUid: string) {
     const apiRequest: WebApiRequest = {

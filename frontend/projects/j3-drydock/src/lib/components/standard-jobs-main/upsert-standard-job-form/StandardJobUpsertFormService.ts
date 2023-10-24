@@ -76,8 +76,8 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridColStart: 1,
             gridColEnd: 2,
             listRequest: {
-              labelKey: 'label',
-              valueKey: 'value',
+              labelKey: 'displayName',
+              valueKey: 'uid',
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory)
             }
           },
@@ -92,8 +92,8 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridColStart: 2,
             gridColEnd: 3,
             listRequest: {
-              labelKey: 'label',
-              valueKey: 'value',
+              labelKey: 'displayName',
+              valueKey: 'uid',
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection)
             }
           },
@@ -108,8 +108,8 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridColStart: 1,
             gridColEnd: 2,
             listRequest: {
-              labelKey: 'label',
-              valueKey: 'value',
+              labelKey: 'displayName',
+              valueKey: 'uid',
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.MaterialSuppliedBy)
             }
           },
@@ -124,8 +124,8 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridColStart: 2,
             gridColEnd: 3,
             listRequest: {
-              labelKey: 'label',
-              valueKey: 'value',
+              labelKey: 'displayName',
+              valueKey: 'uid',
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.DoneBy)
             }
           },

@@ -98,7 +98,7 @@ export class StandardJobsGridService {
       FieldName: eStandardJobsMainFields.ItemCategory,
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      DisplayCode: 'label',
+      DisplayCode: 'displayName',
       FieldID: 2,
       gridName: this.gridName,
       default: true
@@ -108,7 +108,7 @@ export class StandardJobsGridService {
       FieldName: eStandardJobsMainFields.Inspection,
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      DisplayCode: 'label',
+      DisplayCode: 'displayName',
       FieldID: 3,
       gridName: this.gridName,
       default: true
@@ -118,7 +118,7 @@ export class StandardJobsGridService {
       FieldName: eStandardJobsMainFields.DoneBy,
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      DisplayCode: 'label',
+      DisplayCode: 'displayName',
       FieldID: 4,
       gridName: this.gridName,
       default: true
@@ -128,7 +128,7 @@ export class StandardJobsGridService {
       FieldName: eStandardJobsMainFields.MaterialSuppliedBy,
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      DisplayCode: 'label',
+      DisplayCode: 'displayName',
       FieldID: 5,
       gridName: this.gridName,
       default: true
@@ -166,25 +166,25 @@ export class StandardJobsGridService {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory),
       type: eFieldControlType.MultiSelect,
       odataKey: eStandardJobsMainFields.ItemCategory,
-      listValueKey: 'value'
+      listValueKey: 'uid'
     },
     [eStandardJobsMainFields.Inspection]: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection),
       type: eFieldControlType.MultiSelect,
       odataKey: eStandardJobsMainFields.Inspection,
-      listValueKey: 'value'
+      listValueKey: 'uid'
     },
     [eStandardJobsMainFields.DoneBy]: {
-      webApiRequest: this.standardJobsService.getDoneByRequest(),
+      webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.DoneBy),
       type: eFieldControlType.MultiSelect,
       odataKey: eStandardJobsMainFields.DoneBy,
-      listValueKey: 'ID'
+      listValueKey: 'uid'
     },
     [eStandardJobsMainFields.MaterialSuppliedBy]: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.MaterialSuppliedBy),
       type: eFieldControlType.MultiSelect,
-      odataKey: eStandardJobsMainFields.MaterialSuppliedBy,
-      listValueKey: 'value'
+      odataKey: eStandardJobsMainFields.MaterialSuppliedByID,
+      listValueKey: 'uid'
     },
     [eStandardJobsMainFields.Status]: {
       list: this.standardJobsService.getStatusList(),
