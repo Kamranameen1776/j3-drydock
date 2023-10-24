@@ -9,15 +9,22 @@ export interface CreateStandardJob {
 export interface CreateStandardJobResult {
   Uid: string;
 }
-
-// TODO can change all + need also data fields for create new popup
+// TODO function
 export interface StandardJobResult {
-  [eStandardJobsMainFields.ItemNumber]: string;
-  [eStandardJobsMainFields.Subject]: Partial<IGridCellStyle>;
-  [eStandardJobsMainFields.VesselType]: string;
-  [eStandardJobsMainFields.ItemCategory]: string;
-  [eStandardJobsMainFields.Inspection]: string;
-  [eStandardJobsMainFields.DoneBy]: string;
-  [eStandardJobsMainFields.MaterialSuppliedBy]: string;
   [eStandardJobsMainFields.UID]: string;
+  [eStandardJobsMainFields.Subject]: Partial<IGridCellStyle>;
+  [eStandardJobsMainFields.Function]: string;
+  [eStandardJobsMainFields.ItemNumber]: string;
+  [eStandardJobsMainFields.ItemCategoryID]: string;
+  [eStandardJobsMainFields.ItemCategory]: string;
+  [eStandardJobsMainFields.DoneByID]: string;
+  [eStandardJobsMainFields.DoneBy]: string;
+  [eStandardJobsMainFields.Inspection]: string;
+  [eStandardJobsMainFields.MaterialSuppliedByID]: string;
+  [eStandardJobsMainFields.MaterialSuppliedBy]: string;
+  [eStandardJobsMainFields.VesselSpecific]: boolean;
+  [eStandardJobsMainFields.Description]: string;
+  [eStandardJobsMainFields.Status]: boolean;
+  [eStandardJobsMainFields.VesselTypeID]: string;
+  [eStandardJobsMainFields.VesselType]: string;
 }
