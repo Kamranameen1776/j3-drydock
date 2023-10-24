@@ -165,19 +165,19 @@ export class StandardJobsGridService {
     [eStandardJobsMainFields.ItemCategory]: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory),
       type: eFieldControlType.MultiSelect,
-      odataKey: eStandardJobsMainFields.ItemCategory,
+      odataKey: eStandardJobsMainFields.ItemCategoryID,
       listValueKey: 'uid'
     },
     [eStandardJobsMainFields.Inspection]: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection),
       type: eFieldControlType.MultiSelect,
-      odataKey: eStandardJobsMainFields.Inspection,
+      odataKey: eStandardJobsMainFields.InspectionID,
       listValueKey: 'uid'
     },
     [eStandardJobsMainFields.DoneBy]: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.DoneBy),
       type: eFieldControlType.MultiSelect,
-      odataKey: eStandardJobsMainFields.DoneBy,
+      odataKey: eStandardJobsMainFields.DoneByID,
       listValueKey: 'uid'
     },
     [eStandardJobsMainFields.MaterialSuppliedBy]: {
