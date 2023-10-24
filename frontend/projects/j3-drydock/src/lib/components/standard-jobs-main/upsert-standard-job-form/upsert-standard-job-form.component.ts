@@ -23,6 +23,7 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
   public formGroup: FormGroup;
 
   public formStructure: FormModel;
+
   public formValues: FormValues;
 
   public isFormValid = false;
@@ -46,8 +47,16 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
   public dispatchForm(event: FormGroup) {
     this.formGroup = event;
     // TODO listen to changes and logic to change some fields state
+    this.initFormState();
     this.listenFormValid();
     this.listenVesselSpecificChanges();
+  }
+
+  private initFormState() {
+    if (this.isEditing) {
+      this.popupFormService.setEnabled(this.formGroup, eStandardJobsMainFields.Function, false);
+      this.popupFormService.setEnabled(this.formGroup, eStandardJobsMainFields.ItemNumber, false);
+    }
   }
 
   private initFormStructure() {
