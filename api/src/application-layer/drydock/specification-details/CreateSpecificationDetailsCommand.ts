@@ -5,14 +5,12 @@ import { CreateSpecificationDetailsDto } from './dtos/CreateSpecificationDetails
 
 export class CreateSpecificationDetailsCommand extends Command<CreateSpecificationDetailsDto, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
-    //projectsService: ProjectService;
     uow: UnitOfWork;
 
     constructor() {
         super();
 
         this.specificationDetailsRepository = new SpecificationDetailsRepository();
-        // this.projectsService = new ProjectService();
         this.uow = new UnitOfWork();
     }
 
@@ -32,17 +30,9 @@ export class CreateSpecificationDetailsCommand extends Command<CreateSpecificati
      * @returns data of specification details
      */
     protected async MainHandlerAsync(request: CreateSpecificationDetailsDto): Promise<void> {
-        // const result = new CreateProjectResultDto();
-
-        // request.CreatedAtOffice = !this.projectsService.IsVessel();
-        // request.ProjectCode = this.projectsService.GetProjectCode();
-        //(request.ProjectStateId = 1),
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const projectId = await this.specificationDetailsRepository.CreateSpecificationDetails(
-                request,
-                queryRunner,
-            );
-            return projectId;
+            const specData = await this.specificationDetailsRepository.CreateSpecificationDetails(request, queryRunner);
+            return specData;
         });
 
         return;

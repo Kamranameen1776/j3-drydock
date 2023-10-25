@@ -33,7 +33,7 @@ export class v32311422CreateTableScriptOfSpecificationDetails1697522126447 imple
                     [estimated_days] [datetime],
                     [buffer_time] [int],
                     [treatment] [varchar](200),
-                    [onboard_location] [varchar](max),
+                    [onboard_location] [uniqueidentifier],
                     [access] [varchar](200),
                     [material_supplied_by] [uniqueidentifier],
                     [test_criteria] [varchar](200),
