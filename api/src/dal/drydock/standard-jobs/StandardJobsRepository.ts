@@ -88,15 +88,32 @@ export class StandardJobsRepository {
         token: string,
     ): Promise<FiltersDataResponse[]> {
         const libraryCode = StandardJobsLibraryValuesMap[filterKey];
-        const apiPath = `library/get-library-data-by-code?libraryCode=${libraryCode}`;
-        const libraryData = await new ApiRequestService().master(token, apiPath, 'post', {
-            odata: { $filter: 'active_status=1' },
-        });
+        if (libraryCode) {
+            const apiPath = `library/get-library-data-by-code?libraryCode=${libraryCode}`;
+            const libraryData = await new ApiRequestService().master(token, apiPath, 'post', {
+                odata: { $filter: 'active_status=1' },
+            });
 
-        return libraryData.data?.records?.map((item: any) => {
+            return libraryData.data?.records?.map((item: any) => {
+                return {
+                    displayName: item.display_name || item.displayName,
+                    uid: item.uid,
+                } as FiltersDataResponse;
+            });
+        }
+
+        const filterData = await getManager()
+            .createQueryBuilder('standard_jobs', 'sj')
+            .select(`DISTINCT sj.${filterKey} as ${filterKey}`)
+            .where('sj.active_status = 1')
+            .getRawMany();
+
+        return filterData
+          .filter((item) => !!item[filterKey])
+          .map((item) => {
             return {
-                displayName: item.display_name || item.displayName,
-                uid: item.uid,
+                displayName: item[filterKey],
+                uid: item[filterKey],
             } as FiltersDataResponse;
         });
     }
