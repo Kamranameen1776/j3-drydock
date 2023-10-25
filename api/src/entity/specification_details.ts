@@ -26,9 +26,9 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'item_source',
+        name: 'item_source_uid',
     })
-    item_source: string;
+    item_source_uid: string;
 
     @Column('varchar', {
         nullable: true,
@@ -39,21 +39,21 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'done_by',
+        name: 'done_by_uid',
     })
-    done_by: string;
+    done_by_uid: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'item_category',
+        name: 'item_category_uid',
     })
-    item_category: string;
+    item_category_uid: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'inspection',
+        name: 'inspection_uid',
     })
-    inspection: string;
+    inspection_uid: string;
 
     @Column('varchar', {
         nullable: true,
@@ -64,13 +64,14 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'priority',
+        name: 'priority_uid',
     })
-    priority: string;
+    priority_uid: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'description',
+        length: 1000,
     })
     description: string;
 
@@ -80,11 +81,11 @@ export class SpecificationDetailsEntity {
     })
     start_date: Date;
 
-    @Column('datetime', {
+    @Column('int', {
         nullable: true,
-        name: 'estimated_dates',
+        name: 'estimated_days',
     })
-    estimated_dates: Date;
+    estimated_days: number;
 
     @Column('int', {
         nullable: true,
@@ -99,11 +100,11 @@ export class SpecificationDetailsEntity {
     })
     treatment: string;
 
-    @Column('varchar', {
+    @Column('uniqueidentifier', {
         nullable: true,
-        name: 'onboard_location',
+        name: 'onboard_location_uid',
     })
-    onboard_location: string;
+    onboard_location_uid: string;
 
     @Column('varchar', {
         nullable: true,
@@ -114,9 +115,9 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'material_supplied_by',
+        name: 'material_supplied_by_uid',
     })
-    material_supplied_by: string;
+    material_supplied_by_uid: string;
 
     @Column('varchar', {
         nullable: true,
@@ -128,12 +129,14 @@ export class SpecificationDetailsEntity {
     @Column('varchar', {
         nullable: true,
         name: 'ppe',
+        length: 1000,
     })
     ppe: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'safety_instruction',
+        length: 1000,
     })
     safety_instruction: string;
 
@@ -143,27 +146,39 @@ export class SpecificationDetailsEntity {
     })
     active_status: boolean;
 
-    @Column('datetime', {
+    @Column('uniqueidentifier', {
         nullable: true,
-        name: 'date_of_creation',
+        name: 'created_by_uid',
     })
-    date_of_creation: Date;
-
-    @Column('int', {
-        nullable: true,
-        name: 'created_by',
-    })
-    created_by: number;
+    created_by_uid: string;
 
     @Column('datetime', {
         nullable: true,
-        name: 'date_of_modification',
+        name: 'created_at',
     })
-    date_of_modification: Date;
+    created_at: Date;
 
-    @Column('int', {
+    @Column('uniqueidentifier', {
         nullable: true,
-        name: 'modified_by',
+        name: 'updated_by_uid',
     })
-    modified_by: number;
+    updated_by_uid: string;
+
+    @Column('datetime', {
+        nullable: true,
+        name: 'updated_at',
+    })
+    updated_at: Date;
+
+    @Column('uniqueidentifier', {
+        nullable: true,
+        name: 'deleted_by_uid',
+    })
+    deleted_by_uid: string;
+
+    @Column('datetime', {
+        nullable: true,
+        name: 'deleted_at',
+    })
+    deleted_at: Date;
 }
