@@ -13,12 +13,13 @@ import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 export async function getSpecificationDetails(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (queryDto: Request) => {
+    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         // Prepare query payload
         const query = new GetSpecificationDetailsQuery();
 
         // Execute query
-        const projects = await query.ExecuteAsync(queryDto as Request);
+        const uid = request.query.uid as string;
+        const projects = await query.ExecuteAsync(uid);
 
         return projects;
     });

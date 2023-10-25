@@ -80,11 +80,11 @@ export class SpecificationDetailsEntity {
     })
     start_date: Date;
 
-    @Column('datetime', {
+    @Column('int', {
         nullable: true,
-        name: 'estimated_dates',
+        name: 'estimated_days',
     })
-    estimated_dates: Date;
+    estimated_days: number;
 
     @Column('int', {
         nullable: true,
@@ -143,27 +143,39 @@ export class SpecificationDetailsEntity {
     })
     active_status: boolean;
 
-    @Column('datetime', {
-        nullable: true,
-        name: 'date_of_creation',
-    })
-    date_of_creation: Date;
-
-    @Column('int', {
+    @Column('uuid', {
         nullable: true,
         name: 'created_by',
     })
-    created_by: number;
+    created_by: string;
 
     @Column('datetime', {
         nullable: true,
-        name: 'date_of_modification',
+        name: 'created_at',
     })
-    date_of_modification: Date;
+    created_at: Date;
 
-    @Column('int', {
+    @Column('uuid', {
         nullable: true,
-        name: 'modified_by',
+        name: 'updated_by',
     })
-    modified_by: number;
+    updated_by: string;
+
+    @Column('datetime', {
+        nullable: true,
+        name: 'updated_at',
+    })
+    updated_at: Date;
+
+    @Column('uuid', {
+        nullable: true,
+        name: 'deleted_by',
+    })
+    deleted_by: string;
+
+    @Column('datetime', {
+        nullable: true,
+        name: 'deleted_at',
+    })
+    deleted_at: Date;
 }
