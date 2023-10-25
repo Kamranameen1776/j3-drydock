@@ -14,7 +14,6 @@ import { SpecificationDetailsComponent } from './components/specification-detail
 import { SpecificationGridService } from './services/specifications/specification.service';
 import { SpecificationStatusPipe } from './components/specification-details/specification-status.pipe';
 import { StatusCodeColorPipe } from './utils/status-code-color.pipe';
-import { JibeTabViewComponent } from './components/jb-tabview/jb-tabview.component';
 import { SpecificationTopDetailsService } from './services/specifications/specification-top-details.service';
 import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
 import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
@@ -33,7 +32,6 @@ export function winEnv(): unknown {
 @NgModule({
   declarations: [
     ExampleProjectsComponent,
-    JibeTabViewComponent,
     SpecificationStatusPipe,
     StatusCodeColorPipe,
     ExampleProjectsGridComponent,

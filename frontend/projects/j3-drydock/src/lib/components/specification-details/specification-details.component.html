@@ -1,64 +1,66 @@
 <jb-details-layout-figma>
   <jb-project-header alayout-header></jb-project-header>
-  <jb-layout-widget
-    alayout-content
-    titleIconClass="icons8-more-details-2"
-    size="auto"
-    titleText="Technical Specification"
-  >
-    <div
-      class="specs-header-actions"
-      awidget-header-buttons
+  <ng-container alayout-content>
+    <jb-layout-widget
+      titleIconClass="icons8-more-details-2"
+      size="auto"
+      titleText="Technical Specification"
     >
-      <jb-button
-        type="NoButton"
-        icon="icons8-anchor"
-        label="Import"
-      ></jb-button>
-      <jb-split-button
-        type="NoButton"
-        label="Create new"
-        [model]="createNewItems"
-      ></jb-split-button>
-    </div>
-    <div
-      class="specs-content"
-      awidget-content
-    >
-      <jb-tree
-        [nodeAPIReq]="treeData"
-        [showSetting]="{ showSearch: true, showButtons: false }"
-        filterPlaceholder="Search Function / Component"
-      ></jb-tree>
-      <jb-tabview
-        [activeIndex]="activeIndex"
-        (activeIndexChange)="activeIndexChange($event)"
+      <div
+        class="specs-header-actions"
+        awidget-header-buttons
       >
-        <p-tabPanel
-          *ngFor="let item of types"
-          [header]="item"
+        <jb-button
+          type="NoButton"
+          icon="icons8-anchor"
+          label="Import"
+        ></jb-button>
+        <jb-split-button
+          type="NoButton"
+          label="Create new"
+          [model]="createNewItems"
+        ></jb-split-button>
+      </div>
+      <div
+        class="specs-content"
+        awidget-content
+      >
+        <jb-tree
+          [nodeAPIReq]="treeData"
+          [showSetting]="{ showSearch: true, showButtons: false }"
+          filterPlaceholder="Search Function / Component"
+        ></jb-tree>
+        <p-tabView
+          class="jb-tabview"
+          [activeIndex]="activeIndex"
+          (activeIndexChange)="activeIndexChange($event)"
         >
-          <jb-grid
-            *ngIf="gridData"
-            [gridName]="gridData.gridName"
-            [colData]="gridData.columns"
-            [tableData]="gridData.data"
-            [setActions]="gridData.actions"
-            [filterData]="gridData.filters"
-            [filterListsSet]="gridData.filtersLists"
-            [getStyleByContainer]="true"
-          ></jb-grid>
-        </p-tabPanel>
-      </jb-tabview>
-    </div>
-  </jb-layout-widget>
-  <ng-template
-    #statusTemplate
-    let-rowData
-  >
-    <jb-current-status
-      [status]="rowData.status"
-      [statusColor]="rowData.status | specificationStatus | statusCodeColor"
-    ></jb-current-status>
-  </ng-template>
+          <p-tabPanel
+            *ngFor="let item of types"
+            [header]="item"
+          >
+            <jb-grid
+              *ngIf="gridData"
+              [gridName]="gridData.gridName"
+              [colData]="gridData.columns"
+              [tableData]="gridData.data"
+              [setActions]="gridData.actions"
+              [filterData]="gridData.filters"
+              [filterListsSet]="gridData.filtersLists"
+              [getStyleByContainer]="true"
+            ></jb-grid>
+          </p-tabPanel>
+        </p-tabView>
+      </div>
+    </jb-layout-widget>
+    <ng-template
+      #statusTemplate
+      let-rowData
+    >
+      <jb-current-status
+        [status]="rowData.status"
+        [statusColor]="rowData.status | specificationStatus | statusCodeColor"
+      ></jb-current-status>
+    </ng-template>
+  </ng-container>
 </jb-details-layout-figma>

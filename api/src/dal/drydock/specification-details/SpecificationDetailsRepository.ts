@@ -52,6 +52,51 @@ export class SpecificationDetailsRepository {
         }
     }
 
+    public async GetManySpecificationDetails(data: Request): Promise<GetSpecificationDetailsResultDto[]> {
+        try {
+            const oDataService = new ODataService(data, getConnection);
+
+            const query = getManager()
+                .createQueryBuilder('specification_details', 'sd')
+                .leftJoin('[dto].[tm_dd_lib_item_category]', 'ic', 'sd.item_category = ic.uid')
+                .leftJoin('[dto].[tm_dd_lib_done_by]', 'db', 'sd.done_by = db.uid')
+                .select(
+                    'sd.uid as uid,' +
+                        'sd.function_uid as Function,' +
+                        'sd.component_uid as Component,' +
+                        'sd.account_code,' +
+                        'sd.item_number,' +
+                        'sd.item_source,' +
+                        'db.done_by,' +
+                        'ic.item_category,' +
+                        'sd.inspection,' +
+                        'sd.equipment_description,' +
+                        'sd.active_status,' +
+                        'sd.priority,' +
+                        'sd.description,' +
+                        'sd.start_date,' +
+                        'sd.estimated_dates,' +
+                        'sd.buffer_time,' +
+                        'sd.treatment,' +
+                        'sd.onboard_location,' +
+                        'sd.access,' +
+                        'sd.material_supplied_by,' +
+                        'sd.test_criteria,' +
+                        'sd.ppe,' +
+                        'sd.safety_instruction',
+                )
+                .where('sd.active_status = 1')
+                .getSql();
+
+            const result = await oDataService.getJoinResult(query);
+            return result.records;
+        } catch (error) {
+            throw new Error(
+                `Method: GetSpecificationDetails / Class: SpecificationDetailsRepository / Error: ${error}`,
+            );
+        }
+    }
+
     public async CreateSpecificationDetails(
         data: CreateSpecificationDetailsDto,
         queryRunner: QueryRunner,
