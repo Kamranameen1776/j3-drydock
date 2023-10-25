@@ -209,7 +209,8 @@ export class StandardJobsGridService {
       request: this.standardJobsService.getStandardJobsRequest(),
       gridButton: this.gridButton,
       filters: this.gridFilters,
-      filtersLists: this.gridFilterLists
+      filtersLists: this.gridFilterLists,
+      searchFields: [eStandardJobsMainFields.Subject]
     };
   }
 }
