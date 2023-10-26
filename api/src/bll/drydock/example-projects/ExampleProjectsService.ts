@@ -1,4 +1,4 @@
-import { BusinessException } from '../../core/exceptions/BusinessException';
+import { BusinessException } from '../core/exceptions/BusinessException';
 
 export class ExampleProjectsService {
     /**

@@ -1,0 +1,34 @@
+<section class="proects-specifications-grid">
+    <jb-grid
+        [gridName]="gridInputs.gridName"
+        [colData]="gridInputs.columns"
+        [tableDataReq]="gridInputs.request"
+        [filterData]="gridInputs.filters"
+        [searchFields]="gridInputs.searchFields"
+        [filterListsSet]="gridInputs.filtersLists"
+        [button]="gridInputs.gridButton"
+        [setActions]="gridInputs.actions"
+        [getStyleByContainer]="true"
+        (action)="onGridAction($any($event))"
+    ></jb-grid>
+</section>
+
+<jb-dialog (closeDialog)="showCreateNewDialog(false)"
+           [(dialogVisible)]="createNewDialogVisible"
+           [dialogContent]="createProjectDialog"
+           class="dialog">
+    <div class="dialog-body" jb-dialog-body>
+        <jb-form [displayMenus]="false"
+                 (jbFormGroup)='initFormGroup($any($event))'
+                 [formStructure]="createProjectForm"
+                 class="form-generator-log">
+        </jb-form>
+
+        <div class="popup-footer">
+            <jb-button (click)="showCreateNewDialog(false)" label="Cancel" type="NoButton">
+            </jb-button>
+            <jb-button (click)="saveNewProject()" [disabled]="saveProjectButtonDisabled$ | async" label="Create" type="Standard">
+            </jb-button>
+        </div>
+    </div>
+</jb-dialog>

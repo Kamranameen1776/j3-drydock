@@ -6,6 +6,8 @@ import express from 'express';
 import { AccessRights } from 'j2utils';
 import path from 'path';
 
+import { options } from './express-swagger.config';
+
 /**
  * Extends the Express Request interface to include the 'user' object
  * -> provided by AccessRights.accessRightsMiddleware middleware
@@ -22,6 +24,11 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const expressSwagger = require('express-swagger-generator')(app); // exposes web api's help page
+expressSwagger(options(3020)); // http://localhost:3020/api-docs/#/
+
 app.use(AccessRights.accessRightsMiddleware);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

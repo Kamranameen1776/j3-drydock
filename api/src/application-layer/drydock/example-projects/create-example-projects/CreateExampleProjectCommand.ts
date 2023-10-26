@@ -1,5 +1,5 @@
 import { AuthorizationException } from '../../../../bll/drydock/core/exceptions/AuthorizationException';
-import { ExampleProjectsService } from '../../../../bll/drydock/projects/example-projects-service/ExampleProjectsService';
+import { ExampleProjectsService } from '../../../../bll/drydock/example-projects/ExampleProjectsService';
 import { ExampleProjectsRepository } from '../../../../dal/drydock/example-projects/ExampleProjectsRepository';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
