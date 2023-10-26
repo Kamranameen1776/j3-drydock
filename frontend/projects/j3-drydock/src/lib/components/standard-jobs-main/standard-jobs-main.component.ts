@@ -1,6 +1,6 @@
 import { eStandardJobsMainFields } from './../../models/enums/standard-jobs-main.enum';
 import { StandardJobResult } from './../../models/interfaces/standard-jobs';
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   CentralizedDataService,
   eGridRefreshType,
@@ -27,8 +27,6 @@ import { GrowlMessageService } from '../../services/GrowlMessageService';
   providers: [StandardJobsGridService, GrowlMessageService]
 })
 export class StandardJobsMainComponent extends UnsubscribeComponent implements OnInit {
-  @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<HTMLElement>;
-
   public gridInputs: GridInputsWithRequest;
 
   public isUpsertPopupVisible = false;
@@ -63,7 +61,6 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
   ngOnInit(): void {
     this.setAccessRights();
     this.setGridInputs();
-    this.setStatusCellTemplate();
     this.setGridRowActions();
     this.loadFunctionsTree();
   }
@@ -165,10 +162,5 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
       this.currentRow = undefined;
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);
     });
-  }
-
-  private setStatusCellTemplate() {
-    const statusCol = this.gridInputs.columns.find((col) => col.FieldName === eStandardJobsMainFields.Status);
-    statusCol.cellTemplate = this.statusTemplate;
   }
 }

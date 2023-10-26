@@ -65,14 +65,6 @@ export class StandardJobsGridService {
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
-    },
-    {
-      DisableSort: true,
-      DisplayText: eStandardJobsMainLabels.Status,
-      FieldName: eStandardJobsMainFields.Status,
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: true
     }
   ];
 
@@ -134,22 +126,12 @@ export class StandardJobsGridService {
       default: true
     },
     {
-      DisplayText: eStandardJobsMainLabels.Status,
-      FieldName: eStandardJobsMainFields.Status,
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      DisplayCode: 'label',
-      FieldID: 6,
-      gridName: this.gridName,
-      default: true
-    },
-    {
       DisplayText: eStandardJobsMainLabels.VesselSpecific,
       FieldName: eStandardJobsMainFields.VesselSpecific,
       Active_Status: true,
       Active_Status_Config_Filter: true,
       DisplayCode: 'label',
-      FieldID: 7,
+      FieldID: 6,
       gridName: this.gridName,
       default: false
     }
@@ -185,12 +167,6 @@ export class StandardJobsGridService {
       type: eFieldControlType.MultiSelect,
       odataKey: eStandardJobsMainFields.MaterialSuppliedByID,
       listValueKey: 'uid'
-    },
-    [eStandardJobsMainFields.Status]: {
-      list: this.standardJobsService.getStatusList(),
-      type: eFieldControlType.MultiSelect,
-      odataKey: eStandardJobsMainFields.Status,
-      listValueKey: 'value'
     },
     [eStandardJobsMainFields.VesselSpecific]: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.VesselSpecific),

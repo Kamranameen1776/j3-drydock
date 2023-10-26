@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities, eJMSFilterDataKeys } from 'jibe-components';
 import { ODataFilterBuilder } from 'odata-filter-builder';
-import { eStandardJobsMainFields, eStandardJobsMainStatus } from '../models/enums/standard-jobs-main.enum';
+import { eStandardJobsMainFields } from '../models/enums/standard-jobs-main.enum';
 
 @Injectable({ providedIn: 'root' })
 export class StandardJobsService {
@@ -86,25 +86,11 @@ export class StandardJobsService {
     return this.apiRequestService.sendApiReq(apiRequest);
   }
 
-  public getStatusList() {
-    return [
-      {
-        label: eStandardJobsMainStatus.Active,
-        value: true
-      },
-      {
-        label: eStandardJobsMainStatus.InActive,
-        value: false
-      }
-    ];
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getUpsertStandardJobBody(uid: string, formValue: any) {
     return {
       ...formValue,
-      [eStandardJobsMainFields.UID]: uid || '',
-      [eStandardJobsMainFields.Status]: uid ? formValue[eStandardJobsMainFields.Status] : true
+      [eStandardJobsMainFields.UID]: uid || ''
     };
   }
 }

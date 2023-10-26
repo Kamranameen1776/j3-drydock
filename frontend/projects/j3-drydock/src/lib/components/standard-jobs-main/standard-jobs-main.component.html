@@ -42,14 +42,4 @@
   </ng-container>
 </jb-dialog>
 
-<ng-template
-  #statusTemplate
-  let-rowData
->
-  <jb-current-status
-    [status]="rowData[eStandardJobsMainFields.Status] | standardJobsStatusName"
-    [statusColor]="rowData[eStandardJobsMainFields.Status] | standardJobsStatusColor"
-  ></jb-current-status>
-</ng-template>
-
 <jb-growl [content]="growlMessage$ | async"></jb-growl>

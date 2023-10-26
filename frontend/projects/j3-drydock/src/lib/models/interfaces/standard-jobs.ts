@@ -24,7 +24,6 @@ export interface StandardJobResult {
   [eStandardJobsMainFields.MaterialSuppliedBy]: string;
   [eStandardJobsMainFields.VesselSpecific]: boolean;
   [eStandardJobsMainFields.Description]: string;
-  [eStandardJobsMainFields.Status]: boolean;
   [eStandardJobsMainFields.VesselTypeID]: string;
   [eStandardJobsMainFields.VesselType]: string;
 }
