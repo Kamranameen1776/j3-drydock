@@ -83,7 +83,7 @@ export class ProjectsRepository {
                 'tm.Code AS ProjectCode',
 
                 'tm.Status as ProjectStatusId',
-                'tm.Status as ProjectStatusName',
+                'wdetails.StatusDisplayName as ProjectStatusName',
 
                 'vessel.VesselName AS VesselName',
                 'wt.WorklistTypeDisplay as ProjectTypeName',
@@ -101,6 +101,11 @@ export class ProjectsRepository {
             .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
             .innerJoin(className(TECTaskManagerEntity), 'tm', 'tm.uid = pr.TaskManagerUid')
+            .innerJoin(
+                className(JMSDTLWorkflowConfigDetailsEntity),
+                'wdetails',
+                'wdetails.ConfigId = wt.ID and wdetails.WorkflowTypeID = tm.Status',
+            )
             .where('pr.ActiveStatus = 1');
 
         if (uid) {
