@@ -17,4 +17,10 @@ export class LibVesselsEntity {
         name: 'Active_Status',
     })
     ActiveStatus: boolean;
+
+    @Column('integer', {
+        nullable: true,
+        name: 'Vessel_ID',
+    })
+    VesselId: number;
 }

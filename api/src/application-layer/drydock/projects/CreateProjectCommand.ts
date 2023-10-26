@@ -1,13 +1,14 @@
-import { AuthorizationException } from '../../../bll/drydock/core/exceptions/AuthorizationException';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
+import { Request } from 'express';
+
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateProjectDto } from './dtos/CreateProjectDto';
-import { CreateProjectResultDto } from './dtos/CreateProjectResultDto';
 
-
-export class CreateProjectCommand extends Command<CreateProjectDto, void> {
+export class CreateProjectCommand extends Command<Request, void> {
     projectsRepository: ProjectsRepository;
     projectsService: ProjectService;
     uow: UnitOfWork;
@@ -20,11 +21,9 @@ export class CreateProjectCommand extends Command<CreateProjectDto, void> {
         this.uow = new UnitOfWork();
     }
 
-    protected async AuthorizationHandlerAsync(request: CreateProjectDto): Promise<void> {
-        
-    }
+    protected async AuthorizationHandlerAsync(request: Request): Promise<void> {}
 
-    protected async ValidationHandlerAsync(request: CreateProjectDto): Promise<void> {
+    protected async ValidationHandlerAsync(request: Request): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
         }
@@ -35,16 +34,19 @@ export class CreateProjectCommand extends Command<CreateProjectDto, void> {
      * @param request Project data for creation of the new project
      * @returns New created project result
      */
-    protected async MainHandlerAsync(request: CreateProjectDto): Promise<void> {
-        // const result = new CreateProjectResultDto();
-        
-        request.CreatedAtOffice = await this.projectsService.IsOffice();
-        request.ProjectCode = await this.projectsService.GetProjectCode();
-        request.ProjectStateId = 1;
-        
+    protected async MainHandlerAsync(request: Request): Promise<void> {
+        const token: string = request.headers.authorization as string;
+        const body: CreateProjectDto = request.body;
+
+        body.CreatedAtOffice = await this.projectsService.IsOffice();
+        body.ProjectCode = await this.projectsService.GetProjectCode();
+        body.ProjectStateId = 1;
+
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            
-            const projectId = await this.projectsRepository.CreateProject(request, queryRunner);
+            const vessel: LibVesselsEntity = await this.projectsRepository.GetVesselByUid(body.VesselUid);
+            const taskManagerData = await this.projectsService.TaskManagerIntegration(body, vessel, token);
+            body.TaskManagerUid = taskManagerData.uid;
+            const projectId = await this.projectsRepository.CreateProject(body, queryRunner);
             return projectId;
         });
 

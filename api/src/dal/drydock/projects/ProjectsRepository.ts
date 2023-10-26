@@ -3,7 +3,7 @@ import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/Update
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
-import { getConnection, getManager, QueryRunner } from 'typeorm';
+import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
 import { CreateProjectDto } from '../../../application-layer/drydock/projects/dtos/CreateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
@@ -11,6 +11,7 @@ import { JMSDTLWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/J
 import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
 import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { TECLIBWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
+import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
@@ -71,22 +72,15 @@ export class ProjectsRepository {
         return result;
     }
 
-    /**
-     * Loads projects for the main page, with information
-     * about the project manager, vessel, project type, project state,
-     * open specifications, start date and end date
-     * @param data Http request object with Odata query
-     * @returns Projects for the main page
-     */
-    public async GetProjectsForMainPage(data: Request): Promise<ODataResult<IProjectsForMainPageRecordDto>> {
+    private GetQueryForProjects(uid?: string): SelectQueryBuilder<ProjectEntity> {
         const projectRepository = getManager().getRepository(ProjectEntity);
-
-        const query = projectRepository
+        let query = projectRepository
             .createQueryBuilder('pr')
             .select([
                 'pr.uid AS ProjectId',
                 'pr.CreatedAtOffice AS CreatedAtOffice',
-                'pr.ProjectCode AS ProjectCode',
+                'tm.Code AS ProjectCode',
+                'tm.Status AS ProjectStatus',
                 'vessel.VesselName AS VesselName',
                 'wt.WorklistTypeDisplay as ProjectTypeName',
                 'wt.WorklistType as ProjectTypeCode',
@@ -102,12 +96,34 @@ export class ProjectsRepository {
             .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = pr.ProjectTypeUid')
             .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
-            .where('pr.ActiveStatus = 1')
-            .getQuery();
+            .innerJoin(className(TECTaskManagerEntity), 'tm', 'tm.uid = pr.TaskManagerUid')
+            .where('pr.ActiveStatus = 1');
+
+        if (uid) {
+            console.log(1, uid);
+            query = query.where('pr.uid = :uid', { uid });
+        }
+        return query;
+    }
+
+    public async GetProject(uid: string): Promise<Array<IProjectsForMainPageRecordDto>> {
+        const query = this.GetQueryForProjects(uid);
+        return query.execute();
+    }
+
+    /**
+     * Loads projects for the main page, with information
+     * about the project manager, vessel, project type, project state,
+     * open specifications, start date and end date
+     * @param data Http request object with Odata query
+     * @returns Projects for the main page
+     */
+    public async GetProjectsForMainPage(data: Request): Promise<ODataResult<IProjectsForMainPageRecordDto>> {
+        const query = this.GetQueryForProjects();
 
         const oDataService = new ODataService(data, getConnection);
 
-        const result = await oDataService.getJoinResult(query);
+        const result = await oDataService.getJoinResult(query.getQuery());
 
         return result;
     }
@@ -150,7 +166,7 @@ export class ProjectsRepository {
         try {
             const project = new ProjectEntity();
             project.ProjectCode = data.ProjectCode as string;
-            project.CreatedAtOffice = data.CreatedAtOffice as boolean;
+            project.CreatedAtOffice = !!data.CreatedAtOffice;
             project.VesselUid = data.VesselUid;
             project.ProjectTypeUid = data.ProjectTypeUid;
             project.ProjectStateId = data.ProjectStateId as number;
@@ -158,6 +174,7 @@ export class ProjectsRepository {
             project.ProjectManagerUid = data.ProjectManagerUid;
             project.StartDate = data.StartDate;
             project.EndDate = data.EndDate;
+            project.TaskManagerUid = data.TaskManagerUid as string;
 
             const result = await queryRunner.manager.insert(ProjectEntity, project);
             return;
@@ -173,5 +190,15 @@ export class ProjectsRepository {
         } catch (error) {
             throw new Error(`Method: update-delete / Class: ProjectRepository / Error: ${error}`);
         }
+    }
+
+    public async GetVesselByUid(uid: string): Promise<any> {
+        const vesselRepository = getManager().getRepository(LibVesselsEntity);
+        const data = await vesselRepository.findOneOrFail({
+            where: {
+                uid,
+            },
+        });
+        return data;
     }
 }

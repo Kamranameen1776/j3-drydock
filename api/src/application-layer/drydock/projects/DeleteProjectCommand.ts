@@ -1,10 +1,8 @@
-import { AuthorizationException } from '../../../bll/drydock/core/exceptions/AuthorizationException';
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { DeleteProjectDto } from './dtos/DeleteProjectDto';
-
 
 export class DeleteProjectCommand extends Command<DeleteProjectDto, void> {
     projectsRepository: ProjectsRepository;
@@ -19,9 +17,8 @@ export class DeleteProjectCommand extends Command<DeleteProjectDto, void> {
         this.uow = new UnitOfWork();
     }
 
-    protected async AuthorizationHandlerAsync(request: DeleteProjectDto): Promise<void> {
-        
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    protected async AuthorizationHandlerAsync(request: DeleteProjectDto): Promise<void> {}
 
     protected async ValidationHandlerAsync(request: DeleteProjectDto): Promise<void> {
         if (!request) {
@@ -35,7 +32,7 @@ export class DeleteProjectCommand extends Command<DeleteProjectDto, void> {
      * @returns New created project result
      */
     protected async MainHandlerAsync(request: DeleteProjectDto): Promise<void> {
-        request.ActiveStatus = false
+        request.ActiveStatus = false;
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const projectId = await this.projectsRepository.UpdateProject(request, queryRunner);
             return projectId;

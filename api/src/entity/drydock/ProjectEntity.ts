@@ -73,4 +73,10 @@ export class ProjectEntity {
         name: 'active_status',
     })
     ActiveStatus: boolean;
+
+    @Column('uniqueidentifier', {
+        nullable: false,
+        name: 'task_manager_uid',
+    })
+    TaskManagerUid: string;
 }

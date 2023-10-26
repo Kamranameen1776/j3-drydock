@@ -8,8 +8,8 @@ async function createProject(req: Request, res: Response) {
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new CreateProjectCommand();
-        
-        return await command.ExecuteAsync(request.body);
+
+        return await command.ExecuteAsync(request);
     });
 }
 
