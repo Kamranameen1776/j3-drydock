@@ -15,7 +15,7 @@ export interface IProjectsForMainPageGridDto {
 
   ShipYard: string;
 
-  ProjectStatus: string;
+  ProjectStatusName: string;
 
   ProjectState: string;
 

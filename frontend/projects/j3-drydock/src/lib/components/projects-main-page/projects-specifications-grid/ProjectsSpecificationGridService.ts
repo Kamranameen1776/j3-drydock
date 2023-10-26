@@ -7,13 +7,15 @@ import {
   GridRowActions,
   UserService,
   eGridColumnsWidth,
-  eGridRowActions, eFieldControlType, FormModel
-} from "jibe-components";
+  eGridRowActions,
+  eFieldControlType,
+  FormModel
+} from 'jibe-components';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
-import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from "../../../models/enums/projects-create.enum";
+import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
 
 @Injectable()
 export class ProjectsSpecificationGridService {
@@ -111,7 +113,7 @@ export class ProjectsSpecificationGridService {
     {
       DisableSort: true,
       DisplayText: 'Status',
-      FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectStatus),
+      FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectStatusName),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -274,7 +276,7 @@ export class ProjectsSpecificationGridService {
     ProjectStatuses: {
       webApiRequest: this.projectsService.getProjectStatusesRequest(),
       type: 'multiselect',
-      odataKey: 'StatusId',
+      odataKey: 'ProjectStatusId',
       listValueKey: 'ProjectStatusId'
     },
     StartDate: {
@@ -399,7 +401,7 @@ export class ProjectsSpecificationGridService {
               gridRowStart: 4,
               gridRowEnd: 5,
               gridColStart: 1,
-              gridColEnd: 3,
+              gridColEnd: 3
             },
             [eProjectsCreateFieldNames.ProjectManager]: {
               label: eProjectsCreateDisplayNames.ProjectManager,
@@ -426,7 +428,7 @@ export class ProjectsSpecificationGridService {
               gridRowStart: 6,
               gridRowEnd: 7,
               gridColStart: 1,
-              gridColEnd: 3,
+              gridColEnd: 3
             },
             [eProjectsCreateFieldNames.EndDate]: {
               label: eProjectsCreateDisplayNames.EndDate,
@@ -437,12 +439,11 @@ export class ProjectsSpecificationGridService {
               gridRowStart: 7,
               gridRowEnd: 8,
               gridColStart: 1,
-              gridColEnd: 3,
-            },
+              gridColEnd: 3
+            }
           }
         }
       }
     };
-
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestService, eCrud, WebApiRequest } from 'jibe-components';
-import { Observable } from "rxjs";
-import { ProjectCreate } from "../models/interfaces/projects";
+import { Observable } from 'rxjs';
+import { ProjectCreate } from '../models/interfaces/projects';
 
 @Injectable()
 export class ProjectsService {
@@ -85,7 +85,7 @@ export class ProjectsService {
       action: 'dictionaries/fleets',
       crud: eCrud.Get,
       entity: 'drydock'
-    }
+    };
 
     return apiRequest;
   }
@@ -96,7 +96,7 @@ export class ProjectsService {
       action: 'dictionaries/vessels',
       crud: eCrud.Get,
       entity: 'drydock'
-    }
+    };
 
     return apiRequest;
   }
@@ -107,8 +107,8 @@ export class ProjectsService {
       action: 'projects/create-project',
       crud: eCrud.Post,
       entity: 'drydock',
-      body: data,
-    }
+      body: data
+    };
 
     return this.apiRequestService.sendApiReq(apiRequest);
   }

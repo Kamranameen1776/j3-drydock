@@ -81,7 +81,10 @@ export class ProjectsRepository {
                 'pr.uid AS ProjectId',
                 'pr.CreatedAtOffice AS CreatedAtOffice',
                 'tm.Code AS ProjectCode',
-                'tm.Status AS ProjectStatus',
+
+                'tm.Status as ProjectStatusId',
+                'tm.Status as ProjectStatusName',
+
                 'vessel.VesselName AS VesselName',
                 'wt.WorklistTypeDisplay as ProjectTypeName',
                 'wt.WorklistType as ProjectTypeCode',

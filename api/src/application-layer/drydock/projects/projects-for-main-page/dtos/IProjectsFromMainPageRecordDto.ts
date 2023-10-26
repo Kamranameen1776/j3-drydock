@@ -15,7 +15,7 @@ export interface IProjectsFromMainPageRecordDto {
 
     ShipYard: string;
 
-    ProjectStatus: string;
+    ProjectStatusName: string;
 
     ProjectState: string;
 

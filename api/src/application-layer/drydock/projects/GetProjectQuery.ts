@@ -44,7 +44,7 @@ export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordD
             // TODO: replace with real data
             ShipYard: 'Country ave.Name 123',
             Specification: '330/500',
-            ProjectStatus: record.ProjectStatus,
+            ProjectStatusName: record.ProjectStatusName,
 
             ProjectState: record.ProjectStateName,
 
