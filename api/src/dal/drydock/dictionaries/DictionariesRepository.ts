@@ -31,7 +31,7 @@ export class DictionariesRepository {
         SELECT TOP (50)
             [uid]
             ,[Date_Of_Deleted]
-            , [First_Name] + ' ' + [Last_Name] as ProjectManager
+            , [First_Name] + ' ' + [Last_Name] as FullName
             
         FROM [JIBE_Main].[dbo].[LIB_USER]
         where Date_of_Deleted IS NULL;
