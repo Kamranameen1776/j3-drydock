@@ -414,9 +414,9 @@ export class ProjectsSpecificationGridService {
               gridColStart: 1,
               gridColEnd: 3,
               listRequest: {
-                webApiRequest: this.projectsService.getProjectsManagersRequest(),
+                webApiRequest: this.projectsService.getProjectsManagersDictionariesRequest(),
                 labelKey: 'FullName',
-                valueKey: 'LibUserUid'
+                valueKey: 'uid'
               }
             },
             [eProjectsCreateFieldNames.StartDate]: {

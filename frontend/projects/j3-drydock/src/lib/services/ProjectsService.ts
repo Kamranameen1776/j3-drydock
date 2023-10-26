@@ -55,6 +55,18 @@ export class ProjectsService {
     return apiRequest;
   }
 
+  public getProjectsManagersDictionariesRequest(): WebApiRequest {
+    const apiRequest: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'dictionaries/managers',
+      crud: eCrud.Get,
+      entity: 'drydock'
+    };
+    return apiRequest;
+  }
+
   public getProjectsShipsYardsRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
       // TODO:update jibe lib
