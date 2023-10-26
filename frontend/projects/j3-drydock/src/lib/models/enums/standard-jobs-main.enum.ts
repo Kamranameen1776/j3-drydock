@@ -34,7 +34,7 @@ export enum eStandardJobsMainFields {
   DoneByID = 'doneByUid',
   VesselTypeID = 'vesselTypeId',
   Description = 'description',
-  InspectionID = 'InspectionID',
+  InspectionID = 'inspection',
   Scope = 'Scope'
 }
 
