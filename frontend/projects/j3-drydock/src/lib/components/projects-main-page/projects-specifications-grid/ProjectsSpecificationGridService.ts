@@ -198,7 +198,7 @@ export class ProjectsSpecificationGridService {
       DisplayText: 'Status',
       FieldName: 'ProjectStatuses',
       DisplayCode: 'ProjectStatusName',
-      ValueCode: 'ProjectStatusCode',
+      ValueCode: 'ProjectStatusId',
       FieldID: 2,
       default: true,
       CoupleID: 0,
@@ -275,7 +275,7 @@ export class ProjectsSpecificationGridService {
       webApiRequest: this.projectsService.getProjectStatusesRequest(),
       type: 'multiselect',
       odataKey: 'StatusId',
-      listValueKey: 'StatusCode'
+      listValueKey: 'ProjectStatusId'
     },
     StartDate: {
       odataKey: 'StartDate',
