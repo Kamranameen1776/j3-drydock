@@ -42,10 +42,11 @@ export class CreateProjectCommand extends Command<Request, void> {
         body.ProjectCode = await this.projectsService.GetProjectCode();
         body.ProjectStateId = 1;
 
+        const vessel: LibVesselsEntity = await this.projectsRepository.GetVesselByUid(body.VesselUid);
+        const taskManagerData = await this.projectsService.TaskManagerIntegration(body, vessel, token);
+        body.TaskManagerUid = taskManagerData.uid;
+
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const vessel: LibVesselsEntity = await this.projectsRepository.GetVesselByUid(body.VesselUid);
-            const taskManagerData = await this.projectsService.TaskManagerIntegration(body, vessel, token);
-            body.TaskManagerUid = taskManagerData.uid;
             const projectId = await this.projectsRepository.CreateProject(body, queryRunner);
             return projectId;
         });

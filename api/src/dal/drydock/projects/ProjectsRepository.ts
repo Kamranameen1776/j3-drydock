@@ -106,10 +106,11 @@ export class ProjectsRepository {
                 'wdetails',
                 'wdetails.ConfigId = wt.ID and wdetails.WorkflowTypeID = tm.Status',
             )
-            .where('pr.ActiveStatus = 1');
+            .where('pr.ActiveStatus = 1')
+            .distinct(true)
+            .distinctOn(['pr.uid']);
 
         if (uid) {
-            console.log(1, uid);
             query = query.where('pr.uid = :uid', { uid });
         }
         return query;
