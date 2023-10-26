@@ -19,8 +19,10 @@ export async function getSpecificationDetails(req: Request, res: Response) {
 
         // Execute query
         const uid = request.query.uid as string;
-        const projects = await query.ExecuteAsync(uid);
+        const specDetails = await query.ExecuteAsync(uid);
 
-        return projects;
+        return specDetails;
     });
 }
+
+exports.post = getSpecificationDetails;

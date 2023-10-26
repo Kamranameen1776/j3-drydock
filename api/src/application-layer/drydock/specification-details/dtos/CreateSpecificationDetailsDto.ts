@@ -1,7 +1,8 @@
 import { BaseSpecificationDetailsDto } from './BaseSpecificationDetailsDto';
 
 export class CreateSpecificationDetailsDto extends BaseSpecificationDetailsDto {
-    public uid?: string;
+    public uid: string;
+    public tmTask: string;
     public functionUid: string;
     public componentUid: string;
     public accountCode: string;

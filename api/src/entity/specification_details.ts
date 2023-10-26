@@ -7,6 +7,12 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
+        name: 'tm_task',
+    })
+    tm_task: string;
+
+    @Column('uniqueidentifier', {
+        nullable: true,
         name: 'function_uid',
     })
     function_uid: string;
@@ -148,7 +154,7 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'created_by_uid',
+        name: 'created_by',
     })
     created_by_uid: string;
 
@@ -160,7 +166,7 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'updated_by_uid',
+        name: 'updated_by',
     })
     updated_by_uid: string;
 
@@ -172,7 +178,7 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'deleted_by_uid',
+        name: 'deleted_by',
     })
     deleted_by_uid: string;
 

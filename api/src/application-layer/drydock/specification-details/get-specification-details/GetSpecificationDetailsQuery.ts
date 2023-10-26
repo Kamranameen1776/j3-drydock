@@ -14,7 +14,6 @@ export class GetSpecificationDetailsQuery extends Query<string, GetSpecification
     }
 
     /**
-     *
      * @returns All specification details
      */
     protected async MainHandlerAsync(uid: string): Promise<GetSpecificationDetailsResultDto[]> {
