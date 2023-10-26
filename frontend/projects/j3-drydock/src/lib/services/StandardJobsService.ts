@@ -86,6 +86,20 @@ export class StandardJobsService {
     return this.apiRequestService.sendApiReq(apiRequest);
   }
 
+  public getStandardJobFunctions() {
+    const apiRequest: WebApiRequest = {
+      apiBase: eApiBase.TechnicalAPI,
+      entity: eEntities.PMS,
+      crud: eCrud.Post,
+      action: 'lib/functions/get-all-pms-function',
+      odata: {
+        skip: '0',
+        top: '10000000'
+      }
+    };
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getUpsertStandardJobBody(uid: string, formValue: any) {
     return {

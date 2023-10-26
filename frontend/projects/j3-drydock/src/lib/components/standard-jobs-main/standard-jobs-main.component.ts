@@ -139,11 +139,13 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     // TODO fixme to generic request with no vessel_uid
     const vesselUid = this.cds.userDetails?.vessel_uid ?? '3EEF2E1B-2533-45C7-82C7-C13D6AA79559';
     if (vesselUid) {
-      this.techApiSvc
-        .getComponentFunctionTreeData(vesselUid)
+      this.standardJobsService
+        .getStandardJobFunctions()
         .pipe(takeUntil(this.unsubscribe$))
         .subscribe((res) => {
-          this.setFunctionsTree(<FunctionsTreeNode[]>res.records);
+          // eslint-disable-next-line no-console
+          console.log(res);
+          // this.setFunctionsTree(<FunctionsTreeNode[]>res.records);
         });
     }
   }
