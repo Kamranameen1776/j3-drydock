@@ -43,6 +43,7 @@ export class ProjectsRepository {
             .andWhere('wdetails.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('wt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .distinct(true)
             .distinctOn(['wdetails.WorkflowTypeID'])
             .orderBy('wdetails.WorkflowOrderID')
             .execute();
@@ -137,9 +138,11 @@ export class ProjectsRepository {
 
         const result = await projectRepository
             .createQueryBuilder('pr')
-            .select(['usr.uid as LibUserUid', `usr.FirstName + ' ' + usr.LastName as FullName`])
+            .select(['usr.uid as ManagerId', `usr.FirstName + ' ' + usr.LastName as FullName`])
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
             .where('pr.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .distinct(true)
+            .distinctOn(['usr.uid'])
             .execute();
 
         return result;
