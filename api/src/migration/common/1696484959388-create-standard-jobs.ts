@@ -24,7 +24,6 @@ export class createStandardJobs1696484959388 implements MigrationInterface {
             [material_supplied_by_uid] [uniqueidentifier] NULL,
             [done_by_uid]              [uniqueidentifier] NULL,
             [vessel_type_specific]     [bit]              NULL,
-            [vessel_type_uid]          [uniqueidentifier] NULL,
             [description]              [varchar](5000)    NULL,
 
             [active_status]            [bit]              NULL DEFAULT 1,

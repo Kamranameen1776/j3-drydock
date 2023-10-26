@@ -1,4 +1,4 @@
-import { ApiRequestService, ODataService } from 'j2utils';
+import { ApiRequestService, DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 import { RequestWithOData } from '../../../shared/interfaces';
 import {
@@ -22,7 +22,8 @@ export class StandardJobsRepository {
 
         const query = getManager()
             .createQueryBuilder('standard_jobs', 'sj')
-            .leftJoin('LIB_VESSELTYPES', 'vt', `vt.uid = sj.vessel_type_uid and vt.active_status = 1`)
+            .leftJoin('standard_jobs_vessel_type', 'sjvt', `sjvt.standard_job_uid = sj.uid`)
+            .leftJoin('LIB_VESSELTYPES', 'vt', `vt.ID = sjvt.vessel_type_id and vt.active_status = 1`)
             .leftJoin('tm_dd_lib_done_by', 'db', `db.uid = sj.done_by_uid AND db.active_status = 1`)
             .leftJoin('tm_dd_lib_item_category', 'ic', `ic.uid = sj.category_uid AND ic.active_status = 1`)
             .leftJoin(
@@ -61,8 +62,11 @@ export class StandardJobsRepository {
     ): Promise<any> {
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         standardJob.created_by = createdBy;
+        standardJob.uid = new DataUtilService().newUid();
 
-        return queryRunner.manager.insert(standard_jobs, standardJob);
+        const entity: standard_jobs = queryRunner.manager.create(standard_jobs, standardJob);
+
+        return queryRunner.manager.save(standard_jobs, entity);
     }
 
     public async updateStandardJob(
@@ -74,7 +78,10 @@ export class StandardJobsRepository {
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         const updateStandardJobData = this.standardJobsService.addUpdateStandardJobsFields(standardJob, updatedBy);
 
-        return queryRunner.manager.update(standard_jobs, { uid, active_status: 1 }, updateStandardJobData);
+        const entity: standard_jobs = queryRunner.manager.create(standard_jobs, updateStandardJobData);
+        entity.uid = uid;
+
+        return queryRunner.manager.save(standard_jobs, entity);
     }
 
     public async deleteStandardJob(uid: string, deletedBy: string, queryRunner: QueryRunner): Promise<any> {
@@ -109,12 +116,12 @@ export class StandardJobsRepository {
             .getRawMany();
 
         return filterData
-          .filter((item) => !!item[filterKey])
-          .map((item) => {
-            return {
-                displayName: item[filterKey],
-                uid: item[filterKey],
-            } as FiltersDataResponse;
-        });
+            .filter((item) => !!item[filterKey])
+            .map((item) => {
+                return {
+                    displayName: item[filterKey],
+                    uid: item[filterKey],
+                } as FiltersDataResponse;
+            });
     }
 }
