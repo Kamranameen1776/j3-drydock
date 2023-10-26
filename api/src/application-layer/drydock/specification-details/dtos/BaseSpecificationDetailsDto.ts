@@ -1,8 +1,8 @@
-export class BaseSpecificationDetailsDto {
-    public VesselId: number;
-    public ProjectTypeId: number;
-    public Subject: string;
-    public ProjectManagerUid: string;
-    public StartDate: Date;
-    public EndDate: Date;
+export interface BaseSpecificationDetailsDto {
+    VesselId: number;
+    ProjectTypeId: number;
+    Subject: string;
+    ProjectManagerUid: string;
+    StartDate: Date;
+    EndDate: Date;
 }

@@ -1,5 +1,5 @@
 import { BaseSpecificationDetailsDto } from './BaseSpecificationDetailsDto';
 
-export class UpdateSpecificationDetailsDto extends BaseSpecificationDetailsDto {
-    public uid: string;
+export interface UpdateSpecificationDetailsDto extends BaseSpecificationDetailsDto {
+    uid: string;
 }
