@@ -387,7 +387,7 @@ export class ProjectsSpecificationGridService {
               listRequest: {
                 webApiRequest: this.projectsService.getAllProjectTypesRequest(),
                 labelKey: 'Worklist_Type',
-                valueKey: 'id'
+                valueKey: 'uid'
               }
             },
             [eProjectsCreateFieldNames.Subject]: {
@@ -414,7 +414,7 @@ export class ProjectsSpecificationGridService {
               listRequest: {
                 webApiRequest: this.projectsService.getProjectsManagersRequest(),
                 labelKey: 'FullName',
-                valueKey: 'ManagerId'
+                valueKey: 'LibUserUid'
               }
             },
             [eProjectsCreateFieldNames.StartDate]: {

@@ -1,7 +1,7 @@
 export enum eProjectsCreateFieldNames {
   Fleet = 'FleetId',
-  Vessel = 'VesselId',
-  ProjectType = 'ProjectTypeId',
+  Vessel = 'VesselUid',
+  ProjectType = 'ProjectTypeUid',
   Subject = 'Subject',
   ProjectManager = 'ProjectManagerUid',
   StartDate = 'StartDate',
