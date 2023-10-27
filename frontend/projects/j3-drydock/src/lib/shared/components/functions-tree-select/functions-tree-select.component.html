@@ -11,7 +11,7 @@
   >
     <ng-container [ngSwitch]="component.pTemplateName">
       <ng-container *ngSwitchCase="'default'">
-        <ng-container *ngIf="component?.node?.data.selectable">
+        <ng-container *ngIf="!component?.node?.children.length">
           <label
             class="selectable-node"
             (click)="onGetSelected(component?.node)"
@@ -20,7 +20,7 @@
           </label>
         </ng-container>
 
-        <ng-container *ngIf="!component?.node?.data.selectable">
+        <ng-container *ngIf="component?.node?.children.length">
           <label class="nonselectable-node">
             {{ component?.node?.label }}
           </label>

@@ -14,7 +14,7 @@ import { GrowlMessageService } from '../../../services/GrowlMessageService';
   templateUrl: './upsert-standard-job-popup.component.html',
   styleUrls: ['./upsert-standard-job-popup.component.scss']
 })
-export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implements OnChanges, OnInit {
+export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implements OnChanges {
   @Input() item: StandardJobResult;
   @Input() isOpen: boolean;
   @Output() closeDialog = new EventEmitter<boolean>();
@@ -59,11 +59,8 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     if (changes.item) {
       this.setPopupHeader();
       this.setPopupFooter();
+      this.setAttachmentConfig();
     }
-  }
-
-  ngOnInit(): void {
-    this.setAttachmentConfig();
   }
 
   public onClosePopup() {
@@ -83,16 +80,16 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     this.attachmentConfig = {
       Module_Code: 'j3_drydock',
       Function_Code: 'standard_jobs',
-      Key1: this.item.uid
+      Key1: this.item?.uid
     };
   }
 
   private setPopupHeader() {
-    this.popupConfig.dialogHeader = !this.isEditing ? 'Create New Standard Job' : 'Update Standard Job';
+    this.popupConfig.dialogHeader = !this.isEditing ? 'Create New Standard Job' : 'Edit Standard Job';
   }
 
   private setPopupFooter() {
-    this.okLabel = this.isEditing ? 'Update' : 'Create';
+    this.okLabel = 'Save';
   }
 
   private closePopup(isSaved = false) {

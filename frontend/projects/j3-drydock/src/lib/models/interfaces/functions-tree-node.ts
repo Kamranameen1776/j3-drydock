@@ -1,21 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// TODO fixme any to known types
-export interface FunctionsTreeNode {
-  Parent_ID: string;
-  Child_ID: string;
-  machinery_uid: string | null;
+export interface FunctionTreeResponseNode {
   uid: string;
+  name: string;
+  description: string;
+  parentFunction: string;
+  level: number;
+  display_order: number;
+  active_status: string;
+  parent_function_uid: string;
+  utilized: string;
+}
 
+export interface FunctionsTreeNode {
+  path: string;
+  Child_ID: string;
+  Parent_ID: string | number;
   DisplayText: string;
-  active_status: boolean;
-  Vessel_ID: any;
-  deleted: any;
-  tag: string;
-  isParentComponent: number;
-  row_num: string;
-  critical_status: number;
-  icon: string;
+  selectable: boolean;
+  icon?: string;
 
   jb_value_label?: string;
-  selectable?: boolean;
 }

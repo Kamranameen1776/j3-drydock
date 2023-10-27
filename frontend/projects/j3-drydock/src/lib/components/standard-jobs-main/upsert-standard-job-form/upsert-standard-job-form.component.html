@@ -5,6 +5,14 @@
   (jbFormGroup)="dispatchForm($event)"
 ></jb-form>
 
-<ng-template #treeTemplate>
-  <jb-drydock-functions-tree-select [treeData]="functionsTree$ | async"></jb-drydock-functions-tree-select>
+<ng-template
+  #treeTemplate
+  let-formId="formId"
+  let-fieldName="fieldName"
+>
+  <jb-drydock-functions-tree-select
+    [treeData]="functionsTree$ | async"
+    [formId]="formId"
+    [fieldName]="fieldName"
+  ></jb-drydock-functions-tree-select>
 </ng-template>

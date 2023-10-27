@@ -83,11 +83,11 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
       return;
     }
     // TODO waiting j-component version with 'inputWithDlg' type in form field
-    // field.inputWithDlgConfig = {
-    //   dlgTemplate: this.treeTemplate,
-    //   inputLabelKey: 'jb_value_label',
-    //   dlgConfiguration: { appendTo: '' }
-    // };
+    field.inputWithDlgConfig = {
+      dlgTemplate: this.treeTemplate,
+      inputLabelKey: 'jb_value_label',
+      dlgConfiguration: { appendTo: '' }
+    };
   }
 
   private setFieldEnabledAndRequired(fieldName: eStandardJobsMainFields, isEnabled: boolean) {

@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Component, Input, Optional } from '@angular/core';
-import { CentralizedDataService, JmsTechApiService } from 'jibe-components';
+import { Component, Input } from '@angular/core';
+import { InputWithDlgService } from 'jibe-components';
 import { FunctionsTreeNode } from '../../../models/interfaces/functions-tree-node';
 
 @Component({
@@ -10,23 +11,17 @@ import { FunctionsTreeNode } from '../../../models/interfaces/functions-tree-nod
 })
 export class FunctionsTreeSelectComponent {
   @Input() treeData: FunctionsTreeNode[] = [];
+  @Input() formId!: string;
+  @Input() fieldName!: string;
 
-  // TODO wait for j-component version with 'inputWithDlg' type in form field
-  constructor(
-    private techApiSvc: JmsTechApiService // @Optional() private inputFunctionsTreeService: InputWithDlgService
-  ) {}
+  constructor(private inputFunctionsTreeService: InputWithDlgService) {}
 
-  public onGetSelected({ data }: { data: FunctionsTreeNode }) {
-    if (data.machinery_uid && data.Child_ID) {
-      this.getEquipmentLocationPath(data);
-    }
-  }
-
-  private getEquipmentLocationPath(node: FunctionsTreeNode) {
-    this.techApiSvc.getJobLinkedEquipmentLocationPath(node.machinery_uid, node.Child_ID).subscribe((res) => {
-      const value: FunctionsTreeNode = { ...node, jb_value_label: res.functionPath };
-      // TODO wait for j-component version with 'inputWithDlg' type in form field
-      // this.inputFunctionsTreeService?.selected$.next(value);
+  public onGetSelected({ data, ...rest }: { data: FunctionsTreeNode }) {
+    // TODO find patch by parent
+    this.inputFunctionsTreeService?.changed$.next({
+      formId: this.formId,
+      fieldName: this.fieldName,
+      value: { ...data, jb_value_label: data.DisplayText }
     });
   }
 }

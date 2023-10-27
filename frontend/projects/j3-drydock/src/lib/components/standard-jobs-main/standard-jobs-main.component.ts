@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { eStandardJobsMainFields } from './../../models/enums/standard-jobs-main.enum';
 import { StandardJobResult } from './../../models/interfaces/standard-jobs';
 import { Component, OnInit } from '@angular/core';
@@ -12,13 +13,14 @@ import {
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { StandardJobsGridService } from './StandardJobsGridService';
-import { FunctionsTreeNode } from '../../models/interfaces/functions-tree-node';
+import { FunctionTreeResponseNode, FunctionsTreeNode } from '../../models/interfaces/functions-tree-node';
 import { StandardJobUpsertFormService } from './upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../models/constants/popup';
 import { StandardJobsService } from '../../services/StandardJobsService';
 import { GrowlMessageService } from '../../services/GrowlMessageService';
+import { ShellFunctionsTreeService } from '../../services/ShellFunctionsTreeService';
 
 @Component({
   selector: 'jb-standard-jobs-main',
@@ -53,7 +55,8 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     private gridService: GridService,
     private cds: CentralizedDataService,
     private techApiSvc: JmsTechApiService,
-    private growlMessageService: GrowlMessageService
+    private growlMessageService: GrowlMessageService,
+    private treeService: ShellFunctionsTreeService
   ) {
     super();
   }
@@ -144,18 +147,14 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
         .pipe(takeUntil(this.unsubscribe$))
         .subscribe((res) => {
           // eslint-disable-next-line no-console
-          console.log(res);
-          // this.setFunctionsTree(<FunctionsTreeNode[]>res.records);
+          this.treeService.createFlatTree(<FunctionTreeResponseNode[]>res.records);
+          this.setFunctionsTree(this.treeService.createFlatTree(<FunctionTreeResponseNode[]>res.records));
         });
     }
   }
 
   private setFunctionsTree(records: FunctionsTreeNode[]) {
-    this.upsertFormService.functionsTree$.next(
-      records.map((rec) => {
-        return { ...rec, selectable: rec.isParentComponent === 3 };
-      })
-    );
+    this.upsertFormService.functionsTree$.next(records);
   }
 
   private deleteStandardJob() {

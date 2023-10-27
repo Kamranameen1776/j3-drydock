@@ -31,7 +31,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
         gridColEnd: 3,
         fields: {
           [eStandardJobsMainFields.Function]: {
-            type: eFieldControlType.Text,
+            type: 'inputWithDlg',
             label: eStandardJobsMainLabels.Function,
             sectionID: this.formId,
             enabled: true,
