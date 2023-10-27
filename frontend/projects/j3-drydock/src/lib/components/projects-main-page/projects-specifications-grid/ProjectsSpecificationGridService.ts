@@ -17,6 +17,7 @@ import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
 import { eProjectsEditDisplayNames, eProjectsEditFieldNames } from '../../../models/enums/projects-edit.enum';
+import { eProjectsDeleteDisplayNames, eProjectsDeleteFieldNames } from '../../../models/enums/projects-delete.enum';
 
 @Injectable()
 export class ProjectsSpecificationGridService {
@@ -302,8 +303,10 @@ export class ProjectsSpecificationGridService {
   ];
 
   public createProjectFormId = 'projectCreate';
-  
+
   public editProjectFormId = 'projectEdit';
+
+  public deleteProjectFormId = 'projectDelete';
 
   constructor(
     private userService: UserService,
@@ -552,6 +555,38 @@ export class ProjectsSpecificationGridService {
               gridRowEnd: 8,
               gridColStart: 1,
               gridColEnd: 3
+            }
+          }
+        }
+      }
+    };
+  }
+
+  public getDeleteProjectForm(): FormModel {
+    return {
+      id: 'deleteProject',
+      label: '',
+      type: 'form',
+      sections: {
+        [this.deleteProjectFormId]: {
+          type: 'grid',
+          label: '',
+          formID: this.deleteProjectFormId,
+          gridRowStart: 1,
+          gridRowEnd: 1,
+          gridColStart: 1,
+          gridColEnd: 2,
+          fields: {
+            [eProjectsDeleteFieldNames.Subject]: {
+              label: eProjectsDeleteDisplayNames.Subject,
+              type: eFieldControlType.Label,
+              sectionID: this.deleteProjectFormId,
+              enabled: true,
+              validatorRequired: false,
+              gridRowStart: 1,
+              gridRowEnd: 1,
+              gridColStart: 1,
+              gridColEnd: 2
             }
           }
         }

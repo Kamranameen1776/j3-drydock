@@ -20,6 +20,8 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
 
   public editDialogVisible = false;
 
+  public deleteDialogVisible = false;
+
   createProjectDialog: IJbDialog = {
     dialogHeader: 'Create Project',
     closableIcon: true,
@@ -38,17 +40,32 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
     focusOnShow: false
   };
 
+  deleteProjectDialog: IJbDialog = {
+    dialogHeader: 'Delete Project',
+    closableIcon: true,
+    dialogWidth: 600,
+    resizableDialog: true,
+    blockScroll: false,
+    focusOnShow: false
+  };
+
   createProjectForm: FormModel;
 
   editProjectForm: FormModel;
+
+  deleteProjectForm: FormModel;
 
   createProjectFormGroup: FormGroup;
 
   editProjectFormGroup: FormGroup;
 
+  deleteProjectFormGroup: FormGroup;
+
   saveNewProjectButtonDisabled$ = new BehaviorSubject(false);
 
   saveProjectButtonDisabled$ = new BehaviorSubject(false);
+
+  deleteProjectButtonDisabled$ = new BehaviorSubject(false);
 
   constructor(
     private projectsGridService: ProjectsSpecificationGridService,
@@ -59,11 +76,12 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
     this.gridInputs = this.projectsGridService.getGridInputs();
     this.createProjectForm = this.projectsGridService.getCreateProjectForm();
     this.editProjectForm = this.projectsGridService.getEditProjectForm();
+    this.deleteProjectForm = this.projectsGridService.getDeleteProjectForm();
   }
 
   public onGridAction({ type }: GridAction<string, string>): void {
     if (type === eGridRowActions.Delete) {
-      // TODO: show 'Delete Project' popup
+      this.showDeleteDialog();
     } else if (type === eGridRowActions.Edit) {
       this.showEditDialog();
     } else if (type === this.gridInputs.gridButton.label) {
@@ -71,12 +89,16 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
     }
   }
 
-  public showEditDialog(value = true) {
+  private showEditDialog(value = true) {
     this.editDialogVisible = value;
   }
 
-  public showCreateNewDialog(value = true) {
+  private showCreateNewDialog(value = true) {
     this.createNewDialogVisible = value;
+  }
+
+  private showDeleteDialog(value = true) {
+    this.deleteDialogVisible = value;
   }
 
   public initCreateNewProjectFormGroup(action: FormGroup): void {
@@ -101,6 +123,17 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
     });
   }
 
+  public initDeleteProjectFormGroup(action: FormGroup): void {
+    this.deleteProjectFormGroup = action;
+    this.deleteProjectFormGroup.valueChanges.subscribe(() => {
+      if (this.deleteProjectFormGroup.valid) {
+        this.deleteProjectButtonDisabled$.next(false);
+      } else {
+        this.deleteProjectButtonDisabled$.next(true);
+      }
+    });
+  }
+
   public saveNewProject() {
     this.saveNewProjectButtonDisabled$.next(true);
     if (this.createProjectFormGroup.valid) {
@@ -117,7 +150,7 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
     }
   }
 
-  public saveEditProject() {
+  public saveProject() {
     this.saveProjectButtonDisabled$.next(true);
     if (this.editProjectFormGroup.valid) {
       const values: ProjectEdit = this.editProjectFormGroup.value[this.projectsGridService.editProjectFormId];
@@ -130,6 +163,20 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
       });
     } else {
       this.editProjectFormGroup.markAllAsTouched();
+    }
+  }
+
+  public deleteProject() {
+    this.deleteProjectButtonDisabled$.next(true);
+    if (this.deleteProjectFormGroup.valid) {
+      const values: ProjectEdit = this.deleteProjectFormGroup.value[this.projectsGridService.deleteProjectFormId];
+
+      this.projectsService.deleteProject(values).subscribe(() => {
+        this.deleteProjectButtonDisabled$.next(false);
+        this.showDeleteDialog(false);
+      });
+    } else {
+      this.deleteProjectFormGroup.markAllAsTouched();
     }
   }
 }

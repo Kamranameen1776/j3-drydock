@@ -136,4 +136,16 @@ export class ProjectsService {
 
     return this.apiRequestService.sendApiReq(apiRequest);
   }
+  
+  public deleteProject(data: ProjectEdit): Observable<any> {
+    const apiRequest: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      action: 'projects/delete-project',
+      crud: eCrud.Post,
+      entity: 'drydock',
+      body: data
+    };
+
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
 }

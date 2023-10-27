@@ -78,3 +78,36 @@
     </div>
   </div>
 </jb-dialog>
+
+<jb-dialog
+  (closeDialog)="showDeleteDialog(false)"
+  [(dialogVisible)]="deleteDialogVisible"
+  [dialogContent]="deleteProjectDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-form
+      [displayMenus]="false"
+      (jbFormGroup)="initDeleteProjectFormGroup($any($event))"
+      [formStructure]="deleteProjectForm"
+      class="form-generator-log"
+    ></jb-form>
+
+    <div class="popup-footer">
+      <jb-button
+        (click)="showDeleteDialog(false)"
+        label="Cancel"
+        type="NoButton"
+      ></jb-button>
+      <jb-button
+        (click)="deleteProject()"
+        [disabled]="deleteProjectButtonDisabled$ | async"
+        label="Delete"
+        type="Standard"
+      ></jb-button>
+    </div>
+  </div>
+</jb-dialog>
