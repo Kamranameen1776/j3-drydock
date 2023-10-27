@@ -3,7 +3,7 @@ export interface IProjectsFromMainPageRecordDto {
 
     ProjectCode: string;
 
-    Vessel: string;
+    VesselName: string;
 
     Subject: string;
 

@@ -48,9 +48,8 @@ export class ProjectsSpecificationGridService {
       width: eGridColumnsWidth.ShortDescription
     },
     {
-      DisableSort: true,
       DisplayText: 'Vessel',
-      FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.Vessel),
+      FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.VesselName),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,

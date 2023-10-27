@@ -3,7 +3,7 @@ export interface IProjectsForMainPageGridDto {
 
   ProjectCode: string;
 
-  Vessel: string;
+  VesselName: string;
 
   Subject: string;
 

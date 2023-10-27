@@ -52,7 +52,7 @@ export class ProjectsFromMainPageQuery extends Query<Request, ODataResult<IProje
 
                     ProjectState: record.ProjectStateName,
 
-                    Vessel: record.VesselName,
+                    VesselName: record.VesselName,
 
                     Subject: record.Subject,
                     StartDate: record.StartDate,
