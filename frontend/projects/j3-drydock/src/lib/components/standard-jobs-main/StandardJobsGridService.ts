@@ -65,6 +65,14 @@ export class StandardJobsGridService {
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
+    },
+    {
+      DisableSort: true,
+      DisplayText: eStandardJobsMainLabels.VesselSpecific,
+      FieldName: eStandardJobsMainFields.VesselSpecific,
+      IsActive: false,
+      IsMandatory: false,
+      IsVisible: false
     }
   ];
 
@@ -169,7 +177,7 @@ export class StandardJobsGridService {
       listValueKey: 'uid'
     },
     [eStandardJobsMainFields.VesselSpecific]: {
-      webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.VesselSpecific),
+      list: this.standardJobsService.getVesselSpevificList(),
       type: eFieldControlType.Dropdown,
       odataKey: eStandardJobsMainFields.VesselSpecific,
       listValueKey: 'value'

@@ -31,7 +31,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
         gridColEnd: 3,
         fields: {
           [eStandardJobsMainFields.Function]: {
-            type: 'inputWithDlg',
+            type: eFieldControlType.Text,
             label: eStandardJobsMainLabels.Function,
             sectionID: this.formId,
             enabled: true,
@@ -139,11 +139,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridRowEnd: 6,
             gridColStart: 1,
             gridColEnd: 2,
-            listRequest: {
-              labelKey: 'label',
-              valueKey: 'value',
-              webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.VesselSpecific)
-            }
+            list: this.standardJobsService.getVesselSpevificList()
           },
           [eStandardJobsMainFields.VesselTypeID]: {
             type: eFieldControlType.MultiSelect,

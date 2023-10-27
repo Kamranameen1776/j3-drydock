@@ -22,7 +22,7 @@ export interface StandardJobResult {
   [eStandardJobsMainFields.Inspection]: string;
   [eStandardJobsMainFields.MaterialSuppliedByID]: string;
   [eStandardJobsMainFields.MaterialSuppliedBy]: string;
-  [eStandardJobsMainFields.VesselSpecific]: boolean;
+  [eStandardJobsMainFields.VesselSpecific]: number;
   [eStandardJobsMainFields.Description]: string;
   [eStandardJobsMainFields.VesselTypeID]: string;
   [eStandardJobsMainFields.VesselType]: string;

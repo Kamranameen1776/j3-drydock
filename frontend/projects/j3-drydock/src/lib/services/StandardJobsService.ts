@@ -33,7 +33,7 @@ export class StandardJobsService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  upsertStandardJob(uid: string, formValue: any) {
+  public upsertStandardJob(uid: string, formValue: any) {
     const body = this.getUpsertStandardJobBody(uid, formValue);
     const action = uid ? 'standard-jobs/update-standard-jobs' : 'standard-jobs/create-standard-jobs';
     const apiReq: WebApiRequest = {
@@ -98,6 +98,19 @@ export class StandardJobsService {
       }
     };
     return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
+  public getVesselSpevificList() {
+    return [
+      {
+        label: 'Yes',
+        value: 1
+      },
+      {
+        label: 'No',
+        value: 0
+      }
+    ];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
