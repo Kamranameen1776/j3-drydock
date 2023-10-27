@@ -31,7 +31,6 @@ export class ProjectsSpecificationGridService {
 
   private readonly columns: Column[] = [
     {
-      DisableSort: true,
       DisplayText: 'ProjectId',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectId),
       IsActive: true,
@@ -40,7 +39,6 @@ export class ProjectsSpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: false,
       DisplayText: 'Code',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectCode),
       IsActive: true,
@@ -60,7 +58,6 @@ export class ProjectsSpecificationGridService {
       width: eGridColumnsWidth.ShortDescription
     },
     {
-      DisableSort: false,
       DisplayText: 'Subject',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.Subject),
       IsActive: true,
@@ -70,7 +67,6 @@ export class ProjectsSpecificationGridService {
       width: eGridColumnsWidth.LongDescription
     },
     {
-      DisableSort: true,
       DisplayText: 'Project Type',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectTypeName),
       IsActive: true,
@@ -80,7 +76,6 @@ export class ProjectsSpecificationGridService {
       width: eGridColumnsWidth.ShortDescription
     },
     {
-      DisableSort: true,
       DisplayText: 'Project manager',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectManager),
       IsActive: true,
@@ -111,7 +106,6 @@ export class ProjectsSpecificationGridService {
     },
 
     {
-      DisableSort: true,
       DisplayText: 'Status',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectStatusName),
       IsActive: true,
@@ -120,7 +114,6 @@ export class ProjectsSpecificationGridService {
       ReadOnly: true,
       width: eGridColumnsWidth.ShortDescription
     },
-
     {
       DisableSort: true,
       DisplayText: 'State',
@@ -133,7 +126,6 @@ export class ProjectsSpecificationGridService {
     },
 
     {
-      DisableSort: false,
       DisplayText: 'Start date',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.StartDate),
       IsActive: true,
@@ -147,7 +139,6 @@ export class ProjectsSpecificationGridService {
       }
     },
     {
-      DisableSort: false,
       DisplayText: 'End date',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.EndDate),
       IsActive: true,
@@ -295,9 +286,10 @@ export class ProjectsSpecificationGridService {
 
   private searchFields: string[] = [
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.Subject),
-    nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectCode)
+    nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectCode),
+    nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectTypeName),
+    nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectManager)
   ];
-
   private gridActions: GridRowActions[] = [
     {
       name: eGridRowActions.Delete,
