@@ -5,6 +5,7 @@ import {
 } from '../../../application-layer/drydock/standard-jobs/dto';
 import { standard_jobs } from '../../../entity/standard_jobs';
 import _ from 'lodash';
+import { LIB_VESSELTYPES } from "../../../entity/LIB_VESSELTYPES";
 
 export class StandardJobsService {
     public mapStandardJobsDataToDto(standardJobs: GetStandardJobsQueryResult): GetStandardJobsResultDto {
@@ -38,7 +39,12 @@ export class StandardJobsService {
         standardJob.material_supplied_by_uid = data.materialSuppliedByUid;
         standardJob.vessel_type_specific = data.vesselTypeSpecific;
         standardJob.description = data.description;
-        standardJob.vessel_type_uid = data.vesselTypeUid;
+        standardJob.vessel_type = data.vesselTypeId.map(id => {
+            const vesselType = new LIB_VESSELTYPES();
+            vesselType.ID = id;
+
+            return vesselType;
+        });
 
         return _.omitBy(standardJob, _.isUndefined);
     }

@@ -5,5 +5,5 @@ export interface CreateStandardJobsRequestDto
         GetStandardJobsQueryData,
         'vesselType' | 'vesselTypeId' | 'activeStatus' | 'uid' | 'category' | 'materialSuppliedBy' | 'doneBy'
     > {
-    vesselTypeUid: string;
+    vesselTypeId: string[];
 }

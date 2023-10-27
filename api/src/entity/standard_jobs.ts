@@ -1,5 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
-
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
 import { LIB_VESSELTYPES } from './LIB_VESSELTYPES';
 
 @Entity('standard_jobs', { schema: 'drydock' })
@@ -59,14 +58,20 @@ export class standard_jobs {
     })
     vessel_type_specific: boolean;
 
-    @ManyToOne(() => LIB_VESSELTYPES, (LIB_VESSELTYPES) => LIB_VESSELTYPES.standard_jobs)
-    @JoinColumn({
-        name: 'vessel_type_uid',
-        referencedColumnName: 'uid',
+    @ManyToMany(() => LIB_VESSELTYPES, (LIB_VESSELTYPES) => LIB_VESSELTYPES.standard_jobs)
+    @JoinTable({
+        name: 'standard_jobs_vessel_type',
+        schema: 'drydock',
+        joinColumn: {
+            name: 'standard_job_uid',
+            referencedColumnName: 'uid',
+        },
+        inverseJoinColumn: {
+            name: 'vessel_type_id',
+            referencedColumnName: 'ID',
+        },
     })
-    readonly vessel_type: LIB_VESSELTYPES;
-    @RelationId((entity: standard_jobs) => entity.vessel_type)
-    vessel_type_uid: string;
+    vessel_type: Partial<LIB_VESSELTYPES>[];
 
     @Column('varchar', {
         nullable: true,

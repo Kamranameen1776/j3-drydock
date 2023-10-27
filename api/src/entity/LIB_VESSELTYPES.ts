@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 import { standard_jobs } from './standard_jobs';
 
@@ -20,6 +20,18 @@ export class LIB_VESSELTYPES {
     })
     VesselTypes: string;
 
-    @OneToMany(() => standard_jobs, (photo) => photo.vessel_type)
+    @ManyToMany(() => standard_jobs, (standardJob) => standardJob.vessel_type)
+    @JoinTable({
+        name: 'standard_jobs_vessel_type',
+        schema: 'drydock',
+        joinColumn: {
+            name: 'vessel_type_id',
+            referencedColumnName: 'ID',
+        },
+        inverseJoinColumn: {
+            name: 'standard_job_uid',
+            referencedColumnName: 'uid',
+        },
+    })
     standard_jobs: standard_jobs[];
 }
