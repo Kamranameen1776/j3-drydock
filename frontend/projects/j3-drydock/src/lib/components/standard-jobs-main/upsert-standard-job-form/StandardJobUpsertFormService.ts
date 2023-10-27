@@ -153,7 +153,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridColEnd: 3,
             listRequest: {
               labelKey: 'VesselTypes',
-              valueKey: 'VesselTypes',
+              valueKey: 'ID',
               webApiRequest: this.standardJobsService.getVesselTypesRequest()
             }
           },

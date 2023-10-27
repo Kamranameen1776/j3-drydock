@@ -10,7 +10,6 @@ export class StandardJobsGridService {
 
   private readonly columns: Column[] = [
     {
-      DisableSort: true,
       DisplayText: eStandardJobsMainLabels.ItemNumber,
       FieldName: eStandardJobsMainFields.ItemNumber,
       IsActive: true,
@@ -19,7 +18,6 @@ export class StandardJobsGridService {
       width: '100px'
     },
     {
-      DisableSort: true,
       DisplayText: eStandardJobsMainLabels.Subject,
       FieldName: eStandardJobsMainFields.Subject,
       IsActive: true,
@@ -27,7 +25,6 @@ export class StandardJobsGridService {
       IsVisible: true
     },
     {
-      DisableSort: true,
       DisplayText: eStandardJobsMainLabels.VesselType,
       FieldName: eStandardJobsMainFields.VesselType,
       IsActive: true,
@@ -35,7 +32,6 @@ export class StandardJobsGridService {
       IsVisible: true
     },
     {
-      DisableSort: true,
       DisplayText: eStandardJobsMainLabels.ItemCategory,
       FieldName: eStandardJobsMainFields.ItemCategory,
       IsActive: true,
@@ -43,7 +39,6 @@ export class StandardJobsGridService {
       IsVisible: true
     },
     {
-      DisableSort: true,
       DisplayText: eStandardJobsMainLabels.Inspection,
       FieldName: eStandardJobsMainFields.Inspection,
       IsActive: true,
@@ -51,7 +46,6 @@ export class StandardJobsGridService {
       IsVisible: true
     },
     {
-      DisableSort: true,
       DisplayText: eStandardJobsMainLabels.DoneBy,
       FieldName: eStandardJobsMainFields.DoneBy,
       IsActive: true,
@@ -59,7 +53,6 @@ export class StandardJobsGridService {
       IsVisible: true
     },
     {
-      DisableSort: true,
       DisplayText: eStandardJobsMainLabels.MaterialSuppliedBy,
       FieldName: eStandardJobsMainFields.MaterialSuppliedBy,
       IsActive: true,

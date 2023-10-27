@@ -16,7 +16,7 @@ export enum eStandardJobsMainLabels {
   Description = 'Description',
   Scope = 'Scope'
 }
-// TODO fixme capital when api ready
+
 export enum eStandardJobsMainFields {
   ItemNumber = 'code',
   Subject = 'subject',
@@ -35,7 +35,7 @@ export enum eStandardJobsMainFields {
   VesselTypeID = 'vesselTypeId',
   Description = 'description',
   InspectionID = 'inspection',
-  Scope = 'Scope'
+  Scope = 'scope'
 }
 
 export enum eStandardJobsMainStatus {

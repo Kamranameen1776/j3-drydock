@@ -139,18 +139,13 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
   }
 
   private loadFunctionsTree() {
-    // TODO fixme to generic request with no vessel_uid
-    const vesselUid = this.cds.userDetails?.vessel_uid ?? '3EEF2E1B-2533-45C7-82C7-C13D6AA79559';
-    if (vesselUid) {
-      this.standardJobsService
-        .getStandardJobFunctions()
-        .pipe(takeUntil(this.unsubscribe$))
-        .subscribe((res) => {
-          // eslint-disable-next-line no-console
-          this.treeService.createFlatTree(<FunctionTreeResponseNode[]>res.records);
-          this.setFunctionsTree(this.treeService.createFlatTree(<FunctionTreeResponseNode[]>res.records));
-        });
-    }
+    this.standardJobsService
+      .getStandardJobFunctions()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((res) => {
+        this.treeService.createFlatTree(<FunctionTreeResponseNode[]>res.records);
+        this.setFunctionsTree(this.treeService.createFlatTree(<FunctionTreeResponseNode[]>res.records));
+      });
   }
 
   private setFunctionsTree(records: FunctionsTreeNode[]) {
