@@ -22,7 +22,7 @@ export class SpecificationDetailsRepository {
     public async CreateSpecificationDetails(data: CreateSpecificationDetailsDto, queryRunner: QueryRunner) {
         const spec = new SpecificationDetailsEntity();
         spec.uid = new DataUtilService().newUid();
-        spec.tm_task = data.tmTask;
+        spec.tec_task_manager_uid = data.tmTask;
         spec.function_uid = data.functionUid;
         spec.component_uid = data.componentUid;
         spec.account_code = data.accountCode;

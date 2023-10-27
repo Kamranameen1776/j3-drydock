@@ -23,8 +23,4 @@ export class GetSpecificationDetailsResultDto {
     testCriteria: string;
     ppe: string;
     safetyInstruction: string;
-    updatedBy: string;
-    updatedAt: Date;
-    deletedBy: string;
-    deletedAt: Date;
 }
