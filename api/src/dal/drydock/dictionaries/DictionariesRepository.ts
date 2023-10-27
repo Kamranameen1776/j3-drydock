@@ -28,13 +28,12 @@ export class DictionariesRepository {
 
     public async GetManagers(): Promise<any[]> {
         const dbQuery = `
-        SELECT TOP (50)
-            [uid]
-            ,[Date_Of_Deleted]
+        SELECT [uid]
+            ,[Active_Status]
+			,[User_Type]
             , [First_Name] + ' ' + [Last_Name] as FullName
-            
         FROM [JIBE_Main].[dbo].[LIB_USER]
-        where Date_of_Deleted IS NULL;
+        where Active_status = 1 and User_Type = 'OFFICE USER';
         `;
 
         return getManager().query(dbQuery);
