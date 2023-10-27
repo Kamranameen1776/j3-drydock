@@ -16,7 +16,7 @@ export interface GetStandardJobsQueryData {
     vesselTypeSpecific: boolean;
     description: string;
     activeStatus: boolean;
-    vesselTypeId: number;
+    vesselTypeId: number[];
     vesselType: string;
 }
 

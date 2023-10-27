@@ -46,13 +46,36 @@ export class StandardJobsRepository {
                     'sj.vessel_type_specific as vesselTypeSpecific,' +
                     'sj.description as description,' +
                     'sj.active_status as activeStatus,' +
-                    'vt.ID as vesselTypeId,' +
-                    'vt.VesselTypes as vesselType',
+                    `STRING_AGG(vt.ID, ',') as vesselTypeId,` +
+                    `STRING_AGG(vt.VesselTypes, ',') as vesselType`,
             )
+          .groupBy('sj.uid,' +
+            'sj.subject,' +
+            'sj."function",' +
+            'sj.code,' +
+            'sj.category_uid,' +
+            'ic.display_name,' +
+            'sj.done_by_uid,' +
+            'db.displayName,' +
+            'sj.inspection,' +
+            'sj.material_supplied_by_uid,' +
+            'msb.display_name,' +
+            'sj.vessel_type_specific,' +
+            'sj.description,' +
+            'sj.active_status')
             .where('sj.active_status = 1')
             .getSql();
 
-        return oDataService.getJoinResult(query);
+        const queryData = await oDataService.getJoinResult(query);
+
+        queryData.records = queryData.records.map(item => {
+            return {
+                ...item,
+                vesselTypeId: item.vesselTypeId?.split(','),
+            };
+        });
+
+        return queryData;
     }
 
     public async createStandardJob(
@@ -75,11 +98,17 @@ export class StandardJobsRepository {
         queryRunner: QueryRunner,
     ): Promise<any> {
         const uid = data.uid;
+
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         const updateStandardJobData = this.standardJobsService.addUpdateStandardJobsFields(standardJob, updatedBy);
 
         const entity: standard_jobs = queryRunner.manager.create(standard_jobs, updateStandardJobData);
         entity.uid = uid;
+
+        await queryRunner.manager.save(standard_jobs, {
+            uid,
+            vessel_type: [],
+        });
 
         return queryRunner.manager.save(standard_jobs, entity);
     }
