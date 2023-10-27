@@ -63,7 +63,10 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
 
     if (this.isEditing) {
       const values = this.formValues.values[this.popupFormService.formId];
-      Object.assign(values, this.item, { subject: this.item.subject?.value ?? '' });
+      Object.assign(values, this.item, {
+        subject: this.item.subject?.value ?? '',
+        vesselTypeSpecific: this.item.vesselTypeSpecific ? 1 : 0
+      });
     }
   }
 
