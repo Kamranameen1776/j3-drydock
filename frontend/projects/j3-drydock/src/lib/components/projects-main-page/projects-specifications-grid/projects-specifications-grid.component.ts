@@ -5,7 +5,7 @@ import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ProjectsService } from '../../../services/ProjectsService';
-import { DeleteProjectDto, ProjectCreate, ProjectEdit } from '../../../models/interfaces/projects';
+import { DeleteProjectDto, ProjectCreate } from '../../../models/interfaces/projects';
 import { Router } from '@angular/router';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 
@@ -125,6 +125,7 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
       this.projectsService.createProject(values).subscribe(() => {
         this.saveNewProjectButtonDisabled$.next(false);
         this.showCreateNewDialog(false);
+        this.projectsGrid.fetchMatrixData();
       });
     } else {
       this.createProjectFormGroup.markAllAsTouched();

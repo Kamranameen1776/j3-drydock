@@ -4,7 +4,6 @@ import { ODataService } from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
-import { CreateProjectDto } from '../../../application-layer/drydock/projects/dtos/CreateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { JMSDTLWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
 import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
@@ -14,6 +13,7 @@ import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManager
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
+import { ICreateNewProjectDto } from './dtos/ICreateNewProjectDto';
 import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
 import { IProjectsManagersResultDto } from './dtos/IProjectsManagersResultDto';
 import { IProjectStatusResultDto } from './dtos/IProjectStatusResultDto';
@@ -173,7 +173,7 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async CreateProject(data: CreateProjectDto, queryRunner: QueryRunner): Promise<void> {
+    public async CreateProject(data: ICreateNewProjectDto, queryRunner: QueryRunner): Promise<void> {
         const project = new ProjectEntity();
         project.CreatedAtOffice = !!data.CreatedAtOffice;
         project.VesselUid = data.VesselUid;
@@ -188,6 +188,7 @@ export class ProjectsRepository {
         await queryRunner.manager.insert(ProjectEntity, project);
     }
 
+    // TODO: check if this method is used
     public async UpdateProject(data: UpdateProjectDto, queryRunner: QueryRunner): Promise<void> {
         await queryRunner.manager.update(ProjectEntity, data.uid, data);
     }
@@ -200,11 +201,12 @@ export class ProjectsRepository {
         await queryRunner.manager.update(ProjectEntity, project.uid, project);
     }
 
-    public async GetVesselByUid(uid: string): Promise<any> {
+    public async GetVessel(vesselId: number): Promise<any> {
         const vesselRepository = getManager().getRepository(LibVesselsEntity);
+
         const data = await vesselRepository.findOneOrFail({
             where: {
-                uid,
+                VesselId: vesselId,
             },
         });
 

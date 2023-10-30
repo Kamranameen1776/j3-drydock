@@ -3,10 +3,11 @@ import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { Request } from 'express';
 
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
+import { ICreateNewProjectDto } from '../../../dal/drydock/projects/dtos/ICreateNewProjectDto';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { CreateProjectDto } from './dtos/CreateProjectDto';
+import { ICreateProjectDto } from './dtos/ICreateProjectDto';
 
 export class CreateProjectCommand extends Command<Request, void> {
     projectsRepository: ProjectsRepository;
@@ -36,17 +37,35 @@ export class CreateProjectCommand extends Command<Request, void> {
      */
     protected async MainHandlerAsync(request: Request): Promise<void> {
         const token: string = request.headers.authorization as string;
-        const body: CreateProjectDto = request.body;
+        const createProjectDto: ICreateProjectDto = request.body as ICreateProjectDto;
 
-        body.CreatedAtOffice = await this.projectsService.IsOffice();
-        body.ProjectStateId = 1;
+        createProjectDto.CreatedAtOffice = await this.projectsService.IsOffice();
 
-        const vessel: LibVesselsEntity = await this.projectsRepository.GetVesselByUid(body.VesselUid);
-        const taskManagerData = await this.projectsService.getTaskMaanagerUid(body, vessel, token);
-        body.TaskManagerUid = taskManagerData.uid;
+        createProjectDto.ProjectCode = await this.projectsService.GetProjectCode();
+
+        createProjectDto.ProjectStateId = 1;
+
+        const vessel: LibVesselsEntity = await this.projectsRepository.GetVessel(createProjectDto.VesselId);
+
+        const taskManagerData = await this.projectsService.TaskManagerIntegration(createProjectDto, vessel, token);
+
+        createProjectDto.TaskManagerUid = taskManagerData.uid;
+
+        const newProjectDto: ICreateNewProjectDto = {
+            EndDate: createProjectDto.EndDate,
+            StartDate: createProjectDto.StartDate,
+            ProjectManagerUid: createProjectDto.ProjectManagerUid,
+            ProjectTypeUid: createProjectDto.ProjectTypeUid,
+            ProjectStateId: createProjectDto.ProjectStateId,
+            ProjectCode: createProjectDto.ProjectCode,
+            Subject: createProjectDto.Subject,
+            VesselUid: vessel.uid,
+            CreatedAtOffice: createProjectDto.CreatedAtOffice,
+            TaskManagerUid: createProjectDto.TaskManagerUid,
+        };
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const projectId = await this.projectsRepository.CreateProject(body, queryRunner);
+            const projectId = await this.projectsRepository.CreateProject(newProjectDto, queryRunner);
             return projectId;
         });
 

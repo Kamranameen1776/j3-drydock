@@ -1,7 +1,7 @@
-import { CreateProjectDto } from 'application-layer/drydock/projects/dtos/CreateProjectDto';
 import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { ConfigurationService } from 'j2utils';
 
+import { ICreateProjectDto } from '../../../application-layer/drydock/projects/dtos/ICreateProjectDto';
 import { TaskManagerRequestDto, TaskManagerService } from '../../../external-services/drydock/TaskManager';
 import { TaskManagerConstants } from '../../../shared/constants';
 
@@ -17,6 +17,14 @@ export class ProjectService {
         return location === 'office' ? 1 : 0;
     }
 
+    public async TaskManagerIntegration(
+        request: ICreateProjectDto,
+        vessel: LibVesselsEntity,
+        token: string,
+    ): Promise<any> {
+        const saveTaskManagerDetails = {
+            uid: null,
+            Office_ID: request.CreatedAtOffice,
     public async getTaskMaanagerUid(request: CreateProjectDto, vessel: LibVesselsEntity, token: string): Promise<any> {
         const saveTaskManagerDetails: TaskManagerRequestDto = {
             Office_ID: request.CreatedAtOffice as number,
