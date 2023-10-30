@@ -1,4 +1,3 @@
-import { DeleteProjectDto } from 'application-layer/drydock/projects/dtos/DeleteProjectDto';
 import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
@@ -15,6 +14,7 @@ import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManager
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
+import { IDeleteProjectDto } from './dtos/IDeleteProjectDto';
 import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
 import { IProjectsManagersResultDto } from './dtos/IProjectsManagersResultDto';
 import { IProjectStatusResultDto } from './dtos/IProjectStatusResultDto';
@@ -195,13 +195,19 @@ export class ProjectsRepository {
         }
     }
 
-    public async UpdateProject(data: UpdateProjectDto | DeleteProjectDto, queryRunner: QueryRunner): Promise<any> {
-        try {
-            const result = await queryRunner.manager.update(ProjectEntity, data.uid, data);
-            return;
-        } catch (error) {
-            throw new Error(`Method: update-delete / Class: ProjectRepository / Error: ${error}`);
-        }
+    public async UpdateProject(data: UpdateProjectDto, queryRunner: QueryRunner): Promise<any> {
+        const result = await queryRunner.manager.update(ProjectEntity, data.uid, data);
+
+        return;
+    }
+
+    public async DeleteProject(projectId: string, queryRunner: QueryRunner): Promise<void> {
+        const data: IDeleteProjectDto = {
+            uid: projectId,
+            ActiveStatus: false,
+        };
+
+        await queryRunner.manager.update(ProjectEntity, data.uid, data);
     }
 
     public async GetVesselByUid(uid: string): Promise<any> {

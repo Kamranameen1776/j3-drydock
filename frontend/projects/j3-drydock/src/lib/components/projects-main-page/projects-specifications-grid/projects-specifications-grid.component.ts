@@ -5,7 +5,7 @@ import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ProjectsService } from '../../../services/ProjectsService';
-import { ProjectCreate, ProjectEdit } from '../../../models/interfaces/projects';
+import { DeleteProjectDto, ProjectCreate, ProjectEdit } from '../../../models/interfaces/projects';
 import { Router } from '@angular/router';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 
@@ -68,6 +68,7 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
 
   public onGridAction({ type }: GridAction<string, string>, project: IProjectsForMainPageGridDto): void {
     if (type === eGridRowActions.Delete) {
+      this.deleteProjectFormGroup.value.Project = project;
       this.showDeleteDialog();
     } else if (type === eGridRowActions.Edit) {
       if (!project) {
@@ -130,9 +131,11 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
   public deleteProject() {
     this.deleteProjectButtonDisabled$.next(true);
     if (this.deleteProjectFormGroup.valid) {
-      const values: ProjectEdit = this.deleteProjectFormGroup.value[this.projectsGridService.deleteProjectFormId];
+      const data: DeleteProjectDto = {
+        ProjectId: this.deleteProjectFormGroup.value.Project.ProjectId
+      };
 
-      this.projectsService.deleteProject(values).subscribe(() => {
+      this.projectsService.deleteProject(data).subscribe(() => {
         this.deleteProjectButtonDisabled$.next(false);
         this.showDeleteDialog(false);
       });

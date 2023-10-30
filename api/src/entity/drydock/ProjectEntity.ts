@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
+import { IDeleteProjectDto } from 'dal/drydock/projects/dtos/IDeleteProjectDto';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('project', { schema: 'dry_dock' })
-export class ProjectEntity {
+export class ProjectEntity implements IDeleteProjectDto {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 

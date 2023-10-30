@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestService, eCrud, WebApiRequest } from 'jibe-components';
 import { Observable } from 'rxjs';
-import { ProjectCreate, ProjectEdit } from '../models/interfaces/projects';
+import { DeleteProjectDto, ProjectCreate, ProjectEdit } from '../models/interfaces/projects';
 
 @Injectable()
 export class ProjectsService {
@@ -137,7 +137,7 @@ export class ProjectsService {
     return this.apiRequestService.sendApiReq(apiRequest);
   }
   
-  public deleteProject(data: ProjectEdit): Observable<any> {
+  public deleteProject(data: DeleteProjectDto): Observable<any> {
     const apiRequest: WebApiRequest = {
       apiBase: 'dryDockAPI',
       action: 'projects/delete-project',
