@@ -13,19 +13,6 @@ export class DictionariesRepository {
         });
     }
 
-    public async GetVessels(): Promise<any[]> {
-        const dbQuery = `
-        SELECT
-            vessel.[Vessel_ID] as vesselId,
-            vessel.[uid] as VesselUid,
-            vessel.[Vessel_Name] as VesselName
-        FROM dbo.[Lib_Vessels] as vessel 
-        where Date_Of_Deleted IS NULL;
-        `;
-
-        return getManager().query(dbQuery);
-    }
-
     public async GetManagers(): Promise<any[]> {
         const dbQuery = `
         SELECT [uid]
