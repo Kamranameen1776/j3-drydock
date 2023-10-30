@@ -189,6 +189,7 @@ export class ProjectsRepository {
         await queryRunner.manager.insert(ProjectEntity, project);
     }
 
+    // TODO: check if this method is used
     public async UpdateProject(data: UpdateProjectDto, queryRunner: QueryRunner): Promise<void> {
         await queryRunner.manager.update(ProjectEntity, data.uid, data);
     }
