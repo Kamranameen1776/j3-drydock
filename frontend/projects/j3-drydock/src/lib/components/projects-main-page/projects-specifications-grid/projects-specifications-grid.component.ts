@@ -6,6 +6,8 @@ import { FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { ProjectCreate, ProjectEdit } from '../../../models/interfaces/projects';
+import { Router } from '@angular/router';
+import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -18,21 +20,10 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
 
   public createNewDialogVisible = false;
 
-  public editDialogVisible = false;
-
   public deleteDialogVisible = false;
 
   createProjectDialog: IJbDialog = {
     dialogHeader: 'Create Project',
-    closableIcon: true,
-    dialogWidth: 600,
-    resizableDialog: true,
-    blockScroll: false,
-    focusOnShow: false
-  };
-
-  editProjectDialog: IJbDialog = {
-    dialogHeader: 'Edit Project',
     closableIcon: true,
     dialogWidth: 600,
     resizableDialog: true,
@@ -51,13 +42,9 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
 
   createProjectForm: FormModel;
 
-  editProjectForm: FormModel;
-
   deleteProjectForm: FormModel;
 
   createProjectFormGroup: FormGroup;
-
-  editProjectFormGroup: FormGroup;
 
   deleteProjectFormGroup: FormGroup;
 
@@ -68,6 +55,7 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
   deleteProjectButtonDisabled$ = new BehaviorSubject(false);
 
   constructor(
+    private router: Router,
     private projectsGridService: ProjectsSpecificationGridService,
     private projectsService: ProjectsService
   ) {}
@@ -75,22 +63,21 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
   ngOnInit(): void {
     this.gridInputs = this.projectsGridService.getGridInputs();
     this.createProjectForm = this.projectsGridService.getCreateProjectForm();
-    this.editProjectForm = this.projectsGridService.getEditProjectForm();
     this.deleteProjectForm = this.projectsGridService.getDeleteProjectForm();
   }
 
-  public onGridAction({ type }: GridAction<string, string>): void {
+  public onGridAction({ type }: GridAction<string, string>, project: IProjectsForMainPageGridDto): void {
     if (type === eGridRowActions.Delete) {
       this.showDeleteDialog();
     } else if (type === eGridRowActions.Edit) {
-      this.showEditDialog();
+      if (!project) {
+        throw new Error('Project is null');
+      }
+
+      this.router.navigate(['project-monitoring', project.ProjectId]);
     } else if (type === this.gridInputs.gridButton.label) {
       this.showCreateNewDialog();
     }
-  }
-
-  private showEditDialog(value = true) {
-    this.editDialogVisible = value;
   }
 
   private showCreateNewDialog(value = true) {
@@ -108,17 +95,6 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
         this.saveNewProjectButtonDisabled$.next(false);
       } else {
         this.saveNewProjectButtonDisabled$.next(true);
-      }
-    });
-  }
-
-  public initEditProjectFormGroup(action: FormGroup): void {
-    this.editProjectFormGroup = action;
-    this.editProjectFormGroup.valueChanges.subscribe(() => {
-      if (this.editProjectFormGroup.valid) {
-        this.saveProjectButtonDisabled$.next(false);
-      } else {
-        this.saveProjectButtonDisabled$.next(true);
       }
     });
   }
@@ -147,22 +123,6 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
       });
     } else {
       this.createProjectFormGroup.markAllAsTouched();
-    }
-  }
-
-  public saveProject() {
-    this.saveProjectButtonDisabled$.next(true);
-    if (this.editProjectFormGroup.valid) {
-      const values: ProjectEdit = this.editProjectFormGroup.value[this.projectsGridService.editProjectFormId];
-      values.EndDate = new Date(values.EndDate);
-      values.StartDate = new Date(values.StartDate);
-
-      this.projectsService.updateProject(values).subscribe(() => {
-        this.saveProjectButtonDisabled$.next(false);
-        this.showEditDialog(false);
-      });
-    } else {
-      this.editProjectFormGroup.markAllAsTouched();
     }
   }
 

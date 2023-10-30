@@ -16,7 +16,6 @@ import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
-import { eProjectsEditDisplayNames, eProjectsEditFieldNames } from '../../../models/enums/projects-edit.enum';
 import { eProjectsDeleteDisplayNames, eProjectsDeleteFieldNames } from '../../../models/enums/projects-delete.enum';
 
 @Injectable()
@@ -304,8 +303,6 @@ export class ProjectsSpecificationGridService {
 
   public createProjectFormId = 'projectCreate';
 
-  public editProjectFormId = 'projectEdit';
-
   public deleteProjectFormId = 'projectDelete';
 
   constructor(
@@ -431,124 +428,6 @@ export class ProjectsSpecificationGridService {
               label: eProjectsCreateDisplayNames.EndDate,
               type: eFieldControlType.Date,
               sectionID: this.createProjectFormId,
-              enabled: true,
-              validatorRequired: true,
-              gridRowStart: 7,
-              gridRowEnd: 8,
-              gridColStart: 1,
-              gridColEnd: 3
-            }
-          }
-        }
-      }
-    };
-  }
-
-  public getEditProjectForm(): FormModel {
-    return {
-      id: 'editProject',
-      label: '',
-      type: 'form',
-      sections: {
-        [this.editProjectFormId]: {
-          type: 'grid',
-          label: '',
-          formID: this.editProjectFormId,
-          gridRowStart: 1,
-          gridRowEnd: 14,
-          gridColStart: 1,
-          gridColEnd: 1,
-          fields: {
-            [eProjectsEditFieldNames.Fleet]: {
-              label: eProjectsEditDisplayNames.Fleet,
-              type: eFieldControlType.Dropdown,
-              sectionID: this.editProjectFormId,
-              enabled: true,
-              validatorRequired: false,
-              gridRowStart: 1,
-              gridRowEnd: 2,
-              gridColStart: 1,
-              gridColEnd: 3,
-              listRequest: {
-                webApiRequest: this.projectsService.getFleetsRequest(),
-                labelKey: 'FleetName',
-                valueKey: 'uid'
-              }
-            },
-            [eProjectsEditFieldNames.Vessel]: {
-              label: eProjectsEditDisplayNames.Vessel,
-              type: eFieldControlType.Dropdown,
-              sectionID: this.editProjectFormId,
-              enabled: true,
-              validatorRequired: false,
-              gridRowStart: 2,
-              gridRowEnd: 3,
-              gridColStart: 1,
-              gridColEnd: 3,
-              listRequest: {
-                webApiRequest: this.projectsService.getVesselsRequest(),
-                labelKey: 'VesselName',
-                valueKey: 'VesselUid'
-              }
-            },
-            [eProjectsEditFieldNames.ProjectType]: {
-              label: eProjectsEditDisplayNames.ProjectType,
-              type: eFieldControlType.Dropdown,
-              sectionID: this.editProjectFormId,
-              enabled: true,
-              validatorRequired: true,
-              gridRowStart: 3,
-              gridRowEnd: 4,
-              gridColStart: 1,
-              gridColEnd: 3,
-              listRequest: {
-                webApiRequest: this.projectsService.getAllProjectTypesRequest(),
-                labelKey: 'Worklist_Type',
-                valueKey: 'uid'
-              }
-            },
-            [eProjectsEditFieldNames.Subject]: {
-              label: eProjectsEditDisplayNames.Subject,
-              type: eFieldControlType.Text,
-              sectionID: this.editProjectFormId,
-              enabled: true,
-              validatorRequired: true,
-              gridRowStart: 4,
-              gridRowEnd: 5,
-              gridColStart: 1,
-              gridColEnd: 3
-            },
-            [eProjectsEditFieldNames.ProjectManager]: {
-              label: eProjectsEditDisplayNames.ProjectManager,
-              type: eFieldControlType.Dropdown,
-              sectionID: this.editProjectFormId,
-              enabled: true,
-              validatorRequired: false,
-              gridRowStart: 5,
-              gridRowEnd: 6,
-              gridColStart: 1,
-              gridColEnd: 3,
-              listRequest: {
-                webApiRequest: this.projectsService.getProjectsManagersDictionariesRequest(),
-                labelKey: 'FullName',
-                valueKey: 'uid'
-              }
-            },
-            [eProjectsEditFieldNames.StartDate]: {
-              label: eProjectsEditDisplayNames.StartDate,
-              type: eFieldControlType.Date,
-              sectionID: this.editProjectFormId,
-              enabled: true,
-              validatorRequired: true,
-              gridRowStart: 6,
-              gridRowEnd: 7,
-              gridColStart: 1,
-              gridColEnd: 3
-            },
-            [eProjectsEditFieldNames.EndDate]: {
-              label: eProjectsEditDisplayNames.EndDate,
-              type: eFieldControlType.Date,
-              sectionID: this.editProjectFormId,
               enabled: true,
               validatorRequired: true,
               gridRowStart: 7,

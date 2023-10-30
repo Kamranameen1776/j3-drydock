@@ -9,7 +9,7 @@
     [button]="gridInputs.gridButton"
     [setActions]="gridInputs.actions"
     [getStyleByContainer]="true"
-    (action)="onGridAction($any($event))"
+    (action)="onGridAction($any($event), $event?.payload)"
   ></jb-grid>
 </section>
 
@@ -40,39 +40,6 @@
         (click)="saveNewProject()"
         [disabled]="saveNewProjectButtonDisabled$ | async"
         label="Create"
-        type="Standard"
-      ></jb-button>
-    </div>
-  </div>
-</jb-dialog>
-
-<jb-dialog
-  (closeDialog)="showEditDialog(false)"
-  [(dialogVisible)]="editDialogVisible"
-  [dialogContent]="editProjectDialog"
-  class="dialog"
->
-  <div
-    class="dialog-body"
-    jb-dialog-body
-  >
-    <jb-form
-      [displayMenus]="false"
-      (jbFormGroup)="initEditProjectFormGroup($any($event))"
-      [formStructure]="editProjectForm"
-      class="form-generator-log"
-    ></jb-form>
-
-    <div class="popup-footer">
-      <jb-button
-        (click)="showEditDialog(false)"
-        label="Cancel"
-        type="NoButton"
-      ></jb-button>
-      <jb-button
-        (click)="saveProject()"
-        [disabled]="saveEditProjectButtonDisabled$ | async"
-        label="Edit"
         type="Standard"
       ></jb-button>
     </div>
