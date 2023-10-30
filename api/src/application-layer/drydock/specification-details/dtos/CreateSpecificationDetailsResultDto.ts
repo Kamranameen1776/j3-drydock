@@ -1,3 +1,3 @@
-export class CreateProjectResultDto {
-    public ProjectId: number;
+export interface CreateProjectResultDto {
+    ProjectId: number;
 }

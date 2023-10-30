@@ -30,7 +30,7 @@ export class DeleteSpecificationDetailsCommand extends Command<DeleteSpecificati
      * @returns New created project result
      */
     protected async MainHandlerAsync(request: DeleteSpecificationDetailsDto): Promise<void> {
-        request.DeletedAt = new Date();
+        request.deletedAt = new Date();
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const projectId = await this.specificationDetailsRepository.UpdateSpecificationDetails(
                 request,

@@ -7,6 +7,12 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
+        name: 'tec_task_manager_uid',
+    })
+    tec_task_manager_uid: string;
+
+    @Column('uniqueidentifier', {
+        nullable: false,
         name: 'function_uid',
     })
     function_uid: string;
@@ -44,7 +50,7 @@ export class SpecificationDetailsEntity {
     done_by_uid: string;
 
     @Column('uniqueidentifier', {
-        nullable: true,
+        nullable: false,
         name: 'item_category_uid',
     })
     item_category_uid: string;
@@ -69,7 +75,7 @@ export class SpecificationDetailsEntity {
     priority_uid: string;
 
     @Column('varchar', {
-        nullable: true,
+        nullable: false,
         name: 'description',
         length: 1000,
     })
@@ -148,7 +154,7 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'created_by_uid',
+        name: 'created_by',
     })
     created_by_uid: string;
 
@@ -157,28 +163,4 @@ export class SpecificationDetailsEntity {
         name: 'created_at',
     })
     created_at: Date;
-
-    @Column('uniqueidentifier', {
-        nullable: true,
-        name: 'updated_by_uid',
-    })
-    updated_by_uid: string;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'updated_at',
-    })
-    updated_at: Date;
-
-    @Column('uniqueidentifier', {
-        nullable: true,
-        name: 'deleted_by_uid',
-    })
-    deleted_by_uid: string;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'deleted_at',
-    })
-    deleted_at: Date;
 }

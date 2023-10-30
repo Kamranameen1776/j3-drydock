@@ -1,4 +1,4 @@
-export class DeleteSpecificationDetailsDto {
-    public uid: string;
-    public DeletedAt: Date = new Date();
+export interface DeleteSpecificationDetailsDto {
+    uid: string;
+    deletedAt: Date;
 }

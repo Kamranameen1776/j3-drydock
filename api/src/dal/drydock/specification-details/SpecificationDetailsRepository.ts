@@ -71,12 +71,10 @@ export class SpecificationDetailsRepository {
         }
     }
 
-    public async CreateSpecificationDetails(
-        data: CreateSpecificationDetailsDto,
-        queryRunner: QueryRunner,
-    ): Promise<any> {
+    public async CreateSpecificationDetails(data: CreateSpecificationDetailsDto, queryRunner: QueryRunner) {
         const spec = new SpecificationDetailsEntity();
         spec.uid = new DataUtilService().newUid();
+        spec.tec_task_manager_uid = data.tmTask;
         spec.function_uid = data.functionUid;
         spec.component_uid = data.componentUid;
         spec.account_code = data.accountCode;
@@ -109,7 +107,7 @@ export class SpecificationDetailsRepository {
     public async UpdateSpecificationDetails(
         data: UpdateSpecificationDetailsDto | DeleteSpecificationDetailsDto,
         queryRunner: QueryRunner,
-    ): Promise<any> {
+    ) {
         const result = await queryRunner.manager.update(SpecificationDetailsEntity, data.uid, data);
         return result;
     }

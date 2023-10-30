@@ -1,29 +1,26 @@
 // Repository method name eq to the dto name + 'ResultsDto' suffix
 export class GetSpecificationDetailsResultDto {
     uid: string;
-    function_uid: string;
-    component_uid: string;
-    account_code: string;
-    item_source: string;
-    item_number: string;
-    done_by: string;
-    item_category: string;
-    inspection: string;
-    equipment_description: string;
-    priority: string;
+    tmTask: string;
+    functionUid: string;
+    componentUid: string;
+    accountCode: string;
+    itemSourceUid: string;
+    itemNumber: string;
+    doneByUid: string;
+    itemCategoryUid: string;
+    inspectionUid: string;
+    equipmentDescription: string;
+    priorityUid: string;
     description: string;
-    start_date: Date;
-    estimated_days: number;
-    buffer_time: number;
+    startDate: Date;
+    estimatedDays: number;
+    bufferTime: number;
     treatment: string;
-    onboard_location: string;
+    onboardLocationUid: string;
     access: string;
-    material_supplied_by: string;
-    test_criteria: string;
+    materialSuppliedByUid: string;
+    testCriteria: string;
     ppe: string;
-    safety_instruction: string;
-    updated_by: string;
-    updated_at: Date;
-    deleted_by: string;
-    deleted_at: Date;
+    safetyInstruction: string;
 }
