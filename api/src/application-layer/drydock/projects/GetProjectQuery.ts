@@ -1,6 +1,4 @@
 import { Request } from 'express';
-import { map } from 'lodash';
-import { ODataResult } from 'shared/interfaces';
 
 import { ApplicationException } from '../../../bll/drydock/core/exceptions/ApplicationException';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';

@@ -1,11 +1,8 @@
-import { AuthorizationException } from '../../../bll/drydock/core/exceptions/AuthorizationException';
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { CreateProjectDto } from './dtos/CreateProjectDto';
 import { UpdateProjectDto } from './dtos/UpdateProjectDto';
-
 
 export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
     projectsRepository: ProjectsRepository;
@@ -21,7 +18,7 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
     }
 
     protected async AuthorizationHandlerAsync(request: UpdateProjectDto): Promise<void> {
-        
+        return;
     }
 
     protected async ValidationHandlerAsync(request: UpdateProjectDto): Promise<void> {

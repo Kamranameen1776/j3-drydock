@@ -175,7 +175,6 @@ export class ProjectsRepository {
 
     public async CreateProject(data: CreateProjectDto, queryRunner: QueryRunner): Promise<void> {
         const project = new ProjectEntity();
-        project.ProjectCode = data.ProjectCode as string;
         project.CreatedAtOffice = !!data.CreatedAtOffice;
         project.VesselUid = data.VesselUid;
         project.ProjectTypeUid = data.ProjectTypeUid;

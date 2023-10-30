@@ -5,13 +5,6 @@ export class ProjectEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
-    @Column('varchar', {
-        nullable: true,
-        name: 'project_code',
-        length: 250,
-    })
-    ProjectCode: string;
-
     @Column('bit', {
         name: 'created_at_office',
         default: true,

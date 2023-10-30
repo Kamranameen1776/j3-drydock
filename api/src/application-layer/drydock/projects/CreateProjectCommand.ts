@@ -39,11 +39,10 @@ export class CreateProjectCommand extends Command<Request, void> {
         const body: CreateProjectDto = request.body;
 
         body.CreatedAtOffice = await this.projectsService.IsOffice();
-        body.ProjectCode = await this.projectsService.GetProjectCode();
         body.ProjectStateId = 1;
 
         const vessel: LibVesselsEntity = await this.projectsRepository.GetVesselByUid(body.VesselUid);
-        const taskManagerData = await this.projectsService.TaskManagerIntegration(body, vessel, token);
+        const taskManagerData = await this.projectsService.getTaskMaanagerUid(body, vessel, token);
         body.TaskManagerUid = taskManagerData.uid;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
