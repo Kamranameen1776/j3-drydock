@@ -1,5 +1,8 @@
-import { DataUtilService } from 'j2utils';
-import { getManager, QueryRunner } from 'typeorm';
+import { className } from 'common/drydock/ts-helpers/className';
+import { TECTaskManagerEntity } from 'entity/drydock/dbo/TECTaskManagerEntity';
+import { Request } from 'express';
+import { DataUtilService, ODataService } from 'j2utils';
+import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { CreateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/CreateSpecificationDetailsDto';
 import { DeleteSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationDetailsDto';
@@ -25,8 +28,6 @@ export class SpecificationDetailsRepository {
 
             const query = getManager()
                 .createQueryBuilder('specification_details', 'sd')
-                .leftJoin('[dto].[tm_dd_lib_item_category]', 'ic', 'sd.item_category = ic.uid')
-                .leftJoin('[dto].[tm_dd_lib_done_by]', 'db', 'sd.done_by = db.uid')
                 .select(
                     'sd.uid as uid,' +
                         'sd.function_uid as Function,' +
@@ -47,11 +48,17 @@ export class SpecificationDetailsRepository {
                         'sd.treatment,' +
                         'sd.onboard_location,' +
                         'sd.access,' +
-                        'sd.material_supplied_by,' +
+                        'msb.material_supplied_by,' +
                         'sd.test_criteria,' +
                         'sd.ppe,' +
+                        'tm.Code as code' +
+                        'tm.Status as status' +
                         'sd.safety_instruction',
                 )
+                .leftJoin('[dto].[tm_dd_lib_item_category]', 'ic', 'sd.item_category = ic.uid')
+                .leftJoin('[dto].[tm_dd_lib_done_by]', 'db', 'sd.done_by = db.uid')
+                .leftJoin('[dto].[tm_dd_lib_material_supplied_by]', 'msb', 'sd.material_supplied_by = msb.uid')
+                .innerJoin(className(TECTaskManagerEntity), 'tm', 'sd.tm_task_uid = tm.uid')
                 .where('sd.active_status = 1')
                 .getSql();
 
