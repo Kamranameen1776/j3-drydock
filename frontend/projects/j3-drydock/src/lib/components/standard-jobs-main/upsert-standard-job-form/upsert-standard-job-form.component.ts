@@ -32,7 +32,7 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
     return !!this.item;
   }
 
-  public functionsTree$ = this.popupFormService.functionsTree$;
+  public functionsFlatTree$ = this.popupFormService.functionsFlatTree$;
 
   constructor(private popupFormService: StandardJobUpsertFormService) {
     super();

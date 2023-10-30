@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export interface FunctionTreeResponseNode {
+export interface ShellFunctionTreeResponseNode {
   uid: string;
   name: string;
   description: string;
@@ -11,7 +11,7 @@ export interface FunctionTreeResponseNode {
   utilized: string;
 }
 
-export interface FunctionsTreeNode {
+export interface FunctionsFlatTreeNode {
   Child_ID: string;
   Parent_ID: string | number;
   DisplayText: string;
@@ -19,4 +19,10 @@ export interface FunctionsTreeNode {
   icon?: string;
 
   jb_value_label?: string;
+}
+
+export interface FunctionsTreeNode extends FunctionsFlatTreeNode {
+  children: FunctionsTreeNode[];
+  parent: FunctionsTreeNode;
+  label: string;
 }

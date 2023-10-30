@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Component, Input, ViewChild } from '@angular/core';
 import { InputWithDlgService, JbTreeComponent } from 'jibe-components';
-import { FunctionsTreeNode } from '../../../models/interfaces/functions-tree-node';
+import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 import { TreeNode } from 'primeng';
+import { FunctionsTreeService } from '../../../services/FunctionsTreeService';
 
 @Component({
   selector: 'jb-drydock-functions-tree-select',
@@ -11,40 +10,24 @@ import { TreeNode } from 'primeng';
   styleUrls: ['./functions-tree-select.component.scss']
 })
 export class FunctionsTreeSelectComponent {
-  @Input() treeData: FunctionsTreeNode[] = [];
+  @Input() treeData: FunctionsFlatTreeNode[] = [];
   @Input() formId!: string;
   @Input() fieldName!: string;
 
   @ViewChild('treeRef') treeRef: JbTreeComponent;
 
-  constructor(private inputFunctionsTreeService: InputWithDlgService) {}
+  constructor(
+    private inputFunctionsTreeService: InputWithDlgService,
+    private functionsTreeService: FunctionsTreeService
+  ) {}
 
   public onSelected(e: TreeNode) {
-    const data = e.data as FunctionsTreeNode;
+    const data = e.data as FunctionsFlatTreeNode;
 
     this.inputFunctionsTreeService.changed$.next({
       formId: this.formId,
       fieldName: this.fieldName,
-      value: { ...data, jb_value_label: this.getPath(e) }
+      value: { ...data, jb_value_label: this.functionsTreeService.getPath(e) }
     });
-  }
-
-  private getPath(node: TreeNode) {
-    const path = [];
-
-    if (!node.label) {
-      return '';
-    }
-
-    path.unshift(node.label);
-
-    if (node.parent) {
-      const subPath = this.getPath(node.parent);
-      if (subPath) {
-        path.unshift(subPath);
-      }
-    }
-
-    return path.join(' > ');
   }
 }

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities, eJMSFilterDataKeys } from 'jibe-components';
 import { ODataFilterBuilder } from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../models/enums/standard-jobs-main.enum';
+import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../models/interfaces/functions-tree-node';
+import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class StandardJobsService {
@@ -97,7 +99,15 @@ export class StandardJobsService {
         top: '10000000'
       }
     };
-    return this.apiRequestService.sendApiReq(apiRequest);
+
+    return this.apiRequestService.sendApiReq(apiRequest).pipe(
+      map((res) => {
+        if (!res.records) {
+          return [];
+        }
+        return res.records.map((record) => this.createFlatNode(record));
+      })
+    );
   }
 
   public getVesselSpevificList() {
@@ -118,6 +128,16 @@ export class StandardJobsService {
     return {
       ...formValue,
       [eStandardJobsMainFields.UID]: uid || ''
+    };
+  }
+
+  private createFlatNode(comp: ShellFunctionTreeResponseNode): FunctionsFlatTreeNode {
+    return {
+      Child_ID: comp.uid,
+      Parent_ID: comp.parent_function_uid || 0,
+      DisplayText: comp.name,
+      selectable: false,
+      icon: 'icons8-cloud-function'
     };
   }
 }

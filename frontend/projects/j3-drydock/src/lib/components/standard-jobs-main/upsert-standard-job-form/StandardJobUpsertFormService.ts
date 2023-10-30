@@ -6,7 +6,7 @@ import { StandardJobsService } from '../../../services/StandardJobsService';
 import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../../../models/enums/standard-jobs-main.enum';
 import { BehaviorSubject } from 'rxjs';
-import { FunctionsTreeNode } from '../../../models/interfaces/functions-tree-node';
+import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,9 @@ import { FunctionsTreeNode } from '../../../models/interfaces/functions-tree-nod
 export class StandardJobUpsertFormService extends FormServiceBase {
   public readonly formId = standardJobsUpsertFormId;
 
-  public functionsTree$ = new BehaviorSubject<FunctionsTreeNode[]>([]);
+  public functionsFlatTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
+
+  public functionsTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
 
   protected readonly _formStructure: FormModel = {
     id: this.formId,

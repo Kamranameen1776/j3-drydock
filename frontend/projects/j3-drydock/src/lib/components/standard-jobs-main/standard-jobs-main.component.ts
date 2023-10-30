@@ -13,14 +13,14 @@ import {
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { StandardJobsGridService } from './StandardJobsGridService';
-import { FunctionTreeResponseNode, FunctionsTreeNode } from '../../models/interfaces/functions-tree-node';
+import { FunctionsFlatTreeNode, FunctionsTreeNode } from '../../models/interfaces/functions-tree-node';
 import { StandardJobUpsertFormService } from './upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../models/constants/popup';
 import { StandardJobsService } from '../../services/StandardJobsService';
 import { GrowlMessageService } from '../../services/GrowlMessageService';
-import { ShellFunctionsTreeService } from '../../services/ShellFunctionsTreeService';
+import { FunctionsTreeService } from '../../services/FunctionsTreeService';
 
 @Component({
   selector: 'jb-standard-jobs-main',
@@ -56,7 +56,7 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     private cds: CentralizedDataService,
     private techApiSvc: JmsTechApiService,
     private growlMessageService: GrowlMessageService,
-    private treeService: ShellFunctionsTreeService
+    private treeService: FunctionsTreeService
   ) {
     super();
   }
@@ -142,14 +142,19 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     this.standardJobsService
       .getStandardJobFunctions()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((res) => {
-        this.treeService.createFlatTree(<FunctionTreeResponseNode[]>res.records);
-        this.setFunctionsTree(this.treeService.createFlatTree(<FunctionTreeResponseNode[]>res.records));
+      .subscribe((flatTree) => {
+        this.setFunctionsFlatTree(flatTree);
+        this.setFunctionsTree(this.treeService.createTree(flatTree));
       });
   }
 
-  private setFunctionsTree(records: FunctionsTreeNode[]) {
-    this.upsertFormService.functionsTree$.next(records);
+  private setFunctionsFlatTree(flatTree: FunctionsFlatTreeNode[]) {
+    this.upsertFormService.functionsFlatTree$.next(flatTree);
+  }
+
+  private setFunctionsTree(tree: FunctionsTreeNode[]) {
+    console.log(tree);
+    this.upsertFormService.functionsTree$.next(tree);
   }
 
   private deleteStandardJob() {
