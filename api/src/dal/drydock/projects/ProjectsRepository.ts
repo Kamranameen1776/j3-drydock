@@ -174,25 +174,20 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async CreateProject(data: CreateProjectDto, queryRunner: QueryRunner): Promise<any> {
-        try {
-            const project = new ProjectEntity();
-            project.ProjectCode = data.ProjectCode as string;
-            project.CreatedAtOffice = !!data.CreatedAtOffice;
-            project.VesselUid = data.VesselUid;
-            project.ProjectTypeUid = data.ProjectTypeUid;
-            project.ProjectStateId = data.ProjectStateId as number;
-            project.Subject = data.Subject;
-            project.ProjectManagerUid = data.ProjectManagerUid;
-            project.StartDate = data.StartDate;
-            project.EndDate = data.EndDate;
-            project.TaskManagerUid = data.TaskManagerUid as string;
+    public async CreateProject(data: CreateProjectDto, queryRunner: QueryRunner): Promise<void> {
+        const project = new ProjectEntity();
+        project.ProjectCode = data.ProjectCode as string;
+        project.CreatedAtOffice = !!data.CreatedAtOffice;
+        project.VesselUid = data.VesselUid;
+        project.ProjectTypeUid = data.ProjectTypeUid;
+        project.ProjectStateId = data.ProjectStateId as number;
+        project.Subject = data.Subject;
+        project.ProjectManagerUid = data.ProjectManagerUid;
+        project.StartDate = data.StartDate;
+        project.EndDate = data.EndDate;
+        project.TaskManagerUid = data.TaskManagerUid as string;
 
-            const result = await queryRunner.manager.insert(ProjectEntity, project);
-            return;
-        } catch (error) {
-            throw new Error(`Method: create / Class: ProjectRepository / Error: ${error}`);
-        }
+        await queryRunner.manager.insert(ProjectEntity, project);
     }
 
     public async UpdateProject(data: UpdateProjectDto, queryRunner: QueryRunner): Promise<any> {
@@ -202,12 +197,11 @@ export class ProjectsRepository {
     }
 
     public async DeleteProject(projectId: string, queryRunner: QueryRunner): Promise<void> {
-        const data: IDeleteProjectDto = {
-            uid: projectId,
-            ActiveStatus: false,
-        };
+        const project = new ProjectEntity();
+        project.uid = projectId;
+        project.ActiveStatus = false;
 
-        await queryRunner.manager.update(ProjectEntity, data.uid, data);
+        await queryRunner.manager.update(ProjectEntity, project.uid, project);
     }
 
     public async GetVesselByUid(uid: string): Promise<any> {
