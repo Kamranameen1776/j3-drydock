@@ -1,9 +1,12 @@
 <jb-tree
+  #treeRef
   [staticNodes]="treeData"
   [showSelectButton]="false"
   [showSetting]="{ showSearch: true, showButtons: false }"
   [templateRefSet]="treesection"
   [pTemplatesTypes]="['default']"
+  [virtualScroll]="true"
+  scrollHeight="70vh"
 >
   <ng-template
     #treesection
@@ -14,7 +17,7 @@
         <ng-container *ngIf="!component?.node?.children.length">
           <label
             class="selectable-node"
-            (click)="onGetSelected(component?.node)"
+            (click)="onSelected(component?.node)"
           >
             <b>{{ component?.node?.label }}</b>
           </label>

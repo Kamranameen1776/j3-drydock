@@ -12,7 +12,6 @@ export interface FunctionTreeResponseNode {
 }
 
 export interface FunctionsTreeNode {
-  path: string;
   Child_ID: string;
   Parent_ID: string | number;
   DisplayText: string;
