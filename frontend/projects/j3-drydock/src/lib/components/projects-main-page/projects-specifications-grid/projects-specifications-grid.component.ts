@@ -74,6 +74,7 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
         throw new Error('Project is null');
       }
 
+      // TODO: re-check navigation params
       this.router.navigate(['project-monitoring', project.ProjectId]);
     } else if (type === this.gridInputs.gridButton.label) {
       this.showCreateNewDialog();
