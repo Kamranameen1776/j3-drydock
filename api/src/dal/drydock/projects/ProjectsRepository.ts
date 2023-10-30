@@ -14,7 +14,6 @@ import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManager
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
-import { IDeleteProjectDto } from './dtos/IDeleteProjectDto';
 import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
 import { IProjectsManagersResultDto } from './dtos/IProjectsManagersResultDto';
 import { IProjectStatusResultDto } from './dtos/IProjectStatusResultDto';
