@@ -121,11 +121,11 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
       const values: ProjectCreate = this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId];
       values.EndDate = new Date(values.EndDate);
       values.StartDate = new Date(values.StartDate);
-      debugger;
 
       this.projectsService.createProject(values).subscribe(() => {
         this.saveNewProjectButtonDisabled$.next(false);
         this.showCreateNewDialog(false);
+        this.projectsGrid.fetchMatrixData();
       });
     } else {
       this.createProjectFormGroup.markAllAsTouched();
