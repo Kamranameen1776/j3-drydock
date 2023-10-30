@@ -41,8 +41,6 @@ export class CreateProjectCommand extends Command<Request, void> {
 
         createProjectDto.CreatedAtOffice = await this.projectsService.IsOffice();
 
-        createProjectDto.ProjectCode = await this.projectsService.GetProjectCode();
-
         createProjectDto.ProjectStateId = 1;
 
         const vessel: LibVesselsEntity = await this.projectsRepository.GetVessel(createProjectDto.VesselId);

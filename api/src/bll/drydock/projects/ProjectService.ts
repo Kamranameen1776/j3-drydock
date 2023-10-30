@@ -22,10 +22,6 @@ export class ProjectService {
         vessel: LibVesselsEntity,
         token: string,
     ): Promise<any> {
-        const saveTaskManagerDetails = {
-            uid: null,
-            Office_ID: request.CreatedAtOffice,
-    public async getTaskMaanagerUid(request: CreateProjectDto, vessel: LibVesselsEntity, token: string): Promise<any> {
         const saveTaskManagerDetails: TaskManagerRequestDto = {
             Office_ID: request.CreatedAtOffice as number,
             Vessel_ID: vessel.VesselId,
