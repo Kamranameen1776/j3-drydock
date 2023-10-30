@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProjectsSpecificationGridService } from './ProjectsSpecificationGridService';
-import { eGridRowActions, FormModel, GridAction, IJbDialog } from 'jibe-components';
+import { eGridRowActions, FormModel, GridAction, GridComponent, IJbDialog } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
@@ -16,6 +16,9 @@ import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto'
   providers: [ProjectsSpecificationGridService]
 })
 export class ProjectsSpecificationsGridComponent implements OnInit {
+  @ViewChild('projectsGrid')
+  projectsGrid: GridComponent;
+
   public gridInputs: GridInputsWithRequest;
 
   public createNewDialogVisible = false;
@@ -138,6 +141,7 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
       this.projectsService.deleteProject(data).subscribe(() => {
         this.deleteProjectButtonDisabled$.next(false);
         this.showDeleteDialog(false);
+        this.projectsGrid.fetchMatrixData();
       });
     } else {
       this.deleteProjectFormGroup.markAllAsTouched();
