@@ -3,13 +3,13 @@ import { getConnection, getManager, QueryRunner } from 'typeorm';
 import { RequestWithOData } from '../../../shared/interfaces';
 import {
     CreateStandardJobsRequestDto,
-    GetStandardJobsQueryResult,
     UpdateStandardJobsRequestDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
 import { standard_jobs } from '../../../entity/standard_jobs';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
 import {
     StandardJobsFiltersAllowedKeys,
+    StandardJobsFilterTablesMap,
     StandardJobsLibraryValuesMap,
 } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto';
 import { FiltersDataResponse } from '../../../shared/interfaces/filters-data-response.interface';
@@ -17,13 +17,15 @@ import { FiltersDataResponse } from '../../../shared/interfaces/filters-data-res
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
 
-    public async getStandardJobs(data: RequestWithOData): Promise<GetStandardJobsQueryResult> {
+    public async getStandardJobs(data: RequestWithOData): Promise<standard_jobs[]> {
         const oDataService = new ODataService(data, getConnection);
 
         const query = getManager()
             .createQueryBuilder('standard_jobs', 'sj')
             .leftJoin('standard_jobs_vessel_type', 'sjvt', `sjvt.standard_job_uid = sj.uid`)
-            .leftJoin('LIB_VESSELTYPES', 'vt', `vt.ID = sjvt.vessel_type_id and vt.active_status = 1`)
+            .leftJoin('standard_jobs_survey_certificate_authority', 'sjsca', `sjsca.standard_job_uid = sj.uid`)
+            .leftJoin('LIB_Survey_CertificateAuthority', 'lsca', `lsca.ID = sjsca.survey_id and lsca.Active_Status = 1`)
+            .leftJoin('LIB_VESSELTYPES', 'vt', `vt.ID = sjvt.vessel_type_id and vt.Active_Status = 1`)
             .leftJoin('tm_dd_lib_done_by', 'db', `db.uid = sj.done_by_uid AND db.active_status = 1`)
             .leftJoin('tm_dd_lib_item_category', 'ic', `ic.uid = sj.category_uid AND ic.active_status = 1`)
             .leftJoin(
@@ -40,42 +42,29 @@ export class StandardJobsRepository {
                     'ic.display_name as category,' +
                     'sj.done_by_uid as doneByUid,' +
                     'db.displayName as doneBy,' +
-                    'sj.inspection as inspection,' +
-                    'sj.material_supplied_by_uid as materialSuppliedByUid,' +
-                    'msb.display_name as materialSuppliedBy,' +
                     'sj.vessel_type_specific as vesselTypeSpecific,' +
                     'sj.description as description,' +
                     'sj.active_status as activeStatus,' +
-                    `STRING_AGG(vt.ID, ',') as vesselTypeId,` +
-                    `STRING_AGG(vt.VesselTypes, ',') as vesselType`,
+                    'sj.material_supplied_by_uid as materialSuppliedByUid,' +
+                    'msb.display_name as materialSuppliedBy,' +
+                    'lsca.Authority as inspection,' +
+                    `vt.VesselTypes as vesselType,` +
+                    `vt.ID as vesselTypeId,` +
+                    `lsca.ID as inspectionId`,
             )
-          .groupBy('sj.uid,' +
-            'sj.subject,' +
-            'sj."function",' +
-            'sj.code,' +
-            'sj.category_uid,' +
-            'ic.display_name,' +
-            'sj.done_by_uid,' +
-            'db.displayName,' +
-            'sj.inspection,' +
-            'sj.material_supplied_by_uid,' +
-            'msb.display_name,' +
-            'sj.vessel_type_specific,' +
-            'sj.description,' +
-            'sj.active_status')
             .where('sj.active_status = 1')
             .getSql();
 
-        const queryData = await oDataService.getJoinResult(query);
+        const filteredData = await oDataService.getJoinResult(query);
 
-        queryData.records = queryData.records.map(item => {
-            return {
-                ...item,
-                vesselTypeId: item.vesselTypeId?.split(','),
-            };
+        const uids = filteredData.records.map((item: any) => item.uid);
+
+        return await getManager().find(standard_jobs, {
+            where: {
+                uid: uids,
+            },
+            relations: ['inspection', 'vessel_type', 'done_by', 'material_supplied_by', 'category'],
         });
-
-        return queryData;
     }
 
     public async createStandardJob(
@@ -138,19 +127,18 @@ export class StandardJobsRepository {
             });
         }
 
-        const filterData = await getManager()
-            .createQueryBuilder('standard_jobs', 'sj')
-            .select(`DISTINCT sj.${filterKey} as ${filterKey}`)
-            .where('sj.active_status = 1')
-            .getRawMany();
+        const tableName = StandardJobsFilterTablesMap[filterKey];
+        if (tableName) {
+            switch (filterKey) {
+                case 'inspection':
+                    return await getManager()
+                        .createQueryBuilder(tableName, 'lsca')
+                        .select(`DISTINCT lsca.ID as uid, lsca.Authority as displayName`)
+                        .where('lsca.active_status = 1')
+                        .getRawMany();
+            }
+        }
 
-        return filterData
-            .filter((item) => !!item[filterKey])
-            .map((item) => {
-                return {
-                    displayName: item[filterKey],
-                    uid: item[filterKey],
-                } as FiltersDataResponse;
-            });
+        return [];
     }
 }

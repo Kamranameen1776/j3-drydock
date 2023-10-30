@@ -2,30 +2,30 @@ import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "t
 
 import { standard_jobs } from './standard_jobs';
 
-@Entity('LIB_VESSELTYPES', { schema: 'dbo' })
-export class LIB_VESSELTYPES {
+@Entity('LIB_Survey_CertificateAuthority', { schema: 'dbo' })
+export class LIB_Survey_CertificateAuthority {
     @PrimaryGeneratedColumn()
     ID: number;
 
-    @Column('uniqueidentifier', {
-        nullable: false,
-        name: 'uid',
-    })
-    uid: string;
-
     @Column('varchar', {
         nullable: false,
-        name: 'VesselTypes',
+        name: 'Authority',
         length: 250,
     })
-    VesselTypes: string;
+    Authority: string;
+
+    @Column('bit', {
+        nullable: false,
+        name: 'Active_Status',
+    })
+    Active_Status: boolean;
 
     @ManyToMany(() => standard_jobs, (standardJob) => standardJob.vessel_type)
     @JoinTable({
-        name: 'standard_jobs_vessel_type',
+        name: 'standard_jobs_survey_certificate_authority',
         schema: 'drydock',
         joinColumn: {
-            name: 'vessel_type_id',
+            name: 'survey_id',
             referencedColumnName: 'ID',
         },
         inverseJoinColumn: {

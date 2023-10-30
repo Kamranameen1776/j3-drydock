@@ -1,5 +1,17 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
+import {
+    Column,
+    Entity,
+    ManyToMany,
+    PrimaryGeneratedColumn,
+    JoinTable,
+    ManyToOne,
+    JoinColumn, RelationId
+} from "typeorm";
 import { LIB_VESSELTYPES } from './LIB_VESSELTYPES';
+import { LIB_Survey_CertificateAuthority } from "./LIB_Survey_CertificateAuthority";
+import { tm_dd_lib_material_supplied_by } from "./tm_dd_lib_material_supplied_by";
+import { tm_dd_lib_done_by } from "./tm_dd_lib_done_by";
+import { tm_dd_lib_item_category } from "./tm_dd_lib_item_category";
 
 @Entity('standard_jobs', { schema: 'drydock' })
 export class standard_jobs {
@@ -27,29 +39,35 @@ export class standard_jobs {
     })
     code: string;
 
-    @Column('uuid', {
-        nullable: true,
-        name: 'category_uid',
-    })
-    category_uid: string;
-
-    @Column('uuid', {
-        nullable: true,
-        name: 'done_by_uid',
-    })
-    done_by_uid: string;
-
     @Column('varchar', {
         nullable: true,
-        name: 'inspection',
+        name: 'scope',
         length: 250,
     })
-    inspection: string;
+    scope: string;
 
-    @Column('uuid', {
-        nullable: true,
+    @ManyToOne(() => tm_dd_lib_item_category)
+    @JoinColumn({
+        name: 'category_uid',
+    })
+    category: Partial<tm_dd_lib_item_category>;
+    @RelationId((entity: standard_jobs) => entity.category)
+    category_uid: string;
+
+    @ManyToOne(() => tm_dd_lib_done_by)
+    @JoinColumn({
+        name: 'done_by_uid',
+    })
+    done_by: Partial<tm_dd_lib_done_by>;
+    @RelationId((entity: standard_jobs) => entity.done_by)
+    done_by_uid: string;
+
+    @ManyToOne(() => tm_dd_lib_material_supplied_by)
+    @JoinColumn({
         name: 'material_supplied_by_uid',
     })
+    material_supplied_by: Partial<tm_dd_lib_material_supplied_by>;
+    @RelationId((entity: standard_jobs) => entity.material_supplied_by)
     material_supplied_by_uid: string;
 
     @Column('bit', {
@@ -72,6 +90,21 @@ export class standard_jobs {
         },
     })
     vessel_type: Partial<LIB_VESSELTYPES>[];
+
+    @ManyToMany(() => LIB_Survey_CertificateAuthority, (LIB_Survey_CertificateAuthority) => LIB_Survey_CertificateAuthority.standard_jobs)
+    @JoinTable({
+        name: 'standard_jobs_survey_certificate_authority',
+        schema: 'drydock',
+        joinColumn: {
+            name: 'standard_job_uid',
+            referencedColumnName: 'uid',
+        },
+        inverseJoinColumn: {
+            name: 'survey_id',
+            referencedColumnName: 'ID',
+        },
+    })
+    inspection: Partial<LIB_Survey_CertificateAuthority>[];
 
     @Column('varchar', {
         nullable: true,

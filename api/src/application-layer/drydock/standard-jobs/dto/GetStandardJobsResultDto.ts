@@ -6,22 +6,26 @@ export interface GetStandardJobsQueryData {
     subject: string;
     function: string;
     code: string;
-    category: string;
+    scope: string;
+    category?: string;
     categoryUid: string;
-    doneBy: string;
+    doneBy?: string;
     doneByUid: string;
+    inspectionId: number;
     inspection: string;
-    materialSuppliedBy: string;
+    materialSuppliedBy?: string;
     materialSuppliedByUid: string;
     vesselTypeSpecific: boolean;
     description: string;
     activeStatus: boolean;
-    vesselTypeId: number[];
+    vesselTypeId: number;
     vesselType: string;
 }
 
-export interface GetStandardJobsResult extends Omit<GetStandardJobsQueryData, 'subject'> {
-    subject: HtmlCell | string;
+export interface GetStandardJobsResult extends Omit<GetStandardJobsQueryData, 'subject' | 'inspectionId' | 'vesselTypeId'> {
+    subject: HtmlCell;
+    inspectionId: number[];
+    vesselTypeId: number[];
 }
 
 export type GetStandardJobsQueryResult = ODataResult<GetStandardJobsQueryData>;

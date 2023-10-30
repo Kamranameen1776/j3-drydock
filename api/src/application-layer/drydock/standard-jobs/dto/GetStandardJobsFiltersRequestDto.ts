@@ -17,3 +17,7 @@ export const StandardJobsLibraryValuesMap: { [key in StandardJobsFiltersAllowedK
     doneBy: 'ddDoneBy',
     materialSuppliedBy: 'materialSuppliedBy',
 };
+
+export const StandardJobsFilterTablesMap: { [key in StandardJobsFiltersAllowedKeys]?: string } = {
+    inspection: 'LIB_Survey_CertificateAuthority',
+}
