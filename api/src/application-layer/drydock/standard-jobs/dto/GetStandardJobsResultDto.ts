@@ -1,5 +1,6 @@
 import { ODataResult } from '../../../../shared/interfaces';
 import { HtmlCell } from '../../../../shared/interfaces/html-cell.interface';
+import { GetStandardJobSubItemsResultDto } from "./GetStandardJobSubItemsResultDto";
 
 export interface GetStandardJobsQueryData {
     uid: string;
@@ -26,6 +27,7 @@ export interface GetStandardJobsResult extends Omit<GetStandardJobsQueryData, 's
     subject: HtmlCell;
     inspectionId: number[];
     vesselTypeId: number[];
+    subItems: GetStandardJobSubItemsResultDto[];
 }
 
 export type GetStandardJobsQueryResult = ODataResult<GetStandardJobsQueryData>;

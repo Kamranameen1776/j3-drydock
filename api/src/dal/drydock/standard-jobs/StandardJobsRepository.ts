@@ -1,5 +1,5 @@
 import { ApiRequestService, DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, QueryRunner } from 'typeorm';
+import { getConnection, getManager, In, QueryRunner } from "typeorm";
 import { RequestWithOData } from '../../../shared/interfaces';
 import {
     CreateStandardJobsRequestDto,
@@ -13,6 +13,8 @@ import {
     StandardJobsLibraryValuesMap,
 } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto';
 import { FiltersDataResponse } from '../../../shared/interfaces/filters-data-response.interface';
+import { UpdateStandardJobSubItemsRequestDto } from '../../../application-layer/drydock/standard-jobs/dto/UpdateStandardJobSubItemsRequestDto';
+import { standard_jobs_sub_items } from "../../../entity/standard_jobs_sub_items";
 
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
@@ -63,7 +65,7 @@ export class StandardJobsRepository {
             where: {
                 uid: uids,
             },
-            relations: ['inspection', 'vessel_type', 'done_by', 'material_supplied_by', 'category'],
+            relations: ['inspection', 'vessel_type', 'done_by', 'material_supplied_by', 'category', 'sub_items'],
         });
     }
 
@@ -79,6 +81,33 @@ export class StandardJobsRepository {
         const entity: standard_jobs = queryRunner.manager.create(standard_jobs, standardJob);
 
         return queryRunner.manager.save(standard_jobs, entity);
+    }
+
+    public async updateStandardJobSubItems(
+        data: UpdateStandardJobSubItemsRequestDto,
+        userUid: string,
+        queryRunner: QueryRunner,
+    ): Promise<any> {
+        const standardJobUid = data.uid;
+
+        const standardJob = await queryRunner.manager.findOne(standard_jobs, {
+            where: {
+                uid: standardJobUid,
+            },
+            relations: ['sub_items'],
+        });
+        const newSubItems = data.subItems.map((item) => item.uid);
+        const existingSubItems = standardJob?.sub_items.map((item) => item.uid) || [];
+        const subItemsToDelete = existingSubItems.filter((item) => !newSubItems.includes(item));
+
+        const subItems = this.standardJobsService.mapStandardJobSubItemsDtoToEntity(data.subItems, data.uid, userUid);
+        const deleteData = this.standardJobsService.addDeleteStandardJobsFields(userUid);
+
+        await queryRunner.manager.save(standard_jobs_sub_items, subItems);
+        await queryRunner.manager.update(standard_jobs_sub_items, {
+            uid: In(subItemsToDelete),
+            active_status: 1,
+        }, deleteData);
     }
 
     public async updateStandardJob(
@@ -97,6 +126,7 @@ export class StandardJobsRepository {
         await queryRunner.manager.save(standard_jobs, {
             uid,
             vessel_type: [],
+            inspection: [],
         });
 
         return queryRunner.manager.save(standard_jobs, entity);

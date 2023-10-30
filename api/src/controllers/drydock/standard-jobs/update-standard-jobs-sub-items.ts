@@ -1,15 +1,17 @@
 import { MiddlewareHandler } from "../core/middleware/MiddlewareHandler";
 import { Request, Response } from "express";
-import { UpdateStandardJobsCommand } from "../../../application-layer/drydock/standard-jobs";
+import {
+  UpdateStandardJobSubItemsCommand
+} from "../../../application-layer/drydock/standard-jobs";
 
-async function updateStandardJobs(req: Request, res: Response) {
+async function updateStandardJobsSubItems(req: Request, res: Response) {
   const middlewareHandler = new MiddlewareHandler();
 
   await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-    const command = new UpdateStandardJobsCommand();
+    const command = new UpdateStandardJobSubItemsCommand();
 
     return await command.ExecuteAsync(request);
   });
 }
 
-exports.post = updateStandardJobs;
+exports.post = updateStandardJobsSubItems;

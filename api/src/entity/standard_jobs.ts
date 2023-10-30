@@ -5,13 +5,14 @@ import {
     PrimaryGeneratedColumn,
     JoinTable,
     ManyToOne,
-    JoinColumn, RelationId
+    JoinColumn, RelationId, OneToMany
 } from "typeorm";
 import { LIB_VESSELTYPES } from './LIB_VESSELTYPES';
 import { LIB_Survey_CertificateAuthority } from "./LIB_Survey_CertificateAuthority";
 import { tm_dd_lib_material_supplied_by } from "./tm_dd_lib_material_supplied_by";
 import { tm_dd_lib_done_by } from "./tm_dd_lib_done_by";
 import { tm_dd_lib_item_category } from "./tm_dd_lib_item_category";
+import { standard_jobs_sub_items } from "./standard_jobs_sub_items";
 
 @Entity('standard_jobs', { schema: 'drydock' })
 export class standard_jobs {
@@ -69,6 +70,9 @@ export class standard_jobs {
     material_supplied_by: Partial<tm_dd_lib_material_supplied_by>;
     @RelationId((entity: standard_jobs) => entity.material_supplied_by)
     material_supplied_by_uid: string;
+
+    @OneToMany(() => standard_jobs_sub_items, (standard_jobs_sub_items) => standard_jobs_sub_items.standard_job)
+    sub_items: standard_jobs_sub_items[];
 
     @Column('bit', {
         nullable: true,

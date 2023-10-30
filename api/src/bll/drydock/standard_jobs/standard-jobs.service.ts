@@ -7,6 +7,10 @@ import { standard_jobs } from '../../../entity/standard_jobs';
 import _ from 'lodash';
 import { LIB_VESSELTYPES } from '../../../entity/LIB_VESSELTYPES';
 import { LIB_Survey_CertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
+import { standard_jobs_sub_items } from "../../../entity/standard_jobs_sub_items";
+import {
+    GetStandardJobSubItemsResultDto
+} from "../../../application-layer/drydock/standard-jobs/dto/GetStandardJobSubItemsResultDto";
 
 export class StandardJobsService {
     public mapStandardJobsDataToDto(queryData: standard_jobs[]): GetStandardJobsResultDto {
@@ -34,6 +38,7 @@ export class StandardJobsService {
                 inspection: '',
                 vesselTypeId: [],
                 vesselType: '',
+                subItems: standardJob.sub_items,
             };
 
 
@@ -99,7 +104,31 @@ export class StandardJobsService {
         return _.omitBy(standardJob, _.isUndefined);
     }
 
-    public addUpdateStandardJobsFields(data: Partial<standard_jobs>, updatedBy: string): Partial<standard_jobs> {
+    public mapStandardJobSubItemsDtoToEntity(
+      data: GetStandardJobSubItemsResultDto[],
+      standardJobUid: string,
+      createdBy: string,
+    ): standard_jobs_sub_items[] {
+        return data.map(itemData => {
+            let subItem = new standard_jobs_sub_items();
+            subItem.uid = itemData.uid;
+            subItem.code = itemData.code;
+            subItem.subject = itemData.subject;
+            subItem.description = itemData.description;
+            subItem.standard_job = {
+                uid: standardJobUid,
+            };
+            if (!itemData.uid) {
+                subItem = this.addCreateStandardJobsFields(subItem, createdBy);
+            } else {
+                subItem = this.addUpdateStandardJobsFields(subItem, createdBy);
+            }
+
+            return subItem;
+        });
+    }
+
+    public addUpdateStandardJobsFields<T extends { updated_at?: Date; updated_by?: string; }>(data: T, updatedBy: string): T {
         return {
             ...data,
             updated_at: new Date(),
@@ -107,7 +136,15 @@ export class StandardJobsService {
         };
     }
 
-    public addDeleteStandardJobsFields(deletedBy: string): Partial<standard_jobs> {
+    public addCreateStandardJobsFields<T extends { created_at?: Date; created_by?: string; }>(data: T, updatedBy: string): T {
+        return {
+            ...data,
+            created_at: new Date(),
+            created_by: updatedBy,
+        };
+    }
+
+    public addDeleteStandardJobsFields(deletedBy: string) {
         return {
             active_status: false,
             deleted_at: new Date(),
