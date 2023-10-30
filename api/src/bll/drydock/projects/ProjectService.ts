@@ -1,7 +1,7 @@
-import { CreateProjectDto } from 'application-layer/drydock/projects/dtos/CreateProjectDto';
 import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { ApiRequestService, ConfigurationService } from 'j2utils';
 
+import { ICreateProjectDto } from '../../../application-layer/drydock/projects/dtos/ICreateProjectDto';
 import { TaskManagerConstants } from '../../../shared/constants';
 
 export class ProjectService {
@@ -16,7 +16,7 @@ export class ProjectService {
     }
 
     public async TaskManagerIntegration(
-        request: CreateProjectDto,
+        request: ICreateProjectDto,
         vessel: LibVesselsEntity,
         token: string,
     ): Promise<any> {

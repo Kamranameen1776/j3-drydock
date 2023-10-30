@@ -9,7 +9,9 @@ import {
   eGridColumnsWidth,
   eGridRowActions,
   eFieldControlType,
-  FormModel
+  FormModel,
+  SystemLevelFiltersService,
+  Datasource
 } from 'jibe-components';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
@@ -307,7 +309,8 @@ export class ProjectsSpecificationGridService {
 
   constructor(
     private userService: UserService,
-    private projectsService: ProjectsService
+    private projectsService: ProjectsService,
+    private slfService: SystemLevelFiltersService
   ) {}
 
   public getGridInputs(): GridInputsWithRequest {
@@ -365,9 +368,9 @@ export class ProjectsSpecificationGridService {
               gridColStart: 1,
               gridColEnd: 3,
               listRequest: {
-                webApiRequest: this.projectsService.getVesselsRequest(),
-                labelKey: 'VesselName',
-                valueKey: 'VesselUid'
+                webApiRequest: this.slfService.getSLFDetails(Datasource.Vessels),
+                labelKey: 'Vessel_Name',
+                valueKey: 'Vessel_ID'
               }
             },
             [eProjectsCreateFieldNames.ProjectType]: {

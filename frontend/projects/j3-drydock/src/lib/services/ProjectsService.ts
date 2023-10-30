@@ -102,17 +102,6 @@ export class ProjectsService {
     return apiRequest;
   }
 
-  public getVesselsRequest(): WebApiRequest {
-    const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      action: 'dictionaries/vessels',
-      crud: eCrud.Get,
-      entity: 'drydock'
-    };
-
-    return apiRequest;
-  }
-
   public createProject(data: ProjectCreate): Observable<any> {
     const apiRequest: WebApiRequest = {
       apiBase: 'dryDockAPI',
