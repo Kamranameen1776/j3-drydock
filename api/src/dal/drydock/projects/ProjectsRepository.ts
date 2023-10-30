@@ -189,10 +189,8 @@ export class ProjectsRepository {
         await queryRunner.manager.insert(ProjectEntity, project);
     }
 
-    public async UpdateProject(data: UpdateProjectDto, queryRunner: QueryRunner): Promise<any> {
-        const result = await queryRunner.manager.update(ProjectEntity, data.uid, data);
-
-        return;
+    public async UpdateProject(data: UpdateProjectDto, queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.manager.update(ProjectEntity, data.uid, data);
     }
 
     public async DeleteProject(projectId: string, queryRunner: QueryRunner): Promise<void> {
@@ -210,6 +208,7 @@ export class ProjectsRepository {
                 uid,
             },
         });
+        
         return data;
     }
 }
