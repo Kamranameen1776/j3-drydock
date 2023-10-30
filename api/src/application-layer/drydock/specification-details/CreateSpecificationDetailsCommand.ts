@@ -1,11 +1,12 @@
+import { SpecificationService } from 'bll/drydock/specification-details/SpecificationService';
+import { ProjectsRepository } from 'dal/drydock/projects/ProjectsRepository';
 import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
+import { Request } from 'express';
+
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateSpecificationDetailsDto } from './dtos/CreateSpecificationDetailsDto';
-import { ProjectsRepository } from 'dal/drydock/projects/ProjectsRepository';
-import { SpecificationService } from 'bll/drydock/specification-details/SpecificationService';
-import { Request } from 'express';
 
 export class CreateSpecificationDetailsCommand extends Command<Request, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
@@ -49,7 +50,7 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
                 vessel,
                 token,
             );
-            request.body.TaskManagerUid = taskManagerData.uid;
+            request.body.tmTask = taskManagerData.uid;
             const specData = await this.specificationDetailsRepository.CreateSpecificationDetails(
                 request.body,
                 queryRunner,
