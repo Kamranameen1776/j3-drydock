@@ -125,18 +125,14 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
 
   public deleteProject() {
     this.deleteProjectButtonDisabled$.next(true);
-    if (this.deleteProjectFormGroup.valid) {
-      const data: DeleteProjectDto = {
-        ProjectId: this.deleteProjectFormGroup.value.Project.ProjectId
-      };
+    const data: DeleteProjectDto = {
+      ProjectId: this.deleteProjectFormGroup.value.Project.ProjectId
+    };
 
-      this.projectsService.deleteProject(data).subscribe(() => {
-        this.deleteProjectButtonDisabled$.next(false);
-        this.showDeleteDialog(false);
-        this.projectsGrid.fetchMatrixData();
-      });
-    } else {
-      this.deleteProjectFormGroup.markAllAsTouched();
-    }
+    this.projectsService.deleteProject(data).subscribe(() => {
+      this.deleteProjectButtonDisabled$.next(false);
+      this.showDeleteDialog(false);
+      this.projectsGrid.fetchMatrixData();
+    });
   }
 }
