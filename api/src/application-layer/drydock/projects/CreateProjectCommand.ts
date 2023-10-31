@@ -11,6 +11,14 @@ import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepositor
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 
+enum ProjectStates {
+    Specification = 1,
+
+    YardSelection = 2,
+
+    Report = 3,
+}
+
 export class CreateProjectCommand extends Command<Request, void> {
     projectsRepository: ProjectsRepository;
     projectsService: ProjectService;
@@ -51,8 +59,8 @@ export class CreateProjectCommand extends Command<Request, void> {
         const createProjectDto: ICreateProjectDto = request.body as ICreateProjectDto;
 
         createProjectDto.CreatedAtOffice = await this.projectsService.IsOffice();
-        // TODO: change 1 to constant, enum, etc
-        createProjectDto.ProjectStateId = 1;
+
+        createProjectDto.ProjectStateId = ProjectStates.Specification;
 
         const vessel: LibVesselsEntity = await this.vesselsRepository.GetVessel(createProjectDto.VesselId);
 
