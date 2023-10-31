@@ -5,7 +5,9 @@ import {
     PrimaryGeneratedColumn,
     JoinTable,
     ManyToOne,
-    JoinColumn, RelationId, OneToMany
+    JoinColumn,
+    RelationId,
+    OneToMany
 } from "typeorm";
 import { LIB_VESSELTYPES } from './LIB_VESSELTYPES';
 import { LIB_Survey_CertificateAuthority } from "./LIB_Survey_CertificateAuthority";
@@ -13,9 +15,10 @@ import { tm_dd_lib_material_supplied_by } from "./tm_dd_lib_material_supplied_by
 import { tm_dd_lib_done_by } from "./tm_dd_lib_done_by";
 import { tm_dd_lib_item_category } from "./tm_dd_lib_item_category";
 import { standard_jobs_sub_items } from "./standard_jobs_sub_items";
+import { BaseDatesEntity } from "./baseDatesEntity";
 
 @Entity('standard_jobs', { schema: 'drydock' })
-export class standard_jobs {
+export class standard_jobs extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
@@ -116,46 +119,4 @@ export class standard_jobs {
         length: 5000,
     })
     description: string;
-
-    @Column('bit', {
-        nullable: true,
-        name: 'active_status',
-    })
-    active_status: boolean;
-
-    @Column('uuid', {
-        nullable: true,
-        name: 'created_by',
-    })
-    created_by: string;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'created_at',
-    })
-    created_at: Date;
-
-    @Column('uuid', {
-        nullable: true,
-        name: 'updated_by',
-    })
-    updated_by: string;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'updated_at',
-    })
-    updated_at: Date;
-
-    @Column('uuid', {
-        nullable: true,
-        name: 'deleted_by',
-    })
-    deleted_by: string;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'deleted_at',
-    })
-    deleted_at: Date;
 }

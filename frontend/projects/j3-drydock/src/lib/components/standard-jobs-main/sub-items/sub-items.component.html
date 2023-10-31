@@ -6,7 +6,7 @@
   [getStyleByContainer]="true"
   [setActions]="gridRowActions"
   [isDisplayAdvancedFilter]="false"
-  (action)="onGridAction($event)"
+  (action)="onGridAction($any($event))"
 ></jb-grid>
 
 <jb-upsert-sub-item-popup

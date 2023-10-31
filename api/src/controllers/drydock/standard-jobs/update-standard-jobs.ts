@@ -12,4 +12,4 @@ async function updateStandardJobs(req: Request, res: Response) {
   });
 }
 
-exports.post = updateStandardJobs;
+exports.put = updateStandardJobs;

@@ -22,5 +22,5 @@ export class updateJcdsLibraryData1698058006302 implements MigrationInterface {
         await queryRunner.query(doneByQuery);
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {}
+    public async down(): Promise<void> {}
 }

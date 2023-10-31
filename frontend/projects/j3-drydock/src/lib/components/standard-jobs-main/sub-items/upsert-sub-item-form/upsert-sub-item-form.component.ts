@@ -1,4 +1,4 @@
-import { SubItem } from './../../../../models/interfaces/sub-items';
+import { SubItem } from "../../../../models/interfaces/sub-items";
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { FormGroup } from '@angular/forms';

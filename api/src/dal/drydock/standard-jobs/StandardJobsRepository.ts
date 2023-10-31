@@ -63,7 +63,7 @@ export class StandardJobsRepository {
 
         return await getManager().find(standard_jobs, {
             where: {
-                uid: uids,
+                uid: In(uids),
             },
             relations: ['inspection', 'vessel_type', 'done_by', 'material_supplied_by', 'category', 'sub_items'],
         });
@@ -104,10 +104,12 @@ export class StandardJobsRepository {
         const deleteData = this.standardJobsService.addDeleteStandardJobsFields(userUid);
 
         await queryRunner.manager.save(standard_jobs_sub_items, subItems);
-        await queryRunner.manager.update(standard_jobs_sub_items, {
-            uid: In(subItemsToDelete),
-            active_status: 1,
-        }, deleteData);
+        if (subItemsToDelete.length > 0) {
+            await queryRunner.manager.update(standard_jobs_sub_items, {
+                uid: In(subItemsToDelete),
+                active_status: 1,
+            }, deleteData);
+        }
     }
 
     public async updateStandardJob(

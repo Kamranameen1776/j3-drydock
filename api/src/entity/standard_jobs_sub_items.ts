@@ -1,9 +1,10 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, RelationId } from "typeorm";
 
 import { standard_jobs } from './standard_jobs';
+import { BaseDatesEntity } from "./baseDatesEntity";
 
 @Entity('standard_jobs_sub_items', { schema: 'drydock' })
-export class standard_jobs_sub_items {
+export class standard_jobs_sub_items extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
@@ -42,46 +43,4 @@ export class standard_jobs_sub_items {
     standard_job: Partial<standard_jobs>;
     @RelationId((entity: standard_jobs_sub_items) => entity.standard_job)
     standard_job_uid: string;
-
-    @Column('bit', {
-        nullable: true,
-        name: 'active_status',
-    })
-    active_status: boolean;
-
-    @Column('uuid', {
-        nullable: true,
-        name: 'created_by',
-    })
-    created_by: string;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'created_at',
-    })
-    created_at: Date;
-
-    @Column('uuid', {
-        nullable: true,
-        name: 'updated_by',
-    })
-    updated_by: string;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'updated_at',
-    })
-    updated_at: Date;
-
-    @Column('uuid', {
-        nullable: true,
-        name: 'deleted_by',
-    })
-    deleted_by: string;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'deleted_at',
-    })
-    deleted_at: Date;
 }
