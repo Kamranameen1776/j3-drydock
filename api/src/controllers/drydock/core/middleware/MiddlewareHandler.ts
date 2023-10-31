@@ -1,3 +1,4 @@
+import { ValidationError } from 'class-validator';
 import { Request, Response } from 'express';
 import * as httpStatus from 'http-status-codes';
 import { AccessRights } from 'j2utils';
@@ -79,6 +80,14 @@ export class MiddlewareHandler {
                 log.error(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
 
                 res.status(httpStatus.INTERNAL_SERVER_ERROR).json(details.params);
+
+                return;
+            } else if (exception instanceof Array && exception.length && exception[0] instanceof ValidationError) {
+                //TODO: think how to refactor it, and if we need to log this exceptions into db;
+                res.status(httpStatus.BAD_REQUEST).json({
+                    title: 'Request validation error',
+                    errors: exception,
+                });
 
                 return;
             }
