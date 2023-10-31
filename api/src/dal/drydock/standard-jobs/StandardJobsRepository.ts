@@ -63,8 +63,7 @@ export class StandardJobsRepository {
 
         return await getManager().find(standard_jobs, {
             where: {
-                uid: uids,
-                "sub_items.active_status": 1,
+                uid: In(uids),
             },
             relations: ['inspection', 'vessel_type', 'done_by', 'material_supplied_by', 'category', 'sub_items'],
         });
