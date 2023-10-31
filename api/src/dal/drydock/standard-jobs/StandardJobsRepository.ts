@@ -1,5 +1,5 @@
 import { ApiRequestService, DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, In, QueryRunner } from "typeorm";
+import { getConnection, getManager, In, QueryRunner } from 'typeorm';
 import { RequestWithOData } from '../../../shared/interfaces';
 import {
     CreateStandardJobsRequestDto,
@@ -14,7 +14,7 @@ import {
 } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto';
 import { FiltersDataResponse } from '../../../shared/interfaces/filters-data-response.interface';
 import { UpdateStandardJobSubItemsRequestDto } from '../../../application-layer/drydock/standard-jobs/dto/UpdateStandardJobSubItemsRequestDto';
-import { standard_jobs_sub_items } from "../../../entity/standard_jobs_sub_items";
+import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items';
 
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
@@ -66,6 +66,9 @@ export class StandardJobsRepository {
                 uid: In(uids),
             },
             relations: ['inspection', 'vessel_type', 'done_by', 'material_supplied_by', 'category', 'sub_items'],
+            order: {
+                uid: 'ASC',
+            },
         });
     }
 
@@ -105,10 +108,14 @@ export class StandardJobsRepository {
 
         await queryRunner.manager.save(standard_jobs_sub_items, subItems);
         if (subItemsToDelete.length > 0) {
-            await queryRunner.manager.update(standard_jobs_sub_items, {
-                uid: In(subItemsToDelete),
-                active_status: 1,
-            }, deleteData);
+            await queryRunner.manager.update(
+                standard_jobs_sub_items,
+                {
+                    uid: In(subItemsToDelete),
+                    active_status: 1,
+                },
+                deleteData,
+            );
         }
     }
 
