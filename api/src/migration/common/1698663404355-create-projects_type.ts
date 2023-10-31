@@ -57,7 +57,7 @@ export class createProjectsType1698663404355 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createProjectsType1698663404355',
-                error,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 'Create project type table',
@@ -85,7 +85,7 @@ export class createProjectsType1698663404355 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createProjectsType1698663404355',
-                error,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 'Drop project type table (Down migration)',

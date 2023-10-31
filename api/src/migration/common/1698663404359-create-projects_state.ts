@@ -51,7 +51,7 @@ export class createProjectsState1698663404359 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createProjectsState1698663404359',
-                error,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 'Create project state table',
@@ -79,7 +79,7 @@ export class createProjectsState1698663404359 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createProjectsState1698663404359',
-                error,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 'Drop project state table (Down migration)',
