@@ -20,6 +20,10 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
   @ViewChild('projectsGrid')
   projectsGrid: GridComponent;
 
+  public DeleteBtnLabel = 'Delete';
+
+  public CreateBtnLabel = 'Create';
+
   public gridInputs: GridInputsWithRequest;
 
   public createNewDialogVisible = false;
@@ -27,7 +31,7 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
   public deleteDialogVisible = false;
 
   createProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Create Project' };
-  
+
   deleteProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Delete Project' };
 
   createProjectForm: FormModel;

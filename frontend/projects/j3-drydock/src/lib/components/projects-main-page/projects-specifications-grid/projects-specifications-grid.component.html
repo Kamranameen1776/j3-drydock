@@ -36,7 +36,7 @@
     <jb-dialog-footer
       [isOkBtnDisabled]="saveNewProjectButtonDisabled$ | async"
       [isCancelBtnDisabled]="isSaving"
-      [okBtnLabel]="Create"
+      [okBtnLabel]="CreateBtnLabel"
       (ok)="saveNewProject()"
       (cancel)="showCreateNewDialog(false)"
     ></jb-dialog-footer>
@@ -54,9 +54,9 @@
     jb-dialog-body
   >
     <jb-form
-      [displayMenus]="false"
       (jbFormGroup)="initDeleteProjectFormGroup($any($event))"
       [formStructure]="deleteProjectForm"
+      [isVerticalLabel]="true"
       class="form-generator-log"
     ></jb-form>
   </div>
@@ -64,7 +64,7 @@
   <ng-container jb-dialog-footer>
     <jb-dialog-footer
       [isOkBtnDisabled]="deleteProjectButtonDisabled$ | async"
-      [okBtnLabel]="Delete"
+      [okBtnLabel]="DeleteBtnLabel"
       (ok)="deleteProject()"
       (cancel)="showDeleteDialog(false)"
     ></jb-dialog-footer>
