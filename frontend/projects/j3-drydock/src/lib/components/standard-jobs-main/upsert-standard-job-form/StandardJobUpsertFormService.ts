@@ -18,6 +18,8 @@ export class StandardJobUpsertFormService extends FormServiceBase {
 
   public functionsTree$ = new BehaviorSubject<FunctionsTreeNode[]>([]);
 
+  public functionsTreeNodesMap: Map<string | number, FunctionsTreeNode> = new Map();
+
   protected readonly _formStructure: FormModel = {
     id: this.formId,
     label: '',

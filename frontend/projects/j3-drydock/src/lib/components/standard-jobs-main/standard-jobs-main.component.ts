@@ -144,7 +144,7 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((flatTree) => {
         this.setFunctionsFlatTree(flatTree);
-        this.setFunctionsTree(this.treeService.createTree(flatTree));
+        this.setFunctionsTree(this.treeService.createTreeAndNodesMap(flatTree));
       });
   }
 
@@ -152,9 +152,9 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     this.upsertFormService.functionsFlatTree$.next(flatTree);
   }
 
-  private setFunctionsTree(tree: FunctionsTreeNode[]) {
-    console.log(tree);
-    this.upsertFormService.functionsTree$.next(tree);
+  private setFunctionsTree(data: { tree: FunctionsTreeNode[]; nodesMap: Map<string | number, FunctionsTreeNode> }) {
+    this.upsertFormService.functionsTree$.next(data.tree);
+    this.upsertFormService.functionsTreeNodesMap = data.nodesMap;
   }
 
   private deleteStandardJob() {
