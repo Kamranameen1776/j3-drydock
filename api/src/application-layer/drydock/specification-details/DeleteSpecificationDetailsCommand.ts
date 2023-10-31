@@ -24,19 +24,14 @@ export class DeleteSpecificationDetailsCommand extends Command<DeleteSpecificati
         }
     }
 
-    /**
-     *
-     * @param request Project data for creation of the new project
-     * @returns New created project result
-     */
-    protected async MainHandlerAsync(request: DeleteSpecificationDetailsDto): Promise<void> {
+    protected async MainHandlerAsync(request: DeleteSpecificationDetailsDto) {
         request.deletedAt = new Date();
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const projectId = await this.specificationDetailsRepository.UpdateSpecificationDetails(
+            const deletedSpecData = await this.specificationDetailsRepository.DeleteSpecificationDetails(
                 request,
                 queryRunner,
             );
-            return projectId;
+            return deletedSpecData;
         });
 
         return;

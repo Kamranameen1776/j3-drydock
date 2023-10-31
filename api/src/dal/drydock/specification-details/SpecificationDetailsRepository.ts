@@ -1,10 +1,9 @@
 import { DataUtilService } from 'j2utils';
 import { getManager, QueryRunner } from 'typeorm';
 
-import { CreateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/CreateSpecificationDetailsDto';
+import { CreateAndUpdateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/CreateAndUpdateSpecificationDetailsDto';
 import { DeleteSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationDetailsDto';
-import { UpdateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationDetailsDto';
-import { SpecificationDetailsEntity } from '../../../entity/specification_details';
+import { SpecificationDetailsEntity } from '../../../entity/SpecificationDetailsEntity';
 import { GetSpecificationDetailsResultDto } from './dtos/GetSpecificationDetailsResultDto';
 
 export class SpecificationDetailsRepository {
@@ -19,9 +18,28 @@ export class SpecificationDetailsRepository {
         return result;
     }
 
-    public async CreateSpecificationDetails(data: CreateSpecificationDetailsDto, queryRunner: QueryRunner) {
+    public async CreateSpecificationDetails(data: CreateAndUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
+        const spec = await this.specData(data);
+        spec.created_at = new Date();
+        spec.active_status = true;
+        const result = await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
+        return result;
+    }
+
+    public async UpdateSpecificationDetails(data: CreateAndUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
+        const spec = await this.specData(data);
+        const result = await queryRunner.manager.update(SpecificationDetailsEntity, spec.uid, spec);
+        return result;
+    }
+
+    public async DeleteSpecificationDetails(data: DeleteSpecificationDetailsDto, queryRunner: QueryRunner) {
+        const result = await queryRunner.manager.delete(SpecificationDetailsEntity, data.uid);
+        return result;
+    }
+
+    public async specData(data: CreateAndUpdateSpecificationDetailsDto) {
         const spec = new SpecificationDetailsEntity();
-        spec.uid = new DataUtilService().newUid();
+        spec.uid = data?.uid ? data.uid : new DataUtilService().newUid();
         spec.tec_task_manager_uid = data.tmTask;
         spec.function_uid = data.functionUid;
         spec.component_uid = data.componentUid;
@@ -44,19 +62,6 @@ export class SpecificationDetailsRepository {
         spec.test_criteria = data.testCriteria;
         spec.ppe = data.ppe;
         spec.safety_instruction = data.safetyInstruction;
-        spec.active_status = data.activeStatus;
-        spec.created_by_uid = data.createdByUid;
-        spec.created_at = new Date();
-
-        const result = await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
-        return result;
-    }
-
-    public async UpdateSpecificationDetails(
-        data: UpdateSpecificationDetailsDto | DeleteSpecificationDetailsDto,
-        queryRunner: QueryRunner,
-    ) {
-        const result = await queryRunner.manager.update(SpecificationDetailsEntity, data.uid, data);
-        return result;
+        return spec;
     }
 }
