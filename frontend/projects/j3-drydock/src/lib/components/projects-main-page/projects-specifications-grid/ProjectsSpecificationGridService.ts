@@ -353,8 +353,7 @@ export class ProjectsSpecificationGridService {
               gridColEnd: 3,
               listRequest: {
                 webApiRequest: this.slfService.getSLFDetails(Datasource.Fleets),
-                labelKey: 'FleetName',
-                valueKey: 'FleetCode'
+                labelKey: 'FleetName'
               }
             },
             [eProjectsCreateFieldNames.Vessel]: {
