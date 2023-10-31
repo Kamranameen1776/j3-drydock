@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
-import { GetStandardJobsCommand } from '../../../application-layer/drydock/standard-jobs/GetStandardJobsCommand';
-import { RequestWithOData } from '../../../shared/interfaces/request-with-odata.interface';
+import { GetStandardJobsCommand } from "../../../application-layer/drydock/standard-jobs";
+import { RequestWithOData } from "../../../shared/interfaces";
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 async function getStandardJobs(req: Request, res: Response) {

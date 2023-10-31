@@ -1,4 +1,4 @@
-import { StandardJobResult } from './../../../models/interfaces/standard-jobs';
+import { StandardJobResult } from "../../../models/interfaces/standard-jobs";
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { FormModel, IJbAttachment, IJbDialog, eAttachmentButtonTypes } from 'jibe-components';

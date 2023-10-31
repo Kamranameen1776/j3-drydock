@@ -14,4 +14,4 @@ async function updateStandardJobsSubItems(req: Request, res: Response) {
   });
 }
 
-exports.post = updateStandardJobsSubItems;
+exports.put = updateStandardJobsSubItems;

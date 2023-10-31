@@ -1,5 +1,5 @@
-import { subItemUpsertFormId } from './../../../../models/constants/constants';
-import { SubItem } from './../../../../models/interfaces/sub-items';
+import { subItemUpsertFormId } from "../../../../models/constants/constants";
+import { SubItem } from "../../../../models/interfaces/sub-items";
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { UpsertSubItemFormComponent } from '../upsert-sub-item-form/upsert-sub-item-form.component';
 import { IJbDialog } from 'jibe-components';

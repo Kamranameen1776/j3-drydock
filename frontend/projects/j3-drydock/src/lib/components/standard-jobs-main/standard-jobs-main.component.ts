@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { eStandardJobsMainFields } from './../../models/enums/standard-jobs-main.enum';
-import { StandardJobResult } from './../../models/interfaces/standard-jobs';
+import { eStandardJobsMainFields } from "../../models/enums/standard-jobs-main.enum";
+import { StandardJobResult } from "../../models/interfaces/standard-jobs";
 import { Component, OnInit } from '@angular/core';
 import {
   CentralizedDataService,

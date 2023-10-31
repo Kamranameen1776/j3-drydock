@@ -8,7 +8,7 @@
   [filterData]="gridInputs.filters"
   [filterListsSet]="gridInputs.filtersLists"
   [searchFields]="gridInputs.searchFields"
-  (action)="onGridAction($event)"
+  (action)="onGridAction($any($event))"
 ></jb-grid>
 
 <jb-upsert-standard-job-popup

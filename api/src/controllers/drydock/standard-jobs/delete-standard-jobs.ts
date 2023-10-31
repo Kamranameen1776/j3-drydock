@@ -12,4 +12,4 @@ async function deleteStandardJobs(req: Request, res: Response) {
   });
 }
 
-exports.post = deleteStandardJobs;
+exports.delete = deleteStandardJobs;
