@@ -1,7 +1,7 @@
 export enum eProjectsDeleteFieldNames {
-  Subject = 'Subject'
+  AreYouSureYouWantToDeleteThisProject = 'AreYouSureYouWantToDeleteThisProject'
 }
 
 export enum eProjectsDeleteDisplayNames {
-  Subject = 'Are you sure you want to delete this project?'
+  AreYouSureYouWantToDeleteThisProject = 'Are you sure you want to delete this project?'
 }

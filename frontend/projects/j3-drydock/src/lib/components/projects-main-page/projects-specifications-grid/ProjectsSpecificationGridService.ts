@@ -457,18 +457,16 @@ export class ProjectsSpecificationGridService {
           gridRowStart: 1,
           gridRowEnd: 1,
           gridColStart: 1,
-          gridColEnd: 2,
+          gridColEnd: 1,
           fields: {
-            [eProjectsDeleteFieldNames.Subject]: {
-              label: eProjectsDeleteDisplayNames.Subject,
-              type: eFieldControlType.Label,
+            [eProjectsDeleteFieldNames.AreYouSureYouWantToDeleteThisProject]: {
+              label: eProjectsDeleteDisplayNames.AreYouSureYouWantToDeleteThisProject,
+              type: eFieldControlType.String,
               sectionID: this.deleteProjectFormId,
-              enabled: true,
-              validatorRequired: false,
               gridRowStart: 1,
               gridRowEnd: 1,
               gridColStart: 1,
-              gridColEnd: 2
+              gridColEnd: 1
             }
           }
         }
