@@ -25,26 +25,22 @@
     jb-dialog-body
   >
     <jb-form
-      [displayMenus]="false"
       (jbFormGroup)="initCreateNewProjectFormGroup($any($event))"
       [formStructure]="createProjectForm"
+      [isVerticalLabel]="true"
       class="form-generator-log"
     ></jb-form>
-
-    <div class="popup-footer">
-      <jb-button
-        (click)="showCreateNewDialog(false)"
-        label="Cancel"
-        type="NoButton"
-      ></jb-button>
-      <jb-button
-        (click)="saveNewProject()"
-        [disabled]="saveNewProjectButtonDisabled$ | async"
-        label="Create"
-        type="Standard"
-      ></jb-button>
-    </div>
   </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="saveNewProjectButtonDisabled$ | async"
+      [isCancelBtnDisabled]="isSaving"
+      [okBtnLabel]="Create"
+      (ok)="saveNewProject()"
+      (cancel)="showCreateNewDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
 </jb-dialog>
 
 <jb-dialog

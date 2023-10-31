@@ -8,6 +8,7 @@ import { ProjectsService } from '../../../services/ProjectsService';
 import { DeleteProjectDto, ProjectCreate } from '../../../models/interfaces/projects';
 import { Router } from '@angular/router';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
+import { getSmallPopup } from '../../../models/constants/popup';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -25,23 +26,9 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
 
   public deleteDialogVisible = false;
 
-  createProjectDialog: IJbDialog = {
-    dialogHeader: 'Create Project',
-    closableIcon: true,
-    dialogWidth: 600,
-    resizableDialog: true,
-    blockScroll: false,
-    focusOnShow: false
-  };
-
-  deleteProjectDialog: IJbDialog = {
-    dialogHeader: 'Delete Project',
-    closableIcon: true,
-    dialogWidth: 600,
-    resizableDialog: true,
-    blockScroll: false,
-    focusOnShow: false
-  };
+  createProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Create Project' };
+  
+  deleteProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Delete Project' };
 
   createProjectForm: FormModel;
 
