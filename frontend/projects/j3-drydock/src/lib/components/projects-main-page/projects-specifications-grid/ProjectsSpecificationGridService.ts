@@ -352,9 +352,9 @@ export class ProjectsSpecificationGridService {
               gridColStart: 1,
               gridColEnd: 3,
               listRequest: {
-                webApiRequest: this.projectsService.getFleetsRequest(),
+                webApiRequest: this.slfService.getSLFDetails(Datasource.Fleets),
                 labelKey: 'FleetName',
-                valueKey: 'uid'
+                valueKey: 'FleetCode'
               }
             },
             [eProjectsCreateFieldNames.Vessel]: {
