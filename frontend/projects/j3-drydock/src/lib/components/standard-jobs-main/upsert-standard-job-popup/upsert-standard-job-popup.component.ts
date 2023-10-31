@@ -8,6 +8,9 @@ import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { StandardJobsService } from '../../../services/StandardJobsService';
 import { finalize } from 'rxjs/operators';
 import { GrowlMessageService } from '../../../services/GrowlMessageService';
+import { SubItem } from '../../../models/interfaces/sub-items';
+import { forkJoin } from 'rxjs';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'jb-upsert-standard-job-popup',
@@ -48,6 +51,8 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   public formStructure: FormModel = this.popupFormService.formStructure;
 
+  private changedSubItems: SubItem[] = [];
+
   constructor(
     private formService: StandardJobUpsertFormService,
     private standardJobsService: StandardJobsService,
@@ -62,6 +67,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
       this.setPopupHeader();
       this.setPopupFooter();
       this.setAttachmentConfig();
+      this.initChangedSubIems();
     }
   }
 
@@ -75,6 +81,10 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   public onIsFormValid(isValid: boolean) {
     this.isPopupValid = isValid;
+  }
+
+  public onSubItemsChanged(subItems: SubItem[]) {
+    this.changedSubItems = subItems;
   }
 
   // TODO fixme to relevant values and use them from eModuleCode and eFunctionCode from jibe-components
@@ -97,18 +107,20 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   private closePopup(isSaved = false) {
     this.closeDialog.emit(isSaved);
     this.isPopupValid = false;
+    this.changedSubItems = [];
   }
 
   private save() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const value = this.jobFormValue;
 
     // TODO here can be addded validation messages for the form that appear in growl
 
     this.isSaving = true;
 
-    this.standardJobsService
-      .upsertStandardJob(this.item?.uid, value)
+    forkJoin([
+      this.standardJobsService.upsertStandardJob(this.item?.uid, value),
+      this.standardJobsService.updateJobSubItems(this.item?.uid, this.changedSubItems)
+    ])
       .pipe(
         finalize(() => {
           this.isSaving = false;
@@ -126,5 +138,10 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
           }
         }
       );
+  }
+
+  private initChangedSubIems() {
+    const subItems = this.item?.subItems ?? [];
+    this.changedSubItems = cloneDeep(subItems);
   }
 }

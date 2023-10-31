@@ -1,11 +1,9 @@
-/* eslint-disable no-console */
 import { Component, Input, OnInit, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { SubItem } from '../../../models/interfaces/sub-items';
 import { GridAction, GridRowActions, eGridRowActions } from 'jibe-components';
 import { GridInputsWithData } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SubItemsGridService } from './SubItemsGridService';
-import { StandardJobsService } from '../../../services/StandardJobsService';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { cloneDeep } from 'lodash';
@@ -21,7 +19,7 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
 
   @Input() functionUid: string;
 
-  @Output() updated = new EventEmitter<SubItem[]>();
+  @Output() changed = new EventEmitter<SubItem[]>();
 
   public gridInputs: GridInputsWithData<SubItem>;
 
@@ -40,10 +38,9 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
 
   public isConfirmDeleteVisible = false;
 
-  constructor(
-    private subItemsGridService: SubItemsGridService,
-    private standardJobsService: StandardJobsService
-  ) {
+  private editingSubItemIdx: number;
+
+  constructor(private subItemsGridService: SubItemsGridService) {
     super();
   }
 
@@ -66,6 +63,7 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
         break;
       case eGridRowActions.Edit:
         this.editRow(<SubItem>payload);
+        this.editingSubItemIdx = this.subItems.findIndex((item) => item === payload);
         break;
       case eGridRowActions.Delete:
         this.deleteRow(<SubItem>payload);
@@ -75,17 +73,21 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
     }
   }
 
-  public onCloseUpsertPopup(itemToSave: SubItem | null) {
+  public onCloseUpsertPopup(item: SubItem | null) {
     this.isUpsertPopupVisible = false;
-    this.currentRow = undefined;
 
-    if (itemToSave) {
-      itemToSave.uid ? this.edit(itemToSave) : this.add(itemToSave);
+    if (item) {
+      const isExist = !!this.currentRow;
+      isExist ? this.edit(item) : this.add(item);
     }
+
+    this.currentRow = undefined;
+    this.editingSubItemIdx = -1;
   }
 
   public onConfirmDeleteOk() {
     this.delete(this.currentRow);
+    this.isConfirmDeleteVisible = false;
   }
 
   public onConfirmDeleteCancel() {
@@ -103,25 +105,26 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
   }
 
   private delete(record: SubItem) {
-    // eslint-disable-next-line eqeqeq
-    const idx = this.subItems.findIndex((item) => item == record);
+    const idx = this.subItems.findIndex((item) => item === record);
     if (idx > -1) {
       this.subItems = [...this.subItems];
       this.subItems.splice(idx, 1);
     }
-    this.updateSubItems();
+
+    this.changed.emit(this.subItems);
   }
 
   private add(record: SubItem) {
-    this.subItems.push(record);
-    this.updateSubItems();
+    this.subItems = [...this.subItems, record];
+    this.changed.emit(this.subItems);
   }
 
   private edit(record: SubItem) {
-    const idx = this.subItems.findIndex((item) => item.uid === record.uid);
+    const idx = this.editingSubItemIdx;
     if (idx > -1) {
       this.subItems[idx] = record;
-      this.updateSubItems();
+      this.subItems = [...this.subItems];
+      this.changed.emit(this.subItems);
     }
   }
 
@@ -156,12 +159,5 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
       ...this.gridInputs.gridButton,
       disabled: !this.functionUid
     };
-  }
-
-  private updateSubItems() {
-    // TODO
-    this.standardJobsService.updateJobSubItems(this.job.uid, this.subItems).subscribe((res) => {
-      console.log(res);
-    });
   }
 }

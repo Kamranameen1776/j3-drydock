@@ -42,7 +42,7 @@ export class StandardJobsService {
     const apiReq: WebApiRequest = {
       apiBase: 'dryDockAPI',
       entity: 'drydock',
-      crud: eCrud.Post,
+      crud: uid ? eCrud.Put : eCrud.Post,
       action: action,
       body: body
     };
