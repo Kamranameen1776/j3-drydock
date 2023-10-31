@@ -127,7 +127,9 @@ export class StandardJobsService {
   private getUpsertStandardJobBody(uid: string, formValue: any) {
     return {
       ...formValue,
-      [eStandardJobsMainFields.UID]: uid || ''
+      [eStandardJobsMainFields.UID]: uid || '',
+      [eStandardJobsMainFields.Function]: formValue.function.jb_value_label || '',
+      subItems: []
     };
   }
 
