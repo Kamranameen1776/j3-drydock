@@ -1,5 +1,6 @@
 import { IGridCellStyle } from 'jibe-components';
 import { eStandardJobsMainFields } from '../enums/standard-jobs-main.enum';
+import { SubItem } from './sub-items';
 
 // TODO fixme all of this
 export interface CreateStandardJob {
@@ -26,4 +27,5 @@ export interface StandardJobResult {
   [eStandardJobsMainFields.Description]: string;
   [eStandardJobsMainFields.VesselTypeID]: string;
   [eStandardJobsMainFields.VesselType]: string;
+  [eStandardJobsMainFields.SubItems]: SubItem[];
 }

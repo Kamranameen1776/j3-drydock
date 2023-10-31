@@ -16,7 +16,9 @@ import { GrowlMessageService } from '../../../services/GrowlMessageService';
 })
 export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implements OnChanges {
   @Input() item: StandardJobResult;
+
   @Input() isOpen: boolean;
+
   @Output() closeDialog = new EventEmitter<boolean>();
 
   @ViewChild(UpsertStandardJobFormComponent) popupForm: UpsertStandardJobFormComponent;

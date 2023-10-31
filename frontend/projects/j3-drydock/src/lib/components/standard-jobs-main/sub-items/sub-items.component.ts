@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+/* eslint-disable no-console */
+import { Component, Input, OnInit, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { of } from 'rxjs';
 import { SubItem } from '../../../models/interfaces/sub-items';
 import { GridAction, GridRowActions, eGridRowActions } from 'jibe-components';
@@ -6,8 +7,9 @@ import { GridInputsWithData } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SubItemsGridService } from './SubItemsGridService';
 import { StandardJobsService } from '../../../services/StandardJobsService';
-import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../../models/constants/popup';
+import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'jb-drydock-sub-items',
@@ -16,9 +18,11 @@ import { getSmallPopup } from '../../../models/constants/popup';
   providers: [SubItemsGridService]
 })
 export class SubItemsComponent extends UnsubscribeComponent implements OnChanges, OnInit {
-  @Input() jobUid: string;
+  @Input() job: StandardJobResult;
 
   @Input() functionUid: string;
+
+  @Output() updated = new EventEmitter<SubItem[]>();
 
   public gridInputs: GridInputsWithData<SubItem>;
 
@@ -72,12 +76,12 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
     }
   }
 
-  public onCloseUpsertPopup(hasSaved: boolean) {
+  public onCloseUpsertPopup(itemToSave: SubItem | null) {
     this.isUpsertPopupVisible = false;
     this.currentRow = undefined;
 
-    if (hasSaved) {
-      // TODO insert new subitem to grid
+    if (itemToSave) {
+      itemToSave.uid ? this.edit(itemToSave) : this.add(itemToSave);
     }
   }
 
@@ -100,15 +104,26 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
   }
 
   private delete(record: SubItem) {
-    // TODO
-    of(record).subscribe(() => {
-      // eslint-disable-next-line eqeqeq
-      const idx = this.subItems.findIndex((item) => item == record);
-      if (idx > -1) {
-        this.subItems = [...this.subItems];
-        this.subItems.splice(idx, 1);
-      }
-    });
+    // eslint-disable-next-line eqeqeq
+    const idx = this.subItems.findIndex((item) => item == record);
+    if (idx > -1) {
+      this.subItems = [...this.subItems];
+      this.subItems.splice(idx, 1);
+    }
+    this.updateSubItems();
+  }
+
+  private add(record: SubItem) {
+    this.subItems.push(record);
+    this.updateSubItems();
+  }
+
+  private edit(record: SubItem) {
+    const idx = this.subItems.findIndex((item) => item.uid === record.uid);
+    if (idx > -1) {
+      this.subItems[idx] = record;
+      this.updateSubItems();
+    }
   }
 
   private setGridRowActions(): void {
@@ -129,16 +144,8 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
   }
 
   private initSubItems() {
-    if (!this.jobUid) {
-      this.subItems = [];
-    } else {
-      this.standardJobsService
-        .getJobSubItems(this.jobUid)
-        .pipe(takeUntil(this.unsubscribe$))
-        .subscribe((res) => {
-          this.subItems = res;
-        });
-    }
+    const subItems = this.job?.subItems ?? [];
+    this.subItems = cloneDeep(subItems);
   }
 
   private setGridButton() {
@@ -150,5 +157,12 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
       ...this.gridInputs.gridButton,
       disabled: !this.functionUid
     };
+  }
+
+  private updateSubItems() {
+    // TODO
+    this.standardJobsService.updateJobSubItems(this.job.uid, this.subItems).subscribe((res) => {
+      console.log(res);
+    });
   }
 }

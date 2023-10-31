@@ -4,6 +4,7 @@ import { ODataFilterBuilder } from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../models/enums/standard-jobs-main.enum';
 import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../models/interfaces/functions-tree-node';
 import { map } from 'rxjs/operators';
+import { SubItem } from '../models/interfaces/sub-items';
 
 @Injectable({ providedIn: 'root' })
 export class StandardJobsService {
@@ -25,7 +26,7 @@ export class StandardJobsService {
     const apiReq: WebApiRequest = {
       apiBase: 'dryDockAPI',
       entity: 'drydock',
-      crud: eCrud.Post,
+      crud: 'delete',
       action: 'standard-jobs/delete-standard-jobs',
       body: {
         uid
@@ -77,13 +78,16 @@ export class StandardJobsService {
     return apiRequest;
   }
 
-  public getJobSubItems(jobUid: string) {
+  public updateJobSubItems(jobUid: string, subItems: SubItem[]) {
     const apiRequest: WebApiRequest = {
       apiBase: 'dryDockAPI',
-      action: 'standard-jobs/get-sub-items',
-      crud: eCrud.Get,
+      action: 'standard-jobs/update-standard-jobs-sub-items',
+      crud: eCrud.Put,
       entity: 'drydock',
-      params: `job_uid=${jobUid}`
+      body: {
+        uid: jobUid,
+        subItems: subItems
+      }
     };
     return this.apiRequestService.sendApiReq(apiRequest);
   }
@@ -128,8 +132,7 @@ export class StandardJobsService {
     return {
       ...formValue,
       [eStandardJobsMainFields.UID]: uid || '',
-      [eStandardJobsMainFields.Function]: formValue.function.jb_value_label || '',
-      subItems: []
+      [eStandardJobsMainFields.Function]: formValue.function.jb_value_label || ''
     };
   }
 

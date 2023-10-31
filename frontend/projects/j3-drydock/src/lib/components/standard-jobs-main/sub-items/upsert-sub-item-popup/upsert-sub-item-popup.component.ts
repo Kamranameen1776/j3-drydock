@@ -13,8 +13,10 @@ import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.bas
 })
 export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements OnChanges {
   @Input() item: SubItem;
+
   @Input() isOpen: boolean;
-  @Output() closeDialog = new EventEmitter<boolean>();
+
+  @Output() closeDialog = new EventEmitter<SubItem | null>();
 
   @ViewChild(UpsertSubItemFormComponent) popupForm: UpsertSubItemFormComponent;
 
@@ -65,31 +67,18 @@ export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements
     this.okLabel = 'Save';
   }
 
-  private closePopup(isSaved = false) {
-    this.closeDialog.emit(isSaved);
+  private closePopup(itemToSave?: SubItem) {
+    this.closeDialog.emit(itemToSave ?? null);
     this.isPopupValid = false;
   }
 
   private save() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const value = this.formValue;
 
-    // TODO here can be addded validation messages for the form that appear in growl
-
-    this.isSaving = true;
-
-    // this.projectsLibraryService.upsertProjectRecord(this.item?.uid, value).pipe(
-    //   finalize(() => {
-    //     this.isSaving = false;
-    //   })
-    // ).subscribe(res => {
-    //   this.closePopup(true);
-    // }, err => {
-    //   if (err?.status === 422) {
-    //     this.growlMessageService.setValidationErrorMessage(err.error);
-    //   } else {
-    //     this.growlMessageService.setValidationErrorMessage('Server error occured');
-    //   }
-    // });
+    if (this.isEditing) {
+      this.closePopup({ ...this.item, ...value });
+    } else {
+      this.closePopup({ ...value });
+    }
   }
 }

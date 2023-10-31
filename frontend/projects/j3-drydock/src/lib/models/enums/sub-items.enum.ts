@@ -9,5 +9,6 @@ export enum eSubItemsLabels {
 export enum eSubItemsFields {
   ItemNumber = 'code',
   Subject = 'subject',
-  Description = 'description'
+  Description = 'description',
+  Uid = 'uid'
 }

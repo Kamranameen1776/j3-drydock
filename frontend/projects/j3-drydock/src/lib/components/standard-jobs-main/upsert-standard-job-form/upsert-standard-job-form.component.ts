@@ -53,7 +53,7 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
 
   private initFormState() {
     if (this.isEditing) {
-      this.popupFormService.setEnabled(this.formGroup, eStandardJobsMainFields.Function, false);
+      // this.popupFormService.setEnabled(this.formGroup, eStandardJobsMainFields.Function, false);
       this.popupFormService.setEnabled(this.formGroup, eStandardJobsMainFields.ItemNumber, false);
     }
   }
