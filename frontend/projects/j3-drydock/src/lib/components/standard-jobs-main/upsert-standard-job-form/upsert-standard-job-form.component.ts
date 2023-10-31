@@ -45,7 +45,7 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
 
   public dispatchForm(event: FormGroup) {
     this.formGroup = event;
-    // TODO listen to changes and logic to change some fields state
+
     this.initFormState();
     this.listenFormValid();
     this.listenVesselSpecificChanges();

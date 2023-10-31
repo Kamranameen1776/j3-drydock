@@ -26,7 +26,7 @@ export class StandardJobsService {
     const apiReq: WebApiRequest = {
       apiBase: 'dryDockAPI',
       entity: 'drydock',
-      crud: 'delete',
+      crud: eCrud.Put,
       action: 'standard-jobs/delete-standard-jobs',
       body: {
         uid

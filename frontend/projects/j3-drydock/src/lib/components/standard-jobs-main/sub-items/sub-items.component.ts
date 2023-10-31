@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { Component, Input, OnInit, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
-import { of } from 'rxjs';
 import { SubItem } from '../../../models/interfaces/sub-items';
 import { GridAction, GridRowActions, eGridRowActions } from 'jibe-components';
 import { GridInputsWithData } from '../../../models/interfaces/grid-inputs';
