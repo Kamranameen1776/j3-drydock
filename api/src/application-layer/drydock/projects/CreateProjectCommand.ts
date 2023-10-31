@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { Request } from 'express';
 
@@ -22,11 +23,18 @@ export class CreateProjectCommand extends Command<Request, void> {
         this.uow = new UnitOfWork();
     }
 
-    protected async AuthorizationHandlerAsync(request: Request): Promise<void> {}
+    protected async AuthorizationHandlerAsync(request: Request): Promise<void> {
+        return;
+    }
 
     protected async ValidationHandlerAsync(request: Request): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
+        }
+        const createProjectDto: ICreateProjectDto = plainToClass(ICreateProjectDto, request.body);
+        const result = await validate(createProjectDto);
+        if (result.length) {
+            throw result;
         }
     }
 
@@ -40,7 +48,7 @@ export class CreateProjectCommand extends Command<Request, void> {
         const createProjectDto: ICreateProjectDto = request.body as ICreateProjectDto;
 
         createProjectDto.CreatedAtOffice = await this.projectsService.IsOffice();
-
+        // TODO: change 1 to constant, enum, etc
         createProjectDto.ProjectStateId = 1;
 
         const vessel: LibVesselsEntity = await this.projectsRepository.GetVessel(createProjectDto.VesselId);

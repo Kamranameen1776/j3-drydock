@@ -201,7 +201,7 @@ export class ProjectsRepository {
         await queryRunner.manager.update(ProjectEntity, project.uid, project);
     }
 
-    public async GetVessel(vesselId: number): Promise<any> {
+    public async GetVessel(vesselId: number): Promise<LibVesselsEntity> {
         const vesselRepository = getManager().getRepository(LibVesselsEntity);
 
         const data = await vesselRepository.findOneOrFail({

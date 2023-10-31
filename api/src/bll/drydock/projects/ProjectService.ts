@@ -1,7 +1,9 @@
-import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { ConfigurationService } from 'j2utils';
 
+//TODO: move ICreateProjectDto to bll
 import { ICreateProjectDto } from '../../../application-layer/drydock/projects/dtos/ICreateProjectDto';
+//TODO: add dto for vesels, remove using entity from bll
+import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { TaskManagerRequestDto, TaskManagerService } from '../../../external-services/drydock/TaskManager';
 import { TaskManagerConstants } from '../../../shared/constants';
 
