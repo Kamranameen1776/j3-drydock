@@ -1,17 +1,13 @@
-import { DictionaryService } from '../../../../bll/drydock/dictionaries/DictionaryService';
-
 import { DictionariesRepository } from '../../../../dal/drydock/dictionaries/DictionariesRepository';
 import { Query } from '../../core/cqrs/Query';
 
 export class GetProjectTypesQuery extends Query<void, any[]> {
     dictionariesRepository: DictionariesRepository;
-    dictionariesService: DictionaryService;
 
     constructor() {
         super();
 
         this.dictionariesRepository = new DictionariesRepository();
-        this.dictionariesService = new DictionaryService();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -27,7 +23,6 @@ export class GetProjectTypesQuery extends Query<void, any[]> {
      * @returns All example projects, which were created after the latest projects date
      */
     protected async MainHandlerAsync(): Promise<any[]> {
-        
         const query = undefined;
         const projects = await this.dictionariesRepository.GetProjectTypes();
 

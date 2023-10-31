@@ -1,16 +1,13 @@
-import { DictionaryService } from '../../../../bll/drydock/dictionaries/DictionaryService';
 import { DictionariesRepository } from '../../../../dal/drydock/dictionaries/DictionariesRepository';
 import { Query } from '../../core/cqrs/Query';
 
 export class GetManagersQuery extends Query<void, any[]> {
     dictionariesRepository: DictionariesRepository;
-    dictionariesService: DictionaryService;
 
     constructor() {
         super();
 
         this.dictionariesRepository = new DictionariesRepository();
-        this.dictionariesService = new DictionaryService();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {

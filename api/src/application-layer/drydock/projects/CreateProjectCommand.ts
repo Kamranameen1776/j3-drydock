@@ -3,22 +3,25 @@ import { validate } from 'class-validator';
 import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { Request } from 'express';
 
+import { ICreateProjectDto } from '../../../bll/drydock/projects/dtos/ICreateProjectDto';
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
 import { ICreateNewProjectDto } from '../../../dal/drydock/projects/dtos/ICreateNewProjectDto';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
+import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { ICreateProjectDto } from './dtos/ICreateProjectDto';
 
 export class CreateProjectCommand extends Command<Request, void> {
     projectsRepository: ProjectsRepository;
     projectsService: ProjectService;
+    vesselsRepository: VesselsRepository;
     uow: UnitOfWork;
 
     constructor() {
         super();
 
         this.projectsRepository = new ProjectsRepository();
+        this.vesselsRepository = new VesselsRepository();
         this.projectsService = new ProjectService();
         this.uow = new UnitOfWork();
     }
@@ -51,7 +54,7 @@ export class CreateProjectCommand extends Command<Request, void> {
         // TODO: change 1 to constant, enum, etc
         createProjectDto.ProjectStateId = 1;
 
-        const vessel: LibVesselsEntity = await this.projectsRepository.GetVessel(createProjectDto.VesselId);
+        const vessel: LibVesselsEntity = await this.vesselsRepository.GetVessel(createProjectDto.VesselId);
 
         const taskManagerData = await this.projectsService.TaskManagerIntegration(createProjectDto, vessel, token);
 

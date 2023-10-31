@@ -1,11 +1,10 @@
 import { ConfigurationService } from 'j2utils';
 
-//TODO: move ICreateProjectDto to bll
-import { ICreateProjectDto } from '../../../application-layer/drydock/projects/dtos/ICreateProjectDto';
-//TODO: add dto for vesels, remove using entity from bll
-import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { TaskManagerRequestDto, TaskManagerService } from '../../../external-services/drydock/TaskManager';
 import { TaskManagerConstants } from '../../../shared/constants';
+import { ICreateProjectDto } from './dtos/ICreateProjectDto';
+//TODO: add dto for vesels, remove using entity from bll
+import { ILibVesselDto } from './dtos/LibVesselDto';
 
 export class ProjectService {
     tmSevice: TaskManagerService;
@@ -21,7 +20,7 @@ export class ProjectService {
 
     public async TaskManagerIntegration(
         request: ICreateProjectDto,
-        vessel: LibVesselsEntity,
+        vessel: ILibVesselDto,
         token: string,
     ): Promise<any> {
         const saveTaskManagerDetails: TaskManagerRequestDto = {
