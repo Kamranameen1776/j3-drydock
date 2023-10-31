@@ -59,19 +59,14 @@
       [formStructure]="deleteProjectForm"
       class="form-generator-log"
     ></jb-form>
-
-    <div class="popup-footer">
-      <jb-button
-        (click)="showDeleteDialog(false)"
-        label="Cancel"
-        type="NoButton"
-      ></jb-button>
-      <jb-button
-        (click)="deleteProject()"
-        [disabled]="deleteProjectButtonDisabled$ | async"
-        label="Delete"
-        type="Standard"
-      ></jb-button>
-    </div>
   </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="deleteProjectButtonDisabled$ | async"
+      [okBtnLabel]="Delete"
+      (ok)="deleteProject()"
+      (cancel)="showDeleteDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
 </jb-dialog>
