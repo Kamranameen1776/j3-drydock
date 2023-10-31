@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('project_type', { schema: 'dry_dock' })
 export class ProjectTypeEntity {
     @PrimaryGeneratedColumn()
-    id: string;
+    uid: string;
 
     @Column('varchar', {
         nullable: true,

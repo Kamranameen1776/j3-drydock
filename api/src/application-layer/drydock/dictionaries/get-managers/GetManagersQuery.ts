@@ -1,7 +1,8 @@
 import { DictionariesRepository } from '../../../../dal/drydock/dictionaries/DictionariesRepository';
+import { LibUserEntity } from '../../../../entity/drydock/dbo/LibUserEntity';
 import { Query } from '../../core/cqrs/Query';
 
-export class GetManagersQuery extends Query<void, any[]> {
+export class GetManagersQuery extends Query<void, LibUserEntity[]> {
     dictionariesRepository: DictionariesRepository;
 
     constructor() {
@@ -22,10 +23,16 @@ export class GetManagersQuery extends Query<void, any[]> {
      *
      * @returns All example projects, which were created after the latest projects date
      */
-    protected async MainHandlerAsync(): Promise<any[]> {
+    protected async MainHandlerAsync(): Promise<LibUserEntity[]> {
         const query = undefined;
         const projects = await this.dictionariesRepository.GetManagers();
 
-        return projects;
+        //TODO: think how to change it, Entity.get FullName() didnt work, take a look on other
+        return projects.map((item) => {
+            return {
+                ...item,
+                FullName: `${item.FirstName} ${item.LastName}`,
+            };
+        });
     }
 }

@@ -1,31 +1,27 @@
 import { getManager } from 'typeorm';
 
+import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
+import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
+
 export class DictionariesRepository {
+    public async GetManagers(): Promise<LibUserEntity[]> {
+        const libUserRepository = getManager().getRepository(LibUserEntity);
 
-    public async GetManagers(): Promise<any[]> {
-        const dbQuery = `
-        SELECT [uid]
-            ,[Active_Status]
-			,[User_Type]
-            , [First_Name] + ' ' + [Last_Name] as FullName
-        FROM [JIBE_Main].[dbo].[LIB_USER]
-        where Active_status = 1 and User_Type = 'OFFICE USER';
-        `;
-
-        return getManager().query(dbQuery);
+        return libUserRepository.find({
+            where: {
+                UserType: 'OFFICE USER',
+                ActiveStatus: true,
+            },
+        });
     }
 
-    public async GetProjectTypes(): Promise<any[]> {
-        const dbQuery = `
-        SELECT [uid]
-            ,[Worklist_Type]
-            ,[short_code]
-            ,[created_at]
-            ,[active_status]
-        FROM [JIBE_Main].[dry_dock].[project_type]
-        where active_status = 1;
-        `;
+    public async GetProjectTypes(): Promise<ProjectTypeEntity[]> {
+        const projectTypeRepository = getManager().getRepository(ProjectTypeEntity);
 
-        return getManager().query(dbQuery);
+        return projectTypeRepository.find({
+            where: {
+                ActiveStatus: true,
+            },
+        });
     }
 }

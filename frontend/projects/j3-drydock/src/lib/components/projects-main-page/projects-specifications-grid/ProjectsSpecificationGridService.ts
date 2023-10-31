@@ -384,7 +384,7 @@ export class ProjectsSpecificationGridService {
               gridColEnd: 3,
               listRequest: {
                 webApiRequest: this.projectsService.getAllProjectTypesRequest(),
-                labelKey: 'Worklist_Type',
+                labelKey: 'WorklistType',
                 valueKey: 'uid'
               }
             },
