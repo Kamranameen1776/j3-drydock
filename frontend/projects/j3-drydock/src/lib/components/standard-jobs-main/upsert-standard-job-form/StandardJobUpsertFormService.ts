@@ -43,7 +43,11 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridRowStart: 1,
             gridRowEnd: 2,
             gridColStart: 1,
-            gridColEnd: 2
+            gridColEnd: 2,
+            inputWithDlgConfig: {
+              inputLabelKey: 'jb_value_label',
+              dlgConfiguration: { appendTo: '' }
+            }
           },
           [eStandardJobsMainFields.ItemNumber]: {
             type: eFieldControlType.Text,

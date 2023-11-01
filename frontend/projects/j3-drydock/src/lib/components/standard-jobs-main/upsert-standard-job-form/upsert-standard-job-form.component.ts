@@ -65,7 +65,8 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
       const values = this.formValues.values[this.popupFormService.formId];
       Object.assign(values, this.item, {
         subject: this.item.subject?.value ?? '',
-        vesselTypeSpecific: this.item.vesselTypeSpecific ? 1 : 0
+        vesselTypeSpecific: this.item.vesselTypeSpecific ? 1 : 0,
+        function: { jb_value_label: this.item.function }
       });
     }
   }
@@ -82,16 +83,11 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
     if (!field) {
       return;
     }
-    // TODO waiting j-component version with 'inputWithDlg' type in form field
-    field.inputWithDlgConfig = {
-      dlgTemplate: this.treeTemplate,
-      inputLabelKey: 'jb_value_label',
-      dlgConfiguration: { appendTo: '' }
-    };
+    field.inputWithDlgConfig.dlgTemplate = this.treeTemplate;
   }
 
   private setFieldEnabledAndRequired(fieldName: eStandardJobsMainFields, isEnabled: boolean) {
-    this.popupFormService.setEnabled(this.formGroup, fieldName, isEnabled);
+    this.popupFormService.setEnabled(this.formGroup, fieldName, isEnabled, true);
     this.popupFormService.setValidationRequired(this.formStructure, fieldName, isEnabled);
   }
 
