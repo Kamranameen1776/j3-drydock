@@ -187,7 +187,7 @@ export class StandardJobsGridService {
       gridButton: this.gridButton,
       filters: this.gridFilters,
       filtersLists: this.gridFilterLists,
-      searchFields: [eStandardJobsMainFields.Subject]
+      searchFields: [eStandardJobsMainFields.Subject, eStandardJobsMainFields.Function]
     };
   }
 }

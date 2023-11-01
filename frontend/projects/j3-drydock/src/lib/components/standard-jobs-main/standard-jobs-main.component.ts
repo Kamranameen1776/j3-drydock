@@ -13,7 +13,7 @@ import {
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { StandardJobsGridService } from './StandardJobsGridService';
-import { FunctionsFlatTreeNode, FunctionsTreeNode } from '../../models/interfaces/functions-tree-node';
+import { FunctionsFlatTreeNode } from '../../models/interfaces/functions-tree-node';
 import { StandardJobUpsertFormService } from './upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
@@ -144,17 +144,11 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((flatTree) => {
         this.setFunctionsFlatTree(flatTree);
-        this.setFunctionsTree(this.treeService.createTreeAndNodesMap(flatTree));
       });
   }
 
   private setFunctionsFlatTree(flatTree: FunctionsFlatTreeNode[]) {
     this.upsertFormService.functionsFlatTree$.next(flatTree);
-  }
-
-  private setFunctionsTree(data: { tree: FunctionsTreeNode[]; nodesMap: Map<string | number, FunctionsTreeNode> }) {
-    this.upsertFormService.functionsTree$.next(data.tree);
-    this.upsertFormService.functionsTreeNodesMap = data.nodesMap;
   }
 
   private deleteStandardJob() {

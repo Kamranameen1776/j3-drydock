@@ -60,13 +60,16 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
 
   private initFormValues() {
     this.formValues = this.popupFormService.formValues;
-    // TODO set function value here if needed with calculcated path form functionsTreeNodesMap and functionsTree$
+
     if (this.isEditing) {
       const values = this.formValues.values[this.popupFormService.formId];
       Object.assign(values, this.item, {
         subject: this.item.subject?.value ?? '',
         vesselTypeSpecific: this.item.vesselTypeSpecific ? 1 : 0,
-        function: { jb_value_label: this.item.function }
+        function: {
+          jb_value_label: this.item.function,
+          Child_ID: this.item.functionUid
+        }
       });
     }
   }

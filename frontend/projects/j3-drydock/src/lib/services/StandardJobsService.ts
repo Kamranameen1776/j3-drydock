@@ -132,7 +132,8 @@ export class StandardJobsService {
     return {
       ...formValue,
       [eStandardJobsMainFields.UID]: uid || '',
-      [eStandardJobsMainFields.Function]: formValue.function.jb_value_label || ''
+      [eStandardJobsMainFields.Function]: formValue.function.jb_value_label || '',
+      [eStandardJobsMainFields.FunctionUid]: formValue.function.Child_ID || ''
     };
   }
 

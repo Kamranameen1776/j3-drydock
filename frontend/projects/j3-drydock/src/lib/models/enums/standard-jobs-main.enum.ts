@@ -29,6 +29,7 @@ export enum eStandardJobsMainFields {
   UID = 'uid',
 
   Function = 'function',
+  FunctionUid = 'functionUid',
   ItemCategoryID = 'categoryUid',
   MaterialSuppliedByID = 'materialSuppliedByUid',
   DoneByID = 'doneByUid',

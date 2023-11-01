@@ -15,6 +15,7 @@ export interface StandardJobResult {
   [eStandardJobsMainFields.UID]: string;
   [eStandardJobsMainFields.Subject]: Partial<IGridCellStyle>;
   [eStandardJobsMainFields.Function]: string;
+  [eStandardJobsMainFields.FunctionUid]: string;
   [eStandardJobsMainFields.ItemNumber]: string;
   [eStandardJobsMainFields.ItemCategoryID]: string;
   [eStandardJobsMainFields.ItemCategory]: string;
