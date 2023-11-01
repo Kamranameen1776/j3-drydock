@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable, merge, of } from 'rxjs';
-import { Column, Filter, FilterListSet, GridRowActions, eFieldControlType, eGridAction } from 'jibe-components';
-import { map } from 'rxjs/operators';
-import { GridInputsWithDataObject } from '../../models/interfaces/grid-inputs';
+import { Column, Filter, FilterListSet, GridRowActions, WebApiRequest, eCrud, eFieldControlType, eGridAction } from 'jibe-components';
+import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
+import ODataFilterBuilder from 'odata-filter-builder';
 
 export enum SpecificationType {
   ALL = 'All',
@@ -15,96 +14,50 @@ export enum SpecificationType {
 export enum SpecificationStatus {
   RAISED = 'Raised',
   APPROVED = 'Approved',
-  COMPLETED = 'Completed'
-}
-
-export interface Specification {
-  id: string;
-  // Either must be an object
-  // Depends on routing and backend implementation
-  spec: string;
-  subject: string;
-  kind: Exclude<SpecificationType, SpecificationType.ALL>;
-  category: string;
-  done_by: string;
-  inspection: string;
-  status: SpecificationStatus;
+  COMPLETED = 'Completed',
+  REJECTED = 'Rejected'
 }
 
 @Injectable()
 export class SpecificationGridService {
-  // Will be replaced with WebApiRequest later, but will have same interface
-  getData(projectId: string, kind: SpecificationType): Observable<Specification[]> {
-    return of(
-      [
-        {
-          id: 'GA0012',
-          spec: 'SPEC-O-1860',
-          subject: 'Inspection of the Fixed fire fighting system',
-          kind: SpecificationType.STANDARD,
-          category: 'Inspection',
-          done_by: 'Technician',
-          inspection: 'Class',
-          due_date: new Date(),
-          status: SpecificationStatus.RAISED
-        },
-        {
-          id: 'DF0270',
-          spec: 'SPEC-O-1861',
-          subject: 'Hatch Coaming renewal',
-          kind: SpecificationType.ADHOC,
-          category: 'Steel Renewal',
-          done_by: 'Yard',
-          inspection: 'Owner',
-          status: SpecificationStatus.APPROVED
-        },
-        {
-          id: 'DF0345',
-          spec: 'SPEC-O-1863',
-          subject: 'Main Engine Air Cooler Pressure Test',
-          kind: SpecificationType.PMS,
-          category: 'Overhaul',
-          done_by: 'Yard',
-          inspection: 'Manufacturer',
-          status: SpecificationStatus.COMPLETED
-        }
-      ].filter((spec) => {
-        if (kind === SpecificationType.ALL) {
-          return true;
-        }
+  public getSpecificationDetailsAPIRequest(projectId: string | null, componentUIDs: string[], functionUIDs: string[]): WebApiRequest {
+    const filter = ODataFilterBuilder('and');
 
-        return spec.kind === kind;
-      }) as Specification[]
-    );
+    if (projectId) {
+      filter.eq('project_uid', projectId);
+    }
+
+    if (componentUIDs?.length > 0) {
+      filter.in('component_uid', componentUIDs);
+    }
+
+    if (functionUIDs?.length > 0) {
+      filter.in('function_uid', functionUIDs);
+    }
+
+    const apiRequest: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'specification-details/get-many-specification-details',
+      crud: eCrud.Post,
+      entity: 'drydock',
+      odata: {
+        filter
+      }
+    };
+    return apiRequest;
   }
 
-  getGridData(projectId: string, kind: SpecificationType): Observable<GridInputsWithDataObject<Specification>> {
-    const gridParams: GridInputsWithDataObject<Specification> = {
+  getGridData(projectId: string | null, componentUIDs: string[], functionUIDs: string[]): GridInputsWithRequest {
+    return {
       columns: this.columns,
       gridName: this.gridName,
-      data: {
-        records: [],
-        count: 0
-      },
+      request: this.getSpecificationDetailsAPIRequest(projectId, componentUIDs, functionUIDs),
       actions: this.gridActions,
       filters: this.filters,
       filtersLists: this.filtersLists
     };
-
-    return merge(
-      of(gridParams),
-      this.getData(projectId, kind).pipe(
-        map((data) => {
-          return {
-            ...gridParams,
-            data: {
-              records: data,
-              count: data.length
-            }
-          } as GridInputsWithDataObject<Specification>;
-        })
-      )
-    );
   }
 
   public readonly gridName: string = 'specificationGrid';
@@ -113,7 +66,7 @@ export class SpecificationGridService {
     {
       DisableSort: true,
       DisplayText: 'Item No',
-      FieldName: 'id',
+      FieldName: 'item_number',
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -123,7 +76,7 @@ export class SpecificationGridService {
     {
       DisableSort: true,
       DisplayText: 'Code',
-      FieldName: 'spec',
+      FieldName: 'code',
       hyperlink: true,
       IsActive: true,
       IsMandatory: true,
@@ -134,14 +87,14 @@ export class SpecificationGridService {
     {
       DisableSort: true,
       DisplayText: 'Subject',
-      FieldName: 'subject',
+      FieldName: 'description',
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
       width: '395px'
     },
-    {
+    /*{
       DisableSort: true,
       DisplayText: 'Item source',
       FieldName: 'kind',
@@ -150,11 +103,11 @@ export class SpecificationGridService {
       IsVisible: true,
       ReadOnly: true,
       width: '83px'
-    },
+    },*/
     {
       DisableSort: true,
       DisplayText: 'Item category',
-      FieldName: 'category',
+      FieldName: 'item_category',
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -171,7 +124,7 @@ export class SpecificationGridService {
       ReadOnly: true,
       width: '84px'
     },
-    {
+    /*{
       DisableSort: true,
       DisplayText: 'Inspection / Survey',
       FieldName: 'inspection',
@@ -180,7 +133,7 @@ export class SpecificationGridService {
       IsVisible: true,
       ReadOnly: true,
       width: '130px'
-    },
+    },*/
     {
       DisableSort: true,
       DisplayText: 'Status',
@@ -196,16 +149,16 @@ export class SpecificationGridService {
   private readonly filters: Filter[] = [
     {
       DisplayText: 'Item Category',
-      FieldName: 'category',
+      FieldName: 'item_category',
       placeholder: 'Select',
       default: true
     },
-    {
+    /*{
       DisplayText: 'Inspection / Survey',
       FieldName: 'inspection',
       placeholder: 'Select',
       default: true
-    },
+    },*/
     {
       DisplayText: 'Status',
       FieldName: 'status',
@@ -242,12 +195,16 @@ export class SpecificationGridService {
         {
           label: SpecificationStatus.RAISED,
           value: SpecificationStatus.RAISED
+        },
+        {
+          label: SpecificationStatus.REJECTED,
+          value: SpecificationStatus.REJECTED
         }
       ],
       type: eFieldControlType.MultiSelect,
       odataKey: 'status'
     },
-    inspection: {
+    /*inspection: {
       list: [
         {
           label: 'Owner',
@@ -264,8 +221,8 @@ export class SpecificationGridService {
       ],
       type: eFieldControlType.MultiSelect,
       odataKey: 'inspection'
-    },
-    category: {
+    },*/
+    item_category: {
       list: [
         {
           label: 'Steel Renewal',
@@ -281,7 +238,7 @@ export class SpecificationGridService {
         }
       ],
       type: eFieldControlType.MultiSelect,
-      odataKey: 'category'
+      odataKey: 'item_category'
     },
     due_date: {
       type: eFieldControlType.Date,

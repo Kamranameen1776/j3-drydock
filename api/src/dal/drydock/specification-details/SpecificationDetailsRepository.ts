@@ -55,10 +55,10 @@ export class SpecificationDetailsRepository {
                         'tm.Status as status' +
                         'sd.safety_instruction',
                 )
-                .leftJoin('[dto].[tm_dd_lib_item_category]', 'ic', 'sd.item_category = ic.uid')
-                .leftJoin('[dto].[tm_dd_lib_done_by]', 'db', 'sd.done_by = db.uid')
-                .leftJoin('[dto].[tm_dd_lib_material_supplied_by]', 'msb', 'sd.material_supplied_by = msb.uid')
-                .innerJoin(className(TECTaskManagerEntity), 'tm', 'sd.tm_task_uid = tm.uid')
+                .leftJoin('[dto].[tm_dd_lib_item_category]', 'ic', 'sd.item_category_uid = ic.uid')
+                .leftJoin('[dto].[tm_dd_lib_done_by]', 'db', 'sd.done_by_uid = db.uid')
+                .leftJoin('[dto].[tm_dd_lib_material_supplied_by]', 'msb', 'sd.material_supplied_by_uid = msb.uid')
+                .innerJoin(className(TECTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
                 .where('sd.active_status = 1')
                 .getSql();
 

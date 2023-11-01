@@ -31,7 +31,7 @@ export class SpecificationService {
             module_code: TaskManagerConstants.specification.module_code,
             function_code: TaskManagerConstants.specification.function_code,
             raised_location: office,
-            task_status: TaskManagerConstants.project.status.Planned,
+            task_status: TaskManagerConstants.specification.status.Raised,
             title: request.Subject,
             date_raised: new Date(),
             link_job_uid: null,

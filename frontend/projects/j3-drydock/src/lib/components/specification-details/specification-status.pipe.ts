@@ -4,7 +4,8 @@ import { SpecificationStatus } from '../../services/specifications/specification
 const statusCodeMap = {
   [SpecificationStatus.RAISED.toLocaleLowerCase()]: 'raise',
   [SpecificationStatus.APPROVED.toLocaleLowerCase()]: 'in progress',
-  [SpecificationStatus.COMPLETED.toLocaleLowerCase()]: 'close'
+  [SpecificationStatus.COMPLETED.toLocaleLowerCase()]: 'close',
+  [SpecificationStatus.REJECTED.toLocaleLowerCase()]: 'raise'
 };
 
 @Pipe({

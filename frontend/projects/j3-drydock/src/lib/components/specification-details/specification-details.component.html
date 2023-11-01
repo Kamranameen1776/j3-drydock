@@ -29,8 +29,10 @@
           [nodeAPIReq]="treeData"
           [showSetting]="{ showSearch: true, showButtons: false }"
           filterPlaceholder="Search Function / Component"
+          (nodeData)="setNodeData($event)"
+          [eventsList]="eventsList"
         ></jb-tree>
-        <p-tabView
+        <!--        <p-tabView
           class="jb-tabview"
           [activeIndex]="activeIndex"
           (activeIndexChange)="activeIndexChange($event)"
@@ -38,19 +40,19 @@
           <p-tabPanel
             *ngFor="let item of types"
             [header]="item"
-          >
-            <jb-grid
-              *ngIf="gridData"
-              [gridName]="gridData.gridName"
-              [colData]="gridData.columns"
-              [tableData]="gridData.data"
-              [setActions]="gridData.actions"
-              [filterData]="gridData.filters"
-              [filterListsSet]="gridData.filtersLists"
-              [getStyleByContainer]="true"
-            ></jb-grid>
-          </p-tabPanel>
-        </p-tabView>
+          >-->
+        <jb-grid
+          *ngIf="gridData"
+          [gridName]="gridData.gridName"
+          [colData]="gridData.columns"
+          [tableDataReq]="gridData.request"
+          [setActions]="gridData.actions"
+          [filterData]="gridData.filters"
+          [filterListsSet]="gridData.filtersLists"
+          [getStyleByContainer]="true"
+        ></jb-grid>
+        <!--           </p-tabPanel> 
+        </p-tabView>-->
       </div>
     </jb-layout-widget>
     <ng-template
