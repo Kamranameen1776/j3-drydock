@@ -1,8 +1,10 @@
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 import { Request } from 'express';
 
-import { ApplicationException } from '../../../bll/drydock/core/exceptions/ApplicationException';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../core/cqrs/Query';
+import { GetProjectByUidDto } from './dtos/GetProjectByUidDto';
 import { IProjectsFromMainPageRecordDto } from './projects-for-main-page/dtos/IProjectsFromMainPageRecordDto';
 
 export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordDto> {
@@ -19,8 +21,10 @@ export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordD
     }
 
     protected async ValidationHandlerAsync(request: Request): Promise<void> {
-        if (!request || !request.query || !request.query.uid) {
-            throw new ApplicationException('Request uid is required');
+        const query: GetProjectByUidDto = plainToClass(GetProjectByUidDto, request.query);
+        const result = await validate(query);
+        if (result.length) {
+            throw result;
         }
 
         return;

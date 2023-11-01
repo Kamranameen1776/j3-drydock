@@ -84,9 +84,21 @@ export class MiddlewareHandler {
                 return;
             } else if (exception instanceof Array && exception.length && exception[0] instanceof ValidationError) {
                 //TODO: think how to refactor it, and if we need to log this exceptions into db;
-                res.status(httpStatus.BAD_REQUEST).json({
+                const error = exception[0];
+                let message = 'Valdidation request has failed';
+                let property = 'Something';
+                if (error.constraints && error.property) {
+                    property = error.property;
+                    const keys = Object.keys(error.constraints);
+                    if (keys.length) {
+                        message = error.constraints[keys[0]];
+                    }
+                }
+
+                res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
                     title: 'Request validation error',
-                    errors: exception,
+                    property,
+                    message,
                 });
 
                 return;

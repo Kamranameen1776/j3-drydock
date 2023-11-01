@@ -33,7 +33,6 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
      * @returns New created project result
      */
     protected async MainHandlerAsync(request: UpdateProjectDto): Promise<void> {
-        // const result = new CreateProjectResultDto();
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const projectId = await this.projectsRepository.UpdateProject(request, queryRunner);
             return projectId;
