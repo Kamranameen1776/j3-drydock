@@ -1,3 +1,5 @@
+// TODO: remove references to application-layer
+// UpdateProjectDto should be a part of the Infrastructure layer(DAL)
 import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
