@@ -8,12 +8,12 @@ import { GetSpecificationDetailsResultDto } from './dtos/GetSpecificationDetails
 
 export class SpecificationDetailsRepository {
     public async findOneBySpecificationUid(uid: string): Promise<GetSpecificationDetailsResultDto[]> {
-        const specificationDetailsRepository = getManager().getRepository(SpecificationDetailsEntity);
-
-        const result = await specificationDetailsRepository
-            .createQueryBuilder('spec')
-            .where('spec.active_status = 1 and spec.uid = :uid', { uid: uid })
-            .execute();
+        const result = await getManager()
+            .createQueryBuilder()
+            .from('specification_details', 'spec')
+            .select('spec.*')
+            .where(`spec.active_status = 1 and spec.uid='${uid}'`)
+            .getRawMany();
 
         return result;
     }
