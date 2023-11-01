@@ -14,7 +14,7 @@ import {
 
 export class StandardJobsService {
     public mapStandardJobsDataToDto(queryData: standard_jobs[]): GetStandardJobsResultDto {
-        let resultData: GetStandardJobsResult[] = queryData.map((standardJob) => {
+        const resultData: GetStandardJobsResult[] = queryData.map((standardJob) => {
             let newItem: GetStandardJobsResult = {
                 uid: standardJob.uid,
                 function: standardJob.function,
@@ -38,7 +38,7 @@ export class StandardJobsService {
                 inspection: '',
                 vesselTypeId: [],
                 vesselType: '',
-                subItems: standardJob.sub_items,
+                subItems: this.getActiveItems(standardJob.sub_items),
             };
 
 
@@ -54,12 +54,14 @@ export class StandardJobsService {
             }
 
             if (standardJob.inspection) {
-                newItem.inspection = standardJob.inspection.map((itm) => itm.Authority).join(', ');
-                newItem.inspectionId = standardJob.inspection.map((itm) => itm.ID) as number[];
+                const inspections = this.getActiveItems(standardJob.inspection, 'Active_Status');
+                newItem.inspection = inspections.map((itm) => itm.Authority).join(', ');
+                newItem.inspectionId = inspections.map((itm) => itm.ID) as number[];
             }
             if (standardJob.vessel_type) {
-                newItem.vesselType = standardJob.vessel_type.map((itm) => itm.VesselTypes).join(', ');
-                newItem.vesselTypeId = standardJob.vessel_type.map((itm) => itm.ID) as number[];
+                const vesselTypes = this.getActiveItems(standardJob.vessel_type, 'Active_Status');
+                newItem.vesselType = vesselTypes.map((itm) => itm.VesselTypes).join(', ');
+                newItem.vesselTypeId = vesselTypes.map((itm) => itm.ID) as number[];
             }
 
             return newItem;
@@ -150,5 +152,11 @@ export class StandardJobsService {
             deleted_at: new Date(),
             deleted_by: deletedBy,
         };
+    }
+
+    private getActiveItems<T extends {}>(items: T[], key: keyof T): T[]
+    private getActiveItems<T extends { active_status: boolean }>(items: T[]): T[]
+    private getActiveItems<T extends { active_status: boolean }>(items: T[], key: keyof T = 'active_status'): T[] {
+        return items.filter((item) => item[key]);
     }
 }

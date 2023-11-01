@@ -20,6 +20,12 @@ export class LIB_VESSELTYPES {
     })
     VesselTypes: string;
 
+    @Column('bit', {
+        nullable: false,
+        name: 'Active_Status',
+    })
+    Active_Status: string;
+
     @ManyToMany(() => standard_jobs, (standardJob) => standardJob.vessel_type)
     @JoinTable({
         name: 'standard_jobs_vessel_type',
