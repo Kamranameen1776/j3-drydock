@@ -59,7 +59,7 @@ export class StandardJobsRepository {
 
         const filteredData = await oDataService.getJoinResult(query);
 
-        const uids = filteredData.records.map((item: any) => item.uid);
+        const uids: string[] = filteredData.records.map(item => item.uid);
 
         return await getManager().find(standard_jobs, {
             where: {
