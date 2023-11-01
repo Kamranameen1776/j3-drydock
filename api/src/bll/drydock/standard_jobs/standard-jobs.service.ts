@@ -18,6 +18,7 @@ export class StandardJobsService {
             let newItem: GetStandardJobsResult = {
                 uid: standardJob.uid,
                 function: standardJob.function,
+                functionUid: standardJob.functionUid,
                 code: standardJob.code,
                 scope: standardJob.scope,
                 category: standardJob.category?.display_name,
@@ -82,6 +83,7 @@ export class StandardJobsService {
             uid: data.categoryUid,
         };
         standardJob.function = data.function;
+        standardJob.functionUid = data.functionUid;
         standardJob.done_by = {
             uid: data.doneByUid,
         };
