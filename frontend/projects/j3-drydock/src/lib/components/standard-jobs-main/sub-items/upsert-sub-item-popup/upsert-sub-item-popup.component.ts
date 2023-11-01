@@ -22,7 +22,7 @@ export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements
 
   public isPopupValid = false;
 
-  public readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false };
+  public readonly popupConfig: IJbDialog = { ...getSmallPopup() };
 
   public get isEditing() {
     return !!this.item;
