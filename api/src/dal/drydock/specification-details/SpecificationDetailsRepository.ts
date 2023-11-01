@@ -8,12 +8,41 @@ import { GetSpecificationDetailsResultDto } from './dtos/GetSpecificationDetails
 
 export class SpecificationDetailsRepository {
     public async findOneBySpecificationUid(uid: string): Promise<GetSpecificationDetailsResultDto[]> {
-        const specificationDetailsRepository = getManager().getRepository(SpecificationDetailsEntity);
+        const result = await getManager()
+            .createQueryBuilder()
+            .from('specification_details', 'spec')
+            .select(
+                `spec.uid as uid,
+                spec.tec_task_manager_uid as tm_task,
+                spec.function_uid as functionUid,
+                spec.component_uid as componentUid,
+                spec.account_code as accountCode,
+                spec.item_source_uid as itemSourceUid,
+                spec.item_number as itemNumber,
+                spec.done_by_uid as doneByUid,
+                spec.item_category_uid as itemCategoryUid,
+                spec.inspection_uid as inspectionUid,
+                spec.equipment_description as equipmentDescription,
+                spec.priority_uid as priorityUid,
+                spec.description as description,
+                spec.start_date as startDate,
+                spec.estimated_days as estimatedDays,
+                spec.buffer_time as bufferTime,
+                spec.treatment as treatment,
+                spec.onboard_location_uid as onboardLocationUid,
+                spec.access as access,
+                spec.material_supplied_by_uid as materialSuppliedByUid,
+                spec.test_criteria as testCriteria,
+                spec.ppe as ppe,
+                spec.safety_instruction as safetyInstruction,
+                spec.active_status as activeStatus,
+                spec.created_by as createdBy,
+                spec.created_at as createdAt
+                `,
+            )
 
-        const result = await specificationDetailsRepository
-            .createQueryBuilder('spec')
-            .where('spec.active_status = 1 and spec.uid = :uid', { uid: uid })
-            .execute();
+            .where(`spec.active_status = 1 and spec.uid='${uid}'`)
+            .getRawMany();
 
         return result;
     }

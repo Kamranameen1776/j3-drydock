@@ -25,4 +25,4 @@ export async function getSpecificationDetails(req: Request, res: Response) {
     });
 }
 
-exports.post = getSpecificationDetails;
+exports.get = getSpecificationDetails;
