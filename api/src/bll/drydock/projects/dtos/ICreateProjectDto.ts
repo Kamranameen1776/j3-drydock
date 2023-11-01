@@ -1,4 +1,4 @@
-import { IsDateString, IsNumber, IsUUID, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsNumber, IsOptional, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class ICreateProjectDto {
     ProjectCode?: string;
@@ -22,9 +22,11 @@ export class ICreateProjectDto {
     @IsUUID('4')
     ProjectManagerUid: string;
 
+    @IsOptional()
     @IsDateString()
     StartDate: Date;
 
+    @IsOptional()
     @IsDateString()
     EndDate: Date;
 }
