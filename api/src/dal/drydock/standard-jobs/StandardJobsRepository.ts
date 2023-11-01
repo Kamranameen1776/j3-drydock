@@ -61,6 +61,8 @@ export class StandardJobsRepository {
 
         const uids: string[] = filteredData.records.map(item => item.uid);
 
+        if (!uids.length) return [];
+
         return await getManager().find(standard_jobs, {
             where: {
                 uid: In(uids),
