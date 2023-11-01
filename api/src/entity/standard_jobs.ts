@@ -7,15 +7,15 @@ import {
     ManyToOne,
     JoinColumn,
     RelationId,
-    OneToMany
-} from "typeorm";
+    OneToMany,
+} from 'typeorm';
 import { LIB_VESSELTYPES } from './LIB_VESSELTYPES';
-import { LIB_Survey_CertificateAuthority } from "./LIB_Survey_CertificateAuthority";
-import { tm_dd_lib_material_supplied_by } from "./tm_dd_lib_material_supplied_by";
-import { tm_dd_lib_done_by } from "./tm_dd_lib_done_by";
-import { tm_dd_lib_item_category } from "./tm_dd_lib_item_category";
-import { standard_jobs_sub_items } from "./standard_jobs_sub_items";
-import { BaseDatesEntity } from "./baseDatesEntity";
+import { LIB_Survey_CertificateAuthority } from './LIB_Survey_CertificateAuthority';
+import { tm_dd_lib_material_supplied_by } from './tm_dd_lib_material_supplied_by';
+import { tm_dd_lib_done_by } from './tm_dd_lib_done_by';
+import { tm_dd_lib_item_category } from './tm_dd_lib_item_category';
+import { standard_jobs_sub_items } from './standard_jobs_sub_items';
+import { BaseDatesEntity } from './baseDatesEntity';
 
 @Entity('standard_jobs', { schema: 'drydock' })
 export class standard_jobs extends BaseDatesEntity {
@@ -48,6 +48,13 @@ export class standard_jobs extends BaseDatesEntity {
         length: 250,
     })
     code: string;
+
+    @Column('int', {
+        nullable: false,
+        name: 'number',
+        generated: 'increment',
+    })
+    number: number;
 
     @Column('varchar', {
         nullable: true,
@@ -104,7 +111,10 @@ export class standard_jobs extends BaseDatesEntity {
     })
     vessel_type: Partial<LIB_VESSELTYPES>[];
 
-    @ManyToMany(() => LIB_Survey_CertificateAuthority, (LIB_Survey_CertificateAuthority) => LIB_Survey_CertificateAuthority.standard_jobs)
+    @ManyToMany(
+        () => LIB_Survey_CertificateAuthority,
+        (LIB_Survey_CertificateAuthority) => LIB_Survey_CertificateAuthority.standard_jobs,
+    )
     @JoinTable({
         name: 'standard_jobs_survey_certificate_authority',
         schema: 'drydock',

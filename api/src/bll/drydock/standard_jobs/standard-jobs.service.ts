@@ -17,7 +17,7 @@ export class StandardJobsService {
                 uid: standardJob.uid,
                 function: standardJob.function,
                 functionUid: standardJob.functionUid,
-                code: standardJob.code,
+                code: this.getStandardJobCode(standardJob.number, standardJob.code),
                 scope: standardJob.scope,
                 category: standardJob.category?.display_name,
                 categoryUid: standardJob.category_uid,
@@ -37,7 +37,13 @@ export class StandardJobsService {
                 inspection: '',
                 vesselTypeId: [],
                 vesselType: '',
-                subItems: this.getActiveItems(standardJob.sub_items),
+                subItems: this.getActiveItems(standardJob.sub_items).map((subItem) => {
+                    const code = this.getStandardJobCode(subItem.number, standardJob.code);
+                    return {
+                        ...subItem,
+                        code,
+                    }
+                }),
             };
 
             if (standardJob.function && standardJob.subject) {
@@ -116,9 +122,9 @@ export class StandardJobsService {
     }
 
     public mapStandardJobSubItemsDtoToEntity(
-        data: GetStandardJobSubItemsResultDto[],
-        standardJobUid: string,
-        createdBy: string,
+      data: GetStandardJobSubItemsResultDto[],
+      standardJobUid: string,
+      createdBy: string,
     ): standard_jobs_sub_items[] {
         return data.map((itemData) => {
             let subItem = new standard_jobs_sub_items();
@@ -140,8 +146,8 @@ export class StandardJobsService {
     }
 
     public addUpdateStandardJobsFields<T extends { updated_at?: Date; updated_by?: string }>(
-        data: T,
-        updatedBy: string,
+      data: T,
+      updatedBy: string,
     ): T {
         return {
             ...data,
@@ -151,8 +157,8 @@ export class StandardJobsService {
     }
 
     public addCreateStandardJobsFields<T extends { created_at?: Date; created_by?: string }>(
-        data: T,
-        updatedBy: string,
+      data: T,
+      updatedBy: string,
     ): T {
         return {
             ...data,
@@ -173,5 +179,9 @@ export class StandardJobsService {
     private getActiveItems<T extends { active_status: boolean }>(items: T[]): T[];
     private getActiveItems<T extends { active_status: boolean }>(items: T[], key: keyof T = 'active_status'): T[] {
         return items.filter((item) => item[key]);
+    }
+
+    private getStandardJobCode(number: number, code?: string) {
+      return `${code || ''}${number}`
     }
 }

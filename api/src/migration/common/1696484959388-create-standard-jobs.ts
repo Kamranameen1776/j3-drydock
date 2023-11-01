@@ -20,6 +20,7 @@ export class createStandardJobs1696484959388 implements MigrationInterface {
             [function]                 [varchar](250)     NULL,
             [functionUid]              [uniqueidentifier] NULL,
             [code]                     [varchar](250)     NULL,
+            [number]                   [int]              NOT NULL IDENTITY(1,1),
             [scope]                    [varchar](5000)    NULL,
             [category_uid]             [uniqueidentifier] NULL,
             [material_supplied_by_uid] [uniqueidentifier] NULL,
