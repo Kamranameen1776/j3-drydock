@@ -1,16 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('project', { schema: 'dry_dock' })
 export class ProjectEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
-
-    @Column('varchar', {
-        nullable: true,
-        name: 'project_code',
-        length: 250,
-    })
-    ProjectCode: string;
 
     @Column('bit', {
         name: 'created_at_office',

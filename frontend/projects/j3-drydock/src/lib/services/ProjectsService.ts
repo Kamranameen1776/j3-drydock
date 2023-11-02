@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestService, eCrud, WebApiRequest } from 'jibe-components';
-import { Observable } from "rxjs";
-import { ProjectCreate } from "../models/interfaces/projects";
+import { Observable } from 'rxjs';
+import { DeleteProjectDto, ProjectCreate, ProjectEdit } from '../models/interfaces/projects';
 
 @Injectable()
 export class ProjectsService {
@@ -55,6 +55,18 @@ export class ProjectsService {
     return apiRequest;
   }
 
+  public getProjectsManagersDictionariesRequest(): WebApiRequest {
+    const apiRequest: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'dictionaries/managers',
+      crud: eCrud.Get,
+      entity: 'drydock'
+    };
+    return apiRequest;
+  }
+
   public getProjectsShipsYardsRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
       // TODO:update jibe lib
@@ -85,18 +97,7 @@ export class ProjectsService {
       action: 'dictionaries/fleets',
       crud: eCrud.Get,
       entity: 'drydock'
-    }
-
-    return apiRequest;
-  }
-
-  public getVesselsRequest(): WebApiRequest {
-    const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      action: 'dictionaries/vessels',
-      crud: eCrud.Get,
-      entity: 'drydock'
-    }
+    };
 
     return apiRequest;
   }
@@ -107,8 +108,32 @@ export class ProjectsService {
       action: 'projects/create-project',
       crud: eCrud.Post,
       entity: 'drydock',
-      body: data,
-    }
+      body: data
+    };
+
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
+  public updateProject(data: ProjectEdit): Observable<any> {
+    const apiRequest: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      action: 'projects/update-project',
+      crud: eCrud.Post,
+      entity: 'drydock',
+      body: data
+    };
+
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
+  
+  public deleteProject(data: DeleteProjectDto): Observable<any> {
+    const apiRequest: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      action: 'projects/delete-project',
+      crud: eCrud.Post,
+      entity: 'drydock',
+      body: data
+    };
 
     return this.apiRequestService.sendApiReq(apiRequest);
   }

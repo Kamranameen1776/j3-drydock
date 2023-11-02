@@ -8,7 +8,7 @@ async function getProjectTypes(req: Request, res: Response) {
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new GetProjectTypesQuery();
-        
+
         return await command.ExecuteAsync();
     });
 }

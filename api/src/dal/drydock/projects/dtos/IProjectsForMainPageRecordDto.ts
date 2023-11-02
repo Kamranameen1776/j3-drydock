@@ -15,7 +15,7 @@ export interface IProjectsForMainPageRecordDto {
 
     ProjectManager: string;
 
-    ProjectStatus: string;
+    ProjectStatusName: string;
 
     StartDate: Date;
 

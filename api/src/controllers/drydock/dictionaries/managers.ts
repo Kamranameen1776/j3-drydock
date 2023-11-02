@@ -8,7 +8,7 @@ async function getManagers(req: Request, res: Response) {
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new GetManagersQuery();
-        
+
         return await command.ExecuteAsync();
     });
 }

@@ -1,31 +1,51 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { Request } from 'express';
 
+import { ICreateProjectDto } from '../../../bll/drydock/projects/dtos/ICreateProjectDto';
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
+import { ICreateNewProjectDto } from '../../../dal/drydock/projects/dtos/ICreateNewProjectDto';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
+import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { CreateProjectDto } from './dtos/CreateProjectDto';
+
+enum ProjectStates {
+    Specification = 1,
+
+    YardSelection = 2,
+
+    Report = 3,
+}
 
 export class CreateProjectCommand extends Command<Request, void> {
     projectsRepository: ProjectsRepository;
     projectsService: ProjectService;
+    vesselsRepository: VesselsRepository;
     uow: UnitOfWork;
 
     constructor() {
         super();
 
         this.projectsRepository = new ProjectsRepository();
+        this.vesselsRepository = new VesselsRepository();
         this.projectsService = new ProjectService();
         this.uow = new UnitOfWork();
     }
 
-    protected async AuthorizationHandlerAsync(request: Request): Promise<void> {}
+    protected async AuthorizationHandlerAsync(request: Request): Promise<void> {
+        return;
+    }
 
     protected async ValidationHandlerAsync(request: Request): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
+        }
+        const createProjectDto: ICreateProjectDto = plainToClass(ICreateProjectDto, request.body);
+        const result = await validate(createProjectDto);
+        if (result.length) {
+            throw result;
         }
     }
 
@@ -36,17 +56,33 @@ export class CreateProjectCommand extends Command<Request, void> {
      */
     protected async MainHandlerAsync(request: Request): Promise<void> {
         const token: string = request.headers.authorization as string;
-        const body: CreateProjectDto = request.body;
+        const createProjectDto: ICreateProjectDto = request.body as ICreateProjectDto;
 
-        body.CreatedAtOffice = await this.projectsService.IsOffice();
-        body.ProjectCode = await this.projectsService.GetProjectCode();
-        body.ProjectStateId = 1;
+        createProjectDto.CreatedAtOffice = await this.projectsService.IsOffice();
+
+        createProjectDto.ProjectStateId = ProjectStates.Specification;
+
+        const vessel: LibVesselsEntity = await this.vesselsRepository.GetVessel(createProjectDto.VesselId);
+
+        const taskManagerData = await this.projectsService.TaskManagerIntegration(createProjectDto, vessel, token);
+
+        createProjectDto.TaskManagerUid = taskManagerData.uid;
+
+        const newProjectDto: ICreateNewProjectDto = {
+            EndDate: createProjectDto.EndDate,
+            StartDate: createProjectDto.StartDate,
+            ProjectManagerUid: createProjectDto.ProjectManagerUid,
+            ProjectTypeUid: createProjectDto.ProjectTypeUid,
+            ProjectStateId: createProjectDto.ProjectStateId,
+            ProjectCode: createProjectDto.ProjectCode,
+            Subject: createProjectDto.Subject,
+            VesselUid: vessel.uid,
+            CreatedAtOffice: createProjectDto.CreatedAtOffice,
+            TaskManagerUid: createProjectDto.TaskManagerUid,
+        };
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const vessel: LibVesselsEntity = await this.projectsRepository.GetVesselByUid(body.VesselUid);
-            const taskManagerData = await this.projectsService.TaskManagerIntegration(body, vessel, token);
-            body.TaskManagerUid = taskManagerData.uid;
-            const projectId = await this.projectsRepository.CreateProject(body, queryRunner);
+            const projectId = await this.projectsRepository.CreateProject(newProjectDto, queryRunner);
             return projectId;
         });
 

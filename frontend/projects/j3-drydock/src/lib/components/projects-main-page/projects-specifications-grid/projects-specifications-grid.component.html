@@ -1,34 +1,72 @@
 <section class="proects-specifications-grid">
-    <jb-grid
-        [gridName]="gridInputs.gridName"
-        [colData]="gridInputs.columns"
-        [tableDataReq]="gridInputs.request"
-        [filterData]="gridInputs.filters"
-        [searchFields]="gridInputs.searchFields"
-        [filterListsSet]="gridInputs.filtersLists"
-        [button]="gridInputs.gridButton"
-        [setActions]="gridInputs.actions"
-        [getStyleByContainer]="true"
-        (action)="onGridAction($any($event))"
-    ></jb-grid>
+  <jb-grid
+    #projectsGrid
+    [gridName]="gridInputs.gridName"
+    [colData]="gridInputs.columns"
+    [tableDataReq]="gridInputs.request"
+    [filterData]="gridInputs.filters"
+    [searchFields]="gridInputs.searchFields"
+    [filterListsSet]="gridInputs.filtersLists"
+    [button]="gridInputs.gridButton"
+    [setActions]="gridInputs.actions"
+    [getStyleByContainer]="true"
+    (action)="onGridAction($any($event), $event?.payload)"
+  ></jb-grid>
 </section>
 
-<jb-dialog (closeDialog)="showCreateNewDialog(false)"
-           [(dialogVisible)]="createNewDialogVisible"
-           [dialogContent]="createProjectDialog"
-           class="dialog">
-    <div class="dialog-body" jb-dialog-body>
-        <jb-form [displayMenus]="false"
-                 (jbFormGroup)='initFormGroup($any($event))'
-                 [formStructure]="createProjectForm"
-                 class="form-generator-log">
-        </jb-form>
+<jb-dialog
+  (closeDialog)="showCreateNewDialog(false)"
+  [(dialogVisible)]="createNewDialogVisible"
+  [dialogContent]="createProjectDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-form
+      (jbFormGroup)="initCreateNewProjectFormGroup($any($event))"
+      [formStructure]="createProjectForm"
+      [isVerticalLabel]="true"
+      class="form-generator-log"
+    ></jb-form>
+  </div>
 
-        <div class="popup-footer">
-            <jb-button (click)="showCreateNewDialog(false)" label="Cancel" type="NoButton">
-            </jb-button>
-            <jb-button (click)="saveNewProject()" [disabled]="saveProjectButtonDisabled$ | async" label="Create" type="Standard">
-            </jb-button>
-        </div>
-    </div>
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="saveNewProjectButtonDisabled$ | async"
+      [isCancelBtnDisabled]="isSaving"
+      [okBtnLabel]="CreateBtnLabel"
+      (ok)="saveNewProject()"
+      (cancel)="showCreateNewDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<jb-dialog
+  (closeDialog)="showDeleteDialog(false)"
+  [(dialogVisible)]="deleteDialogVisible"
+  [dialogContent]="deleteProjectDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-form
+      (jbFormGroup)="initDeleteProjectFormGroup($any($event))"
+      [formStructure]="deleteProjectForm"
+      [isVerticalLabel]="true"
+      class="form-generator-log"
+    ></jb-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="deleteProjectButtonDisabled$ | async"
+      [okBtnLabel]="DeleteBtnLabel"
+      (ok)="deleteProject()"
+      (cancel)="showDeleteDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
 </jb-dialog>

@@ -1,56 +1,27 @@
 import { getManager } from 'typeorm';
-import { LIB_FLEETS } from "../../../entity/LIB_FLEETS";
-import { GetFleetsResult } from "../../../application-layer/drydock/dictionaries/get-fleets/GetFleetsResultDto";
+
+import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
+import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
 
 export class DictionariesRepository {
+    public async GetManagers(): Promise<LibUserEntity[]> {
+        const libUserRepository = getManager().getRepository(LibUserEntity);
 
-    public async GetFleets(): Promise<GetFleetsResult[]> {
-        return getManager().find(LIB_FLEETS, {
-            select: ['uid', 'FleetName', 'FleetCode'],
+        return libUserRepository.find({
             where: {
-                Active_Status: true
-            }
+                UserType: 'OFFICE USER',
+                ActiveStatus: true,
+            },
         });
     }
 
-    public async GetVessels(): Promise<any[]> {
-        const dbQuery = `
-        SELECT
-            vessel.[Vessel_ID] as vesselId,
-            vessel.[uid] as VesselUid,
-            vessel.[Vessel_Name] as VesselName
-        FROM dbo.[Lib_Vessels] as vessel 
-        where Date_Of_Deleted IS NULL;
-        `
-        
-        return getManager().query(dbQuery);
-    }
+    public async GetProjectTypes(): Promise<ProjectTypeEntity[]> {
+        const projectTypeRepository = getManager().getRepository(ProjectTypeEntity);
 
-    public async GetManagers(): Promise<any[]> {
-        const dbQuery = `
-        SELECT 
-            [uid]
-            ,[Date_Of_Deleted]
-            , [First_Name] + ' ' + [Last_Name] as ProjectManager
-            
-        FROM [JIBE_Main].[dbo].[LIB_USER]
-        where Date_of_Deleted IS NULL;
-        `
-        
-        return getManager().query(dbQuery);
-    }
-
-    public async GetProjectTypes(): Promise<any[]> {
-        const dbQuery = `
-        SELECT [uid]
-            ,[Worklist_Type]
-            ,[short_code]
-            ,[created_at]
-            ,[active_status]
-        FROM [JIBE_Main].[dry_dock].[project_type]
-        where active_status = 1;
-        `
-        
-        return getManager().query(dbQuery);
+        return projectTypeRepository.find({
+            where: {
+                ActiveStatus: true,
+            },
+        });
     }
 }

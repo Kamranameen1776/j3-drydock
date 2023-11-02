@@ -1,11 +1,8 @@
-import { AuthorizationException } from '../../../bll/drydock/core/exceptions/AuthorizationException';
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { CreateProjectDto } from './dtos/CreateProjectDto';
 import { UpdateProjectDto } from './dtos/UpdateProjectDto';
-
 
 export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
     projectsRepository: ProjectsRepository;
@@ -21,7 +18,7 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
     }
 
     protected async AuthorizationHandlerAsync(request: UpdateProjectDto): Promise<void> {
-        
+        return;
     }
 
     protected async ValidationHandlerAsync(request: UpdateProjectDto): Promise<void> {
@@ -36,7 +33,6 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
      * @returns New created project result
      */
     protected async MainHandlerAsync(request: UpdateProjectDto): Promise<void> {
-        // const result = new CreateProjectResultDto();
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const projectId = await this.projectsRepository.UpdateProject(request, queryRunner);
             return projectId;

@@ -1,11 +1,11 @@
-import { DeleteProjectDto } from 'application-layer/drydock/projects/dtos/DeleteProjectDto';
+// TODO: remove references to application-layer
+// UpdateProjectDto should be a part of the Infrastructure layer(DAL)
 import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
-import { CreateProjectDto } from '../../../application-layer/drydock/projects/dtos/CreateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { JMSDTLWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
 import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
@@ -15,6 +15,7 @@ import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManager
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
+import { ICreateNewProjectDto } from './dtos/ICreateNewProjectDto';
 import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
 import { IProjectsManagersResultDto } from './dtos/IProjectsManagersResultDto';
 import { IProjectStatusResultDto } from './dtos/IProjectStatusResultDto';
@@ -43,6 +44,7 @@ export class ProjectsRepository {
             .andWhere('wdetails.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('wt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .distinct(true)
             .distinctOn(['wdetails.WorkflowTypeID'])
             .orderBy('wdetails.WorkflowOrderID')
             .execute();
@@ -80,7 +82,10 @@ export class ProjectsRepository {
                 'pr.uid AS ProjectId',
                 'pr.CreatedAtOffice AS CreatedAtOffice',
                 'tm.Code AS ProjectCode',
-                'tm.Status AS ProjectStatus',
+
+                'tm.Status as ProjectStatusId',
+                'wdetails.StatusDisplayName as ProjectStatusName',
+
                 'vessel.VesselName AS VesselName',
                 'wt.WorklistTypeDisplay as ProjectTypeName',
                 'wt.WorklistType as ProjectTypeCode',
@@ -97,10 +102,16 @@ export class ProjectsRepository {
             .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
             .innerJoin(className(TECTaskManagerEntity), 'tm', 'tm.uid = pr.TaskManagerUid')
-            .where('pr.ActiveStatus = 1');
+            .innerJoin(
+                className(JMSDTLWorkflowConfigDetailsEntity),
+                'wdetails',
+                'wdetails.ConfigId = wt.ID and wdetails.WorkflowTypeID = tm.Status',
+            )
+            .where('pr.ActiveStatus = 1')
+            .distinct(true)
+            .distinctOn(['pr.uid']);
 
         if (uid) {
-            console.log(1, uid);
             query = query.where('pr.uid = :uid', { uid });
         }
         return query;
@@ -137,9 +148,11 @@ export class ProjectsRepository {
 
         const result = await projectRepository
             .createQueryBuilder('pr')
-            .select(['usr.uid as LibUserUid', `usr.FirstName + ' ' + usr.LastName as FullName`])
+            .select(['usr.uid as ManagerId', `usr.FirstName + ' ' + usr.LastName as FullName`])
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
             .where('pr.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .distinct(true)
+            .distinctOn(['usr.uid'])
             .execute();
 
         return result;
@@ -162,43 +175,31 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async CreateProject(data: CreateProjectDto, queryRunner: QueryRunner): Promise<any> {
-        try {
-            const project = new ProjectEntity();
-            project.ProjectCode = data.ProjectCode as string;
-            project.CreatedAtOffice = !!data.CreatedAtOffice;
-            project.VesselUid = data.VesselUid;
-            project.ProjectTypeUid = data.ProjectTypeUid;
-            project.ProjectStateId = data.ProjectStateId as number;
-            project.Subject = data.Subject;
-            project.ProjectManagerUid = data.ProjectManagerUid;
-            project.StartDate = data.StartDate;
-            project.EndDate = data.EndDate;
-            project.TaskManagerUid = data.TaskManagerUid as string;
+    public async CreateProject(data: ICreateNewProjectDto, queryRunner: QueryRunner): Promise<void> {
+        const project = new ProjectEntity();
+        project.CreatedAtOffice = !!data.CreatedAtOffice;
+        project.VesselUid = data.VesselUid;
+        project.ProjectTypeUid = data.ProjectTypeUid;
+        project.ProjectStateId = data.ProjectStateId as number;
+        project.Subject = data.Subject;
+        project.ProjectManagerUid = data.ProjectManagerUid;
+        project.StartDate = data.StartDate;
+        project.EndDate = data.EndDate;
+        project.TaskManagerUid = data.TaskManagerUid as string;
 
-            const result = await queryRunner.manager.insert(ProjectEntity, project);
-            return;
-        } catch (error) {
-            throw new Error(`Method: create / Class: ProjectRepository / Error: ${error}`);
-        }
+        await queryRunner.manager.insert(ProjectEntity, project);
     }
 
-    public async UpdateProject(data: UpdateProjectDto | DeleteProjectDto, queryRunner: QueryRunner): Promise<any> {
-        try {
-            const result = await queryRunner.manager.update(ProjectEntity, data.uid, data);
-            return;
-        } catch (error) {
-            throw new Error(`Method: update-delete / Class: ProjectRepository / Error: ${error}`);
-        }
+    // TODO: check if this method is used
+    public async UpdateProject(data: UpdateProjectDto, queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.manager.update(ProjectEntity, data.uid, data);
     }
 
-    public async GetVesselByUid(uid: string): Promise<any> {
-        const vesselRepository = getManager().getRepository(LibVesselsEntity);
-        const data = await vesselRepository.findOneOrFail({
-            where: {
-                uid,
-            },
-        });
-        return data;
+    public async DeleteProject(projectId: string, queryRunner: QueryRunner): Promise<void> {
+        const project = new ProjectEntity();
+        project.uid = projectId;
+        project.ActiveStatus = false;
+
+        await queryRunner.manager.update(ProjectEntity, project.uid, project);
     }
 }

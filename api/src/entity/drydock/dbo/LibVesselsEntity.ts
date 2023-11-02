@@ -5,6 +5,12 @@ export class LibVesselsEntity {
     @PrimaryGeneratedColumn()
     uid: string;
 
+    @Column('int', {
+        nullable: false,
+        name: 'Vessel_ID',
+    })
+    VesselId: number;
+
     @Column('varchar', {
         nullable: true,
         name: 'Vessel_Name',
@@ -17,10 +23,4 @@ export class LibVesselsEntity {
         name: 'Active_Status',
     })
     ActiveStatus: boolean;
-
-    @Column('integer', {
-        nullable: true,
-        name: 'Vessel_ID',
-    })
-    VesselId: number;
 }

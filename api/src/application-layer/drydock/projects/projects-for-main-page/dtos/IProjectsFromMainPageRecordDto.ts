@@ -3,7 +3,7 @@ export interface IProjectsFromMainPageRecordDto {
 
     ProjectCode: string;
 
-    Vessel: string;
+    VesselName: string;
 
     Subject: string;
 
@@ -15,7 +15,7 @@ export interface IProjectsFromMainPageRecordDto {
 
     ShipYard: string;
 
-    ProjectStatus: string;
+    ProjectStatusName: string;
 
     ProjectState: string;
 

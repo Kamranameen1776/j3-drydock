@@ -48,11 +48,11 @@ export class ProjectsFromMainPageQuery extends Query<Request, ODataResult<IProje
                     // TODO: replace with real data
                     ShipYard: 'Country ave.Name 123',
                     Specification: '330/500',
-                    ProjectStatus: record.ProjectStatus,
+                    ProjectStatusName: record.ProjectStatusName,
 
                     ProjectState: record.ProjectStateName,
 
-                    Vessel: record.VesselName,
+                    VesselName: record.VesselName,
 
                     Subject: record.Subject,
                     StartDate: record.StartDate,
