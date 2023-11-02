@@ -37,8 +37,7 @@ export class SubItemsGridService {
     return {
       columns: this.columns,
       gridName: this.gridName,
-      gridButton: this.gridButton,
-      searchFields: [eSubItemsFields.Subject]
+      gridButton: this.gridButton
     };
   }
 }

@@ -3,7 +3,6 @@
   [colData]="gridInputs.columns"
   [tableData]="subItems | staticGridSearch: (searchTerm$ | async) : searchFn"
   [button]="gridInputs.gridButton"
-  [searchFields]="gridInputs.searchFields"
   [getStyleByContainer]="true"
   [setActions]="gridRowActions"
   [isDisplayAdvancedFilter]="false"
