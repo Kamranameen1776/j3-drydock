@@ -1,12 +1,13 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { SubItem } from '../../../models/interfaces/sub-items';
-import { GridAction, GridRowActions, eGridRowActions } from 'jibe-components';
+import { DispatchAction, GridAction, GridRowActions, GridService, eGridEvents, eGridRowActions } from 'jibe-components';
 import { GridInputsWithData } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SubItemsGridService } from './SubItemsGridService';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { cloneDeep } from 'lodash';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'jb-drydock-sub-items',
@@ -27,6 +28,11 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
 
   public currentRow: SubItem;
 
+  public searchTerm$ = this.gridService.storeState$.pipe(
+    filter((event: DispatchAction) => event.type === eGridEvents.SearchTable && event.gridName === this.gridInputs.gridName),
+    map((event: DispatchAction) => event.payload)
+  );
+
   public gridRowActions: GridRowActions[] = [];
 
   public subItems: SubItem[];
@@ -40,7 +46,10 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
 
   private editingSubItemIdx: number;
 
-  constructor(private subItemsGridService: SubItemsGridService) {
+  constructor(
+    private subItemsGridService: SubItemsGridService,
+    private gridService: GridService
+  ) {
     super();
   }
 
@@ -93,6 +102,11 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
   public onConfirmDeleteCancel() {
     this.isConfirmDeleteVisible = false;
   }
+
+  public searchFn = (record: SubItem, term: string) => {
+    term = term ?? '';
+    return record.subject?.toLowerCase().includes(term.toLowerCase());
+  };
 
   private editRow(row: SubItem) {
     this.currentRow = row;
