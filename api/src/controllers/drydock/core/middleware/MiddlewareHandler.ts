@@ -1,3 +1,4 @@
+import { ValidationError } from 'class-validator';
 import { Request, Response } from 'express';
 import * as httpStatus from 'http-status-codes';
 import { AccessRights } from 'j2utils';
@@ -32,7 +33,7 @@ export class MiddlewareHandler {
 
             const method = req.method;
             const userId = AccessRights.getUserIdFromReq(req);
-            const moduleCode = 'drydock';
+            const moduleCode = 'dry_dock';
             const functionCode = null;
             const api = req.path;
             const locationId = null;
@@ -79,6 +80,26 @@ export class MiddlewareHandler {
                 log.error(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
 
                 res.status(httpStatus.INTERNAL_SERVER_ERROR).json(details.params);
+
+                return;
+            } else if (exception instanceof Array && exception.length && exception[0] instanceof ValidationError) {
+                //TODO: think how to refactor it, and if we need to log this exceptions into db;
+                const error = exception[0];
+                let message = 'Valdidation request has failed';
+                let property = 'Something';
+                if (error.constraints && error.property) {
+                    property = error.property;
+                    const keys = Object.keys(error.constraints);
+                    if (keys.length) {
+                        message = error.constraints[keys[0]];
+                    }
+                }
+
+                res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
+                    title: 'Request validation error',
+                    property,
+                    message,
+                });
 
                 return;
             }
