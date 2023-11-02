@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Column, GridButton, eColor } from 'jibe-components';
-import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { nameOf } from '../../../utils/nameOf';
 import { ExampleProjectsService } from '../../../services/ExampleProjectsService';
 import { ExampleProjectResult } from '../../../models/interfaces/example-projects';
+import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 
 @Injectable()
 export class ExampleProjectsGridService {

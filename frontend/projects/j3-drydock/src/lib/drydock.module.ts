@@ -18,6 +18,9 @@ import { UpsertSubItemFormComponent } from './components/standard-jobs-main/sub-
 import { UpsertSubItemPopupComponent } from './components/standard-jobs-main/sub-items/upsert-sub-item-popup/upsert-sub-item-popup.component';
 import { StandardJobsStatusNamePipe } from './components/standard-jobs-main/pipes/status-name.pipe';
 import { StandardJobsStatusColorPipe } from './components/standard-jobs-main/pipes/status-color.pipe';
+import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
+import { ProjectsSpecificationsGridComponent } from './components/projects-main-page/projects-specifications-grid/projects-specifications-grid.component';
+import { ProjectsService } from './services/ProjectsService';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -33,6 +36,8 @@ export function winEnv(): unknown {
     ExampleProjectsComponent,
     ExampleProjectsGridComponent,
     CreateExampleProjectPopupComponent,
+    ProjectsMainPageComponent,
+    ProjectsSpecificationsGridComponent,
     StandardJobsMainComponent,
     UpsertStandardJobPopupComponent,
     UpsertStandardJobFormComponent,
@@ -58,7 +63,7 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [ExampleProjectsService, DatePipe],
+  providers: [ExampleProjectsService, DatePipe, ProjectsService],
   exports: [],
   entryComponents: []
 })

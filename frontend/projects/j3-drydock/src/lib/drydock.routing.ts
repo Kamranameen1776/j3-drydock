@@ -3,20 +3,28 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuardService } from 'jibe-components';
 import { ExampleProjectsComponent } from './components/example-projects/example-projects.component';
 import { StandardJobsMainComponent } from './components/standard-jobs-main/standard-jobs-main.component';
+import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
 
 const routes: Routes = [
   {
     path: '',
     canActivate: [AuthGuardService],
     pathMatch: 'full',
-    redirectTo: 'example-projects'
+    redirectTo: 'projects-main-page'
   },
-
   {
     path: 'example-projects',
     component: ExampleProjectsComponent,
     canActivate: [AuthGuardService],
-    runGuardsAndResolvers: 'paramsOrQueryParamsChange'
+    runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+    children: []
+  },
+  {
+    path: 'projects-main-page',
+    component: ProjectsMainPageComponent,
+    canActivate: [AuthGuardService],
+    runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+    children: []
   },
 
   {
