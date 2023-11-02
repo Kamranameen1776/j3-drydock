@@ -44,7 +44,6 @@ export class UpsertSubItemFormComponent extends UnsubscribeComponent implements 
 
   public dispatchForm(event: FormGroup) {
     this.formGroup = event;
-    // TODO listen to changes and logic to change some fields state
     this.listenFormValid();
   }
 
