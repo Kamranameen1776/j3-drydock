@@ -8,9 +8,10 @@ import { GetSpecificationDetailsResultDto } from './dtos/GetSpecificationDetails
 
 export class SpecificationDetailsRepository {
     public async findOneBySpecificationUid(uid: string): Promise<GetSpecificationDetailsResultDto[]> {
-        const result = await getManager()
+        const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
+
+        return await specificationRepository
             .createQueryBuilder()
-            .from('specification_details', 'spec')
             .select(
                 `spec.uid as uid,
                 spec.tec_task_manager_uid as tm_task,
@@ -37,33 +38,26 @@ export class SpecificationDetailsRepository {
                 spec.safety_instruction as safetyInstruction,
                 spec.active_status as activeStatus,
                 spec.created_by as createdBy,
-                spec.created_at as createdAt
-                `,
+                spec.created_at as createdAt`,
             )
-
             .where(`spec.active_status = 1 and spec.uid='${uid}'`)
             .getRawMany();
-
-        return result;
     }
 
     public async CreateSpecificationDetails(data: CreateAndUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
         const spec = await this.specData(data);
         spec.created_at = new Date();
         spec.active_status = true;
-        const result = await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
-        return result;
+        return await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
     }
 
     public async UpdateSpecificationDetails(data: CreateAndUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
         const spec = await this.specData(data);
-        const result = await queryRunner.manager.update(SpecificationDetailsEntity, spec.uid, spec);
-        return result;
+        return await queryRunner.manager.update(SpecificationDetailsEntity, spec.uid, spec);
     }
 
     public async DeleteSpecificationDetails(data: DeleteSpecificationDetailsDto, queryRunner: QueryRunner) {
-        const result = await queryRunner.manager.delete(SpecificationDetailsEntity, data.uid);
-        return result;
+        return await queryRunner.manager.update(SpecificationDetailsEntity, data.uid, { active_status: false });
     }
 
     public async specData(data: CreateAndUpdateSpecificationDetailsDto) {
