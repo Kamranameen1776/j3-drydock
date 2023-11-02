@@ -10,9 +10,9 @@ import { ExampleProjectsComponent } from './components/example-projects/example-
 import { ExampleProjectsGridComponent } from './components/example-projects/example-projects-grid/example-projects-grid.component';
 import { ExampleProjectsService } from './services/ExampleProjectsService';
 import { CreateExampleProjectPopupComponent } from './components/example-projects/example-projects-grid/create-example-project-popup/create-example-project-popup.component';
-import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
+import { ProjectDetailsComponent } from './components/specification-details/project-details.component';
 import { SpecificationGridService } from './services/specifications/specification.service';
-import { SpecificationStatusPipe } from './components/specification-details/specification-status.pipe';
+import { SpecificationStatusPipe } from './components/specification-details/specification/specification-status.pipe';
 import { StatusCodeColorPipe } from './utils/status-code-color.pipe';
 import { SpecificationTopDetailsService } from './services/specifications/specification-top-details.service';
 import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
@@ -22,6 +22,7 @@ import { ProjectHeaderComponent } from './components/project-header/project-head
 import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
 import { ProjectsSpecificationsGridComponent } from './components/projects-main-page/projects-specifications-grid/projects-specifications-grid.component';
 import { ProjectsService } from './services/ProjectsService';
+import { SpecificationsComponent } from './components/specification-details/specification/specifications.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -39,7 +40,8 @@ export function winEnv(): unknown {
     StatusCodeColorPipe,
     ExampleProjectsGridComponent,
     CreateExampleProjectPopupComponent,
-    SpecificationDetailsComponent,
+    ProjectDetailsComponent,
+    SpecificationsComponent,
     ProjectsMainPageComponent,
     ProjectsSpecificationsGridComponent,
     StandardJobsMainComponent,

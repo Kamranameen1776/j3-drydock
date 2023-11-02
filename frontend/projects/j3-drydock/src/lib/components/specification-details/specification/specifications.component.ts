@@ -1,15 +1,15 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { SpecificationGridService, SpecificationType } from '../../services/specifications/specification.service';
+import { SpecificationGridService, SpecificationType } from '../../../services/specifications/specification.service';
 import { JmsTechApiService, WebApiRequest, eJbTreeEvents } from 'jibe-components';
-import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
-import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
+import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
+import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 
 @Component({
-  selector: 'jb-specification-details',
-  templateUrl: './specification-details.component.html',
-  styleUrls: ['./specification-details.component.scss']
+  selector: 'jb-specifications',
+  templateUrl: './specifications.component.html',
+  styleUrls: ['./specifications.component.scss']
 })
-export class SpecificationDetailsComponent extends UnsubscribeComponent implements OnInit {
+export class SpecificationsComponent extends UnsubscribeComponent implements OnInit {
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
   treeData: WebApiRequest;
   gridData: GridInputsWithRequest;

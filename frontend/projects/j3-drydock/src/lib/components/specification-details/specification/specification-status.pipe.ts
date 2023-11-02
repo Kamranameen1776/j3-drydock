@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { SpecificationStatus } from '../../services/specifications/specification.service';
+import { SpecificationStatus } from '../../../services/specifications/specification.service';
 
 const statusCodeMap = {
   [SpecificationStatus.RAISED.toLocaleLowerCase()]: 'raise',

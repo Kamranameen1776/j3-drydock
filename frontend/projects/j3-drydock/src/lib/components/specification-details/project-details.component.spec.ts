@@ -1,22 +1,22 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SpecificationDetailsComponent } from './specification-details.component';
+import { ProjectDetailsComponent } from './project-details.component';
 import { SpecificationGridService } from '../../services/specifications/specification.service';
 import { SpecificationTopDetailsService } from '../../services/specifications/specification-top-details.service';
 
-describe('SpecificationDetailsComponent', () => {
-  let component: SpecificationDetailsComponent;
-  let fixture: ComponentFixture<SpecificationDetailsComponent>;
+describe('ProjectDetailsComponent', () => {
+  let component: ProjectDetailsComponent;
+  let fixture: ComponentFixture<ProjectDetailsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [SpecificationDetailsComponent],
+      declarations: [ProjectDetailsComponent],
       providers: [SpecificationGridService, SpecificationTopDetailsService]
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SpecificationDetailsComponent);
+    fixture = TestBed.createComponent(ProjectDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
