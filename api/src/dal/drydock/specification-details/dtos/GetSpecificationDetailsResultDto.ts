@@ -1,4 +1,3 @@
-// Repository method name eq to the dto name + 'ResultsDto' suffix
 export class GetSpecificationDetailsResultDto {
     uid: string;
     tmTask: string;
