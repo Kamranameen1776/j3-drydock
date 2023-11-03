@@ -1,9 +1,10 @@
+import { Request } from 'express';
+
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { DeleteSpecificationDetailsDto } from './dtos/DeleteSpecificationDetailsDto';
 
-export class DeleteSpecificationDetailsCommand extends Command<DeleteSpecificationDetailsDto, void> {
+export class DeleteSpecificationDetailsCommand extends Command<Request, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
 
@@ -18,22 +19,21 @@ export class DeleteSpecificationDetailsCommand extends Command<DeleteSpecificati
         return;
     }
 
-    protected async ValidationHandlerAsync(request: DeleteSpecificationDetailsDto): Promise<void> {
+    protected async ValidationHandlerAsync(request: Request): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
         }
     }
 
-    protected async MainHandlerAsync(request: DeleteSpecificationDetailsDto) {
-        request.deletedAt = new Date();
+    protected async MainHandlerAsync(request: Request) {
+        const uid = request.body.uid as string;
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const deletedSpecData = await this.specificationDetailsRepository.DeleteSpecificationDetails(
-                request,
+            const updatedSpecData = await this.specificationDetailsRepository.DeleteSpecificationDetails(
+                uid,
                 queryRunner,
             );
-            return deletedSpecData;
+            return updatedSpecData;
         });
-
         return;
     }
 }
