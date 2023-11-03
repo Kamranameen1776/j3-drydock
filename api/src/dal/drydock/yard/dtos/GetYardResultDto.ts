@@ -1,10 +1,9 @@
-export class CreateAndUpdateYardSelectionDto {
+export class GetYardResultDto {
     uid: string;
     yardName: string;
     yardLocation: string;
     exportStatus: string;
     importStatus: string;
-    activeStatus: boolean;
+    activeStatus: string;
     createdBy: string;
-    createdAt: Date;
 }

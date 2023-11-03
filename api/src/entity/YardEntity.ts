@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('yard_selection', { schema: 'dry_dock' })
-export class YardSelectionEntity {
+@Entity('yard', { schema: 'dry_dock' })
+export class YardEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
@@ -10,44 +10,44 @@ export class YardSelectionEntity {
         name: 'yard_name',
         length: 400,
     })
-    yard_name: string;
+    YardName: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'yard_location',
         length: 400,
     })
-    yard_location: string;
+    YardLocation: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'export_status',
         length: 200,
     })
-    export_status: string;
+    ExportStatus: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'import_status',
         length: 200,
     })
-    import_status: string;
+    ImportStatus: string;
 
     @Column('bit', {
         nullable: true,
         name: 'active_status',
     })
-    active_status: boolean;
+    ActiveStatus: boolean;
 
     @Column('uniqueidentifier', {
         nullable: true,
         name: 'created_by',
     })
-    created_by_uid: string;
+    CreatedByUid: string;
 
     @Column('datetime', {
         nullable: true,
         name: 'created_at',
     })
-    created_at: Date;
+    CreatedAt: Date;
 }
