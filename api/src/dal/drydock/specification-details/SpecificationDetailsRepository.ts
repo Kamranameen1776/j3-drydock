@@ -1,12 +1,13 @@
-/* eslint-disable prettier/prettier */
 import { DataUtilService } from 'j2utils';
 import { getManager, QueryRunner } from 'typeorm';
 
 import { SpecificationDetailsEntity } from '../../../entity/SpecificationDetailsEntity';
-import { SpecificationDetailsResultDto } from './dtos/SpecificationDetailsResultDto';
+import { ICreateSpecificationDetailsDto } from './dtos/ICreateSpecificationDetailsDto';
+import { ISpecificationDetailsResultDto } from './dtos/ISpecificationDetailsResultDto';
+import { IUpdateSpecificationDetailsDto } from './dtos/IUpdateSpecificationDetailsDto';
 
 export class SpecificationDetailsRepository {
-    public async findOneBySpecificationUid(uid: string): Promise<SpecificationDetailsResultDto> {
+    public async findOneBySpecificationUid(uid: string): Promise<ISpecificationDetailsResultDto> {
         const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
 
         return await specificationRepository
@@ -44,25 +45,25 @@ export class SpecificationDetailsRepository {
             .execute();
     }
 
-    public async CreateSpecificationDetails(data: SpecificationDetailsResultDto, queryRunner: QueryRunner) {
+    public async CreateSpecificationDetails(data: ICreateSpecificationDetailsDto, queryRunner: QueryRunner) {
         const spec = await this.upsertSpecification(data);
         spec.CreatedAt = new Date();
         spec.ActiveStatus = true;
         return await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
     }
 
-    public async UpdateSpecificationDetails(data: SpecificationDetailsResultDto, queryRunner: QueryRunner) {
+    public async UpdateSpecificationDetails(data: IUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
         const spec = await this.upsertSpecification(data);
         return await queryRunner.manager.update(SpecificationDetailsEntity, spec.uid, spec);
     }
 
-    public async DeleteSpecificationDetails(uid: SpecificationDetailsResultDto, queryRunner: QueryRunner) {
+    public async DeleteSpecificationDetails(uid: string, queryRunner: QueryRunner) {
         const spec = new SpecificationDetailsEntity();
         spec.ActiveStatus = false;
         return await queryRunner.manager.update(SpecificationDetailsEntity, uid, spec);
     }
 
-    private async upsertSpecification(data: SpecificationDetailsResultDto) {
+    private async upsertSpecification(data: IUpdateSpecificationDetailsDto) {
         const spec = new SpecificationDetailsEntity();
         spec.uid = data?.uid ? data.uid : new DataUtilService().newUid();
         spec.TecTaskManagerUid = data.tmTask;
@@ -86,7 +87,7 @@ export class SpecificationDetailsRepository {
         spec.MaterialSuppliedByUid = data.materialSuppliedByUid;
         spec.TestCriteria = data.testCriteria;
         spec.Ppe = data.ppe;
-        spec.SafetyInstruction = data.safetyInstruction
+        spec.SafetyInstruction = data.safetyInstruction;
         return spec;
     }
 }

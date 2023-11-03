@@ -1,4 +1,4 @@
-export class SpecificationDetailsResultDto {
+export class CreateSpecificationDetailsDto {
     uid: string;
     tmTask: string;
     functionUid: string;
@@ -22,4 +22,7 @@ export class SpecificationDetailsResultDto {
     testCriteria: string;
     ppe: string;
     safetyInstruction: string;
+    activeStatus: boolean;
+    createdByUid: string;
+    createdAt: Date;
 }

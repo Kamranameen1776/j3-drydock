@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { GetSpecificationDetailsQuery } from '../../../application-layer/drydock/specification-details/get-specification-details/GetSpecificationDetailsQuery';
+import { GetSpecificationDetailsQuery } from '../../../application-layer/drydock/specification-details/GetSpecificationDetailsQuery';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 /**
