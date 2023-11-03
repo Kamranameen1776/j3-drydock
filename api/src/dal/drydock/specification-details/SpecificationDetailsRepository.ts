@@ -1,96 +1,95 @@
 import { DataUtilService } from 'j2utils';
 import { getManager, QueryRunner } from 'typeorm';
 
-import { CreateAndUpdateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/CreateAndUpdateSpecificationDetailsDto';
-import { DeleteSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationDetailsDto';
 import { SpecificationDetailsEntity } from '../../../entity/SpecificationDetailsEntity';
-import { GetSpecificationDetailsResultDto } from './dtos/GetSpecificationDetailsResultDto';
+import { ICreateSpecificationDetailsDto } from './dtos/ICreateSpecificationDetailsDto';
+import { ISpecificationDetailsResultDto } from './dtos/ISpecificationDetailsResultDto';
+import { IUpdateSpecificationDetailsDto } from './dtos/IUpdateSpecificationDetailsDto';
 
 export class SpecificationDetailsRepository {
-    public async findOneBySpecificationUid(uid: string): Promise<GetSpecificationDetailsResultDto[]> {
-        const result = await getManager()
-            .createQueryBuilder()
-            .from('specification_details', 'spec')
+    public async findOneBySpecificationUid(uid: string): Promise<ISpecificationDetailsResultDto> {
+        const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
+
+        return await specificationRepository
+            .createQueryBuilder('spec')
             .select(
                 `spec.uid as uid,
-                spec.tec_task_manager_uid as tm_task,
-                spec.function_uid as functionUid,
-                spec.component_uid as componentUid,
-                spec.account_code as accountCode,
-                spec.item_source_uid as itemSourceUid,
-                spec.item_number as itemNumber,
-                spec.done_by_uid as doneByUid,
-                spec.item_category_uid as itemCategoryUid,
-                spec.inspection_uid as inspectionUid,
-                spec.equipment_description as equipmentDescription,
-                spec.priority_uid as priorityUid,
-                spec.description as description,
-                spec.start_date as startDate,
-                spec.estimated_days as estimatedDays,
-                spec.buffer_time as bufferTime,
-                spec.treatment as treatment,
-                spec.onboard_location_uid as onboardLocationUid,
-                spec.access as access,
-                spec.material_supplied_by_uid as materialSuppliedByUid,
-                spec.test_criteria as testCriteria,
-                spec.ppe as ppe,
-                spec.safety_instruction as safetyInstruction,
-                spec.active_status as activeStatus,
-                spec.created_by as createdBy,
-                spec.created_at as createdAt
-                `,
+               spec.TecTaskManagerUid as tmTask,
+               spec.FunctionUid as functionUid,
+               spec.ComponentUid as componentUid,
+               spec.AccountCode as accountCode,
+               spec.ItemSourceUid as itemSourceUid,
+               spec.ItemNumber as itemNumber,
+               spec.DoneByUid as doneByUid,
+               spec.ItemCategoryUid as itemCategoryUid,
+               spec.InspectionUid as inspectionUid,
+               spec.EquipmentDescription as equipmentDescription,
+               spec.PriorityUid as priorityUid,
+               spec.Description as description,
+               spec.StartDate as startDate,
+               spec.EstimatedDays as estimatedDays,
+               spec.BufferTime as bufferTime,
+               spec.Treatment as treatment,
+               spec.OnboardLocationUid as onboardLocationUid,
+               spec.Access as access,
+               spec.MaterialSuppliedByUid as materialSuppliedByUid,
+               spec.TestCriteria as testCriteria,
+               spec.Ppe as ppe,
+               spec.SafetyInstruction as safetyInstruction,
+               spec.ActiveStatus as activeStatus,
+               spec.CreatedByUid as createdBy,
+               spec.CreatedAt as createdAt
+               `,
             )
-
-            .where(`spec.active_status = 1 and spec.uid='${uid}'`)
-            .getRawMany();
-
-        return result;
+            .where(`spec.ActiveStatus = 1 and spec.uid='${uid}'`)
+            .execute();
     }
 
-    public async CreateSpecificationDetails(data: CreateAndUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
-        const spec = await this.specData(data);
-        spec.created_at = new Date();
-        spec.active_status = true;
-        const result = await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
-        return result;
+    public async CreateSpecificationDetails(data: ICreateSpecificationDetailsDto, queryRunner: QueryRunner) {
+        const spec = await this.CreateSpecificationDetailsEntity(data);
+        spec.CreatedAt = new Date();
+        spec.ActiveStatus = true;
+        return await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
     }
 
-    public async UpdateSpecificationDetails(data: CreateAndUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
-        const spec = await this.specData(data);
-        const result = await queryRunner.manager.update(SpecificationDetailsEntity, spec.uid, spec);
-        return result;
+    public async UpdateSpecificationDetails(data: IUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
+        const spec = await this.CreateSpecificationDetailsEntity(data);
+        return await queryRunner.manager.update(SpecificationDetailsEntity, spec.uid, spec);
     }
 
-    public async DeleteSpecificationDetails(data: DeleteSpecificationDetailsDto, queryRunner: QueryRunner) {
-        const result = await queryRunner.manager.delete(SpecificationDetailsEntity, data.uid);
-        return result;
+    public async DeleteSpecificationDetails(uid: string, queryRunner: QueryRunner) {
+        const spec = new SpecificationDetailsEntity();
+        spec.ActiveStatus = false;
+        return await queryRunner.manager.update(SpecificationDetailsEntity, uid, spec);
     }
 
-    public async specData(data: CreateAndUpdateSpecificationDetailsDto) {
+    private async CreateSpecificationDetailsEntity(
+        data: ICreateSpecificationDetailsDto | IUpdateSpecificationDetailsDto,
+    ) {
         const spec = new SpecificationDetailsEntity();
         spec.uid = data?.uid ? data.uid : new DataUtilService().newUid();
-        spec.tec_task_manager_uid = data.tmTask;
-        spec.function_uid = data.functionUid;
-        spec.component_uid = data.componentUid;
-        spec.account_code = data.accountCode;
-        spec.item_source_uid = data.itemSourceUid;
-        spec.item_number = data.itemNumber;
-        spec.done_by_uid = data.doneByUid;
-        spec.item_category_uid = data.itemCategoryUid;
-        spec.inspection_uid = data.inspectionUid;
-        spec.equipment_description = data.equipmentDescription;
-        spec.priority_uid = data.priorityUid;
-        spec.description = data.description;
-        spec.start_date = data.startDate;
-        spec.estimated_days = data.estimatedDays;
-        spec.buffer_time = data.bufferTime;
-        spec.treatment = data.treatment;
-        spec.onboard_location_uid = data.onboardLocationUid;
-        spec.access = data.access;
-        spec.material_supplied_by_uid = data.materialSuppliedByUid;
-        spec.test_criteria = data.testCriteria;
-        spec.ppe = data.ppe;
-        spec.safety_instruction = data.safetyInstruction;
+        spec.TecTaskManagerUid = data.tmTask;
+        spec.FunctionUid = data.functionUid;
+        spec.ComponentUid = data.componentUid;
+        spec.AccountCode = data.accountCode;
+        spec.ItemSourceUid = data.itemSourceUid;
+        spec.ItemNumber = data.itemNumber;
+        spec.DoneByUid = data.doneByUid;
+        spec.ItemCategoryUid = data.itemCategoryUid;
+        spec.InspectionUid = data.inspectionUid;
+        spec.EquipmentDescription = data.equipmentDescription;
+        spec.PriorityUid = data.priorityUid;
+        spec.Description = data.description;
+        spec.StartDate = data.startDate;
+        spec.EstimatedDays = data.estimatedDays;
+        spec.BufferTime = data.bufferTime;
+        spec.Treatment = data.treatment;
+        spec.OnboardLocationUid = data.onboardLocationUid;
+        spec.Access = data.access;
+        spec.MaterialSuppliedByUid = data.materialSuppliedByUid;
+        spec.TestCriteria = data.testCriteria;
+        spec.Ppe = data.ppe;
+        spec.SafetyInstruction = data.safetyInstruction;
         return spec;
     }
 }

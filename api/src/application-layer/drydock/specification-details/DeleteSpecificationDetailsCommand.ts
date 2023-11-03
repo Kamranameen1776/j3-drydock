@@ -25,13 +25,12 @@ export class DeleteSpecificationDetailsCommand extends Command<DeleteSpecificati
     }
 
     protected async MainHandlerAsync(request: DeleteSpecificationDetailsDto) {
-        request.deletedAt = new Date();
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const deletedSpecData = await this.specificationDetailsRepository.DeleteSpecificationDetails(
-                request,
+            const updatedSpecData = await this.specificationDetailsRepository.DeleteSpecificationDetails(
+                request.uid,
                 queryRunner,
             );
-            return deletedSpecData;
+            return updatedSpecData;
         });
 
         return;
