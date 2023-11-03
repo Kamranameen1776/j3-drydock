@@ -4,8 +4,6 @@ import { GetSpecificationDetailsQuery } from '../../../application-layer/drydock
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 /**
- * This handler returns all available shipments
- * GET /drydock/example-projects
  * @exports
  * @param {Request} req Express request
  * @param {Response} res Express response

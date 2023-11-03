@@ -85,7 +85,7 @@ export class SpecificationDetailsEntity {
         nullable: true,
         name: 'start_date',
     })
-    StartDate: Date;
+    StartDate: Date | null;
 
     @Column('int', {
         nullable: true,
