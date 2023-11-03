@@ -76,11 +76,11 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
     }
   }
 
-  private showCreateNewDialog(value = true) {
+  public showCreateNewDialog(value = true) {
     this.createNewDialogVisible = value;
   }
 
-  private showDeleteDialog(value = true) {
+  public showDeleteDialog(value = true) {
     this.deleteDialogVisible = value;
   }
 
