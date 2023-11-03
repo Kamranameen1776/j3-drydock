@@ -1,4 +1,4 @@
-export class GetSpecificationDetailsResultDto {
+export class SpecificationDetailsResultDto {
     uid: string;
     tmTask: string;
     functionUid: string;

@@ -3,10 +3,10 @@ import { DataUtilService } from 'j2utils';
 import { getManager, QueryRunner } from 'typeorm';
 
 import { SpecificationDetailsEntity } from '../../../entity/SpecificationDetailsEntity';
-import { GetSpecificationDetailsResultDto } from './dtos/GetSpecificationDetailsResultDto';
+import { SpecificationDetailsResultDto } from './dtos/SpecificationDetailsResultDto';
 
 export class SpecificationDetailsRepository {
-    public async findOneBySpecificationUid(uid: string): Promise<GetSpecificationDetailsResultDto[]> {
+    public async findOneBySpecificationUid(uid: string): Promise<SpecificationDetailsResultDto> {
         const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
 
         return await specificationRepository
@@ -44,108 +44,49 @@ export class SpecificationDetailsRepository {
             .execute();
     }
 
-    public async CreateSpecificationDetails(data: GetSpecificationDetailsResultDto, queryRunner: QueryRunner) {
-        const spec = await this.createAndUpdateSpecificationData(data);
+    public async CreateSpecificationDetails(data: SpecificationDetailsResultDto, queryRunner: QueryRunner) {
+        const spec = await this.upsertSpecification(data);
         spec.CreatedAt = new Date();
         spec.ActiveStatus = true;
         return await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
     }
 
-    public async UpdateSpecificationDetails(data: GetSpecificationDetailsResultDto, queryRunner: QueryRunner) {
-        const spec = await this.createAndUpdateSpecificationData(data);
+    public async UpdateSpecificationDetails(data: SpecificationDetailsResultDto, queryRunner: QueryRunner) {
+        const spec = await this.upsertSpecification(data);
         return await queryRunner.manager.update(SpecificationDetailsEntity, spec.uid, spec);
     }
 
-    public async DeleteSpecificationDetails(uid: string, queryRunner: QueryRunner) {
+    public async DeleteSpecificationDetails(uid: SpecificationDetailsResultDto, queryRunner: QueryRunner) {
         const spec = new SpecificationDetailsEntity();
         spec.ActiveStatus = false;
         return await queryRunner.manager.update(SpecificationDetailsEntity, uid, spec);
     }
 
-    public async createAndUpdateSpecificationData(data: GetSpecificationDetailsResultDto) {
-        const existingSpec = await getManager().findOne(SpecificationDetailsEntity, {
-            where: { uid: data.uid, ActiveStatus: 1 },
-        });
+    private async upsertSpecification(data: SpecificationDetailsResultDto) {
         const spec = new SpecificationDetailsEntity();
         spec.uid = data?.uid ? data.uid : new DataUtilService().newUid();
-        spec.TecTaskManagerUid = data?.tmTask
-            ? data.tmTask
-            : (existingSpec?.TecTaskManagerUid
-            ? existingSpec.TecTaskManagerUid
-            : '');
-        spec.FunctionUid = data?.functionUid
-            ? data.functionUid
-            : (existingSpec?.FunctionUid
-            ? existingSpec.FunctionUid
-            : '');
-        spec.ComponentUid = data?.componentUid
-            ? data.componentUid
-            : (existingSpec?.ComponentUid
-            ? existingSpec.ComponentUid
-            : '');
-        spec.AccountCode = data?.accountCode
-            ? data.accountCode
-            : (existingSpec?.AccountCode
-            ? existingSpec.AccountCode
-            : '');
-        spec.ItemSourceUid = data?.itemSourceUid
-            ? data.itemSourceUid
-            : (existingSpec?.ItemSourceUid
-            ? existingSpec.ItemSourceUid
-            : '');
-        spec.ItemNumber = data?.itemNumber ? data.itemNumber : (existingSpec?.ItemNumber ? existingSpec.ItemNumber : '');
-        spec.DoneByUid = data?.doneByUid ? data.doneByUid : (existingSpec?.DoneByUid ? existingSpec.DoneByUid : '');
-        spec.ItemCategoryUid = data?.itemCategoryUid
-            ? data.itemCategoryUid
-            : (existingSpec?.ItemCategoryUid
-            ? existingSpec.ItemCategoryUid
-            : '');
-        spec.InspectionUid = data?.inspectionUid
-            ? data.inspectionUid
-            : (existingSpec?.InspectionUid
-            ? existingSpec.InspectionUid
-            : '');
-        spec.EquipmentDescription = data?.equipmentDescription
-            ? data.equipmentDescription
-            : (existingSpec?.EquipmentDescription
-            ? existingSpec.EquipmentDescription
-            : '');
-        spec.PriorityUid = data?.priorityUid
-            ? data.priorityUid
-            : (existingSpec?.PriorityUid
-            ? existingSpec.PriorityUid
-            : '');
-        spec.Description = data?.description
-            ? data.description
-            : (existingSpec?.Description
-            ? existingSpec.Description
-            : '');
-        spec.StartDate = data?.startDate ? data.startDate : (existingSpec?.StartDate ? existingSpec.StartDate : null);
-        spec.EstimatedDays = data?.estimatedDays
-            ? data.estimatedDays
-            : (existingSpec?.EstimatedDays
-            ? existingSpec.EstimatedDays
-            : 0);
-        spec.BufferTime = data?.bufferTime ? data.bufferTime : (existingSpec?.BufferTime ? existingSpec.BufferTime : 0);
-        spec.Treatment = data?.treatment ? data.treatment : (existingSpec?.Treatment ? existingSpec.Treatment : '');
-        spec.OnboardLocationUid = data?.onboardLocationUid
-            ? data.onboardLocationUid
-            : (existingSpec?.OnboardLocationUid
-            ? existingSpec.OnboardLocationUid
-            : '');
-        spec.Access = data?.access ? data?.access : (existingSpec?.Access ? existingSpec.Access : '');
-        spec.MaterialSuppliedByUid = data?.materialSuppliedByUid
-            ? data.materialSuppliedByUid
-            : (existingSpec?.MaterialSuppliedByUid
-            ? existingSpec.MaterialSuppliedByUid
-            : '');
-        spec.TestCriteria = data?.testCriteria
-            ? data.testCriteria
-            : (existingSpec?.TestCriteria
-            ? existingSpec.TestCriteria
-            : '');
-        spec.Ppe = data?.ppe ? data.ppe : (existingSpec?.Ppe ? existingSpec.Ppe : '');
-        spec.SafetyInstruction = data?.safetyInstruction ? data.safetyInstruction : (existingSpec?.SafetyInstruction ? existingSpec.SafetyInstruction : '');
+        spec.TecTaskManagerUid = data.tmTask;
+        spec.FunctionUid = data.functionUid;
+        spec.ComponentUid = data.componentUid;
+        spec.AccountCode = data.accountCode;
+        spec.ItemSourceUid = data.itemSourceUid;
+        spec.ItemNumber = data.itemNumber;
+        spec.DoneByUid = data.doneByUid;
+        spec.ItemCategoryUid = data.itemCategoryUid;
+        spec.InspectionUid = data.inspectionUid;
+        spec.EquipmentDescription = data.equipmentDescription;
+        spec.PriorityUid = data.priorityUid;
+        spec.Description = data.description;
+        spec.StartDate = data.startDate;
+        spec.EstimatedDays = data.estimatedDays;
+        spec.BufferTime = data.bufferTime;
+        spec.Treatment = data.treatment;
+        spec.OnboardLocationUid = data.onboardLocationUid;
+        spec.Access = data.access;
+        spec.MaterialSuppliedByUid = data.materialSuppliedByUid;
+        spec.TestCriteria = data.testCriteria;
+        spec.Ppe = data.ppe;
+        spec.SafetyInstruction = data.safetyInstruction
         return spec;
     }
 }

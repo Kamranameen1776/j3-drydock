@@ -1,8 +1,8 @@
-import { GetSpecificationDetailsResultDto } from '../../../../dal/drydock/specification-details/dtos/GetSpecificationDetailsResultDto';
+import { SpecificationDetailsResultDto } from '../../../../dal/drydock/specification-details/dtos/SpecificationDetailsResultDto';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Query } from '../../core/cqrs/Query';
 
-export class GetSpecificationDetailsQuery extends Query<string, GetSpecificationDetailsResultDto[]> {
+export class GetSpecificationDetailsQuery extends Query<string, SpecificationDetailsResultDto> {
     specificationDetailsRepository = new SpecificationDetailsRepository();
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -16,7 +16,7 @@ export class GetSpecificationDetailsQuery extends Query<string, GetSpecification
     /**
      * @returns All specification details
      */
-    protected async MainHandlerAsync(uid: string): Promise<GetSpecificationDetailsResultDto[]> {
+    protected async MainHandlerAsync(uid: string): Promise<SpecificationDetailsResultDto> {
         const specDetails = await this.specificationDetailsRepository.findOneBySpecificationUid(uid);
         return specDetails;
     }

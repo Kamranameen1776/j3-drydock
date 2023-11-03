@@ -1,9 +1,9 @@
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { CreateAndUpdateSpecificationDetailsDto } from './dtos/CreateAndUpdateSpecificationDetailsDto';
+import { SpecificationDetailsDto } from './dtos/SpecificationDetailsDto';
 
-export class CreateSpecificationDetailsCommand extends Command<CreateAndUpdateSpecificationDetailsDto, void> {
+export class CreateSpecificationDetailsCommand extends Command<SpecificationDetailsDto, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
 
@@ -18,7 +18,7 @@ export class CreateSpecificationDetailsCommand extends Command<CreateAndUpdateSp
         return;
     }
 
-    protected async ValidationHandlerAsync(request: CreateAndUpdateSpecificationDetailsDto): Promise<void> {
+    protected async ValidationHandlerAsync(request: SpecificationDetailsDto): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
         }
@@ -29,7 +29,7 @@ export class CreateSpecificationDetailsCommand extends Command<CreateAndUpdateSp
      * @param request data for creation of specification details
      * @returns data of specification details
      */
-    protected async MainHandlerAsync(request: CreateAndUpdateSpecificationDetailsDto): Promise<void> {
+    protected async MainHandlerAsync(request: SpecificationDetailsDto): Promise<void> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const specData = await this.specificationDetailsRepository.CreateSpecificationDetails(request, queryRunner);
             return specData;
