@@ -40,6 +40,7 @@ export class StandardJobsRepository {
                     'sj.subject as subject,' +
                     'sj."function" as "function",' +
                     'sj.code as code,' +
+                    'sj.number as number,' +
                     'sj.category_uid as categoryUid,' +
                     'ic.display_name as category,' +
                     'sj.done_by_uid as doneByUid,' +
@@ -68,9 +69,6 @@ export class StandardJobsRepository {
                 uid: In(uids),
             },
             relations: ['inspection', 'vessel_type', 'done_by', 'material_supplied_by', 'category', 'sub_items'],
-            order: {
-                uid: 'ASC',
-            },
         });
     }
 
