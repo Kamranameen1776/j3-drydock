@@ -29,7 +29,7 @@ export class v32311422CreateTableScriptOfSpecificationDetails1697522126447 imple
                     [inspection_uid] [uniqueidentifier],
                     [equipment_description] [varchar](200),
                     [priority_uid] [uniqueidentifier],
-                    [description] [varchar](max) NOT NULL,
+                    [description] [varchar](1000) NOT NULL,
                     [start_date] [datetime2],
                     [estimated_days] [int],
                     [buffer_time] [int],

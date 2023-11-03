@@ -1,5 +1,6 @@
 import { IGridCellStyle } from 'jibe-components';
 import { eStandardJobsMainFields } from '../enums/standard-jobs-main.enum';
+import { SubItem } from './sub-items';
 
 // TODO fixme all of this
 export interface CreateStandardJob {
@@ -9,14 +10,23 @@ export interface CreateStandardJob {
 export interface CreateStandardJobResult {
   Uid: string;
 }
-
-// TODO can change all + need also data fields for create new popup
+// TODO function
 export interface StandardJobResult {
-  [eStandardJobsMainFields.ItemNumber]: string;
+  [eStandardJobsMainFields.UID]: string;
   [eStandardJobsMainFields.Subject]: Partial<IGridCellStyle>;
-  [eStandardJobsMainFields.VesselType]: string;
+  [eStandardJobsMainFields.Function]: string;
+  [eStandardJobsMainFields.FunctionUid]: string;
+  [eStandardJobsMainFields.ItemNumber]: string;
+  [eStandardJobsMainFields.ItemCategoryID]: string;
   [eStandardJobsMainFields.ItemCategory]: string;
-  [eStandardJobsMainFields.Inspection]: string;
+  [eStandardJobsMainFields.DoneByID]: string;
   [eStandardJobsMainFields.DoneBy]: string;
+  [eStandardJobsMainFields.Inspection]: string;
+  [eStandardJobsMainFields.MaterialSuppliedByID]: string;
   [eStandardJobsMainFields.MaterialSuppliedBy]: string;
+  [eStandardJobsMainFields.VesselSpecific]: number;
+  [eStandardJobsMainFields.Description]: string;
+  [eStandardJobsMainFields.VesselTypeID]: string;
+  [eStandardJobsMainFields.VesselType]: string;
+  [eStandardJobsMainFields.SubItems]: SubItem[];
 }

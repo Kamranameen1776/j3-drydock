@@ -1,5 +1,4 @@
-// Repository method name eq to the dto name + 'ResultsDto' suffix
-export class GetSpecificationDetailsResultDto {
+export class ISpecificationDetailsResultDto {
     uid: string;
     tmTask: string;
     functionUid: string;
@@ -23,4 +22,7 @@ export class GetSpecificationDetailsResultDto {
     testCriteria: string;
     ppe: string;
     safetyInstruction: string;
+    activeStatus: boolean;
+    createdByUid: string;
+    createdAt: Date;
 }

@@ -13,4 +13,4 @@ async function deleteSpecificationDetails(req: Request, res: Response) {
     });
 }
 
-exports.delete = deleteSpecificationDetails;
+exports.put = deleteSpecificationDetails;

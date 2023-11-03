@@ -1,6 +1,4 @@
-import { BaseSpecificationDetailsDto } from './BaseSpecificationDetailsDto';
-
-export interface CreateSpecificationDetailsDto extends BaseSpecificationDetailsDto {
+export class CreateSpecificationDetailsDto {
     uid: string;
     tmTask: string;
     functionUid: string;

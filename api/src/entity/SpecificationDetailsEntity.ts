@@ -9,158 +9,158 @@ export class SpecificationDetailsEntity {
         nullable: true,
         name: 'tec_task_manager_uid',
     })
-    tec_task_manager_uid: string;
+    TecTaskManagerUid: string;
 
     @Column('uniqueidentifier', {
         nullable: false,
         name: 'function_uid',
     })
-    function_uid: string;
+    FunctionUid: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
         name: 'component_uid',
     })
-    component_uid: string;
+    ComponentUid: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'account_code',
         length: 200,
     })
-    account_code: string;
+    AccountCode: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
         name: 'item_source_uid',
     })
-    item_source_uid: string;
+    ItemSourceUid: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'item_number',
         length: 200,
     })
-    item_number: string;
+    ItemNumber: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
         name: 'done_by_uid',
     })
-    done_by_uid: string;
+    DoneByUid: string;
 
     @Column('uniqueidentifier', {
         nullable: false,
         name: 'item_category_uid',
     })
-    item_category_uid: string;
+    ItemCategoryUid: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
         name: 'inspection_uid',
     })
-    inspection_uid: string;
+    InspectionUid: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'equipment_description',
         length: 200,
     })
-    equipment_description: string;
+    EquipmentDescription: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
         name: 'priority_uid',
     })
-    priority_uid: string;
+    PriorityUid: string;
 
     @Column('varchar', {
         nullable: false,
         name: 'description',
         length: 1000,
     })
-    description: string;
+    Description: string;
 
     @Column('datetime', {
         nullable: true,
         name: 'start_date',
     })
-    start_date: Date;
+    StartDate: Date | null;
 
     @Column('int', {
         nullable: true,
         name: 'estimated_days',
     })
-    estimated_days: number;
+    EstimatedDays: number;
 
     @Column('int', {
         nullable: true,
         name: 'buffer_time',
     })
-    buffer_time: number;
+    BufferTime: number;
 
     @Column('varchar', {
         nullable: true,
         name: 'treatment',
         length: 200,
     })
-    treatment: string;
+    Treatment: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
         name: 'onboard_location_uid',
     })
-    onboard_location_uid: string;
+    OnboardLocationUid: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'access',
         length: 200,
     })
-    access: string;
+    Access: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
         name: 'material_supplied_by_uid',
     })
-    material_supplied_by_uid: string;
+    MaterialSuppliedByUid: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'test_criteria',
         length: 200,
     })
-    test_criteria: string;
+    TestCriteria: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'ppe',
         length: 1000,
     })
-    ppe: string;
+    Ppe: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'safety_instruction',
         length: 1000,
     })
-    safety_instruction: string;
+    SafetyInstruction: string;
 
     @Column('bit', {
         nullable: true,
         name: 'active_status',
     })
-    active_status: boolean;
+    ActiveStatus: boolean;
 
     @Column('uniqueidentifier', {
         nullable: true,
         name: 'created_by',
     })
-    created_by_uid: string;
+    CreatedByUid: string;
 
     @Column('datetime', {
         nullable: true,
         name: 'created_at',
     })
-    created_at: Date;
+    CreatedAt: Date;
 }

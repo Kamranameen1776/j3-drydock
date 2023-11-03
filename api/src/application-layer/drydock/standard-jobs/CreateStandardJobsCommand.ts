@@ -1,9 +1,11 @@
-import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { CreateStandardJobsRequestDto } from './CreateStandardJobsRequestDto';
+import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
+import { CreateStandardJobsRequestDto } from './dto';
+import { AccessRights } from "j2utils";
+import { Request } from "express";
 
-export class CreateStandardJobsCommand extends Command<CreateStandardJobsRequestDto, string> {
+export class CreateStandardJobsCommand extends Command<Request, string> {
     standardJobsRepository: StandardJobsRepository;
     uow: UnitOfWork;
 
@@ -14,18 +16,12 @@ export class CreateStandardJobsCommand extends Command<CreateStandardJobsRequest
         this.uow = new UnitOfWork();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-    protected async AuthorizationHandlerAsync(request: CreateStandardJobsRequestDto) {}
+    protected async MainHandlerAsync(request: Request) {
+        const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
+        const body: CreateStandardJobsRequestDto = request.body;
 
-    protected async ValidationHandlerAsync(request: CreateStandardJobsRequestDto) {
-        if (!request) {
-            throw new Error('Request is null');
-        }
-    }
-
-    protected async MainHandlerAsync(request: CreateStandardJobsRequestDto) {
-        return await this.uow.ExecuteAsync(async (queryRunner) => {
-            return await this.standardJobsRepository.createStandardJob(request, queryRunner);
+        return this.uow.ExecuteAsync(async (queryRunner) => {
+            return this.standardJobsRepository.createStandardJob(body, createdBy, queryRunner);
         });
     }
 }

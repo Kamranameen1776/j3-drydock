@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 
 import { eFieldControlType, FormModel, FormValues } from 'jibe-components';
-import { standardJobsUpsertFormId } from '../../models/constants/constants';
-import { StandardJobsService } from '../../services/StandardJobsService';
-import { FormServiceBase } from '../../shared/classes/form-service.base';
-import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../../models/enums/standard-jobs-main.enum';
+import { standardJobsUpsertFormId } from '../../../models/constants/constants';
+import { StandardJobsService } from '../../../services/standard-jobs.service';
+import { FormServiceBase } from '../../../shared/classes/form-service.base';
+import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../../../models/enums/standard-jobs-main.enum';
 import { BehaviorSubject } from 'rxjs';
-import { FunctionsTreeNode } from '../../models/interfaces/functions-tree-node';
-// TODO fixme all
+import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
+
 @Injectable({
   providedIn: 'root'
 })
 export class StandardJobUpsertFormService extends FormServiceBase {
-  public readonly formId = standardJobsUpsertFormId;
+  readonly formId = standardJobsUpsertFormId;
 
-  public functionsTree$ = new BehaviorSubject<FunctionsTreeNode[]>([]);
+  functionsFlatTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
 
   protected readonly _formStructure: FormModel = {
     id: this.formId,
@@ -39,7 +39,11 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridRowStart: 1,
             gridRowEnd: 2,
             gridColStart: 1,
-            gridColEnd: 2
+            gridColEnd: 2,
+            inputWithDlgConfig: {
+              inputLabelKey: 'jb_value_label',
+              dlgConfiguration: { appendTo: '' }
+            }
           },
           [eStandardJobsMainFields.ItemNumber]: {
             type: eFieldControlType.Text,
@@ -75,9 +79,13 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridRowEnd: 4,
             gridColStart: 1,
             gridColEnd: 2,
-            list: []
+            listRequest: {
+              labelKey: 'displayName',
+              valueKey: 'uid',
+              webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory)
+            }
           },
-          [eStandardJobsMainFields.InspectionIDs]: {
+          [eStandardJobsMainFields.InspectionID]: {
             type: eFieldControlType.MultiSelect,
             label: eStandardJobsMainLabels.Inspection,
             sectionID: this.formId,
@@ -86,12 +94,12 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridRowStart: 3,
             gridRowEnd: 4,
             gridColStart: 2,
-            gridColEnd: 3
-            // listRequest: {
-            //   labelKey: 'Authority_Name',
-            //   valueKey: 'uid',
-            //   webApiRequest: {}
-            // }
+            gridColEnd: 3,
+            listRequest: {
+              labelKey: 'displayName',
+              valueKey: 'uid',
+              webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection)
+            }
           },
           [eStandardJobsMainFields.MaterialSuppliedByID]: {
             type: eFieldControlType.Dropdown,
@@ -103,7 +111,11 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridRowEnd: 5,
             gridColStart: 1,
             gridColEnd: 2,
-            list: []
+            listRequest: {
+              labelKey: 'displayName',
+              valueKey: 'uid',
+              webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.MaterialSuppliedBy)
+            }
           },
           [eStandardJobsMainFields.DoneByID]: {
             type: eFieldControlType.Dropdown,
@@ -115,7 +127,11 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridRowEnd: 5,
             gridColStart: 2,
             gridColEnd: 3,
-            list: []
+            listRequest: {
+              labelKey: 'displayName',
+              valueKey: 'uid',
+              webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.DoneBy)
+            }
           },
           [eStandardJobsMainFields.VesselSpecific]: {
             type: eFieldControlType.Dropdown,
@@ -127,7 +143,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridRowEnd: 6,
             gridColStart: 1,
             gridColEnd: 2,
-            list: []
+            list: this.standardJobsService.getVesselSpevificList()
           },
           [eStandardJobsMainFields.VesselTypeID]: {
             type: eFieldControlType.MultiSelect,
@@ -138,12 +154,12 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridRowStart: 5,
             gridRowEnd: 6,
             gridColStart: 2,
-            gridColEnd: 3
-            // listRequest: {
-            //   labelKey: 'Supplier_Name',
-            //   valueKey: 'uid',
-            //   webApiRequest: {}
-            // }
+            gridColEnd: 3,
+            listRequest: {
+              labelKey: 'VesselTypes',
+              valueKey: 'ID',
+              webApiRequest: this.standardJobsService.getVesselTypesRequest()
+            }
           },
           [eStandardJobsMainFields.Description]: {
             type: eFieldControlType.TextAreaType,
@@ -182,10 +198,10 @@ export class StandardJobUpsertFormService extends FormServiceBase {
         [eStandardJobsMainFields.ItemNumber]: null,
         [eStandardJobsMainFields.Subject]: null,
         [eStandardJobsMainFields.ItemCategoryID]: null,
-        [eStandardJobsMainFields.InspectionIDs]: null,
+        [eStandardJobsMainFields.InspectionID]: null,
         [eStandardJobsMainFields.MaterialSuppliedByID]: null,
         [eStandardJobsMainFields.DoneByID]: null,
-        [eStandardJobsMainFields.VesselSpecific]: false,
+        [eStandardJobsMainFields.VesselSpecific]: 0,
         [eStandardJobsMainFields.VesselTypeID]: null,
         [eStandardJobsMainFields.Description]: null,
         [eStandardJobsMainFields.Scope]: null

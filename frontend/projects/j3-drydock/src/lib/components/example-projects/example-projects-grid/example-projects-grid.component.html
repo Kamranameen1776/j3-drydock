@@ -6,7 +6,7 @@
     [button]="gridInputs.gridButton"
     [getStyleByContainer]="true"
     theme="figma"
-    (action)="onGridAction($event)"
+    (action)="onGridAction($any($event))"
   ></jb-grid>
 </section>
 

@@ -1,0 +1,10 @@
+:host {
+    ::ng-deep {
+        .attachments {
+            .control-upload {
+                display: flex;
+                justify-content: flex-end;
+            }
+        } 
+    }
+}

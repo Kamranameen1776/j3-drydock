@@ -7,14 +7,12 @@ export abstract class RequestPipeline<TRequest, TResponse> {
 
         await this.ValidationHandlerAsync(request);
 
-        const result = await this.MainHandlerAsync(request);
-
-        return result;
+        return this.MainHandlerAsync(request);
     }
 
-    protected abstract AuthorizationHandlerAsync(request: TRequest): Promise<void>;
+    protected async AuthorizationHandlerAsync(request: TRequest): Promise<void> {}
 
-    protected abstract ValidationHandlerAsync(request: TRequest): Promise<void>;
+    protected async ValidationHandlerAsync(request: TRequest): Promise<void> {}
 
     protected abstract MainHandlerAsync(request: TRequest): Promise<TResponse>;
 }

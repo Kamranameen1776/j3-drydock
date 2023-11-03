@@ -24,19 +24,13 @@ export class UpdateSpecificationDetailsCommand extends Command<UpdateSpecificati
         }
     }
 
-    /**
-     *
-     * @param request Project data for creation of the new project
-     * @returns New created project result
-     */
     protected async MainHandlerAsync(request: UpdateSpecificationDetailsDto): Promise<void> {
-        // const result = new CreateProjectResultDto();
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const projectId = await this.specificationDetailsRepository.UpdateSpecificationDetails(
+            const updatedSpecData = await this.specificationDetailsRepository.UpdateSpecificationDetails(
                 request,
                 queryRunner,
             );
-            return projectId;
+            return updatedSpecData;
         });
 
         return;

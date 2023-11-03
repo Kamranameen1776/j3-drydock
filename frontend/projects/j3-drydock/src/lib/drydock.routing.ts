@@ -17,15 +17,13 @@ const routes: Routes = [
     path: 'example-projects',
     component: ExampleProjectsComponent,
     canActivate: [AuthGuardService],
-    runGuardsAndResolvers: 'paramsOrQueryParamsChange',
-    children: []
+    runGuardsAndResolvers: 'paramsOrQueryParamsChange'
   },
   {
     path: 'projects-main-page',
     component: ProjectsMainPageComponent,
     canActivate: [AuthGuardService],
-    runGuardsAndResolvers: 'paramsOrQueryParamsChange',
-    children: []
+    runGuardsAndResolvers: 'paramsOrQueryParamsChange'
   },
   {
     path: 'project',

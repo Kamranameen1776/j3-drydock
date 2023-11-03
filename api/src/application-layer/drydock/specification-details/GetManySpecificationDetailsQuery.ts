@@ -1,10 +1,10 @@
+import { SpecificationDetailsEntity } from 'entity/SpecificationDetailsEntity';
 import { Request } from 'express';
 
-import { GetSpecificationDetailsResultDto } from '../../../../dal/drydock/specification-details/dtos/GetSpecificationDetailsResultDto';
-import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
-import { Query } from '../../core/cqrs/Query';
+import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
+import { Query } from '../core/cqrs/Query';
 
-export class GetManySpecificationDetailsQuery extends Query<Request, GetSpecificationDetailsResultDto[]> {
+export class GetManySpecificationDetailsQuery extends Query<Request, SpecificationDetailsEntity[]> {
     specificationDetailsRepository: SpecificationDetailsRepository = new SpecificationDetailsRepository();
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -19,7 +19,7 @@ export class GetManySpecificationDetailsQuery extends Query<Request, GetSpecific
      *
      * @returns All specification details
      */
-    protected async MainHandlerAsync(request: Request): Promise<GetSpecificationDetailsResultDto[]> {
+    protected async MainHandlerAsync(request: Request): Promise<SpecificationDetailsEntity[]> {
         const specDetails = await this.specificationDetailsRepository.GetManySpecificationDetails(request);
         return specDetails;
     }

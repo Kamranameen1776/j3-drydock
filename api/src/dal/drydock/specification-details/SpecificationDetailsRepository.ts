@@ -4,25 +4,51 @@ import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
-import { CreateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/CreateSpecificationDetailsDto';
-import { DeleteSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationDetailsDto';
-import { UpdateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationDetailsDto';
-import { SpecificationDetailsEntity } from '../../../entity/specification_details';
-import { GetSpecificationDetailsResultDto } from './dtos/GetSpecificationDetailsResultDto';
+import { SpecificationDetailsEntity } from '../../../entity/SpecificationDetailsEntity';
+import { ICreateSpecificationDetailsDto } from './dtos/ICreateSpecificationDetailsDto';
+import { ISpecificationDetailsResultDto } from './dtos/ISpecificationDetailsResultDto';
+import { IUpdateSpecificationDetailsDto } from './dtos/IUpdateSpecificationDetailsDto';
 
 export class SpecificationDetailsRepository {
-    public async findOneBySpecificationUid(uid: string): Promise<GetSpecificationDetailsResultDto[]> {
-        const specificationDetailsRepository = getManager().getRepository(SpecificationDetailsEntity);
+    public async findOneBySpecificationUid(uid: string): Promise<ISpecificationDetailsResultDto> {
+        const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
 
-        const result = await specificationDetailsRepository
+        return await specificationRepository
             .createQueryBuilder('spec')
-            .where('spec.active_status = 1 and spec.uid = :uid', { uid: uid })
+            .select(
+                `spec.uid as uid,
+               spec.TecTaskManagerUid as tmTask,
+               spec.FunctionUid as functionUid,
+               spec.ComponentUid as componentUid,
+               spec.AccountCode as accountCode,
+               spec.ItemSourceUid as itemSourceUid,
+               spec.ItemNumber as itemNumber,
+               spec.DoneByUid as doneByUid,
+               spec.ItemCategoryUid as itemCategoryUid,
+               spec.InspectionUid as inspectionUid,
+               spec.EquipmentDescription as equipmentDescription,
+               spec.PriorityUid as priorityUid,
+               spec.Description as description,
+               spec.StartDate as startDate,
+               spec.EstimatedDays as estimatedDays,
+               spec.BufferTime as bufferTime,
+               spec.Treatment as treatment,
+               spec.OnboardLocationUid as onboardLocationUid,
+               spec.Access as access,
+               spec.MaterialSuppliedByUid as materialSuppliedByUid,
+               spec.TestCriteria as testCriteria,
+               spec.Ppe as ppe,
+               spec.SafetyInstruction as safetyInstruction,
+               spec.ActiveStatus as activeStatus,
+               spec.CreatedByUid as createdBy,
+               spec.CreatedAt as createdAt
+               `,
+            )
+            .where(`spec.ActiveStatus = 1 and spec.uid='${uid}'`)
             .execute();
-
-        return result;
     }
 
-    public async GetManySpecificationDetails(data: Request): Promise<GetSpecificationDetailsResultDto[]> {
+    public async GetManySpecificationDetails(data: Request): Promise<SpecificationDetailsEntity[]> {
         try {
             const oDataService = new ODataService(data, getConnection);
 
@@ -71,44 +97,51 @@ export class SpecificationDetailsRepository {
         }
     }
 
-    public async CreateSpecificationDetails(data: CreateSpecificationDetailsDto, queryRunner: QueryRunner) {
-        const spec = new SpecificationDetailsEntity();
-        spec.uid = new DataUtilService().newUid();
-        spec.tec_task_manager_uid = data.tmTask;
-        spec.function_uid = data.functionUid;
-        spec.component_uid = data.componentUid;
-        spec.account_code = data.accountCode;
-        spec.item_source_uid = data.itemSourceUid;
-        spec.item_number = data.itemNumber;
-        spec.done_by_uid = data.doneByUid;
-        spec.item_category_uid = data.itemCategoryUid;
-        spec.inspection_uid = data.inspectionUid;
-        spec.equipment_description = data.equipmentDescription;
-        spec.priority_uid = data.priorityUid;
-        spec.description = data.description;
-        spec.start_date = data.startDate;
-        spec.estimated_days = data.estimatedDays;
-        spec.buffer_time = data.bufferTime;
-        spec.treatment = data.treatment;
-        spec.onboard_location_uid = data.onboardLocationUid;
-        spec.access = data.access;
-        spec.material_supplied_by_uid = data.materialSuppliedByUid;
-        spec.test_criteria = data.testCriteria;
-        spec.ppe = data.ppe;
-        spec.safety_instruction = data.safetyInstruction;
-        spec.active_status = data.activeStatus;
-        spec.created_by_uid = data.createdByUid;
-        spec.created_at = new Date();
-
-        const result = await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
-        return result;
+    public async CreateSpecificationDetails(data: ICreateSpecificationDetailsDto, queryRunner: QueryRunner) {
+        const spec = await this.CreateSpecificationDetailsEntity(data);
+        spec.CreatedAt = new Date();
+        spec.ActiveStatus = true;
+        return await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
     }
 
-    public async UpdateSpecificationDetails(
-        data: UpdateSpecificationDetailsDto | DeleteSpecificationDetailsDto,
-        queryRunner: QueryRunner,
+    public async UpdateSpecificationDetails(data: IUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
+        const spec = await this.CreateSpecificationDetailsEntity(data);
+        return await queryRunner.manager.update(SpecificationDetailsEntity, spec.uid, spec);
+    }
+
+    public async DeleteSpecificationDetails(uid: string, queryRunner: QueryRunner) {
+        const spec = new SpecificationDetailsEntity();
+        spec.ActiveStatus = false;
+        return await queryRunner.manager.update(SpecificationDetailsEntity, uid, spec);
+    }
+
+    private async CreateSpecificationDetailsEntity(
+        data: ICreateSpecificationDetailsDto | IUpdateSpecificationDetailsDto,
     ) {
-        const result = await queryRunner.manager.update(SpecificationDetailsEntity, data.uid, data);
-        return result;
+        const spec = new SpecificationDetailsEntity();
+        spec.uid = data?.uid ? data.uid : new DataUtilService().newUid();
+        spec.TecTaskManagerUid = data.tmTask;
+        spec.FunctionUid = data.functionUid;
+        spec.ComponentUid = data.componentUid;
+        spec.AccountCode = data.accountCode;
+        spec.ItemSourceUid = data.itemSourceUid;
+        spec.ItemNumber = data.itemNumber;
+        spec.DoneByUid = data.doneByUid;
+        spec.ItemCategoryUid = data.itemCategoryUid;
+        spec.InspectionUid = data.inspectionUid;
+        spec.EquipmentDescription = data.equipmentDescription;
+        spec.PriorityUid = data.priorityUid;
+        spec.Description = data.description;
+        spec.StartDate = data.startDate;
+        spec.EstimatedDays = data.estimatedDays;
+        spec.BufferTime = data.bufferTime;
+        spec.Treatment = data.treatment;
+        spec.OnboardLocationUid = data.onboardLocationUid;
+        spec.Access = data.access;
+        spec.MaterialSuppliedByUid = data.materialSuppliedByUid;
+        spec.TestCriteria = data.testCriteria;
+        spec.Ppe = data.ppe;
+        spec.SafetyInstruction = data.safetyInstruction;
+        return spec;
     }
 }
