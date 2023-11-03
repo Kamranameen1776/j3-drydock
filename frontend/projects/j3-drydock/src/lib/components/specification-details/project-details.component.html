@@ -1,6 +1,19 @@
 <jb-details-layout-figma>
   <jb-project-header alayout-header></jb-project-header>
   <ng-container alayout-content>
-    <jb-specifications></jb-specifications>
+    <ng-container [ngSwitch]="currentSectionId">
+      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.General">
+        <div #general>TODO insert general component here</div>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.Specifications">
+        <div #specifications>
+          <div #technical_specification>
+            <jb-specifications></jb-specifications>
+          </div>
+          <div #requisition>TODO insert requisition component here</div>
+        </div>
+      </ng-container>
+    </ng-container>
   </ng-container>
 </jb-details-layout-figma>
