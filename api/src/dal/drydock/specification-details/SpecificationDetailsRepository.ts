@@ -46,14 +46,14 @@ export class SpecificationDetailsRepository {
     }
 
     public async CreateSpecificationDetails(data: ICreateSpecificationDetailsDto, queryRunner: QueryRunner) {
-        const spec = await this.upsertSpecification(data);
+        const spec = await this.CreateSpecificationDetailsEntity(data);
         spec.CreatedAt = new Date();
         spec.ActiveStatus = true;
         return await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
     }
 
     public async UpdateSpecificationDetails(data: IUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
-        const spec = await this.upsertSpecification(data);
+        const spec = await this.CreateSpecificationDetailsEntity(data);
         return await queryRunner.manager.update(SpecificationDetailsEntity, spec.uid, spec);
     }
 
@@ -63,7 +63,9 @@ export class SpecificationDetailsRepository {
         return await queryRunner.manager.update(SpecificationDetailsEntity, uid, spec);
     }
 
-    private async upsertSpecification(data: ICreateSpecificationDetailsDto | IUpdateSpecificationDetailsDto) {
+    private async CreateSpecificationDetailsEntity(
+        data: ICreateSpecificationDetailsDto | IUpdateSpecificationDetailsDto,
+    ) {
         const spec = new SpecificationDetailsEntity();
         spec.uid = data?.uid ? data.uid : new DataUtilService().newUid();
         spec.TecTaskManagerUid = data.tmTask;
