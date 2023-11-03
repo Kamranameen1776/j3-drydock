@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Column, Filter, FilterListSet, GridRowActions, WebApiRequest, eCrud, eFieldControlType, eGridAction } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
+import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
+import { StandardJobsService } from '../StandardJobsService';
 
 export enum SpecificationType {
   ALL = 'All',
@@ -20,6 +22,8 @@ export enum SpecificationStatus {
 
 @Injectable()
 export class SpecificationGridService {
+  constructor(private standardJobsService: StandardJobsService) {}
+
   public getSpecificationDetailsAPIRequest(projectId: string | null, componentUIDs: string[], functionUIDs: string[]): WebApiRequest {
     const filter = ODataFilterBuilder('and');
 
@@ -204,41 +208,23 @@ export class SpecificationGridService {
       type: eFieldControlType.MultiSelect,
       odataKey: 'status'
     },
-    /*inspection: {
-      list: [
-        {
-          label: 'Owner',
-          value: 'Owner'
-        },
-        {
-          label: 'Manufacturer',
-          value: 'Manafacturer'
-        },
-        {
-          label: 'Class',
-          value: 'Class'
-        }
-      ],
+    [eStandardJobsMainFields.ItemCategory]: {
+      webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory),
       type: eFieldControlType.MultiSelect,
-      odataKey: 'inspection'
+      odataKey: eStandardJobsMainFields.ItemCategoryID,
+      listValueKey: 'uid'
+    },
+    /*[eStandardJobsMainFields.Inspection]: {
+      webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection),
+      type: eFieldControlType.MultiSelect,
+      odataKey: eStandardJobsMainFields.InspectionID,
+      listValueKey: 'uid'
     },*/
-    item_category: {
-      list: [
-        {
-          label: 'Steel Renewal',
-          value: 'Steel Renewal'
-        },
-        {
-          label: 'Overhaul',
-          value: 'Overhaul'
-        },
-        {
-          label: 'Inspection',
-          value: 'Inspection'
-        }
-      ],
+    [eStandardJobsMainFields.MaterialSuppliedBy]: {
+      webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.MaterialSuppliedBy),
       type: eFieldControlType.MultiSelect,
-      odataKey: 'item_category'
+      odataKey: eStandardJobsMainFields.MaterialSuppliedByID,
+      listValueKey: 'uid'
     },
     due_date: {
       type: eFieldControlType.Date,
