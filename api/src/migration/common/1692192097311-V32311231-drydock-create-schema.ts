@@ -5,6 +5,7 @@ export class V32311231DryDockCreateSchema1692192097311 implements MigrationInter
     public className = this.constructor.name;
     public moduleName = 'drydock';
     public functionName = 'Create database schema: "drydock"';
+    schemaName = 'dry_dock';
 
     /**
      * @description Create database schema: "drydock"
@@ -17,17 +18,10 @@ export class V32311231DryDockCreateSchema1692192097311 implements MigrationInter
         try {
             await queryRunner.query(
                 `
-                IF NOT EXISTS (SELECT 1 FROM sys.schemas where name = 'drydock')
+                IF NOT EXISTS (SELECT 1 FROM sys.schemas where name = '${this.schemaName}')
                 BEGIN
-                    EXEC ('CREATE SCHEMA [drydock];')
+                    EXEC ('CREATE SCHEMA [${this.schemaName}];')
                 END;
-
-                IF OBJECT_ID(N'[drydock].[ExampleProject]', N'U') IS NULL
-                CREATE TABLE [drydock].[ExampleProject] (
-                    [ExampleProjectId] int IDENTITY(1,1) NOT NULL,
-                    [ProjectName] nvarchar(100) NOT NULL,
-                    [DateOfCreation] datetime2(7) NOT NULL
-                );
             `,
             );
 
