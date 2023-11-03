@@ -3,8 +3,8 @@ import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild 
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { FormGroup } from '@angular/forms';
 import { FormModel, FormValues } from 'jibe-components';
-import { SubItemEditFormService } from './SubItemEditFormService';
-import { SubItemCreateFormService } from './SubItemCreateFormService';
+import { SubItemEditFormService } from './sub-item-create-form';
+import { SubItemCreateFormService } from './sub-item-edit-form.service';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -21,12 +21,12 @@ export class UpsertSubItemFormComponent extends UnsubscribeComponent implements 
   // can be used from parent to get formvalue when submitting
   public formGroup: FormGroup;
 
-  public formStructure: FormModel;
-  public formValues: FormValues;
+  formStructure: FormModel;
+  formValues: FormValues;
 
-  public isFormValid = false;
+  isFormValid = false;
 
-  public get isEditing() {
+  get isEditing() {
     return !!this.item;
   }
 
@@ -42,7 +42,7 @@ export class UpsertSubItemFormComponent extends UnsubscribeComponent implements 
     this.initFormValues();
   }
 
-  public dispatchForm(event: FormGroup) {
+  dispatchForm(event: FormGroup) {
     this.formGroup = event;
     this.listenFormValid();
   }

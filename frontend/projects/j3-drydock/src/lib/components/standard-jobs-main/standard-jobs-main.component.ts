@@ -12,15 +12,15 @@ import {
   JmsTechApiService
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
-import { StandardJobsGridService } from './StandardJobsGridService';
+import { StandardJobsGridService } from './standard-jobs-grid.service';
 import { FunctionsFlatTreeNode } from '../../models/interfaces/functions-tree-node';
 import { StandardJobUpsertFormService } from './upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../models/constants/popup';
-import { StandardJobsService } from '../../services/StandardJobsService';
-import { GrowlMessageService } from '../../services/GrowlMessageService';
-import { FunctionsTreeService } from '../../services/FunctionsTreeService';
+import { StandardJobsService } from '../../services/standard-jobs.service';
+import { GrowlMessageService } from '../../services/growl-message.service';
+import { FunctionsTreeService } from '../../services/functions-tree.service';
 
 @Component({
   selector: 'jb-standard-jobs-main',
@@ -29,24 +29,24 @@ import { FunctionsTreeService } from '../../services/FunctionsTreeService';
   providers: [StandardJobsGridService, GrowlMessageService]
 })
 export class StandardJobsMainComponent extends UnsubscribeComponent implements OnInit {
-  public gridInputs: GridInputsWithRequest;
+  gridInputs: GridInputsWithRequest;
 
-  public isUpsertPopupVisible = false;
+  isUpsertPopupVisible = false;
 
-  public isConfirmDeleteVisible = false;
+  isConfirmDeleteVisible = false;
 
-  public currentRow: StandardJobResult;
+  currentRow: StandardJobResult;
 
-  public gridRowActions: GridRowActions[] = [];
+  gridRowActions: GridRowActions[] = [];
 
-  public confirmationPopUp = {
+  confirmationPopUp = {
     ...getSmallPopup(),
     dialogHeader: 'Delete Standard Job'
   };
 
-  public growlMessage$ = this.growlMessageService.growlMessage$;
+  growlMessage$ = this.growlMessageService.growlMessage$;
 
-  public eStandardJobsMainFields = eStandardJobsMainFields;
+  eStandardJobsMainFields = eStandardJobsMainFields;
 
   constructor(
     private standardJobsGridService: StandardJobsGridService,
@@ -68,7 +68,7 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     this.loadFunctionsTree();
   }
 
-  public onGridAction({ type, payload }: GridAction<string, unknown>): void {
+  onGridAction({ type, payload }: GridAction<string, unknown>): void {
     switch (type) {
       case eGridRowActions.DoubleClick:
       case eGridRowActions.Edit:
@@ -88,15 +88,15 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     }
   }
 
-  public onConfirmDeleteOk() {
+  onConfirmDeleteOk() {
     this.deleteStandardJob();
   }
 
-  public onConfirmDeleteCancel() {
+  onConfirmDeleteCancel() {
     this.isConfirmDeleteVisible = false;
   }
 
-  public onCloseUpsertPopup(hasSaved: boolean) {
+  onCloseUpsertPopup(hasSaved: boolean) {
     this.isUpsertPopupVisible = false;
     this.currentRow = undefined;
 

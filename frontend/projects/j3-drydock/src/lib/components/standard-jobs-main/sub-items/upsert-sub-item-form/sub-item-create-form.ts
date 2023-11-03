@@ -9,7 +9,7 @@ import { FormServiceBase } from '../../../../shared/classes/form-service.base';
   providedIn: 'root'
 })
 export class SubItemEditFormService extends FormServiceBase {
-  public readonly formId = subItemUpsertFormId;
+  readonly formId = subItemUpsertFormId;
 
   protected readonly _formStructure: FormModel = {
     id: this.formId,

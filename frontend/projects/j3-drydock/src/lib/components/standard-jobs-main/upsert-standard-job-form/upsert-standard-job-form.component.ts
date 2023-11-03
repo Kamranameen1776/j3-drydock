@@ -24,15 +24,15 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
   // can be used from parent to get formvalue when submitting
   public formGroup: FormGroup;
 
-  public formValues: FormValues;
+  formValues: FormValues;
 
-  public isFormValid = false;
+  isFormValid = false;
 
-  public get isEditing() {
+  get isEditing() {
     return !!this.item;
   }
 
-  public functionsFlatTree$ = this.popupFormService.functionsFlatTree$;
+  functionsFlatTree$ = this.popupFormService.functionsFlatTree$;
 
   constructor(private popupFormService: StandardJobUpsertFormService) {
     super();
@@ -43,7 +43,7 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
     this.setFunctionConfig();
   }
 
-  public dispatchForm(event: FormGroup) {
+  dispatchForm(event: FormGroup) {
     this.formGroup = event;
 
     this.initFormState();

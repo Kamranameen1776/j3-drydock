@@ -2,7 +2,7 @@ import { Component, Input, ViewChild } from '@angular/core';
 import { InputWithDlgService, JbTreeComponent } from 'jibe-components';
 import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 import { TreeNode } from 'primeng';
-import { FunctionsTreeService } from '../../../services/FunctionsTreeService';
+import { FunctionsTreeService } from '../../../services/functions-tree.service';
 
 @Component({
   selector: 'jb-drydock-functions-tree-select',

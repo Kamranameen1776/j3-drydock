@@ -5,9 +5,9 @@ import { FormModel, IJbAttachment, IJbDialog, eAttachmentButtonTypes } from 'jib
 import { UpsertStandardJobFormComponent } from '../upsert-standard-job-form/upsert-standard-job-form.component';
 import { StandardJobUpsertFormService } from '../upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
-import { StandardJobsService } from '../../../services/StandardJobsService';
+import { StandardJobsService } from '../../../services/standard-jobs.service';
 import { finalize } from 'rxjs/operators';
-import { GrowlMessageService } from '../../../services/GrowlMessageService';
+import { GrowlMessageService } from '../../../services/growl-message.service';
 import { SubItem } from '../../../models/interfaces/sub-items';
 import { forkJoin } from 'rxjs';
 import { cloneDeep } from 'lodash';
@@ -26,30 +26,30 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   @ViewChild(UpsertStandardJobFormComponent) popupForm: UpsertStandardJobFormComponent;
 
-  public readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false };
+  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false };
 
-  public isPopupValid = false;
+  isPopupValid = false;
 
-  public okLabel: string;
+  okLabel: string;
 
-  public isSaving: boolean;
+  isSaving: boolean;
 
-  public get isEditing() {
+  get isEditing() {
     return !!this.item;
   }
 
-  public get jobFormValue() {
+  get jobFormValue() {
     return this.popupForm?.formGroup.getRawValue()[this.formService.formId];
   }
   // TODO fixme to relevant values and use them from eModuleCode and eFunctionCode from jibe-components
-  public attachmentConfig: IJbAttachment = { Module_Code: 'j3_drydock', Function_Code: 'standard_jobs' };
+  attachmentConfig: IJbAttachment = { Module_Code: 'j3_drydock', Function_Code: 'standard_jobs' };
 
-  public attachmentButton = {
+  attachmentButton = {
     buttonLabel: 'Add New',
     buttonType: eAttachmentButtonTypes.NoButton
   };
 
-  public formStructure: FormModel = this.popupFormService.formStructure;
+  formStructure: FormModel = this.popupFormService.formStructure;
 
   private changedSubItems: SubItem[] = [];
 
@@ -71,19 +71,19 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     }
   }
 
-  public onClosePopup() {
+  onClosePopup() {
     this.closePopup();
   }
 
-  public onOkPopup() {
+  onOkPopup() {
     this.save();
   }
 
-  public onIsFormValid(isValid: boolean) {
+  onIsFormValid(isValid: boolean) {
     this.isPopupValid = isValid;
   }
 
-  public onSubItemsChanged(subItems: SubItem[]) {
+  onSubItemsChanged(subItems: SubItem[]) {
     this.changedSubItems = subItems;
   }
 

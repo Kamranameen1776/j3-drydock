@@ -20,19 +20,19 @@ export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements
 
   @ViewChild(UpsertSubItemFormComponent) popupForm: UpsertSubItemFormComponent;
 
-  public isPopupValid = false;
+  isPopupValid = false;
 
-  public readonly popupConfig: IJbDialog = { ...getSmallPopup() };
+  readonly popupConfig: IJbDialog = { ...getSmallPopup() };
 
-  public get isEditing() {
+  get isEditing() {
     return !!this.item;
   }
 
-  public okLabel: string;
+  okLabel: string;
 
-  public isSaving: boolean;
+  isSaving: boolean;
 
-  public get formValue() {
+  get formValue() {
     return this.popupForm?.formGroup.getRawValue()[subItemUpsertFormId];
   }
 
@@ -47,15 +47,15 @@ export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements
     }
   }
 
-  public onClosePopup() {
+  onClosePopup() {
     this.closePopup();
   }
 
-  public onOkPopup() {
+  onOkPopup() {
     this.save();
   }
 
-  public onIsFormValid(isValid: boolean) {
+  onIsFormValid(isValid: boolean) {
     this.isPopupValid = isValid;
   }
 

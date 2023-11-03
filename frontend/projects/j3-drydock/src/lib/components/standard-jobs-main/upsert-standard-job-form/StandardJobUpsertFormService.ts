@@ -2,19 +2,19 @@ import { Injectable } from '@angular/core';
 
 import { eFieldControlType, FormModel, FormValues } from 'jibe-components';
 import { standardJobsUpsertFormId } from '../../../models/constants/constants';
-import { StandardJobsService } from '../../../services/StandardJobsService';
+import { StandardJobsService } from '../../../services/standard-jobs.service';
 import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../../../models/enums/standard-jobs-main.enum';
 import { BehaviorSubject } from 'rxjs';
-import { FunctionsFlatTreeNode, FunctionsTreeNode } from '../../../models/interfaces/functions-tree-node';
+import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StandardJobUpsertFormService extends FormServiceBase {
-  public readonly formId = standardJobsUpsertFormId;
+  readonly formId = standardJobsUpsertFormId;
 
-  public functionsFlatTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
+  functionsFlatTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
 
   protected readonly _formStructure: FormModel = {
     id: this.formId,

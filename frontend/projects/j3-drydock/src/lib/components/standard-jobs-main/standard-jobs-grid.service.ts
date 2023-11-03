@@ -1,4 +1,4 @@
-import { StandardJobsService } from '../../services/StandardJobsService';
+import { StandardJobsService } from '../../services/standard-jobs.service';
 import { Injectable } from '@angular/core';
 import { Column, Filter, GridButton, FilterListSet, eFieldControlType } from 'jibe-components';
 import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../../models/enums/standard-jobs-main.enum';
@@ -6,7 +6,7 @@ import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 
 @Injectable()
 export class StandardJobsGridService {
-  public readonly gridName: string = 'standardJobsGrid';
+  readonly gridName: string = 'standardJobsGrid';
 
   private readonly columns: Column[] = [
     {
@@ -179,7 +179,7 @@ export class StandardJobsGridService {
 
   constructor(private standardJobsService: StandardJobsService) {}
 
-  public getGridInputs(): GridInputsWithRequest {
+  getGridInputs(): GridInputsWithRequest {
     return {
       columns: this.columns,
       gridName: this.gridName,

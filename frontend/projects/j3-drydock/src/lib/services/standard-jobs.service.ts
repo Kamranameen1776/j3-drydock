@@ -9,7 +9,7 @@ import { SubItem } from '../models/interfaces/sub-items';
 @Injectable({ providedIn: 'root' })
 export class StandardJobsService {
   constructor(private apiRequestService: ApiRequestService) {}
-  // TODO
+
   public getStandardJobsRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
       // TODO:update jibe lib
@@ -17,7 +17,10 @@ export class StandardJobsService {
       apiBase: 'dryDockAPI',
       action: 'standard-jobs/get-standard-jobs',
       crud: eCrud.Post,
-      entity: 'drydock'
+      entity: 'drydock',
+      odata: {
+        orderby: 'code asc'
+      }
     };
     return apiRequest;
   }

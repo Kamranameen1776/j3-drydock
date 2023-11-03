@@ -6,7 +6,7 @@ import { SubItem } from '../../../models/interfaces/sub-items';
 
 @Injectable()
 export class SubItemsGridService {
-  public readonly gridName: string = 'subItemsGrid';
+  readonly gridName: string = 'subItemsGrid';
 
   private readonly columns: Column[] = [
     {
@@ -33,7 +33,7 @@ export class SubItemsGridService {
     show: true
   };
 
-  public getGridInputs(): GridInputsWithData<SubItem> {
+  getGridInputs(): GridInputsWithData<SubItem> {
     return {
       columns: this.columns,
       gridName: this.gridName,

@@ -3,7 +3,7 @@ import { SubItem } from '../../../models/interfaces/sub-items';
 import { DispatchAction, GridAction, GridRowActions, GridService, eGridEvents, eGridRowActions } from 'jibe-components';
 import { GridInputsWithData } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
-import { SubItemsGridService } from './SubItemsGridService';
+import { SubItemsGridService } from './sub-items-grid.service';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { cloneDeep } from 'lodash';
@@ -22,27 +22,27 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
 
   @Output() changed = new EventEmitter<SubItem[]>();
 
-  public gridInputs: GridInputsWithData<SubItem>;
+  gridInputs: GridInputsWithData<SubItem>;
 
-  public isUpsertPopupVisible = false;
+  isUpsertPopupVisible = false;
 
-  public currentRow: SubItem;
+  currentRow: SubItem;
 
-  public searchTerm$ = this.gridService.storeState$.pipe(
+  searchTerm$ = this.gridService.storeState$.pipe(
     filter((event: DispatchAction) => event.type === eGridEvents.SearchTable && event.gridName === this.gridInputs.gridName),
     map((event: DispatchAction) => event.payload)
   );
 
-  public gridRowActions: GridRowActions[] = [];
+  gridRowActions: GridRowActions[] = [];
 
-  public subItems: SubItem[];
+  subItems: SubItem[];
 
-  public confirmationPopUp = {
+  confirmationPopUp = {
     ...getSmallPopup(),
     dialogHeader: 'Delete Sub Item'
   };
 
-  public isConfirmDeleteVisible = false;
+  isConfirmDeleteVisible = false;
 
   private editingSubItemIdx: number;
 
@@ -65,7 +65,7 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
     this.initSubItems();
   }
 
-  public onGridAction({ type, payload }: GridAction<string, unknown>): void {
+  onGridAction({ type, payload }: GridAction<string, unknown>): void {
     switch (type) {
       case this.gridInputs.gridButton.label:
         this.isUpsertPopupVisible = true;
@@ -82,7 +82,7 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
     }
   }
 
-  public onCloseUpsertPopup(item: SubItem | null) {
+  onCloseUpsertPopup(item: SubItem | null) {
     this.isUpsertPopupVisible = false;
 
     if (item) {
@@ -94,16 +94,16 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
     this.editingSubItemIdx = -1;
   }
 
-  public onConfirmDeleteOk() {
+  onConfirmDeleteOk() {
     this.delete(this.currentRow);
     this.isConfirmDeleteVisible = false;
   }
 
-  public onConfirmDeleteCancel() {
+  onConfirmDeleteCancel() {
     this.isConfirmDeleteVisible = false;
   }
 
-  public searchFn = (record: SubItem, term: string) => {
+  searchFn = (record: SubItem, term: string) => {
     term = term ?? '';
     return record.subject?.toLowerCase().includes(term.toLowerCase());
   };
