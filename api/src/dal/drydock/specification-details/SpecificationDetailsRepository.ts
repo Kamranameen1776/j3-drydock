@@ -63,7 +63,7 @@ export class SpecificationDetailsRepository {
         return await queryRunner.manager.update(SpecificationDetailsEntity, uid, spec);
     }
 
-    private async upsertSpecification(data: IUpdateSpecificationDetailsDto) {
+    private async upsertSpecification(data: ICreateSpecificationDetailsDto | IUpdateSpecificationDetailsDto) {
         const spec = new SpecificationDetailsEntity();
         spec.uid = data?.uid ? data.uid : new DataUtilService().newUid();
         spec.TecTaskManagerUid = data.tmTask;
