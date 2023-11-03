@@ -1,9 +1,24 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
-
+import {
+    Column,
+    Entity,
+    ManyToMany,
+    PrimaryGeneratedColumn,
+    JoinTable,
+    ManyToOne,
+    JoinColumn,
+    RelationId,
+    OneToMany,
+} from 'typeorm';
 import { LIB_VESSELTYPES } from './LIB_VESSELTYPES';
+import { LIB_Survey_CertificateAuthority } from './LIB_Survey_CertificateAuthority';
+import { tm_dd_lib_material_supplied_by } from './tm_dd_lib_material_supplied_by';
+import { tm_dd_lib_done_by } from './tm_dd_lib_done_by';
+import { tm_dd_lib_item_category } from './tm_dd_lib_item_category';
+import { standard_jobs_sub_items } from './standard_jobs_sub_items';
+import { BaseDatesEntity } from './baseDatesEntity';
 
 @Entity('standard_jobs', { schema: 'drydock' })
-export class standard_jobs {
+export class standard_jobs extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
@@ -21,6 +36,12 @@ export class standard_jobs {
     })
     function: string;
 
+    @Column('uniqueidentifier', {
+        nullable: true,
+        name: 'functionUid',
+    })
+    functionUid: string;
+
     @Column('varchar', {
         nullable: true,
         name: 'code',
@@ -28,33 +49,46 @@ export class standard_jobs {
     })
     code: string;
 
-    @Column('varchar', {
-        nullable: true,
-        name: 'category',
-        length: 250,
+    @Column('int', {
+        nullable: false,
+        name: 'number',
+        generated: 'increment',
     })
-    category: string;
+    number: number;
 
     @Column('varchar', {
         nullable: true,
-        name: 'done_by',
+        name: 'scope',
         length: 250,
     })
-    done_by: string;
+    scope: string;
 
-    @Column('varchar', {
-        nullable: true,
-        name: 'inspection',
-        length: 250,
+    @ManyToOne(() => tm_dd_lib_item_category)
+    @JoinColumn({
+        name: 'category_uid',
     })
-    inspection: string;
+    category: Partial<tm_dd_lib_item_category>;
+    @RelationId((entity: standard_jobs) => entity.category)
+    category_uid: string;
 
-    @Column('varchar', {
-        nullable: true,
-        name: 'material_supplied_by',
-        length: 250,
+    @ManyToOne(() => tm_dd_lib_done_by)
+    @JoinColumn({
+        name: 'done_by_uid',
     })
-    material_supplied_by: string;
+    done_by: Partial<tm_dd_lib_done_by>;
+    @RelationId((entity: standard_jobs) => entity.done_by)
+    done_by_uid: string;
+
+    @ManyToOne(() => tm_dd_lib_material_supplied_by)
+    @JoinColumn({
+        name: 'material_supplied_by_uid',
+    })
+    material_supplied_by: Partial<tm_dd_lib_material_supplied_by>;
+    @RelationId((entity: standard_jobs) => entity.material_supplied_by)
+    material_supplied_by_uid: string;
+
+    @OneToMany(() => standard_jobs_sub_items, (standard_jobs_sub_items) => standard_jobs_sub_items.standard_job)
+    sub_items: standard_jobs_sub_items[];
 
     @Column('bit', {
         nullable: true,
@@ -62,14 +96,38 @@ export class standard_jobs {
     })
     vessel_type_specific: boolean;
 
-    @ManyToOne(() => LIB_VESSELTYPES, (LIB_VESSELTYPES) => LIB_VESSELTYPES.standard_jobs)
-    @JoinColumn({
-        name: 'vessel_type_uid',
-        referencedColumnName: 'uid',
+    @ManyToMany(() => LIB_VESSELTYPES, (LIB_VESSELTYPES) => LIB_VESSELTYPES.standard_jobs)
+    @JoinTable({
+        name: 'standard_jobs_vessel_type',
+        schema: 'drydock',
+        joinColumn: {
+            name: 'standard_job_uid',
+            referencedColumnName: 'uid',
+        },
+        inverseJoinColumn: {
+            name: 'vessel_type_id',
+            referencedColumnName: 'ID',
+        },
     })
-    readonly vessel_type: LIB_VESSELTYPES;
-    @RelationId((entity: standard_jobs) => entity.vessel_type)
-    vessel_type_uid: string;
+    vessel_type: Partial<LIB_VESSELTYPES>[];
+
+    @ManyToMany(
+        () => LIB_Survey_CertificateAuthority,
+        (LIB_Survey_CertificateAuthority) => LIB_Survey_CertificateAuthority.standard_jobs,
+    )
+    @JoinTable({
+        name: 'standard_jobs_survey_certificate_authority',
+        schema: 'drydock',
+        joinColumn: {
+            name: 'standard_job_uid',
+            referencedColumnName: 'uid',
+        },
+        inverseJoinColumn: {
+            name: 'survey_id',
+            referencedColumnName: 'ID',
+        },
+    })
+    inspection: Partial<LIB_Survey_CertificateAuthority>[];
 
     @Column('varchar', {
         nullable: true,
@@ -77,46 +135,4 @@ export class standard_jobs {
         length: 5000,
     })
     description: string;
-
-    @Column('bit', {
-        nullable: true,
-        name: 'active_status',
-    })
-    active_status: boolean;
-
-    @Column('int', {
-        nullable: true,
-        name: 'created_by',
-    })
-    created_by: number;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'date_of_creation',
-    })
-    date_of_creation: Date;
-
-    @Column('int', {
-        nullable: true,
-        name: 'modified_by',
-    })
-    modified_by: number;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'date_of_modification',
-    })
-    date_of_modification: Date;
-
-    @Column('int', {
-        nullable: true,
-        name: 'deleted_by',
-    })
-    deleted_by: number;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'date_of_deletion',
-    })
-    date_of_deletion: Date;
 }

@@ -1,4 +1,6 @@
-import { StandardJobResult } from './../../models/interfaces/standard-jobs';
+/* eslint-disable no-console */
+import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
+import { StandardJobResult } from '../../models/interfaces/standard-jobs';
 import { Component, OnInit } from '@angular/core';
 import {
   CentralizedDataService,
@@ -10,37 +12,54 @@ import {
   JmsTechApiService
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
-import { StandardJobsGridService } from './StandardJobsGridService';
-import { of } from 'rxjs';
-import { FunctionsTreeNode } from '../../models/interfaces/functions-tree-node';
-import { StandardJobUpsertFormService } from './StandardJobUpsertFormService';
+import { StandardJobsGridService } from './standard-jobs-grid.service';
+import { FunctionsFlatTreeNode } from '../../models/interfaces/functions-tree-node';
+import { StandardJobUpsertFormService } from './upsert-standard-job-form/StandardJobUpsertFormService';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
+import { getSmallPopup } from '../../models/constants/popup';
+import { StandardJobsService } from '../../services/standard-jobs.service';
+import { GrowlMessageService } from '../../services/growl-message.service';
+import { FunctionsTreeService } from '../../services/functions-tree.service';
 
 @Component({
   selector: 'jb-standard-jobs-main',
   templateUrl: './standard-jobs-main.component.html',
   styleUrls: ['./standard-jobs-main.component.scss'],
-  providers: [StandardJobsGridService]
+  providers: [StandardJobsGridService, GrowlMessageService]
 })
 export class StandardJobsMainComponent extends UnsubscribeComponent implements OnInit {
-  public gridInputs: GridInputsWithRequest;
+  gridInputs: GridInputsWithRequest;
+
+  isUpsertPopupVisible = false;
+
+  isConfirmDeleteVisible = false;
+
+  currentRow: StandardJobResult;
+
+  gridRowActions: GridRowActions[] = [];
+
+  confirmationPopUp = {
+    ...getSmallPopup(),
+    dialogHeader: 'Delete Standard Job'
+  };
+
+  growlMessage$ = this.growlMessageService.growlMessage$;
+
+  eStandardJobsMainFields = eStandardJobsMainFields;
 
   constructor(
     private standardJobsGridService: StandardJobsGridService,
+    private standardJobsService: StandardJobsService,
     private upsertFormService: StandardJobUpsertFormService,
     private gridService: GridService,
     private cds: CentralizedDataService,
-    private techApiSvc: JmsTechApiService
+    private techApiSvc: JmsTechApiService,
+    private growlMessageService: GrowlMessageService,
+    private treeService: FunctionsTreeService
   ) {
     super();
   }
-
-  public isUpsertPopupVisible = false;
-
-  public currentRow: StandardJobResult;
-
-  public gridRowActions: GridRowActions[] = [];
 
   ngOnInit(): void {
     this.setAccessRights();
@@ -49,24 +68,35 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     this.loadFunctionsTree();
   }
 
-  public onGridAction({ type, payload }: GridAction<string, unknown>): void {
+  onGridAction({ type, payload }: GridAction<string, unknown>): void {
     switch (type) {
+      case eGridRowActions.DoubleClick:
+      case eGridRowActions.Edit:
+        this.editRow(<StandardJobResult>payload);
+        break;
+
       case this.gridInputs.gridButton.label:
         this.isUpsertPopupVisible = true;
         break;
-      case eGridRowActions.Edit:
-        this.isUpsertPopupVisible = true;
-        this.currentRow = <StandardJobResult>payload;
-        break;
+
       case eGridRowActions.Delete:
-        this.delete(<StandardJobResult>payload);
+        this.deleteRow(<StandardJobResult>payload);
         break;
+
       default:
         break;
     }
   }
 
-  public onCloseUpsertPopup(hasSaved: boolean) {
+  onConfirmDeleteOk() {
+    this.deleteStandardJob();
+  }
+
+  onConfirmDeleteCancel() {
+    this.isConfirmDeleteVisible = false;
+  }
+
+  onCloseUpsertPopup(hasSaved: boolean) {
     this.isUpsertPopupVisible = false;
     this.currentRow = undefined;
 
@@ -75,8 +105,19 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     }
   }
 
+  private editRow(row: StandardJobResult) {
+    this.currentRow = row;
+    this.isUpsertPopupVisible = true;
+  }
+
+  private deleteRow(row: StandardJobResult) {
+    this.isConfirmDeleteVisible = true;
+    this.currentRow = row;
+  }
+
   private setGridRowActions(): void {
     this.gridRowActions.length = 0;
+    this.gridRowActions.push({ name: eGridRowActions.DoubleClick });
 
     // TODO Access rigths
     this.gridRowActions.push({
@@ -97,31 +138,24 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     //TODO
   }
 
-  private delete(record: StandardJobResult) {
-    // TODO, check status if inActive - return
-    of(record).subscribe(() => {
+  private loadFunctionsTree() {
+    this.standardJobsService
+      .getStandardJobFunctions()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((flatTree) => {
+        this.setFunctionsFlatTree(flatTree);
+      });
+  }
+
+  private setFunctionsFlatTree(flatTree: FunctionsFlatTreeNode[]) {
+    this.upsertFormService.functionsFlatTree$.next(flatTree);
+  }
+
+  private deleteStandardJob() {
+    this.standardJobsService.deleteStandardJob(this.currentRow.uid).subscribe(() => {
+      this.isConfirmDeleteVisible = false;
+      this.currentRow = undefined;
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);
     });
-  }
-
-  private loadFunctionsTree() {
-    // TODO fixme to generic request with no vessel_uid
-    const vesselUid = this.cds.userDetails?.vessel_uid ?? '3EEF2E1B-2533-45C7-82C7-C13D6AA79559';
-    if (vesselUid) {
-      this.techApiSvc
-        .getComponentFunctionTreeData(vesselUid)
-        .pipe(takeUntil(this.unsubscribe$))
-        .subscribe((res) => {
-          this.setFunctionsTree(<FunctionsTreeNode[]>res.records);
-        });
-    }
-  }
-
-  private setFunctionsTree(records: FunctionsTreeNode[]) {
-    this.upsertFormService.functionsTree$.next(
-      records.map((rec) => {
-        return { ...rec, selectable: rec.isParentComponent === 3 };
-      })
-    );
   }
 }

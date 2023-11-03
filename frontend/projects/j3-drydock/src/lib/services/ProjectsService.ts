@@ -125,7 +125,7 @@ export class ProjectsService {
 
     return this.apiRequestService.sendApiReq(apiRequest);
   }
-  
+
   public deleteProject(data: DeleteProjectDto): Observable<any> {
     const apiRequest: WebApiRequest = {
       apiBase: 'dryDockAPI',

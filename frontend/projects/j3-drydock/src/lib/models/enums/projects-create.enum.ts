@@ -5,7 +5,7 @@ export enum eProjectsCreateFieldNames {
   Subject = 'Subject',
   ProjectManager = 'ProjectManagerUid',
   StartDate = 'StartDate',
-  EndDate = 'EndDate',
+  EndDate = 'EndDate'
 }
 
 export enum eProjectsCreateDisplayNames {
@@ -15,5 +15,5 @@ export enum eProjectsCreateDisplayNames {
   Subject = 'Subject',
   ProjectManager = 'Project Manager',
   StartDate = 'Start Date',
-  EndDate = 'End Date',
+  EndDate = 'End Date'
 }

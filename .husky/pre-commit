@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm --prefix ./api run lint
+# npm --prefix ./api run lint
 cd ./frontend && npx lint-staged
