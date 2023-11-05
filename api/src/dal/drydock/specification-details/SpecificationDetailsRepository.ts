@@ -1,9 +1,9 @@
-import { className } from 'common/drydock/ts-helpers/className';
-import { TECTaskManagerEntity } from 'entity/drydock/dbo/TECTaskManagerEntity';
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
+import { className } from '../../../common/drydock/ts-helpers/className';
+import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
 import { SpecificationDetailsEntity } from '../../../entity/SpecificationDetailsEntity';
 import { ICreateSpecificationDetailsDto } from './dtos/ICreateSpecificationDetailsDto';
 import { ISpecificationDetailsResultDto } from './dtos/ISpecificationDetailsResultDto';

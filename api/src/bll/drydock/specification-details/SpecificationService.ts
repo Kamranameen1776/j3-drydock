@@ -1,7 +1,8 @@
-import { CreateSpecificationDetailsDto } from 'application-layer/drydock/specification-details/dtos/CreateSpecificationDetailsDto';
-import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { ApiRequestService, ConfigurationService } from 'j2utils';
-import { TaskManagerConstants } from 'shared/constants/task-manager';
+
+import { CreateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/CreateSpecificationDetailsDto';
+import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
+import { TaskManagerConstants } from '../../../shared/constants/task-manager';
 
 export class SpecificationService {
     apiRequestService = new ApiRequestService();
@@ -32,7 +33,7 @@ export class SpecificationService {
             function_code: TaskManagerConstants.specification.function_code,
             raised_location: office,
             task_status: TaskManagerConstants.specification.status.Raised,
-            title: request.Subject,
+            title: request.description,
             date_raised: new Date(),
             link_job_uid: null,
             parent_uid: null,

@@ -1,16 +1,16 @@
-import { SpecificationService } from 'bll/drydock/specification-details/SpecificationService';
-import { ProjectsRepository } from 'dal/drydock/projects/ProjectsRepository';
-import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { Request } from 'express';
 
+import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
+import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateSpecificationDetailsDto } from './dtos/CreateSpecificationDetailsDto';
 
 export class CreateSpecificationDetailsCommand extends Command<Request, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
-    projectsRepository: ProjectsRepository;
+    vesselsRepository: VesselsRepository;
     specificationDetailsService: SpecificationService;
     uow: UnitOfWork;
 
@@ -18,7 +18,7 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
         super();
 
         this.specificationDetailsRepository = new SpecificationDetailsRepository();
-        this.projectsRepository = new ProjectsRepository();
+        this.vesselsRepository = new VesselsRepository();
         this.specificationDetailsService = new SpecificationService();
         this.uow = new UnitOfWork();
     }
@@ -42,7 +42,7 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
         const token: string = request.headers.authorization as string;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const vessel: LibVesselsEntity = await this.projectsRepository.GetVesselByUid(
+            const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(
                 request.query.VesselUid as string,
             );
             const taskManagerData = await this.specificationDetailsService.TaskManagerIntegration(

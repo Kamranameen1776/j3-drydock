@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { GetManySpecificationDetailsQuery } from '../../../application-layer/drydock/specification-details/get-specification-details/GetManySpecificationDetailsQuery';
+import { GetManySpecificationDetailsQuery } from '../../../application-layer/drydock/specification-details/GetManySpecificationDetailsQuery';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 /**
@@ -23,3 +23,5 @@ export async function getManySpecificationDetails(req: Request, res: Response) {
         return projects;
     });
 }
+
+exports.post = getManySpecificationDetails;

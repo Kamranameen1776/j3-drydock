@@ -3,7 +3,7 @@ import { Column, Filter, FilterListSet, GridRowActions, WebApiRequest, eCrud, eF
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
-import { StandardJobsService } from '../StandardJobsService';
+import { StandardJobsService } from '../standard-jobs.service';
 
 export enum SpecificationType {
   ALL = 'All',
