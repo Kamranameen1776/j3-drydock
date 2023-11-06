@@ -14,6 +14,7 @@ module.exports = {
     extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
     ignorePatterns: ['.eslintrc.js', 'jest.config.js', 'jest.integration.config.js'],
     rules: {
+        'no-return-await': 'error',
         'simple-import-sort/imports': 'error',
         'simple-import-sort/exports': 'error',
         '@typescript-eslint/explicit-member-accessibility': [
