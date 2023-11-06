@@ -19,6 +19,7 @@
   .widget-content {
     max-height: 616px;
   }
+  @include jb-tabview;
 }
 
 p-tabview {

@@ -1,28 +1,30 @@
 @import '~jibe-components/assets/sass/theme-figma';
 
-::ng-deep .jb-tabview .ui-tabview.ui-tabview-top > .ui-tabview-nav {
-    border-bottom: none;
-}
-
-::ng-deep .jb-tabview .ui-tabview.ui-tabview-top > .ui-tabview-nav > li {
-    border: none;
-    border-bottom: 2px solid transparent !important;
-    font-weight: 400;
-    a {
-        color: var(--jbGreyBlue500);
-        font-size: 16px;
-        padding: 0 12px 0 12px;
+@mixin jb-tabview {
+    .jb-tabview .ui-tabview.ui-tabview-top > .ui-tabview-nav {
+        border-bottom: none;
     }
-    &:hover {
-        border-bottom-color: var(--jbGrey) !important;
-        background-color: transparent !important;
-    }
-    &.ui-tabview-selected {
-        // jb-components uses important, so to override it we use it too
-        border-bottom-color: var(--jbBlue) !important;
+    
+    .jb-tabview .ui-tabview.ui-tabview-top > .ui-tabview-nav > li {
+        border: none;
+        border-bottom: 2px solid transparent !important;
+        font-weight: 400;
         a {
-            color: var(--jbBlue);
-            font-weight: 500;
+            color: var(--jbGreyBlue500);
+            font-size: 16px;
+            padding: 0 12px 0 12px;
+        }
+        &:hover {
+            border-bottom-color: var(--jbGrey) !important;
+            background-color: transparent !important;
+        }
+        &.ui-tabview-selected {
+            // jb-components uses important, so to override it we use it too
+            border-bottom-color: var(--jbBlue) !important;
+            a {
+                color: var(--jbBlue);
+                font-weight: 500;
+            }
         }
     }
 }
