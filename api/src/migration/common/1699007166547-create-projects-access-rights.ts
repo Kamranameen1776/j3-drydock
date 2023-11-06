@@ -66,87 +66,91 @@ WHEN NOT MATCHED BY TARGET THEN
 			`);
 
                 await queryRunner.query(`
-                MERGE INTO INF_LIB_Right AS TARGET
-USING (VALUES ('218da033-cff4-4600-92e6-4e7e958d7004', 'projects_view_list', 'View project records in main page', 'o', 'project',
-               'project', 'view_projects_list', 1, getdate(), 1, NULL, 1, 'View Project Records Main', NULL),
-
-              ('ba88a0df-854b-4f07-b879-c2577e3777bd', 'projects_view_list_onboard', 'View project records in main page', 'v', 'project',
-               'project', 'view_projects_list_onboard', 1, getdate(), 1, NULL, 1, 'View Project Records Main', NULL),
-
-			   ('6648945d-5b7c-4557-aa32-af85ccbfb14a', 'dry_dock_project_create', 'Create dry dock project', 'o', 'project',
-               'project', 'create_dry_dock_project', 1, getdate(), 1, NULL, 1, 'Create Dry Dock Project', NULL),
-
-			   ('cbd1b4ec-5dee-4437-ae86-f367ed576ea0', 'dry_dock_project_delete', 'Delete dry dock project', 'o', 'project',
-               'project', 'delete_dry_dock_project', 1, getdate(), 1, NULL, 1, 'Delete Dry Dock Project', NULL),
-
-			   ('d39cf0f9-5386-4506-a130-2b621707e757', 'dry_dock_project_view_details', 'View dry dock project detail page', 'o', 'project',
-               'dry_dock', 'view_details_dry_dock_project', 1, getdate(), 1, NULL, 1, 'View Dry Dock Project Detail', NULL),
-
-			   ('70b68d32-63b8-4ff7-8695-aec5a9e899f1', 'dry_dock_project_attachment_view', 'View attachment rights for project dry dock', 'o', 'project',
-               'dry_dock', 'view_dry_dock_project_attachment', 1, getdate(), 1, NULL, 1, 'View Attachment in Project Dry Dock', NULL),
-
-			   ('78ca7a6d-2b5d-4389-bd3f-1aa5e06f3545', 'dry_dock_project_view_details_onboard', 'View dry dock project detail page', 'v', 'project',
-               'dry_dock', 'view_dry_dock_project_details_onboard', 1, getdate(), 1, NULL, 1, 'View Dry Dock Project Detail', NULL),
-
-			   ('dd7a5ea8-1ee5-4c52-aa3b-3b27288d1926', 'dry_dock_project_attachment_view_onboard', 'View attachment rights for project dry dock', 'v', 'project',
-               'dry_dock', 'view_dry_dock_project_attachment_onboard', 1, getdate(), 1, NULL, 1, 'View Attachment in Project Dry Dock', NULL),
-
-			   ('8d0cbdfb-0f49-4b6f-85e3-040fd392813a', 'dry_dock_project_edit_header', 'Edit header section in project dry dock', 'o', 'project',
-               'dry_dock', 'edit_dry_dock_project_header', 1, getdate(), 1, NULL, 1, 'Edit Header Section of Project Dry Dock', NULL),
-
-			   ('98d8cf6b-72bf-43f4-ba4c-8792adfe1f3e', 'dry_dock_project_edit_flow', 'Add or Edit Workflow and Follow up in project Dry Dock', 'o', 'project',
-               'dry_dock', 'edit_dry_dock_project_flow', 1, getdate(), 1, NULL, 1, 'Add or Edit Workflow and Follow up in Project Dry Dock', NULL),
-
-			   ('e871b32a-8b37-4e81-95a0-227037d2e512', 'dry_dock_project_attachment_add', 'Add attachment rights for project dry dock', 'o', 'project',
-               'dry_dock', 'add_dry_dock_project_attachment', 1, getdate(), 1, NULL, 1, 'Add Attachment in Project Dry Dock', NULL),
-
-			   ('d1aa0d3d-bb13-48d7-9d17-4e3b3901b51c', 'dry_dock_project_attachment_edit', 'Edit attachment rights for project dry dock', 'o', 'project',
-               'dry_dock', 'edit_dry_dock_project_attachment', 1, getdate(), 1, NULL, 1, 'Edit Attachment in Project Dry Dock', NULL),
-
-			   ('ce04db58-161a-4a1e-b89b-7d3acdd4aea5', 'dry_dock_project_attachment_delete', 'Delete attachment rights for project dry dock', 'o', 'project',
-               'dry_dock', 'delete_dry_dock_project_attachment', 1, getdate(), 1, NULL, 1, 'Delete Attachment in Project Dry Dock', NULL),
-
-			   ('860c2446-c5d0-4880-84f4-268dfc8ae4d1', 'dry_dock_project_edit_header_onboard', 'Edit header section in project dry dock', 'v', 'project',
-               'dry_dock', 'edit_dry_dock_project_header_onboard', 1, getdate(), 1, NULL, 1, 'Edit Header Section in Project Dry Dock', NULL),
-
-			   ('403a0b02-6a4c-43dc-9791-dccb89b938f1', 'dry_dock_project_edit_flow_onboard', 'Add or Edit Workflow and Follow up in project Dry Dock', 'v', 'project',
-               'dry_dock', 'edit_dry_dock_project_flow_onboard', 1, getdate(), 1, NULL, 1, 'Add or Edit Workflow and Follow up in Project Dry Dock', NULL),
-
-              ('56c0d41f-c230-4132-a300-0c2566e2ecce', 'dry_dock_project_attachment_add_onboard', 'Add attachment rights for project dry dock', 'v', 'project',
-               'dry_dock', 'add_dry_dock_project_attachment_onboard', 1, getdate(), 1, NULL, 1, 'Add Attachment in Project Dry Dock', NULL),
-
-              ('3fa3988a-e6d5-4944-b4aa-f3932e986006', 'dry_dock_project_attachment_edit_onboard', 'Edit attachment rights for project dry dock', 'v', 'project',
-               'dry_dock', 'edit_dry_dock_project_attachment_onboard', 1, getdate(), 1, NULL, 1, 'Edit Attachment in Project Dry Dock', NULL),
-
-              ('a8318817-4c33-49c8-b516-a796ea305c95', 'dry_dock_project_attachment_delete_onboard', 'Delete attachment rights for project dry dock', 'v', 'project',
-               'dry_dock', 'delete_dry_dock_project_attachment_onboard', 1, getdate(), 1, NULL, 1, 'Delete Attachment in Project Dry Dock', NULL))
-
-    AS SOURCE ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],
-               [Function_Code], [Action], [Created_By], [Date_Of_Creation], [Modified_By], [Date_Of_Modification],
-               [Active_Status], [right_name], [api_url])
-ON TARGET.[Right_Code] = SOURCE.[Right_Code]
-WHEN MATCHED THEN
-    UPDATE
-    SET TARGET.[Right_UID]=SOURCE.[Right_UID],
-        TARGET.[Right_Code]=SOURCE.[Right_Code],
-        TARGET.[Right_Description]=SOURCE.[Right_Description],
-        TARGET.[Valid_On]=SOURCE.[Valid_On],
-        TARGET.[Module_Code]=SOURCE.[Module_Code],
-        TARGET.[Function_Code]=SOURCE.[Function_Code],
-        TARGET.[Action]=SOURCE.[Action],
-        TARGET.[Modified_By]=1,
-        TARGET.[Date_Of_Modification]=getdate(),
-        TARGET.[Active_Status]=1,
-        TARGET.[right_name]=SOURCE.[right_name],
-        TARGET.[api_url] = SOURCE.[api_url]
-WHEN NOT MATCHED BY TARGET THEN
-    INSERT ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],
-            [Function_Code], [Action], [Created_By], [Date_Of_Creation], [Modified_By],
-            [Date_Of_Modification], [Active_Status], [right_name], [api_url])
-    VALUES (SOURCE.[Right_UID], SOURCE.[Right_Code], SOURCE.[Right_Description],
-            SOURCE.[Valid_On], SOURCE.[Module_Code], SOURCE.[Function_Code],
-            SOURCE.[Action], SOURCE.[Created_By], SOURCE.[Date_Of_Creation], SOURCE.[Modified_By],
-            SOURCE.[Date_Of_Modification], SOURCE.[Active_Status], SOURCE.[right_name], SOURCE.[api_url]);
+               	
+			   
+ MERGE INTO INF_LIB_Right AS TARGET
+ USING (VALUES ('218da033-cff4-4600-92e6-4e7e958d7004', 'projects_view_list', 'View project records in main page', 'o', 'project',
+                'project', 'view_projects_list', 1, getdate(), 1, NULL, 1, 'View Project Records Main', NULL),
+ 
+                ('ba88a0df-854b-4f07-b879-c2577e3777bd', 'projects_view_list_onboard', 'View project records in main page', 'v', 'project',
+                'project', 'view_projects_list_onboard', 1, getdate(), 1, NULL, 1, 'View Project Records Main', NULL),
+ 
+                ('6648945d-5b7c-4557-aa32-af85ccbfb14a', 'dry_dock_project_create', 'Create dry dock project', 'o', 'project',
+                'project', 'create_dry_dock_project', 1, getdate(), 1, NULL, 1, 'Create Dry Dock Project', NULL),
+                 
+                 ('cbd1b4ec-5dee-4437-ae86-f367ed576ea0', 'dry_dock_project_delete', 'Delete dry dock project', 'o', 'project',
+                'project', 'delete_dry_dock_project', 1, getdate(), 1, NULL, 1, 'Delete Dry Dock Project', NULL),
+ 
+                ('d39cf0f9-5386-4506-a130-2b621707e757', 'dry_dock_project_view_details', 'View dry dock project detail page', 'o', 'project',
+                'dry_dock', 'view_details_dry_dock_project', 1, getdate(), 1, NULL, 1, 'View Dry Dock Project Detail', NULL),
+                
+                 ('70b68d32-63b8-4ff7-8695-aec5a9e899f1', 'dry_dock_project_attachment_view', 'View attachment rights for project dry dock', 'o', 'project',
+                'dry_dock', 'view_dry_dock_project_att', 1, getdate(), 1, NULL, 1, 'View Attachment in Project Dry Dock', NULL),
+ 
+ 
+                ('78ca7a6d-2b5d-4389-bd3f-1aa5e06f3545', 'dry_dock_project_view_details_onboard', 'View dry dock project detail page', 'v', 'project',
+                'dry_dock', 'view_dd_project_details_onb', 1, getdate(), 1, NULL, 1, 'View Dry Dock Project Detail', NULL),
+ 
+                ('dd7a5ea8-1ee5-4c52-aa3b-3b27288d1926', 'dry_dock_project_attachment_view_onboard', 'View attachment rights for project dry dock', 'v', 'project',
+                'dry_dock', 'view_dd_project_att_onb', 1, getdate(), 1, NULL, 1, 'View Attachment in Project Dry Dock', NULL),
+ 
+                ('8d0cbdfb-0f49-4b6f-85e3-040fd392813a', 'dry_dock_project_edit_header', 'Edit header section in project dry dock', 'o', 'project',
+                'dry_dock', 'edit_dd_project_header', 1, getdate(), 1, NULL, 1, 'Edit Header Section of Project Dry Dock', NULL),
+ 
+                ('98d8cf6b-72bf-43f4-ba4c-8792adfe1f3e', 'dry_dock_project_edit_flow', 'Add or Edit Workflow and Follow up in project Dry Dock', 'o', 'project',
+                'dry_dock', 'edit_dd_project_flow', 1, getdate(), 1, NULL, 1, 'Add or Edit Workflow and Follow up in Project Dry Dock', NULL),
+ 
+                ('e871b32a-8b37-4e81-95a0-227037d2e512', 'dry_dock_project_attachment_add', 'Add attachment rights for project dry dock', 'o', 'project',
+                'dry_dock', 'add_dd_project_att', 1, getdate(), 1, NULL, 1, 'Add Attachment in Project Dry Dock', NULL),
+ 
+                ('d1aa0d3d-bb13-48d7-9d17-4e3b3901b51c', 'dry_dock_project_attachment_edit', 'Edit attachment rights for project dry dock', 'o', 'project',
+                'dry_dock', 'edit_dd_project_att', 1, getdate(), 1, NULL, 1, 'Edit Attachment in Project Dry Dock', NULL),
+ 
+                ('ce04db58-161a-4a1e-b89b-7d3acdd4aea5', 'dry_dock_project_attachment_delete', 'Delete attachment rights for project dry dock', 'o', 'project',
+                'dry_dock', 'delete_dd_project_att', 1, getdate(), 1, NULL, 1, 'Delete Attachment in Project Dry Dock', NULL),
+ 
+                ('860c2446-c5d0-4880-84f4-268dfc8ae4d1', 'dry_dock_project_edit_header_onboard', 'Edit header section in project dry dock', 'v', 'project',
+                'dry_dock', 'edit_dd_project_header_onb', 1, getdate(), 1, NULL, 1, 'Edit Header Section in Project Dry Dock', NULL),
+ 
+                ('403a0b02-6a4c-43dc-9791-dccb89b938f1', 'dry_dock_project_edit_flow_onboard', 'Add or Edit Workflow and Follow up in project Dry Dock', 'v', 'project',
+                'dry_dock', 'edit_dd_project_flow_onb', 1, getdate(), 1, NULL, 1, 'Add or Edit Workflow and Follow up in Project Dry Dock', NULL),
+ 
+               ('56c0d41f-c230-4132-a300-0c2566e2ecce', 'dry_dock_project_attachment_add_onboard', 'Add attachment rights for project dry dock', 'v', 'project',
+                'dry_dock', 'add_dd_project_att_onb', 1, getdate(), 1, NULL, 1, 'Add Attachment in Project Dry Dock', NULL),
+ 
+               ('3fa3988a-e6d5-4944-b4aa-f3932e986006', 'dry_dock_project_attachment_edit_onboard', 'Edit attachment rights for project dry dock', 'v', 'project',
+                'dry_dock', 'edit_dd_project_att_onb', 1, getdate(), 1, NULL, 1, 'Edit Attachment in Project Dry Dock', NULL),
+ 
+               ('a8318817-4c33-49c8-b516-a796ea305c95', 'dry_dock_project_attachment_delete_onboard', 'Delete attachment rights for project dry dock', 'v', 'project',
+                'dry_dock', 'delete_dd_project_att_onb', 1, getdate(), 1, NULL, 1, 'Delete Attachment in Project Dry Dock', NULL)   
+                )
+ 
+     AS SOURCE ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],
+                [Function_Code], [Action], [Created_By], [Date_Of_Creation], [Modified_By], [Date_Of_Modification],
+                [Active_Status], [right_name], [api_url])
+ ON TARGET.[Right_Code] = SOURCE.[Right_Code]
+ WHEN MATCHED THEN
+     UPDATE
+     SET TARGET.[Right_UID]=SOURCE.[Right_UID],
+         TARGET.[Right_Code]=SOURCE.[Right_Code],
+         TARGET.[Right_Description]=SOURCE.[Right_Description],
+         TARGET.[Valid_On]=SOURCE.[Valid_On],
+         TARGET.[Module_Code]=SOURCE.[Module_Code],
+         TARGET.[Function_Code]=SOURCE.[Function_Code],
+         TARGET.[Action]=SOURCE.[Action],
+         TARGET.[Modified_By]=1,
+         TARGET.[Date_Of_Modification]=getdate(),
+         TARGET.[Active_Status]=1,
+         TARGET.[right_name]=SOURCE.[right_name],
+         TARGET.[api_url] = SOURCE.[api_url]
+ WHEN NOT MATCHED BY TARGET THEN
+     INSERT ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],
+             [Function_Code], [Action], [Created_By], [Date_Of_Creation], [Modified_By],
+             [Date_Of_Modification], [Active_Status], [right_name], [api_url])
+     VALUES (SOURCE.[Right_UID], SOURCE.[Right_Code], SOURCE.[Right_Description],
+             SOURCE.[Valid_On], SOURCE.[Module_Code], SOURCE.[Function_Code],
+             SOURCE.[Action], SOURCE.[Created_By], SOURCE.[Date_Of_Creation], SOURCE.[Modified_By],
+             SOURCE.[Date_Of_Modification], SOURCE.[Active_Status], SOURCE.[right_name], SOURCE.[api_url]);
 
          
 			`);
