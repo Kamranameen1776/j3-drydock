@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { CreateYardCommand } from '../../../application-layer/drydock/yard/CreateYardCommand';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
-async function CreateYardSelection(req: Request, res: Response) {
+async function CreateYard(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
@@ -13,4 +13,4 @@ async function CreateYardSelection(req: Request, res: Response) {
     });
 }
 
-exports.post = CreateYardSelection;
+exports.post = CreateYard;
