@@ -10,9 +10,16 @@ import { ExampleProjectsComponent } from './components/example-projects/example-
 import { ExampleProjectsGridComponent } from './components/example-projects/example-projects-grid/example-projects-grid.component';
 import { ExampleProjectsService } from './services/ExampleProjectsService';
 import { CreateExampleProjectPopupComponent } from './components/example-projects/example-projects-grid/create-example-project-popup/create-example-project-popup.component';
+import { ProjectDetailsComponent } from './components/project-details/project-details.component';
+import { SpecificationGridService } from './services/specifications/specification.service';
+import { SpecificationStatusPipe } from './components/project-details/specification/specification-status.pipe';
+import { StatusCodeColorPipe } from './shared/pipes/status-code-color.pipe';
+import { SpecificationTopDetailsService } from './services/specifications/specification-top-details.service';
 import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
 import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
 import { FunctionsTreeSelectComponent } from './shared/components/functions-tree-select/functions-tree-select.component';
+import { ProjectHeaderComponent } from './components/project-header/project-header.component';
+import { SpecificationsComponent } from './components/project-details/specification/specifications.component';
 import { SubItemsComponent } from './components/standard-jobs-main/sub-items/sub-items.component';
 import { UpsertSubItemFormComponent } from './components/standard-jobs-main/sub-items/upsert-sub-item-form/upsert-sub-item-form.component';
 import { UpsertSubItemPopupComponent } from './components/standard-jobs-main/sub-items/upsert-sub-item-popup/upsert-sub-item-popup.component';
@@ -35,14 +42,19 @@ export function winEnv(): unknown {
 @NgModule({
   declarations: [
     ExampleProjectsComponent,
+    SpecificationStatusPipe,
+    StatusCodeColorPipe,
     ExampleProjectsGridComponent,
     CreateExampleProjectPopupComponent,
+    ProjectDetailsComponent,
+    SpecificationsComponent,
     ProjectsMainPageComponent,
     ProjectsSpecificationsGridComponent,
     StandardJobsMainComponent,
     UpsertStandardJobPopupComponent,
     UpsertStandardJobFormComponent,
     FunctionsTreeSelectComponent,
+    ProjectHeaderComponent,
     SubItemsComponent,
     UpsertSubItemFormComponent,
     UpsertSubItemPopupComponent,
@@ -65,7 +77,7 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [ExampleProjectsService, DatePipe, ProjectsService],
+  providers: [ExampleProjectsService, DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService],
   exports: [],
   entryComponents: []
 })

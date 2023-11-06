@@ -14,4 +14,16 @@ export class VesselsRepository {
 
         return data;
     }
+
+    public async GetVesselByUID(vesselUID: string): Promise<LibVesselsEntity> {
+        const vesselRepository = getManager().getRepository(LibVesselsEntity);
+
+        const data = await vesselRepository.findOneOrFail({
+            where: {
+                uid: vesselUID,
+            },
+        });
+
+        return data;
+    }
 }
