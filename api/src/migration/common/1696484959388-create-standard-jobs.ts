@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class createStandardJobs1696484959388 implements MigrationInterface {
     tableName = 'standard_jobs';
-    schemaName = 'drydock';
+    schemaName = 'dry_dock';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {

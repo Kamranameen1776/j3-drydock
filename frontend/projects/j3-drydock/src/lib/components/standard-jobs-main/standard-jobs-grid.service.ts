@@ -15,7 +15,8 @@ export class StandardJobsGridService {
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
-      width: '100px'
+      width: '100px',
+      ReplacementFieldName: 'number'
     },
     {
       DisplayText: eStandardJobsMainLabels.Subject,

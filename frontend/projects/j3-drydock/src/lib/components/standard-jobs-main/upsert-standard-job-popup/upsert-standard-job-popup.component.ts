@@ -90,8 +90,8 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   // TODO fixme to relevant values and use them from eModuleCode and eFunctionCode from jibe-components
   private setAttachmentConfig() {
     this.attachmentConfig = {
-      Module_Code: 'j3_drydock',
-      Function_Code: 'standard_jobs',
+      Module_Code: 'project',
+      Function_Code: 'standard_job',
       Key1: this.item?.uid
     };
   }
