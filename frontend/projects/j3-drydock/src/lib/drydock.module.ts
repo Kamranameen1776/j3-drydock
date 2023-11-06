@@ -13,7 +13,7 @@ import { CreateExampleProjectPopupComponent } from './components/example-project
 import { ProjectDetailsComponent } from './components/project-details/project-details.component';
 import { SpecificationGridService } from './services/specifications/specification.service';
 import { SpecificationStatusPipe } from './components/project-details/specification/specification-status.pipe';
-import { StatusCodeColorPipe } from './utils/status-code-color.pipe';
+import { StatusCodeColorPipe } from './shared/pipes/status-code-color.pipe';
 import { SpecificationTopDetailsService } from './services/specifications/specification-top-details.service';
 import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
 import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
