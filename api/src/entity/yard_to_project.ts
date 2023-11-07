@@ -1,7 +1,7 @@
 import { Column, Entity } from 'typeorm';
 
 @Entity('yard_to_project', { schema: 'dry_dock' })
-export class yard_to_project {
+export class YardToProjectEntity {
     @Column('uniqueidentifier', {
         nullable: false,
         primary: true,
@@ -9,19 +9,29 @@ export class yard_to_project {
     })
     Uid: string;
 
-    @Column('varchar', {
-        nullable: true,
-        name: 'yard_name',
-        length: 200,
+    @Column('uniqueidentifier', {
+        primary: true,
+        name: 'project_uid',
     })
-    YardName: string | null;
+    ProjectUid: string;
 
-    @Column('varchar', {
-        nullable: true,
-        name: 'yard_location',
-        length: 200,
+    @Column('uniqueidentifier', {
+        primary: true,
+        name: 'yard_uid',
     })
-    YardLocation: string | null;
+    YardUid: string;
+
+    @Column('datetime', {
+        nullable: true,
+        name: 'last_exported_date',
+    })
+    LastExportedDate: Date;
+
+    @Column('bit', {
+        nullable: true,
+        name: 'is_selected',
+    })
+    IsSelected: boolean;
 
     @Column('bit', {
         nullable: true,
