@@ -5,12 +5,10 @@ export class createProjectsAccessRights1699007166547 implements MigrationInterfa
     public async up(queryRunner: QueryRunner): Promise<void> {
         const className = this.constructor.name;
         try {
-            const applocation = await MigrationUtilsService.getApplicationLocation();
-            if (applocation === eApplicationLocation.Office) {
-                await queryRunner.query(`
+            await queryRunner.query(`
                 MERGE INTO INF_Lib_Module AS TARGET
                 USING (VALUES (196, '93a7855b-0445-4f29-978e-53d11dafa767', 'project', 'Project', 1, getdate(), NULL, NULL, 1,
-                               'accounting'))
+                               NULL))
                     AS SOURCE ([ModuleId], [Module_UID], [Module_Code], [Module_Name], [Created_By], [Date_Of_Creation], [Modified_By],
                                [Date_Of_Modification], [Active_Status], [parent_module_code])
                 ON TARGET.[Module_Code] = SOURCE.[Module_Code]
@@ -33,7 +31,7 @@ export class createProjectsAccessRights1699007166547 implements MigrationInterfa
                             SOURCE.[Modified_By], SOURCE.[Date_Of_Modification], SOURCE.[Active_Status], SOURCE.[parent_module_code]);     
 			`);
 
-                await queryRunner.query(`
+            await queryRunner.query(`
                 MERGE INTO inf_lib_function AS TARGET
 USING (VALUES (3160, 'af1c36a1-9cd0-43c4-b4e2-62f500729fd4', 'project', 'project', 'Project', 1, getdate(), 1, NULL, 1, NULL, 'crew', NULL),
 				(3160, 'f808da39-ba82-482b-90d8-912ecb41bc04', 'project', 'dry_dock', 'Dry Dock', 1, getdate(), 1, NULL, 1, NULL, 'crew', NULL))
@@ -65,7 +63,7 @@ WHEN NOT MATCHED BY TARGET THEN
          
 			`);
 
-                await queryRunner.query(`
+            await queryRunner.query(`
                	
 			   
  MERGE INTO INF_LIB_Right AS TARGET
@@ -155,7 +153,7 @@ WHEN NOT MATCHED BY TARGET THEN
          
 			`);
 
-                await queryRunner.query(`
+            await queryRunner.query(`
                 MERGE INTO inf_lnk_right_user_type AS TARGET
                 USING (VALUES ('82b76534-26fb-4e52-a492-bec49633eb96', 'projects_view_list','3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), 1, NULL),
                                 ('9fdadd3c-28e7-4bad-bb44-e16fb11e5898', 'projects_view_list_onboard','0F3613B9-9FB5-40E6-8763-FC4941136598', 1, 1, getdate(), 1, NULL),
@@ -192,7 +190,7 @@ WHEN NOT MATCHED BY TARGET THEN
                             SOURCE.[created_by], SOURCE.[date_of_creation], SOURCE.[modified_by], SOURCE.[date_of_modification]);     
             `);
 
-                await queryRunner.query(`
+            await queryRunner.query(`
                 MERGE INTO INF_Lib_Group AS TARGET
                 USING (VALUES ('28ee5f8b-d5d3-40c9-b5fb-f8f782b16046', 'view_project_main', 
                                 'View access rights for project main page', '1', getdate(), null, null, 1, 'View Project Main', '3C084885-783B-46B8-9635-B2F70CC49218'),
@@ -240,7 +238,7 @@ WHEN NOT MATCHED BY TARGET THEN
                             SOURCE.[Date_Of_Modification], SOURCE.[Active_Status], SOURCE.[group_name], SOURCE.[user_type_uid]);      
             `);
 
-                await queryRunner.query(`
+            await queryRunner.query(`
                 MERGE INTO INF_Lib_GroupRights AS TARGET
                 USING (VALUES (N'4cd31095-25c0-428c-9658-ca7c887016c2', N'view_project_main', N'projects_view_list', 1, N'1', getdate(), NULL, NULL),
                                 (N'0c98027a-25f8-4f81-9e9c-d99f7a98de99', N'view_project_main_onboard', N'projects_view_list_onboard', 1, N'1', getdate(), NULL, NULL),
@@ -278,7 +276,7 @@ WHEN NOT MATCHED BY TARGET THEN
                             SOURCE.[modified_by], SOURCE.[date_of_modification]);
             `);
 
-                await queryRunner.query(`
+            await queryRunner.query(`
                 if exists(select *
                     from INF_Lib_Roles
                     where Role = 'Client Admin'
@@ -319,7 +317,7 @@ WHEN NOT MATCHED BY TARGET THEN
               End;
             `);
 
-                await queryRunner.query(`
+            await queryRunner.query(`
                 if exists(select *
                     from INF_Lib_Roles
                     where Role = 'JiBe Crew Implementation'
@@ -361,7 +359,7 @@ WHEN NOT MATCHED BY TARGET THEN
                               SOURCE.[Modified_By], SOURCE.[Date_Of_Modification], SOURCE.[Active_Status]);
               End;
              `);
-            }
+
             await MigrationUtilsService.migrationLog(
                 className,
                 '',
