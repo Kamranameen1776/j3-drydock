@@ -4,7 +4,19 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'staticGridSearch'
 })
 export class StaticGridSearchPipe implements PipeTransform {
-  transform<T>(gridData: T[], searchTerm: string, filterFn: (item: T, searchTerm: string) => boolean): T[] {
-    return gridData.filter((item) => filterFn(item, searchTerm));
+  transform<T>(gridData: T[], searchTerm: string, filterFn: (item: T, searchTerm: string) => boolean) {
+    if (!gridData) {
+      return gridData;
+    }
+
+    if (!searchTerm) {
+      return {
+        records: gridData,
+        count: gridData.length
+      };
+    }
+
+    const filtered = gridData.filter((item) => filterFn(item, searchTerm));
+    return { records: filtered, count: filtered.length };
   }
 }
