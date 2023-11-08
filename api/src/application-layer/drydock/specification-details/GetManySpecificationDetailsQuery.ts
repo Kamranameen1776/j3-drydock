@@ -4,7 +4,10 @@ import { Request } from 'express';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Query } from '../core/cqrs/Query';
 
-export class GetManySpecificationDetailsQuery extends Query<Request, SpecificationDetailsEntity[]> {
+export class GetManySpecificationDetailsQuery extends Query<
+    Request,
+    { records: SpecificationDetailsEntity[]; count?: number }
+> {
     specificationDetailsRepository: SpecificationDetailsRepository = new SpecificationDetailsRepository();
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -19,8 +22,7 @@ export class GetManySpecificationDetailsQuery extends Query<Request, Specificati
      *
      * @returns All specification details
      */
-    protected async MainHandlerAsync(request: Request): Promise<SpecificationDetailsEntity[]> {
-        const specDetails = await this.specificationDetailsRepository.GetManySpecificationDetails(request);
-        return specDetails;
+    protected async MainHandlerAsync(request: Request) {
+        return this.specificationDetailsRepository.GetManySpecificationDetails(request);
     }
 }

@@ -25,4 +25,5 @@ export class CreateSpecificationDetailsDto {
     activeStatus: boolean;
     createdByUid: string;
     createdAt: Date;
+    subject: string;
 }
