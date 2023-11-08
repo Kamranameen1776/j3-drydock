@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
@@ -6,7 +7,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class StaticGridSearchPipe implements PipeTransform {
   transform<T>(gridData: T[], searchTerm: string, filterFn: (item: T, searchTerm: string) => boolean) {
     if (!gridData) {
-      return gridData;
+      return {
+        records: [],
+        count: 0
+      };
     }
 
     if (!searchTerm) {

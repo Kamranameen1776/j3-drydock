@@ -23,3 +23,13 @@
     ></jb-grid>
   </ng-container>
 </jb-layout-widget>
+
+<ng-template
+  #isSelectedTmpl
+  let-rowData
+>
+  <jb-checkbox
+    [checked]="rowData.isSelected"
+    class="a-readonly"
+  ></jb-checkbox>
+</ng-template>
