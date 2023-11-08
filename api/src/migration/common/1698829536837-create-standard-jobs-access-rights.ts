@@ -36,7 +36,7 @@ WHEN NOT MATCHED BY TARGET THEN
                 await queryRunner.query(`
                 MERGE INTO inf_lib_function AS TARGET
 USING (VALUES (3160, '9C79EF57-A1C6-40B4-A343-968976325150', 'project', 'standard_job', 'Standard Job', 1, getdate(), 1,
-               NULL, 1, NULL, 'crew', NULL))
+               NULL, 1, NULL, 'crew', 'standard_job_attachment'))
     AS SOURCE ([FunctionId], [Function_UID], [Module_Code], [Function_Code], [Function_Name], [Created_By],
                [Date_Of_Creation], [Modified_By], [Date_Of_Modification], [Active_Status], [parent_function_code],
                [parent_module_code], [attach_prefix])

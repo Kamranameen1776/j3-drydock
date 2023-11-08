@@ -6,14 +6,10 @@ import { DropdownModule, MenuModule, SidebarModule, TieredMenuModule } from 'pri
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule as PrimeNgModule } from 'primeng';
 import { JiBeTheme, JibeComponentsModule } from 'jibe-components';
-import { ExampleProjectsComponent } from './components/example-projects/example-projects.component';
-import { ExampleProjectsGridComponent } from './components/example-projects/example-projects-grid/example-projects-grid.component';
-import { ExampleProjectsService } from './services/ExampleProjectsService';
-import { CreateExampleProjectPopupComponent } from './components/example-projects/example-projects-grid/create-example-project-popup/create-example-project-popup.component';
 import { ProjectDetailsComponent } from './components/project-details/project-details.component';
 import { SpecificationGridService } from './services/specifications/specification.service';
 import { SpecificationStatusPipe } from './components/project-details/specification/specification-status.pipe';
-import { StatusCodeColorPipe } from './utils/status-code-color.pipe';
+import { StatusCodeColorPipe } from './shared/pipes/status-code-color.pipe';
 import { SpecificationTopDetailsService } from './services/specifications/specification-top-details.service';
 import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
 import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
@@ -41,11 +37,8 @@ export function winEnv(): unknown {
 
 @NgModule({
   declarations: [
-    ExampleProjectsComponent,
     SpecificationStatusPipe,
     StatusCodeColorPipe,
-    ExampleProjectsGridComponent,
-    CreateExampleProjectPopupComponent,
     ProjectDetailsComponent,
     SpecificationsComponent,
     ProjectsMainPageComponent,
@@ -77,7 +70,7 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [ExampleProjectsService, DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService],
+  providers: [DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService],
   exports: [],
   entryComponents: []
 })

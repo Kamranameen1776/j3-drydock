@@ -3,7 +3,7 @@ import { MigrationUtilsService } from 'j2utils';
 
 export class createStandardJobVesselTypeTable1698221383318 implements MigrationInterface {
     tableName = 'standard_jobs_vessel_type';
-    schemaName = 'drydock';
+    schemaName = 'dry_dock';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {

@@ -3,7 +3,7 @@ import { MigrationUtilsService } from "j2utils";
 
 export class createStandardJobSurveyCertificateAuthorityTable1698397957294 implements MigrationInterface {
     tableName = 'standard_jobs_survey_certificate_authority';
-    schemaName = 'drydock';
+    schemaName = 'dry_dock';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {

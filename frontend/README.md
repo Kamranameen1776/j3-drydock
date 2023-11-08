@@ -52,3 +52,13 @@ Run `ng generate component component-name --project j3-drydock` to generate a ne
 ```sh
 $ npm run test
 ```
+
+## Deployment
+1. Pull changes for j3-drydock and jibe2web
+2. Get the latest version of j3-drydock from jibe2web (package.json) file
+3. Increment version in `~\j3-drydock\frontend\projects\j3-drydock\package.json`
+4. `npm run build` in `~\j3-drydock\frontend`
+5. copy .npmrc from `~\j3-drydock\frontend\` to `~\j3-drydock\frontend\dist\j3-drydock`
+6. `npm publish` in `~\j3-drydock\frontend\dist\j3-drydock`
+7. update version in jibe2web (package.json) and test it locally
+8. Create PR for jibe2web and j3-drydock

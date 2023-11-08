@@ -3,7 +3,7 @@ import { MigrationUtilsService } from "j2utils";
 
 export class createSubItemsTable1698668572441 implements MigrationInterface {
     tableName = 'standard_jobs_sub_items';
-    schemaName = 'drydock';
+    schemaName = 'dry_dock';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
