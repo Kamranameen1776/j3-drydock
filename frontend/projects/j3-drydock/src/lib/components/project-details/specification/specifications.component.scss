@@ -12,7 +12,11 @@
 }
 
 :host ::ng-deep {
-  .ui-tabview-panels, .host-grid-container, jb-grid, .ui-tabview-panel, p-tabpanel {
+  .ui-tabview-panels,
+  .host-grid-container,
+  jb-grid,
+  .ui-tabview-panel,
+  p-tabpanel {
     max-height: 582px;
     display: block;
   }
