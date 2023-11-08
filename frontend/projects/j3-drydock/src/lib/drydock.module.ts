@@ -25,6 +25,7 @@ import { ProjectsMainPageComponent } from './components/projects-main-page/proje
 import { ProjectsSpecificationsGridComponent } from './components/projects-main-page/projects-specifications-grid/projects-specifications-grid.component';
 import { ProjectsService } from './services/ProjectsService';
 import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
+import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -53,7 +54,8 @@ export function winEnv(): unknown {
     UpsertSubItemPopupComponent,
     StandardJobsStatusNamePipe,
     StandardJobsStatusColorPipe,
-    StaticGridSearchPipe
+    StaticGridSearchPipe,
+    SpecificationDetailsComponent
   ],
   imports: [
     CommonModule,
