@@ -1,9 +1,9 @@
-import { YardToProjectRepository } from '../../../../dal/drydock/yards/yard-to-project/YardToProjectRepository';
+import { LinkedYardsRepository } from '../../../../dal/drydock/yards/linked-yards/LinkedYardsRepository';
 import { YardToProjectEntity } from '../../../../entity/yard_to_project';
 import { Query } from '../../core/cqrs/Query';
 
-export class GetYardToProjectQuery extends Query<string, YardToProjectEntity> {
-    yardToProjectRepository = new YardToProjectRepository();
+export class GetLinkedYardsQuery extends Query<string, YardToProjectEntity> {
+    linkedYardsRepository = new LinkedYardsRepository();
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
         return;
@@ -17,7 +17,7 @@ export class GetYardToProjectQuery extends Query<string, YardToProjectEntity> {
      * @returns All yard details specific to project
      */
     protected async MainHandlerAsync(projectUid: string): Promise<YardToProjectEntity> {
-        const yardToProjectList = await this.yardToProjectRepository.getYardsToProject(projectUid);
-        return yardToProjectList;
+        const linkedYardDetails = await this.linkedYardsRepository.getLinkedYards(projectUid);
+        return linkedYardDetails;
     }
 }

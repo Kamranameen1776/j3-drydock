@@ -4,7 +4,7 @@ import { YardToProjectEntity } from '../../../../entity/yard_to_project';
 import { IUpdateYardToProjectDto } from './dtos/IUpdateYardToProjectDto';
 
 export class YardToProjectRepository {
-    public async getYardsToProject(projectUid: string): Promise<YardToProjectEntity[]> {
+    public async getYardsToProject(projectUid: string): Promise<YardToProjectEntity> {
         const result = getManager()
             .createQueryBuilder('yard_to_project', 'yp')
             .leftJoin('yards', 'yd', 'yd.uid = yp.yard_uid')
