@@ -29,11 +29,11 @@ export class StatementOfFactsRepository {
         await queryRunner.manager.update(StatementOfFactsEntity, data.uid, data);
     }
 
-    public async GetStatementOfFacts(request: Request): Promise<ODataResult<any>> {
+    public async GetStatementOfFacts(request: Request): Promise<ODataResult<StatementOfFactsEntity>> {
         const projectRepository = getManager().getRepository(StatementOfFactsEntity);
         const query = projectRepository
             .createQueryBuilder('sof')
-            .select(['sof.uid AS uid', 'sof.fact AS Fact', 'cast(sof.date as datetimeoffset) AS DateAndTime'])
+            .select(['sof.uid AS uid', 'sof.Fact AS Fact', 'cast(sof.DateAndTime as datetimeoffset) AS DateAndTime'])
             .where('sof.ActiveStatus = 1');
 
         const oDataService = new ODataService(request, getConnection);

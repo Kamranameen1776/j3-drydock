@@ -6,8 +6,9 @@ import { ODataResult } from 'shared/interfaces';
 import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-facts/StatementOfFactsRepository';
 import { Query } from '../core/cqrs/Query';
 import { GetStatementOfFactsDto } from './dtos/GetStatementOfFactsDto';
+import { GetStatementOfFactsResultDto } from './dtos/GetStatementOfFactsResultDto';
 
-export class GetStatementOfFactsQuery extends Query<Request, ODataResult<any>> {
+export class GetStatementOfFactsQuery extends Query<Request, ODataResult<GetStatementOfFactsResultDto>> {
     repository: StatementOfFactsRepository;
 
     constructor() {
@@ -33,7 +34,7 @@ export class GetStatementOfFactsQuery extends Query<Request, ODataResult<any>> {
     /**
      * @returns All specification details
      */
-    protected async MainHandlerAsync(request: Request): Promise<ODataResult<any>> {
+    protected async MainHandlerAsync(request: Request): Promise<ODataResult<GetStatementOfFactsResultDto>> {
         const data = await this.repository.GetStatementOfFacts(request);
         return data;
     }
