@@ -15,6 +15,10 @@ export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandar
     protected async MainHandlerAsync(request: RequestWithOData): Promise<GetStandardJobsResultDto> {
         const data = await this.standardJobsRepository.getStandardJobs(request);
 
-        return this.standardJobsService.mapStandardJobsDataToDto(data);
+        const uids = data.records.map(item => item.uid);
+
+        const subItems = await this.standardJobsRepository.getStandardJobSubItems(uids);
+
+        return this.standardJobsService.mapStandardJobsDataToDto(data, subItems);
     }
 }

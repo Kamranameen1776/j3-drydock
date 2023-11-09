@@ -185,4 +185,20 @@ export class StandardJobsRepository {
 
         return [];
     }
+
+    public getStandardJobSubItems(uids: string[]): Promise<standard_jobs_sub_items[]> {
+        const uidString = uids.map(uid => `'${uid}'`).join(",");
+        return getManager()
+            .createQueryBuilder(standard_jobs_sub_items, 'sub_items')
+            .select(
+                'sub_items.uid as uid,' +
+                    'sub_items.code as code,' +
+                    'sub_items.subject as subject,' +
+                    'sub_items.description as description,' +
+                    'sub_items.standard_job_uid as standard_job_uid',
+            )
+            .where('sub_items.active_status = 1')
+            .andWhere(`sub_items.standard_job_uid IN (${uidString})`)
+            .getRawMany();
+    }
 }

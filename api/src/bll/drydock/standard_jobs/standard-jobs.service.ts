@@ -12,84 +12,87 @@ import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items
 import { GetStandardJobSubItemsResultDto } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobSubItemsResultDto';
 
 export class StandardJobsService {
-    public mapStandardJobsDataToDto(queryData: GetStandardJobsQueryResult): GetStandardJobsResultDto {
-        const resultData: GetStandardJobsResult[] = queryData.records
-            .map((standardJob) => {
-                let newItem: GetStandardJobsResult = {
-                    uid: standardJob.uid,
-                    function: standardJob.function,
-                    functionUid: standardJob.functionUid,
-                    code: standardJob.code,
-                    scope: standardJob.scope,
-                    category: standardJob.category,
-                    categoryUid: standardJob.categoryUid,
-                    doneBy: standardJob.doneBy,
-                    doneByUid: standardJob.doneByUid,
-                    materialSuppliedBy: standardJob.materialSuppliedBy,
-                    materialSuppliedByUid: standardJob.materialSuppliedByUid,
-                    vesselTypeSpecific: standardJob.vesselTypeSpecific,
-                    description: standardJob.description,
-                    activeStatus: standardJob.activeStatus,
+    public mapStandardJobsDataToDto(
+        queryData: GetStandardJobsQueryResult,
+        subItems: standard_jobs_sub_items[],
+    ): GetStandardJobsResultDto {
+        const resultData: GetStandardJobsResult[] = queryData.records.map((standardJob) => {
+            let newItem: GetStandardJobsResult = {
+                uid: standardJob.uid,
+                function: standardJob.function,
+                functionUid: standardJob.functionUid,
+                code: standardJob.code,
+                scope: standardJob.scope,
+                category: standardJob.category,
+                categoryUid: standardJob.categoryUid,
+                doneBy: standardJob.doneBy,
+                doneByUid: standardJob.doneByUid,
+                materialSuppliedBy: standardJob.materialSuppliedBy,
+                materialSuppliedByUid: standardJob.materialSuppliedByUid,
+                vesselTypeSpecific: standardJob.vesselTypeSpecific,
+                description: standardJob.description,
+                activeStatus: standardJob.activeStatus,
+                subject: {
+                    innerHTML: '<p class="jb_grid_mainText">${standardJob.subject}</p>',
+                    value: standardJob.subject,
+                    cellStyle: '',
+                },
+                inspectionId: [],
+                inspection: '',
+                vesselTypeId: [],
+                vesselType: '',
+                subItems: [],
+            };
+
+            if (standardJob.inspectionId) {
+                const inspectionIds = standardJob.inspectionId.split(',');
+                const inspections = standardJob.inspection.split(',');
+                newItem = {
+                    ...newItem,
+                    inspectionId: _.uniq(inspectionIds),
+                    inspection: _.uniq(inspections).join(','),
+                };
+            }
+
+            if (standardJob.vesselTypeId) {
+                const vesselTypeIds = standardJob.vesselTypeId.split(',');
+                const vesselTypes = standardJob.vesselType.split(',');
+                newItem = {
+                    ...newItem,
+                    vesselTypeId: _.uniq(vesselTypeIds),
+                    vesselType: _.uniq(vesselTypes).join(','),
+                };
+            }
+
+            if (standardJob.function && standardJob.subject) {
+                newItem = {
+                    ...newItem,
                     subject: {
-                        innerHTML: '<p class="jb_grid_mainText">${standardJob.subject}</p>',
+                        innerHTML: `<p class="jb_grid_mainText">${standardJob.subject}</p><p class="jb_grid_subText">${standardJob.function}</p>`,
                         value: standardJob.subject,
                         cellStyle: '',
                     },
-                    inspectionId: [],
-                    inspection: '',
-                    vesselTypeId: [],
-                    vesselType: '',
-                    subItems: [],
                 };
+            }
 
-                if (standardJob.inspectionId) {
-                    const inspectionIds = standardJob.inspectionId.split(',');
-                    const inspections = standardJob.inspection.split(',');
-                    newItem = {
-                        ...newItem,
-                        inspectionId: _.uniq(inspectionIds),
-                        inspection: _.uniq(inspections).join(','),
-                    };
-                }
+            return newItem;
+        });
 
-                if (standardJob.vesselTypeId) {
-                    const vesselTypeIds = standardJob.vesselTypeId.split(',');
-                    const vesselTypes = standardJob.vesselType.split(',');
-                    newItem = {
-                        ...newItem,
-                        vesselTypeId: _.uniq(vesselTypeIds),
-                        vesselType: _.uniq(vesselTypes).join(','),
-                    };
-                }
-
-                if (standardJob.subItemUid) {
-                    newItem = {
-                        ...newItem,
-                        subItems: [
-                            {
-                                standard_job_uid: standardJob.uid,
-                                uid: standardJob.subItemUid,
-                                code: standardJob.subItemCode,
-                                subject: standardJob.subItemSubject,
-                                description: standardJob.subItemDescription,
-                            },
-                        ],
-                    };
-                }
-
-                if (standardJob.function && standardJob.subject) {
-                    newItem = {
-                        ...newItem,
-                        subject: {
-                            innerHTML: `<p class="jb_grid_mainText">${standardJob.subject}</p><p class="jb_grid_subText">${standardJob.function}</p>`,
-                            value: standardJob.subject,
-                            cellStyle: '',
-                        },
-                    };
-                }
-
-                return newItem;
-            })
+        if (subItems) {
+            resultData.forEach((item) => {
+                item.subItems = subItems
+                    .filter(subItem => subItem.standard_job_uid === item.uid)
+                    .map(subItem => {
+                        return {
+                            uid: subItem.uid,
+                            code: subItem.code,
+                            subject: subItem.subject,
+                            description: subItem.description,
+                            standard_job_uid: item.uid,
+                        };
+                    });
+            });
+        }
 
         return {
             records: resultData,
