@@ -32,7 +32,7 @@ const routes: Routes = [
     runGuardsAndResolvers: 'paramsOrQueryParamsChange'
   },
   {
-    path: 'specification-details',
+    path: 'specification-details/:specificationUid',
     component: SpecificationDetailsComponent,
     canActivate: [AuthGuardService],
     runGuardsAndResolvers: 'paramsOrQueryParamsChange'

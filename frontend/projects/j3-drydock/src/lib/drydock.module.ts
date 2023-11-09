@@ -26,6 +26,7 @@ import { ProjectsSpecificationsGridComponent } from './components/projects-main-
 import { ProjectsService } from './services/ProjectsService';
 import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
+import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -72,7 +73,7 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService],
+  providers: [DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService, SpecificationDetailsService],
   exports: [],
   entryComponents: []
 })
