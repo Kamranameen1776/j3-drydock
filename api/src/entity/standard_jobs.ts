@@ -17,7 +17,7 @@ import { tm_dd_lib_item_category } from './tm_dd_lib_item_category';
 import { standard_jobs_sub_items } from './standard_jobs_sub_items';
 import { BaseDatesEntity } from './baseDatesEntity';
 
-@Entity('standard_jobs', { schema: 'drydock' })
+@Entity('standard_jobs', { schema: 'dry_dock' })
 export class standard_jobs extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
@@ -99,7 +99,7 @@ export class standard_jobs extends BaseDatesEntity {
     @ManyToMany(() => LIB_VESSELTYPES, (LIB_VESSELTYPES) => LIB_VESSELTYPES.standard_jobs)
     @JoinTable({
         name: 'standard_jobs_vessel_type',
-        schema: 'drydock',
+        schema: 'dry_dock',
         joinColumn: {
             name: 'standard_job_uid',
             referencedColumnName: 'uid',
@@ -117,7 +117,7 @@ export class standard_jobs extends BaseDatesEntity {
     )
     @JoinTable({
         name: 'standard_jobs_survey_certificate_authority',
-        schema: 'drydock',
+        schema: 'dry_dock',
         joinColumn: {
             name: 'standard_job_uid',
             referencedColumnName: 'uid',
