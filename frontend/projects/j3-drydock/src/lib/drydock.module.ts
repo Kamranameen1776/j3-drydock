@@ -29,6 +29,7 @@ import { ProjectTypesLeftPanelComponent } from './components/projects-main-page/
 import { ProjectStatusFilterComponent } from './components/projects-main-page/project-types-left-panel/project-status-filter/project-status-filter.component';
 import { LeftPanelFilterService } from './components/projects-main-page/services/LeftPanelFilterService';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
+import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -77,7 +78,7 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService, LeftPanelFilterService],
+  providers: [DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService, SpecificationDetailsService, LeftPanelFilterService],
   exports: [],
   entryComponents: []
 })
