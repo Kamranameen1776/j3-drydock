@@ -33,7 +33,7 @@ export class YardsEntity {
         nullable: true,
         name: 'created_by',
     })
-    CreatedByUid: string;
+    CreatedBy: string;
 
     @Column('datetime', {
         nullable: true,

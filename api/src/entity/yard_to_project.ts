@@ -17,9 +17,9 @@ export class YardProjectsEntity {
 
     @Column('uniqueidentifier', {
         primary: true,
-        name: 'yard_uids',
+        name: 'yard_uid',
     })
-    YardUids: [];
+    YardUid: string;
 
     @Column('datetime', {
         nullable: true,
@@ -43,7 +43,7 @@ export class YardProjectsEntity {
         nullable: true,
         name: 'created_by',
     })
-    CreatedByUid: string;
+    CreatedBy: string;
 
     @Column('datetime', {
         nullable: true,

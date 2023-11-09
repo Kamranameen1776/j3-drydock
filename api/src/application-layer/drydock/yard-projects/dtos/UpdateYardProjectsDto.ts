@@ -1,6 +1,6 @@
 export class UpdateYardProjectsDto {
     uid: string;
-    yardUids: [];
+    yardUid: string;
     lastExportedDate: Date;
     isSelected: boolean;
 }

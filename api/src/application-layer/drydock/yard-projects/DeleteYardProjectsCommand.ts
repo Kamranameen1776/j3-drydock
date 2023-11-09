@@ -1,9 +1,10 @@
+import { Request } from 'express';
+import { AccessRights } from 'j2utils';
+
 import { YardProjectsRepository } from '../../../dal/drydock/yard-projects/YardProjectsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { DeleteYardProjectsDto } from './dtos/DeleteYardProjectsDto';
-
-export class DeleteYardProjectsCommand extends Command<DeleteYardProjectsDto, void> {
+export class DeleteYardProjectsCommand extends Command<Request, void> {
     yardProjectsRepository: YardProjectsRepository;
     uow: UnitOfWork;
 
@@ -18,16 +19,22 @@ export class DeleteYardProjectsCommand extends Command<DeleteYardProjectsDto, vo
         return;
     }
 
-    protected async ValidationHandlerAsync(request: DeleteYardProjectsDto): Promise<void> {
+    protected async ValidationHandlerAsync(request: Request): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
         }
     }
 
-    protected async MainHandlerAsync(request: DeleteYardProjectsDto) {
+    protected async MainHandlerAsync(request: Request) {
+        const { UserUID: deletedBy } = AccessRights.authorizationDecode(request);
+        const uid = request.body.uid;
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const updatedSpecData = await this.yardProjectsRepository.DeleteYardProjects(request.uid, queryRunner);
-            return updatedSpecData;
+            const deletedYardProject = await this.yardProjectsRepository.DeleteYardProjects(
+                uid,
+                deletedBy,
+                queryRunner,
+            );
+            return deletedYardProject;
         });
 
         return;

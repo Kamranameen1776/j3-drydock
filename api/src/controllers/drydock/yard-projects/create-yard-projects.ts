@@ -9,7 +9,7 @@ async function CreateYardProjects(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new CreateYardProjectsCommand();
 
-        return await command.ExecuteAsync(request.body);
+        return await command.ExecuteAsync(request);
     });
 }
 
