@@ -33,3 +33,9 @@
     class="a-readonly"
   ></jb-checkbox>
 </ng-template>
+
+<jb-drydock-link-yard-popup
+  [projectId]="projectId"
+  [isOpen]="isLinkPopupVisible"
+  (closeDialog)="onCloseLinkYardPopup($event)"
+></jb-drydock-link-yard-popup>

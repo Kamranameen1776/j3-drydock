@@ -78,4 +78,17 @@ export class ProjectDetailsService {
       }
     ]).pipe(delay(2000));
   }
+
+  linkYardsToProject(projectId: string, uids: string[]) {
+    // const apiReq: WebApiRequest = {
+    //   apiBase: eApiBase.DryDockApi,
+    //   entity: eEntities.DryDock,
+    //   crud: eCrud.Post,
+    //   action: 'yard/LinkToProject',
+    //   params: `projectId=${projectId}`,
+    //   body: uids
+    // };
+    // return this.apiRequestService.sendApiReq(apiReq);
+    return of([]).pipe(delay(2000));
+  }
 }

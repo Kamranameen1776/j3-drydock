@@ -31,6 +31,7 @@ import { ProjectsService } from './services/ProjectsService';
 import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
 import { RfqComponent } from './components/project-details/yard/rfq/rfq.component';
 import { ComparisonComponent } from './components/project-details/yard/comparison/comparison.component';
+import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -64,7 +65,8 @@ export function winEnv(): unknown {
     StandardJobsStatusColorPipe,
     StaticGridSearchPipe,
     RfqComponent,
-    ComparisonComponent
+    ComparisonComponent,
+    LinkYardPopupComponent
   ],
   imports: [
     CommonModule,

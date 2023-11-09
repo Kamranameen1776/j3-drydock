@@ -27,7 +27,7 @@ export class RfqComponent implements OnInit {
 
   eRfqFields = eRfqFields;
 
-  linked: YardLink[] = [];
+  linked: YardLink[];
 
   searchTerm$ = this.gridService.storeState$.pipe(
     filter((event: DispatchAction) => event.type === eGridEvents.SearchTable && event.gridName === this.gridInputs.gridName),
@@ -49,7 +49,7 @@ export class RfqComponent implements OnInit {
   }
 
   onLinkYard() {
-    // TODO
+    this.isLinkPopupVisible = true;
   }
 
   onGridAction({ type, payload }: GridAction<string, YardLink>): void {
@@ -68,6 +68,15 @@ export class RfqComponent implements OnInit {
 
       default:
         break;
+    }
+  }
+  // TODO
+  onCloseLinkYardPopup(saved: YardLink[]) {
+    this.isLinkPopupVisible = false;
+
+    if (saved?.length) {
+      // refresh grid and linked
+      this.linked = cloneDeep(saved);
     }
   }
 
