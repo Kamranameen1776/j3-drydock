@@ -1,7 +1,7 @@
-export class CreateLinkedYardsDto {
+export class CreateYardProjectsDto {
     uid: string;
     projectUid: string;
-    yardUid: string;
+    yardUids: [];
     lastExportedDate: Date;
     isSelected: boolean;
     activeStatus: boolean;

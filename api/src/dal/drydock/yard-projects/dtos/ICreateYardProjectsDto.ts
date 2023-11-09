@@ -1,7 +1,7 @@
-export interface ICreateLinkedYardsDto {
+export interface ICreateYardProjectsDto {
     uid: string;
     projectUid: string;
-    yardUid: string;
+    yardUids: [];
     lastExportedDate: Date;
     isSelected: boolean;
     activeStatus: boolean;

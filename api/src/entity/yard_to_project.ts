@@ -1,7 +1,7 @@
 import { Column, Entity } from 'typeorm';
 
 @Entity('yard_to_project', { schema: 'dry_dock' })
-export class YardToProjectEntity {
+export class YardProjectsEntity {
     @Column('uniqueidentifier', {
         nullable: false,
         primary: true,
@@ -17,9 +17,9 @@ export class YardToProjectEntity {
 
     @Column('uniqueidentifier', {
         primary: true,
-        name: 'yard_uid',
+        name: 'yard_uids',
     })
-    YardUid: string;
+    YardUids: [];
 
     @Column('datetime', {
         nullable: true,

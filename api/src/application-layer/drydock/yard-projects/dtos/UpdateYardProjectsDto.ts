@@ -1,6 +1,6 @@
-export interface IUpdateYardToProjectDto {
+export class UpdateYardProjectsDto {
     uid: string;
-    yardUid: string;
+    yardUids: [];
     lastExportedDate: Date;
     isSelected: boolean;
 }
