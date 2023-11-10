@@ -32,6 +32,7 @@ import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
 import { RfqComponent } from './components/project-details/yard/rfq/rfq.component';
 import { ComparisonComponent } from './components/project-details/yard/comparison/comparison.component';
 import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
+import { SelectLinkYardGridComponent } from './components/project-details/yard/rfq/select-link-yard-grid/select-link-yard-grid.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -66,7 +67,8 @@ export function winEnv(): unknown {
     StaticGridSearchPipe,
     RfqComponent,
     ComparisonComponent,
-    LinkYardPopupComponent
+    LinkYardPopupComponent,
+    SelectLinkYardGridComponent
   ],
   imports: [
     CommonModule,

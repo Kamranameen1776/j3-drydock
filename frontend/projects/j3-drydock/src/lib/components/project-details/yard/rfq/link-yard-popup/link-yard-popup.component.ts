@@ -1,7 +1,8 @@
-import { YardLink } from './../../../../../models/interfaces/project-details';
+import { eRfqFields } from './../../../../../models/enums/rfq.enum';
+import { YardLink, YardToLink } from './../../../../../models/interfaces/project-details';
 import { ProjectDetailsService } from './../../../../../services/project-details.service';
 import { GrowlMessageService } from './../../../../../services/growl-message.service';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { getSmallPopup } from '../../../../../models/constants/popup';
 import { IJbDialog } from 'jibe-components';
 import { UnsubscribeComponent } from '../../../../../shared/classes/unsubscribe.base';
@@ -12,8 +13,10 @@ import { finalize } from 'rxjs/operators';
   templateUrl: './link-yard-popup.component.html',
   styleUrls: ['./link-yard-popup.component.scss']
 })
-export class LinkYardPopupComponent extends UnsubscribeComponent {
-  @Input() linkedGuids: string[];
+export class LinkYardPopupComponent extends UnsubscribeComponent implements OnInit {
+  @Input() set linked(val: YardLink[]) {
+    this.linkedGuids = val?.map((yard) => yard[eRfqFields.YardUid]) ?? [];
+  }
 
   @Input() projectId: string;
 
@@ -27,6 +30,10 @@ export class LinkYardPopupComponent extends UnsubscribeComponent {
 
   isSaving: boolean;
 
+  allYardsToLink: YardToLink[];
+
+  linkedGuids: string[];
+
   private guidsToLink: string[];
 
   constructor(
@@ -34,6 +41,10 @@ export class LinkYardPopupComponent extends UnsubscribeComponent {
     private projectDetailsService: ProjectDetailsService
   ) {
     super();
+  }
+
+  ngOnInit(): void {
+    this.loadAllYardsToLink();
   }
 
   onClosePopup() {
@@ -82,5 +93,16 @@ export class LinkYardPopupComponent extends UnsubscribeComponent {
           }
         }
       );
+  }
+
+  private loadAllYardsToLink() {
+    this.projectDetailsService.getYardsToLink(this.projectId).subscribe((yards: YardToLink[]) => {
+      this.allYardsToLink = yards.map((yard) => {
+        return <YardToLink>{
+          ...yard,
+          isLinked: this.linkedGuids.includes(yard[eRfqFields.YardUid])
+        };
+      });
+    });
   }
 }

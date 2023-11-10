@@ -102,8 +102,9 @@ export class RfqComponent implements OnInit {
   }
 
   private select(row: YardLink) {
-    // TODO send request and then update the grid and linked
     const uid = row.uid;
+    const previousSelected: YardLink = this.linked.find((yard) => yard.isSelected);
+    // TODO send request to unselect and to select new and then update the grid and linked on success
     this.linked = this.linked.map((yard) => {
       return { ...yard, isSelected: yard.uid === uid };
     });

@@ -5,6 +5,7 @@
 >
   <ng-container awidget-header-buttons>
     <jb-button
+      [disabled]="!linked"
       type="NoButton"
       label="Link Yard"
       (click)="onLinkYard()"
@@ -35,6 +36,7 @@
 </ng-template>
 
 <jb-drydock-link-yard-popup
+  [linked]="linked"
   [projectId]="projectId"
   [isOpen]="isLinkPopupVisible"
   (closeDialog)="onCloseLinkYardPopup($event)"

@@ -10,6 +10,11 @@
       (changed)="onSubItemsChanged($event)"
       *ngIf="isOpen"
     ></jb-drydock-sub-items> -->
+    <jb-drydock-select-link-yard-grid
+      *ngIf="isOpen"
+      [yards]="yardsToLink"
+      (changed)="onSelectedChanged($event)"
+    ></jb-drydock-select-link-yard-grid>
   </div>
 
   <ng-container jb-dialog-footer>
