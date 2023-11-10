@@ -25,6 +25,9 @@ import { ProjectsMainPageComponent } from './components/projects-main-page/proje
 import { ProjectsSpecificationsGridComponent } from './components/projects-main-page/projects-specifications-grid/projects-specifications-grid.component';
 import { ProjectsService } from './services/ProjectsService';
 import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
+import { ProjectTypesLeftPanelComponent } from './components/projects-main-page/project-types-left-panel/project-types-left-panel.component';
+import { ProjectStatusFilterComponent } from './components/projects-main-page/project-types-left-panel/project-status-filter/project-status-filter.component';
+import { LeftPanelFilterService } from './components/projects-main-page/services/LeftPanelFilterService';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -47,6 +50,8 @@ export function winEnv(): unknown {
     UpsertStandardJobPopupComponent,
     UpsertStandardJobFormComponent,
     FunctionsTreeSelectComponent,
+    ProjectTypesLeftPanelComponent,
+    ProjectStatusFilterComponent,
     ProjectHeaderComponent,
     SubItemsComponent,
     UpsertSubItemFormComponent,
@@ -70,7 +75,7 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService],
+  providers: [DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService, LeftPanelFilterService],
   exports: [],
   entryComponents: []
 })
