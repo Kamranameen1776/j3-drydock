@@ -3,7 +3,7 @@ import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, RelationI
 import { standard_jobs } from './standard_jobs';
 import { BaseDatesEntity } from "./baseDatesEntity";
 
-@Entity('standard_jobs_sub_items', { schema: 'drydock' })
+@Entity('standard_jobs_sub_items', { schema: 'dry_dock' })
 export class standard_jobs_sub_items extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;

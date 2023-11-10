@@ -23,7 +23,7 @@ export class LIB_Survey_CertificateAuthority {
     @ManyToMany(() => standard_jobs, (standardJob) => standardJob.vessel_type)
     @JoinTable({
         name: 'standard_jobs_survey_certificate_authority',
-        schema: 'drydock',
+        schema: 'dry_dock',
         joinColumn: {
             name: 'survey_id',
             referencedColumnName: 'ID',
