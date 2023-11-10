@@ -24,7 +24,6 @@ export class SpecificationDetailsRepository {
                 'tm.job_card_no as SpecificationCode',
                 'tm.task_status as Status',
                 'spec.FunctionUid as FunctionUid',
-                'spec.function_text as FunctionText',
                 'spec.AccountCode as AccountCode',
 
                 //TODO: clarify where it's from
@@ -33,21 +32,15 @@ export class SpecificationDetailsRepository {
 
                 'spec.ItemNumber as ItemNumber',
 
-                //TODO: fix it, when another component is done
-                'spec.InspectionUid as InspectionUid',
-                `'Inspection' as InspectionText`,
-
                 'spec.DoneByUid as DoneByUid',
                 'db.displayName as DoneByDisplayName',
 
                 'spec.EquipmentDescription as EquipmentDescription',
                 'spec.Description as Description',
 
-                'spec.ItemCategoryUid as itemCategoryUid',
-                'spec.PriorityUid as priorityUid',
-
-                //TODO: check priority, what's going on with it?
-                '1 as Priority',
+                //TODO: fix it, when another component is done
+                'spec.PriorityUid as PriorityUid',
+                `'qwerty' as PriorityName`,
 
                 // 'spec.StartDate as startDate',
                 // 'spec.EstimatedDays as estimatedDays',
