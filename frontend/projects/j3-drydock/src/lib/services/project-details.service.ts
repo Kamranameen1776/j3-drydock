@@ -10,15 +10,15 @@ import { YardLink, YardToLink } from '../models/interfaces/project-details';
 export class ProjectDetailsService {
   constructor(private apiRequestService: ApiRequestService) {}
 
-  getLinkedYards(projectId: string): Observable<YardLink[]> {
-    // const apiReq: WebApiRequest = {
-    //   apiBase: eApiBase.DryDockApi,
-    //   entity: eEntities.DryDock,
-    //   crud: eCrud.Get,
-    //   action: 'yard/list',
-    //   params: `projectId=${projectId}`
-    // };
-    // return this.apiRequestService.sendApiReq(apiReq);
+  getLinkedYards(projectUid: string): Observable<YardLink[]> {
+    const apiReq: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      crud: eCrud.Get,
+      action: 'yard-projects/get-yard-projects',
+      params: `uid=${projectUid}`
+    };
+    return this.apiRequestService.sendApiReq(apiReq);
     return of([
       {
         yard: 'yard1',
@@ -56,14 +56,14 @@ export class ProjectDetailsService {
   }
 
   getYardsToLink(projectId: string): Observable<YardToLink[]> {
-    // const apiReq: WebApiRequest = {
-    //   apiBase: eApiBase.DryDockApi,
-    //   entity: eEntities.DryDock,
-    //   crud: eCrud.Get,
-    //   action: 'yard/GetLinks',
-    //   params: `projectId=${projectId}`
-    // };
-    // return this.apiRequestService.sendApiReq(apiReq);
+    const apiReq: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      crud: eCrud.Get,
+      action: 'yards/get-yards',
+      params: `uid=${projectId}`
+    };
+    return this.apiRequestService.sendApiReq(apiReq);
     return of([
       {
         yard: 'yard1',
@@ -110,7 +110,7 @@ export class ProjectDetailsService {
 
   linkYardsToProject(projectId: string, uids: string[]) {
     // const apiReq: WebApiRequest = {
-    //   apiBase: eApiBase.DryDockApi,
+    //   apiBase: 'dryDockAPI',
     //   entity: eEntities.DryDock,
     //   crud: eCrud.Post,
     //   action: 'yard/LinkToProject',
