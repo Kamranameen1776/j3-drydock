@@ -3,6 +3,7 @@ import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
+import { PriorityEntity } from '../../../entity/drydock/dbo/PriorityEntity';
 import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
 import { SpecificationDetailsEntity } from '../../../entity/drydock/SpecificationDetailsEntity';
 import { tm_dd_lib_done_by } from '../../../entity/tm_dd_lib_done_by';
@@ -21,8 +22,8 @@ export class SpecificationDetailsRepository {
             .select([
                 'spec.uid as uid',
                 'spec.subject as Subject',
-                'tm.job_card_no as SpecificationCode',
-                'tm.task_status as Status',
+                'tm.Code as SpecificationCode',
+                'tm.Status as Status',
                 'spec.FunctionUid as FunctionUid',
                 'spec.AccountCode as AccountCode',
 
@@ -38,9 +39,8 @@ export class SpecificationDetailsRepository {
                 'spec.EquipmentDescription as EquipmentDescription',
                 'spec.Description as Description',
 
-                //TODO: fix it, when another component is done
                 'spec.PriorityUid as PriorityUid',
-                `'qwerty' as PriorityName`,
+                `pr.DisplayName as PriorityName`,
 
                 // 'spec.StartDate as startDate',
                 // 'spec.EstimatedDays as estimatedDays',
@@ -57,7 +57,8 @@ export class SpecificationDetailsRepository {
                 // 'spec.CreatedAt as createdAt',
             ])
             .innerJoin(className(TECTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
-            .innerJoin(className(tm_dd_lib_done_by), 'db', 'spec.done_by_uid = db.uid')
+            .innerJoin(className(tm_dd_lib_done_by), 'db', 'spec.DoneByUid = db.uid')
+            .innerJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
             .where('spec.ActiveStatus = 1')
             .andWhere('spec.uid = :uid', { uid })
             .execute();
