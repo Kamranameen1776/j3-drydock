@@ -4,7 +4,7 @@ import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
-import { SpecificationDetailsEntity } from '../../../entity/SpecificationDetailsEntity';
+import { SpecificationDetailsEntity } from '../../../entity/drydock/SpecificationDetailsEntity';
 import { tm_dd_lib_done_by } from '../../../entity/tm_dd_lib_done_by';
 import { tm_dd_lib_item_category } from '../../../entity/tm_dd_lib_item_category';
 import { tm_dd_lib_material_supplied_by } from '../../../entity/tm_dd_lib_material_supplied_by';
@@ -13,41 +13,60 @@ import { ISpecificationDetailsResultDto } from './dtos/ISpecificationDetailsResu
 import { IUpdateSpecificationDetailsDto } from './dtos/IUpdateSpecificationDetailsDto';
 
 export class SpecificationDetailsRepository {
-    public async findOneBySpecificationUid(uid: string): Promise<ISpecificationDetailsResultDto> {
+    public async findOneBySpecificationUid(uid: string): Promise<any> {
         const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
 
         return await specificationRepository
             .createQueryBuilder('spec')
-            .select(
-                `spec.uid as uid,
-               spec.TecTaskManagerUid as tmTask,
-               spec.FunctionUid as functionUid,
-               spec.ComponentUid as componentUid,
-               spec.AccountCode as accountCode,
-               spec.ItemSourceUid as itemSourceUid,
-               spec.ItemNumber as itemNumber,
-               spec.DoneByUid as doneByUid,
-               spec.ItemCategoryUid as itemCategoryUid,
-               spec.InspectionUid as inspectionUid,
-               spec.EquipmentDescription as equipmentDescription,
-               spec.PriorityUid as priorityUid,
-               spec.Description as description,
-               spec.StartDate as startDate,
-               spec.EstimatedDays as estimatedDays,
-               spec.BufferTime as bufferTime,
-               spec.Treatment as treatment,
-               spec.OnboardLocationUid as onboardLocationUid,
-               spec.Access as access,
-               spec.MaterialSuppliedByUid as materialSuppliedByUid,
-               spec.TestCriteria as testCriteria,
-               spec.Ppe as ppe,
-               spec.SafetyInstruction as safetyInstruction,
-               spec.ActiveStatus as activeStatus,
-               spec.CreatedByUid as createdBy,
-               spec.CreatedAt as createdAt
-               `,
-            )
-            .where(`spec.ActiveStatus = 1 and spec.uid='${uid}'`)
+            .select([
+                'spec.uid as uid',
+                'spec.subject as Subject',
+                'tm.job_card_no as SpecificationCode',
+                'tm.task_status as Status',
+                'spec.FunctionUid as FunctionUid',
+                'spec.function_text as FunctionText',
+                'spec.AccountCode as AccountCode',
+
+                //TODO: clarify where it's from
+                'spec.ItemSourceUid as ItemSourceUid',
+                `'PMS' as ItemSourceText`,
+
+                'spec.ItemNumber as ItemNumber',
+
+                //TODO: fix it, when another component is done
+                'spec.InspectionUid as InspectionUid',
+                `'Inspection' as InspectionText`,
+
+                'spec.DoneByUid as DoneByUid',
+                'db.displayName as DoneByDisplayName',
+
+                'spec.EquipmentDescription as EquipmentDescription',
+                'spec.Description as Description',
+
+                'spec.ItemCategoryUid as itemCategoryUid',
+                'spec.PriorityUid as priorityUid',
+
+                //TODO: check priority, what's going on with it?
+                '1 as Priority',
+
+                // 'spec.StartDate as startDate',
+                // 'spec.EstimatedDays as estimatedDays',
+                // 'spec.BufferTime as bufferTime',
+                // 'spec.Treatment as treatment',
+                // 'spec.OnboardLocationUid as onboardLocationUid',
+                // 'spec.Access as access',
+                // 'spec.MaterialSuppliedByUid as materialSuppliedByUid',
+                // 'spec.TestCriteria as testCriteria',
+                // 'spec.Ppe as ppe',
+                // 'spec.SafetyInstruction as safetyInstruction',
+                // 'spec.ActiveStatus as activeStatus',
+                // 'spec.CreatedByUid as createdBy',
+                // 'spec.CreatedAt as createdAt',
+            ])
+            .innerJoin(className(TECTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
+            .innerJoin(className(tm_dd_lib_done_by), 'db', 'spec.done_by_uid = db.uid')
+            .where('spec.ActiveStatus = 1')
+            .andWhere('spec.uid = :uid', { uid })
             .execute();
     }
 
