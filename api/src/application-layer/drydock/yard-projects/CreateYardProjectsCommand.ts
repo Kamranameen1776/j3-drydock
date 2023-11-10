@@ -30,18 +30,11 @@ export class CreateYardProjectsCommand extends Command<Request, void> {
     protected async MainHandlerAsync(request: Request): Promise<void> {
         const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
         const body: CreateYardProjectsDto = request.body;
-        const yardUid = request.body.yardUid;
-        for (let i = 0; i < yardUid?.length; i++) {
-            await this.uow.ExecuteAsync(async (queryRunner) => {
-                const createdYardProject = await this.yardProjectsRepository.CreateYardProjects(
-                    yardUid[i],
-                    body,
-                    createdBy,
-                    queryRunner,
-                );
-                return createdYardProject;
-            });
-        }
+        await this.uow.ExecuteAsync(async () => {
+            const createdYardProject = await this.yardProjectsRepository.createYardProjects(body, createdBy);
+            return createdYardProject;
+        });
+
         return;
     }
 }

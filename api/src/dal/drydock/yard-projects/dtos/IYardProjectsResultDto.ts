@@ -1,10 +1,10 @@
-export class CreateYardProjectsDto {
+export interface IYardProjectsResultDto {
     uid: string;
+    yardUid: string;
     projectUid: string;
-    yardUid: [];
     lastExportedDate: Date;
     isSelected: boolean;
     activeStatus: boolean;
-    createdBy: string;
+    createdByUid: string;
     createdAt: Date;
 }
