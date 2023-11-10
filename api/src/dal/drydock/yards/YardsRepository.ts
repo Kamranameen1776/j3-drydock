@@ -7,7 +7,7 @@ export class YardsRepository {
         const yardsRepository = getManager().getRepository(YardsEntity);
 
         return await yardsRepository
-            .createQueryBuilder('yards')
+            .createQueryBuilder('yd')
             .select(
                 `yd.Uid as uid,
                 yd.YardName as yardName,
