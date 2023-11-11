@@ -70,7 +70,7 @@ export class createOfficeMenu1699715068745 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createOfficeMenu1699715068745',
-                error as string,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 'Create office menu',
@@ -87,15 +87,11 @@ export class createOfficeMenu1699715068745 implements MigrationInterface {
             AND [Menu_Discription] = 'Projects' 
             AND [Menu_Link] is null 
             AND Active_Status = 1;
-            `);
 
-            await queryRunner.query(`
             DELETE FROM Lib_Menu WHERE 
             [Menu_Link] = 'dry-dock/projects-main-page'
             AND Active_Status = 1;
-            `);
 
-            await queryRunner.query(`
             DELETE FROM Lib_Menu WHERE 
             [Menu_Link] = 'dry-dock/standard-jobs-main'
             AND Active_Status = 1;
@@ -111,7 +107,7 @@ export class createOfficeMenu1699715068745 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createOfficeMenu1699715068745',
-                error as string,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 'Create office menu (Down migration)',
