@@ -1,0 +1,34 @@
+:host {
+  display: block;
+}
+
+.header-form {
+  width: 100%;
+  padding-right: 16px;
+  margin-top: 8px;
+  grid-column-gap: 16px;
+  display: flex;
+
+  input.ui-inputtext.jb-text:read-only {
+    border-bottom-color: transparent;
+    pointer-events: none;
+  }
+
+  input.ui-inputtext.jb-text {
+    height: 32px;
+    background: #f7f9fa;
+    border-radius: 4px 4px 0 0;
+    border-bottom: 1px solid #2676bb;
+    font-size: 14px;
+    padding: 8px !important;
+    color: #171c3a;
+  }
+  .jb-text.readonly {
+    pointer-events: none;
+    border-bottom: none !important;
+  }
+}
+
+.form-label {
+  flex-basis: 120px;
+}
