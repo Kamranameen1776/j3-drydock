@@ -16,6 +16,7 @@ export class YardProjectsRepository {
             .select(
                 `yp.uid as uid,
                 yp.project_uid as projectUid,
+                yp.yard_uid as yardUid,
                 y.YardName as yardName,
                 y.YardLocation as yardLocation,
                 yp.last_exported_date as lastExportedDate,
@@ -27,7 +28,7 @@ export class YardProjectsRepository {
                 yp.deleted_at as deletedAt`,
             )
             .leftJoin(className(YardsEntity), 'y', 'yp.yard_uid = y.uid')
-            .where(`yp.active_status = 1 and yp.uid = '${uid}'`)
+            .where(`yp.active_status = 1 and yp.project_uid = '${uid}'`)
             .execute();
     }
 
