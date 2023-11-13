@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { J3PrcRequisition } from "./j3_prc_requisition";
 
 @Entity('specification_details', { schema: 'dry_dock' })
 export class SpecificationDetailsEntity {
@@ -164,4 +165,19 @@ export class SpecificationDetailsEntity {
         name: 'created_at',
     })
     CreatedAt: Date;
+
+    @ManyToMany(() => J3PrcRequisition)
+    @JoinTable({
+        name: 'specification_requisitions',
+        schema: 'dry_dock',
+        joinColumn: {
+            name: 'specification_uid',
+            referencedColumnName: 'uid',
+        },
+        inverseJoinColumn: {
+            name: 'requisition_uid',
+            referencedColumnName: 'uid',
+        },
+    })
+    requisitions: Partial<J3PrcRequisition>[];
 }

@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, QueryRunner } from 'typeorm';
+import { getConnection, getManager, QueryRunner } from "typeorm";
 
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
@@ -21,6 +21,17 @@ import {
     IUpdateSpecificationDetailsDto,
     SpecificationDetailsResultDto,
 } from './dtos';
+import { SpecificationRequisitionsEntity } from "../../../entity/SpecificationRequisitionsEntity";
+import {
+  LinkSpecificationRequisitionsRequestDto
+} from "../../../application-layer/drydock/specification-details/dtos/LinkSpecificationRequisitionsRequestDto";
+import { J3PrcRequisition } from "../../../entity/j3_prc_requisition";
+import {
+  GetSpecificationRequisitionsRequestDto
+} from "../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto";
+import {
+  DeleteSpecificationRequisitionsRequestDto
+} from "../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto";
 
 export class SpecificationDetailsRepository {
     public async findSpecInspections(uid: string): Promise<Array<InspectionsResultDto>> {
@@ -147,4 +158,61 @@ export class SpecificationDetailsRepository {
         spec.ActiveStatus = false;
         return queryRunner.manager.update(SpecificationDetailsEntity, uid, spec);
     }
+
+    public getSpecificationRequisitions(data: GetSpecificationRequisitionsRequestDto): Promise<ODataResult<GetRequisitionsResponseDto>> {
+        const oDataService = new ODataService(data, getConnection);
+        const specificationUid = data.body.uid;
+
+        const query = getManager()
+            .createQueryBuilder(J3PrcRequisition, 'rq')
+            .innerJoin('specification_requisitions', 'sr', 'sr.requisition_uid = rq.uid')
+            .innerJoin('specification_details', 'sd', 'sr.specification_uid = sd.uid AND sd.active_status = 1')
+            .leftJoin('Lib_Ports', 'port', 'rq.delivery_port_id = port.PORT_ID')
+            .leftJoin('lib_urgency', 'urg', 'urg.uid = rq.urgency_uid')
+            .select([
+                'rq.uid as uid',
+                'rq.requisition_number as number',
+                'rq.status_uid as status',
+                'rq.delivery_date as deliveryDate',
+                'port.PORT_NAME as port',
+                'rq.description as description',
+                'urg.urgencys as priority',
+            ])
+          .where(`sd.uid = '${specificationUid}'`)
+          .getSql();
+
+
+        return oDataService.getJoinResult(query);
+    }
+
+    public linkSpecificationRequisitions(
+      data: LinkSpecificationRequisitionsRequestDto,
+      queryRunner: QueryRunner,
+    ): Promise<SpecificationRequisitionsEntity[]> {
+      const specificationUid = data.specificationUid;
+      const requisitionUid = data.requisitionUid;
+
+      const entities = requisitionUid.map(uid => {
+        const specificationRequisition = new SpecificationRequisitionsEntity();
+        specificationRequisition.specification_uid = specificationUid;
+        specificationRequisition.requisition_uid = uid;
+        return specificationRequisition;
+      });
+
+      return queryRunner.manager.save(SpecificationRequisitionsEntity, entities);
+    }
+
+  public async deleteSpecificationRequisitions(
+    data: DeleteSpecificationRequisitionsRequestDto,
+    queryRunner: QueryRunner,
+  ): Promise<void> {
+    const specificationUid = data.specificationUid;
+    const requisitionUid = data.requisitionUid;
+
+    await queryRunner.manager.createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
+      .delete()
+      .where(`specification_uid = '${specificationUid}'`)
+      .andWhere(`requisition_uid = '${requisitionUid}'`)
+      .execute();
+  }
 }
