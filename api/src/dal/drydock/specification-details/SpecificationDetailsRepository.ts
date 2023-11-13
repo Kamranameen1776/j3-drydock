@@ -59,6 +59,7 @@ export class SpecificationDetailsRepository {
                 `pr.DisplayName as PriorityName`,
 
                 'ves.VesselName AS VesselName',
+                'ves.uid AS VesselUid',
                 `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
                 'usr.uid AS ProjectManagerUid',
             ])
