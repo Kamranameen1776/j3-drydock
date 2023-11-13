@@ -7,11 +7,11 @@ export enum eRfqLabels {
 }
 
 export enum eRfqFields {
-  Yard = 'yard',
-  Location = 'location',
+  Yard = 'yardName',
+  Location = 'yardLocation',
   Uid = 'uid',
   YardUid = 'yardUid',
-  ExportedDate = 'exportedDate',
+  ExportedDate = 'lastExportedDate',
   IsSelected = 'isSelected',
   IsLinked = 'isLinked'
 }

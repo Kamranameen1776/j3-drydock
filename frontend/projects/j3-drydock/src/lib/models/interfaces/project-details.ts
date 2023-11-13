@@ -12,6 +12,6 @@ export interface YardLink {
 export interface YardToLink {
   [eRfqFields.Yard]: string;
   [eRfqFields.Location]: string;
-  [eRfqFields.YardUid]: string;
+  [eRfqFields.Uid]: string;
   [eRfqFields.IsLinked]?: boolean;
 }

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities } from 'jibe-components';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { ApiRequestService, WebApiRequest, eCrud, eEntities } from 'jibe-components';
+import { Observable } from 'rxjs';
 import { YardLink, YardToLink } from '../models/interfaces/project-details';
 
 @Injectable({
@@ -19,40 +18,6 @@ export class ProjectDetailsService {
       params: `uid=${projectUid}`
     };
     return this.apiRequestService.sendApiReq(apiReq);
-    return of([
-      {
-        yard: 'yard1',
-        yardUid: 'yardUid1',
-        location: 'location1',
-        uid: 'uid1',
-        isSelected: false,
-        exportedDate: '07-11-2023'
-      },
-      {
-        yard: 'yard2',
-        yardUid: 'yardUid2',
-        location: 'location2',
-        uid: 'uid2',
-        isSelected: false,
-        exportedDate: '07-11-2023'
-      },
-      {
-        yard: 'yard3',
-        yardUid: 'yardUid3',
-        location: 'location1',
-        uid: 'uid3',
-        isSelected: false,
-        exportedDate: '07-11-2023'
-      },
-      {
-        yard: 'yard4',
-        yardUid: 'yardUid4',
-        location: 'location2',
-        uid: 'uid4',
-        isSelected: false,
-        exportedDate: '07-11-2023'
-      }
-    ]).pipe(delay(2000));
   }
 
   getYardsToLink(projectId: string): Observable<YardToLink[]> {
@@ -64,60 +29,30 @@ export class ProjectDetailsService {
       params: `uid=${projectId}`
     };
     return this.apiRequestService.sendApiReq(apiReq);
-    return of([
-      {
-        yard: 'yard1',
-        yardUid: 'yardUid1',
-        location: 'location1'
-      },
-      {
-        yard: 'yard2',
-        yardUid: 'yardUid2',
-        location: 'location2'
-      },
-      {
-        yard: 'yard3',
-        yardUid: 'yardUid3',
-        location: 'location1'
-      },
-      {
-        yard: 'yard4',
-        yardUid: 'yardUid4',
-        location: 'location2'
-      },
-      {
-        yard: 'yard5',
-        yardUid: 'yardUid5',
-        location: 'location1'
-      },
-      {
-        yard: 'yard6',
-        yardUid: 'yardUid6',
-        location: 'location2'
-      },
-      {
-        yard: 'yard7',
-        yardUid: 'yardUid7',
-        location: 'location1'
-      },
-      {
-        yard: 'yard8',
-        yardUid: 'yardUid8',
-        location: 'location2'
-      }
-    ]);
   }
 
-  linkYardsToProject(projectId: string, uids: string[]) {
-    // const apiReq: WebApiRequest = {
-    //   apiBase: 'dryDockAPI',
-    //   entity: eEntities.DryDock,
-    //   crud: eCrud.Post,
-    //   action: 'yard/LinkToProject',
-    //   params: `projectId=${projectId}`,
-    //   body: uids
-    // };
-    // return this.apiRequestService.sendApiReq(apiReq);
-    return of([]).pipe(delay(2000));
+  linkYardsToProject(projectUid: string, yardUid: string[]) {
+    const apiReq: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      crud: eCrud.Post,
+      action: 'yard-projects/create-yard-projects',
+      body: {
+        projectUid,
+        yardUid
+      }
+    };
+    return this.apiRequestService.sendApiReq(apiReq);
+  }
+
+  removeYardLink(uid: string): Observable<YardToLink[]> {
+    const apiReq: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      crud: 'delete',
+      action: 'yards/get-yards',
+      params: `uid=${uid}`
+    };
+    return this.apiRequestService.sendApiReq(apiReq);
   }
 }

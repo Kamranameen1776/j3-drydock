@@ -15,7 +15,7 @@ import { finalize } from 'rxjs/operators';
 })
 export class LinkYardPopupComponent extends UnsubscribeComponent implements OnInit {
   @Input() set linked(val: YardLink[]) {
-    this.linkedGuids = val?.map((yard) => yard[eRfqFields.YardUid]) ?? [];
+    this.linkedGuids = val?.map((yard) => yard.yardUid) ?? [];
   }
 
   @Input() projectId: string;
@@ -100,7 +100,7 @@ export class LinkYardPopupComponent extends UnsubscribeComponent implements OnIn
       this.allYardsToLink = yards.map((yard) => {
         return <YardToLink>{
           ...yard,
-          isLinked: this.linkedGuids.includes(yard[eRfqFields.YardUid])
+          isLinked: this.linkedGuids.includes(yard.uid)
         };
       });
     });

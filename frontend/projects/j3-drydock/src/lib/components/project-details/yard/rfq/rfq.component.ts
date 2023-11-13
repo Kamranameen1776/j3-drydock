@@ -82,7 +82,7 @@ export class RfqComponent implements OnInit {
 
   searchFn = (record: YardLink, term: string) => {
     term = term ?? '';
-    return record.yard?.toLowerCase().includes(term.toLowerCase());
+    return record.yardName?.toLowerCase().includes(term.toLowerCase());
   };
 
   private loadLinkedYards(): void {
@@ -118,7 +118,7 @@ export class RfqComponent implements OnInit {
 
   private export(row: YardLink) {
     // TODO send request and then update the grid and linked
-    row.exportedDate = getDateString(new Date());
+    row.lastExportedDate = getDateString(new Date());
     this.linked = cloneDeep(this.linked);
   }
 
