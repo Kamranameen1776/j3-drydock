@@ -3,9 +3,14 @@ import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
+import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
+import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { PriorityEntity } from '../../../entity/drydock/dbo/PriorityEntity';
 import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
+import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { SpecificationDetailsEntity } from '../../../entity/drydock/SpecificationDetailsEntity';
+import { SpecificationInspectionEntity } from '../../../entity/drydock/SpecificationInspectionEntity';
+import { LIB_Survey_CertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
 import { tm_dd_lib_done_by } from '../../../entity/tm_dd_lib_done_by';
 import { tm_dd_lib_item_category } from '../../../entity/tm_dd_lib_item_category';
 import { tm_dd_lib_material_supplied_by } from '../../../entity/tm_dd_lib_material_supplied_by';
@@ -14,6 +19,17 @@ import { ISpecificationDetailsResultDto } from './dtos/ISpecificationDetailsResu
 import { IUpdateSpecificationDetailsDto } from './dtos/IUpdateSpecificationDetailsDto';
 
 export class SpecificationDetailsRepository {
+    public async findSpecInspections(uid: string): Promise<any> {
+        const inspectionRepository = getManager().getRepository(SpecificationInspectionEntity);
+
+        return await inspectionRepository
+            .createQueryBuilder('insp')
+            .select(['ca.ID as InspectionId', 'ca.Authority as InspectionText'])
+            .innerJoin(className(LIB_Survey_CertificateAuthority), 'ca', 'insp.LIBSurveyCertificateAuthorityID = ca.ID')
+            .where('insp.SpecificationDetailsUid = :uid', { uid })
+            .execute();
+    }
+
     public async findOneBySpecificationUid(uid: string): Promise<any> {
         const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
 
@@ -42,23 +58,16 @@ export class SpecificationDetailsRepository {
                 'spec.PriorityUid as PriorityUid',
                 `pr.DisplayName as PriorityName`,
 
-                // 'spec.StartDate as startDate',
-                // 'spec.EstimatedDays as estimatedDays',
-                // 'spec.BufferTime as bufferTime',
-                // 'spec.Treatment as treatment',
-                // 'spec.OnboardLocationUid as onboardLocationUid',
-                // 'spec.Access as access',
-                // 'spec.MaterialSuppliedByUid as materialSuppliedByUid',
-                // 'spec.TestCriteria as testCriteria',
-                // 'spec.Ppe as ppe',
-                // 'spec.SafetyInstruction as safetyInstruction',
-                // 'spec.ActiveStatus as activeStatus',
-                // 'spec.CreatedByUid as createdBy',
-                // 'spec.CreatedAt as createdAt',
+                'ves.VesselName AS VesselName',
+                `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
+                'usr.uid AS ProjectManagerUid',
             ])
             .innerJoin(className(TECTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
             .innerJoin(className(tm_dd_lib_done_by), 'db', 'spec.DoneByUid = db.uid')
             .innerJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
+            .innerJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
+            .innerJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
+            .innerJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
             .where('spec.ActiveStatus = 1')
             .andWhere('spec.uid = :uid', { uid })
             .execute();
@@ -131,7 +140,7 @@ export class SpecificationDetailsRepository {
         spec.ItemNumber = data.itemNumber;
         spec.DoneByUid = data.doneByUid;
         spec.ItemCategoryUid = data.itemCategoryUid;
-        spec.InspectionUid = data.inspectionUid;
+        // spec.InspectionUid = data.inspectionUid;
         spec.EquipmentDescription = data.equipmentDescription;
         spec.PriorityUid = data.priorityUid;
         spec.Description = data.description;

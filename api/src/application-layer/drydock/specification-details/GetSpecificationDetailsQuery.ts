@@ -31,14 +31,9 @@ export class GetSpecificationDetailsQuery extends Query<Request, any> {
         const [specDetails] = await this.specificationDetailsRepository.findOneBySpecificationUid(
             request.query.uid as string,
         );
-
-        //TODO: mock data for now
-        specDetails.Inspections = [
-            {
-                InspectionUid: '7122C262-B138-4739-AD2C-6F7B6F089BB3',
-                InspectionText: 'Inspections',
-            },
-        ];
+        specDetails.Inspections = await this.specificationDetailsRepository.findSpecInspections(
+            request.query.uid as string,
+        );
         return specDetails;
     }
 }

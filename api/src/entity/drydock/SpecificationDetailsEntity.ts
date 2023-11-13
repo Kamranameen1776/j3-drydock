@@ -57,9 +57,9 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'inspection_uid',
+        name: 'project_uid',
     })
-    InspectionUid: string;
+    ProjectUid: string;
 
     @Column('varchar', {
         nullable: true,
