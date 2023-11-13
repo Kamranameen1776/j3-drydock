@@ -40,8 +40,8 @@ export interface GetStandardJobsResult
         | 'subItemDescription'
     > {
     subject: HtmlCell;
-    inspectionId: (number | string)[];
-    vesselTypeId: (number | string)[];
+    inspectionId: number[];
+    vesselTypeId: number[];
     subItems: GetStandardJobSubItemsResultDto[];
 }
 

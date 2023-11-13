@@ -13,6 +13,8 @@ import { standard_jobs } from '../../../entity/standard_jobs';
 import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items';
 
 export class StandardJobsService {
+    notSelectedValueLabel = '-';
+
     public mapStandardJobsDataToDto(
         queryData: GetStandardJobsQueryResult,
         subItems: standard_jobs_sub_items[],
@@ -24,11 +26,11 @@ export class StandardJobsService {
                 functionUid: standardJob.functionUid,
                 code: standardJob.code,
                 scope: standardJob.scope,
-                category: standardJob.category,
+                category: standardJob.category || this.notSelectedValueLabel,
                 categoryUid: standardJob.categoryUid,
-                doneBy: standardJob.doneBy,
+                doneBy: standardJob.doneBy || this.notSelectedValueLabel,
                 doneByUid: standardJob.doneByUid,
-                materialSuppliedBy: standardJob.materialSuppliedBy,
+                materialSuppliedBy: standardJob.materialSuppliedBy || this.notSelectedValueLabel,
                 materialSuppliedByUid: standardJob.materialSuppliedByUid,
                 vesselTypeSpecific: standardJob.vesselTypeSpecific,
                 description: standardJob.description,
@@ -39,14 +41,14 @@ export class StandardJobsService {
                     cellStyle: '',
                 },
                 inspectionId: [],
-                inspection: '',
+                inspection: this.notSelectedValueLabel,
                 vesselTypeId: [],
-                vesselType: '',
+                vesselType: 'All',
                 subItems: [],
             };
 
             if (standardJob.inspectionId) {
-                const inspectionIds = standardJob.inspectionId.split(',');
+                const inspectionIds = standardJob.inspectionId.split(',').map(id => Number(id));
                 const inspections = standardJob.inspection.split(',');
                 newItem = {
                     ...newItem,
@@ -56,7 +58,7 @@ export class StandardJobsService {
             }
 
             if (standardJob.vesselTypeId) {
-                const vesselTypeIds = standardJob.vesselTypeId.split(',');
+                const vesselTypeIds = standardJob.vesselTypeId.split(',').map(id => Number(id));
                 const vesselTypes = standardJob.vesselType.split(',');
                 newItem = {
                     ...newItem,
