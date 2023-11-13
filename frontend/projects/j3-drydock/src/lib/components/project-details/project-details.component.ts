@@ -4,17 +4,24 @@ import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.enum';
 import { projectDetailsMenuData } from './project-details-menu';
+import { GrowlMessageService } from '../../services/growl-message.service';
 
 @Component({
   selector: 'jb-project-details',
   templateUrl: './project-details.component.html',
-  styleUrls: ['./project-details.component.scss']
+  styleUrls: ['./project-details.component.scss'],
+  providers: [GrowlMessageService]
 })
 export class ProjectDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @ViewChild(eProjectDetailsSideMenuId.General) [eProjectDetailsSideMenuId.General]: ElementRef;
+
   @ViewChild(eProjectDetailsSideMenuId.Specifications) [eProjectDetailsSideMenuId.Specifications]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.TechnicalSpecification) [eProjectDetailsSideMenuId.TechnicalSpecification]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.Requisition) [eProjectDetailsSideMenuId.Requisition]: ElementRef;
+
+  @ViewChild(eProjectDetailsSideMenuId.YardSelection) [eProjectDetailsSideMenuId.YardSelection]: ElementRef;
+  @ViewChild(eProjectDetailsSideMenuId.RFQ) [eProjectDetailsSideMenuId.RFQ]: ElementRef;
+  @ViewChild(eProjectDetailsSideMenuId.Comparison) [eProjectDetailsSideMenuId.Comparison]: ElementRef;
 
   private readonly menuId = 'project-details-menu';
 
@@ -22,7 +29,15 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   eProjectDetailsSideMenuId = eProjectDetailsSideMenuId;
 
-  constructor(private jbMenuService: JbMenuService) {
+  growlMessage$ = this.growlMessageService.growlMessage$;
+
+  // fixme temporary
+  readonly projectId = '12963993-9397-4B5E-849E-0046FB90F564';
+
+  constructor(
+    private jbMenuService: JbMenuService,
+    private growlMessageService: GrowlMessageService
+  ) {
     super();
   }
 
