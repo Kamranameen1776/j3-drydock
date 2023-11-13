@@ -32,7 +32,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   growlMessage$ = this.growlMessageService.growlMessage$;
 
   // fixme temporary
-  readonly projectId = 'D6280FCA-E58D-4993-8A6D-070432E12758';
+  readonly projectId = '12963993-9397-4B5E-849E-0046FB90F564';
 
   constructor(
     private jbMenuService: JbMenuService,

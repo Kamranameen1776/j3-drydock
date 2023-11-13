@@ -1,4 +1,3 @@
-import { eRfqFields } from './../../../../../models/enums/rfq.enum';
 import { YardLink, YardToLink } from './../../../../../models/interfaces/project-details';
 import { ProjectDetailsService } from './../../../../../services/project-details.service';
 import { GrowlMessageService } from './../../../../../services/growl-message.service';
