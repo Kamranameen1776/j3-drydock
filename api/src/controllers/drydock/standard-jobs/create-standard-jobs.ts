@@ -4,7 +4,7 @@ import { CreateStandardJobsCommand } from '../../../application-layer/drydock/st
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 async function createStandardJobs(req: Request, res: Response) {
-    const middlewareHandler = new MiddlewareHandler();
+    const middlewareHandler = new MiddlewareHandler('standard_jobs');
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new CreateStandardJobsCommand();
