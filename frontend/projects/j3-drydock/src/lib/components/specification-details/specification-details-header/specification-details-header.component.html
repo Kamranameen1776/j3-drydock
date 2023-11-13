@@ -1,0 +1,21 @@
+<div
+  class="single-page-header"
+  [formGroup]="formGroup"
+>
+  <drydock-generic-header
+    [editMode]="true"
+    [status]="status"
+    formControlName="title"
+    [showThreeDot]="false"
+    [settingsOptions]="headerMenu"
+    [buttons]="headerInputs.headerButtons"
+    [sections]="headerInputs.headerSections"
+  >
+    <jb-specification-details-sub-header
+      *ngIf="sepcificationDetails"
+      [isEditMode]="true"
+      [inputs]="headerInputs"
+      [specificationDetailsInfo]="sepcificationDetails"
+    ></jb-specification-details-sub-header>
+  </drydock-generic-header>
+</div>

@@ -1,9 +1,7 @@
-import { Vessel } from './VesselDto';
-
-export interface GetSpecificationDetailsDto {
+export class UpdateSpecificationDetailsDto {
   uid: string;
   tmTask: string;
-  FunctionUid: string;
+  functionUid: string;
   componentUid: string;
   accountCode: string;
   itemSourceUid: string;
@@ -13,7 +11,7 @@ export interface GetSpecificationDetailsDto {
   inspectionUid: string;
   equipmentDescription: string;
   priorityUid: string;
-  Description: string;
+  description: string;
   startDate: Date;
   estimatedDays: number;
   bufferTime: number;
@@ -25,13 +23,4 @@ export interface GetSpecificationDetailsDto {
   ppe: string;
   safetyInstruction: string;
   activeStatus: boolean;
-  createdByUid: string;
-  createdAt: Date;
-  SpecificationCode: string;
-  ProjectManagerUid?: string;
-  title?: string;
-  destination?: Vessel;
-  VesselName?: string;
-  Status?: string;
-  Subject?: string;
 }

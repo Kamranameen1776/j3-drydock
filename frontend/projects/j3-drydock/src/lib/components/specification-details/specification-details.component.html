@@ -1,1 +1,13 @@
-<p>specification-details works!</p>
+<jb-details-layout-figma
+  class="jb-section-DetailPage"
+  [formGroup]="formGroup"
+>
+  <jb-specification-details-header
+    alayout-header
+    *ngIf="specificationDetails"
+    [sepcificationDetails]="specificationDetails"
+    (saveButtonClick)="save()"
+    (applyStepButton)="applyStep($event)"
+    (reworkStepButton)="reworkStep()"
+  ></jb-specification-details-header>
+</jb-details-layout-figma>

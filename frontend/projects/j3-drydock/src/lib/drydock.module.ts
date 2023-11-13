@@ -30,6 +30,12 @@ import { ProjectStatusFilterComponent } from './components/projects-main-page/pr
 import { LeftPanelFilterService } from './components/projects-main-page/services/LeftPanelFilterService';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
+import { FormLabelComponent } from './shared/components/form-label/form-label.component';
+import { FormGroupLabelComponent } from './shared/components/form-group-label/form-group-label.component';
+import { GenericHeaderComponent } from './shared/components/generic-header/generic-header.component';
+import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
+import { SpecificationDetailsSubHeaderComponent } from './components/specification-details/specification-details-header/specification-details-sub-header/specification-details-sub-header.component';
+import { SidebarMenuService } from './services/sidebar-menu.service';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -61,7 +67,12 @@ export function winEnv(): unknown {
     StandardJobsStatusNamePipe,
     StandardJobsStatusColorPipe,
     StaticGridSearchPipe,
-    SpecificationDetailsComponent
+    SpecificationDetailsComponent,
+    FormLabelComponent,
+    FormGroupLabelComponent,
+    GenericHeaderComponent,
+    SpecificationDetailsHeaderComponent,
+    SpecificationDetailsSubHeaderComponent
   ],
   imports: [
     CommonModule,
@@ -78,7 +89,15 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService, SpecificationDetailsService, LeftPanelFilterService],
+  providers: [
+    DatePipe,
+    SpecificationGridService,
+    SpecificationTopDetailsService,
+    ProjectsService,
+    SpecificationDetailsService,
+    SidebarMenuService,
+    LeftPanelFilterService
+  ],
   exports: [],
   entryComponents: []
 })
