@@ -16,6 +16,7 @@ export class SpecificationService {
         request: CreateSpecificationDetailsDto,
         vessel: LibVesselsEntity,
         token: string,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<any> {
         const office = await this.IsOffice();
 

@@ -1,33 +1,38 @@
+import _ from 'lodash';
+
 import {
     CreateStandardJobsRequestDto,
+    GetStandardJobsQueryResult,
     GetStandardJobsResult,
     GetStandardJobsResultDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
-import { standard_jobs } from '../../../entity/standard_jobs';
-import _ from 'lodash';
-import { LIB_VESSELTYPES } from '../../../entity/LIB_VESSELTYPES';
-import { LIB_Survey_CertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
-import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items';
 import { GetStandardJobSubItemsResultDto } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobSubItemsResultDto';
+import { LIB_Survey_CertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
+import { LIB_VESSELTYPES } from '../../../entity/LIB_VESSELTYPES';
+import { standard_jobs } from '../../../entity/standard_jobs';
+import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items';
 
 export class StandardJobsService {
-    public mapStandardJobsDataToDto(queryData: standard_jobs[]): GetStandardJobsResultDto {
-        const resultData: GetStandardJobsResult[] = queryData.map((standardJob) => {
+    public mapStandardJobsDataToDto(
+        queryData: GetStandardJobsQueryResult,
+        subItems: standard_jobs_sub_items[],
+    ): GetStandardJobsResultDto {
+        const resultData: GetStandardJobsResult[] = queryData.records.map((standardJob) => {
             let newItem: GetStandardJobsResult = {
                 uid: standardJob.uid,
                 function: standardJob.function,
                 functionUid: standardJob.functionUid,
-                code: this.getStandardJobCode(standardJob.number, standardJob.code),
+                code: standardJob.code,
                 scope: standardJob.scope,
-                category: standardJob.category?.display_name,
-                categoryUid: standardJob.category_uid,
-                doneBy: standardJob.done_by?.displayName,
-                doneByUid: standardJob.done_by_uid,
-                materialSuppliedBy: standardJob.material_supplied_by?.display_name,
-                materialSuppliedByUid: standardJob.material_supplied_by_uid,
-                vesselTypeSpecific: standardJob.vessel_type_specific,
+                category: standardJob.category,
+                categoryUid: standardJob.categoryUid,
+                doneBy: standardJob.doneBy,
+                doneByUid: standardJob.doneByUid,
+                materialSuppliedBy: standardJob.materialSuppliedBy,
+                materialSuppliedByUid: standardJob.materialSuppliedByUid,
+                vesselTypeSpecific: standardJob.vesselTypeSpecific,
                 description: standardJob.description,
-                activeStatus: standardJob.active_status,
+                activeStatus: standardJob.activeStatus,
                 subject: {
                     innerHTML: '<p class="jb_grid_mainText">${standardJob.subject}</p>',
                     value: standardJob.subject,
@@ -37,14 +42,28 @@ export class StandardJobsService {
                 inspection: '',
                 vesselTypeId: [],
                 vesselType: '',
-                subItems: this.getActiveItems(standardJob.sub_items).map((subItem) => {
-                    const code = this.getStandardJobCode(subItem.number, standardJob.code);
-                    return {
-                        ...subItem,
-                        code,
-                    }
-                }),
+                subItems: [],
             };
+
+            if (standardJob.inspectionId) {
+                const inspectionIds = standardJob.inspectionId.split(',');
+                const inspections = standardJob.inspection.split(',');
+                newItem = {
+                    ...newItem,
+                    inspectionId: _.uniq(inspectionIds),
+                    inspection: _.uniq(inspections).join(','),
+                };
+            }
+
+            if (standardJob.vesselTypeId) {
+                const vesselTypeIds = standardJob.vesselTypeId.split(',');
+                const vesselTypes = standardJob.vesselType.split(',');
+                newItem = {
+                    ...newItem,
+                    vesselTypeId: _.uniq(vesselTypeIds),
+                    vesselType: _.uniq(vesselTypes).join(','),
+                };
+            }
 
             if (standardJob.function && standardJob.subject) {
                 newItem = {
@@ -57,23 +76,28 @@ export class StandardJobsService {
                 };
             }
 
-            if (standardJob.inspection) {
-                const inspections = this.getActiveItems(standardJob.inspection, 'Active_Status');
-                newItem.inspection = inspections.map((itm) => itm.Authority).join(', ');
-                newItem.inspectionId = inspections.map((itm) => itm.ID) as number[];
-            }
-            if (standardJob.vessel_type) {
-                const vesselTypes = this.getActiveItems(standardJob.vessel_type, 'Active_Status');
-                newItem.vesselType = vesselTypes.map((itm) => itm.VesselTypes).join(', ');
-                newItem.vesselTypeId = vesselTypes.map((itm) => itm.ID) as number[];
-            }
-
             return newItem;
         });
 
+        if (subItems) {
+            resultData.forEach((item) => {
+                item.subItems = subItems
+                    .filter((subItem) => subItem.standard_job_uid === item.uid)
+                    .map((subItem) => {
+                        return {
+                            uid: subItem.uid,
+                            code: subItem.code,
+                            subject: subItem.subject,
+                            description: subItem.description,
+                            standard_job_uid: item.uid,
+                        };
+                    });
+            });
+        }
+
         return {
             records: resultData,
-            count: resultData.length,
+            count: queryData.count,
         };
     }
 
@@ -122,9 +146,9 @@ export class StandardJobsService {
     }
 
     public mapStandardJobSubItemsDtoToEntity(
-      data: GetStandardJobSubItemsResultDto[],
-      standardJobUid: string,
-      createdBy: string,
+        data: GetStandardJobSubItemsResultDto[],
+        standardJobUid: string,
+        createdBy: string,
     ): standard_jobs_sub_items[] {
         return data.map((itemData) => {
             let subItem = new standard_jobs_sub_items();
@@ -146,8 +170,8 @@ export class StandardJobsService {
     }
 
     public addUpdateStandardJobsFields<T extends { updated_at?: Date; updated_by?: string }>(
-      data: T,
-      updatedBy: string,
+        data: T,
+        updatedBy: string,
     ): T {
         return {
             ...data,
@@ -157,8 +181,8 @@ export class StandardJobsService {
     }
 
     public addCreateStandardJobsFields<T extends { created_at?: Date; created_by?: string }>(
-      data: T,
-      updatedBy: string,
+        data: T,
+        updatedBy: string,
     ): T {
         return {
             ...data,
@@ -173,15 +197,5 @@ export class StandardJobsService {
             deleted_at: new Date(),
             deleted_by: deletedBy,
         };
-    }
-
-    private getActiveItems<T extends {}>(items: T[], key: keyof T): T[];
-    private getActiveItems<T extends { active_status: boolean }>(items: T[]): T[];
-    private getActiveItems<T extends { active_status: boolean }>(items: T[], key: keyof T = 'active_status'): T[] {
-        return items.filter((item) => item[key]);
-    }
-
-    private getStandardJobCode(number: number, code?: string) {
-      return `${code || ''}${number}`
     }
 }

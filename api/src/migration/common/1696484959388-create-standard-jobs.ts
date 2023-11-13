@@ -53,7 +53,7 @@ export class createStandardJobs1696484959388 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createStandardJobs1696484959388',
-                error,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 'Create standard jobs table',
@@ -82,7 +82,7 @@ export class createStandardJobs1696484959388 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createStandardJobs1696484959388',
-                error,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 'Drop standard jobs table (Down migration)',

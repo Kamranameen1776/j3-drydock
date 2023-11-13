@@ -1,6 +1,6 @@
 import { ODataResult } from '../../../../shared/interfaces';
 import { HtmlCell } from '../../../../shared/interfaces/html-cell.interface';
-import { GetStandardJobSubItemsResultDto } from "./GetStandardJobSubItemsResultDto";
+import { GetStandardJobSubItemsResultDto } from './GetStandardJobSubItemsResultDto';
 
 export interface GetStandardJobsQueryData {
     uid: string;
@@ -13,21 +13,35 @@ export interface GetStandardJobsQueryData {
     categoryUid: string;
     doneBy?: string;
     doneByUid: string;
-    inspectionId: number;
+    inspectionId: string;
     inspection: string;
     materialSuppliedBy?: string;
     materialSuppliedByUid: string;
     vesselTypeSpecific: boolean;
     description: string;
     activeStatus: boolean;
-    vesselTypeId: number;
+    vesselTypeId: string;
     vesselType: string;
+    subItemUid: string;
+    subItemCode: string;
+    subItemSubject: string;
+    subItemDescription: string;
 }
 
-export interface GetStandardJobsResult extends Omit<GetStandardJobsQueryData, 'subject' | 'inspectionId' | 'vesselTypeId'> {
+export interface GetStandardJobsResult
+    extends Omit<
+        GetStandardJobsQueryData,
+        | 'subject'
+        | 'inspectionId'
+        | 'vesselTypeId'
+        | 'subItemUid'
+        | 'subItemCode'
+        | 'subItemSubject'
+        | 'subItemDescription'
+    > {
     subject: HtmlCell;
-    inspectionId: number[];
-    vesselTypeId: number[];
+    inspectionId: (number | string)[];
+    vesselTypeId: (number | string)[];
     subItems: GetStandardJobSubItemsResultDto[];
 }
 

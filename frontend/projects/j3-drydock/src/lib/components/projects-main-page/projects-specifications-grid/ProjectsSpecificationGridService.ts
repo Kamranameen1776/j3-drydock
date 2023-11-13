@@ -19,6 +19,7 @@ import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
 import { eProjectsDeleteDisplayNames, eProjectsDeleteFieldNames } from '../../../models/enums/projects-delete.enum';
+import { ProjectsGridOdataKeys } from '../../../models/enums/ProjectsGridOdataKeys';
 
 @Injectable()
 export class ProjectsSpecificationGridService {
@@ -252,34 +253,34 @@ export class ProjectsSpecificationGridService {
       webApiRequest: this.projectsService.getProjectTypesRequest(),
       type: 'multiselect',
       listValueKey: 'ProjectTypeCode',
-      odataKey: 'ProjectTypeCode'
+      odataKey: ProjectsGridOdataKeys.ProjectTypeCode
     },
     ProjectsManages: {
       webApiRequest: this.projectsService.getProjectsManagersRequest(),
       type: 'multiselect',
       listValueKey: 'ManagerId',
-      odataKey: 'ProjectManagerUid'
+      odataKey: ProjectsGridOdataKeys.ProjectManagerUid
     },
     ShipsYards: {
       webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
       type: 'multiselect',
       listValueKey: 'ShipYardId',
-      odataKey: 'ShipYardId'
+      odataKey: ProjectsGridOdataKeys.ShipYardId
     },
     ProjectStatuses: {
       webApiRequest: this.projectsService.getProjectStatusesRequest(),
       type: 'multiselect',
-      odataKey: 'ProjectStatusId',
+      odataKey: ProjectsGridOdataKeys.ProjectStatusId,
       listValueKey: 'ProjectStatusId'
     },
     StartDate: {
-      odataKey: 'StartDate',
+      odataKey: ProjectsGridOdataKeys.StartDate,
       alterKey: 'StartDate',
       type: 'date',
       dateMethod: 'ge'
     },
     EndDate: {
-      odataKey: 'EndDate',
+      odataKey: ProjectsGridOdataKeys.EndDate,
       alterKey: 'EndDate',
       type: 'date',
       dateMethod: 'le'

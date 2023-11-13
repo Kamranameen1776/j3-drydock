@@ -17,10 +17,6 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
         this.uow = new UnitOfWork();
     }
 
-    protected async AuthorizationHandlerAsync(request: UpdateProjectDto): Promise<void> {
-        return;
-    }
-
     protected async ValidationHandlerAsync(request: UpdateProjectDto): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
@@ -37,7 +33,5 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
             const projectId = await this.projectsRepository.UpdateProject(request, queryRunner);
             return projectId;
         });
-
-        return;
     }
 }

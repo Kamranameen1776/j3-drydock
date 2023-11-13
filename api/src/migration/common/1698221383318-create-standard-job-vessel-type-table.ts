@@ -1,5 +1,5 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class createStandardJobVesselTypeTable1698221383318 implements MigrationInterface {
     tableName = 'standard_jobs_vessel_type';
@@ -31,7 +31,7 @@ export class createStandardJobVesselTypeTable1698221383318 implements MigrationI
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createStandardJobVesselTypeTable1698221383318',
-                error,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 'Create standard jobs vessel type table',
@@ -51,20 +51,20 @@ export class createStandardJobVesselTypeTable1698221383318 implements MigrationI
             `);
 
             await MigrationUtilsService.migrationLog(
-              'createStandardJobVesselTypeTable1698221383318',
-              '',
-              'S',
-              'dry_dock',
-              'Create standard jobs vessel type table (Down migration)',
+                'createStandardJobVesselTypeTable1698221383318',
+                '',
+                'S',
+                'dry_dock',
+                'Create standard jobs vessel type table (Down migration)',
             );
         } catch (error) {
             await MigrationUtilsService.migrationLog(
-              'createStandardJobVesselTypeTable1698221383318',
-              error,
-              'E',
-              'dry_dock',
-              'Create standard jobs vessel type table (Down migration)',
-              true,
+                'createStandardJobVesselTypeTable1698221383318',
+                JSON.stringify(error),
+                'E',
+                'dry_dock',
+                'Create standard jobs vessel type table (Down migration)',
+                true,
             );
         }
     }
