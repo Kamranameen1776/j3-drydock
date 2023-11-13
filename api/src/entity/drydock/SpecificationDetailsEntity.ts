@@ -81,6 +81,13 @@ export class SpecificationDetailsEntity {
     })
     Description: string;
 
+    @Column('varchar', {
+        nullable: false,
+        name: 'subject',
+        length: 350,
+    })
+    Subject: string;
+
     @Column('datetime', {
         nullable: true,
         name: 'start_date',

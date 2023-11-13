@@ -34,7 +34,7 @@ export class SpecificationService {
             function_code: TaskManagerConstants.specification.function_code,
             raised_location: office,
             task_status: TaskManagerConstants.specification.status.Raised,
-            title: request.subject,
+            title: request.Subject,
             date_raised: new Date(),
             link_job_uid: null,
             parent_uid: null,

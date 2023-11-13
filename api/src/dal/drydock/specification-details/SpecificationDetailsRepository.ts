@@ -65,7 +65,7 @@ export class SpecificationDetailsRepository {
             ])
             .innerJoin(className(TECTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
             .innerJoin(className(tm_dd_lib_done_by), 'db', 'spec.DoneByUid = db.uid')
-            .innerJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
+            .leftJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
             .innerJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
             .innerJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
             .innerJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
@@ -111,50 +111,39 @@ export class SpecificationDetailsRepository {
     }
 
     public async CreateSpecificationDetails(data: ICreateSpecificationDetailsDto, queryRunner: QueryRunner) {
-        const spec = await this.CreateSpecificationDetailsEntity(data);
-        spec.CreatedAt = new Date();
-        spec.ActiveStatus = true;
-        return await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
+        // const spec = await this.CreateSpecificationDetailsEntity(data);
+        data.CreatedAt = new Date();
+        data.ActiveStatus = true;
+
+        //TODO: think how to return uid from insert request, why it return undefined?
+        data.uid = new DataUtilService().newUid();
+        await queryRunner.manager.insert(SpecificationDetailsEntity, data);
+        return data.uid;
+    }
+
+    public async CreateSpecificationInspection(data: any, queryRunner: QueryRunner) {
+        return queryRunner.manager.insert(SpecificationInspectionEntity, data);
+    }
+
+    public async UpdateSpecificationInspection(
+        data: Array<any>,
+        SpecificationDetailsUid: string,
+        queryRunner: QueryRunner,
+    ) {
+        console.log('inside');
+        console.log(data);
+        await queryRunner.manager.delete(SpecificationInspectionEntity, { SpecificationDetailsUid });
+        return this.CreateSpecificationInspection(data, queryRunner);
     }
 
     public async UpdateSpecificationDetails(data: IUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
-        const spec = await this.CreateSpecificationDetailsEntity(data);
-        return await queryRunner.manager.update(SpecificationDetailsEntity, spec.uid, spec);
+        delete data.Inspections;
+        return queryRunner.manager.update(SpecificationDetailsEntity, data.uid, data);
     }
 
     public async DeleteSpecificationDetails(uid: string, queryRunner: QueryRunner) {
         const spec = new SpecificationDetailsEntity();
         spec.ActiveStatus = false;
         return await queryRunner.manager.update(SpecificationDetailsEntity, uid, spec);
-    }
-
-    private async CreateSpecificationDetailsEntity(
-        data: ICreateSpecificationDetailsDto | IUpdateSpecificationDetailsDto,
-    ) {
-        const spec = new SpecificationDetailsEntity();
-        spec.uid = data?.uid ? data.uid : new DataUtilService().newUid();
-        spec.TecTaskManagerUid = data.tmTask;
-        spec.FunctionUid = data.functionUid;
-        spec.ComponentUid = data.componentUid;
-        spec.AccountCode = data.accountCode;
-        spec.ItemSourceUid = data.itemSourceUid;
-        spec.ItemNumber = data.itemNumber;
-        spec.DoneByUid = data.doneByUid;
-        spec.ItemCategoryUid = data.itemCategoryUid;
-        // spec.InspectionUid = data.inspectionUid;
-        spec.EquipmentDescription = data.equipmentDescription;
-        spec.PriorityUid = data.priorityUid;
-        spec.Description = data.description;
-        spec.StartDate = data.startDate;
-        spec.EstimatedDays = data.estimatedDays;
-        spec.BufferTime = data.bufferTime;
-        spec.Treatment = data.treatment;
-        spec.OnboardLocationUid = data.onboardLocationUid;
-        spec.Access = data.access;
-        spec.MaterialSuppliedByUid = data.materialSuppliedByUid;
-        spec.TestCriteria = data.testCriteria;
-        spec.Ppe = data.ppe;
-        spec.SafetyInstruction = data.safetyInstruction;
-        return spec;
     }
 }

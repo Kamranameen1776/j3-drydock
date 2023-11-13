@@ -154,6 +154,7 @@ export class ProjectsRepository {
                 'cast(pr.EndDate as datetimeoffset) AS EndDate',
                 'gps.GroupProjectStatusId as GroupProjectStatusId',
                 'vessel.VesselId as VesselId',
+                'pr.VesselUid as VesselUid',
             ])
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
