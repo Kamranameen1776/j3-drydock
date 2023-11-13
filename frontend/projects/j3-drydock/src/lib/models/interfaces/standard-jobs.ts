@@ -10,7 +10,7 @@ export interface CreateStandardJob {
 export interface CreateStandardJobResult {
   Uid: string;
 }
-// TODO function
+
 export interface StandardJobResult {
   [eStandardJobsMainFields.UID]: string;
   [eStandardJobsMainFields.Subject]: Partial<IGridCellStyle>;
