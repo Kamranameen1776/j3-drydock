@@ -19,7 +19,7 @@ export class StandardJobsService {
       crud: eCrud.Post,
       entity: 'drydock',
       odata: {
-        orderby: 'number asc'
+        orderby: 'code asc'
       }
     };
     return apiRequest;

@@ -119,12 +119,12 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     this.gridRowActions.length = 0;
     this.gridRowActions.push({ name: eGridRowActions.DoubleClick });
 
-    // TODO Access rigths
+    // TODO Access rights
     this.gridRowActions.push({
       name: eGridRowActions.Edit
     });
 
-    // TODO Access rigths
+    // TODO Access rights
     this.gridRowActions.push({
       name: eGridRowActions.Delete
     });

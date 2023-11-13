@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiRequestService, eCrud, WebApiRequest } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { DeleteProjectDto, ProjectCreate, ProjectEdit } from '../models/interfaces/projects';
+import { IGroupProjectStatusesDto } from './dtos/IGroupProjectStatusesDto';
 
 @Injectable()
 export class ProjectsService {
@@ -133,6 +134,17 @@ export class ProjectsService {
       crud: eCrud.Post,
       entity: 'drydock',
       body: data
+    };
+
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
+  public groupProjectStatuses(): Observable<IGroupProjectStatusesDto[]> {
+    const apiRequest: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      action: 'projects/group-project-statuses',
+      crud: eCrud.Get,
+      entity: 'drydock'
     };
 
     return this.apiRequestService.sendApiReq(apiRequest);
