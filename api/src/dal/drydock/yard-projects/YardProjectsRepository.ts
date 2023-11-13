@@ -8,7 +8,7 @@ import { IUpdateYardProjectsDto } from './dtos/IUpdateYardProjectsDto';
 import { IYardProjectsResultDto } from './dtos/IYardProjectsResultDto';
 
 export class YardProjectsRepository {
-    public async getYardProjects(uid: string): Promise<IYardProjectsResultDto> {
+    public async getAllByProject(uid: string): Promise<IYardProjectsResultDto> {
         const yardProjectsRepository = getManager().getRepository(YardProjectsEntity);
 
         return await yardProjectsRepository
@@ -20,19 +20,14 @@ export class YardProjectsRepository {
                 y.YardName as yardName,
                 y.YardLocation as yardLocation,
                 yp.last_exported_date as lastExportedDate,
-                yp.is_selected as isSelected,
-                yp.active_status as activeStatus,
-                yp.created_by as createdBy,
-                yp.created_at as createdAt,
-                yp.deleted_by as deletedBy,
-                yp.deleted_at as deletedAt`,
+                yp.is_selected as isSelected`,
             )
             .leftJoin(className(YardsEntity), 'y', 'yp.yard_uid = y.uid')
             .where(`yp.active_status = 1 and yp.project_uid = '${uid}'`)
             .execute();
     }
 
-    public async createYardProjects(data: ICreateYardProjectsDto, createdBy: string) {
+    public async createYardProjects(data: ICreateYardProjectsDto) {
         const yardProjectsRepository = getManager().getRepository(YardProjectsEntity);
         await yardProjectsRepository
             .createQueryBuilder('yp')
@@ -43,9 +38,9 @@ export class YardProjectsRepository {
                     const yardProjects = new YardProjectsEntity();
                     yardProjects.Uid = item;
                     yardProjects.ProjectUid = data.projectUid;
-                    yardProjects.YardUid = item;
+                    yardProjects.YardUid = data.yardUid[0];
                     yardProjects.IsSelected = false;
-                    yardProjects.CreatedBy = createdBy;
+                    yardProjects.CreatedBy = data.createdBy;
                     yardProjects.CreatedAt = new Date();
                     yardProjects.ActiveStatus = true;
                     return yardProjects;

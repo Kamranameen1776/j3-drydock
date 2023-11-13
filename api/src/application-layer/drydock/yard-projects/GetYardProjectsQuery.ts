@@ -14,7 +14,6 @@ export class GetYardProjectsQuery extends Query<string, GetYardProjectsDto> {
     }
 
     protected async MainHandlerAsync(uid: string): Promise<GetYardProjectsDto> {
-        const yardToProjectList = await this.yardProjectsRepository.getYardProjects(uid);
-        return yardToProjectList;
+        return await this.yardProjectsRepository.getAllByProject(uid);
     }
 }

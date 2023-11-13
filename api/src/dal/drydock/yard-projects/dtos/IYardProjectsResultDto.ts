@@ -4,7 +4,4 @@ export interface IYardProjectsResultDto {
     projectUid: string;
     lastExportedDate: Date;
     isSelected: boolean;
-    activeStatus: boolean;
-    createdByUid: string;
-    createdAt: Date;
 }

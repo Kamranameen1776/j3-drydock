@@ -4,7 +4,6 @@ import { AccessRights } from 'j2utils';
 import { YardProjectsRepository } from '../../../dal/drydock/yard-projects/YardProjectsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { CreateYardProjectsDto } from './dtos/CreateYardProjectsDto';
 
 export class CreateYardProjectsCommand extends Command<Request, void> {
     yardProjectsRepository: YardProjectsRepository;
@@ -29,9 +28,13 @@ export class CreateYardProjectsCommand extends Command<Request, void> {
 
     protected async MainHandlerAsync(request: Request): Promise<void> {
         const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
-        const body: CreateYardProjectsDto = request.body;
+
         await this.uow.ExecuteAsync(async () => {
-            const createdYardProject = await this.yardProjectsRepository.createYardProjects(body, createdBy);
+            const createdYardProject = await this.yardProjectsRepository.createYardProjects({
+                createdBy: createdBy,
+                projectUid: request.body.projectUid,
+                yardUid: request.body.yardUid,
+            });
             return createdYardProject;
         });
 
