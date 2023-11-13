@@ -76,7 +76,7 @@ export class initProjectData1698663404370 implements MigrationInterface {
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
+    public async down(): Promise<void> {
         try {
             await MigrationUtilsService.migrationLog(
                 'initProjectData1698663404370',

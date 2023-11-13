@@ -1,4 +1,4 @@
-import { eApplicationLocation, MigrationUtilsService } from 'j2utils';
+import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class createProjectsAccessRights1699007166547 implements MigrationInterface {
@@ -379,7 +379,6 @@ WHEN NOT MATCHED BY TARGET THEN
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        return;
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    public async down(): Promise<void> {}
 }

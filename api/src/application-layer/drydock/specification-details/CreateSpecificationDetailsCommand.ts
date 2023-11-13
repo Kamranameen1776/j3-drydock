@@ -23,10 +23,6 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
         this.uow = new UnitOfWork();
     }
 
-    protected async AuthorizationHandlerAsync(): Promise<void> {
-        return;
-    }
-
     protected async ValidationHandlerAsync(request: Request): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
@@ -38,7 +34,7 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
      * @param request data for creation of specification details
      * @returns data of specification details
      */
-    protected async MainHandlerAsync(request: Request<any, CreateSpecificationDetailsDto>): Promise<void> {
+    protected async MainHandlerAsync(request: Request<unknown, CreateSpecificationDetailsDto>): Promise<void> {
         const token: string = request.headers.authorization as string;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
@@ -57,7 +53,5 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
             );
             return specData;
         });
-
-        return;
     }
 }

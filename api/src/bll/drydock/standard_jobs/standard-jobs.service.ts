@@ -1,15 +1,16 @@
+import _ from 'lodash';
+
 import {
     CreateStandardJobsRequestDto,
     GetStandardJobsQueryResult,
     GetStandardJobsResult,
     GetStandardJobsResultDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
-import { standard_jobs } from '../../../entity/standard_jobs';
-import _ from 'lodash';
-import { LIB_VESSELTYPES } from '../../../entity/LIB_VESSELTYPES';
-import { LIB_Survey_CertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
-import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items';
 import { GetStandardJobSubItemsResultDto } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobSubItemsResultDto';
+import { LIB_Survey_CertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
+import { LIB_VESSELTYPES } from '../../../entity/LIB_VESSELTYPES';
+import { standard_jobs } from '../../../entity/standard_jobs';
+import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items';
 
 export class StandardJobsService {
     public mapStandardJobsDataToDto(
@@ -81,8 +82,8 @@ export class StandardJobsService {
         if (subItems) {
             resultData.forEach((item) => {
                 item.subItems = subItems
-                    .filter(subItem => subItem.standard_job_uid === item.uid)
-                    .map(subItem => {
+                    .filter((subItem) => subItem.standard_job_uid === item.uid)
+                    .map((subItem) => {
                         return {
                             uid: subItem.uid,
                             code: subItem.code,

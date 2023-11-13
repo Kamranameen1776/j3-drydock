@@ -1,11 +1,13 @@
+import { Request } from 'express';
+import { AccessRights } from 'j2utils';
+import { UpdateResult } from 'typeorm';
+
+import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
-import { DeleteStandardJobsRequestDto } from "./dto";
-import { AccessRights } from "j2utils";
-import { Request } from "express";
+import { DeleteStandardJobsRequestDto } from './dto';
 
-export class DeleteStandardJobsCommand extends Command<Request, string> {
+export class DeleteStandardJobsCommand extends Command<Request, UpdateResult> {
     standardJobsRepository: StandardJobsRepository;
     uow: UnitOfWork;
 

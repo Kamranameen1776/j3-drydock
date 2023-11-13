@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
 
+import { GetStandardJobsFiltersCommand } from '../../../application-layer/drydock/standard-jobs';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
-import {
-    GetStandardJobsFiltersCommand
-} from "../../../application-layer/drydock/standard-jobs";
 
 async function getStandardJobsFilters(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler('standard_jobs');

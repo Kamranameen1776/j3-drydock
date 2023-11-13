@@ -28,7 +28,17 @@ export interface GetStandardJobsQueryData {
     subItemDescription: string;
 }
 
-export interface GetStandardJobsResult extends Omit<GetStandardJobsQueryData, 'subject' | 'inspectionId' | 'vesselTypeId' | 'subItemUid' | 'subItemCode' | 'subItemSubject' | 'subItemDescription'> {
+export interface GetStandardJobsResult
+    extends Omit<
+        GetStandardJobsQueryData,
+        | 'subject'
+        | 'inspectionId'
+        | 'vesselTypeId'
+        | 'subItemUid'
+        | 'subItemCode'
+        | 'subItemSubject'
+        | 'subItemDescription'
+    > {
     subject: HtmlCell;
     inspectionId: (number | string)[];
     vesselTypeId: (number | string)[];

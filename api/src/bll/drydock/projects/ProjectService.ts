@@ -7,10 +7,10 @@ import { ICreateProjectDto } from './dtos/ICreateProjectDto';
 import { ILibVesselDto } from './dtos/LibVesselDto';
 
 export class ProjectService {
-    tmSevice: TaskManagerService;
+    tmService: TaskManagerService;
 
     constructor() {
-        this.tmSevice = new TaskManagerService();
+        this.tmService = new TaskManagerService();
     }
 
     public async IsOffice(): Promise<number> {
@@ -22,6 +22,7 @@ export class ProjectService {
         request: ICreateProjectDto,
         vessel: ILibVesselDto,
         token: string,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<any> {
         const saveTaskManagerDetails: TaskManagerRequestDto = {
             Office_ID: request.CreatedAtOffice as number,
@@ -42,6 +43,6 @@ export class ProjectService {
             parent_uid: null,
         };
 
-        return this.tmSevice.TaskManagerIntegration(saveTaskManagerDetails, token);
+        return this.tmService.TaskManagerIntegration(saveTaskManagerDetails, token);
     }
 }

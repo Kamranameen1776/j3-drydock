@@ -1,12 +1,12 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
 import { eApplicationLocation, MigrationUtilsService } from 'j2utils';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class createStandardJobsAccessRights1698829536837 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const className = this.constructor.name;
         try {
-            const applocation = await MigrationUtilsService.getApplicationLocation();
-            if (applocation === eApplicationLocation.Office) {
+            const application = await MigrationUtilsService.getApplicationLocation();
+            if (application === eApplicationLocation.Office) {
                 await queryRunner.query(`
             MERGE INTO INF_Lib_Module AS TARGET
 USING (VALUES (196, '677D0F79-281F-4A23-A226-C61D84222A26', 'project', 'Project', 1, getdate(), NULL, NULL, 1,
@@ -298,7 +298,7 @@ WHEN NOT MATCHED BY TARGET THEN
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 className,
-                error,
+                JSON.stringify(error),
                 'E',
                 'crew_accounts',
                 'create access rights for j3 standard jobs',
@@ -307,5 +307,6 @@ WHEN NOT MATCHED BY TARGET THEN
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    public async down(): Promise<void> {}
 }

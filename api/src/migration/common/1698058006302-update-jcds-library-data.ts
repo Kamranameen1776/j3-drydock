@@ -22,5 +22,6 @@ export class updateJcdsLibraryData1698058006302 implements MigrationInterface {
         await queryRunner.query(doneByQuery);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     public async down(): Promise<void> {}
 }

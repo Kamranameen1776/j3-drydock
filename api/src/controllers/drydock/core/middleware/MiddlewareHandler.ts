@@ -12,7 +12,7 @@ import { log } from '../../../../logger';
 import { ProblemDetails, ProblemDetailsType } from '../ProblemDetails';
 import { ExceptionLogDataDto } from './ExceptionLogDataDto';
 
-type NextFunction<TResult> = (req: Request, res: Response) => Promise<TResult>;
+type ResultGetterRequestHandler<TResult> = (req: Request, res: Response) => Promise<TResult>;
 
 export class MiddlewareHandler {
     functionCode?: string;
@@ -21,13 +21,17 @@ export class MiddlewareHandler {
         this.functionCode = functionCode;
     }
 
-    public async ExecuteAsync<TResult>(req: Request, res: Response, func: NextFunction<TResult>) {
-        await this.ExceptionHandler(req, res, func);
+    public async ExecuteAsync<TResult>(req: Request, res: Response, getResult: ResultGetterRequestHandler<TResult>) {
+        await this.ExceptionHandler(req, res, getResult);
     }
 
-    private async ExceptionHandler<TResult>(req: Request, res: Response, next: NextFunction<TResult>): Promise<void> {
+    private async ExceptionHandler<TResult>(
+        req: Request,
+        res: Response,
+        getResult: ResultGetterRequestHandler<TResult>,
+    ): Promise<void> {
         try {
-            const result = await next(req, res);
+            const result = await getResult(req, res);
 
             res.status(httpStatus.OK).json(result);
 
