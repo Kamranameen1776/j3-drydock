@@ -4,11 +4,13 @@ import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.enum';
 import { projectDetailsMenuData } from './project-details-menu';
+import { GrowlMessageService } from '../../services/growl-message.service';
 
 @Component({
   selector: 'jb-project-details',
   templateUrl: './project-details.component.html',
-  styleUrls: ['./project-details.component.scss']
+  styleUrls: ['./project-details.component.scss'],
+  providers: [GrowlMessageService]
 })
 export class ProjectDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @ViewChild(eProjectDetailsSideMenuId.General) [eProjectDetailsSideMenuId.General]: ElementRef;

@@ -50,6 +50,11 @@
     ></jb-grid>
     <!--           </p-tabPanel> 
   </p-tabView>-->
+    <jb-create-specification-popup
+      [isOpen]="isCreatePopupVisible"
+      (closeDialog)="onCloseCreatePopup($event)"
+    ></jb-create-specification-popup>
+    <jb-growl [content]="growlMessage$ | async"></jb-growl>
   </div>
 </jb-layout-widget>
 <ng-template

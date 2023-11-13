@@ -1,0 +1,18 @@
+<jb-form
+  [formStructure]="formStructure"
+  [formValues]="formValues"
+  [isVerticalLabel]="true"
+  (jbFormGroup)="dispatchForm($event)"
+></jb-form>
+
+<ng-template
+  #treeTemplate
+  let-formId="formId"
+  let-fieldName="fieldName"
+>
+  <jb-drydock-functions-tree-select
+    [treeData]="functionsFlatTree$ | async"
+    [formId]="formId"
+    [fieldName]="fieldName"
+  ></jb-drydock-functions-tree-select>
+</ng-template>

@@ -1,5 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Column, Filter, FilterListSet, GridRowActions, WebApiRequest, eCrud, eFieldControlType, eGridAction } from 'jibe-components';
+import {
+  ApiRequestService,
+  Column,
+  Filter,
+  FilterListSet,
+  GridRowActions,
+  WebApiRequest,
+  eCrud,
+  eFieldControlType,
+  eGridAction
+} from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
@@ -22,7 +32,10 @@ export enum SpecificationStatus {
 
 @Injectable()
 export class SpecificationGridService {
-  constructor(private standardJobsService: StandardJobsService) {}
+  constructor(
+    private standardJobsService: StandardJobsService,
+    private apiRequestService: ApiRequestService
+  ) {}
 
   public getSpecificationDetailsAPIRequest(projectId: string | null, componentUIDs: string[], functionUIDs: string[]): WebApiRequest {
     const filter = ODataFilterBuilder('and');
@@ -51,6 +64,22 @@ export class SpecificationGridService {
       }
     };
     return apiRequest;
+  }
+
+  public createSpecification(formValue: any) {
+    const action = 'specification-details/create-specification-details';
+    const apiReq: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      crud: eCrud.Post,
+      action: action,
+      body: {
+        ...formValue,
+        function_uid: formValue.function.Child_ID || '',
+        component_uid: formValue.function.Child_ID || ''
+      }
+    };
+    return this.apiRequestService.sendApiReq(apiReq);
   }
 
   getGridData(projectId: string | null, componentUIDs: string[], functionUIDs: string[]): GridInputsWithRequest {

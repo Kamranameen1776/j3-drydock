@@ -25,6 +25,9 @@ import { ProjectsMainPageComponent } from './components/projects-main-page/proje
 import { ProjectsSpecificationsGridComponent } from './components/projects-main-page/projects-specifications-grid/projects-specifications-grid.component';
 import { ProjectsService } from './services/ProjectsService';
 import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
+import { CreateSpecificationPopupComponent } from './components/project-details/create-specification-popup/create-specification-popup.component';
+import { SpecificationFormComponent } from './components/project-details/specification-form/specification-form.component';
+import { SpecificationCreateFormService } from './components/project-details/specification-form/specification-create-form-service';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -53,7 +56,9 @@ export function winEnv(): unknown {
     UpsertSubItemPopupComponent,
     StandardJobsStatusNamePipe,
     StandardJobsStatusColorPipe,
-    StaticGridSearchPipe
+    StaticGridSearchPipe,
+    CreateSpecificationPopupComponent,
+    SpecificationFormComponent
   ],
   imports: [
     CommonModule,
@@ -70,7 +75,7 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService],
+  providers: [DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService, SpecificationCreateFormService],
   exports: [],
   entryComponents: []
 })
