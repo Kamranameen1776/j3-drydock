@@ -6,7 +6,6 @@ import { GridInputsWithData } from './../../../../models/interfaces/grid-inputs'
 import { eRfqFields } from './../../../../models/enums/rfq.enum';
 import { DispatchAction, GridAction, GridRowActions, GridService, eGridEvents, eGridRowActions, eLayoutWidgetSize } from 'jibe-components';
 import { filter, map } from 'rxjs/operators';
-import { getDateString } from './../../../../utils/date';
 import { cloneDeep } from 'lodash';
 
 @Component({
@@ -118,7 +117,7 @@ export class RfqComponent implements OnInit {
 
   private export(row: YardLink) {
     // TODO send request and then update the grid and linked
-    row.lastExportedDate = getDateString(new Date());
+    row.lastExportedDate = new Date().toISOString();
     this.linked = cloneDeep(this.linked);
   }
 
