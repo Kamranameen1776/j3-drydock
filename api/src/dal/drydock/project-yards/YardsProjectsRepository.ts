@@ -27,20 +27,7 @@ export class YardsProjectsRepository {
     }
 
     public async create(data: ICreateProjectYardsDto, queryRunner: QueryRunner) {
-        const yardProjects: yards_projects[] = data.yardsUids.map((yardUid) => {
-            const yardProjects = new yards_projects();
-            yardProjects.uid = new DataUtilService().newUid();
-            yardProjects.project_uid = data.projectUid;
-            yardProjects.yard = {
-                uid: yardUid,
-            };
-            yardProjects.is_selected = false;
-            yardProjects.created_by = data.createdBy;
-            yardProjects.created_at = data.createdAt;
-            yardProjects.active_status = true;
-            return yardProjects;
-        });
-
+        const yardProjects: yards_projects[] = data.yardsUids.map((yardUid) => this.createYardProject(yardUid, data));
         const yardProjectsRepository = queryRunner.manager.getRepository(yards_projects);
         await yardProjectsRepository
             .createQueryBuilder('yp')
@@ -49,6 +36,18 @@ export class YardsProjectsRepository {
             .values(yardProjects)
             .execute();
         return;
+    }
+
+    private createYardProject(yardUid: string, data: ICreateProjectYardsDto): yards_projects {
+        const yardProjects = new yards_projects();
+        yardProjects.uid = new DataUtilService().newUid();
+        yardProjects.project_uid = data.projectUid;
+        yardProjects.yard = { uid: yardUid };
+        yardProjects.is_selected = false;
+        yardProjects.created_by = data.createdBy;
+        yardProjects.created_at = data.createdAt;
+        yardProjects.active_status = true;
+        return yardProjects;
     }
 
     public async update(data: IUpdateProjectYardsDto, queryRunner: QueryRunner) {
