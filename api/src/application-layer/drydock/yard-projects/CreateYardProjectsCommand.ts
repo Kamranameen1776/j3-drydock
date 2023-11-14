@@ -29,12 +29,15 @@ export class CreateYardProjectsCommand extends Command<Request, void> {
     protected async MainHandlerAsync(request: Request): Promise<void> {
         //todo: const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
 
-        await this.uow.ExecuteAsync(async () => {
-            const createdYardProject = await this.yardProjectsRepository.create({
-                createdBy: '7EBF2022-5300-4137-8E86-21E9118BCD41',
-                projectUid: request.body.projectUid,
-                yardsUids: request.body.yardsUids,
-            });
+        await this.uow.ExecuteAsync(async (queryRunner) => {
+            const createdYardProject = await this.yardProjectsRepository.create(
+                {
+                    createdBy: '7EBF2022-5300-4137-8E86-21E9118BCD41',
+                    projectUid: request.body.projectUid,
+                    yardsUids: request.body.yardsUids,
+                },
+                queryRunner,
+            );
             return createdYardProject;
         });
 

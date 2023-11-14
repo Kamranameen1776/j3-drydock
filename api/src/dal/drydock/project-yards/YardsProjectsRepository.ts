@@ -1,5 +1,5 @@
 import { DataUtilService } from 'j2utils';
-import { getManager } from 'typeorm';
+import { getManager, QueryRunner } from 'typeorm';
 
 import { yards_projects } from '../../../entity/yards_projects';
 import { ICreateProjectYardsDto } from './dtos/ICreateProjectYardsDto';
@@ -26,7 +26,7 @@ export class YardsProjectsRepository {
             .execute();
     }
 
-    public async create(data: ICreateProjectYardsDto) {
+    public async create(data: ICreateProjectYardsDto, queryRunner: QueryRunner) {
         const yardProjects: yards_projects[] = data.yardsUids.map((yardUid) => {
             const yardProjects = new yards_projects();
             yardProjects.uid = new DataUtilService().newUid();
@@ -41,7 +41,7 @@ export class YardsProjectsRepository {
             return yardProjects;
         });
 
-        const yardProjectsRepository = getManager().getRepository(yards_projects);
+        const yardProjectsRepository = queryRunner.manager.getRepository(yards_projects);
         await yardProjectsRepository
             .createQueryBuilder('yp')
             .insert()
@@ -51,8 +51,8 @@ export class YardsProjectsRepository {
         return;
     }
 
-    public async update(data: IUpdateProjectYardsDto) {
-        const yardProjectsRepository = getManager().getRepository(yards_projects);
+    public async update(data: IUpdateProjectYardsDto, queryRunner: QueryRunner) {
+        const yardProjectsRepository = queryRunner.manager.getRepository(yards_projects);
         return await yardProjectsRepository
             .createQueryBuilder('yp')
             .update(yards_projects)
@@ -64,8 +64,8 @@ export class YardsProjectsRepository {
             .execute();
     }
 
-    public async delete(uid: string, deletedBy: string) {
-        const yardProjectsRepository = getManager().getRepository(yards_projects);
+    public async delete(uid: string, deletedBy: string, queryRunner: QueryRunner) {
+        const yardProjectsRepository = queryRunner.manager.getRepository(yards_projects);
         return await yardProjectsRepository
             .createQueryBuilder('yp')
             .update(yards_projects)

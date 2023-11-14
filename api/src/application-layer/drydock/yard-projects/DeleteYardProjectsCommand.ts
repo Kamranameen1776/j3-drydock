@@ -28,10 +28,12 @@ export class DeleteYardProjectsCommand extends Command<Request, void> {
     protected async MainHandlerAsync(request: Request) {
         //todo: const { UserUID: deletedBy } = AccessRights.authorizationDecode(request);
         const uid = request.body.uid;
-        await this.uow.ExecuteAsync(async () => {
+
+        await this.uow.ExecuteAsync(async (queryRunner) => {
             const deletedYardProject = await this.yardProjectsRepository.delete(
                 uid,
                 '7EBF2022-5300-4137-8E86-21E9118BCD41',
+                queryRunner,
             );
             return deletedYardProject;
         });
