@@ -2,9 +2,9 @@ import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, RelationI
 
 import { yards } from './yards';
 
-//todo: rename to low case
+//todo: rename to low case & table name
 @Entity('yard_to_project', { schema: 'dry_dock' })
-export class yard_projects {
+export class yards_projects {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
@@ -19,7 +19,7 @@ export class yard_projects {
         name: 'yard_uid',
     })
     yard: Partial<yards>;
-    @RelationId((entity: yard_projects) => entity.yard)
+    @RelationId((entity: yards_projects) => entity.yard)
     YardUid: string;
 
     @Column('datetime', {

@@ -1,16 +1,16 @@
-import { YardProjectsRepository } from '../../../dal/drydock/yard-projects/YardProjectsRepository';
+import { YardsProjectsRepository } from '../../../dal/drydock/project-yards/YardsProjectsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateYardProjectsDto } from './dtos/UpdateYardProjectsDto';
 
 export class UpdateYardProjectsCommand extends Command<UpdateYardProjectsDto, void> {
-    yardProjectsRepository: YardProjectsRepository;
+    yardProjectsRepository: YardsProjectsRepository;
     uow: UnitOfWork;
 
     constructor() {
         super();
 
-        this.yardProjectsRepository = new YardProjectsRepository();
+        this.yardProjectsRepository = new YardsProjectsRepository();
         this.uow = new UnitOfWork();
     }
 
@@ -25,6 +25,6 @@ export class UpdateYardProjectsCommand extends Command<UpdateYardProjectsDto, vo
     }
 
     protected async MainHandlerAsync(request: UpdateYardProjectsDto): Promise<void> {
-        await this.yardProjectsRepository.updateYardProjects(request);
+        await this.yardProjectsRepository.update(request);
     }
 }

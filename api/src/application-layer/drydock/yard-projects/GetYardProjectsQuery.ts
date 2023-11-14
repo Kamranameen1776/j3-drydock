@@ -1,9 +1,9 @@
-import { YardProjectsRepository } from '../../../dal/drydock/yard-projects/YardProjectsRepository';
+import { YardsProjectsRepository } from '../../../dal/drydock/project-yards/YardsProjectsRepository';
 import { Query } from '../core/cqrs/Query';
 import { GetYardProjectsDto } from './dtos/GetYardProjectsDto';
 
 export class GetYardProjectsQuery extends Query<string, GetYardProjectsDto> {
-    yardProjectsRepository = new YardProjectsRepository();
+    yardProjectsRepository = new YardsProjectsRepository();
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
         return;

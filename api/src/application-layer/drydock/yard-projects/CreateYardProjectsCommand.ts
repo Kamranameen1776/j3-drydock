@@ -1,18 +1,18 @@
 import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
-import { YardProjectsRepository } from '../../../dal/drydock/yard-projects/YardProjectsRepository';
+import { YardsProjectsRepository } from '../../../dal/drydock/project-yards/YardsProjectsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 
 export class CreateYardProjectsCommand extends Command<Request, void> {
-    yardProjectsRepository: YardProjectsRepository;
+    yardProjectsRepository: YardsProjectsRepository;
     uow: UnitOfWork;
 
     constructor() {
         super();
 
-        this.yardProjectsRepository = new YardProjectsRepository();
+        this.yardProjectsRepository = new YardsProjectsRepository();
         this.uow = new UnitOfWork();
     }
 
@@ -27,11 +27,11 @@ export class CreateYardProjectsCommand extends Command<Request, void> {
     }
 
     protected async MainHandlerAsync(request: Request): Promise<void> {
-        const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
+        //todo: const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
 
         await this.uow.ExecuteAsync(async () => {
-            const createdYardProject = await this.yardProjectsRepository.createYardProjects({
-                createdBy: createdBy,
+            const createdYardProject = await this.yardProjectsRepository.create({
+                createdBy: '7EBF2022-5300-4137-8E86-21E9118BCD41',
                 projectUid: request.body.projectUid,
                 yardsUids: request.body.yardsUids,
             });

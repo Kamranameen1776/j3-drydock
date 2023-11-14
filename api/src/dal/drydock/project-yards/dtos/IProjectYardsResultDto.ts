@@ -1,4 +1,4 @@
-export interface IYardProjectsResultDto {
+export interface IProjectYardsResultDto {
     uid: string;
     yardUid: string;
     projectUid: string;

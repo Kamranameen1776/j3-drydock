@@ -8,7 +8,7 @@ import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
  * @param {Request} req Express request
  * @param {Response} res Express response
  */
-export async function getYardProjects(req: Request, res: Response) {
+export async function getProjectYards(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
@@ -21,4 +21,4 @@ export async function getYardProjects(req: Request, res: Response) {
     });
 }
 
-exports.get = getYardProjects;
+exports.get = getProjectYards;

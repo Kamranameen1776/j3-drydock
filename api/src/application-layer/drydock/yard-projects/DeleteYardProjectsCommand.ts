@@ -1,17 +1,17 @@
 import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
-import { YardProjectsRepository } from '../../../dal/drydock/yard-projects/YardProjectsRepository';
+import { YardsProjectsRepository } from '../../../dal/drydock/project-yards/YardsProjectsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 export class DeleteYardProjectsCommand extends Command<Request, void> {
-    yardProjectsRepository: YardProjectsRepository;
+    yardProjectsRepository: YardsProjectsRepository;
     uow: UnitOfWork;
 
     constructor() {
         super();
 
-        this.yardProjectsRepository = new YardProjectsRepository();
+        this.yardProjectsRepository = new YardsProjectsRepository();
         this.uow = new UnitOfWork();
     }
 
@@ -26,10 +26,13 @@ export class DeleteYardProjectsCommand extends Command<Request, void> {
     }
 
     protected async MainHandlerAsync(request: Request) {
-        const { UserUID: deletedBy } = AccessRights.authorizationDecode(request);
+        //todo: const { UserUID: deletedBy } = AccessRights.authorizationDecode(request);
         const uid = request.body.uid;
         await this.uow.ExecuteAsync(async () => {
-            const deletedYardProject = await this.yardProjectsRepository.deleteYardProjects(uid, deletedBy);
+            const deletedYardProject = await this.yardProjectsRepository.delete(
+                uid,
+                '7EBF2022-5300-4137-8E86-21E9118BCD41',
+            );
             return deletedYardProject;
         });
 

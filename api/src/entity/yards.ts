@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 
-import { yard_projects } from './yard_projects';
+import { yards_projects } from './yards_projects';
 
 @Entity('yards', { schema: 'dry_dock' })
 export class yards {
@@ -55,6 +55,6 @@ export class yards {
     })
     DeletedAt: Date;
 
-    @OneToMany(() => yard_projects, (yard_projects) => yard_projects.yard)
-    YardProjects: yard_projects[];
+    @OneToMany(() => yards_projects, (yard_projects) => yard_projects.yard)
+    YardProjects: yards_projects[];
 }

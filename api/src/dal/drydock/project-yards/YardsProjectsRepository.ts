@@ -1,14 +1,14 @@
 import { DataUtilService } from 'j2utils';
 import { getManager } from 'typeorm';
 
-import { yard_projects } from '../../../entity/yard_projects';
-import { ICreateYardProjectsDto } from './dtos/ICreateYardProjectsDto';
-import { IUpdateYardProjectsDto } from './dtos/IUpdateYardProjectsDto';
-import { IYardProjectsResultDto } from './dtos/IYardProjectsResultDto';
+import { yards_projects } from '../../../entity/yards_projects';
+import { ICreateProjectYardsDto } from './dtos/ICreateProjectYardsDto';
+import { IProjectYardsResultDto } from './dtos/IProjectYardsResultDto';
+import { IUpdateProjectYardsDto } from './dtos/IUpdateProjectYardsDto';
 
-export class YardProjectsRepository {
-    public async getAllByProject(uid: string): Promise<IYardProjectsResultDto> {
-        const yardProjectsRepository = getManager().getRepository(yard_projects);
+export class YardsProjectsRepository {
+    public async getAllByProject(uid: string): Promise<IProjectYardsResultDto> {
+        const yardProjectsRepository = getManager().getRepository(yards_projects);
 
         return await yardProjectsRepository
             .createQueryBuilder('yp')
@@ -26,9 +26,9 @@ export class YardProjectsRepository {
             .execute();
     }
 
-    public async createYardProjects(data: ICreateYardProjectsDto) {
-        const yardProjects: yard_projects[] = data.yardsUids.map((yardUid) => {
-            const yardProjects = new yard_projects();
+    public async create(data: ICreateProjectYardsDto) {
+        const yardProjects: yards_projects[] = data.yardsUids.map((yardUid) => {
+            const yardProjects = new yards_projects();
             yardProjects.uid = new DataUtilService().newUid();
             yardProjects.ProjectUid = data.projectUid;
             yardProjects.yard = {
@@ -41,21 +41,21 @@ export class YardProjectsRepository {
             return yardProjects;
         });
 
-        const yardProjectsRepository = getManager().getRepository(yard_projects);
+        const yardProjectsRepository = getManager().getRepository(yards_projects);
         await yardProjectsRepository
             .createQueryBuilder('yp')
             .insert()
-            .into(yard_projects)
+            .into(yards_projects)
             .values(yardProjects)
             .execute();
         return;
     }
 
-    public async updateYardProjects(data: IUpdateYardProjectsDto) {
-        const yardProjectsRepository = getManager().getRepository(yard_projects);
+    public async update(data: IUpdateProjectYardsDto) {
+        const yardProjectsRepository = getManager().getRepository(yards_projects);
         return await yardProjectsRepository
             .createQueryBuilder('yp')
-            .update(yard_projects)
+            .update(yards_projects)
             .set({
                 LastExportedDate: data.lastExportedDate,
                 IsSelected: data.isSelected,
@@ -64,11 +64,11 @@ export class YardProjectsRepository {
             .execute();
     }
 
-    public async deleteYardProjects(uid: string, deletedBy: string) {
-        const yardProjectsRepository = getManager().getRepository(yard_projects);
+    public async delete(uid: string, deletedBy: string) {
+        const yardProjectsRepository = getManager().getRepository(yards_projects);
         return await yardProjectsRepository
             .createQueryBuilder('yp')
-            .update(yard_projects)
+            .update(yards_projects)
             .set({
                 ActiveStatus: false,
                 DeletedAt: new Date(),

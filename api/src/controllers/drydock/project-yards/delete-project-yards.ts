@@ -1,16 +1,16 @@
 import { Request, Response } from 'express';
 
-import { CreateYardProjectsCommand } from '../../../application-layer/drydock/yard-projects/CreateYardProjectsCommand';
+import { DeleteYardProjectsCommand } from '../../../application-layer/drydock/yard-projects/DeleteYardProjectsCommand';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
-async function CreateYardProjects(req: Request, res: Response) {
+async function deleteProjectYards(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        const command = new CreateYardProjectsCommand();
+        const command = new DeleteYardProjectsCommand();
 
         return await command.ExecuteAsync(request);
     });
 }
 
-exports.post = CreateYardProjects;
+exports.put = deleteProjectYards;

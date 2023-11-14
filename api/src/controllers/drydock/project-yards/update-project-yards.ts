@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { UpdateYardProjectsCommand } from '../../../application-layer/drydock/yard-projects/UpdateYardProjectsCommand';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
-async function updateYardProjects(req: Request, res: Response) {
+async function updateProjectYards(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
@@ -13,4 +13,4 @@ async function updateYardProjects(req: Request, res: Response) {
     });
 }
 
-exports.put = updateYardProjects;
+exports.put = updateProjectYards;
