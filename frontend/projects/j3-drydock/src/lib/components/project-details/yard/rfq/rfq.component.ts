@@ -1,20 +1,20 @@
-import { ProjectDetailsService } from './../../../../services/project-details.service';
+import { YardsService } from './../../../../services/yards.service';
 import { YardLink } from './../../../../models/interfaces/project-details';
 import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { RfqGridService } from './rfq-grid.service';
 import { GridInputsWithData } from './../../../../models/interfaces/grid-inputs';
 import { eRfqFields } from './../../../../models/enums/rfq.enum';
 import { DispatchAction, GridAction, GridRowActions, GridService, eGridEvents, eGridRowActions, eLayoutWidgetSize } from 'jibe-components';
-import { filter, map } from 'rxjs/operators';
-import { getDateString } from './../../../../utils/date';
+import { concatMap, filter, finalize, map, subscribeOn, takeUntil } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
+import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 
 @Component({
   selector: 'jb-drydock-rfq',
   templateUrl: './rfq.component.html',
   styleUrls: ['./rfq.component.scss']
 })
-export class RfqComponent implements OnInit {
+export class RfqComponent extends UnsubscribeComponent implements OnInit {
   @Input() projectId: string;
 
   @ViewChild('isSelectedTmpl', { static: true }) isSelectedTmpl: TemplateRef<unknown>;
@@ -39,8 +39,10 @@ export class RfqComponent implements OnInit {
   constructor(
     private rfqGridService: RfqGridService,
     private gridService: GridService,
-    private projectDetailsService: ProjectDetailsService
-  ) {}
+    private yardsService: YardsService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.loadLinkedYards();
@@ -86,7 +88,7 @@ export class RfqComponent implements OnInit {
   };
 
   private loadLinkedYards(): void {
-    this.projectDetailsService.getLinkedYards(this.projectId).subscribe((data) => {
+    this.yardsService.getLinkedYards(this.projectId).subscribe((data) => {
       this.linked = data ?? [];
     });
   }
@@ -104,22 +106,44 @@ export class RfqComponent implements OnInit {
   private select(row: YardLink) {
     const uid = row.uid;
     const previousSelected: YardLink = this.linked.find((yard) => yard.isSelected);
-    // TODO send request to unselect and to select new and then update the grid and linked on success
-    this.linked = this.linked.map((yard) => {
-      return { ...yard, isSelected: yard.uid === uid };
-    });
+    const newSelected = this.linked.find((yard) => yard.uid === uid);
+
+    if (!newSelected) {
+      return;
+    }
+
+    this.unselectPreviousAndSelectNew(previousSelected, row)
+      .pipe(
+        finalize(() => {
+          this.linked = cloneDeep(this.linked);
+        }),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(() => {
+        row.isSelected = true;
+      });
   }
 
   private delete(row: YardLink) {
-    // TODO send request and then update the grid and linked
     const uid = row.uid;
-    this.linked = this.linked.filter((yard) => yard.uid !== uid);
+
+    this.yardsService
+      .removeYardLink(uid)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.linked = this.linked.filter((yard) => yard.uid !== uid);
+      });
   }
 
   private export(row: YardLink) {
-    // TODO send request and then update the grid and linked
-    row.lastExportedDate = getDateString(new Date());
-    this.linked = cloneDeep(this.linked);
+    const lastExportedDate = new Date().toISOString();
+    this.yardsService
+      .updateYardLink({ ...row, lastExportedDate })
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        row.lastExportedDate = lastExportedDate;
+        this.linked = cloneDeep(this.linked);
+      });
   }
 
   private setCellTemplates() {
@@ -132,5 +156,21 @@ export class RfqComponent implements OnInit {
       return;
     }
     col.cellTemplate = template;
+  }
+
+  private unselectPreviousAndSelectNew(previousSelected: YardLink, newSelected: YardLink) {
+    if (previousSelected) {
+      return this.sendSelect(previousSelected, false).pipe(
+        concatMap(() => {
+          previousSelected.isSelected = false;
+          return this.sendSelect(newSelected, true);
+        })
+      );
+    }
+    return this.sendSelect(newSelected, true);
+  }
+
+  private sendSelect(yard: YardLink, isSelected: boolean) {
+    return this.yardsService.updateYardLink({ ...yard, isSelected });
   }
 }

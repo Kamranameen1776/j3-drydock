@@ -4,15 +4,9 @@
   (closeDialog)="onClosePopup()"
 >
   <div jb-dialog-body>
-    <!-- <jb-drydock-sub-items
-      [job]="item"
-      [functionUid]="jobFormValue?.function?.Child_ID"
-      (changed)="onSubItemsChanged($event)"
-      *ngIf="isOpen"
-    ></jb-drydock-sub-items> -->
     <jb-drydock-select-link-yard-grid
       *ngIf="isOpen"
-      [yards]="yardsToLink"
+      [yards]="allYardsToLink"
       (changed)="onSelectedChanged($event)"
     ></jb-drydock-select-link-yard-grid>
   </div>

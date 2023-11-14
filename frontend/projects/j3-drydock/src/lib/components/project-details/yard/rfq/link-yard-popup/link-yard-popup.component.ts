@@ -1,3 +1,4 @@
+import { YardsService } from './../../../../../services/yards.service';
 import { YardLink, YardToLink } from './../../../../../models/interfaces/project-details';
 import { ProjectDetailsService } from './../../../../../services/project-details.service';
 import { GrowlMessageService } from './../../../../../services/growl-message.service';
@@ -37,7 +38,7 @@ export class LinkYardPopupComponent extends UnsubscribeComponent implements OnIn
 
   constructor(
     private growlMessageService: GrowlMessageService,
-    private projectDetailsService: ProjectDetailsService
+    private yardsService: YardsService
   ) {
     super();
   }
@@ -73,7 +74,7 @@ export class LinkYardPopupComponent extends UnsubscribeComponent implements OnIn
       return;
     }
 
-    this.projectDetailsService
+    this.yardsService
       .linkYardsToProject(this.projectId, guidsToLink)
       .pipe(
         finalize(() => {
@@ -95,7 +96,7 @@ export class LinkYardPopupComponent extends UnsubscribeComponent implements OnIn
   }
 
   private loadAllYardsToLink() {
-    this.projectDetailsService.getYardsToLink(this.projectId).subscribe((yards: YardToLink[]) => {
+    this.yardsService.getYardsToLink(this.projectId).subscribe((yards: YardToLink[]) => {
       this.allYardsToLink = yards.map((yard) => {
         return <YardToLink>{
           ...yard,
