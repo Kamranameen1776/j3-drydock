@@ -41,6 +41,7 @@ export class StandardJobsRepository {
                 'distinct sj.uid as uid,' +
                     'sj.subject as subject,' +
                     'sj."function" as "function",' +
+                    'sj."function_uid" as "functionUid",' +
                     'CONCAT(sj.code, sj.number) as code,' +
                     'sj.category_uid as categoryUid,' +
                     'ic.display_name as category,' +
@@ -60,6 +61,7 @@ export class StandardJobsRepository {
                 `sj.uid` +
                     `,sj.subject` +
                     `,sj."function"` +
+                    ',sj."function_uid"' +
                     `,sj.code` +
                     `,sj.number` +
                     `,sj.category_uid` +
