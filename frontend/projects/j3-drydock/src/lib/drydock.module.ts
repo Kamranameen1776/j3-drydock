@@ -30,9 +30,6 @@ import { ProjectStatusFilterComponent } from './components/projects-main-page/pr
 import { LeftPanelFilterService } from './components/projects-main-page/services/LeftPanelFilterService';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
-import { FormLabelComponent } from './shared/components/form-label/form-label.component';
-import { FormGroupLabelComponent } from './shared/components/form-group-label/form-group-label.component';
-import { GenericHeaderComponent } from './shared/components/generic-header/generic-header.component';
 import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
 
 export function winEnv(): unknown {
@@ -66,9 +63,6 @@ export function winEnv(): unknown {
     StandardJobsStatusColorPipe,
     StaticGridSearchPipe,
     SpecificationDetailsComponent,
-    FormLabelComponent,
-    FormGroupLabelComponent,
-    GenericHeaderComponent,
     SpecificationDetailsHeaderComponent
   ],
   imports: [
