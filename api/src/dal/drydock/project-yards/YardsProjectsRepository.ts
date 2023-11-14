@@ -17,8 +17,8 @@ export class YardsProjectsRepository {
                 `yp.uid as uid,
                 yp.project_uid as projectUid,
                 yp.yard_uid as yardUid,
-                y.YardName as yardName,
-                y.YardLocation as yardLocation,
+                y.yard_name as yardName,
+                y.yard_location as yardLocation,
                 yp.last_exported_date as lastExportedDate,
                 yp.is_selected as isSelected`,
             )
@@ -30,14 +30,14 @@ export class YardsProjectsRepository {
         const yardProjects: yards_projects[] = data.yardsUids.map((yardUid) => {
             const yardProjects = new yards_projects();
             yardProjects.uid = new DataUtilService().newUid();
-            yardProjects.ProjectUid = data.projectUid;
+            yardProjects.project_uid = data.projectUid;
             yardProjects.yard = {
                 uid: yardUid,
             };
-            yardProjects.IsSelected = false;
-            yardProjects.CreatedBy = data.createdBy;
-            yardProjects.CreatedAt = new Date();
-            yardProjects.ActiveStatus = true;
+            yardProjects.is_selected = false;
+            yardProjects.created_by = data.createdBy;
+            yardProjects.created_at = new Date();
+            yardProjects.active_status = true;
             return yardProjects;
         });
 
@@ -57,8 +57,8 @@ export class YardsProjectsRepository {
             .createQueryBuilder('yp')
             .update(yards_projects)
             .set({
-                LastExportedDate: data.lastExportedDate,
-                IsSelected: data.isSelected,
+                last_exported_date: data.lastExportedDate,
+                is_selected: data.isSelected,
             })
             .where(`uid = '${data.uid}'`)
             .execute();
@@ -70,9 +70,9 @@ export class YardsProjectsRepository {
             .createQueryBuilder('yp')
             .update(yards_projects)
             .set({
-                ActiveStatus: false,
-                DeletedAt: new Date(),
-                DeletedBy: data.deletedBy,
+                active_status: false,
+                deleted_at: new Date(),
+                deleted_by: data.deletedBy,
             })
             .where(`uid = '${data.uid}'`)
             .execute();

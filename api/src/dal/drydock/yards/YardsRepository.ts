@@ -15,7 +15,7 @@ export class YardsRepository {
                 yd.YardLocation as yardLocation
                 `,
             )
-            .where(`yd.ActiveStatus = 1`)
+            .where(`yd.active_status = 1`)
             .execute();
     }
 }

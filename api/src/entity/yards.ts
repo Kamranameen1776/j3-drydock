@@ -1,9 +1,10 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 
+import { BaseDatesEntity } from './baseDatesEntity';
 import { yards_projects } from './yards_projects';
 
 @Entity('yards', { schema: 'dry_dock' })
-export class yards {
+export class yards extends BaseDatesEntity {
     @Column('uniqueidentifier', {
         nullable: false,
         primary: true,
@@ -16,44 +17,14 @@ export class yards {
         name: 'yard_name',
         length: 200,
     })
-    YardName: string | null;
+    yard_name: string | null;
 
     @Column('varchar', {
         nullable: true,
         name: 'yard_location',
         length: 200,
     })
-    YardLocation: string | null;
-
-    @Column('bit', {
-        nullable: true,
-        name: 'active_status',
-    })
-    ActiveStatus: boolean;
-
-    @Column('uniqueidentifier', {
-        nullable: true,
-        name: 'created_by',
-    })
-    CreatedBy: string;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'created_at',
-    })
-    CreatedAt: Date;
-
-    @Column('uniqueidentifier', {
-        nullable: true,
-        name: 'deleted_by',
-    })
-    DeletedBy: string;
-
-    @Column('datetime', {
-        nullable: true,
-        name: 'deleted_at',
-    })
-    DeletedAt: Date;
+    yard_location: string | null;
 
     @OneToMany(() => yards_projects, (yard_projects) => yard_projects.yard)
     YardProjects: yards_projects[];
