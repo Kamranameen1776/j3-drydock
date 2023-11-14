@@ -1,6 +1,5 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
 import { YardsProjectsRepository } from '../../../dal/drydock/project-yards/YardsProjectsRepository';
@@ -33,14 +32,15 @@ export class CreateProjectYardsCommand extends Command<CreateProjectYardsDto, vo
     }
 
     protected async MainHandlerAsync(request: CreateProjectYardsDto): Promise<void> {
-        //todo: const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
+        const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const createdYardProject = await this.yardProjectsRepository.create(
                 {
-                    createdBy: '7EBF2022-5300-4137-8E86-21E9118BCD41',
+                    createdBy: createdBy,
                     projectUid: request.projectUid,
                     yardsUids: request.yardsUids,
+                    createdAt: new Date(),
                 },
                 queryRunner,
             );

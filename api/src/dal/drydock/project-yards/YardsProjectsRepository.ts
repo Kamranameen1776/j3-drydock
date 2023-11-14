@@ -19,7 +19,7 @@ export class YardsProjectsRepository {
                 yp.yard_uid as yardUid,
                 y.yard_name as yardName,
                 y.yard_location as yardLocation,
-                yp.last_exported_date as lastExportedDate,
+                cast(yp.last_exported_date as datetimeoffset) AS lastExportedDate,
                 yp.is_selected as isSelected`,
             )
             .where(`yp.active_status = 1 and yp.project_uid = '${uid}'`)
@@ -36,7 +36,7 @@ export class YardsProjectsRepository {
             };
             yardProjects.is_selected = false;
             yardProjects.created_by = data.createdBy;
-            yardProjects.created_at = new Date();
+            yardProjects.created_at = data.createdAt;
             yardProjects.active_status = true;
             return yardProjects;
         });
@@ -59,6 +59,8 @@ export class YardsProjectsRepository {
             .set({
                 last_exported_date: data.lastExportedDate,
                 is_selected: data.isSelected,
+                updated_at: data.updatedAt,
+                updated_by: data.updatedBy,
             })
             .where(`uid = '${data.uid}'`)
             .execute();
@@ -71,7 +73,7 @@ export class YardsProjectsRepository {
             .update(yards_projects)
             .set({
                 active_status: false,
-                deleted_at: new Date(),
+                deleted_at: data.deletedAt,
                 deleted_by: data.deletedBy,
             })
             .where(`uid = '${data.uid}'`)

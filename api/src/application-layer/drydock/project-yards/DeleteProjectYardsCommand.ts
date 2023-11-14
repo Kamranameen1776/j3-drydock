@@ -1,6 +1,5 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
 import { YardsProjectsRepository } from '../../../dal/drydock/project-yards/YardsProjectsRepository';
@@ -32,13 +31,14 @@ export class DeleteProjectYardsCommand extends Command<DeleteProjectYardsDto, vo
     }
 
     protected async MainHandlerAsync(request: DeleteProjectYardsDto) {
-        //todo: const { UserUID: deletedBy } = AccessRights.authorizationDecode(request);
+        const { UserUID: deletedBy } = AccessRights.authorizationDecode(request);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const deletedYardProject = await this.yardProjectsRepository.delete(
                 {
-                    deletedBy: '7EBF2022-5300-4137-8E86-21E9118BCD41',
+                    deletedBy: deletedBy,
                     uid: request.uid,
+                    deletedAt: new Date(),
                 },
                 queryRunner,
             );
