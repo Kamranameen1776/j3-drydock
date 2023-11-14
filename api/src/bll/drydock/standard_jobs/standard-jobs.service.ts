@@ -106,10 +106,9 @@ export class StandardJobsService {
     public mapStandardJobsDtoToEntity(data: CreateStandardJobsRequestDto): Partial<standard_jobs> {
         const standardJob = new standard_jobs();
         standardJob.subject = data.subject;
-        standardJob.code = data.code;
         standardJob.scope = data.scope;
         standardJob.function = data.function;
-        standardJob.functionUid = data.functionUid;
+        standardJob.function_uid = data.functionUid;
         standardJob.vessel_type_specific = data.vesselTypeSpecific;
         standardJob.description = data.description;
         if (data.categoryUid) {
