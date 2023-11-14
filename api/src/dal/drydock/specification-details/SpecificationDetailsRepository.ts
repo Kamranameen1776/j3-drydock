@@ -115,7 +115,6 @@ export class SpecificationDetailsRepository {
     }
 
     public async CreateSpecificationDetails(data: ICreateSpecificationDetailsDto, queryRunner: QueryRunner) {
-        // const spec = await this.CreateSpecificationDetailsEntity(data);
         data.CreatedAt = new Date();
         data.ActiveStatus = true;
 
