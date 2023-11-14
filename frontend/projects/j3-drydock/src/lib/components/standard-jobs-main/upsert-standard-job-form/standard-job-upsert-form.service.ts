@@ -181,7 +181,6 @@ export class StandardJobUpsertFormService extends FormServiceBase {
         [eStandardJobsMainFields.Function]: null,
         [eStandardJobsMainFields.ItemNumber]: null,
         [eStandardJobsMainFields.Subject]: null,
-        [eStandardJobsMainFields.ItemCategoryID]: null,
         [eStandardJobsMainFields.MaterialSuppliedByID]: null,
         [eStandardJobsMainFields.DoneByID]: null,
         [eStandardJobsMainFields.VesselSpecific]: 0,

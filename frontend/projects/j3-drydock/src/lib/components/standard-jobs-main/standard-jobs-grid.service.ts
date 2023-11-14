@@ -15,7 +15,7 @@ export class StandardJobsGridService {
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
-      width: '100px',
+      width: '100px'
     },
     {
       DisplayText: eStandardJobsMainLabels.Subject,
@@ -27,13 +27,6 @@ export class StandardJobsGridService {
     {
       DisplayText: eStandardJobsMainLabels.VesselType,
       FieldName: eStandardJobsMainFields.VesselType,
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: true
-    },
-    {
-      DisplayText: eStandardJobsMainLabels.ItemCategory,
-      FieldName: eStandardJobsMainFields.ItemCategory,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
@@ -87,16 +80,6 @@ export class StandardJobsGridService {
       default: false
     },
     {
-      DisplayText: eStandardJobsMainLabels.ItemCategory,
-      FieldName: eStandardJobsMainFields.ItemCategory,
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      DisplayCode: 'displayName',
-      FieldID: 2,
-      gridName: this.gridName,
-      default: true
-    },
-    {
       DisplayText: eStandardJobsMainLabels.Inspection,
       FieldName: eStandardJobsMainFields.Inspection,
       Active_Status: true,
@@ -114,7 +97,7 @@ export class StandardJobsGridService {
       DisplayCode: 'displayName',
       FieldID: 4,
       gridName: this.gridName,
-      default: true
+      default: false
     },
     {
       DisplayText: eStandardJobsMainLabels.MaterialSuppliedBy,
@@ -144,12 +127,6 @@ export class StandardJobsGridService {
       type: eFieldControlType.MultiSelect,
       odataKey: eStandardJobsMainFields.VesselType,
       listValueKey: 'VesselTypes'
-    },
-    [eStandardJobsMainFields.ItemCategory]: {
-      webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory),
-      type: eFieldControlType.MultiSelect,
-      odataKey: eStandardJobsMainFields.ItemCategoryID,
-      listValueKey: 'uid'
     },
     [eStandardJobsMainFields.Inspection]: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection),
