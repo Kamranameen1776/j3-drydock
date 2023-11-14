@@ -64,7 +64,7 @@ export class SpecificationDetailsRepository {
                 'usr.uid AS ProjectManagerUid',
             ])
             .innerJoin(className(TECTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
-            .innerJoin(className(tm_dd_lib_done_by), 'db', 'spec.DoneByUid = db.uid')
+            .leftJoin(className(tm_dd_lib_done_by), 'db', 'spec.DoneByUid = db.uid')
             .leftJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
             .innerJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
             .innerJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
@@ -130,8 +130,6 @@ export class SpecificationDetailsRepository {
         SpecificationDetailsUid: string,
         queryRunner: QueryRunner,
     ) {
-        console.log('inside');
-        console.log(data);
         await queryRunner.manager.delete(SpecificationInspectionEntity, { SpecificationDetailsUid });
         return this.CreateSpecificationInspection(data, queryRunner);
     }

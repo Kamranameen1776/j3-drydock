@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsNumber, IsUUID, MaxLength, MinLength } from 'class-validator';
+import { ArrayMinSize, IsArray, IsNumber, IsOptional, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class CreateSpecificationDetailsDto {
     @IsUUID()
@@ -24,5 +24,6 @@ export class CreateSpecificationDetailsDto {
     Inspections: Array<number>;
 
     @IsUUID()
+    @IsOptional()
     DoneByUid: string;
 }
