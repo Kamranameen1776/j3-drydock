@@ -1,17 +1,20 @@
+import _ from 'lodash';
+
 import {
     CreateStandardJobsRequestDto,
     GetStandardJobsQueryResult,
     GetStandardJobsResult,
     GetStandardJobsResultDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
-import { standard_jobs } from '../../../entity/standard_jobs';
-import _ from 'lodash';
-import { LIB_VESSELTYPES } from '../../../entity/LIB_VESSELTYPES';
-import { LIB_Survey_CertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
-import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items';
 import { GetStandardJobSubItemsResultDto } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobSubItemsResultDto';
+import { LIB_Survey_CertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
+import { LIB_VESSELTYPES } from '../../../entity/LIB_VESSELTYPES';
+import { standard_jobs } from '../../../entity/standard_jobs';
+import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items';
 
 export class StandardJobsService {
+    notSelectedValueLabel = '-';
+
     public mapStandardJobsDataToDto(
         queryData: GetStandardJobsQueryResult,
         subItems: standard_jobs_sub_items[],
@@ -23,11 +26,11 @@ export class StandardJobsService {
                 functionUid: standardJob.functionUid,
                 code: standardJob.code,
                 scope: standardJob.scope,
-                category: standardJob.category,
+                category: standardJob.category || this.notSelectedValueLabel,
                 categoryUid: standardJob.categoryUid,
-                doneBy: standardJob.doneBy,
+                doneBy: standardJob.doneBy || this.notSelectedValueLabel,
                 doneByUid: standardJob.doneByUid,
-                materialSuppliedBy: standardJob.materialSuppliedBy,
+                materialSuppliedBy: standardJob.materialSuppliedBy || this.notSelectedValueLabel,
                 materialSuppliedByUid: standardJob.materialSuppliedByUid,
                 vesselTypeSpecific: standardJob.vesselTypeSpecific,
                 description: standardJob.description,
@@ -38,14 +41,14 @@ export class StandardJobsService {
                     cellStyle: '',
                 },
                 inspectionId: [],
-                inspection: '',
+                inspection: this.notSelectedValueLabel,
                 vesselTypeId: [],
-                vesselType: '',
+                vesselType: 'All',
                 subItems: [],
             };
 
             if (standardJob.inspectionId) {
-                const inspectionIds = standardJob.inspectionId.split(',');
+                const inspectionIds = standardJob.inspectionId.split(',').map(id => Number(id));
                 const inspections = standardJob.inspection.split(',');
                 newItem = {
                     ...newItem,
@@ -55,7 +58,7 @@ export class StandardJobsService {
             }
 
             if (standardJob.vesselTypeId) {
-                const vesselTypeIds = standardJob.vesselTypeId.split(',');
+                const vesselTypeIds = standardJob.vesselTypeId.split(',').map(id => Number(id));
                 const vesselTypes = standardJob.vesselType.split(',');
                 newItem = {
                     ...newItem,
@@ -81,8 +84,8 @@ export class StandardJobsService {
         if (subItems) {
             resultData.forEach((item) => {
                 item.subItems = subItems
-                    .filter(subItem => subItem.standard_job_uid === item.uid)
-                    .map(subItem => {
+                    .filter((subItem) => subItem.standard_job_uid === item.uid)
+                    .map((subItem) => {
                         return {
                             uid: subItem.uid,
                             code: subItem.code,
@@ -103,10 +106,9 @@ export class StandardJobsService {
     public mapStandardJobsDtoToEntity(data: CreateStandardJobsRequestDto): Partial<standard_jobs> {
         const standardJob = new standard_jobs();
         standardJob.subject = data.subject;
-        standardJob.code = data.code;
         standardJob.scope = data.scope;
         standardJob.function = data.function;
-        standardJob.functionUid = data.functionUid;
+        standardJob.function_uid = data.functionUid;
         standardJob.vessel_type_specific = data.vesselTypeSpecific;
         standardJob.description = data.description;
         if (data.categoryUid) {

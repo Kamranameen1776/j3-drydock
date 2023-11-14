@@ -1,5 +1,5 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
-import { MigrationUtilsService } from "j2utils";
+import { MigrationUtilsService } from 'j2utils';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class createSubItemsTable1698668572441 implements MigrationInterface {
     tableName = 'standard_jobs_sub_items';
@@ -33,20 +33,20 @@ export class createSubItemsTable1698668572441 implements MigrationInterface {
     END`);
 
             await MigrationUtilsService.migrationLog(
-              'createSubItemsTable1698668572441',
-              '',
-              'S',
-              'dry_dock',
-              'Create standard jobs sub items table',
+                'createSubItemsTable1698668572441',
+                '',
+                'S',
+                'dry_dock',
+                'Create standard jobs sub items table',
             );
         } catch (error) {
             await MigrationUtilsService.migrationLog(
-              'createSubItemsTable1698668572441',
-              error,
-              'E',
-              'dry_dock',
-              'Create standard jobs sub items table',
-              true,
+                'createSubItemsTable1698668572441',
+                JSON.stringify(error),
+                'E',
+                'dry_dock',
+                'Create standard jobs sub items table',
+                true,
             );
         }
     }
@@ -62,22 +62,21 @@ export class createSubItemsTable1698668572441 implements MigrationInterface {
             `);
 
             await MigrationUtilsService.migrationLog(
-              'createSubItemsTable1698668572441',
-              '',
-              'S',
-              'dry_dock',
-              'Drop standard jobs sub items table (Down migration)',
+                'createSubItemsTable1698668572441',
+                '',
+                'S',
+                'dry_dock',
+                'Drop standard jobs sub items table (Down migration)',
             );
         } catch (error) {
             await MigrationUtilsService.migrationLog(
-              'createSubItemsTable1698668572441',
-              error,
-              'E',
-              'dry_dock',
-              'Drop standard jobs sub items table (Down migration)',
-              true,
+                'createSubItemsTable1698668572441',
+                JSON.stringify(error),
+                'E',
+                'dry_dock',
+                'Drop standard jobs sub items table (Down migration)',
+                true,
             );
         }
     }
-
 }

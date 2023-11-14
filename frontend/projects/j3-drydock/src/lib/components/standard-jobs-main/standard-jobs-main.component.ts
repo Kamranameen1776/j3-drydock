@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
 import { StandardJobResult } from '../../models/interfaces/standard-jobs';
 import { Component, OnInit } from '@angular/core';
@@ -11,6 +12,7 @@ import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../models/constants/popup';
 import { StandardJobsService } from '../../services/standard-jobs.service';
 import { GrowlMessageService } from '../../services/growl-message.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'jb-standard-jobs-main',
@@ -43,7 +45,8 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     private standardJobsService: StandardJobsService,
     private upsertFormService: StandardJobUpsertFormService,
     private gridService: GridService,
-    private growlMessageService: GrowlMessageService
+    private growlMessageService: GrowlMessageService,
+    private title: Title
   ) {
     super();
   }
@@ -52,6 +55,7 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     this.setAccessRights();
     this.setGridInputs();
     this.setGridRowActions();
+    this.setPageTitle();
     this.loadFunctionsTree();
   }
 
@@ -144,5 +148,9 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
       this.currentRow = undefined;
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);
     });
+  }
+
+  private setPageTitle() {
+    this.title.setTitle('Standard Jobs');
   }
 }

@@ -24,7 +24,6 @@ export class GetProjectTypesQuery extends Query<void, ProjectTypeEntity[]> {
      * @returns All example projects, which were created after the latest projects date
      */
     protected async MainHandlerAsync(): Promise<ProjectTypeEntity[]> {
-        const query = undefined;
         const projects = await this.dictionariesRepository.GetProjectTypes();
 
         return projects;

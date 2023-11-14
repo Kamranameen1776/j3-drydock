@@ -18,7 +18,7 @@ export class createStandardJobs1696484959388 implements MigrationInterface {
             [uid]                      [uniqueidentifier] NOT NULL DEFAULT NEWID(),
             [subject]                  [varchar](250)     NULL,
             [function]                 [varchar](250)     NULL,
-            [functionUid]              [uniqueidentifier] NULL,
+            [function_uid]              [uniqueidentifier] NULL,
             [code]                     [varchar](250)     NULL,
             [number]                   [int]              NOT NULL IDENTITY(1,1),
             [scope]                    [varchar](5000)    NULL,
@@ -53,7 +53,7 @@ export class createStandardJobs1696484959388 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createStandardJobs1696484959388',
-                error,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 'Create standard jobs table',
@@ -82,7 +82,7 @@ export class createStandardJobs1696484959388 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createStandardJobs1696484959388',
-                error,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 'Drop standard jobs table (Down migration)',
