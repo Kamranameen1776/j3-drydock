@@ -17,12 +17,6 @@ export class SpecificationDetailsEntity {
     })
     FunctionUid: string;
 
-    @Column('uniqueidentifier', {
-        nullable: true,
-        name: 'component_uid',
-    })
-    ComponentUid: string;
-
     @Column('varchar', {
         nullable: true,
         name: 'account_code',
