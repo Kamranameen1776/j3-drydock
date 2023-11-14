@@ -1,8 +1,8 @@
 import { YardsRepository } from '../../../dal/drydock/yards/YardsRepository';
-import { yards } from '../../../entity/yards';
 import { Query } from '../core/cqrs/Query';
+import { GetYardsDto } from './dtos/GetYardsDto';
 
-export class GetYardsQuery extends Query<string, yards> {
+export class GetYardsQuery extends Query<string, GetYardsDto> {
     yardsRepository = new YardsRepository();
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -16,7 +16,7 @@ export class GetYardsQuery extends Query<string, yards> {
     /**
      * @returns All yard details
      */
-    protected async MainHandlerAsync(): Promise<yards> {
-        return await this.yardsRepository.getYards();
+    protected async MainHandlerAsync(): Promise<GetYardsDto> {
+        return this.yardsRepository.getYards();
     }
 }

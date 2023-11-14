@@ -3,14 +3,14 @@ import { getManager, QueryRunner } from 'typeorm';
 
 import { yards_projects } from '../../../entity/yards_projects';
 import { ICreateProjectYardsDto } from './dtos/ICreateProjectYardsDto';
+import { IDeleteProjectYardsDto } from './dtos/IDeleteProjectYardsDto';
 import { IProjectYardsResultDto } from './dtos/IProjectYardsResultDto';
 import { IUpdateProjectYardsDto } from './dtos/IUpdateProjectYardsDto';
 
 export class YardsProjectsRepository {
     public async getAllByProject(uid: string): Promise<IProjectYardsResultDto> {
         const yardProjectsRepository = getManager().getRepository(yards_projects);
-
-        return await yardProjectsRepository
+        return yardProjectsRepository
             .createQueryBuilder('yp')
             .leftJoinAndSelect('yp.yard', 'y')
             .select(
@@ -53,7 +53,7 @@ export class YardsProjectsRepository {
 
     public async update(data: IUpdateProjectYardsDto, queryRunner: QueryRunner) {
         const yardProjectsRepository = queryRunner.manager.getRepository(yards_projects);
-        return await yardProjectsRepository
+        return yardProjectsRepository
             .createQueryBuilder('yp')
             .update(yards_projects)
             .set({
@@ -64,17 +64,17 @@ export class YardsProjectsRepository {
             .execute();
     }
 
-    public async delete(uid: string, deletedBy: string, queryRunner: QueryRunner) {
+    public async delete(data: IDeleteProjectYardsDto, queryRunner: QueryRunner) {
         const yardProjectsRepository = queryRunner.manager.getRepository(yards_projects);
-        return await yardProjectsRepository
+        return yardProjectsRepository
             .createQueryBuilder('yp')
             .update(yards_projects)
             .set({
                 ActiveStatus: false,
                 DeletedAt: new Date(),
-                DeletedBy: deletedBy,
+                DeletedBy: data.deletedBy,
             })
-            .where(`uid = '${uid}'`)
+            .where(`uid = '${data.uid}'`)
             .execute();
     }
 }

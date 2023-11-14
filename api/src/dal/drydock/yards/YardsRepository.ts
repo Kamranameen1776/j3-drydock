@@ -1,22 +1,18 @@
 import { getManager } from 'typeorm';
 
 import { yards } from '../../../entity/yards';
+import { IYardsResultDto } from './dtos/IYardsResultDto';
 
 export class YardsRepository {
-    public async getYards(): Promise<yards> {
+    public async getYards(): Promise<IYardsResultDto> {
         const yardsRepository = getManager().getRepository(yards);
 
-        return await yardsRepository
+        return yardsRepository
             .createQueryBuilder('yd')
             .select(
                 `yd.Uid as uid,
                 yd.YardName as yardName,
-                yd.YardLocation as yardLocation,
-                yd.ActiveStatus as activeStatus,
-                yd.CreatedBy as createdBy,
-                yd.CreatedAt as createdAt,
-                yd.DeletedBy as deletedBy,
-                yd.DeletedAt as deletedAt
+                yd.YardLocation as yardLocation
                 `,
             )
             .where(`yd.ActiveStatus = 1`)

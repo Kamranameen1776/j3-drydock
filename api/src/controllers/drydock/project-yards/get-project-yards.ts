@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { GetYardProjectsQuery } from '../../../application-layer/drydock/yard-projects/GetYardProjectsQuery';
+import { GetProjectYardsQuery } from '../../../application-layer/drydock/project-yards/GetProjectYardsQuery';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 /**
@@ -12,7 +12,7 @@ export async function getProjectYards(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        const query = new GetYardProjectsQuery();
+        const query = new GetProjectYardsQuery();
 
         const uid = request.query.uid as string;
         const result = await query.ExecuteAsync(uid);

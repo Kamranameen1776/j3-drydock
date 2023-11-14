@@ -4,4 +4,6 @@ export interface IProjectYardsResultDto {
     projectUid: string;
     lastExportedDate: Date;
     isSelected: boolean;
+    yardName: string;
+    yardLocation: string;
 }

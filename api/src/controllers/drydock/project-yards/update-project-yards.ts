@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
 
-import { UpdateYardProjectsCommand } from '../../../application-layer/drydock/yard-projects/UpdateYardProjectsCommand';
+import { UpdateProjectYardsCommand } from '../../../application-layer/drydock/project-yards/UpdateProjectYardsCommand';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 async function updateProjectYards(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        const command = new UpdateYardProjectsCommand();
+        const command = new UpdateProjectYardsCommand();
 
-        return await command.ExecuteAsync(request.body);
+        return command.ExecuteAsync(request.body);
     });
 }
 
