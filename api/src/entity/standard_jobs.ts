@@ -39,9 +39,9 @@ export class standard_jobs extends BaseDatesEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'functionUid',
+        name: 'function_uid',
     })
-    functionUid: string;
+    function_uid: string;
 
     @Column('varchar', {
         nullable: true,
