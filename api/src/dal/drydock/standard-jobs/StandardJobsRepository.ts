@@ -40,6 +40,7 @@ export class StandardJobsRepository {
             .select(
                 'distinct sj.uid as uid,' +
                     'sj.subject as subject,' +
+                    'sj.scope as scope,' +
                     'sj."function" as "function",' +
                     'sj."function_uid" as "functionUid",' +
                     'CONCAT(sj.code, sj.number) as code,' +
@@ -60,6 +61,7 @@ export class StandardJobsRepository {
             .groupBy(
                 `sj.uid` +
                     `,sj.subject` +
+                    `,sj.scope` +
                     `,sj."function"` +
                     ',sj."function_uid"' +
                     `,sj.code` +
