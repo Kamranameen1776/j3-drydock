@@ -34,8 +34,6 @@ import { FormLabelComponent } from './shared/components/form-label/form-label.co
 import { FormGroupLabelComponent } from './shared/components/form-group-label/form-group-label.component';
 import { GenericHeaderComponent } from './shared/components/generic-header/generic-header.component';
 import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
-import { SpecificationDetailsSubHeaderComponent } from './components/specification-details/specification-details-header/specification-details-sub-header/specification-details-sub-header.component';
-import { SidebarMenuService } from './services/sidebar-menu.service';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -71,8 +69,7 @@ export function winEnv(): unknown {
     FormLabelComponent,
     FormGroupLabelComponent,
     GenericHeaderComponent,
-    SpecificationDetailsHeaderComponent,
-    SpecificationDetailsSubHeaderComponent
+    SpecificationDetailsHeaderComponent
   ],
   imports: [
     CommonModule,
@@ -95,7 +92,6 @@ export function winEnv(): unknown {
     SpecificationTopDetailsService,
     ProjectsService,
     SpecificationDetailsService,
-    SidebarMenuService,
     LeftPanelFilterService
   ],
   exports: [],

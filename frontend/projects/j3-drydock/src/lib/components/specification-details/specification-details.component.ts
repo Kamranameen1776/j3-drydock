@@ -1,48 +1,36 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { SpecificationDetailsService } from '../../services/specification-details/specification-details.service';
 import { GetSpecificationDetailsDto } from '../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { ActivatedRoute } from '@angular/router';
-// import { TypedFormGroup } from '../../shared/components/typed-forms';
-// import { ISpecificationFormGroup, Section } from './specification-details-header/types';
-import { eSpecificationDetailsPageMenuIds } from '../../models/enums/specification-details-menu-items.enum';
-import { FormBuilder, Validators } from '@angular/forms';
-import { JbDatePipe } from 'jibe-components';
-import { Section, SectionEditMode, View, defaultSectionEditMode, sectionViewMap } from './specification-details-header/types';
-import { SidebarMenuService } from '../../services/sidebar-menu.service';
-import { getListSinglePageMenu } from './specification-details-header/single-page-menu';
-import { UnsubscribeComponent } from '../../shared/unsubscribe.component';
-import { NotificationService } from '../../services/notification.service';
-import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
-
+import { eSpecificationDetailsPageMenuIds, specificationDetailsMenuData } from '../../models/enums/specification-details-menu-items.enum';
+import { IJbMenuItem, JbDatePipe, JbMenuService, JiBeTheme } from 'jibe-components';
+import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
+import { takeUntil } from 'rxjs/operators';
+import { GrowlMessageService } from '../../services/growl-message.service';
 @Component({
   selector: 'jb-specification-details',
   templateUrl: './specification-details.component.html',
   styleUrls: ['./specification-details.component.scss'],
-  providers: [JbDatePipe]
+  providers: [JbDatePipe, GrowlMessageService]
 })
-export class SpecificationDetailsComponent extends UnsubscribeComponent implements OnInit {
-  public enums = {
-    eSinglePageMenuIds: eSpecificationDetailsPageMenuIds
-  };
-  public formGroup;
+export class SpecificationDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
+  @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationDetails) [eSpecificationDetailsPageMenuIds.SpecificationDetails]: ElementRef;
+
   private pageTitle = 'Specification Details';
-  public specificationDetails: GetSpecificationDetailsDto;
+  public specificationDetailsInfo: GetSpecificationDetailsDto;
   public specificationUid: string;
-  public currentView: View = eSpecificationDetailsPageMenuIds.SpecificationDetails;
-  public sectionEditMode: SectionEditMode = {
-    ...defaultSectionEditMode,
-    generalInformation: true
-  };
+
+  private readonly menuId = 'specification-details-menu';
+  currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
+  eProjectDetailsSideMenuId = eSpecificationDetailsPageMenuIds;
 
   constructor(
     private title: Title,
     private specificatioDetailService: SpecificationDetailsService,
-    private readonly sidebarMenuService: SidebarMenuService,
-    private readonly formBuilder: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly notificationService: NotificationService
+    private growlMessageService: GrowlMessageService,
+    private jbMenuService: JbMenuService
   ) {
     super();
   }
@@ -51,53 +39,60 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     const { snapshot } = this.activatedRoute;
     this.specificationUid = snapshot.params['specificationUid'];
 
-    this.formGroup = this.formBuilder.group({
-      uid: [this.specificationUid, Validators.required],
-      title: [null, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
-      assigneeUid: undefined
+    this.specificationDetailsInfo = await this.specificatioDetailService.getSpecificationDetails(this.specificationUid).toPromise();
+    this.pageTitle = `Specification ${this.specificationDetailsInfo.SpecificationCode}`;
+    this.title.setTitle(this.pageTitle);
+    this.initSideMenu();
+  }
+
+  ngOnDestroy() {
+    this.hideSideMenu();
+  }
+
+  private initSideMenu() {
+    this.jbMenuService.setSlideLayout.next('static');
+    this.jbMenuService.setSlideMenuConfig.next({
+      theme: JiBeTheme.Figma,
+      activeMenu: true,
+      id: this.menuId,
+      menuData: specificationDetailsMenuData
     });
-
-    this.specificationDetails = await this.specificatioDetailService.getSpecificationDetails(this.specificationUid).toPromise();
-    this.pageTitle = `Specification ${this.specificationDetails.SpecificationCode}`;
-    this.title.setTitle(this.specificationDetails.Subject);
-    this.setSinglePageMenu();
-  }
-
-  public setSectionEditMode(key: Section): void {
-    this.sectionEditMode = {
-      ...defaultSectionEditMode,
-      [key]: true
-    };
-  }
-
-  private setSinglePageMenu(): void {
-    this.sidebarMenuService.init(getListSinglePageMenu(), this.componentDestroyed$, ({ id }) => {
-      this.scrollInto(`#${id}`);
-      this.currentView = sectionViewMap[id] ?? id;
-      this.changeDetectorRef.markForCheck();
+    
+    this.jbMenuService.selectedMenuOpt.pipe(takeUntil(this.unsubscribe$)).subscribe((selectedMenu) => {
+      if (!selectedMenu) {
+        return;
+      }
+      if (this.isMenuSection(selectedMenu)) {
+        this.currentSectionId = selectedMenu.id as eSpecificationDetailsPageMenuIds;
+      }
+      if (selectedMenu.id) {
+        this[selectedMenu.id]?.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      }
     });
   }
 
-  private scrollInto(selector: string): void {
-    document.querySelector(selector)?.scrollIntoView({ behavior: 'smooth' });
+  private hideSideMenu() {
+    this.jbMenuService.setSlideMenuConfig.next({
+      activeMenu: false,
+      id: this.menuId,
+      menuData: null
+    });
+  }
+
+  private isMenuSection(menuItem: IJbMenuItem) {
+    return menuItem.id === eSpecificationDetailsPageMenuIds.SpecificationDetails || !!menuItem.items?.length;
   }
 
   public async save(): Promise<void> {
-    const data: UpdateSpecificationDetailsDto = this.formGroup.value;
-    data.functionUid = this.specificationDetails.FunctionUid;
-    data.itemCategoryUid = this.specificationDetails.FunctionUid;
-    data.description = this.specificationDetails.Description;
+    let data;
 
     try {
       const uid = await this.specificatioDetailService.updateSpecification(data).toPromise();
       if (uid === this.specificationUid) {
-        this.notificationService.success("Specification's information has been saved successfully.");
+        this.growlMessageService.setSuccessMessage("Specification's information has been saved successfully.");
       }
     } catch (err) {
-      this.notificationService.showWarningError(err);
+      this.growlMessageService.setErrorMessage(err.error);
     }
   }
-  async applyStep(event): Promise<void> {}
-
-  reworkStep(): void {}
 }

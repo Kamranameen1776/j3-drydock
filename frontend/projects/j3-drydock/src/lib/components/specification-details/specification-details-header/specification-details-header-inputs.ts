@@ -1,77 +1,78 @@
 import { Injectable } from '@angular/core';
 import f from 'odata-filter-builder';
-import { ISingleSelectDropdown, eAction, eApiBase, eCrud, eEntities, eUserStatus } from 'jibe-components';
-import { HeaderButton, HeaderSection } from '../../../shared/components/generic-header/generic-header.interfaces';
+import { ITopSectionFieldSet, eAction, eApiBase, eCrud, eEntities, eUserStatus } from 'jibe-components';
+import { Observable } from 'rxjs';
+import { TopFieldsData } from '../../../services/specifications/specification-top-details.service';
 
 export type SpecificationDetailsHeaderInputs = {
-  assigneeDropdown: ISingleSelectDropdown;
-  headerButtons: HeaderButton[];
-  headerSections: HeaderSection[];
-  //TODO: tooltip will according to workflow type
-  //buttonTooltip: Partial<Record<WorkerType, string>>
-  buttonTooltip: Partial<Record<string, string>>;
+  topFieldsConfig: ITopSectionFieldSet;
+  detailedData: Record<string, unknown>;
+  canEdit: boolean;
 };
 
 @Injectable()
 export class SpecificationDetailsHeaderInputservice {
   constructor() {}
 
-  private assigneeDropdown: ISingleSelectDropdown = {
-    label: 'First_Name',
-    value: 'uid',
-    id: 'assigneeUid',
-    isValidation: false,
-    apiRequest: {
-      apiBase: eApiBase.MasterAPI,
-      entity: eEntities.Master,
-      action: eAction.GetDataSource,
-      crud: eCrud.Get,
-      params: `dataSourceName=user`,
-      odata: {
-        filter: new f().eq(eUserStatus.ActiveStatus, true),
-        orderby: 'UserID',
-        select: 'First_Name,uid,Active_Status'
+  topFieldsConfig: ITopSectionFieldSet = {
+    showStatus: true,
+    showVessel: true,
+    showJobCard: true,
+    jobStatus: 'raise',
+    statusClass: 'status-9',
+    jobStatusDisplayName: 'Raised',
+    typeIconClass: 'icons8-document-4',
+    worklistType: 'drydock',
+    worklistDisplayName: 'Specification',
+    jobCardNo: '',
+    vesselName: '',
+    jobTitle: '',
+    bottomFieldsConfig: [
+      {
+        id: 'assigneeUid',
+        label: 'Assigned To',
+        isRequired: false,
+        isEditable: true,
+        type: 'dropdown',
+        getFieldName: 'First_Name',
+        saveFieldName: 'uid',
+        controlContent: {
+          label: 'First_Name',
+          value: 'uid',
+          id: 'assigneeUid',
+          isValidation: false,
+          apiRequest: {
+            apiBase: eApiBase.MasterAPI,
+            entity: eEntities.Master,
+            action: eAction.GetDataSource,
+            crud: eCrud.Get,
+            params: `dataSourceName=user`,
+            odata: {
+              filter: new f().eq(eUserStatus.ActiveStatus, true),
+              orderby: 'UserID',
+              select: 'First_Name,uid,Active_Status'
+            }
+          }
+        }
       }
-    }
+    ]
   };
 
-  private headerButtons: HeaderButton[] = [
-    {
-      id: 'save',
-      buttonType: 'Standard',
-      command: null,
-      label: 'Save',
-      buttonClass: 'save'
-    }
-  ];
-
-  private buttonTooltip: Partial<Record<string, string>> = {
-    REVIEW: 'There are no financial items/quotation items selected or some financial item has empty glAccountUid'
+  detailedData = {
+    assigneeUid: ''
   };
 
-  private headerSections: HeaderSection[] = [
-    {
-      label: '',
-      labelClass: '',
-      labelColor: 'var(--jbGreyBlue500)',
-      iconClass: 'icons8-water-transportation',
-      iconColor: 'var(--jbBrandBlue500)'
-    },
-    {
-      label: '',
-      labelClass: '',
-      labelColor: 'var(--jbBrandBlue500)',
-      iconClass: 'icons8-document-4',
-      iconColor: ''
-    }
-  ];
+  canEdit = true;
 
-  public getPopupInputs(): SpecificationDetailsHeaderInputs {
-    return {
-      assigneeDropdown: this.assigneeDropdown,
-      headerButtons: this.headerButtons,
-      headerSections: this.headerSections,
-      buttonTooltip: this.buttonTooltip
-    };
+  public getInputs(): Observable<TopFieldsData> {
+    return new Observable((sub) => {
+      sub.next({
+        topFieldsConfig: this.topFieldsConfig,
+        detailedData: this.detailedData,
+        canEdit: this.canEdit
+      });
+
+      sub.complete();
+    });
   }
 }

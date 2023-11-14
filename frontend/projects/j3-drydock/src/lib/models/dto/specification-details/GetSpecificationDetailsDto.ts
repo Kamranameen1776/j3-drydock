@@ -29,6 +29,7 @@ export interface GetSpecificationDetailsDto {
   createdAt: Date;
   SpecificationCode: string;
   ProjectManagerUid?: string;
+  ProjectManager?: string;
   title?: string;
   destination?: Vessel;
   VesselName?: string;

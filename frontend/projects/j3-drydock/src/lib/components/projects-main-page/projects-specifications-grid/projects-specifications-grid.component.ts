@@ -160,10 +160,10 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     if (this.createProjectFormGroup.valid) {
       const values: ProjectCreate = this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId];
 
-      const endDate = moment(values.EndDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate()
+      const endDate = moment(values.EndDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
       values.EndDate = endDate;
 
-      const startDate = moment(values.StartDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate()
+      const startDate = moment(values.StartDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
       values.StartDate = startDate;
 
       this.projectsService.createProject(values).subscribe(() => {

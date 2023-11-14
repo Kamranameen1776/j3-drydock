@@ -1,21 +1,24 @@
-<div
-  class="single-page-header"
-  [formGroup]="formGroup"
->
-  <drydock-generic-header
-    [editMode]="true"
-    [status]="status"
-    formControlName="title"
-    [showThreeDot]="false"
-    [settingsOptions]="headerMenu"
-    [buttons]="headerInputs.headerButtons"
-    [sections]="headerInputs.headerSections"
+<div jb-detail-top-section>
+  <jb-details-top-section
+    *ngIf="topDetailsData"
+    [topFieldsConfig]="topDetailsData.topFieldsConfig"
+    [detailsData]="topDetailsData.detailedData"
+    [canEdit]="topDetailsData.canEdit"
+    (onValueChange)="onValueChange($event)"
   >
-    <jb-specification-details-sub-header
-      *ngIf="sepcificationDetails"
-      [isEditMode]="true"
-      [inputs]="headerInputs"
-      [specificationDetailsInfo]="sepcificationDetails"
-    ></jb-specification-details-sub-header>
-  </drydock-generic-header>
+    >
+    <div
+      class="header-actions"
+      jb-workflow-section
+    >
+      <jb-grid-advanced-settings></jb-grid-advanced-settings>
+      <jb-button
+        type="NoButton"
+        label="Save"
+        (click)="save()"
+        [disabled]="saveButtonDisabled"
+      ></jb-button>
+      <jb-button label="Complete"></jb-button>
+    </div>
+  </jb-details-top-section>
 </div>
