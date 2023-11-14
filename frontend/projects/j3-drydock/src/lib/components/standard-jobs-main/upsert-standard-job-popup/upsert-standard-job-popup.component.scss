@@ -2,13 +2,13 @@
 
 :host {
   ::ng-deep {
-      @include jb-tabview;
+    @include jb-tabview;
 
-      .attachments {
-          .control-upload {
-              display: flex;
-              justify-content: flex-end;
-          }
-      } 
+    .attachments {
+      .control-upload {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
   }
 }

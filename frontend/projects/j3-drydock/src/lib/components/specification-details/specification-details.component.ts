@@ -57,7 +57,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       id: this.menuId,
       menuData: specificationDetailsMenuData
     });
-    
+
     this.jbMenuService.selectedMenuOpt.pipe(takeUntil(this.unsubscribe$)).subscribe((selectedMenu) => {
       if (!selectedMenu) {
         return;
