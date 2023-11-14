@@ -25,11 +25,6 @@ export class UpdateYardProjectsCommand extends Command<UpdateYardProjectsDto, vo
     }
 
     protected async MainHandlerAsync(request: UpdateYardProjectsDto): Promise<void> {
-        await this.uow.ExecuteAsync(async (queryRunner) => {
-            const updatedYardProjectsData = await this.yardProjectsRepository.updateYardProjects(request, queryRunner);
-            return updatedYardProjectsData;
-        });
-
-        return;
+        await this.yardProjectsRepository.updateYardProjects(request);
     }
 }

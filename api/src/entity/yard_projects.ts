@@ -1,13 +1,12 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
+import { yards } from './yards';
+
+//todo: rename to low case
 @Entity('yard_to_project', { schema: 'dry_dock' })
-export class YardProjectsEntity {
-    @Column('uniqueidentifier', {
-        nullable: false,
-        primary: true,
-        name: 'uid',
-    })
-    Uid: string;
+export class yard_projects {
+    @PrimaryGeneratedColumn('uuid')
+    uid: string;
 
     @Column('uniqueidentifier', {
         primary: true,
@@ -15,10 +14,12 @@ export class YardProjectsEntity {
     })
     ProjectUid: string;
 
-    @Column('uniqueidentifier', {
-        primary: true,
+    @OneToOne(() => yards, (yard) => yard.YardProjects)
+    @JoinColumn({
         name: 'yard_uid',
     })
+    yard: Partial<yards>;
+    @RelationId((entity: yard_projects) => entity.yard)
     YardUid: string;
 
     @Column('datetime', {

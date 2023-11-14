@@ -1,7 +1,9 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
+
+import { yard_projects } from './yard_projects';
 
 @Entity('yards', { schema: 'dry_dock' })
-export class YardsEntity {
+export class yards {
     @Column('uniqueidentifier', {
         nullable: false,
         primary: true,
@@ -52,4 +54,7 @@ export class YardsEntity {
         name: 'deleted_at',
     })
     DeletedAt: Date;
+
+    @OneToMany(() => yard_projects, (yard_projects) => yard_projects.yard)
+    YardProjects: yard_projects[];
 }

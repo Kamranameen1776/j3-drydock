@@ -1,18 +1,18 @@
-import { getManager, QueryRunner } from 'typeorm';
+import { DataUtilService } from 'j2utils';
+import { getManager } from 'typeorm';
 
-import { className } from '../../../common/drydock/ts-helpers/className';
-import { YardProjectsEntity } from '../../../entity/yard_to_project';
-import { YardsEntity } from '../../../entity/yards';
+import { yard_projects } from '../../../entity/yard_projects';
 import { ICreateYardProjectsDto } from './dtos/ICreateYardProjectsDto';
 import { IUpdateYardProjectsDto } from './dtos/IUpdateYardProjectsDto';
 import { IYardProjectsResultDto } from './dtos/IYardProjectsResultDto';
 
 export class YardProjectsRepository {
     public async getAllByProject(uid: string): Promise<IYardProjectsResultDto> {
-        const yardProjectsRepository = getManager().getRepository(YardProjectsEntity);
+        const yardProjectsRepository = getManager().getRepository(yard_projects);
 
         return await yardProjectsRepository
             .createQueryBuilder('yp')
+            .leftJoinAndSelect('yp.yard', 'y')
             .select(
                 `yp.uid as uid,
                 yp.project_uid as projectUid,
@@ -22,48 +22,53 @@ export class YardProjectsRepository {
                 yp.last_exported_date as lastExportedDate,
                 yp.is_selected as isSelected`,
             )
-            .leftJoin(className(YardsEntity), 'y', 'yp.yard_uid = y.uid')
             .where(`yp.active_status = 1 and yp.project_uid = '${uid}'`)
             .execute();
     }
 
     public async createYardProjects(data: ICreateYardProjectsDto) {
-        const yardProjectsRepository = getManager().getRepository(YardProjectsEntity);
+        const yardProjects: yard_projects[] = data.projectUid.map((projectUid) => {
+            const yardProjects = new yard_projects();
+            yardProjects.uid = new DataUtilService().newUid();
+            yardProjects.ProjectUid = projectUid;
+            yardProjects.yard = {
+                uid: data.yardUid,
+            };
+            yardProjects.IsSelected = false;
+            yardProjects.CreatedBy = data.createdBy;
+            yardProjects.CreatedAt = new Date();
+            yardProjects.ActiveStatus = true;
+            return yardProjects;
+        });
+
+        const yardProjectsRepository = getManager().getRepository(yard_projects);
         await yardProjectsRepository
             .createQueryBuilder('yp')
             .insert()
-            .into(YardProjectsEntity)
-            .values(
-                data.yardUid.map((item) => {
-                    const yardProjects = new YardProjectsEntity();
-                    yardProjects.Uid = item;
-                    yardProjects.ProjectUid = data.projectUid;
-                    yardProjects.YardUid = data.yardUid[0];
-                    yardProjects.IsSelected = false;
-                    yardProjects.CreatedBy = data.createdBy;
-                    yardProjects.CreatedAt = new Date();
-                    yardProjects.ActiveStatus = true;
-                    return yardProjects;
-                }),
-            )
+            .into(yard_projects)
+            .values(yardProjects)
             .execute();
         return;
     }
 
-    public async updateYardProjects(data: IUpdateYardProjectsDto, queryRunner: QueryRunner) {
-        const yardProjects = new YardProjectsEntity();
-        yardProjects.Uid = data.uid;
-        yardProjects.YardUid = data.yardUid;
-        yardProjects.LastExportedDate = data.lastExportedDate;
-        yardProjects.IsSelected = data.isSelected;
-        return await queryRunner.manager.update(YardProjectsEntity, yardProjects.Uid, yardProjects);
+    public async updateYardProjects(data: IUpdateYardProjectsDto) {
+        const yardProjectsRepository = getManager().getRepository(yard_projects);
+        return await yardProjectsRepository
+            .createQueryBuilder('yp')
+            .update(yard_projects)
+            .set({
+                LastExportedDate: data.lastExportedDate,
+                IsSelected: data.isSelected,
+            })
+            .where(`uid = '${data.uid}'`)
+            .execute();
     }
 
     public async deleteYardProjects(uid: string, deletedBy: string) {
-        const yardProjectsRepository = getManager().getRepository(YardProjectsEntity);
+        const yardProjectsRepository = getManager().getRepository(yard_projects);
         return await yardProjectsRepository
             .createQueryBuilder('yp')
-            .update(YardProjectsEntity)
+            .update(yard_projects)
             .set({
                 ActiveStatus: false,
                 DeletedAt: new Date(),

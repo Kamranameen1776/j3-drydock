@@ -1,10 +1,10 @@
 import { getManager } from 'typeorm';
 
-import { YardsEntity } from '../../../entity/yards';
+import { yards } from '../../../entity/yards';
 
 export class YardsRepository {
-    public async getYards(): Promise<YardsEntity> {
-        const yardsRepository = getManager().getRepository(YardsEntity);
+    public async getYards(): Promise<yards> {
+        const yardsRepository = getManager().getRepository(yards);
 
         return await yardsRepository
             .createQueryBuilder('yd')
