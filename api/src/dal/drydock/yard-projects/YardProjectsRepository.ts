@@ -27,7 +27,7 @@ export class YardProjectsRepository {
     }
 
     public async createYardProjects(data: ICreateYardProjectsDto) {
-        const yardProjects: yard_projects[] = data.projectUid.map((projectUid) => {
+        const yardProjects: yard_projects[] = data.projectsUids.map((projectUid) => {
             const yardProjects = new yard_projects();
             yardProjects.uid = new DataUtilService().newUid();
             yardProjects.ProjectUid = projectUid;
