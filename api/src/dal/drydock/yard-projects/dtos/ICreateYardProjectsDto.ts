@@ -1,5 +1,5 @@
 export interface ICreateYardProjectsDto {
-    projectsUids: string[];
-    yardUid: string;
+    projectUid: string;
+    yardsUids: string[];
     createdBy: string;
 }

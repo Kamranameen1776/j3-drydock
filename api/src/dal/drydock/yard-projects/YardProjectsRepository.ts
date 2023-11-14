@@ -27,12 +27,12 @@ export class YardProjectsRepository {
     }
 
     public async createYardProjects(data: ICreateYardProjectsDto) {
-        const yardProjects: yard_projects[] = data.projectsUids.map((projectUid) => {
+        const yardProjects: yard_projects[] = data.yardsUids.map((yardUid) => {
             const yardProjects = new yard_projects();
             yardProjects.uid = new DataUtilService().newUid();
-            yardProjects.ProjectUid = projectUid;
+            yardProjects.ProjectUid = data.projectUid;
             yardProjects.yard = {
-                uid: data.yardUid,
+                uid: yardUid,
             };
             yardProjects.IsSelected = false;
             yardProjects.CreatedBy = data.createdBy;
