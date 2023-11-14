@@ -34,10 +34,7 @@ export class UpdateSpecificationDetailsCommand extends Command<Request, void> {
     protected async MainHandlerAsync(request: Request): Promise<void> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const { Inspections } = request.body;
-            const updatedSpecData = await this.specificationDetailsRepository.UpdateSpecificationDetails(
-                request.body,
-                queryRunner,
-            );
+            await this.specificationDetailsRepository.UpdateSpecificationDetails(request.body, queryRunner);
             if (Inspections !== undefined) {
                 const data = Inspections.map((item: number) => {
                     return {

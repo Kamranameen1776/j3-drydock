@@ -14,12 +14,16 @@ import { LIB_Survey_CertificateAuthority } from '../../../entity/LIB_Survey_Cert
 import { tm_dd_lib_done_by } from '../../../entity/tm_dd_lib_done_by';
 import { tm_dd_lib_item_category } from '../../../entity/tm_dd_lib_item_category';
 import { tm_dd_lib_material_supplied_by } from '../../../entity/tm_dd_lib_material_supplied_by';
-import { ICreateSpecificationDetailsDto } from './dtos/ICreateSpecificationDetailsDto';
-import { ISpecificationDetailsResultDto } from './dtos/ISpecificationDetailsResultDto';
-import { IUpdateSpecificationDetailsDto } from './dtos/IUpdateSpecificationDetailsDto';
+import {
+    ICreateInspectionsDto,
+    ICreateSpecificationDetailsDto,
+    IInspectionsResultDto,
+    ISpecificationDetailsResultDto,
+    IUpdateSpecificationDetailsDto,
+} from './dtos';
 
 export class SpecificationDetailsRepository {
-    public async findSpecInspections(uid: string): Promise<any> {
+    public async findSpecInspections(uid: string): Promise<Array<IInspectionsResultDto>> {
         const inspectionRepository = getManager().getRepository(SpecificationInspectionEntity);
 
         return await inspectionRepository
@@ -30,10 +34,10 @@ export class SpecificationDetailsRepository {
             .execute();
     }
 
-    public async findOneBySpecificationUid(uid: string): Promise<any> {
+    public async findOneBySpecificationUid(uid: string): Promise<Array<ISpecificationDetailsResultDto>> {
         const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
 
-        return await specificationRepository
+        return specificationRepository
             .createQueryBuilder('spec')
             .select([
                 'spec.uid as uid',
@@ -121,12 +125,12 @@ export class SpecificationDetailsRepository {
         return data.uid;
     }
 
-    public async CreateSpecificationInspection(data: any, queryRunner: QueryRunner) {
+    public async CreateSpecificationInspection(data: Array<ICreateInspectionsDto>, queryRunner: QueryRunner) {
         return queryRunner.manager.insert(SpecificationInspectionEntity, data);
     }
 
     public async UpdateSpecificationInspection(
-        data: Array<any>,
+        data: Array<ICreateInspectionsDto>,
         SpecificationDetailsUid: string,
         queryRunner: QueryRunner,
     ) {

@@ -7,7 +7,7 @@ import { Query } from '../core/cqrs/Query';
 import { GetSpecificationByUidDto } from './dtos/GetSpecificationByUidDto';
 import { GetSpecificationDetailsDto } from './dtos/GetSpecificationDetailsDto';
 
-export class GetSpecificationDetailsQuery extends Query<Request, any> {
+export class GetSpecificationDetailsQuery extends Query<Request, GetSpecificationDetailsDto> {
     specificationDetailsRepository = new SpecificationDetailsRepository();
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -27,7 +27,7 @@ export class GetSpecificationDetailsQuery extends Query<Request, any> {
     /**
      * @returns All specification details
      */
-    protected async MainHandlerAsync(request: Request): Promise<any> {
+    protected async MainHandlerAsync(request: Request): Promise<GetSpecificationDetailsDto> {
         const [specDetails] = await this.specificationDetailsRepository.findOneBySpecificationUid(
             request.query.uid as string,
         );
