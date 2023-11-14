@@ -3,13 +3,13 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewC
 import { getSmallPopup } from '../../../models/constants/popup';
 import { FormModel, IJbAttachment, IJbDialog, eAttachmentButtonTypes } from 'jibe-components';
 import { UpsertStandardJobFormComponent } from '../upsert-standard-job-form/upsert-standard-job-form.component';
-import { StandardJobUpsertFormService } from '../upsert-standard-job-form/StandardJobUpsertFormService';
+import { StandardJobUpsertFormService } from '../upsert-standard-job-form/standard-job-upsert-form.service';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { StandardJobsService } from '../../../services/standard-jobs.service';
 import { finalize } from 'rxjs/operators';
 import { GrowlMessageService } from '../../../services/growl-message.service';
 import { SubItem } from '../../../models/interfaces/sub-items';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
 
 @Component({
@@ -113,14 +113,13 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   private save() {
     const value = this.jobFormValue;
 
-    // TODO here can be addded validation messages for the form that appear in growl
-
     this.isSaving = true;
 
-    forkJoin([
-      this.standardJobsService.upsertStandardJob(this.item?.uid, value),
-      this.standardJobsService.updateJobSubItems(this.item?.uid, this.changedSubItems)
-    ])
+    const updateSubitemsRequest$ = this.item?.uid
+      ? this.standardJobsService.updateJobSubItems(this.item.uid, this.changedSubItems)
+      : of(null);
+
+    forkJoin([this.standardJobsService.upsertStandardJob(this.item?.uid, value), updateSubitemsRequest$])
       .pipe(
         finalize(() => {
           this.isSaving = false;

@@ -1,29 +1,47 @@
 @import '~jibe-components/assets/sass/theme-figma';
 
 @mixin jb-tabview {
-    .jb-tabview .ui-tabview.ui-tabview-top > .ui-tabview-nav {
-        border-bottom: none;
-    }
-    
-    .jb-tabview .ui-tabview.ui-tabview-top > .ui-tabview-nav > li {
-        border: none;
-        border-bottom: 2px solid transparent !important;
-        font-weight: 400;
-        a {
-            color: var(--jbGreyBlue500);
-            font-size: 16px;
-            padding: 0 12px 0 12px;
+    .jb-tabview {
+
+        .ui-tabview .ui-tabview-nav {
+            margin-bottom: 10px;
         }
-        &:hover {
-            border-bottom-color: var(--jbGrey) !important;
-            background-color: transparent !important;
+
+        .ui-tabview .ui-tabview-nav li a {
+            background: transparent !important;
         }
-        &.ui-tabview-selected {
-            // jb-components uses important, so to override it we use it too
-            border-bottom-color: var(--jbBlue) !important;
+
+        .ui-tabview.ui-tabview-top > .ui-tabview-nav {
+            border-bottom: 1px solid $jibe-grey-blue-200 !important;
+        }
+
+        .ui-tabview.ui-tabview-top > .ui-tabview-nav > li {
+            border: none;
+            background: transparent !important;
+            border-bottom: 1px solid transparent !important;
+            font-weight: 400;
+            margin-bottom: 0 !important;
+            margin-top: -1px;
+
+            &.ui-state-disabled {
+                pointer-events: none;
+            }
+
             a {
-                color: var(--jbBlue);
-                font-weight: 500;
+                color: $jibe-grey-blue-400;
+                font-size: 14px;
+                padding: 0 12px 0 12px;
+            }
+            &:hover {
+                border-bottom-color: $jibe-grey-blue-400 !important;
+                background-color: transparent !important;
+            }
+            &.ui-tabview-selected {
+                border-bottom-color: $jibe-brand-blue-500 !important;
+                a {
+                    color: $jibe-brand-blue-500;
+                    font-weight: 700;
+                }
             }
         }
     }
