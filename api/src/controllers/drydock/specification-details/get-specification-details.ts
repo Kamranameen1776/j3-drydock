@@ -16,8 +16,7 @@ export async function getSpecificationDetails(req: Request, res: Response) {
         const query = new GetSpecificationDetailsQuery();
 
         // Execute query
-        const uid = request.query.uid as string;
-        const specDetails = await query.ExecuteAsync(uid);
+        const specDetails = await query.ExecuteAsync(request);
 
         return specDetails;
     });

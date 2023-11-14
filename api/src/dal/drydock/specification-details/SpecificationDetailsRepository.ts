@@ -3,51 +3,78 @@ import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
+import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
+import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
+import { PriorityEntity } from '../../../entity/drydock/dbo/PriorityEntity';
 import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
-import { SpecificationDetailsEntity } from '../../../entity/SpecificationDetailsEntity';
+import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
+import { SpecificationDetailsEntity } from '../../../entity/drydock/SpecificationDetailsEntity';
+import { SpecificationInspectionEntity } from '../../../entity/drydock/SpecificationInspectionEntity';
+import { LIB_Survey_CertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
 import { tm_dd_lib_done_by } from '../../../entity/tm_dd_lib_done_by';
 import { tm_dd_lib_item_category } from '../../../entity/tm_dd_lib_item_category';
 import { tm_dd_lib_material_supplied_by } from '../../../entity/tm_dd_lib_material_supplied_by';
-import { ICreateSpecificationDetailsDto } from './dtos/ICreateSpecificationDetailsDto';
-import { ISpecificationDetailsResultDto } from './dtos/ISpecificationDetailsResultDto';
-import { IUpdateSpecificationDetailsDto } from './dtos/IUpdateSpecificationDetailsDto';
+import {
+    ICreateInspectionsDto,
+    ICreateSpecificationDetailsDto,
+    IInspectionsResultDto,
+    ISpecificationDetailsResultDto,
+    IUpdateSpecificationDetailsDto,
+} from './dtos';
 
 export class SpecificationDetailsRepository {
-    public async findOneBySpecificationUid(uid: string): Promise<ISpecificationDetailsResultDto> {
+    public async findSpecInspections(uid: string): Promise<Array<IInspectionsResultDto>> {
+        const inspectionRepository = getManager().getRepository(SpecificationInspectionEntity);
+
+        return await inspectionRepository
+            .createQueryBuilder('insp')
+            .select(['ca.ID as InspectionId', 'ca.Authority as InspectionText'])
+            .innerJoin(className(LIB_Survey_CertificateAuthority), 'ca', 'insp.LIBSurveyCertificateAuthorityID = ca.ID')
+            .where('insp.SpecificationDetailsUid = :uid', { uid })
+            .execute();
+    }
+
+    public async findOneBySpecificationUid(uid: string): Promise<Array<ISpecificationDetailsResultDto>> {
         const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
 
-        return await specificationRepository
+        return specificationRepository
             .createQueryBuilder('spec')
-            .select(
-                `spec.uid as uid,
-               spec.TecTaskManagerUid as tmTask,
-               spec.FunctionUid as functionUid,
-               spec.ComponentUid as componentUid,
-               spec.AccountCode as accountCode,
-               spec.ItemSourceUid as itemSourceUid,
-               spec.ItemNumber as itemNumber,
-               spec.DoneByUid as doneByUid,
-               spec.ItemCategoryUid as itemCategoryUid,
-               spec.InspectionUid as inspectionUid,
-               spec.EquipmentDescription as equipmentDescription,
-               spec.PriorityUid as priorityUid,
-               spec.Description as description,
-               spec.StartDate as startDate,
-               spec.EstimatedDays as estimatedDays,
-               spec.BufferTime as bufferTime,
-               spec.Treatment as treatment,
-               spec.OnboardLocationUid as onboardLocationUid,
-               spec.Access as access,
-               spec.MaterialSuppliedByUid as materialSuppliedByUid,
-               spec.TestCriteria as testCriteria,
-               spec.Ppe as ppe,
-               spec.SafetyInstruction as safetyInstruction,
-               spec.ActiveStatus as activeStatus,
-               spec.CreatedByUid as createdBy,
-               spec.CreatedAt as createdAt
-               `,
-            )
-            .where(`spec.ActiveStatus = 1 and spec.uid='${uid}'`)
+            .select([
+                'spec.uid as uid',
+                'spec.subject as Subject',
+                'tm.Code as SpecificationCode',
+                'tm.Status as Status',
+                'spec.FunctionUid as FunctionUid',
+                'spec.AccountCode as AccountCode',
+
+                //TODO: clarify where it's from
+                'spec.ItemSourceUid as ItemSourceUid',
+                `'PMS' as ItemSourceText`,
+
+                'spec.ItemNumber as ItemNumber',
+
+                'spec.DoneByUid as DoneByUid',
+                'db.displayName as DoneByDisplayName',
+
+                'spec.EquipmentDescription as EquipmentDescription',
+                'spec.Description as Description',
+
+                'spec.PriorityUid as PriorityUid',
+                `pr.DisplayName as PriorityName`,
+
+                'ves.VesselName AS VesselName',
+                'ves.uid AS VesselUid',
+                `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
+                'usr.uid AS ProjectManagerUid',
+            ])
+            .innerJoin(className(TECTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
+            .leftJoin(className(tm_dd_lib_done_by), 'db', 'spec.DoneByUid = db.uid')
+            .leftJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
+            .innerJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
+            .innerJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
+            .innerJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
+            .where('spec.ActiveStatus = 1')
+            .andWhere('spec.uid = :uid', { uid })
             .execute();
     }
 
@@ -88,50 +115,36 @@ export class SpecificationDetailsRepository {
     }
 
     public async CreateSpecificationDetails(data: ICreateSpecificationDetailsDto, queryRunner: QueryRunner) {
-        const spec = await this.CreateSpecificationDetailsEntity(data);
-        spec.CreatedAt = new Date();
-        spec.ActiveStatus = true;
-        return await queryRunner.manager.insert(SpecificationDetailsEntity, spec);
+        data.CreatedAt = new Date();
+        data.ActiveStatus = true;
+
+        //TODO: think how to return uid from insert request, why it return undefined?
+        data.uid = new DataUtilService().newUid();
+        await queryRunner.manager.insert(SpecificationDetailsEntity, data);
+        return data.uid;
+    }
+
+    public async CreateSpecificationInspection(data: Array<ICreateInspectionsDto>, queryRunner: QueryRunner) {
+        return queryRunner.manager.insert(SpecificationInspectionEntity, data);
+    }
+
+    public async UpdateSpecificationInspection(
+        data: Array<ICreateInspectionsDto>,
+        SpecificationDetailsUid: string,
+        queryRunner: QueryRunner,
+    ) {
+        await queryRunner.manager.delete(SpecificationInspectionEntity, { SpecificationDetailsUid });
+        return this.CreateSpecificationInspection(data, queryRunner);
     }
 
     public async UpdateSpecificationDetails(data: IUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
-        const spec = await this.CreateSpecificationDetailsEntity(data);
-        return await queryRunner.manager.update(SpecificationDetailsEntity, spec.uid, spec);
+        delete data.Inspections;
+        return queryRunner.manager.update(SpecificationDetailsEntity, data.uid, data);
     }
 
     public async DeleteSpecificationDetails(uid: string, queryRunner: QueryRunner) {
         const spec = new SpecificationDetailsEntity();
         spec.ActiveStatus = false;
         return await queryRunner.manager.update(SpecificationDetailsEntity, uid, spec);
-    }
-
-    private async CreateSpecificationDetailsEntity(
-        data: ICreateSpecificationDetailsDto | IUpdateSpecificationDetailsDto,
-    ) {
-        const spec = new SpecificationDetailsEntity();
-        spec.uid = data?.uid ? data.uid : new DataUtilService().newUid();
-        spec.TecTaskManagerUid = data.tmTask;
-        spec.FunctionUid = data.functionUid;
-        spec.ComponentUid = data.componentUid;
-        spec.AccountCode = data.accountCode;
-        spec.ItemSourceUid = data.itemSourceUid;
-        spec.ItemNumber = data.itemNumber;
-        spec.DoneByUid = data.doneByUid;
-        spec.ItemCategoryUid = data.itemCategoryUid;
-        spec.InspectionUid = data.inspectionUid;
-        spec.EquipmentDescription = data.equipmentDescription;
-        spec.PriorityUid = data.priorityUid;
-        spec.Description = data.description;
-        spec.StartDate = data.startDate;
-        spec.EstimatedDays = data.estimatedDays;
-        spec.BufferTime = data.bufferTime;
-        spec.Treatment = data.treatment;
-        spec.OnboardLocationUid = data.onboardLocationUid;
-        spec.Access = data.access;
-        spec.MaterialSuppliedByUid = data.materialSuppliedByUid;
-        spec.TestCriteria = data.testCriteria;
-        spec.Ppe = data.ppe;
-        spec.SafetyInstruction = data.safetyInstruction;
-        return spec;
     }
 }
