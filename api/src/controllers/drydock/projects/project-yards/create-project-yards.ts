@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
-import { CreateProjectYardsCommand } from '../../../application-layer/drydock/project-yards/CreateProjectYardsCommand';
-import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
+import { CreateProjectYardsCommand } from '../../../../application-layer/drydock/projects/project-yards/CreateProjectYardsCommand';
+import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
 async function CreateProjectYards(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();

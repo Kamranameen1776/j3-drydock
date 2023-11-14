@@ -2,9 +2,9 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { AccessRights } from 'j2utils';
 
-import { YardsProjectsRepository } from '../../../dal/drydock/project-yards/YardsProjectsRepository';
-import { Command } from '../core/cqrs/Command';
-import { UnitOfWork } from '../core/uof/UnitOfWork';
+import { YardsProjectsRepository } from '../../../../dal/drydock/project-yards/YardsProjectsRepository';
+import { Command } from '../../core/cqrs/Command';
+import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { UpdateProjectYardsDto } from './dtos/UpdateProjectYardsDto';
 
 export class UpdateProjectYardsCommand extends Command<UpdateProjectYardsDto, void> {

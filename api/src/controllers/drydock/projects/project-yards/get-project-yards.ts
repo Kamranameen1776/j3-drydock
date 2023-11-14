@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
-import { GetProjectYardsQuery } from '../../../application-layer/drydock/project-yards/GetProjectYardsQuery';
-import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
+import { GetProjectYardsQuery } from '../../../../application-layer/drydock/projects/project-yards/GetProjectYardsQuery';
+import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
 /**
  * @exports

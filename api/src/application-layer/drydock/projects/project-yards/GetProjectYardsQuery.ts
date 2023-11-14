@@ -1,5 +1,5 @@
-import { YardsProjectsRepository } from '../../../dal/drydock/project-yards/YardsProjectsRepository';
-import { Query } from '../core/cqrs/Query';
+import { YardsProjectsRepository } from '../../../../dal/drydock/project-yards/YardsProjectsRepository';
+import { Query } from '../../core/cqrs/Query';
 import { GetProjectYardsDto } from './dtos/GetProjectYardsDto';
 
 export class GetProjectYardsQuery extends Query<string, GetProjectYardsDto> {

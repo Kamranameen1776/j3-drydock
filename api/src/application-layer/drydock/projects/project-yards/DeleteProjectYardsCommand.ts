@@ -2,9 +2,9 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { AccessRights } from 'j2utils';
 
-import { YardsProjectsRepository } from '../../../dal/drydock/project-yards/YardsProjectsRepository';
-import { Command } from '../core/cqrs/Command';
-import { UnitOfWork } from '../core/uof/UnitOfWork';
+import { YardsProjectsRepository } from '../../../../dal/drydock/project-yards/YardsProjectsRepository';
+import { Command } from '../../core/cqrs/Command';
+import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { DeleteProjectYardsDto } from './dtos/DeleteProjectYardsDto';
 export class DeleteProjectYardsCommand extends Command<DeleteProjectYardsDto, void> {
     yardProjectsRepository: YardsProjectsRepository;
