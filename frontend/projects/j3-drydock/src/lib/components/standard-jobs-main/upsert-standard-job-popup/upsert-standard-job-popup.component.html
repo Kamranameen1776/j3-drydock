@@ -4,7 +4,10 @@
   (closeDialog)="onClosePopup()"
 >
   <div jb-dialog-body>
-    <p-tabView *ngIf="isOpen">
+    <p-tabView
+      *ngIf="isOpen"
+      class="jb-tabview"
+    >
       <p-tabPanel header="General Information">
         <jb-upsert-standard-job-form
           [item]="item"
