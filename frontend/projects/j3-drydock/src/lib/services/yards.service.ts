@@ -51,7 +51,7 @@ export class YardsService {
       entity: eEntities.DryDock,
       crud: eCrud.Put,
       action: 'projects/project-yards/delete-project-yards',
-      params: `uid=${uid}`
+      body: { uid }
     };
     return this.apiRequestService.sendApiReq(apiReq);
   }
