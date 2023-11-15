@@ -1,14 +1,14 @@
 @import '../../../styles/mixins';
 
 :host {
-    ::ng-deep {
-        @include jb-tabview;
+  ::ng-deep {
+    @include jb-tabview;
 
-        .attachments {
-            .control-upload {
-                display: flex;
-                justify-content: flex-end;
-            }
-        } 
+    .attachments {
+      .control-upload {
+        display: flex;
+        justify-content: flex-end;
+      }
     }
+  }
 }
