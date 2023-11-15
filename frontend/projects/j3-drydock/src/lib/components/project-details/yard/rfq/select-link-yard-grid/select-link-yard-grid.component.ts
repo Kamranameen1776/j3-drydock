@@ -18,6 +18,7 @@ import { SelectLinkYardGridService } from './select-link-yard-grid.service';
 export class SelectLinkYardGridComponent extends UnsubscribeComponent {
   @Input() set yards(val: YardToLink[]) {
     this.items = cloneDeep(val);
+    this.selected = this.items.filter((yard) => yard.isLinked);
   }
 
   @Output() changed = new EventEmitter<YardToLink>();
@@ -29,7 +30,9 @@ export class SelectLinkYardGridComponent extends UnsubscribeComponent {
     map((event: DispatchAction) => event.payload)
   );
 
-  public items: YardToLink[] = [];
+  items: YardToLink[] = [];
+
+  selected: YardToLink[] = [];
 
   searchFn = (record: YardToLink, term: string) => {
     term = term ?? '';
@@ -43,7 +46,11 @@ export class SelectLinkYardGridComponent extends UnsubscribeComponent {
     super();
   }
 
-  onGridRowChanges(event) {
+  onGridActions(event) {
     // console.log(event);
+  }
+
+  onSelect(rows: YardToLink[]) {
+    this.selected = rows;
   }
 }

@@ -12,6 +12,5 @@ export enum eRfqFields {
   Uid = 'uid',
   YardUid = 'yardUid',
   ExportedDate = 'lastExportedDate',
-  IsSelected = 'isSelected',
-  IsLinked = 'isLinked'
+  IsSelected = 'isSelected'
 }

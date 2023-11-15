@@ -80,7 +80,7 @@ export class LinkYardPopupComponent extends UnsubscribeComponent implements OnIn
     const guidsToLink = this.guidsToLink ?? this.linkedGuids;
 
     // eslint-disable-next-line no-console
-    console.log(this.selectLinkYardGrid);
+    console.log(this.selectLinkYardGrid.selected);
 
     if (!guidsToLink || !guidsToLink.length) {
       this.closePopup();
@@ -125,7 +125,7 @@ export class LinkYardPopupComponent extends UnsubscribeComponent implements OnIn
       return {
         ...yard,
         isLinked: isLinked,
-        isSelected: isLinked
+        isDisable: isLinked
       };
     });
   }
