@@ -65,7 +65,7 @@ export class MiddlewareHandler {
                 // Business exceptions it is expected behavior
                 log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
 
-                res.status(httpStatus.BAD_REQUEST).json(details.params);
+                res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.params);
 
                 return;
             } else if (exception instanceof AuthorizationException) {
