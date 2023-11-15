@@ -5,6 +5,7 @@
 >
   <div jb-dialog-body>
     <jb-drydock-select-link-yard-grid
+      #selectLinkYardGrid
       *ngIf="isOpen"
       [yards]="allYardsToLink"
       (changed)="onSelectedChanged($event)"

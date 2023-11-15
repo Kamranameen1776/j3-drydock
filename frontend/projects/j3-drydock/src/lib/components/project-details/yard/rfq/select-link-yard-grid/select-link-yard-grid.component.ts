@@ -20,7 +20,7 @@ export class SelectLinkYardGridComponent extends UnsubscribeComponent {
     this.items = cloneDeep(val);
   }
 
-  @Output() changed = new EventEmitter<string[]>();
+  @Output() changed = new EventEmitter<YardToLink>();
 
   gridInputs: GridInputsWithData<YardToLink> = this.selectLinkYardService.getGridInputs();
 
@@ -29,7 +29,7 @@ export class SelectLinkYardGridComponent extends UnsubscribeComponent {
     map((event: DispatchAction) => event.payload)
   );
 
-  items: YardToLink[] = [];
+  public items: YardToLink[] = [];
 
   searchFn = (record: YardToLink, term: string) => {
     term = term ?? '';
@@ -41,5 +41,9 @@ export class SelectLinkYardGridComponent extends UnsubscribeComponent {
     private selectLinkYardService: SelectLinkYardGridService
   ) {
     super();
+  }
+
+  onGridRowChanges(event) {
+    // console.log(event);
   }
 }

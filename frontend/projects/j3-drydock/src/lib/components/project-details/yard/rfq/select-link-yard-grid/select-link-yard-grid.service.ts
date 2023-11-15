@@ -1,7 +1,7 @@
 import { YardToLink } from './../../../../../models/interfaces/project-details';
 import { eRfqFields, eRfqLabels } from './../../../../../models/enums/rfq.enum';
 import { Injectable } from '@angular/core';
-import { Column } from 'jibe-components';
+import { Column, eFieldControlType } from 'jibe-components';
 import { GridInputsWithData } from '../../../../../models/interfaces/grid-inputs';
 
 @Injectable()
@@ -10,7 +10,19 @@ export class SelectLinkYardGridService {
 
   private readonly columns: Column[] = [
     {
+      width: '50px',
+      FieldName: eRfqFields.IsSelected,
+      DisplayText: '',
+      ControlType: eFieldControlType.Checkbox,
+      StrictlyEditable: true,
+      IsActive: true,
+      IsMandatory: true,
+      IsVisible: true,
       DisableSort: true,
+      DisableControlKey: eRfqFields.IsLinked
+    },
+    {
+      DisableSort: false,
       DisplayText: eRfqLabels.YardName,
       FieldName: eRfqFields.Yard,
       IsActive: true,
@@ -18,7 +30,7 @@ export class SelectLinkYardGridService {
       IsVisible: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: eRfqLabels.Location,
       FieldName: eRfqFields.Location,
       IsActive: true,

@@ -13,5 +13,7 @@ export interface YardToLink {
   [eRfqFields.Yard]: string;
   [eRfqFields.Location]: string;
   [eRfqFields.Uid]: string;
+
   [eRfqFields.IsLinked]?: boolean;
+  [eRfqFields.IsSelected]?: boolean;
 }

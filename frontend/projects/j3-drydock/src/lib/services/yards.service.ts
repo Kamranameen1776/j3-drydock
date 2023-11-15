@@ -36,7 +36,7 @@ export class YardsService {
       apiBase: 'dryDockAPI',
       entity: eEntities.DryDock,
       crud: eCrud.Post,
-      action: 'projects/project-yards/create-proiect-yards',
+      action: 'projects/project-yards/create-project-yards',
       body: {
         projectUid,
         yardsUids
