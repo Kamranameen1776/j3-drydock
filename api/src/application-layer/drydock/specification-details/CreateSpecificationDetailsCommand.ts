@@ -42,14 +42,10 @@ export class CreateSpecificationDetailsCommand extends Command<Request, string> 
     }
 
     protected async AfterExecution(request: Request, uid: string): Promise<void> {
-        const { UserID: createdBy } = AccessRights.authorizationDecode(request);
-        await this.specificationDetailsAudit.auditCreatedSpecificationDetails(
-            {
-                uid,
-                ...request.body,
-            },
-            createdBy,
-        );
+        await this.specificationDetailsAudit.auditCreatedSpecificationDetails({
+            uid,
+            ...request.body,
+        });
     }
 
     /**
@@ -57,7 +53,7 @@ export class CreateSpecificationDetailsCommand extends Command<Request, string> 
      * @param request data for creation of specification details
      * @returns data of specification details
      */
-    protected async MainHandlerAsync(request: Request): Promise<string> {
+    protected MainHandlerAsync(request: Request): Promise<string> {
         const token: string = request.headers.authorization as string;
         return this.uow.ExecuteAsync(async (queryRunner) => {
             const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
