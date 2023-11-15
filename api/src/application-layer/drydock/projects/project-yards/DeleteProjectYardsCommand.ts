@@ -1,12 +1,13 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
+import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
 import { YardsProjectsRepository } from '../../../../dal/drydock/project-yards/YardsProjectsRepository';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { DeleteProjectYardsDto } from './dtos/DeleteProjectYardsDto';
-export class DeleteProjectYardsCommand extends Command<DeleteProjectYardsDto, void> {
+export class DeleteProjectYardsCommand extends Command<Request, void> {
     yardProjectsRepository: YardsProjectsRepository;
     uow: UnitOfWork;
 
@@ -21,8 +22,8 @@ export class DeleteProjectYardsCommand extends Command<DeleteProjectYardsDto, vo
         return;
     }
 
-    protected async ValidationHandlerAsync(request: DeleteProjectYardsDto): Promise<void> {
-        const body: DeleteProjectYardsDto = plainToClass(DeleteProjectYardsDto, request);
+    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+        const body: DeleteProjectYardsDto = plainToClass(DeleteProjectYardsDto, request.body);
         const result = await validate(body);
         if (result.length) {
             throw result;
@@ -30,14 +31,15 @@ export class DeleteProjectYardsCommand extends Command<DeleteProjectYardsDto, vo
         return;
     }
 
-    protected async MainHandlerAsync(request: DeleteProjectYardsDto) {
+    protected async MainHandlerAsync(request: Request) {
         const { UserUID: deletedBy } = AccessRights.authorizationDecode(request);
+        const body: DeleteProjectYardsDto = request.body;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const deletedYardProject = await this.yardProjectsRepository.delete(
                 {
                     deletedBy: deletedBy,
-                    uid: request.uid,
+                    uid: body.uid,
                     deletedAt: new Date(),
                 },
                 queryRunner,

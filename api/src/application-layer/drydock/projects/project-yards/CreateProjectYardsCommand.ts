@@ -1,5 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
+import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
 import { YardsProjectsRepository } from '../../../../dal/drydock/project-yards/YardsProjectsRepository';
@@ -7,7 +8,7 @@ import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { CreateProjectYardsDto } from './dtos/CreateProjectYardsDto';
 
-export class CreateProjectYardsCommand extends Command<CreateProjectYardsDto, void> {
+export class CreateProjectYardsCommand extends Command<Request, void> {
     yardProjectsRepository: YardsProjectsRepository;
     uow: UnitOfWork;
 
@@ -22,8 +23,8 @@ export class CreateProjectYardsCommand extends Command<CreateProjectYardsDto, vo
         return;
     }
 
-    protected async ValidationHandlerAsync(request: CreateProjectYardsDto): Promise<void> {
-        const body: CreateProjectYardsDto = plainToClass(CreateProjectYardsDto, request);
+    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+        const body: CreateProjectYardsDto = plainToClass(CreateProjectYardsDto, request.body);
         const result = await validate(body);
         if (result.length) {
             throw result;
@@ -31,15 +32,16 @@ export class CreateProjectYardsCommand extends Command<CreateProjectYardsDto, vo
         return;
     }
 
-    protected async MainHandlerAsync(request: CreateProjectYardsDto): Promise<void> {
+    protected async MainHandlerAsync(request: Request): Promise<void> {
         const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
+        const body: CreateProjectYardsDto = request.body;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const createdYardProject = await this.yardProjectsRepository.create(
                 {
                     createdBy: createdBy,
-                    projectUid: request.projectUid,
-                    yardsUids: request.yardsUids,
+                    projectUid: body.projectUid,
+                    yardsUids: body.yardsUids,
                     createdAt: new Date(),
                 },
                 queryRunner,
