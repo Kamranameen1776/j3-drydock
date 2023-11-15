@@ -1,4 +1,4 @@
-export class GetProjectYardsDto {
+export class GetProjectYardsResultDto {
     uid: string;
     yardUid: string;
     projectUid: string;
