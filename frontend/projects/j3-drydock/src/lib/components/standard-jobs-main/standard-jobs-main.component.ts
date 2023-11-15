@@ -6,7 +6,7 @@ import { eGridRefreshType, eGridRowActions, GridAction, GridRowActions, GridServ
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { StandardJobsGridService } from './standard-jobs-grid.service';
 import { FunctionsFlatTreeNode } from '../../models/interfaces/functions-tree-node';
-import { StandardJobUpsertFormService } from './upsert-standard-job-form/StandardJobUpsertFormService';
+import { StandardJobUpsertFormService } from './upsert-standard-job-form/standard-job-upsert-form.service';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../models/constants/popup';

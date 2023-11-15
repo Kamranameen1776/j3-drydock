@@ -69,9 +69,9 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridColStart: 1,
             gridColEnd: 3
           },
-          [eStandardJobsMainFields.ItemCategoryID]: {
+          [eStandardJobsMainFields.MaterialSuppliedByID]: {
             type: eFieldControlType.Dropdown,
-            label: eStandardJobsMainLabels.ItemCategory,
+            label: eStandardJobsMainLabels.MaterialSuppliedBy,
             sectionID: this.formId,
             enabled: true,
             validatorRequired: false,
@@ -82,7 +82,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             listRequest: {
               labelKey: 'displayName',
               valueKey: 'uid',
-              webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory)
+              webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.MaterialSuppliedBy)
             }
           },
           [eStandardJobsMainFields.InspectionID]: {
@@ -101,21 +101,17 @@ export class StandardJobUpsertFormService extends FormServiceBase {
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection)
             }
           },
-          [eStandardJobsMainFields.MaterialSuppliedByID]: {
+          [eStandardJobsMainFields.VesselSpecific]: {
             type: eFieldControlType.Dropdown,
-            label: eStandardJobsMainLabels.MaterialSuppliedBy,
+            label: eStandardJobsMainLabels.VesselSpecific,
             sectionID: this.formId,
             enabled: true,
-            validatorRequired: false,
+            validatorRequired: true,
             gridRowStart: 4,
             gridRowEnd: 5,
             gridColStart: 1,
             gridColEnd: 2,
-            listRequest: {
-              labelKey: 'displayName',
-              valueKey: 'uid',
-              webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.MaterialSuppliedBy)
-            }
+            list: this.standardJobsService.getVesselSpevificList()
           },
           [eStandardJobsMainFields.DoneByID]: {
             type: eFieldControlType.Dropdown,
@@ -132,18 +128,6 @@ export class StandardJobUpsertFormService extends FormServiceBase {
               valueKey: 'uid',
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.DoneBy)
             }
-          },
-          [eStandardJobsMainFields.VesselSpecific]: {
-            type: eFieldControlType.Dropdown,
-            label: eStandardJobsMainLabels.VesselSpecific,
-            sectionID: this.formId,
-            enabled: true,
-            validatorRequired: true,
-            gridRowStart: 5,
-            gridRowEnd: 6,
-            gridColStart: 1,
-            gridColEnd: 2,
-            list: this.standardJobsService.getVesselSpevificList()
           },
           [eStandardJobsMainFields.VesselTypeID]: {
             type: eFieldControlType.MultiSelect,
@@ -197,8 +181,6 @@ export class StandardJobUpsertFormService extends FormServiceBase {
         [eStandardJobsMainFields.Function]: null,
         [eStandardJobsMainFields.ItemNumber]: null,
         [eStandardJobsMainFields.Subject]: null,
-        [eStandardJobsMainFields.ItemCategoryID]: null,
-        [eStandardJobsMainFields.InspectionID]: null,
         [eStandardJobsMainFields.MaterialSuppliedByID]: null,
         [eStandardJobsMainFields.DoneByID]: null,
         [eStandardJobsMainFields.VesselSpecific]: 0,

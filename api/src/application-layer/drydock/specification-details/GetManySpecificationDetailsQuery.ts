@@ -1,4 +1,4 @@
-import { SpecificationDetailsEntity } from 'entity/SpecificationDetailsEntity';
+import { SpecificationDetailsEntity } from 'entity/drydock/SpecificationDetailsEntity';
 import { Request } from 'express';
 
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';

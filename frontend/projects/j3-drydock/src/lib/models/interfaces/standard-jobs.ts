@@ -17,8 +17,6 @@ export interface StandardJobResult {
   [eStandardJobsMainFields.Function]: string;
   [eStandardJobsMainFields.FunctionUid]: string;
   [eStandardJobsMainFields.ItemNumber]: string;
-  [eStandardJobsMainFields.ItemCategoryID]: string;
-  [eStandardJobsMainFields.ItemCategory]: string;
   [eStandardJobsMainFields.DoneByID]: string;
   [eStandardJobsMainFields.DoneBy]: string;
   [eStandardJobsMainFields.Inspection]: string;

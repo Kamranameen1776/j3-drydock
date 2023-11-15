@@ -17,12 +17,6 @@ export class SpecificationDetailsEntity {
     })
     FunctionUid: string;
 
-    @Column('uniqueidentifier', {
-        nullable: true,
-        name: 'component_uid',
-    })
-    ComponentUid: string;
-
     @Column('varchar', {
         nullable: true,
         name: 'account_code',
@@ -57,9 +51,9 @@ export class SpecificationDetailsEntity {
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'inspection_uid',
+        name: 'project_uid',
     })
-    InspectionUid: string;
+    ProjectUid: string;
 
     @Column('varchar', {
         nullable: true,
@@ -80,6 +74,13 @@ export class SpecificationDetailsEntity {
         length: 1000,
     })
     Description: string;
+
+    @Column('varchar', {
+        nullable: false,
+        name: 'subject',
+        length: 350,
+    })
+    Subject: string;
 
     @Column('datetime', {
         nullable: true,

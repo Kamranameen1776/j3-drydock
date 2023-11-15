@@ -1,9 +1,13 @@
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
+import { Request } from 'express';
+
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateSpecificationDetailsDto } from './dtos/UpdateSpecificationDetailsDto';
 
-export class UpdateSpecificationDetailsCommand extends Command<UpdateSpecificationDetailsDto, void> {
+export class UpdateSpecificationDetailsCommand extends Command<Request, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
 
@@ -18,19 +22,32 @@ export class UpdateSpecificationDetailsCommand extends Command<UpdateSpecificati
         return;
     }
 
-    protected async ValidationHandlerAsync(request: UpdateSpecificationDetailsDto): Promise<void> {
-        if (!request) {
-            throw new Error('Request is null');
+    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+        const body: UpdateSpecificationDetailsDto = plainToClass(UpdateSpecificationDetailsDto, request.body);
+        const result = await validate(body);
+        if (result.length) {
+            throw result;
         }
+        return;
     }
 
-    protected async MainHandlerAsync(request: UpdateSpecificationDetailsDto): Promise<void> {
+    protected async MainHandlerAsync(request: Request): Promise<void> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const updatedSpecData = await this.specificationDetailsRepository.UpdateSpecificationDetails(
-                request,
-                queryRunner,
-            );
-            return updatedSpecData;
+            const { Inspections } = request.body;
+            await this.specificationDetailsRepository.UpdateSpecificationDetails(request.body, queryRunner);
+            if (Inspections !== undefined) {
+                const data = Inspections.map((item: number) => {
+                    return {
+                        LIBSurveyCertificateAuthorityID: item,
+                        SpecificationDetailsUid: request.body.uid,
+                    };
+                });
+                await this.specificationDetailsRepository.UpdateSpecificationInspection(
+                    data,
+                    request.body.uid,
+                    queryRunner,
+                );
+            }
         });
 
         return;
