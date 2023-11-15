@@ -2,7 +2,7 @@ import { YardsProjectsRepository } from '../../../../dal/drydock/project-yards/Y
 import { Query } from '../../core/cqrs/Query';
 import { GetProjectYardsDto } from './dtos/GetProjectYardsDto';
 
-export class GetProjectYardsQuery extends Query<string, GetProjectYardsDto> {
+export class GetProjectYardsQuery extends Query<string, GetProjectYardsDto[]> {
     yardProjectsRepository = new YardsProjectsRepository();
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -13,7 +13,7 @@ export class GetProjectYardsQuery extends Query<string, GetProjectYardsDto> {
         return;
     }
 
-    protected async MainHandlerAsync(uid: string): Promise<GetProjectYardsDto> {
+    protected async MainHandlerAsync(uid: string): Promise<GetProjectYardsDto[]> {
         return this.yardProjectsRepository.getAllByProject(uid);
     }
 }

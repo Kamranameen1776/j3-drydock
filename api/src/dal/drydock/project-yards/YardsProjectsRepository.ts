@@ -5,10 +5,11 @@ import { yards_projects } from '../../../entity/yards_projects';
 import { ICreateProjectYardsDto } from './dtos/ICreateProjectYardsDto';
 import { IDeleteProjectYardsDto } from './dtos/IDeleteProjectYardsDto';
 import { IProjectYardsResultDto } from './dtos/IProjectYardsResultDto';
+import { IProjectYardsValidationDto } from './dtos/IProjectYardsValidationDto';
 import { IUpdateProjectYardsDto } from './dtos/IUpdateProjectYardsDto';
 
 export class YardsProjectsRepository {
-    public async getAllByProject(uid: string): Promise<IProjectYardsResultDto> {
+    public async getAllByProject(uid: string): Promise<IProjectYardsResultDto[]> {
         const yardProjectsRepository = getManager().getRepository(yards_projects);
         return yardProjectsRepository
             .createQueryBuilder('yp')
@@ -22,8 +23,24 @@ export class YardsProjectsRepository {
                 cast(yp.last_exported_date as datetimeoffset) AS lastExportedDate,
                 yp.is_selected as isSelected`,
             )
-            .where(`yp.active_status = 1 and yp.project_uid = '${uid}'`)
+            .where('yp.active_status = 1 and yp.project_uid = :uid', { uid })
             .execute();
+    }
+
+    public async get(uid: string): Promise<IProjectYardsValidationDto> {
+        const yardProjectsRepository = getManager().getRepository(yards_projects);
+        return yardProjectsRepository
+            .createQueryBuilder('yp')
+            .select(
+                `yp.uid as uid,
+                yp.project_uid as projectUid,
+                yp.yard_uid as yardUid,
+                yp.is_selected as isSelected,
+                yp.last_exported_date as lastExportedDate,
+                yp.active_status as activeStatus`,
+            )
+            .where('yp.uid = :uid', { uid })
+            .getRawOne();
     }
 
     public async create(data: ICreateProjectYardsDto, queryRunner: QueryRunner) {
@@ -51,6 +68,7 @@ export class YardsProjectsRepository {
     }
 
     public async update(data: IUpdateProjectYardsDto, queryRunner: QueryRunner) {
+        const uid = data.uid;
         const yardProjectsRepository = queryRunner.manager.getRepository(yards_projects);
         return yardProjectsRepository
             .createQueryBuilder('yp')
@@ -61,11 +79,12 @@ export class YardsProjectsRepository {
                 updated_at: data.updatedAt,
                 updated_by: data.updatedBy,
             })
-            .where(`uid = '${data.uid}'`)
+            .where('uid = :uid', { uid })
             .execute();
     }
 
     public async delete(data: IDeleteProjectYardsDto, queryRunner: QueryRunner) {
+        const uid = data.uid;
         const yardProjectsRepository = queryRunner.manager.getRepository(yards_projects);
         return yardProjectsRepository
             .createQueryBuilder('yp')
@@ -75,7 +94,7 @@ export class YardsProjectsRepository {
                 deleted_at: data.deletedAt,
                 deleted_by: data.deletedBy,
             })
-            .where(`uid = '${data.uid}'`)
+            .where('uid = :uid', { uid })
             .execute();
     }
 }

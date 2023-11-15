@@ -3,6 +3,7 @@ import { validate } from 'class-validator';
 import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
+import { BusinessException } from '../../../../bll/drydock/core/exceptions/BusinessException';
 import { YardsProjectsRepository } from '../../../../dal/drydock/project-yards/YardsProjectsRepository';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
@@ -29,6 +30,21 @@ export class UpdateProjectYardsCommand extends Command<Request, void> {
         if (result.length) {
             throw result;
         }
+
+        const yardProject = await this.yardProjectsRepository.get(body.uid);
+        if (!yardProject || yardProject.activeStatus === false) {
+            throw new BusinessException(
+                `The project yard identified by UID: ${body.uid} could not be found or has been deleted.`,
+            );
+        }
+
+        const yardsProjects = await this.yardProjectsRepository.getAllByProject(yardProject.projectUid);
+        if (!yardsProjects || yardsProjects.some((yardProject) => yardProject.isSelected)) {
+            throw new BusinessException(
+                `Multiple yard selection for the same project ${yardProject.projectUid} is not allowed.`,
+            );
+        }
+
         return;
     }
 
