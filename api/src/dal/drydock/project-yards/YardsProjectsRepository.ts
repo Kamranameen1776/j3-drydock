@@ -1,7 +1,7 @@
 import { DataUtilService } from 'j2utils';
 import { getManager, QueryRunner } from 'typeorm';
 
-import { yards_projects } from '../../../entity/yards_projects';
+import { YardsProjectsEntity } from '../../../entity/drydock/YardsProjectsEntity';
 import { ICreateProjectYardsDto } from './dtos/ICreateProjectYardsDto';
 import { IDeleteProjectYardsDto } from './dtos/IDeleteProjectYardsDto';
 import { IProjectYardsResultDto } from './dtos/IProjectYardsResultDto';
@@ -10,7 +10,7 @@ import { IUpdateProjectYardsDto } from './dtos/IUpdateProjectYardsDto';
 
 export class YardsProjectsRepository {
     public async getAllByProject(uid: string): Promise<IProjectYardsResultDto[]> {
-        const yardProjectsRepository = getManager().getRepository(yards_projects);
+        const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
         return yardProjectsRepository
             .createQueryBuilder('yp')
             .leftJoinAndSelect('yp.yard', 'y')
@@ -28,7 +28,7 @@ export class YardsProjectsRepository {
     }
 
     public async get(uid: string): Promise<IProjectYardsValidationDto> {
-        const yardProjectsRepository = getManager().getRepository(yards_projects);
+        const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
         return yardProjectsRepository
             .createQueryBuilder('yp')
             .select(
@@ -44,19 +44,19 @@ export class YardsProjectsRepository {
     }
 
     public async create(data: ICreateProjectYardsDto, queryRunner: QueryRunner) {
-        const yardProjects: yards_projects[] = data.yardsUids.map((yardUid) => this.createYardProject(yardUid, data));
-        const yardProjectsRepository = queryRunner.manager.getRepository(yards_projects);
+        const yardProjects: YardsProjectsEntity[] = data.yardsUids.map((yardUid) => this.createYardProject(yardUid, data));
+        const yardProjectsRepository = queryRunner.manager.getRepository(YardsProjectsEntity);
         await yardProjectsRepository
             .createQueryBuilder('yp')
             .insert()
-            .into(yards_projects)
+            .into(YardsProjectsEntity)
             .values(yardProjects)
             .execute();
         return;
     }
 
-    private createYardProject(yardUid: string, data: ICreateProjectYardsDto): yards_projects {
-        const yardProjects = new yards_projects();
+    private createYardProject(yardUid: string, data: ICreateProjectYardsDto): YardsProjectsEntity {
+        const yardProjects = new YardsProjectsEntity();
         yardProjects.uid = new DataUtilService().newUid();
         yardProjects.project_uid = data.projectUid;
         yardProjects.yard = { uid: yardUid };
@@ -69,10 +69,10 @@ export class YardsProjectsRepository {
 
     public async update(data: IUpdateProjectYardsDto, queryRunner: QueryRunner) {
         const uid = data.uid;
-        const yardProjectsRepository = queryRunner.manager.getRepository(yards_projects);
+        const yardProjectsRepository = queryRunner.manager.getRepository(YardsProjectsEntity);
         return yardProjectsRepository
             .createQueryBuilder('yp')
-            .update(yards_projects)
+            .update(YardsProjectsEntity)
             .set({
                 last_exported_date: data.lastExportedDate,
                 is_selected: data.isSelected,
@@ -85,10 +85,10 @@ export class YardsProjectsRepository {
 
     public async delete(data: IDeleteProjectYardsDto, queryRunner: QueryRunner) {
         const uid = data.uid;
-        const yardProjectsRepository = queryRunner.manager.getRepository(yards_projects);
+        const yardProjectsRepository = queryRunner.manager.getRepository(YardsProjectsEntity);
         return yardProjectsRepository
             .createQueryBuilder('yp')
-            .update(yards_projects)
+            .update(YardsProjectsEntity)
             .set({
                 active_status: false,
                 deleted_at: data.deletedAt,

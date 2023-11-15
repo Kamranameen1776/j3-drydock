@@ -1,10 +1,10 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 
-import { BaseDatesEntity } from './baseDatesEntity';
-import { yards_projects } from './yards_projects';
+import { BaseDatesEntity } from '../baseDatesEntity';
+import { YardsProjectsEntity } from './YardsProjectsEntity';
 
 @Entity('yards', { schema: 'dry_dock' })
-export class yards extends BaseDatesEntity {
+export class YardsEntity extends BaseDatesEntity {
     @Column('uniqueidentifier', {
         nullable: false,
         primary: true,
@@ -26,6 +26,6 @@ export class yards extends BaseDatesEntity {
     })
     yard_location: string | null;
 
-    @OneToMany(() => yards_projects, (yard_projects) => yard_projects.yard)
-    YardProjects: yards_projects[];
+    @OneToMany(() => YardsProjectsEntity, (yard_projects) => yard_projects.yard)
+    YardProjects: YardsProjectsEntity[];
 }

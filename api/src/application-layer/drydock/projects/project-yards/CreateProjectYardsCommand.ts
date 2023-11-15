@@ -37,7 +37,7 @@ export class CreateProjectYardsCommand extends Command<Request, void> {
         const body: CreateProjectYardsDto = request.body;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const createdYardProject = await this.yardProjectsRepository.create(
+            await this.yardProjectsRepository.create(
                 {
                     createdBy: createdBy,
                     projectUid: body.projectUid,
@@ -46,7 +46,6 @@ export class CreateProjectYardsCommand extends Command<Request, void> {
                 },
                 queryRunner,
             );
-            return createdYardProject;
         });
 
         return;

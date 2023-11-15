@@ -1,11 +1,10 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
-import { BaseDatesEntity } from './baseDatesEntity';
-import { yards } from './yards';
+import { BaseDatesEntity } from '../baseDatesEntity';
+import { YardsEntity } from './YardsEntity';
 
-//todo: rename to low case & table name
 @Entity('yards_projects', { schema: 'dry_dock' })
-export class yards_projects extends BaseDatesEntity {
+export class YardsProjectsEntity extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
@@ -15,12 +14,12 @@ export class yards_projects extends BaseDatesEntity {
     })
     project_uid: string;
 
-    @OneToOne(() => yards, (yard) => yard.YardProjects)
+    @OneToOne(() => YardsEntity, (yard) => yard.YardProjects)
     @JoinColumn({
         name: 'yard_uid',
     })
-    yard: Partial<yards>;
-    @RelationId((entity: yards_projects) => entity.yard)
+    yard: Partial<YardsEntity>;
+    @RelationId((entity: YardsProjectsEntity) => entity.yard)
     yard_uid: string;
 
     @Column('datetime', {

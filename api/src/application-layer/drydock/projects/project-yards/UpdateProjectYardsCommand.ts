@@ -38,13 +38,14 @@ export class UpdateProjectYardsCommand extends Command<Request, void> {
             );
         }
 
-        const yardsProjects = await this.yardProjectsRepository.getAllByProject(yardProject.projectUid);
-        if (!yardsProjects || yardsProjects.some((yardProject) => yardProject.isSelected)) {
-            throw new BusinessException(
-                `Multiple yard selection for the same project ${yardProject.projectUid} is not allowed.`,
-            );
+        if (body.isSelected) {
+            const yardsProjects = await this.yardProjectsRepository.getAllByProject(yardProject.projectUid);
+            if (!yardsProjects || yardsProjects.some((yardProject) => yardProject.isSelected)) {
+                throw new BusinessException(
+                    `Multiple yard selection for the same project ${yardProject.projectUid} is not allowed.`,
+                );
+            }
         }
-
         return;
     }
 
@@ -53,7 +54,7 @@ export class UpdateProjectYardsCommand extends Command<Request, void> {
         const body: UpdateProjectYardsDto = request.body;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const projectId = await this.yardProjectsRepository.update(
+            await this.yardProjectsRepository.update(
                 {
                     updatedBy: updatedBy,
                     isSelected: body.isSelected,
@@ -63,7 +64,6 @@ export class UpdateProjectYardsCommand extends Command<Request, void> {
                 },
                 queryRunner,
             );
-            return projectId;
         });
 
         return;
