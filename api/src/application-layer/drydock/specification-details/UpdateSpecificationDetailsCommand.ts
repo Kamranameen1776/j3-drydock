@@ -1,7 +1,10 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
+import { ParamsDictionary } from 'express-serve-static-core';
+import { ParsedQs } from 'qs';
 
+import { SpecificationDetailsAuditService } from '../../../bll/drydock/standard_jobs/specification-details-audit.service';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
@@ -10,12 +13,14 @@ import { UpdateSpecificationDetailsDto } from './dtos/UpdateSpecificationDetails
 export class UpdateSpecificationDetailsCommand extends Command<Request, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
+    specificationDetailsAudit: SpecificationDetailsAuditService;
 
     constructor() {
         super();
 
         this.specificationDetailsRepository = new SpecificationDetailsRepository();
         this.uow = new UnitOfWork();
+        this.specificationDetailsAudit = new SpecificationDetailsAuditService();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -29,6 +34,10 @@ export class UpdateSpecificationDetailsCommand extends Command<Request, void> {
             throw result;
         }
         return;
+    }
+
+    protected AfterExecution(request: Request): Promise<void> {
+        return this.specificationDetailsAudit.auditUpdatedSpecificationDetails(request.body);
     }
 
     protected async MainHandlerAsync(request: Request): Promise<void> {

@@ -10,7 +10,13 @@ export abstract class RequestPipeline<TRequest, TResponse> {
 
         await this.ValidationHandlerAsync(request, validationClass, validationKey);
 
-        return this.MainHandlerAsync(request);
+        const res = await this.MainHandlerAsync(request);
+
+        try {
+            this.AfterExecution(request, res);
+        } finally {
+            return res;
+        }
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
@@ -31,4 +37,6 @@ export abstract class RequestPipeline<TRequest, TResponse> {
     }
 
     protected abstract MainHandlerAsync(request: TRequest): Promise<TResponse>;
+
+    protected async AfterExecution(request: TRequest, response: TResponse): Promise<void> {}
 }
