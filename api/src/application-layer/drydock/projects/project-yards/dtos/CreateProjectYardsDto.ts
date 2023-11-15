@@ -1,7 +1,8 @@
-import { ArrayMinSize, IsArray, IsUUID } from 'class-validator';
+import { ArrayMinSize, IsArray, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateProjectYardsDto {
     @IsUUID()
+    @IsNotEmpty()
     projectUid: string;
 
     @IsArray()
