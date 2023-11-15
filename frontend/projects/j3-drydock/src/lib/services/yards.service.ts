@@ -14,7 +14,7 @@ export class YardsService {
       apiBase: 'dryDockAPI',
       entity: eEntities.DryDock,
       crud: eCrud.Get,
-      action: 'yard-projects/get-yard-projects',
+      action: 'project-yards/get-project-yards',
       params: `uid=${projectUid}`
     };
     return this.apiRequestService.sendApiReq(apiReq);
@@ -31,15 +31,15 @@ export class YardsService {
     return this.apiRequestService.sendApiReq(apiReq);
   }
 
-  linkYardsToProject(projectUid: string, yardUid: string[]) {
+  linkYardsToProject(projectUid: string, yardsUids: string[]) {
     const apiReq: WebApiRequest = {
       apiBase: 'dryDockAPI',
       entity: eEntities.DryDock,
       crud: eCrud.Post,
-      action: 'yard-projects/create-yard-projects',
+      action: 'project-yards/create-proiect-yards',
       body: {
         projectUid,
-        yardUid
+        yardsUids
       }
     };
     return this.apiRequestService.sendApiReq(apiReq);
@@ -50,7 +50,7 @@ export class YardsService {
       apiBase: 'dryDockAPI',
       entity: eEntities.DryDock,
       crud: eCrud.Put,
-      action: 'yard-projects/delete-yard-projects',
+      action: 'project-yards/delete-project-yards',
       params: `uid=${uid}`
     };
     return this.apiRequestService.sendApiReq(apiReq);
@@ -61,10 +61,9 @@ export class YardsService {
       apiBase: 'dryDockAPI',
       entity: eEntities.DryDock,
       crud: eCrud.Put,
-      action: 'yard-projects/update-yard-projects',
+      action: 'project-yards/update-project-yards',
       body: {
         uid: yard.uid,
-        yardUid: yard.yardUid,
         lastExportedDate: yard.lastExportedDate,
         isSelected: yard.isSelected
       }
