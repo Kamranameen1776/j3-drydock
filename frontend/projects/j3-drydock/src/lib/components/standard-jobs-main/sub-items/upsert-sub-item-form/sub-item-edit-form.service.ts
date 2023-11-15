@@ -8,7 +8,7 @@ import { FormServiceBase } from '../../../../shared/classes/form-service.base';
 @Injectable({
   providedIn: 'root'
 })
-export class SubItemCreateFormService extends FormServiceBase {
+export class SubItemEditFormService extends FormServiceBase {
   readonly formId = subItemUpsertFormId;
 
   protected readonly _formStructure: FormModel = {
@@ -25,15 +25,27 @@ export class SubItemCreateFormService extends FormServiceBase {
         gridColStart: 1,
         gridColEnd: 2,
         fields: {
+          [eSubItemsFields.ItemNumber]: {
+            type: eFieldControlType.Text,
+            label: eSubItemsLabels.ItemNumber,
+            sectionID: this.formId,
+            enabled: false,
+            validatorRequired: false,
+            maxLength: 20,
+            gridRowStart: 1,
+            gridRowEnd: 2,
+            gridColStart: 1,
+            gridColEnd: 2
+          },
           [eSubItemsFields.Subject]: {
             type: eFieldControlType.Text,
             label: eSubItemsLabels.Subject,
             sectionID: this.formId,
             enabled: true,
-            validatorRequired: false,
+            validatorRequired: true,
             maxLength: 200,
-            gridRowStart: 1,
-            gridRowEnd: 2,
+            gridRowStart: 2,
+            gridRowEnd: 3,
             gridColStart: 1,
             gridColEnd: 2
           },
@@ -44,8 +56,8 @@ export class SubItemCreateFormService extends FormServiceBase {
             enabled: true,
             validatorRequired: false,
             maxTextLength: 1000,
-            gridRowStart: 2,
-            gridRowEnd: 3,
+            gridRowStart: 3,
+            gridRowEnd: 4,
             gridColStart: 1,
             gridColEnd: 2
           }

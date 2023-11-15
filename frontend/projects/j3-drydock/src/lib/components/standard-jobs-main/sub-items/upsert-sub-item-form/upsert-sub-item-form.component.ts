@@ -3,8 +3,8 @@ import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild 
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { FormGroup } from '@angular/forms';
 import { FormModel, FormValues } from 'jibe-components';
-import { SubItemEditFormService } from './sub-item-create-form';
-import { SubItemCreateFormService } from './sub-item-edit-form.service';
+import { SubItemEditFormService } from './sub-item-edit-form.service';
+import { SubItemCreateFormService } from './sub-item-create-form.service';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({

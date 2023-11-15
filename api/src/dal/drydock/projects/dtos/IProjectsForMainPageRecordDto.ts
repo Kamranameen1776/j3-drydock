@@ -17,6 +17,8 @@ export interface IProjectsForMainPageRecordDto {
 
     ProjectStatusName: string;
 
+    VesselUid: string;
+
     StartDate: Date;
 
     EndDate: Date;

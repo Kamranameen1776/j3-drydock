@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FormModel, FormValues } from 'jibe-components';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
-import { StandardJobUpsertFormService } from './StandardJobUpsertFormService';
+import { StandardJobUpsertFormService } from './standard-job-upsert-form.service';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { startWith, takeUntil } from 'rxjs/operators';
 import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-main.enum';
