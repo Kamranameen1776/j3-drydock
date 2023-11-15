@@ -11,8 +11,8 @@ export class YardsRepository {
             .createQueryBuilder('yd')
             .select(
                 `yd.Uid as uid,
-                yd.YardName as yardName,
-                yd.YardLocation as yardLocation
+                yd.yard_name as yardName,
+                yd.yard_location as yardLocation
                 `,
             )
             .where(`yd.active_status = 1`)

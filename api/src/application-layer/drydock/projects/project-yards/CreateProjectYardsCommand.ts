@@ -32,12 +32,12 @@ export class CreateProjectYardsCommand extends Command<CreateProjectYardsDto, vo
     }
 
     protected async MainHandlerAsync(request: CreateProjectYardsDto): Promise<void> {
-        //const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
+        const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const createdYardProject = await this.yardProjectsRepository.create(
                 {
-                    createdBy: '1FE9AE21-A28A-434B-8797-E7BCFA5328EC',
+                    createdBy: createdBy,
                     projectUid: request.projectUid,
                     yardsUids: request.yardsUids,
                     createdAt: new Date(),

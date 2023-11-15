@@ -32,12 +32,12 @@ export class UpdateProjectYardsCommand extends Command<UpdateProjectYardsDto, vo
     }
 
     protected async MainHandlerAsync(request: UpdateProjectYardsDto): Promise<void> {
-        //const { UserUID: updatedBy } = AccessRights.authorizationDecode(request);
+        const { UserUID: updatedBy } = AccessRights.authorizationDecode(request);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const projectId = await this.yardProjectsRepository.update(
                 {
-                    updatedBy: '1FE9AE21-A28A-434B-8797-E7BCFA5328EC',
+                    updatedBy: updatedBy,
                     isSelected: request.isSelected,
                     lastExportedDate: request.lastExportedDate,
                     uid: request.uid,
