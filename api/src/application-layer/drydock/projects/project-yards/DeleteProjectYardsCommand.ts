@@ -45,7 +45,7 @@ export class DeleteProjectYardsCommand extends Command<Request, void> {
         const body: DeleteProjectYardsDto = request.body;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const deletedYardProject = await this.yardProjectsRepository.delete(
+            await this.yardProjectsRepository.delete(
                 {
                     deletedBy: deletedBy,
                     uid: body.uid,
@@ -53,7 +53,6 @@ export class DeleteProjectYardsCommand extends Command<Request, void> {
                 },
                 queryRunner,
             );
-            return deletedYardProject;
         });
 
         return;

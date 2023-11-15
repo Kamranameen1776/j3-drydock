@@ -1,11 +1,11 @@
 import { getManager } from 'typeorm';
 
-import { yards } from '../../../entity/yards';
+import { YardsEntity } from '../../../entity/drydock/YardsEntity';
 import { IYardsResultDto } from './dtos/IYardsResultDto';
 
 export class YardsRepository {
     public async getYards(): Promise<IYardsResultDto> {
-        const yardsRepository = getManager().getRepository(yards);
+        const yardsRepository = getManager().getRepository(YardsEntity);
 
         return yardsRepository
             .createQueryBuilder('yd')
