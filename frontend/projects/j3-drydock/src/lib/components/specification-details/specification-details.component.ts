@@ -8,6 +8,7 @@ import { IJbMenuItem, JbDatePipe, JbMenuService, JiBeTheme } from 'jibe-componen
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
+import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
 @Component({
   selector: 'jb-specification-details',
   templateUrl: './specification-details.component.html',
@@ -19,11 +20,13 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   private pageTitle = 'Specification Details';
   public specificationDetailsInfo: GetSpecificationDetailsDto;
+  public updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
   public specificationUid: string;
 
   private readonly menuId = 'specification-details-menu';
   currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
   eProjectDetailsSideMenuId = eSpecificationDetailsPageMenuIds;
+  growlMessage$ = this.growlMessageService.growlMessage$;
 
   constructor(
     private title: Title,
@@ -84,13 +87,14 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   }
 
   public async save(): Promise<void> {
-    let data;
+    const data: UpdateSpecificationDetailsDto = {
+      uid: this.specificationDetailsInfo.uid,
+      Subject: this.specificationDetailsInfo.Subject
+    };
 
     try {
-      const uid = await this.specificatioDetailService.updateSpecification(data).toPromise();
-      if (uid === this.specificationUid) {
-        this.growlMessageService.setSuccessMessage("Specification's information has been saved successfully.");
-      }
+      this.specificatioDetailService.updateSpecification(data).toPromise();
+      this.growlMessageService.setSuccessMessage("Specification's information has been saved successfully.");
     } catch (err) {
       this.growlMessageService.setErrorMessage(err.error);
     }
