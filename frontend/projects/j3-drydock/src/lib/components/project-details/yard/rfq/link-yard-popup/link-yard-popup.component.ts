@@ -5,7 +5,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { getSmallPopup } from '../../../../../models/constants/popup';
 import { IJbDialog } from 'jibe-components';
 import { UnsubscribeComponent } from '../../../../../shared/classes/unsubscribe.base';
-import { finalize } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'jb-drydock-link-yard-popup',
@@ -101,10 +101,13 @@ export class LinkYardPopupComponent extends UnsubscribeComponent implements OnIn
   }
 
   private loadAllYardsToLink() {
-    this.yardsService.getYardsToLink(this.projectId).subscribe((yards: YardToLink[]) => {
-      this.setAllYardsToLink(yards ?? []);
-      this.defaultSortYardsToLink();
-    });
+    this.yardsService
+      .getYardsToLink(this.projectId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((yards: YardToLink[]) => {
+        this.setAllYardsToLink(yards ?? []);
+        this.defaultSortYardsToLink();
+      });
   }
 
   private setAllYardsToLink(yards: YardToLink[]) {
