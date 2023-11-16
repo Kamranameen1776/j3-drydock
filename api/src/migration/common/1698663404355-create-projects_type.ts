@@ -13,7 +13,7 @@ export class createProjectsType1698663404355 implements MigrationInterface {
                where TABLE_NAME = '${this.tableName}'
                  AND TABLE_SCHEMA = '${this.schemaName}')
 
-        
+    BEGIN    
         CREATE TABLE [${this.schemaName}].[${this.tableName}](
                     [Worklist_Type] [varchar](50) NOT NULL,
                     [short_code] [varchar](50) NOT NULL,

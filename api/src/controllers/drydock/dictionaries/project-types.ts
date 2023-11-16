@@ -6,7 +6,7 @@ import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 async function getProjectTypes(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
+    await middlewareHandler.ExecuteAsync(req, res, async () => {
         const command = new GetProjectTypesQuery();
 
         return await command.ExecuteAsync();

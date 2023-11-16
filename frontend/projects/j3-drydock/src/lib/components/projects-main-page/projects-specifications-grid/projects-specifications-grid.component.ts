@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ProjectsSpecificationGridService } from './ProjectsSpecificationGridService';
 import { eGridRowActions, FormModel, GridAction, GridComponent, IJbDialog } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
@@ -9,6 +9,13 @@ import { DeleteProjectDto, ProjectCreate } from '../../../models/interfaces/proj
 import { Router } from '@angular/router';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { getSmallPopup } from '../../../models/constants/popup';
+import { ProjectsGridOdataKeys } from '../../../models/enums/ProjectsGridOdataKeys';
+import { LeftPanelFilterService } from '../services/LeftPanelFilterService';
+import { IProjectGroupStatusDto } from '../services/IProjectGroupStatusDto';
+import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
+import { takeUntil } from 'rxjs/operators';
+import { NewTabService } from '../../../services/new-tab-service';
+import moment from 'moment';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -16,9 +23,11 @@ import { getSmallPopup } from '../../../models/constants/popup';
   styleUrls: ['./projects-specifications-grid.component.scss'],
   providers: [ProjectsSpecificationGridService]
 })
-export class ProjectsSpecificationsGridComponent implements OnInit {
+export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
   @ViewChild('projectsGrid')
   projectsGrid: GridComponent;
+
+  readonly allProjectsProjectTypeId = 'all_projects';
 
   public DeleteBtnLabel = 'Delete';
 
@@ -48,16 +57,56 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
 
   deleteProjectButtonDisabled$ = new BehaviorSubject(false);
 
+  leftPanelProjectGroupStatusFilter: IProjectGroupStatusDto;
+
+  leftPanelVesselsFilter: number[];
+
   constructor(
     private router: Router,
     private projectsGridService: ProjectsSpecificationGridService,
-    private projectsService: ProjectsService
-  ) {}
+    private projectsService: ProjectsService,
+    private leftPanelFilterService: LeftPanelFilterService,
+    private newTabService: NewTabService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.gridInputs = this.projectsGridService.getGridInputs();
     this.createProjectForm = this.projectsGridService.getCreateProjectForm();
     this.deleteProjectForm = this.projectsGridService.getDeleteProjectForm();
+  }
+
+  ngAfterViewInit(): void {
+    this.leftPanelFilterService.vesselsChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((filter: number[]) => {
+      this.leftPanelVesselsFilter = filter;
+      this.projectsGrid.fetchMatrixData();
+    });
+
+    this.leftPanelFilterService.groupStatusChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((filter: IProjectGroupStatusDto) => {
+      this.leftPanelProjectGroupStatusFilter = filter;
+      this.projectsGrid.fetchMatrixData();
+    });
+  }
+
+  onMatrixRequestChanged() {
+    if (
+      this.leftPanelProjectGroupStatusFilter.ProjectTypeId &&
+      this.leftPanelProjectGroupStatusFilter.ProjectTypeId !== this.allProjectsProjectTypeId
+    ) {
+      this.projectsGrid.odata.filter.eq(ProjectsGridOdataKeys.ProjectTypeCode, this.leftPanelProjectGroupStatusFilter.ProjectTypeId);
+    }
+
+    if (this.leftPanelProjectGroupStatusFilter.GroupProjectStatusId) {
+      this.projectsGrid.odata.filter.eq(
+        ProjectsGridOdataKeys.GroupProjectStatusId,
+        this.leftPanelProjectGroupStatusFilter.GroupProjectStatusId
+      );
+    }
+
+    if (this.leftPanelVesselsFilter.length > 0) {
+      this.projectsGrid.odata.filter.in(ProjectsGridOdataKeys.VesselId, this.leftPanelVesselsFilter);
+    }
   }
 
   public onGridAction({ type }: GridAction<string, string>, project: IProjectsForMainPageGridDto): void {
@@ -70,7 +119,7 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
       }
 
       // TODO: re-check navigation params
-      this.router.navigate(['project-monitoring', project.ProjectId]);
+      this.newTabService.navigate(['project-monitoring', project.ProjectId]);
     } else if (type === this.gridInputs.gridButton.label) {
       this.showCreateNewDialog();
     }
@@ -110,8 +159,12 @@ export class ProjectsSpecificationsGridComponent implements OnInit {
     this.saveNewProjectButtonDisabled$.next(true);
     if (this.createProjectFormGroup.valid) {
       const values: ProjectCreate = this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId];
-      values.EndDate = new Date(values.EndDate);
-      values.StartDate = new Date(values.StartDate);
+
+      const endDate = moment(values.EndDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
+      values.EndDate = endDate;
+
+      const startDate = moment(values.StartDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
+      values.StartDate = startDate;
 
       this.projectsService.createProject(values).subscribe(() => {
         this.saveNewProjectButtonDisabled$.next(false);

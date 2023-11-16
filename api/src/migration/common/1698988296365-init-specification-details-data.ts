@@ -84,7 +84,7 @@ export class InitSpecificationDetailsData1698988296365 implements MigrationInter
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
+    public async down(): Promise<void> {
         try {
             await MigrationUtilsService.migrationLog(
                 'initSpecificationDetailsData16989882964366',

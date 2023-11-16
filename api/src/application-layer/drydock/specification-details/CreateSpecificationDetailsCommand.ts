@@ -1,6 +1,9 @@
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 import { Request } from 'express';
 
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
+import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
@@ -12,6 +15,7 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     vesselsRepository: VesselsRepository;
     specificationDetailsService: SpecificationService;
+    projectRepository: ProjectsRepository;
     uow: UnitOfWork;
 
     constructor() {
@@ -21,16 +25,16 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
         this.vesselsRepository = new VesselsRepository();
         this.specificationDetailsService = new SpecificationService();
         this.uow = new UnitOfWork();
-    }
-
-    protected async AuthorizationHandlerAsync(): Promise<void> {
-        return;
+        this.projectRepository = new ProjectsRepository();
     }
 
     protected async ValidationHandlerAsync(request: Request): Promise<void> {
-        if (!request) {
-            throw new Error('Request is null');
+        const body: CreateSpecificationDetailsDto = plainToClass(CreateSpecificationDetailsDto, request.body);
+        const result = await validate(body);
+        if (result.length) {
+            throw result;
         }
+        return;
     }
 
     /**
@@ -38,26 +42,33 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
      * @param request data for creation of specification details
      * @returns data of specification details
      */
-    protected async MainHandlerAsync(request: Request<any, CreateSpecificationDetailsDto>): Promise<void> {
+    protected async MainHandlerAsync(request: Request): Promise<void> {
         const token: string = request.headers.authorization as string;
-
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(
-                request.query.VesselUid as string,
-            );
+            const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
+            const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(project.VesselUid);
+
             const taskManagerData = await this.specificationDetailsService.TaskManagerIntegration(
                 request.body,
                 vessel,
                 token,
             );
-            request.body.tmTask = taskManagerData.uid;
+            request.body.TecTaskManagerUid = taskManagerData.uid;
             const specData = await this.specificationDetailsRepository.CreateSpecificationDetails(
                 request.body,
                 queryRunner,
             );
+            const { Inspections } = request.body;
+            if (Inspections.length) {
+                const data = Inspections.map((item: number) => {
+                    return {
+                        LIBSurveyCertificateAuthorityID: item,
+                        SpecificationDetailsUid: specData,
+                    };
+                });
+                await this.specificationDetailsRepository.CreateSpecificationInspection(data, queryRunner);
+            }
             return specData;
         });
-
-        return;
     }
 }

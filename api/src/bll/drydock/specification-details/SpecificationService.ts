@@ -16,6 +16,7 @@ export class SpecificationService {
         request: CreateSpecificationDetailsDto,
         vessel: LibVesselsEntity,
         token: string,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<any> {
         const office = await this.IsOffice();
 
@@ -33,7 +34,7 @@ export class SpecificationService {
             function_code: TaskManagerConstants.specification.function_code,
             raised_location: office,
             task_status: TaskManagerConstants.specification.status.Raised,
-            title: request.subject,
+            title: request.Subject,
             date_raised: new Date(),
             link_job_uid: null,
             parent_uid: null,

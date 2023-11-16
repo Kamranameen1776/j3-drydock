@@ -28,6 +28,12 @@ import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
 import { CreateSpecificationPopupComponent } from './components/project-details/create-specification-popup/create-specification-popup.component';
 import { SpecificationFormComponent } from './components/project-details/specification-form/specification-form.component';
 import { SpecificationCreateFormService } from './components/project-details/specification-form/specification-create-form-service';
+import { ProjectTypesLeftPanelComponent } from './components/projects-main-page/project-types-left-panel/project-types-left-panel.component';
+import { ProjectStatusFilterComponent } from './components/projects-main-page/project-types-left-panel/project-status-filter/project-status-filter.component';
+import { LeftPanelFilterService } from './components/projects-main-page/services/LeftPanelFilterService';
+import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
+import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
+import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -50,6 +56,8 @@ export function winEnv(): unknown {
     UpsertStandardJobPopupComponent,
     UpsertStandardJobFormComponent,
     FunctionsTreeSelectComponent,
+    ProjectTypesLeftPanelComponent,
+    ProjectStatusFilterComponent,
     ProjectHeaderComponent,
     SubItemsComponent,
     UpsertSubItemFormComponent,
@@ -58,7 +66,9 @@ export function winEnv(): unknown {
     StandardJobsStatusColorPipe,
     StaticGridSearchPipe,
     CreateSpecificationPopupComponent,
-    SpecificationFormComponent
+    SpecificationFormComponent,
+    SpecificationDetailsComponent,
+    SpecificationDetailsHeaderComponent
   ],
   imports: [
     CommonModule,
@@ -75,7 +85,15 @@ export function winEnv(): unknown {
     PrimeNgModule,
     MenuModule
   ],
-  providers: [DatePipe, SpecificationGridService, SpecificationTopDetailsService, ProjectsService, SpecificationCreateFormService],
+  providers: [
+    DatePipe,
+    SpecificationGridService,
+    SpecificationTopDetailsService,
+    ProjectsService,
+    SpecificationDetailsService,
+    LeftPanelFilterService,
+    SpecificationCreateFormService
+  ],
   exports: [],
   entryComponents: []
 })

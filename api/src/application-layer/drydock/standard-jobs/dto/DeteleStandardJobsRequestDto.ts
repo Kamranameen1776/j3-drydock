@@ -1,3 +1,3 @@
 export interface DeleteStandardJobsRequestDto {
-  uid: string;
+    uid: string;
 }

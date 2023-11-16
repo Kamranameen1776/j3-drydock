@@ -1,28 +1,30 @@
 import { ApiRequestService, DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, In, QueryRunner } from 'typeorm';
-import { RequestWithOData } from '../../../shared/interfaces';
+import { getConnection, getManager, In, QueryRunner, UpdateResult } from 'typeorm';
+
 import {
     CreateStandardJobsRequestDto,
+    GetStandardJobsQueryResult,
     UpdateStandardJobsRequestDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
-import { standard_jobs } from '../../../entity/standard_jobs';
-import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
 import {
     StandardJobsFiltersAllowedKeys,
     StandardJobsFilterTablesMap,
     StandardJobsLibraryValuesMap,
 } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto';
-import { FiltersDataResponse } from '../../../shared/interfaces/filters-data-response.interface';
 import { UpdateStandardJobSubItemsRequestDto } from '../../../application-layer/drydock/standard-jobs/dto/UpdateStandardJobSubItemsRequestDto';
+import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
+import { standard_jobs } from '../../../entity/standard_jobs';
 import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items';
+import { RequestWithOData } from '../../../shared/interfaces';
+import { FiltersDataResponse } from '../../../shared/interfaces/filters-data-response.interface';
 
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
 
-    public async getStandardJobs(data: RequestWithOData): Promise<standard_jobs[]> {
+    public async getStandardJobs(data: RequestWithOData): Promise<GetStandardJobsQueryResult> {
         const oDataService = new ODataService(data, getConnection);
 
-        const query = getManager()
+        const innerQuery = getManager()
             .createQueryBuilder('standard_jobs', 'sj')
             .leftJoin('standard_jobs_vessel_type', 'sjvt', `sjvt.standard_job_uid = sj.uid`)
             .leftJoin('standard_jobs_survey_certificate_authority', 'sjsca', `sjsca.standard_job_uid = sj.uid`)
@@ -36,11 +38,12 @@ export class StandardJobsRepository {
                 `msb.uid = sj.material_supplied_by_uid AND msb.active_status = 1`,
             )
             .select(
-                'sj.uid as uid,' +
+                'distinct sj.uid as uid,' +
                     'sj.subject as subject,' +
+                    'sj.scope as scope,' +
                     'sj."function" as "function",' +
-                    'sj.code as code,' +
-                    'sj.number as number,' +
+                    'sj."function_uid" as "functionUid",' +
+                    'CONCAT(sj.code, sj.number) as code,' +
                     'sj.category_uid as categoryUid,' +
                     'ic.display_name as category,' +
                     'sj.done_by_uid as doneByUid,' +
@@ -50,33 +53,40 @@ export class StandardJobsRepository {
                     'sj.active_status as activeStatus,' +
                     'sj.material_supplied_by_uid as materialSuppliedByUid,' +
                     'msb.display_name as materialSuppliedBy,' +
-                    'lsca.Authority as inspection,' +
-                    `vt.VesselTypes as vesselType,` +
-                    `vt.ID as vesselTypeId,` +
-                    `lsca.ID as inspectionId`,
+                    `STRING_AGG(vt.ID, ',') as vesselTypeId,` +
+                    `STRING_AGG(lsca.ID, ',') as inspectionId,` +
+                    `STRING_AGG(vt.VesselTypes, ',') as vesselType,` +
+                    `STRING_AGG(lsca.Authority, ',') as inspection`,
+            )
+            .groupBy(
+                `sj.uid` +
+                    `,sj.subject` +
+                    `,sj.scope` +
+                    `,sj."function"` +
+                    ',sj."function_uid"' +
+                    `,sj.code` +
+                    `,sj.number` +
+                    `,sj.category_uid` +
+                    `,ic.display_name` +
+                    `,sj.done_by_uid` +
+                    `,db.displayName` +
+                    `,sj.vessel_type_specific` +
+                    `,sj.description` +
+                    `,sj.active_status` +
+                    `,sj.material_supplied_by_uid` +
+                    `,msb.display_name`,
             )
             .where('sj.active_status = 1')
             .getSql();
 
-        const filteredData = await oDataService.getJoinResult(query);
-
-        const uids: string[] = filteredData.records.map(item => item.uid);
-
-        if (!uids.length) return [];
-
-        return await getManager().find(standard_jobs, {
-            where: {
-                uid: In(uids),
-            },
-            relations: ['inspection', 'vessel_type', 'done_by', 'material_supplied_by', 'category', 'sub_items'],
-        });
+        return oDataService.getJoinResult(innerQuery);
     }
 
     public async createStandardJob(
         data: CreateStandardJobsRequestDto,
         createdBy: string,
         queryRunner: QueryRunner,
-    ): Promise<any> {
+    ): Promise<standard_jobs> {
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         standardJob.created_by = createdBy;
         standardJob.uid = new DataUtilService().newUid();
@@ -90,7 +100,7 @@ export class StandardJobsRepository {
         data: UpdateStandardJobSubItemsRequestDto,
         userUid: string,
         queryRunner: QueryRunner,
-    ): Promise<any> {
+    ): Promise<void> {
         const standardJobUid = data.uid;
 
         const standardJob = await queryRunner.manager.findOne(standard_jobs, {
@@ -123,7 +133,7 @@ export class StandardJobsRepository {
         data: UpdateStandardJobsRequestDto,
         updatedBy: string,
         queryRunner: QueryRunner,
-    ): Promise<any> {
+    ): Promise<standard_jobs> {
         const uid = data.uid;
 
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
@@ -141,7 +151,7 @@ export class StandardJobsRepository {
         return queryRunner.manager.save(standard_jobs, entity);
     }
 
-    public async deleteStandardJob(uid: string, deletedBy: string, queryRunner: QueryRunner): Promise<any> {
+    public async deleteStandardJob(uid: string, deletedBy: string, queryRunner: QueryRunner): Promise<UpdateResult> {
         const updateStandardJobData = this.standardJobsService.addDeleteStandardJobsFields(deletedBy);
 
         return queryRunner.manager.update(standard_jobs, { uid, active_status: 1 }, updateStandardJobData);
@@ -158,7 +168,7 @@ export class StandardJobsRepository {
                 odata: { $filter: 'active_status=1' },
             });
 
-            return libraryData.data?.records?.map((item: any) => {
+            return libraryData.data?.records?.map((item: Record<string, string>) => {
                 return {
                     displayName: item.display_name || item.displayName,
                     uid: item.uid,
@@ -179,5 +189,21 @@ export class StandardJobsRepository {
         }
 
         return [];
+    }
+
+    public getStandardJobSubItems(uids: string[]): Promise<standard_jobs_sub_items[]> {
+        const uidString = uids.map((uid) => `'${uid}'`).join(',');
+        return getManager()
+            .createQueryBuilder(standard_jobs_sub_items, 'sub_items')
+            .select(
+                'sub_items.uid as uid,' +
+                    'sub_items.code as code,' +
+                    'sub_items.subject as subject,' +
+                    'sub_items.description as description,' +
+                    'sub_items.standard_job_uid as standard_job_uid',
+            )
+            .where('sub_items.active_status = 1')
+            .andWhere(`sub_items.standard_job_uid IN (${uidString})`)
+            .getRawMany();
     }
 }

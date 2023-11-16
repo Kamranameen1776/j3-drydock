@@ -1,4 +1,4 @@
-import { Entity, Column } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 @Entity('j2_inf_admin_library', { schema: 'dbo' })
 export class j2_inf_admin_library {

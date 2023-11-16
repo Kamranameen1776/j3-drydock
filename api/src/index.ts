@@ -9,7 +9,6 @@ const PORT = process.env.PORT || 3020;
 console.log(PORT);
 process.env.basedir = __dirname;
 
-
 let server: Server | undefined;
 
 const startServer = async () => {

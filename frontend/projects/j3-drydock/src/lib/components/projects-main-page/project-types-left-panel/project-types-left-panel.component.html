@@ -1,0 +1,12 @@
+<div class="main-page-left-panel">
+  <div class="vessels-select-dropdown">
+    <jb-multi-select-dropdown
+      #vesselsSelectDropdownList
+      [content]="vesselsSelectDropdown"
+      (onClearValues)="onVesselsSelected([])"
+    ></jb-multi-select-dropdown>
+  </div>
+  <div *ngFor="let filter of projectsStatusFilters">
+    <jb-project-status-filter [projectStatusFilter]="filter"></jb-project-status-filter>
+  </div>
+</div>

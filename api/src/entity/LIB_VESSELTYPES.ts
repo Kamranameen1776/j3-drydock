@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { standard_jobs } from './standard_jobs';
 
@@ -29,7 +29,7 @@ export class LIB_VESSELTYPES {
     @ManyToMany(() => standard_jobs, (standardJob) => standardJob.vessel_type)
     @JoinTable({
         name: 'standard_jobs_vessel_type',
-        schema: 'drydock',
+        schema: 'dry_dock',
         joinColumn: {
             name: 'vessel_type_id',
             referencedColumnName: 'ID',

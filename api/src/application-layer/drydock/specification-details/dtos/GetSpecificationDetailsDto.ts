@@ -1,28 +1,27 @@
+import { IInspectionsResultDto } from './InspectionsResultDto';
+
 export class GetSpecificationDetailsDto {
     uid: string;
-    tmTask: string;
-    functionUid: string;
-    componentUid: string;
-    accountCode: string;
-    itemSourceUid: string;
-    itemNumber: string;
-    doneByUid: string;
-    itemCategoryUid: string;
-    inspectionUid: string;
-    equipmentDescription: string;
-    priorityUid: string;
-    description: string;
-    startDate: Date;
-    estimatedDays: number;
-    bufferTime: number;
-    treatment: string;
-    onboardLocationUid: string;
-    access: string;
-    materialSuppliedByUid: string;
-    testCriteria: string;
-    ppe: string;
-    safetyInstruction: string;
-    activeStatus: boolean;
-    createdByUid: string;
-    createdAt: Date;
+    Subject: string;
+    SpecificationCode: string;
+    Status: string;
+    FunctionUid: string;
+    AccountCode: string;
+
+    ItemSourceUid: string;
+    ItemSourceText: string;
+
+    ItemNumber: string;
+
+    DoneByUid: string;
+    DoneByDisplayName: string;
+    EquipmentDescription: string;
+    Description: string;
+    PriorityUid: string;
+    PriorityName: string;
+    VesselName: string;
+    VesselUid: string;
+    ProjectManager: string;
+    ProjectManagerUid: string;
+    Inspections: Array<IInspectionsResultDto>;
 }

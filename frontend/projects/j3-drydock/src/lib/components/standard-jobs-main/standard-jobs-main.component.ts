@@ -2,25 +2,17 @@
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
 import { StandardJobResult } from '../../models/interfaces/standard-jobs';
 import { Component, OnInit } from '@angular/core';
-import {
-  CentralizedDataService,
-  eGridRefreshType,
-  eGridRowActions,
-  GridAction,
-  GridRowActions,
-  GridService,
-  JmsTechApiService
-} from 'jibe-components';
+import { eGridRefreshType, eGridRowActions, GridAction, GridRowActions, GridService } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { StandardJobsGridService } from './standard-jobs-grid.service';
 import { FunctionsFlatTreeNode } from '../../models/interfaces/functions-tree-node';
-import { StandardJobUpsertFormService } from './upsert-standard-job-form/StandardJobUpsertFormService';
+import { StandardJobUpsertFormService } from './upsert-standard-job-form/standard-job-upsert-form.service';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../models/constants/popup';
 import { StandardJobsService } from '../../services/standard-jobs.service';
 import { GrowlMessageService } from '../../services/growl-message.service';
-import { FunctionsTreeService } from '../../services/functions-tree.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'jb-standard-jobs-main',
@@ -53,10 +45,8 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     private standardJobsService: StandardJobsService,
     private upsertFormService: StandardJobUpsertFormService,
     private gridService: GridService,
-    private cds: CentralizedDataService,
-    private techApiSvc: JmsTechApiService,
     private growlMessageService: GrowlMessageService,
-    private treeService: FunctionsTreeService
+    private title: Title
   ) {
     super();
   }
@@ -65,6 +55,7 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     this.setAccessRights();
     this.setGridInputs();
     this.setGridRowActions();
+    this.setPageTitle();
     this.loadFunctionsTree();
   }
 
@@ -119,12 +110,12 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     this.gridRowActions.length = 0;
     this.gridRowActions.push({ name: eGridRowActions.DoubleClick });
 
-    // TODO Access rigths
+    // TODO Access rights
     this.gridRowActions.push({
       name: eGridRowActions.Edit
     });
 
-    // TODO Access rigths
+    // TODO Access rights
     this.gridRowActions.push({
       name: eGridRowActions.Delete
     });
@@ -157,5 +148,9 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
       this.currentRow = undefined;
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);
     });
+  }
+
+  private setPageTitle() {
+    this.title.setTitle('Standard Jobs');
   }
 }

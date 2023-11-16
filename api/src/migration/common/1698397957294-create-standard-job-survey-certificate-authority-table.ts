@@ -1,5 +1,5 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
-import { MigrationUtilsService } from "j2utils";
+import { MigrationUtilsService } from 'j2utils';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class createStandardJobSurveyCertificateAuthorityTable1698397957294 implements MigrationInterface {
     tableName = 'standard_jobs_survey_certificate_authority';
@@ -22,20 +22,20 @@ export class createStandardJobSurveyCertificateAuthorityTable1698397957294 imple
     END`);
 
             await MigrationUtilsService.migrationLog(
-              'createStandardJobSurveyCertificateAuthorityTable1698397957294',
-              '',
-              'S',
-              'dry_dock',
-              'Create standard jobs survey certificate authority table',
+                'createStandardJobSurveyCertificateAuthorityTable1698397957294',
+                '',
+                'S',
+                'dry_dock',
+                'Create standard jobs survey certificate authority table',
             );
         } catch (error) {
             await MigrationUtilsService.migrationLog(
-              'createStandardJobSurveyCertificateAuthorityTable1698397957294',
-              error,
-              'E',
-              'dry_dock',
-              'Create standard jobs survey certificate authority table',
-              true,
+                'createStandardJobSurveyCertificateAuthorityTable1698397957294',
+                JSON.stringify(error),
+                'E',
+                'dry_dock',
+                'Create standard jobs survey certificate authority table',
+                true,
             );
         }
     }
@@ -51,22 +51,21 @@ export class createStandardJobSurveyCertificateAuthorityTable1698397957294 imple
             `);
 
             await MigrationUtilsService.migrationLog(
-              'createStandardJobSurveyCertificateAuthorityTable1698397957294',
-              '',
-              'S',
-              'dry_dock',
-              'Create standard jobs survey certificate authority table (Down migration)',
+                'createStandardJobSurveyCertificateAuthorityTable1698397957294',
+                '',
+                'S',
+                'dry_dock',
+                'Create standard jobs survey certificate authority table (Down migration)',
             );
         } catch (error) {
             await MigrationUtilsService.migrationLog(
-              'createStandardJobSurveyCertificateAuthorityTable1698397957294',
-              error,
-              'E',
-              'dry_dock',
-              'Create standard jobs survey certificate authority table (Down migration)',
-              true,
+                'createStandardJobSurveyCertificateAuthorityTable1698397957294',
+                JSON.stringify(error),
+                'E',
+                'dry_dock',
+                'Create standard jobs survey certificate authority table (Down migration)',
+                true,
             );
         }
     }
-
 }

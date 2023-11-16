@@ -20,4 +20,4 @@ export const StandardJobsLibraryValuesMap: { [key in StandardJobsFiltersAllowedK
 
 export const StandardJobsFilterTablesMap: { [key in StandardJobsFiltersAllowedKeys]?: string } = {
     inspection: 'LIB_Survey_CertificateAuthority',
-}
+};

@@ -1,29 +1,29 @@
+import { ArrayMinSize, IsArray, IsNumber, IsOptional, IsUUID, MaxLength, MinLength } from 'class-validator';
+
 export class CreateSpecificationDetailsDto {
-    uid: string;
-    tmTask: string;
-    functionUid: string;
-    componentUid: string;
-    accountCode: string;
-    itemSourceUid: string;
-    itemNumber: string;
-    doneByUid: string;
-    itemCategoryUid: string;
-    inspectionUid: string;
-    equipmentDescription: string;
-    priorityUid: string;
-    description: string;
-    startDate: Date;
-    estimatedDays: number;
-    bufferTime: number;
-    treatment: string;
-    onboardLocationUid: string;
-    access: string;
-    materialSuppliedByUid: string;
-    testCriteria: string;
-    ppe: string;
-    safetyInstruction: string;
-    activeStatus: boolean;
-    createdByUid: string;
-    createdAt: Date;
-    subject: string;
+    @IsUUID()
+    ProjectUid: string;
+
+    @IsUUID()
+    FunctionUid: string;
+
+    @MinLength(1)
+    @MaxLength(100)
+    Subject: string;
+
+    @IsUUID()
+    ItemSourceUid: string;
+
+    @MinLength(1)
+    @MaxLength(1000)
+    Description: string;
+
+    @IsArray()
+    @ArrayMinSize(0)
+    @IsNumber({}, { each: true })
+    Inspections: Array<number>;
+
+    @IsUUID()
+    @IsOptional()
+    DoneByUid: string;
 }
