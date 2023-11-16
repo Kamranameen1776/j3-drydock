@@ -1,6 +1,6 @@
 import { IsDateString, IsNumber, IsOptional, IsUUID, MaxLength, MinLength } from 'class-validator';
 
-export class ICreateProjectDto {
+export class CreateProjectDto {
     ProjectCode?: string;
 
     CreatedAtOffice?: number;

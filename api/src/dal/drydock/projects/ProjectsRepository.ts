@@ -7,11 +7,11 @@ import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
-import { JMSDTLWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
+import { JmsDtlWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
 import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
 import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
-import { TECLIBWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
-import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
+import { TecLibWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
+import { TecTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
 import { GroupProjectStatusEntity } from '../../../entity/drydock/GroupProjectStatusEntity';
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
@@ -41,8 +41,8 @@ export class ProjectsRepository {
                 'wdetails.StatusDisplayName as ProjectStatusName',
                 'wdetails.WorkflowOrderID',
             ])
-            .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
-            .innerJoin(className(JMSDTLWorkflowConfigDetailsEntity), 'wdetails', 'wdetails.ConfigId = wt.ID')
+            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
+            .innerJoin(className(JmsDtlWorkflowConfigDetailsEntity), 'wdetails', 'wdetails.ConfigId = wt.ID')
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('wdetails.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('wt.ActiveStatus = :activeStatus', { activeStatus: 1 })
@@ -68,7 +68,7 @@ export class ProjectsRepository {
             .innerJoin(className(ProjectTypeEntity), 'pt', 'gps.ProjectTypeId = pt.WorklistType')
             .innerJoin(className(ProjectEntity), 'pr', 'pt.uid = pr.ProjectTypeUid')
             .innerJoin(
-                className(TECTaskManagerEntity),
+                className(TecTaskManagerEntity),
                 'tm',
                 'tm.uid = pr.TaskManagerUid and tm.Status = gps.ProjectStatusId',
             )
@@ -97,7 +97,7 @@ export class ProjectsRepository {
             .innerJoin(className(ProjectTypeEntity), 'pt', 'gps.ProjectTypeId = pt.WorklistType')
             .innerJoin(className(ProjectEntity), 'pr', 'pt.uid = pr.ProjectTypeUid')
             .innerJoin(
-                className(TECTaskManagerEntity),
+                className(TecTaskManagerEntity),
                 'tm',
                 'tm.uid = pr.TaskManagerUid and tm.Status = gps.ProjectStatusId',
             )
@@ -124,7 +124,7 @@ export class ProjectsRepository {
                 'wt.WorklistTypeDisplay as ProjectTypeName',
                 'pt.ShortCode as ProjectTypeShortCode',
             ])
-            .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
+            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .execute();
 
@@ -160,11 +160,11 @@ export class ProjectsRepository {
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
             .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = pr.ProjectTypeUid')
-            .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
+            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
-            .innerJoin(className(TECTaskManagerEntity), 'tm', 'tm.uid = pr.TaskManagerUid')
+            .innerJoin(className(TecTaskManagerEntity), 'tm', 'tm.uid = pr.TaskManagerUid')
             .innerJoin(
-                className(JMSDTLWorkflowConfigDetailsEntity),
+                className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
                 'wdetails.ConfigId = wt.ID and wdetails.WorkflowTypeID = tm.Status',
             )

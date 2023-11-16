@@ -13,8 +13,8 @@ import {
 } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto';
 import { UpdateStandardJobSubItemsRequestDto } from '../../../application-layer/drydock/standard-jobs/dto/UpdateStandardJobSubItemsRequestDto';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
-import { standard_jobs } from '../../../entity/standard_jobs';
-import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items';
+import { StandardJobs } from '../../../entity/standard_jobs';
+import { StandardJobsSubItems } from '../../../entity/standard_jobs_sub_items';
 import { RequestWithOData } from '../../../shared/interfaces';
 import { FiltersDataResponse } from '../../../shared/interfaces/filters-data-response.interface';
 
@@ -86,14 +86,14 @@ export class StandardJobsRepository {
         data: CreateStandardJobsRequestDto,
         createdBy: string,
         queryRunner: QueryRunner,
-    ): Promise<standard_jobs> {
+    ): Promise<StandardJobs> {
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         standardJob.created_by = createdBy;
         standardJob.uid = new DataUtilService().newUid();
 
-        const entity: standard_jobs = queryRunner.manager.create(standard_jobs, standardJob);
+        const entity: StandardJobs = queryRunner.manager.create(StandardJobs, standardJob);
 
-        return queryRunner.manager.save(standard_jobs, entity);
+        return queryRunner.manager.save(StandardJobs, entity);
     }
 
     public async updateStandardJobSubItems(
@@ -103,7 +103,7 @@ export class StandardJobsRepository {
     ): Promise<void> {
         const standardJobUid = data.uid;
 
-        const standardJob = await queryRunner.manager.findOne(standard_jobs, {
+        const standardJob = await queryRunner.manager.findOne(StandardJobs, {
             where: {
                 uid: standardJobUid,
             },
@@ -116,10 +116,10 @@ export class StandardJobsRepository {
         const subItems = this.standardJobsService.mapStandardJobSubItemsDtoToEntity(data.subItems, data.uid, userUid);
         const deleteData = this.standardJobsService.addDeleteStandardJobsFields(userUid);
 
-        await queryRunner.manager.save(standard_jobs_sub_items, subItems);
+        await queryRunner.manager.save(StandardJobsSubItems, subItems);
         if (subItemsToDelete.length > 0) {
             await queryRunner.manager.update(
-                standard_jobs_sub_items,
+                StandardJobsSubItems,
                 {
                     uid: In(subItemsToDelete),
                     active_status: 1,
@@ -133,28 +133,28 @@ export class StandardJobsRepository {
         data: UpdateStandardJobsRequestDto,
         updatedBy: string,
         queryRunner: QueryRunner,
-    ): Promise<standard_jobs> {
+    ): Promise<StandardJobs> {
         const uid = data.uid;
 
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         const updateStandardJobData = this.standardJobsService.addUpdateStandardJobsFields(standardJob, updatedBy);
 
-        const entity: standard_jobs = queryRunner.manager.create(standard_jobs, updateStandardJobData);
+        const entity: StandardJobs = queryRunner.manager.create(StandardJobs, updateStandardJobData);
         entity.uid = uid;
 
-        await queryRunner.manager.save(standard_jobs, {
+        await queryRunner.manager.save(StandardJobs, {
             uid,
             vessel_type: [],
             inspection: [],
         });
 
-        return queryRunner.manager.save(standard_jobs, entity);
+        return queryRunner.manager.save(StandardJobs, entity);
     }
 
     public async deleteStandardJob(uid: string, deletedBy: string, queryRunner: QueryRunner): Promise<UpdateResult> {
         const updateStandardJobData = this.standardJobsService.addDeleteStandardJobsFields(deletedBy);
 
-        return queryRunner.manager.update(standard_jobs, { uid, active_status: 1 }, updateStandardJobData);
+        return queryRunner.manager.update(StandardJobs, { uid, active_status: 1 }, updateStandardJobData);
     }
 
     public async getStandardJobFilters(
@@ -180,7 +180,7 @@ export class StandardJobsRepository {
         if (tableName) {
             switch (filterKey) {
                 case 'inspection':
-                    return await getManager()
+                    return getManager()
                         .createQueryBuilder(tableName, 'lsca')
                         .select(`DISTINCT lsca.ID as uid, lsca.Authority as displayName`)
                         .where('lsca.active_status = 1')
@@ -191,10 +191,10 @@ export class StandardJobsRepository {
         return [];
     }
 
-    public getStandardJobSubItems(uids: string[]): Promise<standard_jobs_sub_items[]> {
+    public getStandardJobSubItems(uids: string[]): Promise<StandardJobsSubItems[]> {
         const uidString = uids.map((uid) => `'${uid}'`).join(',');
         return getManager()
-            .createQueryBuilder(standard_jobs_sub_items, 'sub_items')
+            .createQueryBuilder(StandardJobsSubItems, 'sub_items')
             .select(
                 'sub_items.uid as uid,' +
                     'sub_items.code as code,' +

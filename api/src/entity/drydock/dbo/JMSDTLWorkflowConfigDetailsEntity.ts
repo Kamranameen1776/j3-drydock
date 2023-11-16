@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('JMS_DTL_Workflow_config_Details', { schema: 'dbo' })
-export class JMSDTLWorkflowConfigDetailsEntity {
+export class JmsDtlWorkflowConfigDetailsEntity {
     @PrimaryGeneratedColumn()
     id: string;
 

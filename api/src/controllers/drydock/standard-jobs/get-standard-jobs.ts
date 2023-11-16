@@ -10,7 +10,7 @@ async function getStandardJobs(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new GetStandardJobsCommand();
 
-        return await command.ExecuteAsync(request as RequestWithOData);
+        return command.ExecuteAsync(request as RequestWithOData);
     });
 }
 

@@ -1,7 +1,7 @@
 import { Column, Entity } from 'typeorm';
 
 @Entity('j2_inf_admin_library', { schema: 'dbo' })
-export class j2_inf_admin_library {
+export class J2InfAdminLibrary {
     @Column('uniqueidentifier', {
         nullable: false,
         primary: true,

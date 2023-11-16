@@ -1,4 +1,4 @@
-import { IInspectionsResultDto } from './InspectionsResultDto';
+import { InspectionsResultDto } from './InspectionsResultDto';
 
 export class GetSpecificationDetailsDto {
     uid: string;
@@ -23,5 +23,5 @@ export class GetSpecificationDetailsDto {
     VesselUid: string;
     ProjectManager: string;
     ProjectManagerUid: string;
-    Inspections: Array<IInspectionsResultDto>;
+    Inspections: Array<InspectionsResultDto>;
 }

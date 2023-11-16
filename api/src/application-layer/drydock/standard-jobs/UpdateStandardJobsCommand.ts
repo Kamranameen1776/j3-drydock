@@ -2,12 +2,12 @@ import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
 import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
-import { standard_jobs } from '../../../entity/standard_jobs';
+import { StandardJobs } from '../../../entity/standard_jobs';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateStandardJobsRequestDto } from './dto';
 
-export class UpdateStandardJobsCommand extends Command<Request, standard_jobs> {
+export class UpdateStandardJobsCommand extends Command<Request, StandardJobs> {
     standardJobsRepository: StandardJobsRepository;
     uow: UnitOfWork;
 

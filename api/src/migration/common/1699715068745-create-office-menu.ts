@@ -1,6 +1,7 @@
 import { eApplicationLocation, MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export class createOfficeMenu1699715068745 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const appLocation = await MigrationUtilsService.getApplicationLocation();

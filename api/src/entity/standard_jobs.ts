@@ -11,15 +11,15 @@ import {
 } from 'typeorm';
 
 import { BaseDatesEntity } from './baseDatesEntity';
-import { LIB_Survey_CertificateAuthority } from './LIB_Survey_CertificateAuthority';
-import { LIB_VESSELTYPES } from './LIB_VESSELTYPES';
-import { standard_jobs_sub_items } from './standard_jobs_sub_items';
-import { tm_dd_lib_done_by } from './tm_dd_lib_done_by';
-import { tm_dd_lib_item_category } from './tm_dd_lib_item_category';
-import { tm_dd_lib_material_supplied_by } from './tm_dd_lib_material_supplied_by';
+import { LibSurveyCertificateAuthority } from './LIB_Survey_CertificateAuthority';
+import { LibVesseltypes } from './LIB_VESSELTYPES';
+import { StandardJobsSubItems } from './standard_jobs_sub_items';
+import { TmDdLibDoneBy } from './tm_dd_lib_done_by';
+import { TmDdLibItemCategory } from './tm_dd_lib_item_category';
+import { TmDdLibMaterialSuppliedBy } from './tm_dd_lib_material_supplied_by';
 
 @Entity('standard_jobs', { schema: 'dry_dock' })
-export class standard_jobs extends BaseDatesEntity {
+export class StandardJobs extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
@@ -64,32 +64,32 @@ export class standard_jobs extends BaseDatesEntity {
     })
     scope: string;
 
-    @ManyToOne(() => tm_dd_lib_item_category)
+    @ManyToOne(() => TmDdLibItemCategory)
     @JoinColumn({
         name: 'category_uid',
     })
-    category: Partial<tm_dd_lib_item_category>;
-    @RelationId((entity: standard_jobs) => entity.category)
+    category: Partial<TmDdLibItemCategory>;
+    @RelationId((entity: StandardJobs) => entity.category)
     category_uid: string;
 
-    @ManyToOne(() => tm_dd_lib_done_by)
+    @ManyToOne(() => TmDdLibDoneBy)
     @JoinColumn({
         name: 'done_by_uid',
     })
-    done_by: Partial<tm_dd_lib_done_by>;
-    @RelationId((entity: standard_jobs) => entity.done_by)
+    done_by: Partial<TmDdLibDoneBy>;
+    @RelationId((entity: StandardJobs) => entity.done_by)
     done_by_uid: string;
 
-    @ManyToOne(() => tm_dd_lib_material_supplied_by)
+    @ManyToOne(() => TmDdLibMaterialSuppliedBy)
     @JoinColumn({
         name: 'material_supplied_by_uid',
     })
-    material_supplied_by: Partial<tm_dd_lib_material_supplied_by>;
-    @RelationId((entity: standard_jobs) => entity.material_supplied_by)
+    material_supplied_by: Partial<TmDdLibMaterialSuppliedBy>;
+    @RelationId((entity: StandardJobs) => entity.material_supplied_by)
     material_supplied_by_uid: string;
 
-    @OneToMany(() => standard_jobs_sub_items, (standard_jobs_sub_items) => standard_jobs_sub_items.standard_job)
-    sub_items: standard_jobs_sub_items[];
+    @OneToMany(() => StandardJobsSubItems, (standard_jobs_sub_items) => standard_jobs_sub_items.standard_job)
+    sub_items: StandardJobsSubItems[];
 
     @Column('bit', {
         nullable: true,
@@ -97,7 +97,7 @@ export class standard_jobs extends BaseDatesEntity {
     })
     vessel_type_specific: boolean;
 
-    @ManyToMany(() => LIB_VESSELTYPES, (LIB_VESSELTYPES) => LIB_VESSELTYPES.standard_jobs)
+    @ManyToMany(() => LibVesseltypes, (LIB_VESSELTYPES) => LIB_VESSELTYPES.standard_jobs)
     @JoinTable({
         name: 'standard_jobs_vessel_type',
         schema: 'dry_dock',
@@ -110,10 +110,10 @@ export class standard_jobs extends BaseDatesEntity {
             referencedColumnName: 'ID',
         },
     })
-    vessel_type: Partial<LIB_VESSELTYPES>[];
+    vessel_type: Partial<LibVesseltypes>[];
 
     @ManyToMany(
-        () => LIB_Survey_CertificateAuthority,
+        () => LibSurveyCertificateAuthority,
         (LIB_Survey_CertificateAuthority) => LIB_Survey_CertificateAuthority.standard_jobs,
     )
     @JoinTable({
@@ -128,7 +128,7 @@ export class standard_jobs extends BaseDatesEntity {
             referencedColumnName: 'ID',
         },
     })
-    inspection: Partial<LIB_Survey_CertificateAuthority>[];
+    inspection: Partial<LibSurveyCertificateAuthority>[];
 
     @Column('varchar', {
         nullable: true,

@@ -1,9 +1,9 @@
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { standard_jobs } from './standard_jobs';
+import { StandardJobs } from './standard_jobs';
 
 @Entity('LIB_Survey_CertificateAuthority', { schema: 'dbo' })
-export class LIB_Survey_CertificateAuthority {
+export class LibSurveyCertificateAuthority {
     @PrimaryGeneratedColumn()
     ID: number;
 
@@ -20,7 +20,7 @@ export class LIB_Survey_CertificateAuthority {
     })
     Active_Status: boolean;
 
-    @ManyToMany(() => standard_jobs, (standardJob) => standardJob.vessel_type)
+    @ManyToMany(() => StandardJobs, (standardJob) => standardJob.vessel_type)
     @JoinTable({
         name: 'standard_jobs_survey_certificate_authority',
         schema: 'dry_dock',
@@ -33,5 +33,5 @@ export class LIB_Survey_CertificateAuthority {
             referencedColumnName: 'uid',
         },
     })
-    standard_jobs: standard_jobs[];
+    standard_jobs: StandardJobs[];
 }

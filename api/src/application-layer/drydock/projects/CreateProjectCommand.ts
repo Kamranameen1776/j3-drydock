@@ -3,7 +3,7 @@ import { validate } from 'class-validator';
 import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { Request } from 'express';
 
-import { ICreateProjectDto } from '../../../bll/drydock/projects/dtos/ICreateProjectDto';
+import { CreateProjectDto } from '../../../bll/drydock/projects/dtos/ICreateProjectDto';
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
 import { ICreateNewProjectDto } from '../../../dal/drydock/projects/dtos/ICreateNewProjectDto';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
@@ -38,7 +38,7 @@ export class CreateProjectCommand extends Command<Request, void> {
         if (!request) {
             throw new Error('Request is null');
         }
-        const createProjectDto: ICreateProjectDto = plainToClass(ICreateProjectDto, request.body);
+        const createProjectDto: CreateProjectDto = plainToClass(CreateProjectDto, request.body);
         const result = await validate(createProjectDto);
         if (result.length) {
             throw result;
@@ -52,7 +52,7 @@ export class CreateProjectCommand extends Command<Request, void> {
      */
     protected async MainHandlerAsync(request: Request): Promise<void> {
         const token: string = request.headers.authorization as string;
-        const createProjectDto: ICreateProjectDto = request.body as ICreateProjectDto;
+        const createProjectDto: CreateProjectDto = request.body as CreateProjectDto;
 
         createProjectDto.CreatedAtOffice = await this.projectsService.IsOffice();
 
