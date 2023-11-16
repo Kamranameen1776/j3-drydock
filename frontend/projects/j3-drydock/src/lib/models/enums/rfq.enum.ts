@@ -1,7 +1,7 @@
 export enum eRfqLabels {
   Yard = 'Yard',
   Location = 'Location',
-  ExportedDate = 'Last Exported date',
+  ExportedDate = 'Last Exported Date',
   IsSelected = 'Is Selected',
   YardName = 'Yard Name'
 }
