@@ -17,8 +17,7 @@ import { SelectLinkYardGridService } from './select-link-yard-grid.service';
 })
 export class SelectLinkYardGridComponent extends UnsubscribeComponent {
   @Input() set yards(val: YardToLink[]) {
-    this.items = cloneDeep(val);
-    this.selected = this.items.filter((yard) => yard.isLinked);
+    this.items = cloneDeep((val ?? []).filter((yard) => !yard.isLinked));
   }
 
   @Output() selectedChanged = new EventEmitter<YardToLink[]>();
