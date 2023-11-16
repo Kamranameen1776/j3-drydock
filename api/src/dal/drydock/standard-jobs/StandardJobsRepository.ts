@@ -17,6 +17,8 @@ import { StandardJobs } from '../../../entity/standard_jobs';
 import { StandardJobsSubItems } from '../../../entity/standard_jobs_sub_items';
 import { RequestWithOData } from '../../../shared/interfaces';
 import { FiltersDataResponse } from '../../../shared/interfaces/filters-data-response.interface';
+import { StandardJobsSurveyCertificateAuthorityEntity } from '../../../entity/standard_jobs_survey_certificate_authority';
+import { StandardJobsVesselTypeEntity } from '../../../entity/standard_jobs_vessel_type';
 
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
@@ -93,7 +95,11 @@ export class StandardJobsRepository {
 
         const entity: StandardJobs = queryRunner.manager.create(StandardJobs, standardJob);
 
-        return queryRunner.manager.save(StandardJobs, entity);
+        const result = await queryRunner.manager.save(StandardJobs, entity);
+
+        await this.updateStandardJobRelations(result.uid, data.inspectionId, data.vesselTypeId, queryRunner);
+
+        return result;
     }
 
     public async updateStandardJobSubItems(
@@ -142,13 +148,11 @@ export class StandardJobsRepository {
         const entity: StandardJobs = queryRunner.manager.create(StandardJobs, updateStandardJobData);
         entity.uid = uid;
 
-        await queryRunner.manager.save(StandardJobs, {
-            uid,
-            vessel_type: [],
-            inspection: [],
-        });
+        const result = await queryRunner.manager.save(StandardJobs, entity);
 
-        return queryRunner.manager.save(StandardJobs, entity);
+        await this.updateStandardJobRelations(result.uid, data.inspectionId, data.vesselTypeId, queryRunner);
+
+        return result;
     }
 
     public async deleteStandardJob(uid: string, deletedBy: string, queryRunner: QueryRunner): Promise<UpdateResult> {
@@ -197,7 +201,7 @@ export class StandardJobsRepository {
             .createQueryBuilder(StandardJobsSubItems, 'sub_items')
             .select(
                 'sub_items.uid as uid,' +
-                    'sub_items.code as code,' +
+                    'CONCAT(sub_items.code, sub_items.number) as code,' +
                     'sub_items.subject as subject,' +
                     'sub_items.description as description,' +
                     'sub_items.standard_job_uid as standard_job_uid',
@@ -205,5 +209,68 @@ export class StandardJobsRepository {
             .where('sub_items.active_status = 1')
             .andWhere(`sub_items.standard_job_uid IN (${uidString})`)
             .getRawMany();
+    }
+
+    private async updateStandardJobRelations(
+        standardJobUid: string,
+        inspectionIds: number[],
+        vesselTypeIds: number[],
+        queryRunner: QueryRunner,
+    ) {
+        const relations = await queryRunner.manager.findOne(standard_jobs, {
+            where: {
+                uid: standardJobUid,
+            },
+            relations: ['inspection', 'vessel_type'],
+        });
+
+        if (inspectionIds.length) {
+            const inspectionsToDelete = relations?.inspection
+              .filter((item) => !inspectionIds.includes(item.ID as number))
+              .map((i) => i.ID) || [];
+            const inspectionsToAdd = inspectionIds.filter((item) => !relations?.inspection.map((i) => i.ID).includes(item));
+
+            if (inspectionsToDelete.length) {
+                await queryRunner.manager.delete(StandardJobsSurveyCertificateAuthorityEntity, {
+                    standard_job_uid: standardJobUid,
+                    survey_id: In(inspectionsToDelete),
+                });
+            }
+            if (inspectionsToAdd.length) {
+                const inspections = inspectionsToAdd.map((id) => {
+                    const inspection = new StandardJobsSurveyCertificateAuthorityEntity();
+                    inspection.survey_id = id;
+                    inspection.standard_job_uid = standardJobUid;
+
+                    return inspection;
+                });
+
+                await queryRunner.manager.save(StandardJobsSurveyCertificateAuthorityEntity, inspections);
+            }
+        }
+        if (vesselTypeIds.length) {
+            const vesselTypesToDelete = relations?.vessel_type
+              .filter((item) => !vesselTypeIds.includes(item.ID as number))
+              .map((i) => i.ID) || [];
+            const vesselTypesToAdd = vesselTypeIds.filter((item) => !relations?.vessel_type.map((i) => i.ID).includes(item));
+
+            if (vesselTypesToDelete.length) {
+                await queryRunner.manager.delete(StandardJobsVesselTypeEntity, {
+                    standard_job_uid: standardJobUid,
+                    vessel_type_id: In(vesselTypesToDelete),
+                });
+            }
+            if (vesselTypesToAdd.length) {
+                const vesselTypes = vesselTypesToAdd.map((id) => {
+                    const vesselType = new StandardJobsVesselTypeEntity();
+                    vesselType.vessel_type_id = id;
+                    vesselType.standard_job_uid = standardJobUid;
+
+                    return vesselType;
+                });
+
+                await queryRunner.manager.save(StandardJobsVesselTypeEntity, vesselTypes);
+            }
+        }
     }
 }
