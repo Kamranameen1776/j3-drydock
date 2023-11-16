@@ -155,6 +155,7 @@ export class ProjectsRepository {
                 'gps.GroupProjectStatusId as GroupProjectStatusId',
                 'vessel.VesselId as VesselId',
                 'pr.VesselUid as VesselUid',
+                'vessel.FleetCode as FleetCode',
             ])
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')

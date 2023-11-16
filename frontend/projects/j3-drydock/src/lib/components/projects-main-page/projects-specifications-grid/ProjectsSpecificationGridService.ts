@@ -29,6 +29,8 @@ export class ProjectsSpecificationGridService {
 
   public readonly gridName: string = 'projectsSpecificationGrid';
 
+  public readonly ProjectStatusesFilterName = 'ProjectStatuses';
+
   public readonly dateFormat = this.userService.getUserDetails().Date_Format;
 
   initDate: Date = new Date();
@@ -79,7 +81,7 @@ export class ProjectsSpecificationGridService {
       width: eGridColumnsWidth.ShortDescription
     },
     {
-      DisplayText: 'Project manager',
+      DisplayText: 'Project Manager',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectManager),
       IsActive: true,
       IsMandatory: true,
@@ -89,7 +91,7 @@ export class ProjectsSpecificationGridService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Specification',
+      DisplayText: 'Specifications',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.Specification),
       IsActive: true,
       IsMandatory: true,
@@ -161,7 +163,65 @@ export class ProjectsSpecificationGridService {
     show: true
   };
 
+  private filterListsSet: FilterListSet = {
+    ProjectTypes: {
+      webApiRequest: this.projectsService.getProjectTypesRequest(),
+      type: 'multiselect',
+      listValueKey: 'ProjectTypeCode',
+      odataKey: ProjectsGridOdataKeys.ProjectTypeCode
+    },
+    ProjectsManages: {
+      webApiRequest: this.projectsService.getProjectsManagersRequest(),
+      type: 'multiselect',
+      listValueKey: 'ManagerId',
+      odataKey: ProjectsGridOdataKeys.ProjectManagerUid
+    },
+    ShipsYards: {
+      webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
+      type: 'multiselect',
+      listValueKey: 'ShipYardId',
+      odataKey: ProjectsGridOdataKeys.ShipYardId
+    },
+    ProjectStatuses: {
+      data: () => this.projectsService.getProjectStatuses(),
+      type: 'multiselect',
+      odataKey: ProjectsGridOdataKeys.ProjectStatusId,
+      listValueKey: 'ProjectStatusId'
+    },
+    StartDate: {
+      odataKey: ProjectsGridOdataKeys.StartDate,
+      alterKey: 'StartDate',
+      type: 'date',
+      dateMethod: 'ge'
+    },
+    EndDate: {
+      odataKey: ProjectsGridOdataKeys.EndDate,
+      alterKey: 'EndDate',
+      type: 'date',
+      dateMethod: 'le'
+    },
+    Fleets: {
+      webApiRequest: this.slfService.getSLFDetails(Datasource.Fleets),
+      type: 'multiselect',
+      listValueKey: 'FleetCode',
+      odataKey: ProjectsGridOdataKeys.FleetCode
+    }
+  };
+
   public filters: Filter[] = [
+    {
+      Active_Status_Config_Filter: true,
+      DisplayText: 'Fleet',
+      Active_Status: true,
+      FieldName: 'Fleets',
+      DisplayCode: 'FleetName',
+      ValueCode: 'FleetCode',
+      FieldID: 0,
+      default: true,
+      CoupleID: 0,
+      CoupleLabel: 'Project',
+      gridName: this.gridName
+    },
     {
       Active_Status_Config_Filter: true,
       DisplayText: 'Project Type',
@@ -192,7 +252,7 @@ export class ProjectsSpecificationGridService {
       Active_Status: true,
       Active_Status_Config_Filter: true,
       DisplayText: 'Status',
-      FieldName: 'ProjectStatuses',
+      FieldName: this.ProjectStatusesFilterName,
       DisplayCode: 'ProjectStatusName',
       ValueCode: 'ProjectStatusId',
       FieldID: 2,
@@ -247,45 +307,6 @@ export class ProjectsSpecificationGridService {
       gridName: this.gridName
     }
   ];
-
-  private filterListsSet: FilterListSet = {
-    ProjectTypes: {
-      webApiRequest: this.projectsService.getProjectTypesRequest(),
-      type: 'multiselect',
-      listValueKey: 'ProjectTypeCode',
-      odataKey: ProjectsGridOdataKeys.ProjectTypeCode
-    },
-    ProjectsManages: {
-      webApiRequest: this.projectsService.getProjectsManagersRequest(),
-      type: 'multiselect',
-      listValueKey: 'ManagerId',
-      odataKey: ProjectsGridOdataKeys.ProjectManagerUid
-    },
-    ShipsYards: {
-      webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
-      type: 'multiselect',
-      listValueKey: 'ShipYardId',
-      odataKey: ProjectsGridOdataKeys.ShipYardId
-    },
-    ProjectStatuses: {
-      webApiRequest: this.projectsService.getProjectStatusesRequest(),
-      type: 'multiselect',
-      odataKey: ProjectsGridOdataKeys.ProjectStatusId,
-      listValueKey: 'ProjectStatusId'
-    },
-    StartDate: {
-      odataKey: ProjectsGridOdataKeys.StartDate,
-      alterKey: 'StartDate',
-      type: 'date',
-      dateMethod: 'ge'
-    },
-    EndDate: {
-      odataKey: ProjectsGridOdataKeys.EndDate,
-      alterKey: 'EndDate',
-      type: 'date',
-      dateMethod: 'le'
-    }
-  };
 
   private searchFields: string[] = [
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.Subject),
