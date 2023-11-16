@@ -1,6 +1,6 @@
 export interface IUpdateProjectYardsDto {
     uid: string;
-    lastExportedDate: Date;
+    lastExportedDate?: Date;
     isSelected: boolean;
     updatedBy: string;
     updatedAt: Date;
