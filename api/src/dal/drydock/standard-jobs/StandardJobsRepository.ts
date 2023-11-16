@@ -217,7 +217,7 @@ export class StandardJobsRepository {
         vesselTypeIds: number[],
         queryRunner: QueryRunner,
     ) {
-        const relations = await queryRunner.manager.findOne(standard_jobs, {
+        const relations = await queryRunner.manager.findOne(StandardJobs, {
             where: {
                 uid: standardJobUid,
             },
