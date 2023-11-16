@@ -21,7 +21,7 @@ export class SelectLinkYardGridComponent extends UnsubscribeComponent {
     this.selected = this.items.filter((yard) => yard.isLinked);
   }
 
-  @Output() changed = new EventEmitter<YardToLink>();
+  @Output() selectedChanged = new EventEmitter<YardToLink[]>();
 
   gridInputs: GridInputsWithData<YardToLink> = this.selectLinkYardService.getGridInputs();
 
@@ -46,11 +46,8 @@ export class SelectLinkYardGridComponent extends UnsubscribeComponent {
     super();
   }
 
-  onGridActions(event) {
-    // console.log(event);
-  }
-
   onSelect(rows: YardToLink[]) {
     this.selected = rows;
+    this.selectedChanged.emit(this.selected);
   }
 }

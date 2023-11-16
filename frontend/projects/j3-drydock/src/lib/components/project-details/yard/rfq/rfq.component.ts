@@ -1,20 +1,21 @@
 import { YardsService } from './../../../../services/yards.service';
 import { YardLink } from './../../../../models/interfaces/project-details';
-import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { RfqGridService } from './rfq-grid.service';
 import { GridInputsWithData } from './../../../../models/interfaces/grid-inputs';
 import { eRfqFields } from './../../../../models/enums/rfq.enum';
 import { DispatchAction, GridAction, GridRowActions, GridService, eGridEvents, eGridRowActions, eLayoutWidgetSize } from 'jibe-components';
-import { concatMap, filter, finalize, map, subscribeOn, takeUntil } from 'rxjs/operators';
+import { concatMap, filter, finalize, map, takeUntil } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'jb-drydock-rfq',
   templateUrl: './rfq.component.html',
   styleUrls: ['./rfq.component.scss']
 })
-export class RfqComponent extends UnsubscribeComponent implements OnInit {
+export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @Input() projectId: string;
 
   @ViewChild('isSelectedTmpl', { static: true }) isSelectedTmpl: TemplateRef<unknown>;
@@ -36,6 +37,8 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit {
 
   readonly eLayoutWidgetSize = eLayoutWidgetSize;
 
+  private loadLinkedYardsSub: Subscription;
+
   constructor(
     private rfqGridService: RfqGridService,
     private gridService: GridService,
@@ -48,6 +51,11 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit {
     this.loadLinkedYards();
     this.setGridRowActions();
     this.setCellTemplates();
+  }
+
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.loadLinkedYardsSub?.unsubscribe();
   }
 
   onLinkYard() {
@@ -72,13 +80,12 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit {
         break;
     }
   }
-  // TODO
-  onCloseLinkYardPopup(saved: YardLink[]) {
+
+  onCloseLinkYardPopup(isSaved: boolean) {
     this.isLinkPopupVisible = false;
 
-    if (saved?.length) {
-      // refresh grid and linked
-      this.linked = cloneDeep(saved);
+    if (isSaved) {
+      this.loadLinkedYards();
     }
   }
 
@@ -88,7 +95,8 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit {
   };
 
   private loadLinkedYards(): void {
-    this.yardsService.getLinkedYards(this.projectId).subscribe((data) => {
+    this.loadLinkedYardsSub?.unsubscribe();
+    this.loadLinkedYardsSub = this.yardsService.getLinkedYards(this.projectId).subscribe((data) => {
       this.linked = data ?? [];
     });
   }

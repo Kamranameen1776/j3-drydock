@@ -1,12 +1,11 @@
 import { YardsService } from './../../../../../services/yards.service';
 import { YardLink, YardToLink } from './../../../../../models/interfaces/project-details';
 import { GrowlMessageService } from './../../../../../services/growl-message.service';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { getSmallPopup } from '../../../../../models/constants/popup';
 import { IJbDialog } from 'jibe-components';
 import { UnsubscribeComponent } from '../../../../../shared/classes/unsubscribe.base';
 import { finalize } from 'rxjs/operators';
-import { SelectLinkYardGridComponent } from '../select-link-yard-grid/select-link-yard-grid.component';
 
 @Component({
   selector: 'jb-drydock-link-yard-popup',
@@ -14,15 +13,13 @@ import { SelectLinkYardGridComponent } from '../select-link-yard-grid/select-lin
   styleUrls: ['./link-yard-popup.component.scss']
 })
 export class LinkYardPopupComponent extends UnsubscribeComponent implements OnInit, OnChanges {
-  @ViewChild('selectLinkYardGrid') selectLinkYardGrid: SelectLinkYardGridComponent;
-
   @Input() linked: YardLink[];
 
   @Input() projectId: string;
 
   @Input() isOpen: boolean;
 
-  @Output() closeDialog = new EventEmitter<YardLink[]>();
+  @Output() closeDialog = new EventEmitter<boolean>();
 
   readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 800, dialogHeader: 'Link Yard' };
 
@@ -65,38 +62,33 @@ export class LinkYardPopupComponent extends UnsubscribeComponent implements OnIn
     this.save();
   }
 
-  onSelectedChanged(guidsToLink: string[]) {
-    this.guidsToLink = guidsToLink;
+  onSelectedChanged(yardsToLink: YardToLink[]) {
+    this.guidsToLink = yardsToLink.filter((yard) => !yard.isLinked).map((yard) => yard.uid);
   }
 
-  private closePopup(saved?: YardLink[]) {
-    this.closeDialog.emit(saved);
+  private closePopup(isSaved = false) {
+    this.closeDialog.emit(isSaved);
     this.guidsToLink = undefined;
   }
 
   private save() {
     this.isSaving = true;
 
-    const guidsToLink = this.guidsToLink ?? this.linkedGuids;
-
-    // eslint-disable-next-line no-console
-    console.log(this.selectLinkYardGrid.selected);
-
-    if (!guidsToLink || !guidsToLink.length) {
+    if (!this.guidsToLink || !this.guidsToLink.length) {
       this.closePopup();
       return;
     }
 
     this.yardsService
-      .linkYardsToProject(this.projectId, guidsToLink)
+      .linkYardsToProject(this.projectId, this.guidsToLink)
       .pipe(
         finalize(() => {
           this.isSaving = false;
         })
       )
       .subscribe(
-        (yards: YardLink[]) => {
-          this.closePopup(yards);
+        () => {
+          this.closePopup(true);
         },
         (err) => {
           if (err?.status === 422 && err?.error?.message) {
