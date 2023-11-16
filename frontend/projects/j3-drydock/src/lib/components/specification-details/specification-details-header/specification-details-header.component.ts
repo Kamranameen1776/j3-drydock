@@ -41,10 +41,6 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
   }
 
   save(): void {
-    // if (this.formGroup.invalid) {
-    //   // this.notificationService.error('Please fill the required fields.');
-    //   return;
-    // }
     this.saveButtonClick.emit();
   }
 }
