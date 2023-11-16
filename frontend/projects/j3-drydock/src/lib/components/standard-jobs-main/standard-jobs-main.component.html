@@ -1,4 +1,5 @@
 <jb-grid
+  *ngIf="canView"
   [gridName]="gridInputs.gridName"
   [colData]="gridInputs.columns"
   [tableDataReq]="gridInputs.request"

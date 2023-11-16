@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities, eJMSFilterDataKeys } from 'jibe-components';
+import { ApiRequestService, UserRightsService, WebApiRequest, eApiBase, eCrud, eEntities, eJMSFilterDataKeys } from 'jibe-components';
 import { ODataFilterBuilder } from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../models/enums/standard-jobs-main.enum';
 import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../models/interfaces/functions-tree-node';
 import { map } from 'rxjs/operators';
 import { SubItem } from '../models/interfaces/sub-items';
+import { eModule } from '../models/enums/module.enum';
+import { eFunction } from '../models/enums/function.enum';
 
 @Injectable({ providedIn: 'root' })
 export class StandardJobsService {
-  constructor(private apiRequestService: ApiRequestService) {}
+  constructor(
+    private apiRequestService: ApiRequestService,
+    private userRights: UserRightsService
+  ) {}
 
-  public getStandardJobsRequest(): WebApiRequest {
+  getStandardJobsRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
       // TODO:update jibe lib
       // apiBase: eApiBase.DryDockAPI,
@@ -25,7 +30,7 @@ export class StandardJobsService {
     return apiRequest;
   }
 
-  public deleteStandardJob(uid: string) {
+  deleteStandardJob(uid: string) {
     const apiReq: WebApiRequest = {
       apiBase: 'dryDockAPI',
       entity: 'drydock',
@@ -39,7 +44,7 @@ export class StandardJobsService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public upsertStandardJob(uid: string, formValue: any) {
+  upsertStandardJob(uid: string, formValue: any) {
     const body = this.getUpsertStandardJobBody(uid, formValue);
     const action = uid ? 'standard-jobs/update-standard-jobs' : 'standard-jobs/create-standard-jobs';
     const apiReq: WebApiRequest = {
@@ -52,7 +57,7 @@ export class StandardJobsService {
     return this.apiRequestService.sendApiReq(apiReq);
   }
 
-  public getStandardJobsFiltersRequest(fieldName: eStandardJobsMainFields) {
+  getStandardJobsFiltersRequest(fieldName: eStandardJobsMainFields) {
     const apiRequest: WebApiRequest = {
       // TODO:update jibe lib
       // apiBase: eApiBase.DryDockAPI,
@@ -67,7 +72,7 @@ export class StandardJobsService {
     return apiRequest;
   }
 
-  public getVesselTypesRequest(): WebApiRequest {
+  getVesselTypesRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
       apiBase: eApiBase.MasterAPI,
       entity: eEntities.Master,
@@ -81,7 +86,7 @@ export class StandardJobsService {
     return apiRequest;
   }
 
-  public updateJobSubItems(jobUid: string, subItems: SubItem[]) {
+  updateJobSubItems(jobUid: string, subItems: SubItem[]) {
     const apiRequest: WebApiRequest = {
       apiBase: 'dryDockAPI',
       action: 'standard-jobs/update-standard-jobs-sub-items',
@@ -95,7 +100,7 @@ export class StandardJobsService {
     return this.apiRequestService.sendApiReq(apiRequest);
   }
 
-  public getStandardJobFunctions() {
+  getStandardJobFunctions() {
     const apiRequest: WebApiRequest = {
       apiBase: eApiBase.TechnicalAPI,
       entity: eEntities.PMS,
@@ -117,7 +122,7 @@ export class StandardJobsService {
     );
   }
 
-  public getVesselSpevificList() {
+  getVesselSpevificList() {
     return [
       {
         label: 'Yes',
@@ -128,6 +133,10 @@ export class StandardJobsService {
         value: 0
       }
     ];
+  }
+
+  hasAccess(action: string) {
+    return !!this.userRights.getUserRights(eModule.Project, eFunction.StandardJob, action);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
