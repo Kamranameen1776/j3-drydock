@@ -36,7 +36,7 @@ export class RfqGridService {
           IsVisible: true,
           pipe: {
             value: 'date',
-            format: UserService.getUserDetails()?.Date_Format?.toLocaleUpperCase()
+            format: UserService.getUserDetails()?.Date_Format?.toLocaleUpperCase() || 'DD-MM-YYYY'
           }
         },
         {
