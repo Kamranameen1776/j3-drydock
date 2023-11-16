@@ -131,6 +131,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   }
 
   public showCreateNewDialog(value = true) {
+    this.createProjectFormGroup.reset();
     this.createNewDialogVisible = value;
   }
 
@@ -162,23 +163,25 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   public saveNewProject() {
     this.saveNewProjectButtonDisabled$.next(true);
-    if (this.createProjectFormGroup.valid) {
-      const values: ProjectCreate = this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId];
 
-      const endDate = moment(values.EndDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
-      values.EndDate = endDate;
-
-      const startDate = moment(values.StartDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
-      values.StartDate = startDate;
-
-      this.projectsService.createProject(values).subscribe(() => {
-        this.saveNewProjectButtonDisabled$.next(false);
-        this.showCreateNewDialog(false);
-        this.projectsGrid.fetchMatrixData();
-      });
-    } else {
+    if (!this.createProjectFormGroup.valid) {
       this.createProjectFormGroup.markAllAsTouched();
+      return;
     }
+
+    const values: ProjectCreate = this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId];
+
+    const endDate = moment(values.EndDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
+    values.EndDate = endDate;
+
+    const startDate = moment(values.StartDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
+    values.StartDate = startDate;
+
+    this.projectsService.createProject(values).subscribe(() => {
+      this.saveNewProjectButtonDisabled$.next(false);
+      this.showCreateNewDialog(false);
+      this.projectsGrid.fetchMatrixData();
+    });
   }
 
   public deleteProject() {

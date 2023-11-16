@@ -1,15 +1,15 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
-import { Request } from 'express';
 
-import { CreateProjectDto } from '../../../bll/drydock/projects/dtos/ICreateProjectDto';
-import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
-import { ICreateNewProjectDto } from '../../../dal/drydock/projects/dtos/ICreateNewProjectDto';
-import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
-import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
-import { Command } from '../core/cqrs/Command';
-import { UnitOfWork } from '../core/uof/UnitOfWork';
+import { CreateProjectDto } from '../../../../bll/drydock/projects/dtos/ICreateProjectDto';
+import { ProjectService } from '../../../../bll/drydock/projects/ProjectService';
+import { ICreateNewProjectDto } from '../../../../dal/drydock/projects/dtos/ICreateNewProjectDto';
+import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
+import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
+import { Command } from '../../core/cqrs/Command';
+import { UnitOfWork } from '../../core/uof/UnitOfWork';
+import { CreateProjectDataDto } from './CreateProjectDataDto';
 
 enum ProjectStates {
     Specification = 1,
@@ -19,7 +19,7 @@ enum ProjectStates {
     Report = 3,
 }
 
-export class CreateProjectCommand extends Command<Request, void> {
+export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
     projectsRepository: ProjectsRepository;
     projectsService: ProjectService;
     vesselsRepository: VesselsRepository;
@@ -34,11 +34,12 @@ export class CreateProjectCommand extends Command<Request, void> {
         this.uow = new UnitOfWork();
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+    protected async ValidationHandlerAsync(request: CreateProjectDataDto): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
         }
-        const createProjectDto: CreateProjectDto = plainToClass(CreateProjectDto, request.body);
+        const createProjectDto: CreateProjectDto = plainToClass(CreateProjectDto, request.ProjectDto);
+
         const result = await validate(createProjectDto);
         if (result.length) {
             throw result;
@@ -50,9 +51,9 @@ export class CreateProjectCommand extends Command<Request, void> {
      * @param request Project data for creation of the new project
      * @returns New created project result
      */
-    protected async MainHandlerAsync(request: Request): Promise<void> {
-        const token: string = request.headers.authorization as string;
-        const createProjectDto: CreateProjectDto = request.body as CreateProjectDto;
+    protected async MainHandlerAsync(request: CreateProjectDataDto): Promise<void> {
+        const token: string = request.Token;
+        const createProjectDto: CreateProjectDto = request.ProjectDto;
 
         createProjectDto.CreatedAtOffice = await this.projectsService.IsOffice();
 

@@ -375,7 +375,8 @@ export class ProjectsSpecificationGridService {
               gridColEnd: 3,
               listRequest: {
                 webApiRequest: this.slfService.getSLFDetails(Datasource.Fleets),
-                labelKey: 'FleetName'
+                labelKey: 'FleetName',
+                valueKey: 'FleetCode'
               }
             },
             [eProjectsCreateFieldNames.Vessel]: {
@@ -383,7 +384,7 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Dropdown,
               sectionID: this.createProjectFormId,
               enabled: true,
-              validatorRequired: false,
+              validatorRequired: true,
               gridRowStart: 2,
               gridRowEnd: 3,
               gridColStart: 1,
@@ -405,9 +406,9 @@ export class ProjectsSpecificationGridService {
               gridColStart: 1,
               gridColEnd: 3,
               listRequest: {
-                webApiRequest: this.projectsService.getAllProjectTypesRequest(),
-                labelKey: 'WorklistType',
-                valueKey: 'uid'
+                webApiRequest: this.projectsService.getProjectTypesRequest(),
+                labelKey: 'ProjectTypeName',
+                valueKey: 'ProjectTypeUId'
               }
             },
             [eProjectsCreateFieldNames.Subject]: {
@@ -415,6 +416,8 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Text,
               sectionID: this.createProjectFormId,
               enabled: true,
+              minLength: 1,
+              maxLength: 200,
               validatorRequired: true,
               gridRowStart: 4,
               gridRowEnd: 5,
@@ -426,7 +429,7 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Dropdown,
               sectionID: this.createProjectFormId,
               enabled: true,
-              validatorRequired: false,
+              validatorRequired: true,
               gridRowStart: 5,
               gridRowEnd: 6,
               gridColStart: 1,
@@ -446,7 +449,8 @@ export class ProjectsSpecificationGridService {
               gridRowStart: 6,
               gridRowEnd: 7,
               gridColStart: 1,
-              gridColEnd: 3
+              gridColEnd: 3,
+              calendarMin: this.minDate
             },
             [eProjectsCreateFieldNames.EndDate]: {
               label: eProjectsCreateDisplayNames.EndDate,
@@ -457,7 +461,8 @@ export class ProjectsSpecificationGridService {
               gridRowStart: 7,
               gridRowEnd: 8,
               gridColStart: 1,
-              gridColEnd: 3
+              gridColEnd: 3,
+              calendarMax: this.maxDate
             }
           }
         }

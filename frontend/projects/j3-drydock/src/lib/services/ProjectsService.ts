@@ -21,18 +21,6 @@ export class ProjectsService {
     return apiRequest;
   }
 
-  public getAllProjectTypesRequest(): WebApiRequest {
-    const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
-      action: 'dictionaries/project-types',
-      crud: eCrud.Get,
-      entity: 'drydock'
-    };
-    return apiRequest;
-  }
-
   public getProjectTypesRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
       // TODO:update jibe lib

@@ -120,6 +120,7 @@ export class ProjectsRepository {
         const result = await projectTypeRepository
             .createQueryBuilder('pt')
             .select([
+                'pt.uid as ProjectTypeUId',
                 'pt.WorklistType as ProjectTypeCode',
                 'wt.WorklistTypeDisplay as ProjectTypeName',
                 'pt.ShortCode as ProjectTypeShortCode',

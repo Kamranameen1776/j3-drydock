@@ -16,7 +16,7 @@ export class CreateProjectDto {
     ProjectTypeUid: string;
 
     @MinLength(1)
-    @MaxLength(250)
+    @MaxLength(200)
     Subject: string;
 
     @IsUUID('4')
