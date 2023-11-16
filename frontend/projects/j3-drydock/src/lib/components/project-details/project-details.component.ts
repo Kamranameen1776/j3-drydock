@@ -24,7 +24,12 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   eProjectDetailsSideMenuId = eProjectDetailsSideMenuId;
 
-  constructor(private jbMenuService: JbMenuService) {
+  growlMessage$ = this.growlMessageService.growlMessage$;
+
+  constructor(
+    private jbMenuService: JbMenuService,
+    private growlMessageService: GrowlMessageService
+  ) {
     super();
   }
 

@@ -11,6 +11,13 @@
   max-height: 616px;
 }
 
+jb-tree {
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
+  display: block;
+}
+
 :host ::ng-deep {
   .ui-tabview-panels,
   .host-grid-container,

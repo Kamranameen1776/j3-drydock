@@ -4,7 +4,6 @@ import { ApiRequestService, GridService, JmsTechApiService, WebApiRequest, eGrid
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SpecificationCreateFormService } from '../specification-form/specification-create-form-service';
-import { GrowlMessageService } from '../../../services/growl-message.service';
 
 @Component({
   selector: 'jb-specifications',
@@ -20,8 +19,6 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   functionUIDs: string[] = [];
   types = [SpecificationType.ALL, SpecificationType.PMS, SpecificationType.FINDINGS, SpecificationType.STANDARD, SpecificationType.ADHOC];
   isCreatePopupVisible = false;
-
-  growlMessage$ = this.growlMessageService.growlMessage$;
 
   createNewItems = [
     /*{
@@ -55,8 +52,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     private jmsTechService: JmsTechApiService,
     private formService: SpecificationCreateFormService,
     private apiRequestService: ApiRequestService,
-    private gridService: GridService,
-    private growlMessageService: GrowlMessageService
+    private gridService: GridService
   ) {
     super();
   }

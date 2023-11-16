@@ -71,8 +71,12 @@ export class SpecificationGridService {
       action: action,
       body: {
         ...formValue,
-        project_uid: '',
-        function_uid: formValue.function.Child_ID || ''
+        ProjectUid: 'D6280FCA-E58D-4993-8A6D-070432E12758',
+        VesselUid: '3EEF2E1B-2533-45C7-82C7-C13D6AA79559',
+        // HardCoded for future
+        ItemSourceUid: '3EEF2E1B-2533-45C7-82C7-C13D6AA79559',
+        Inspections: [],
+        FunctionUid: formValue.FunctionUid.Child_ID || ''
       }
     };
     return this.apiRequestService.sendApiReq(apiReq);
@@ -121,7 +125,7 @@ export class SpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: '182px'
+      width: '324px'
     },
     /*{
       DisableSort: true,
@@ -208,11 +212,27 @@ export class SpecificationGridService {
     },
     {
       DisplayText: 'Due Date',
-      FieldName: 'due_date',
+      FieldName: 'due_date_from',
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
       type: 'date',
       placeholder: 'Select',
       FieldID: 3,
-      default: true
+      default: true,
+      CoupleID: 1,
+      CoupleLabel: 'Due Date Range'
+    },
+    {
+      DisplayText: 'Due Date',
+      FieldName: 'due_date_to',
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      type: 'date',
+      placeholder: 'Select',
+      FieldID: 3,
+      default: true,
+      CoupleID: 1,
+      CoupleLabel: 'Due Date Range'
     },
     {
       DisplayText: 'Done By',
@@ -220,7 +240,7 @@ export class SpecificationGridService {
       Active_Status: true,
       Active_Status_Config_Filter: true,
       DisplayCode: 'displayName',
-      FieldID: 4,
+      FieldID: 5,
       default: false
     }
   ];
@@ -272,9 +292,17 @@ export class SpecificationGridService {
       odataKey: 'done_by_uid',
       listValueKey: 'uid'
     },
-    due_date: {
+    due_date_to: {
       type: eFieldControlType.Date,
-      odadaKey: 'due_date'
+      odadaKey: 'due_date',
+      alterKey: 'due_date',
+      dateMethod: 'le'
+    },
+    due_date_from: {
+      type: eFieldControlType.Date,
+      odadaKey: 'due_date',
+      alterKey: 'due_date',
+      dateMethod: 'ge'
     }
   };
 

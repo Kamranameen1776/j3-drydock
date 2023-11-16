@@ -48,8 +48,8 @@ export class SpecificationFormComponent extends UnsubscribeComponent implements 
   }
 
   private setFunctionConfig() {
-    const field = this.popupFormService.getFormFieldModel(this.formStructure, 'function_uid');
-    console.log(field)
+    const field = this.popupFormService.getFormFieldModel(this.formStructure, 'FunctionUid');
+
     if (!field) {
       return;
     }

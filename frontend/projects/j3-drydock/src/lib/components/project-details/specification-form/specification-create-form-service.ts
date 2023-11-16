@@ -29,7 +29,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
         gridColStart: 1,
         gridColEnd: 12,
         fields: {
-          function_uid: {
+          FunctionUid: {
             type: 'inputWithDlg',
             label: 'Function',
             sectionID: this.formId,
@@ -44,7 +44,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
               dlgConfiguration: { appendTo: '' }
             }
           },
-          subject: {
+          Subject: {
             type: eFieldControlType.Text,
             label: 'Subject',
             sectionID: this.formId,
@@ -56,7 +56,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
             gridColStart: 1,
             gridColEnd: 1
           },
-          item_category_uid: {
+          ItemCategoryUid: {
             type: eFieldControlType.Dropdown,
             label: 'Item Category',
             sectionID: this.formId,
@@ -72,7 +72,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory)
             }
           },
-          done_by_uid: {
+          DoneByUid: {
             type: eFieldControlType.Dropdown,
             label: 'Done By',
             sectionID: this.formId,
@@ -88,9 +88,9 @@ export class SpecificationCreateFormService extends FormServiceBase {
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.DoneBy)
             }
           },
-          description: {
+          Description: {
             type: eFieldControlType.TextAreaType,
-            label: 'description',
+            label: 'Description',
             sectionID: this.formId,
             enabled: true,
             validatorRequired: true,
@@ -109,12 +109,12 @@ export class SpecificationCreateFormService extends FormServiceBase {
     keyID: this.formId,
     values: {
       [this.formId]: {
-        function: null,
-        subject: null,
-        item_category_uid: null,
-        material_supplied_by_uid: null,
-        done_by_uid: null,
-        description: null
+        FunctionUid: null,
+        Subject: null,
+        ItemCategoryUid: null,
+        MaterialSuppliedByUid: null,
+        DoneByUid: null,
+        Description: null
       }
     }
   };

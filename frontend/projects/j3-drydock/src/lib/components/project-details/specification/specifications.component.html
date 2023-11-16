@@ -28,6 +28,8 @@
       filterPlaceholder="Search Function / Component"
       (nodeData)="setNodeData($event)"
       [eventsList]="eventsList"
+      [virtualScroll]="true"
+      scrollHeight="582px"
     ></jb-tree>
     <!--        <p-tabView
     class="jb-tabview"
@@ -54,7 +56,6 @@
       [isOpen]="isCreatePopupVisible"
       (closeDialog)="onCloseCreatePopup($event)"
     ></jb-create-specification-popup>
-    <jb-growl [content]="growlMessage$ | async"></jb-growl>
   </div>
 </jb-layout-widget>
 <ng-template
