@@ -17,7 +17,6 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   gridData: GridInputsWithRequest;
   eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.Select, eJbTreeEvents.UnSelect];
   activeIndex = 0;
-  componentUIDs: string[] = [];
   functionUIDs: string[] = [];
   types = [SpecificationType.ALL, SpecificationType.PMS, SpecificationType.FINDINGS, SpecificationType.STANDARD, SpecificationType.ADHOC];
   isCreatePopupVisible = false;
@@ -25,7 +24,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   growlMessage$ = this.growlMessageService.growlMessage$;
 
   createNewItems = [
-    {
+    /*{
       label: 'Add from PMS',
       command: () => {
         this.openPopup();
@@ -36,7 +35,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
       command: () => {
         this.openPopup();
       }
-    },
+    },*/
     {
       label: 'Add from Standard Jobs',
       command: () => {
@@ -95,25 +94,18 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   setNodeData(event) {
     if (event?.type === eJbTreeEvents.NodeSelect) {
-      if (event.payload.tag === 'component') {
-        this.componentUIDs = [...this.componentUIDs, event.payload.uid];
-        this.gridData = this.getData();
-      } else if (event.payload.tag === 'function') {
-        this.functionUIDs = [...this.functionUIDs, event.payload.uid];
-        this.gridData = this.getData();
-      }
+      this.functionUIDs = [...this.functionUIDs, event.payload.uid];
+      this.gridData = this.getData();
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
     } else if (event?.type === eJbTreeEvents.UnSelect) {
-      if (event.payload.tag === 'component') {
-        this.componentUIDs = this.componentUIDs.filter((uid) => uid !== event.payload.uid);
-      } else if (event.payload.tag === 'function') {
-        this.functionUIDs = this.functionUIDs.filter((uid) => uid !== event.payload.uid);
-        this.gridData = this.getData();
-      }
+      this.functionUIDs = this.functionUIDs.filter((uid) => uid !== event.payload.uid);
+      this.gridData = this.getData();
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
     }
   }
 
   private getData() {
-    const gridData = this.specsService.getGridData(null, this.componentUIDs, this.functionUIDs);
+    const gridData = this.specsService.getGridData(null, this.functionUIDs);
     const statusCol = gridData.columns.find((col) => col.FieldName === 'status');
     statusCol.cellTemplate = this.statusTemplate;
     return gridData;
