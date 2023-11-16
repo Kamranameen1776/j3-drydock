@@ -7,8 +7,6 @@ import {
     GetStandardJobsResultDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
 import { GetStandardJobSubItemsResultDto } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobSubItemsResultDto';
-import { LibSurveyCertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
-import { LibVesseltypes } from '../../../entity/LIB_VESSELTYPES';
 import { StandardJobs } from '../../../entity/standard_jobs';
 import { StandardJobsSubItems } from '../../../entity/standard_jobs_sub_items';
 
@@ -111,11 +109,6 @@ export class StandardJobsService {
         standardJob.function_uid = data.functionUid;
         standardJob.vessel_type_specific = data.vesselTypeSpecific;
         standardJob.description = data.description;
-        if (data.categoryUid) {
-            standardJob.category = {
-                uid: data.categoryUid,
-            };
-        }
         if (data.doneByUid) {
             standardJob.done_by = {
                 uid: data.doneByUid,
@@ -125,22 +118,6 @@ export class StandardJobsService {
             standardJob.material_supplied_by = {
                 uid: data.materialSuppliedByUid,
             };
-        }
-        if (data.inspectionId) {
-            standardJob.inspection = data.inspectionId.map((id) => {
-                const surveyCertificateAuthority = new LibSurveyCertificateAuthority();
-                surveyCertificateAuthority.ID = id;
-
-                return surveyCertificateAuthority;
-            });
-        }
-        if (data.vesselTypeId) {
-            standardJob.vessel_type = data.vesselTypeId.map((id) => {
-                const vesselType = new LibVesseltypes();
-                vesselType.ID = id;
-
-                return vesselType;
-            });
         }
 
         return _.omitBy(standardJob, _.isUndefined);

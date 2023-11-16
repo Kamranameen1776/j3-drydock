@@ -20,7 +20,7 @@ export class LibSurveyCertificateAuthority {
     })
     Active_Status: boolean;
 
-    @ManyToMany(() => StandardJobs, (standardJob) => standardJob.vessel_type)
+    @ManyToMany(() => StandardJobs, (standardJob) => standardJob.inspection)
     @JoinTable({
         name: 'standard_jobs_survey_certificate_authority',
         schema: 'dry_dock',
