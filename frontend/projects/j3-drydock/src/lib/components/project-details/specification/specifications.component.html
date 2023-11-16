@@ -10,7 +10,7 @@
     <jb-button
       type="NoButton"
       icon="icons8-anchor"
-      label="Import"
+      label="Export"
     ></jb-button>
     <jb-split-button
       type="NoButton"
@@ -28,6 +28,8 @@
       filterPlaceholder="Search Function / Component"
       (nodeData)="setNodeData($event)"
       [eventsList]="eventsList"
+      [virtualScroll]="true"
+      scrollHeight="582px"
     ></jb-tree>
     <!--        <p-tabView
     class="jb-tabview"
@@ -50,6 +52,10 @@
     ></jb-grid>
     <!--           </p-tabPanel> 
   </p-tabView>-->
+    <jb-create-specification-popup
+      [isOpen]="isCreatePopupVisible"
+      (closeDialog)="onCloseCreatePopup($event)"
+    ></jb-create-specification-popup>
   </div>
 </jb-layout-widget>
 <ng-template
