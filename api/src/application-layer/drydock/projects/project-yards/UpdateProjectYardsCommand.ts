@@ -40,7 +40,10 @@ export class UpdateProjectYardsCommand extends Command<Request, void> {
 
         if (body.isSelected) {
             const yardsProjects = await this.yardProjectsRepository.getAllByProject(yardProject.projectUid);
-            if (!yardsProjects || yardsProjects.some((yardProject) => yardProject.isSelected)) {
+            if (
+                !yardsProjects ||
+                yardsProjects.some((yardProject) => yardProject.isSelected && yardProject.uid !== body.uid)
+            ) {
                 throw new BusinessException(
                     `Multiple yard selection for the same project ${yardProject.projectUid} is not allowed.`,
                 );
