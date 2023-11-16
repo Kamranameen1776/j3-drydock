@@ -1,8 +1,12 @@
-import { ODataRequest, RequestWithOData } from "../../../../shared/interfaces";
+import { ODataBodyDto } from '../../../../shared/dto';
+import { IsUUID, ValidateNested } from 'class-validator';
 
-export interface GetSpecificationRequisitionsRequestDto extends RequestWithOData {
-  body: {
-    odata: ODataRequest;
+export class GetSpecificationBodyDto extends ODataBodyDto {
+    @IsUUID('4')
     uid: string;
-  }
+}
+
+export class GetSpecificationRequisitionsRequestDto {
+    @ValidateNested()
+    body: GetSpecificationBodyDto;
 }

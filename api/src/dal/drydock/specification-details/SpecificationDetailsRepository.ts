@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, QueryRunner } from "typeorm";
+import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
@@ -32,6 +32,10 @@ import {
 import {
   DeleteSpecificationRequisitionsRequestDto
 } from "../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto";
+import {
+  GetRequisitionsResponseDto
+} from "../../../application-layer/drydock/specification-details/dtos/GetRequisitionsResponseDto";
+import { ODataResult } from "../../../shared/interfaces";
 
 export class SpecificationDetailsRepository {
     public async findSpecInspections(uid: string): Promise<Array<InspectionsResultDto>> {
@@ -159,7 +163,9 @@ export class SpecificationDetailsRepository {
         return queryRunner.manager.update(SpecificationDetailsEntity, uid, spec);
     }
 
-    public getSpecificationRequisitions(data: GetSpecificationRequisitionsRequestDto): Promise<ODataResult<GetRequisitionsResponseDto>> {
+    public getSpecificationRequisitions(
+        data: GetSpecificationRequisitionsRequestDto,
+    ): Promise<ODataResult<GetRequisitionsResponseDto>> {
         const oDataService = new ODataService(data, getConnection);
         const specificationUid = data.body.uid;
 
@@ -178,41 +184,41 @@ export class SpecificationDetailsRepository {
                 'rq.description as description',
                 'urg.urgencys as priority',
             ])
-          .where(`sd.uid = '${specificationUid}'`)
-          .getSql();
-
+            .where(`sd.uid = '${specificationUid}'`)
+            .getSql();
 
         return oDataService.getJoinResult(query);
     }
 
     public linkSpecificationRequisitions(
-      data: LinkSpecificationRequisitionsRequestDto,
-      queryRunner: QueryRunner,
+        data: LinkSpecificationRequisitionsRequestDto,
+        queryRunner: QueryRunner,
     ): Promise<SpecificationRequisitionsEntity[]> {
-      const specificationUid = data.specificationUid;
-      const requisitionUid = data.requisitionUid;
+        const specificationUid = data.specificationUid;
+        const requisitionUid = data.requisitionUid;
 
-      const entities = requisitionUid.map(uid => {
-        const specificationRequisition = new SpecificationRequisitionsEntity();
-        specificationRequisition.specification_uid = specificationUid;
-        specificationRequisition.requisition_uid = uid;
-        return specificationRequisition;
-      });
+        const entities = requisitionUid.map((uid) => {
+            const specificationRequisition = new SpecificationRequisitionsEntity();
+            specificationRequisition.specificationUid = specificationUid;
+            specificationRequisition.requisitionUid = uid;
+            return specificationRequisition;
+        });
 
-      return queryRunner.manager.save(SpecificationRequisitionsEntity, entities);
+        return queryRunner.manager.save(SpecificationRequisitionsEntity, entities);
     }
 
-  public async deleteSpecificationRequisitions(
-    data: DeleteSpecificationRequisitionsRequestDto,
-    queryRunner: QueryRunner,
-  ): Promise<void> {
-    const specificationUid = data.specificationUid;
-    const requisitionUid = data.requisitionUid;
+    public async deleteSpecificationRequisitions(
+        data: DeleteSpecificationRequisitionsRequestDto,
+        queryRunner: QueryRunner,
+    ): Promise<void> {
+        const specificationUid = data.specificationUid;
+        const requisitionUid = data.requisitionUid;
 
-    await queryRunner.manager.createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
-      .delete()
-      .where(`specification_uid = '${specificationUid}'`)
-      .andWhere(`requisition_uid = '${requisitionUid}'`)
-      .execute();
-  }
+        await queryRunner.manager
+            .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
+            .delete()
+            .where(`specification_uid = '${specificationUid}'`)
+            .andWhere(`requisition_uid = '${requisitionUid}'`)
+            .execute();
+    }
 }

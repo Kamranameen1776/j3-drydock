@@ -41,7 +41,7 @@ export class StandardJobs extends BaseDatesEntity {
         nullable: true,
         name: 'function_uid',
     })
-    function_uid: string;
+    functionUid: string;
 
     @Column('varchar', {
         nullable: true,
@@ -95,7 +95,7 @@ export class StandardJobs extends BaseDatesEntity {
         nullable: true,
         name: 'vessel_type_specific',
     })
-    vessel_type_specific: boolean;
+    vesselTypeSpecific: boolean;
 
     @ManyToMany(() => LibVesseltypes, (LIB_VESSELTYPES) => LIB_VESSELTYPES.standard_jobs)
     @JoinTable({

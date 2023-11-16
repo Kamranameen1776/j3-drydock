@@ -3,7 +3,7 @@ import { Command } from '../core/cqrs/Command';
 import { Request } from 'express';
 import { LinkSpecificationRequisitionsRequestDto } from './dtos/LinkSpecificationRequisitionsRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { SpecificationRequisitionsEntity } from '../../../entity/SpecificationRequisitionsEntity';
+import { SpecificationRequisitionsEntity } from '../../../entity/drydock';
 
 export class LinkSpecificationRequisitionCommand extends Command<Request, SpecificationRequisitionsEntity[]> {
     specificationDetailsRepository = new SpecificationDetailsRepository();

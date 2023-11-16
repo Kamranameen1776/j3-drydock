@@ -116,7 +116,7 @@ export class StandardJobsRepository {
             relations: ['sub_items'],
         });
         const newSubItems = data.subItems.map((item) => item.uid);
-        const existingSubItems = standardJob?.sub_items.map((item) => item.uid) || [];
+        const existingSubItems = standardJob?.subItems.map((item) => item.uid) || [];
         const subItemsToDelete = existingSubItems.filter((item) => !newSubItems.includes(item));
 
         const subItems = this.standardJobsService.mapStandardJobSubItemsDtoToEntity(data.subItems, data.uid, userUid);

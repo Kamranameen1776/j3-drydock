@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { StandardJobs } from './standard_jobs';
+import { StandardJobs } from '../standard_jobs';
 
 @Entity('tm_dd_lib_done_by', { schema: 'dbo' })
 export class TmDdLibDoneBy {

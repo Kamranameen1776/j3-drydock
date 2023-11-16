@@ -82,14 +82,14 @@ export class StandardJobsService {
         if (subItems) {
             resultData.forEach((item) => {
                 item.subItems = subItems
-                    .filter((subItem) => subItem.standard_job_uid === item.uid)
+                    .filter((subItem) => subItem.standardJobUid === item.uid)
                     .map((subItem) => {
                         return {
                             uid: subItem.uid,
                             code: subItem.code,
                             subject: subItem.subject,
                             description: subItem.description,
-                            standard_job_uid: item.uid,
+                            standardJobUid: item.uid,
                         };
                     });
             });
@@ -106,16 +106,16 @@ export class StandardJobsService {
         standardJob.subject = data.subject;
         standardJob.scope = data.scope;
         standardJob.function = data.function;
-        standardJob.function_uid = data.functionUid;
-        standardJob.vessel_type_specific = data.vesselTypeSpecific;
+        standardJob.functionUid = data.functionUid;
+        standardJob.vesselTypeSpecific = data.vesselTypeSpecific;
         standardJob.description = data.description;
         if (data.doneByUid) {
-            standardJob.done_by = {
+            standardJob.doneBy = {
                 uid: data.doneByUid,
             };
         }
         if (data.materialSuppliedByUid) {
-            standardJob.material_supplied_by = {
+            standardJob.materialSuppliedBy = {
                 uid: data.materialSuppliedByUid,
             };
         }
@@ -134,7 +134,7 @@ export class StandardJobsService {
             subItem.code = itemData.code;
             subItem.subject = itemData.subject;
             subItem.description = itemData.description;
-            subItem.standard_job = {
+            subItem.standardJob = {
                 uid: standardJobUid,
             };
             if (!itemData.uid) {
@@ -147,10 +147,12 @@ export class StandardJobsService {
         });
     }
 
-    public addUpdateStandardJobsFields<T extends { updated_at?: Date; updated_by?: string }>(
-        data: T,
-        updatedBy: string,
-    ): T {
+    public addUpdateStandardJobsFields<
+        T extends {
+            updated_at?: Date;
+            updated_by?: string;
+        },
+    >(data: T, updatedBy: string): T {
         return {
             ...data,
             updated_at: new Date(),
@@ -158,10 +160,12 @@ export class StandardJobsService {
         };
     }
 
-    public addCreateStandardJobsFields<T extends { created_at?: Date; created_by?: string }>(
-        data: T,
-        updatedBy: string,
-    ): T {
+    public addCreateStandardJobsFields<
+        T extends {
+            created_at?: Date;
+            created_by?: string;
+        },
+    >(data: T, updatedBy: string): T {
         return {
             ...data,
             created_at: new Date(),

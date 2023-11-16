@@ -1,4 +1,4 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity } from 'typeorm';
 
 @Entity('specification_requisitions', { schema: 'dry_dock' })
 export class SpecificationRequisitionsEntity {
@@ -7,12 +7,12 @@ export class SpecificationRequisitionsEntity {
         name: 'specification_uid',
         primary: true,
     })
-    specification_uid: string;
+    specificationUid: string;
 
     @Column('uniqueidentifier', {
         nullable: false,
         name: 'requisition_uid',
         primary: true,
     })
-    requisition_uid: string;
+    requisitionUid: string;
 }

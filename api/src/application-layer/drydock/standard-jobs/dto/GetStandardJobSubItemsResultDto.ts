@@ -1,6 +1,6 @@
-import { StandardJobsSubItems } from '../../../../entity/standard_jobs_sub_items';
+import { StandardJobsSubItems } from '../../../../entity/drydock';
 
 export type GetStandardJobSubItemsResultDto = Pick<
     StandardJobsSubItems,
-    'uid' | 'code' | 'subject' | 'description' | 'standard_job_uid'
+    'uid' | 'code' | 'subject' | 'description' | 'standardJobUid'
 >;
