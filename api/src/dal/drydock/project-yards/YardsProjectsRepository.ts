@@ -1,7 +1,7 @@
 import { DataUtilService } from 'j2utils';
 import { getManager, QueryRunner } from 'typeorm';
 
-import { YardsProjectsEntity } from '../../../entity/drydock/YardsProjectsEntity';
+import { YardsProjectsEntity } from "../../../entity/drydock";
 import { ICreateProjectYardsDto } from './dtos/ICreateProjectYardsDto';
 import { IDeleteProjectYardsDto } from './dtos/IDeleteProjectYardsDto';
 import { IProjectYardsResultDto } from './dtos/IProjectYardsResultDto';
@@ -44,7 +44,9 @@ export class YardsProjectsRepository {
     }
 
     public async create(data: ICreateProjectYardsDto, queryRunner: QueryRunner) {
-        const yardProjects: YardsProjectsEntity[] = data.yardsUids.map((yardUid) => this.createYardProject(yardUid, data));
+        const yardProjects: YardsProjectsEntity[] = data.yardsUids.map((yardUid) =>
+            this.createYardProject(yardUid, data),
+        );
         const yardProjectsRepository = queryRunner.manager.getRepository(YardsProjectsEntity);
         await yardProjectsRepository
             .createQueryBuilder('yp')

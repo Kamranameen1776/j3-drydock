@@ -172,7 +172,7 @@ export class ProjectsRepository {
             .innerJoin(
                 className(GroupProjectStatusEntity),
                 'gps',
-                `gps.ProjectTypeId = pt.WorklistType 
+                `gps.ProjectTypeId = pt.WorklistType
                     and gps.ProjectStatusId = tm.Status
                     `,
             )

@@ -2,18 +2,27 @@ import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
+import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
+import { GetRequisitionsResponseDto } from '../../../application-layer/drydock/specification-details/dtos/GetRequisitionsResponseDto';
+import { GetSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto';
+import { LinkSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/LinkSpecificationRequisitionsRequestDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
-import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
-import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
-import { PriorityEntity } from '../../../entity/drydock/dbo/PriorityEntity';
-import { TecTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
-import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
-import { SpecificationDetailsEntity } from '../../../entity/drydock/SpecificationDetailsEntity';
-import { SpecificationInspectionEntity } from '../../../entity/drydock/SpecificationInspectionEntity';
-import { LibSurveyCertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
-import { TmDdLibDoneBy } from '../../../entity/tm_dd_lib_done_by';
-import { TmDdLibItemCategory } from '../../../entity/tm_dd_lib_item_category';
-import { TmDdLibMaterialSuppliedBy } from '../../../entity/tm_dd_lib_material_supplied_by';
+import {
+    J3PrcRequisition,
+    LibSurveyCertificateAuthority,
+    LibUserEntity,
+    LibVesselsEntity,
+    PriorityEntity,
+    ProjectEntity,
+    SpecificationDetailsEntity,
+    SpecificationInspectionEntity,
+    SpecificationRequisitionsEntity,
+    TecTaskManagerEntity,
+    TmDdLibDoneBy,
+    TmDdLibItemCategory,
+    TmDdLibMaterialSuppliedBy,
+} from '../../../entity/drydock';
+import { ODataResult } from '../../../shared/interfaces';
 import {
     CreateInspectionsDto,
     ICreateSpecificationDetailsDto,
@@ -106,7 +115,7 @@ export class SpecificationDetailsRepository {
                 .where('sd.active_status = 1')
                 .getSql();
 
-            return await oDataService.getJoinResult(query);
+            return oDataService.getJoinResult(query);
         } catch (error) {
             throw new Error(
                 `Method: GetSpecificationDetails / Class: SpecificationDetailsRepository / Error: ${error}`,
@@ -146,5 +155,64 @@ export class SpecificationDetailsRepository {
         const spec = new SpecificationDetailsEntity();
         spec.ActiveStatus = false;
         return queryRunner.manager.update(SpecificationDetailsEntity, uid, spec);
+    }
+
+    public getSpecificationRequisitions(
+        data: GetSpecificationRequisitionsRequestDto,
+    ): Promise<ODataResult<GetRequisitionsResponseDto>> {
+        const oDataService = new ODataService(data, getConnection);
+        const specificationUid = data.body.uid;
+
+        const query = getManager()
+            .createQueryBuilder(J3PrcRequisition, 'rq')
+            .innerJoin('specification_requisitions', 'sr', 'sr.requisition_uid = rq.uid')
+            .innerJoin('specification_details', 'sd', 'sr.specification_uid = sd.uid AND sd.active_status = 1')
+            .leftJoin('Lib_Ports', 'port', 'rq.delivery_port_id = port.PORT_ID')
+            .leftJoin('lib_urgency', 'urg', 'urg.uid = rq.urgency_uid')
+            .select([
+                'rq.uid as uid',
+                'rq.requisition_number as number',
+                'rq.status_uid as status',
+                'rq.delivery_date as deliveryDate',
+                'port.PORT_NAME as port',
+                'rq.description as description',
+                'urg.urgencys as priority',
+            ])
+            .where(`sd.uid = '${specificationUid}'`)
+            .getSql();
+
+        return oDataService.getJoinResult(query);
+    }
+
+    public linkSpecificationRequisitions(
+        data: LinkSpecificationRequisitionsRequestDto,
+        queryRunner: QueryRunner,
+    ): Promise<SpecificationRequisitionsEntity[]> {
+        const specificationUid = data.specificationUid;
+        const requisitionUid = data.requisitionUid;
+
+        const entities = requisitionUid.map((uid) => {
+            const specificationRequisition = new SpecificationRequisitionsEntity();
+            specificationRequisition.specificationUid = specificationUid;
+            specificationRequisition.requisitionUid = uid;
+            return specificationRequisition;
+        });
+
+        return queryRunner.manager.save(SpecificationRequisitionsEntity, entities);
+    }
+
+    public async deleteSpecificationRequisitions(
+        data: DeleteSpecificationRequisitionsRequestDto,
+        queryRunner: QueryRunner,
+    ): Promise<void> {
+        const specificationUid = data.specificationUid;
+        const requisitionUid = data.requisitionUid;
+
+        await queryRunner.manager
+            .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
+            .delete()
+            .where(`specification_uid = '${specificationUid}'`)
+            .andWhere(`requisition_uid = '${requisitionUid}'`)
+            .execute();
     }
 }

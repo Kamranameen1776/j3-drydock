@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { StandardJobs } from './standard_jobs';
+import { StandardJobs } from '../';
 
 @Entity('tm_dd_lib_done_by', { schema: 'dbo' })
 export class TmDdLibDoneBy {
@@ -27,6 +27,6 @@ export class TmDdLibDoneBy {
     })
     active_status: boolean;
 
-    @OneToMany(() => StandardJobs, (standardJob) => standardJob.done_by)
+    @OneToMany(() => StandardJobs, (standardJob) => standardJob.doneBy)
     standard_jobs: StandardJobs[];
 }
