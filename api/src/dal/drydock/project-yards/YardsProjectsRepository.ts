@@ -1,7 +1,7 @@
 import { DataUtilService } from 'j2utils';
 import { getManager, QueryRunner } from 'typeorm';
 
-import { YardsProjectsEntity } from '../../../entity/drydock/YardsProjectsEntity';
+import { YardsProjectsEntity } from "../../../entity/drydock";
 import { ICreateProjectYardsDto } from './dtos/ICreateProjectYardsDto';
 import { IDeleteProjectYardsDto } from './dtos/IDeleteProjectYardsDto';
 import { IProjectYardsResultDto } from './dtos/IProjectYardsResultDto';
