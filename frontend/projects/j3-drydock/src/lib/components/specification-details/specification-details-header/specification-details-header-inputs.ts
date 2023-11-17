@@ -12,6 +12,7 @@ export type SpecificationDetailsHeaderInputs = {
 
 @Injectable()
 export class SpecificationDetailsHeaderInputservice {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
 
   topFieldsConfig: ITopSectionFieldSet = {
