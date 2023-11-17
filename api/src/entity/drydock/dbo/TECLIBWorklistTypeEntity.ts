@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('TEC_LIB_Worklist_Type', { schema: 'dbo' })
-export class TECLIBWorklistTypeEntity {
+export class TecLibWorklistTypeEntity {
     @PrimaryGeneratedColumn()
     id: string;
 

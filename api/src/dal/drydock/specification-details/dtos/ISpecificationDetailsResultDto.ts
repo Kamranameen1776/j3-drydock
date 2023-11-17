@@ -1,6 +1,6 @@
-import { IInspectionsResultDto } from './IInspectionsResultDto';
+import { InspectionsResultDto } from './IInspectionsResultDto';
 
-export class ISpecificationDetailsResultDto {
+export class SpecificationDetailsResultDto {
     uid: string;
     Subject: string;
     SpecificationCode: string;
@@ -23,5 +23,5 @@ export class ISpecificationDetailsResultDto {
     VesselUid: string;
     ProjectManager: string;
     ProjectManagerUid: string;
-    Inspections: Array<IInspectionsResultDto>;
+    Inspections: Array<InspectionsResultDto>;
 }

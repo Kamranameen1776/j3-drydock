@@ -14,14 +14,4 @@ export class DictionariesRepository {
             },
         });
     }
-
-    public async GetProjectTypes(): Promise<ProjectTypeEntity[]> {
-        const projectTypeRepository = getManager().getRepository(ProjectTypeEntity);
-
-        return projectTypeRepository.find({
-            where: {
-                ActiveStatus: true,
-            },
-        });
-    }
 }

@@ -1,9 +1,9 @@
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { standard_jobs } from './standard_jobs';
+import { StandardJobs } from './standard_jobs';
 
 @Entity('LIB_VESSELTYPES', { schema: 'dbo' })
-export class LIB_VESSELTYPES {
+export class LibVesseltypes {
     @PrimaryGeneratedColumn()
     ID: number;
 
@@ -26,7 +26,7 @@ export class LIB_VESSELTYPES {
     })
     Active_Status: string;
 
-    @ManyToMany(() => standard_jobs, (standardJob) => standardJob.vessel_type)
+    @ManyToMany(() => StandardJobs, (standardJob) => standardJob.vessel_type)
     @JoinTable({
         name: 'standard_jobs_vessel_type',
         schema: 'dry_dock',
@@ -39,5 +39,5 @@ export class LIB_VESSELTYPES {
             referencedColumnName: 'uid',
         },
     })
-    standard_jobs: standard_jobs[];
+    standard_jobs: StandardJobs[];
 }

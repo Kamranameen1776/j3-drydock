@@ -2,7 +2,7 @@ import { ConfigurationService } from 'j2utils';
 
 import { TaskManagerRequestDto, TaskManagerService } from '../../../external-services/drydock/TaskManager';
 import { TaskManagerConstants } from '../../../shared/constants';
-import { ICreateProjectDto } from './dtos/ICreateProjectDto';
+import { CreateProjectDto } from './dtos/ICreateProjectDto';
 //TODO: add dto for vesels, remove using entity from bll
 import { ILibVesselDto } from './dtos/LibVesselDto';
 
@@ -19,7 +19,7 @@ export class ProjectService {
     }
 
     public async TaskManagerIntegration(
-        request: ICreateProjectDto,
+        request: CreateProjectDto,
         vessel: ILibVesselDto,
         token: string,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

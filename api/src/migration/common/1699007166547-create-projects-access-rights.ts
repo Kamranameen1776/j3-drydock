@@ -1,6 +1,7 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export class createProjectsAccessRights1699007166547 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const className = this.constructor.name;

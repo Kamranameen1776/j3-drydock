@@ -1,9 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { standard_jobs } from './standard_jobs';
+import { StandardJobs } from './standard_jobs';
 
 @Entity('tm_dd_lib_item_category', { schema: 'dbo' })
-export class tm_dd_lib_item_category {
+export class TmDdLibItemCategory {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
@@ -27,6 +27,6 @@ export class tm_dd_lib_item_category {
     })
     active_status: boolean;
 
-    @OneToMany(() => standard_jobs, (standardJob) => standardJob.material_supplied_by)
-    standard_jobs: standard_jobs[];
+    @OneToMany(() => StandardJobs, (standardJob) => standardJob.material_supplied_by)
+    standard_jobs: StandardJobs[];
 }

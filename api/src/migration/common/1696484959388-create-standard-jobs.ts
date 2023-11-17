@@ -1,6 +1,7 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export class createStandardJobs1696484959388 implements MigrationInterface {
     tableName = 'standard_jobs';
     schemaName = 'dry_dock';

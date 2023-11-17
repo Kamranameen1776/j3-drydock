@@ -4,6 +4,7 @@ import { AuthGuardService } from 'jibe-components';
 import { ProjectDetailsComponent } from './components/project-details/project-details.component';
 import { StandardJobsMainComponent } from './components/standard-jobs-main/standard-jobs-main.component';
 import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
+import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 
 const routes: Routes = [
   {
@@ -19,7 +20,7 @@ const routes: Routes = [
     runGuardsAndResolvers: 'paramsOrQueryParamsChange'
   },
   {
-    path: 'project',
+    path: 'project/:projectId',
     component: ProjectDetailsComponent,
     canActivate: [AuthGuardService],
     runGuardsAndResolvers: 'paramsOrQueryParamsChange'
@@ -27,6 +28,12 @@ const routes: Routes = [
   {
     path: 'standard-jobs-main',
     component: StandardJobsMainComponent,
+    canActivate: [AuthGuardService],
+    runGuardsAndResolvers: 'paramsOrQueryParamsChange'
+  },
+  {
+    path: 'specification-details/:specificationUid',
+    component: SpecificationDetailsComponent,
     canActivate: [AuthGuardService],
     runGuardsAndResolvers: 'paramsOrQueryParamsChange'
   }

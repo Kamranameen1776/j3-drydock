@@ -3,6 +3,7 @@ import { ApiRequestService, eCrud, WebApiRequest } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { DeleteProjectDto, ProjectCreate, ProjectEdit } from '../models/interfaces/projects';
 import { IGroupProjectStatusesDto } from './dtos/IGroupProjectStatusesDto';
+import { IProjectStatusDto } from './dtos/IProjectStatusDto';
 
 @Injectable()
 export class ProjectsService {
@@ -15,18 +16,6 @@ export class ProjectsService {
       apiBase: 'dryDockAPI',
       action: 'projects/get-projects-for-main-page',
       crud: eCrud.Post,
-      entity: 'drydock'
-    };
-    return apiRequest;
-  }
-
-  public getAllProjectTypesRequest(): WebApiRequest {
-    const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
-      action: 'dictionaries/project-types',
-      crud: eCrud.Get,
       entity: 'drydock'
     };
     return apiRequest;
@@ -90,6 +79,12 @@ export class ProjectsService {
       entity: 'drydock'
     };
     return apiRequest;
+  }
+
+  public getProjectStatuses(): Observable<IProjectStatusDto> {
+    const apiRequest = this.getProjectStatusesRequest();
+
+    return this.apiRequestService.sendApiReq(apiRequest);
   }
 
   public getFleetsRequest(): WebApiRequest {
