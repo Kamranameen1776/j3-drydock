@@ -1,3 +1,5 @@
 export enum eFunction {
-  StandardJob = 'standard_job'
+  StandardJob = 'standard_job',
+  DryDock = 'dry_dock',
+  Project = 'project'
 }
