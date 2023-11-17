@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
-import { BaseDatesEntity } from './baseDatesEntity';
-import { StandardJobs } from './standard_jobs';
+import { BaseDatesEntity } from '../baseDatesEntity';
+import { StandardJobs } from './StandardJobsEntity';
 
 @Entity('standard_jobs_sub_items', { schema: 'dry_dock' })
 export class StandardJobsSubItems extends BaseDatesEntity {
@@ -36,11 +36,11 @@ export class StandardJobsSubItems extends BaseDatesEntity {
     })
     description: string;
 
-    @OneToOne(() => StandardJobs, (standardJob) => standardJob.sub_items)
+    @OneToOne(() => StandardJobs, (standardJob) => standardJob.subItems)
     @JoinColumn({
         name: 'standard_job_uid',
     })
-    standard_job: Partial<StandardJobs>;
-    @RelationId((entity: StandardJobsSubItems) => entity.standard_job)
-    standard_job_uid: string;
+    standardJob: Partial<StandardJobs>;
+    @RelationId((entity: StandardJobsSubItems) => entity.standardJob)
+    standardJobUid: string;
 }

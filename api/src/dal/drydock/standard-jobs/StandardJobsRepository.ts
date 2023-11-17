@@ -13,12 +13,13 @@ import {
 } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto';
 import { UpdateStandardJobSubItemsRequestDto } from '../../../application-layer/drydock/standard-jobs/dto/UpdateStandardJobSubItemsRequestDto';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
-import { StandardJobs } from '../../../entity/standard_jobs';
-import { StandardJobsSubItems } from '../../../entity/standard_jobs_sub_items';
-import { RequestWithOData } from '../../../shared/interfaces';
-import { FiltersDataResponse } from '../../../shared/interfaces/filters-data-response.interface';
-import { StandardJobsSurveyCertificateAuthorityEntity } from '../../../entity/standard_jobs_survey_certificate_authority';
-import { StandardJobsVesselTypeEntity } from '../../../entity/standard_jobs_vessel_type';
+import {
+    StandardJobs,
+    StandardJobsSubItems,
+    StandardJobsSurveyCertificateAuthorityEntity,
+    StandardJobsVesselTypeEntity,
+} from '../../../entity/drydock';
+import { FiltersDataResponse, RequestWithOData } from '../../../shared/interfaces';
 
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
@@ -225,10 +226,12 @@ export class StandardJobsRepository {
         });
 
         if (inspectionIds.length) {
-            const inspectionsToDelete = relations?.inspection
-              .filter((item) => !inspectionIds.includes(item.ID as number))
-              .map((i) => i.ID) || [];
-            const inspectionsToAdd = inspectionIds.filter((item) => !relations?.inspection.map((i) => i.ID).includes(item));
+            const inspectionsToDelete =
+                relations?.inspection.filter((item) => !inspectionIds.includes(item.ID as number)).map((i) => i.ID) ||
+                [];
+            const inspectionsToAdd = inspectionIds.filter(
+                (item) => !relations?.inspection.map((i) => i.ID).includes(item),
+            );
 
             if (inspectionsToDelete.length) {
                 await queryRunner.manager.delete(StandardJobsSurveyCertificateAuthorityEntity, {
@@ -249,10 +252,12 @@ export class StandardJobsRepository {
             }
         }
         if (vesselTypeIds.length) {
-            const vesselTypesToDelete = relations?.vessel_type
-              .filter((item) => !vesselTypeIds.includes(item.ID as number))
-              .map((i) => i.ID) || [];
-            const vesselTypesToAdd = vesselTypeIds.filter((item) => !relations?.vessel_type.map((i) => i.ID).includes(item));
+            const vesselTypesToDelete =
+                relations?.vesselType.filter((item) => !vesselTypeIds.includes(item.ID as number)).map((i) => i.ID) ||
+                [];
+            const vesselTypesToAdd = vesselTypeIds.filter(
+                (item) => !relations?.vesselType.map((i) => i.ID).includes(item),
+            );
 
             if (vesselTypesToDelete.length) {
                 await queryRunner.manager.delete(StandardJobsVesselTypeEntity, {

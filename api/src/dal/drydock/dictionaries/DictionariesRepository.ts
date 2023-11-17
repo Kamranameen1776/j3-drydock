@@ -1,7 +1,6 @@
 import { getManager } from 'typeorm';
 
-import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
-import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
+import { LibUserEntity } from '../../../entity/drydock';
 
 export class DictionariesRepository {
     public async GetManagers(): Promise<LibUserEntity[]> {

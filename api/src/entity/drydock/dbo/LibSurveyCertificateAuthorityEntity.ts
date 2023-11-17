@@ -1,6 +1,6 @@
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { StandardJobs } from '../standard_jobs';
+import { StandardJobs } from '../';
 
 @Entity('LIB_Survey_CertificateAuthority', { schema: 'dbo' })
 export class LibSurveyCertificateAuthority {

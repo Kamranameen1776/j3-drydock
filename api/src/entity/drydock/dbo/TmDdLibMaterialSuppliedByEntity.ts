@@ -1,18 +1,18 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { StandardJobs } from '../standard_jobs';
+import { StandardJobs } from '../';
 
-@Entity('tm_dd_lib_item_category', { schema: 'dbo' })
-export class TmDdLibItemCategory {
+@Entity('tm_dd_lib_material_supplied_by', { schema: 'dbo' })
+export class TmDdLibMaterialSuppliedBy {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
     @Column('varchar', {
         nullable: false,
-        name: 'item_category',
+        name: 'materialSuppliedBy',
         length: 250,
     })
-    item_category: string;
+    materialSuppliedBy: string;
 
     @Column('varchar', {
         nullable: false,
@@ -27,6 +27,6 @@ export class TmDdLibItemCategory {
     })
     active_status: boolean;
 
-    @OneToMany(() => StandardJobs, (standardJob) => standardJob.material_supplied_by)
+    @OneToMany(() => StandardJobs, (standardJob) => standardJob.materialSuppliedBy)
     standard_jobs: StandardJobs[];
 }

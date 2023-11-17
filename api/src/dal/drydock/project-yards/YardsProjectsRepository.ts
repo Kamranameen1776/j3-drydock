@@ -44,7 +44,9 @@ export class YardsProjectsRepository {
     }
 
     public async create(data: ICreateProjectYardsDto, queryRunner: QueryRunner) {
-        const yardProjects: YardsProjectsEntity[] = data.yardsUids.map((yardUid) => this.createYardProject(yardUid, data));
+        const yardProjects: YardsProjectsEntity[] = data.yardsUids.map((yardUid) =>
+            this.createYardProject(yardUid, data),
+        );
         const yardProjectsRepository = queryRunner.manager.getRepository(YardsProjectsEntity);
         await yardProjectsRepository
             .createQueryBuilder('yp')

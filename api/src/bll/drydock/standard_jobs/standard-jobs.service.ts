@@ -7,8 +7,7 @@ import {
     GetStandardJobsResultDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
 import { GetStandardJobSubItemsResultDto } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobSubItemsResultDto';
-import { StandardJobs } from '../../../entity/standard_jobs';
-import { StandardJobsSubItems } from '../../../entity/standard_jobs_sub_items';
+import { StandardJobs, StandardJobsSubItems } from '../../../entity/drydock';
 
 export class StandardJobsService {
     notSelectedValueLabel = '-';

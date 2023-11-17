@@ -7,17 +7,22 @@ import { GetRequisitionsResponseDto } from '../../../application-layer/drydock/s
 import { GetSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto';
 import { LinkSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/LinkSpecificationRequisitionsRequestDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
-import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
-import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
-import { PriorityEntity } from '../../../entity/drydock/dbo/PriorityEntity';
-import { TecTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
-import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
-import { SpecificationDetailsEntity } from '../../../entity/drydock/SpecificationDetailsEntity';
-import { SpecificationInspectionEntity } from '../../../entity/drydock/SpecificationInspectionEntity';
-import { LibSurveyCertificateAuthority } from '../../../entity/LIB_Survey_CertificateAuthority';
-import { TmDdLibDoneBy } from '../../../entity/tm_dd_lib_done_by';
-import { TmDdLibItemCategory } from '../../../entity/tm_dd_lib_item_category';
-import { TmDdLibMaterialSuppliedBy } from '../../../entity/tm_dd_lib_material_supplied_by';
+import {
+    J3PrcRequisition,
+    LibSurveyCertificateAuthority,
+    LibUserEntity,
+    LibVesselsEntity,
+    PriorityEntity,
+    ProjectEntity,
+    SpecificationDetailsEntity,
+    SpecificationInspectionEntity,
+    SpecificationRequisitionsEntity,
+    TecTaskManagerEntity,
+    TmDdLibDoneBy,
+    TmDdLibItemCategory,
+    TmDdLibMaterialSuppliedBy,
+} from '../../../entity/drydock';
+import { ODataResult } from '../../../shared/interfaces';
 import {
     CreateInspectionsDto,
     ICreateSpecificationDetailsDto,
@@ -25,8 +30,6 @@ import {
     IUpdateSpecificationDetailsDto,
     SpecificationDetailsResultDto,
 } from './dtos';
-import { SpecificationRequisitionsEntity } from "../../../entity/SpecificationRequisitionsEntity";
-import { ODataResult } from "../../../shared/interfaces";
 
 export class SpecificationDetailsRepository {
     public async findSpecInspections(uid: string): Promise<Array<InspectionsResultDto>> {

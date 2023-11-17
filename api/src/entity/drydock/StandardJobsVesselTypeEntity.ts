@@ -1,14 +1,13 @@
 import { Column, Entity } from 'typeorm';
 
-
-@Entity('standard_jobs_survey_certificate_authority', { schema: 'dry_dock' })
-export class StandardJobsSurveyCertificateAuthorityEntity {
+@Entity('standard_jobs_vessel_type', { schema: 'dry_dock' })
+export class StandardJobsVesselTypeEntity {
     @Column('int', {
         nullable: false,
-        name: 'survey_id',
+        name: 'vessel_type_id',
         primary: true,
     })
-    survey_id: number;
+    vessel_type_id: number;
 
     @Column('uniqueidentifier', {
         nullable: false,
