@@ -17,6 +17,8 @@ import { takeUntil } from 'rxjs/operators';
 import { NewTabService } from '../../../services/new-tab-service';
 import moment from 'moment';
 import { IProjectStatusDto } from '../../../services/dtos/IProjectStatusDto';
+import { eProjectsAccessActions } from '../../../models/enums/access-actions.enum';
+import { eFunction } from '../../../models/enums/function.enum';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -31,6 +33,16 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   private readonly allProjectsProjectTypeId = 'all_projects';
 
   private readonly closeProjectStatusId = 'CLOSE';
+
+  private accessActions = eProjectsAccessActions;
+
+  private canViewDetails = false;
+
+  private canCreateProject = false;
+
+  private canDeleteProject = false;
+
+  public canView = false;
 
   public DeleteBtnLabel = 'Delete';
 
@@ -76,7 +88,9 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   }
 
   ngOnInit(): void {
-    this.gridInputs = this.projectsGridService.getGridInputs();
+    this.setAccessRights();
+    this.setGridInputs();
+
     this.createProjectForm = this.projectsGridService.getCreateProjectForm();
     this.deleteProjectForm = this.projectsGridService.getDeleteProjectForm();
 
@@ -200,5 +214,43 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   private selectGridDefaultStatuses(statuses: IProjectStatusDto[]) {
     this.gridInputs.filters.find((filter) => filter.FieldName === this.projectsGridService.ProjectStatusesFilterName).selectedValues =
       statuses.filter((status) => status.ProjectStatusId !== this.closeProjectStatusId).map((status) => status.ProjectStatusId);
+  }
+
+  private setAccessRights() {
+    this.canView = this.hasAccess(this.accessActions.viewGrid) || this.hasAccess(this.accessActions.viewGridVessel);
+    this.canViewDetails =
+      this.hasAccess(this.accessActions.viewDetail, eFunction.DryDock) ||
+      this.hasAccess(this.accessActions.viewDetailVessel, eFunction.DryDock);
+
+    this.canCreateProject = this.hasAccess(this.accessActions.createProject);
+    this.canDeleteProject = this.hasAccess(this.accessActions.deleteProject);
+  }
+
+  private setGridInputs() {
+    this.gridInputs = this.projectsGridService.getGridInputs();
+    this.gridInputs.gridButton.show = this.canCreateProject;
+    this.setGridActions();
+  }
+
+  private setGridActions() {
+    this.gridInputs.actions.length = 0;
+
+    if (this.canViewDetails) {
+      this.gridInputs.actions.push({
+        name: eGridRowActions.Edit,
+        label: 'Edit'
+      });
+    }
+
+    if (this.canDeleteProject) {
+      this.gridInputs.actions.push({
+        name: eGridRowActions.Delete,
+        label: 'Delete'
+      });
+    }
+  }
+
+  private hasAccess(action: eProjectsAccessActions, func = eFunction.Project): boolean {
+    return this.projectsService.hasAccess(action, func);
   }
 }

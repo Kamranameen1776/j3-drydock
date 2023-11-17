@@ -7,7 +7,6 @@ import {
   GridRowActions,
   UserService,
   eGridColumnsWidth,
-  eGridRowActions,
   eFieldControlType,
   FormModel,
   SystemLevelFiltersService,
@@ -314,16 +313,7 @@ export class ProjectsSpecificationGridService {
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectTypeName),
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectManager)
   ];
-  private gridActions: GridRowActions[] = [
-    {
-      name: eGridRowActions.Delete,
-      label: 'Delete'
-    },
-    {
-      name: eGridRowActions.Edit,
-      label: 'Edit'
-    }
-  ];
+  private gridActions: GridRowActions[] = [];
 
   public createProjectFormId = 'projectCreate';
 

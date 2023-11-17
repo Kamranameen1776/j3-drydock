@@ -1,4 +1,7 @@
-<section class="proects-specifications-grid">
+<section
+  class="proects-specifications-grid"
+  *ngIf="canView"
+>
   <jb-grid
     #projectsGrid
     [gridName]="gridInputs.gridName"
