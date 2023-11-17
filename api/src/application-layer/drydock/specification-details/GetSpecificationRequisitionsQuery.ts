@@ -1,8 +1,8 @@
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
-import { Query } from '../core/cqrs/Query';
 import { ODataResult } from '../../../shared/interfaces';
-import { GetSpecificationRequisitionsRequestDto } from './dtos/GetSpecificationRequisitionsRequestDto';
+import { Query } from '../core/cqrs/Query';
 import { GetRequisitionsResponseDto } from './dtos/GetRequisitionsResponseDto';
+import { GetSpecificationRequisitionsRequestDto } from './dtos/GetSpecificationRequisitionsRequestDto';
 
 export class GetSpecificationRequisitionsQuery extends Query<
     GetSpecificationRequisitionsRequestDto,

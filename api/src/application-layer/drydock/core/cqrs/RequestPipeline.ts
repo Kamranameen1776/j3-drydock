@@ -1,5 +1,5 @@
-import { plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 
 /**
  * Request pipeline from Command Query Responsibility Segregation pattern

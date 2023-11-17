@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 
-import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
-import { GetSpecificationRequisitionsQuery } from '../../../application-layer/drydock/specification-details/GetSpecificationRequisitionsQuery';
 import {
     GetSpecificationBodyDto,
     GetSpecificationRequisitionsRequestDto,
 } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto';
+import { GetSpecificationRequisitionsQuery } from '../../../application-layer/drydock/specification-details/GetSpecificationRequisitionsQuery';
+import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 async function getSpecificationRequisitions(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
@@ -13,7 +13,7 @@ async function getSpecificationRequisitions(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new GetSpecificationRequisitionsQuery();
 
-        return await command.ExecuteAsync(request as GetSpecificationRequisitionsRequestDto, GetSpecificationBodyDto);
+        return command.ExecuteAsync(request as GetSpecificationRequisitionsRequestDto, GetSpecificationBodyDto);
     });
 }
 

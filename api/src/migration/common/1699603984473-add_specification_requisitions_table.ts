@@ -1,5 +1,5 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class addSpecificationRequisitionsTable1699603984473 implements MigrationInterface {
     tableName = 'specification_requisitions';

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
-import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
-import { LinkSpecificationRequisitionCommand } from '../../../application-layer/drydock/specification-details/LinkSpecificationRequisitionCommand';
 import { LinkSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/LinkSpecificationRequisitionsRequestDto';
+import { LinkSpecificationRequisitionCommand } from '../../../application-layer/drydock/specification-details/LinkSpecificationRequisitionCommand';
+import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 async function linkSpecificationRequisitions(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
@@ -10,7 +10,7 @@ async function linkSpecificationRequisitions(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new LinkSpecificationRequisitionCommand();
 
-        return await command.ExecuteAsync(request, LinkSpecificationRequisitionsRequestDto);
+        return command.ExecuteAsync(request, LinkSpecificationRequisitionsRequestDto);
     });
 }
 

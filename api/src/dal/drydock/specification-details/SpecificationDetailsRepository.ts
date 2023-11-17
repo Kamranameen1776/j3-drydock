@@ -2,6 +2,10 @@ import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
+import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
+import { GetRequisitionsResponseDto } from '../../../application-layer/drydock/specification-details/dtos/GetRequisitionsResponseDto';
+import { GetSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto';
+import { LinkSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/LinkSpecificationRequisitionsRequestDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
 import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
@@ -22,19 +26,6 @@ import {
     SpecificationDetailsResultDto,
 } from './dtos';
 import { SpecificationRequisitionsEntity } from "../../../entity/SpecificationRequisitionsEntity";
-import {
-  LinkSpecificationRequisitionsRequestDto
-} from "../../../application-layer/drydock/specification-details/dtos/LinkSpecificationRequisitionsRequestDto";
-import { J3PrcRequisition } from "../../../entity/j3_prc_requisition";
-import {
-  GetSpecificationRequisitionsRequestDto
-} from "../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto";
-import {
-  DeleteSpecificationRequisitionsRequestDto
-} from "../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto";
-import {
-  GetRequisitionsResponseDto
-} from "../../../application-layer/drydock/specification-details/dtos/GetRequisitionsResponseDto";
 import { ODataResult } from "../../../shared/interfaces";
 
 export class SpecificationDetailsRepository {
@@ -121,7 +112,7 @@ export class SpecificationDetailsRepository {
                 .where('sd.active_status = 1')
                 .getSql();
 
-            return await oDataService.getJoinResult(query);
+            return oDataService.getJoinResult(query);
         } catch (error) {
             throw new Error(
                 `Method: GetSpecificationDetails / Class: SpecificationDetailsRepository / Error: ${error}`,
