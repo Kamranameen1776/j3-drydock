@@ -49,7 +49,6 @@ export const specificationDetailsMenuData = [
       }],
       
   },
-  { label: eSpecificationDetailsPageMenuLabels.Attachments, id: eSpecificationDetailsPageMenuIds.Attachments },
-  { label: eSpecificationDetailsPageMenuLabels.AuditTrail, id: eSpecificationDetailsPageMenuIds.AuditTrail }
-
+  { label: eSpecificationDetailsPageMenuLabels.Attachments, id: eSpecificationDetailsPageMenuIds.Attachments, icon: 'icons8-attach' },
+  { label: eSpecificationDetailsPageMenuLabels.AuditTrail, id: eSpecificationDetailsPageMenuIds.AuditTrail, icon: 'icons8-order-history-3' }
 ];
