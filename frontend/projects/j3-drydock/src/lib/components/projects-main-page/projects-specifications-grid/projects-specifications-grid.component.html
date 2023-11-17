@@ -11,7 +11,7 @@
     [setActions]="gridInputs.actions"
     [getStyleByContainer]="true"
     (action)="onGridAction($any($event), $event?.payload)"
-    (matrixRequestChanged)="onMatrixRequestChanged($event)"
+    (matrixRequestChanged)="onMatrixRequestChanged()"
   ></jb-grid>
 </section>
 
