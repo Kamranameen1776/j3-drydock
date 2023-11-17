@@ -46,6 +46,8 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
 
   private canViewDetails = false;
 
+  private canCreateJob = false;
+
   private canEditJob = false;
 
   private canDeleteJob = false;
@@ -62,8 +64,8 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
   }
 
   ngOnInit(): void {
-    this.setGridInputs();
     this.setAccessRights();
+    this.setGridInputs();
     this.setGridRowActions();
     this.setPageTitle();
     this.loadFunctionsTree();
@@ -138,13 +140,14 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
 
   private setGridInputs() {
     this.gridInputs = this.standardJobsGridService.getGridInputs();
+    this.gridInputs.gridButton.show = this.canCreateJob;
   }
 
   private setAccessRights() {
     this.canView = this.standardJobsService.hasAccess(eStandardJobsAccessActions.viewGrid);
     this.canViewDetails = this.standardJobsService.hasAccess(eStandardJobsAccessActions.viewDetail);
 
-    this.gridInputs.gridButton.show = this.standardJobsService.hasAccess(eStandardJobsAccessActions.createJob);
+    this.canCreateJob = this.standardJobsService.hasAccess(eStandardJobsAccessActions.createJob);
     this.canEditJob = this.standardJobsService.hasAccess(eStandardJobsAccessActions.editJob);
     this.canDeleteJob = this.standardJobsService.hasAccess(eStandardJobsAccessActions.deleteJob);
   }
