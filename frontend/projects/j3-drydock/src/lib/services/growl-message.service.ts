@@ -15,9 +15,9 @@ export class GrowlMessageService {
   };
 
   // strange jb-growl behavior - doesn't show fist message other way
-  public growlMessage$ = this._growlMessage$.asObservable().pipe(startWith({}));
+  growlMessage$ = this._growlMessage$.asObservable().pipe(startWith({}));
 
-  public setErrorMessage(errorMsg: string) {
+  setErrorMessage(errorMsg: string) {
     this._growlMessage$.next({
       ...this.defaultMsg,
       severity: eMessagesSeverityValues.Error,
@@ -25,7 +25,7 @@ export class GrowlMessageService {
     });
   }
 
-  public setSuccessMessage(successMsg: string, detail?: string) {
+  setSuccessMessage(successMsg: string, detail?: string) {
     this._growlMessage$.next({
       ...this.defaultMsg,
       severity: eMessagesSeverityValues.Success,
@@ -34,7 +34,7 @@ export class GrowlMessageService {
     });
   }
 
-  public setMessage(msg: IJbGrowl) {
+  setMessage(msg: IJbGrowl) {
     this._growlMessage$.next({
       ...this.defaultMsg,
       ...msg
