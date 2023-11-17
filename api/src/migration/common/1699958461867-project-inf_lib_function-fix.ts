@@ -9,7 +9,7 @@ export class ProjectInfLibFunctionFix1699958461867 implements MigrationInterface
      * Clients          : All
      */
     public className = this.constructor.name;
-    public moduleName = 'dry_dock';
+    public moduleName = 'project';
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
             await queryRunner.query(
