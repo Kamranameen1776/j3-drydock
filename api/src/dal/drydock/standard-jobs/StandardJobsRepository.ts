@@ -225,7 +225,7 @@ export class StandardJobsRepository {
             relations: ['inspection', 'vesselType'],
         });
 
-        if (inspectionIds.length) {
+        if (inspectionIds && inspectionIds.length) {
             const inspectionsToDelete =
                 relations?.inspection.filter((item) => !inspectionIds.includes(item.ID as number)).map((i) => i.ID) ||
                 [];
@@ -251,7 +251,7 @@ export class StandardJobsRepository {
                 await queryRunner.manager.save(StandardJobsSurveyCertificateAuthorityEntity, inspections);
             }
         }
-        if (vesselTypeIds.length) {
+        if (vesselTypeIds && vesselTypeIds.length) {
             const vesselTypesToDelete =
                 relations?.vesselType.filter((item) => !vesselTypeIds.includes(item.ID as number)).map((i) => i.ID) ||
                 [];
