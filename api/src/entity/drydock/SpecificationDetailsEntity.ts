@@ -1,6 +1,6 @@
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { J3PrcRequisition } from './prc/j3_prc_requisition';
+import { J3PrcRequisition } from './';
 
 @Entity('specification_details', { schema: 'dry_dock' })
 export class SpecificationDetailsEntity {

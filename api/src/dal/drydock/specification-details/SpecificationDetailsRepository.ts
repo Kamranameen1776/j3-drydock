@@ -169,14 +169,25 @@ export class SpecificationDetailsRepository {
             .innerJoin('specification_details', 'sd', 'sr.specification_uid = sd.uid AND sd.active_status = 1')
             .leftJoin('Lib_Ports', 'port', 'rq.delivery_port_id = port.PORT_ID')
             .leftJoin('lib_urgency', 'urg', 'urg.uid = rq.urgency_uid')
+            .leftJoin('j3_prc_po', 'po', 'rq.uid = po.requisition_uid')
+            .leftJoin('j3_prc_rfq', 'rfq', 'rq.uid = rfq.requisition_uid')
+            .leftJoin('j3_prc_company_registry', 'cr', 'rfq.supplier_uid = cr.uid')
+            .innerJoin('j3_prc_task_status', 'ts', 'rq.uid = ts.objectUid')
+            .distinct(true)
             .select([
                 'rq.uid as uid',
                 'rq.requisition_number as number',
-                'rq.status_uid as status',
+                'ts.statusId statusId',
+                'ts.statusDisplayName statusDisplayName',
                 'rq.delivery_date as deliveryDate',
                 'port.PORT_NAME as port',
                 'rq.description as description',
                 'urg.urgencys as priority',
+                'po.uid as poUid',
+                'po.poDate as poDate',
+                'po.total_value as amount',
+                'cr.uid as crUid',
+                'po.total_value as value',
             ])
             .where(`sd.uid = '${specificationUid}'`)
             .getSql();
