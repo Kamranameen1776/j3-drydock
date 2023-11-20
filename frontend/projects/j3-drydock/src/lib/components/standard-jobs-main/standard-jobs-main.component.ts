@@ -40,8 +40,6 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
 
   eStandardJobsMainFields = eStandardJobsMainFields;
 
-  eStandardJobsAccessActions = eStandardJobsAccessActions;
-
   canView = false;
 
   private canViewDetails = false;

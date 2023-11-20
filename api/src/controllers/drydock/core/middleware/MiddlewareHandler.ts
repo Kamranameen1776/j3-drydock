@@ -45,8 +45,8 @@ export class MiddlewareHandler {
 
             const method = req.path;
             const userId = AccessRights.getUserIdFromReq(req);
-            const moduleCode = 'dry_dock';
-            const functionCode = this.functionCode || null;
+            const moduleCode = 'project';
+            const functionCode = this.functionCode || 'project';
             const api = 'DryDockAPI';
             const locationId = null;
             const isClient = null;
