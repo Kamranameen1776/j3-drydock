@@ -1,0 +1,26 @@
+.filter-btn-label {
+  text-align: left;
+}
+
+.filter-btn-info {
+  text-align: right;
+}
+
+.group-status-button,
+.group-status-button:focus {
+  border: 0px;
+  outline: 0px;
+  box-shadow: none;
+  width: 100%;
+  padding-left: 0px;
+  padding-right: 0px;
+
+  &:hover,
+  &.active {
+    background-color: var(--jbGreyBlue100);
+  }
+}
+
+.delimiter {
+  border-color: var(--jbBrandBlue500);
+}

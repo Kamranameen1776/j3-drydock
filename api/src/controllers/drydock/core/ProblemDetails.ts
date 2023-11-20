@@ -6,6 +6,8 @@ export enum ProblemDetailsType {
     ApplicationException = 'ApplicationException',
 
     AuthorizationException = 'AuthorizationException',
+
+    ValdidationException = 'ValdidationException',
 }
 
 export class ProblemDetails {

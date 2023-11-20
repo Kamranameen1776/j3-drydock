@@ -1,6 +1,6 @@
 import { IsDateString, IsNumber, IsOptional, IsUUID, MaxLength, MinLength } from 'class-validator';
 
-export class ICreateProjectDto {
+export class CreateProjectDto {
     ProjectCode?: string;
 
     CreatedAtOffice?: number;
@@ -16,7 +16,7 @@ export class ICreateProjectDto {
     ProjectTypeUid: string;
 
     @MinLength(1)
-    @MaxLength(250)
+    @MaxLength(200)
     Subject: string;
 
     @IsUUID('4')

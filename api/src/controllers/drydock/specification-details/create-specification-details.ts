@@ -9,7 +9,7 @@ async function CreateSpecificationDetails(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new CreateSpecificationDetailsCommand();
 
-        return await command.ExecuteAsync(request.body);
+        return command.ExecuteAsync(request);
     });
 }
 

@@ -7,15 +7,18 @@ import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
-import { JMSDTLWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
+import { JmsDtlWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
 import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
 import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
-import { TECLIBWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
-import { TECTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
+import { TecLibWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
+import { TecTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
+import { GroupProjectStatusEntity } from '../../../entity/drydock/GroupProjectStatusEntity';
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
 import { ICreateNewProjectDto } from './dtos/ICreateNewProjectDto';
+import { IGroupProjectStatusByProjectTypeDto } from './dtos/IGroupProjectStatusByProjectTypeDto';
+import { IGroupProjectStatusDto } from './dtos/IGroupProjectStatusDto';
 import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
 import { IProjectsManagersResultDto } from './dtos/IProjectsManagersResultDto';
 import { IProjectStatusResultDto } from './dtos/IProjectStatusResultDto';
@@ -38,8 +41,8 @@ export class ProjectsRepository {
                 'wdetails.StatusDisplayName as ProjectStatusName',
                 'wdetails.WorkflowOrderID',
             ])
-            .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
-            .innerJoin(className(JMSDTLWorkflowConfigDetailsEntity), 'wdetails', 'wdetails.ConfigId = wt.ID')
+            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
+            .innerJoin(className(JmsDtlWorkflowConfigDetailsEntity), 'wdetails', 'wdetails.ConfigId = wt.ID')
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('wdetails.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('wt.ActiveStatus = :activeStatus', { activeStatus: 1 })
@@ -48,6 +51,60 @@ export class ProjectsRepository {
             .distinctOn(['wdetails.WorkflowTypeID'])
             .orderBy('wdetails.WorkflowOrderID')
             .execute();
+
+        return result;
+    }
+
+    /**
+     * Get count of projects with each group status
+     * @returns Count of projects with each group status
+     */
+    public async GetGroupProjectStatuses(): Promise<IGroupProjectStatusDto[]> {
+        const groupProjectStatusRepository = getManager().getRepository(GroupProjectStatusEntity);
+
+        const query = groupProjectStatusRepository
+            .createQueryBuilder('gps')
+            .select(['gps.GroupProjectStatusId as GroupProjectStatusId', 'count(tm.Status) as ProjectWithStatusCount'])
+            .innerJoin(className(ProjectTypeEntity), 'pt', 'gps.ProjectTypeId = pt.WorklistType')
+            .innerJoin(className(ProjectEntity), 'pr', 'pt.uid = pr.ProjectTypeUid')
+            .innerJoin(
+                className(TecTaskManagerEntity),
+                'tm',
+                'tm.uid = pr.TaskManagerUid and tm.Status = gps.ProjectStatusId',
+            )
+            .groupBy('gps.GroupProjectStatusId')
+            .where('gps.ActiveStatus = :activeStatus', { activeStatus: 1 });
+
+        const result = await query.execute();
+
+        return result;
+    }
+
+    /**
+     * Get count of projects with each group status, grouped by project type
+     * @returns Count of projects with each group status, grouped by project type
+     */
+    public async GetGroupProjectStatusesByProjectType(): Promise<IGroupProjectStatusByProjectTypeDto[]> {
+        const groupProjectStatusRepository = getManager().getRepository(GroupProjectStatusEntity);
+
+        const query = groupProjectStatusRepository
+            .createQueryBuilder('gps')
+            .select([
+                'gps.GroupProjectStatusId as GroupProjectStatusId',
+                'gps.ProjectTypeId as ProjectTypeId',
+                'count(tm.Status) as ProjectWithStatusCount',
+            ])
+            .innerJoin(className(ProjectTypeEntity), 'pt', 'gps.ProjectTypeId = pt.WorklistType')
+            .innerJoin(className(ProjectEntity), 'pr', 'pt.uid = pr.ProjectTypeUid')
+            .innerJoin(
+                className(TecTaskManagerEntity),
+                'tm',
+                'tm.uid = pr.TaskManagerUid and tm.Status = gps.ProjectStatusId',
+            )
+            .groupBy('gps.ProjectTypeId, gps.GroupProjectStatusId')
+            .where('gps.ActiveStatus = :activeStatus', { activeStatus: 1 });
+
+        const result = await query.execute();
 
         return result;
     }
@@ -63,11 +120,12 @@ export class ProjectsRepository {
         const result = await projectTypeRepository
             .createQueryBuilder('pt')
             .select([
+                'pt.uid as ProjectTypeUId',
                 'pt.WorklistType as ProjectTypeCode',
                 'wt.WorklistTypeDisplay as ProjectTypeName',
                 'pt.ShortCode as ProjectTypeShortCode',
             ])
-            .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
+            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .execute();
 
@@ -95,17 +153,28 @@ export class ProjectsRepository {
                 'usr.uid AS ProjectManagerUid',
                 'cast(pr.StartDate as datetimeoffset) AS StartDate',
                 'cast(pr.EndDate as datetimeoffset) AS EndDate',
+                'gps.GroupProjectStatusId as GroupProjectStatusId',
+                'vessel.VesselId as VesselId',
+                'pr.VesselUid as VesselUid',
+                'vessel.FleetCode as FleetCode',
             ])
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
             .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = pr.ProjectTypeUid')
-            .innerJoin(className(TECLIBWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
+            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
-            .innerJoin(className(TECTaskManagerEntity), 'tm', 'tm.uid = pr.TaskManagerUid')
+            .innerJoin(className(TecTaskManagerEntity), 'tm', 'tm.uid = pr.TaskManagerUid')
             .innerJoin(
-                className(JMSDTLWorkflowConfigDetailsEntity),
+                className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
                 'wdetails.ConfigId = wt.ID and wdetails.WorkflowTypeID = tm.Status',
+            )
+            .innerJoin(
+                className(GroupProjectStatusEntity),
+                'gps',
+                `gps.ProjectTypeId = pt.WorklistType
+                    and gps.ProjectStatusId = tm.Status
+                    `,
             )
             .where('pr.ActiveStatus = 1')
             .distinct(true)

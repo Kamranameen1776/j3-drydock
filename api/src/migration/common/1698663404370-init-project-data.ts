@@ -1,6 +1,7 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export class initProjectData1698663404370 implements MigrationInterface {
     tableName = 'project';
     schemaName = 'dry_dock';
@@ -76,7 +77,7 @@ export class initProjectData1698663404370 implements MigrationInterface {
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
+    public async down(): Promise<void> {
         try {
             await MigrationUtilsService.migrationLog(
                 'initProjectData1698663404370',

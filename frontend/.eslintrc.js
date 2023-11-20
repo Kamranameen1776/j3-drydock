@@ -26,7 +26,6 @@ module.exports = {
         eqeqeq: ['error', 'always', { null: 'ignore' }],
         'grouped-accessor-pairs': 'error',
         'max-depth': 'error',
-        'max-lines': 'error',
         'no-alert': 'error',
         'no-array-constructor': 'error',
         'no-bitwise': 'error',

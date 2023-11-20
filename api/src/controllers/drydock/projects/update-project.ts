@@ -8,8 +8,8 @@ async function updateProject(req: Request, res: Response) {
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new UpdateProjectCommand();
-        
-        return await command.ExecuteAsync(request.body);
+
+        return command.ExecuteAsync(request.body);
     });
 }
 

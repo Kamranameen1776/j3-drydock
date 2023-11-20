@@ -6,10 +6,10 @@ import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 async function getManagers(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
+    await middlewareHandler.ExecuteAsync(req, res, async () => {
         const command = new GetManagersQuery();
 
-        return await command.ExecuteAsync();
+        return command.ExecuteAsync();
     });
 }
 

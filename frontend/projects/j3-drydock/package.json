@@ -1,11 +1,9 @@
 {
-  "name": "j3-drydock",
-  "version": "0.0.1",
+  "name": "j3-drydock-ng",
+  "version": "3.2311.318",
   "peerDependencies": {
     "@angular/common": "^9.1.13",
-    "@angular/core": "^9.1.13",
-    "@angular/router": "^9.1.13",
-    "jibe-components": "^3.2305.523-1"
+    "@angular/core": "^9.1.13"
   },
   "dependencies": {
     "tslib": "^1.10.0"

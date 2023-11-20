@@ -1,6 +1,7 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export class createProjects1698663404365 implements MigrationInterface {
     tableName = 'project';
     schemaName = 'dry_dock';
@@ -14,7 +15,7 @@ export class createProjects1698663404365 implements MigrationInterface {
                  AND TABLE_SCHEMA = '${this.schemaName}')
 
       
-      
+        BEGIN                
                  CREATE TABLE [${this.schemaName}].[${this.tableName}](
                     [uid] [uniqueidentifier] NOT NULL,
                     [created_at_office] [bit] NOT NULL,

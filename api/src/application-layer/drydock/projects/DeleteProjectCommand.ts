@@ -17,9 +17,6 @@ export class DeleteProjectCommand extends Command<IDeleteProjectDto, void> {
         this.uow = new UnitOfWork();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    protected async AuthorizationHandlerAsync(request: IDeleteProjectDto): Promise<void> {}
-
     protected async ValidationHandlerAsync(request: IDeleteProjectDto): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
@@ -36,7 +33,5 @@ export class DeleteProjectCommand extends Command<IDeleteProjectDto, void> {
             const projectId = await this.projectsRepository.DeleteProject(request.ProjectId, queryRunner);
             return projectId;
         });
-
-        return;
     }
 }

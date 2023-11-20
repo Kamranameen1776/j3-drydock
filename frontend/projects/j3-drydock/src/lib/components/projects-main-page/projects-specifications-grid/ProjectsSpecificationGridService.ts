@@ -7,7 +7,6 @@ import {
   GridRowActions,
   UserService,
   eGridColumnsWidth,
-  eGridRowActions,
   eFieldControlType,
   FormModel,
   SystemLevelFiltersService,
@@ -19,6 +18,7 @@ import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
 import { eProjectsDeleteDisplayNames, eProjectsDeleteFieldNames } from '../../../models/enums/projects-delete.enum';
+import { ProjectsGridOdataKeys } from '../../../models/enums/ProjectsGridOdataKeys';
 
 @Injectable()
 export class ProjectsSpecificationGridService {
@@ -27,6 +27,8 @@ export class ProjectsSpecificationGridService {
   public readonly maxDate: Date = new Date('2100-01-01');
 
   public readonly gridName: string = 'projectsSpecificationGrid';
+
+  public readonly ProjectStatusesFilterName = 'ProjectStatuses';
 
   public readonly dateFormat = this.userService.getUserDetails().Date_Format;
 
@@ -78,7 +80,7 @@ export class ProjectsSpecificationGridService {
       width: eGridColumnsWidth.ShortDescription
     },
     {
-      DisplayText: 'Project manager',
+      DisplayText: 'Project Manager',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectManager),
       IsActive: true,
       IsMandatory: true,
@@ -88,7 +90,7 @@ export class ProjectsSpecificationGridService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Specification',
+      DisplayText: 'Specifications',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.Specification),
       IsActive: true,
       IsMandatory: true,
@@ -160,7 +162,65 @@ export class ProjectsSpecificationGridService {
     show: true
   };
 
+  private filterListsSet: FilterListSet = {
+    ProjectTypes: {
+      webApiRequest: this.projectsService.getProjectTypesRequest(),
+      type: 'multiselect',
+      listValueKey: 'ProjectTypeCode',
+      odataKey: ProjectsGridOdataKeys.ProjectTypeCode
+    },
+    ProjectsManages: {
+      webApiRequest: this.projectsService.getProjectsManagersRequest(),
+      type: 'multiselect',
+      listValueKey: 'ManagerId',
+      odataKey: ProjectsGridOdataKeys.ProjectManagerUid
+    },
+    ShipsYards: {
+      webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
+      type: 'multiselect',
+      listValueKey: 'ShipYardId',
+      odataKey: ProjectsGridOdataKeys.ShipYardId
+    },
+    ProjectStatuses: {
+      data: () => this.projectsService.getProjectStatuses(),
+      type: 'multiselect',
+      odataKey: ProjectsGridOdataKeys.ProjectStatusId,
+      listValueKey: 'ProjectStatusId'
+    },
+    StartDate: {
+      odataKey: ProjectsGridOdataKeys.StartDate,
+      alterKey: 'StartDate',
+      type: 'date',
+      dateMethod: 'ge'
+    },
+    EndDate: {
+      odataKey: ProjectsGridOdataKeys.EndDate,
+      alterKey: 'EndDate',
+      type: 'date',
+      dateMethod: 'le'
+    },
+    Fleets: {
+      webApiRequest: this.slfService.getSLFDetails(Datasource.Fleets),
+      type: 'multiselect',
+      listValueKey: 'FleetCode',
+      odataKey: ProjectsGridOdataKeys.FleetCode
+    }
+  };
+
   public filters: Filter[] = [
+    {
+      Active_Status_Config_Filter: true,
+      DisplayText: 'Fleet',
+      Active_Status: true,
+      FieldName: 'Fleets',
+      DisplayCode: 'FleetName',
+      ValueCode: 'FleetCode',
+      FieldID: 0,
+      default: true,
+      CoupleID: 0,
+      CoupleLabel: 'Project',
+      gridName: this.gridName
+    },
     {
       Active_Status_Config_Filter: true,
       DisplayText: 'Project Type',
@@ -191,7 +251,7 @@ export class ProjectsSpecificationGridService {
       Active_Status: true,
       Active_Status_Config_Filter: true,
       DisplayText: 'Status',
-      FieldName: 'ProjectStatuses',
+      FieldName: this.ProjectStatusesFilterName,
       DisplayCode: 'ProjectStatusName',
       ValueCode: 'ProjectStatusId',
       FieldID: 2,
@@ -247,61 +307,13 @@ export class ProjectsSpecificationGridService {
     }
   ];
 
-  private filterListsSet: FilterListSet = {
-    ProjectTypes: {
-      webApiRequest: this.projectsService.getProjectTypesRequest(),
-      type: 'multiselect',
-      listValueKey: 'ProjectTypeCode',
-      odataKey: 'ProjectTypeCode'
-    },
-    ProjectsManages: {
-      webApiRequest: this.projectsService.getProjectsManagersRequest(),
-      type: 'multiselect',
-      listValueKey: 'ManagerId',
-      odataKey: 'ProjectManagerUid'
-    },
-    ShipsYards: {
-      webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
-      type: 'multiselect',
-      listValueKey: 'ShipYardId',
-      odataKey: 'ShipYardId'
-    },
-    ProjectStatuses: {
-      webApiRequest: this.projectsService.getProjectStatusesRequest(),
-      type: 'multiselect',
-      odataKey: 'ProjectStatusId',
-      listValueKey: 'ProjectStatusId'
-    },
-    StartDate: {
-      odataKey: 'StartDate',
-      alterKey: 'StartDate',
-      type: 'date',
-      dateMethod: 'ge'
-    },
-    EndDate: {
-      odataKey: 'EndDate',
-      alterKey: 'EndDate',
-      type: 'date',
-      dateMethod: 'le'
-    }
-  };
-
   private searchFields: string[] = [
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.Subject),
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectCode),
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectTypeName),
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectManager)
   ];
-  private gridActions: GridRowActions[] = [
-    {
-      name: eGridRowActions.Delete,
-      label: 'Delete'
-    },
-    {
-      name: eGridRowActions.Edit,
-      label: 'Edit'
-    }
-  ];
+  private gridActions: GridRowActions[] = [];
 
   public createProjectFormId = 'projectCreate';
 
@@ -353,7 +365,8 @@ export class ProjectsSpecificationGridService {
               gridColEnd: 3,
               listRequest: {
                 webApiRequest: this.slfService.getSLFDetails(Datasource.Fleets),
-                labelKey: 'FleetName'
+                labelKey: 'FleetName',
+                valueKey: 'FleetCode'
               }
             },
             [eProjectsCreateFieldNames.Vessel]: {
@@ -361,7 +374,7 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Dropdown,
               sectionID: this.createProjectFormId,
               enabled: true,
-              validatorRequired: false,
+              validatorRequired: true,
               gridRowStart: 2,
               gridRowEnd: 3,
               gridColStart: 1,
@@ -383,9 +396,9 @@ export class ProjectsSpecificationGridService {
               gridColStart: 1,
               gridColEnd: 3,
               listRequest: {
-                webApiRequest: this.projectsService.getAllProjectTypesRequest(),
-                labelKey: 'WorklistType',
-                valueKey: 'uid'
+                webApiRequest: this.projectsService.getProjectTypesRequest(),
+                labelKey: 'ProjectTypeName',
+                valueKey: 'ProjectTypeUId'
               }
             },
             [eProjectsCreateFieldNames.Subject]: {
@@ -393,6 +406,8 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Text,
               sectionID: this.createProjectFormId,
               enabled: true,
+              minLength: 1,
+              maxLength: 200,
               validatorRequired: true,
               gridRowStart: 4,
               gridRowEnd: 5,
@@ -404,7 +419,7 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Dropdown,
               sectionID: this.createProjectFormId,
               enabled: true,
-              validatorRequired: false,
+              validatorRequired: true,
               gridRowStart: 5,
               gridRowEnd: 6,
               gridColStart: 1,
@@ -424,7 +439,8 @@ export class ProjectsSpecificationGridService {
               gridRowStart: 6,
               gridRowEnd: 7,
               gridColStart: 1,
-              gridColEnd: 3
+              gridColEnd: 3,
+              calendarMin: this.minDate
             },
             [eProjectsCreateFieldNames.EndDate]: {
               label: eProjectsCreateDisplayNames.EndDate,
@@ -435,7 +451,8 @@ export class ProjectsSpecificationGridService {
               gridRowStart: 7,
               gridRowEnd: 8,
               gridColStart: 1,
-              gridColEnd: 3
+              gridColEnd: 3,
+              calendarMax: this.maxDate
             }
           }
         }

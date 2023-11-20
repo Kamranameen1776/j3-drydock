@@ -1,4 +1,3 @@
-export interface DeleteSpecificationDetailsDto {
+export class DeleteSpecificationDetailsDto {
     uid: string;
-    deletedAt: Date;
 }

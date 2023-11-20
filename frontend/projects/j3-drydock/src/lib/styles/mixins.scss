@@ -1,1 +1,50 @@
 @import '~jibe-components/assets/sass/theme-figma';
+
+@mixin jb-tabview {
+  .jb-tabview {
+    .ui-tabview .ui-tabview-nav {
+      margin-bottom: 10px;
+    }
+
+    .ui-tabview .ui-tabview-nav li a {
+      background: transparent !important;
+    }
+
+    .ui-tabview.ui-tabview-top > .ui-tabview-nav {
+      border-bottom: 1px solid $jibe-grey-blue-200 !important;
+    }
+
+    .ui-tabview.ui-tabview-top > .ui-tabview-nav > li {
+      border: none;
+      background: transparent !important;
+      border-bottom: 1px solid transparent !important;
+      font-weight: 400;
+      margin-bottom: 0 !important;
+      margin-top: -1px;
+
+      &.ui-state-disabled {
+        pointer-events: none;
+      }
+
+      a {
+        color: $jibe-grey-blue-400;
+        font-size: 14px;
+        padding: 0 12px 0 12px;
+      }
+
+      &:hover {
+        border-bottom-color: $jibe-grey-blue-400 !important;
+        background-color: transparent !important;
+      }
+
+      &.ui-tabview-selected {
+        border-bottom-color: $jibe-brand-blue-500 !important;
+
+        a {
+          color: $jibe-brand-blue-500;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}

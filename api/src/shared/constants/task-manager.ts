@@ -10,4 +10,15 @@ export const TaskManagerConstants = {
             Completed: 'Completeed',
         },
     },
+    specification: {
+        wlType: 'dry_dock_spec',
+        module_code: 'tm_drydock_spec',
+        function_code: 'tm_drydock_spec',
+        status: {
+            Raised: 'Raised',
+            Approved: 'Approved',
+            Rejected: 'Rejected',
+            Completed: 'Completed',
+        },
+    },
 };

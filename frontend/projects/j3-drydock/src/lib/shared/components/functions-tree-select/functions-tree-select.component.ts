@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Component, Input, Optional } from '@angular/core';
-import { CentralizedDataService, JmsTechApiService } from 'jibe-components';
-import { FunctionsTreeNode } from '../../../models/interfaces/functions-tree-node';
+import { Component, Input, ViewChild } from '@angular/core';
+import { InputWithDlgService, JbTreeComponent } from 'jibe-components';
+import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
+import { TreeNode } from 'primeng';
+import { FunctionsTreeService } from '../../../services/functions-tree.service';
 
 @Component({
   selector: 'jb-drydock-functions-tree-select',
@@ -9,24 +10,24 @@ import { FunctionsTreeNode } from '../../../models/interfaces/functions-tree-nod
   styleUrls: ['./functions-tree-select.component.scss']
 })
 export class FunctionsTreeSelectComponent {
-  @Input() treeData: FunctionsTreeNode[] = [];
+  @Input() treeData: FunctionsFlatTreeNode[] = [];
+  @Input() formId!: string;
+  @Input() fieldName!: string;
 
-  // TODO wait for j-component version with 'inputWithDlg' type in form field
+  @ViewChild('treeRef') treeRef: JbTreeComponent;
+
   constructor(
-    private techApiSvc: JmsTechApiService // @Optional() private inputFunctionsTreeService: InputWithDlgService
+    private inputFunctionsTreeService: InputWithDlgService,
+    private functionsTreeService: FunctionsTreeService
   ) {}
 
-  public onGetSelected({ data }: { data: FunctionsTreeNode }) {
-    if (data.machinery_uid && data.Child_ID) {
-      this.getEquipmentLocationPath(data);
-    }
-  }
+  public onSelected(e: TreeNode) {
+    const data = e.data as FunctionsFlatTreeNode;
 
-  private getEquipmentLocationPath(node: FunctionsTreeNode) {
-    this.techApiSvc.getJobLinkedEquipmentLocationPath(node.machinery_uid, node.Child_ID).subscribe((res) => {
-      const value: FunctionsTreeNode = { ...node, jb_value_label: res.functionPath };
-      // TODO wait for j-component version with 'inputWithDlg' type in form field
-      // this.inputFunctionsTreeService?.selected$.next(value);
+    this.inputFunctionsTreeService.changed$.next({
+      formId: this.formId,
+      fieldName: this.fieldName,
+      value: { ...data, jb_value_label: this.functionsTreeService.getPath(e) }
     });
   }
 }

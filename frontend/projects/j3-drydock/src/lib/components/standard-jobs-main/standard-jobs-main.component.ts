@@ -1,72 +1,102 @@
-import { StandardJobResult } from './../../models/interfaces/standard-jobs';
+import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
+import { StandardJobResult } from '../../models/interfaces/standard-jobs';
 import { Component, OnInit } from '@angular/core';
-import {
-  CentralizedDataService,
-  eGridRefreshType,
-  eGridRowActions,
-  GridAction,
-  GridRowActions,
-  GridService,
-  JmsTechApiService
-} from 'jibe-components';
+import { eGridRefreshType, eGridRowActions, GridAction, GridRowActions, GridService } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
-import { StandardJobsGridService } from './StandardJobsGridService';
-import { of } from 'rxjs';
-import { FunctionsTreeNode } from '../../models/interfaces/functions-tree-node';
-import { StandardJobUpsertFormService } from './StandardJobUpsertFormService';
+import { StandardJobsGridService } from './standard-jobs-grid.service';
+import { FunctionsFlatTreeNode } from '../../models/interfaces/functions-tree-node';
+import { StandardJobUpsertFormService } from './upsert-standard-job-form/standard-job-upsert-form.service';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
+import { getSmallPopup } from '../../models/constants/popup';
+import { StandardJobsService } from '../../services/standard-jobs.service';
+import { GrowlMessageService } from '../../services/growl-message.service';
+import { Title } from '@angular/platform-browser';
+import { eStandardJobsAccessActions } from '../../models/enums/access-actions.enum';
 
 @Component({
   selector: 'jb-standard-jobs-main',
   templateUrl: './standard-jobs-main.component.html',
   styleUrls: ['./standard-jobs-main.component.scss'],
-  providers: [StandardJobsGridService]
+  providers: [StandardJobsGridService, GrowlMessageService]
 })
 export class StandardJobsMainComponent extends UnsubscribeComponent implements OnInit {
-  public gridInputs: GridInputsWithRequest;
+  gridInputs: GridInputsWithRequest;
+
+  isUpsertPopupVisible = false;
+
+  isConfirmDeleteVisible = false;
+
+  currentRow: StandardJobResult;
+
+  gridRowActions: GridRowActions[] = [];
+
+  confirmationPopUp = {
+    ...getSmallPopup(),
+    dialogHeader: 'Delete Standard Job'
+  };
+
+  growlMessage$ = this.growlMessageService.growlMessage$;
+
+  eStandardJobsMainFields = eStandardJobsMainFields;
+
+  canView = false;
+
+  private canViewDetails = false;
+
+  private canCreateJob = false;
+
+  private canEditJob = false;
+
+  private canDeleteJob = false;
 
   constructor(
     private standardJobsGridService: StandardJobsGridService,
+    private standardJobsService: StandardJobsService,
     private upsertFormService: StandardJobUpsertFormService,
     private gridService: GridService,
-    private cds: CentralizedDataService,
-    private techApiSvc: JmsTechApiService
+    private growlMessageService: GrowlMessageService,
+    private title: Title
   ) {
     super();
   }
-
-  public isUpsertPopupVisible = false;
-
-  public currentRow: StandardJobResult;
-
-  public gridRowActions: GridRowActions[] = [];
 
   ngOnInit(): void {
     this.setAccessRights();
     this.setGridInputs();
     this.setGridRowActions();
+    this.setPageTitle();
     this.loadFunctionsTree();
   }
 
-  public onGridAction({ type, payload }: GridAction<string, unknown>): void {
+  onGridAction({ type, payload }: GridAction<string, unknown>): void {
     switch (type) {
-      case this.gridInputs.gridButton.label:
-        this.isUpsertPopupVisible = true;
-        break;
       case eGridRowActions.Edit:
-        this.isUpsertPopupVisible = true;
-        this.currentRow = <StandardJobResult>payload;
+        this.editRow(<StandardJobResult>payload);
         break;
+
+      case this.gridInputs.gridButton.label:
+        this.createNewRow();
+        break;
+
       case eGridRowActions.Delete:
-        this.delete(<StandardJobResult>payload);
+        this.deleteRow(<StandardJobResult>payload);
         break;
+
       default:
         break;
     }
   }
 
-  public onCloseUpsertPopup(hasSaved: boolean) {
+  onConfirmDeleteOk() {
+    this.deleteStandardJob();
+  }
+
+  onConfirmDeleteCancel() {
+    this.isConfirmDeleteVisible = false;
+  }
+
+  onCloseUpsertPopup(hasSaved: boolean) {
     this.isUpsertPopupVisible = false;
     this.currentRow = undefined;
 
@@ -75,53 +105,73 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     }
   }
 
+  private createNewRow() {
+    this.isUpsertPopupVisible = true;
+  }
+
+  private editRow(row: StandardJobResult) {
+    this.currentRow = row;
+    this.isUpsertPopupVisible = true;
+  }
+
+  private deleteRow(row: StandardJobResult) {
+    this.isConfirmDeleteVisible = true;
+    this.currentRow = row;
+  }
+
   private setGridRowActions(): void {
     this.gridRowActions.length = 0;
+    this.gridRowActions.push({ name: eGridRowActions.DoubleClick });
 
-    // TODO Access rigths
-    this.gridRowActions.push({
-      name: eGridRowActions.Edit
-    });
+    if (this.canEditJob) {
+      this.gridRowActions.push({
+        name: eGridRowActions.Edit
+      });
+    }
 
-    // TODO Access rigths
-    this.gridRowActions.push({
-      name: eGridRowActions.Delete
-    });
+    if (this.canDeleteJob) {
+      this.gridRowActions.push({
+        name: eGridRowActions.Delete
+      });
+    }
   }
 
   private setGridInputs() {
     this.gridInputs = this.standardJobsGridService.getGridInputs();
+    this.gridInputs.gridButton.show = this.canCreateJob;
   }
 
   private setAccessRights() {
-    //TODO
+    this.canView = this.standardJobsService.hasAccess(eStandardJobsAccessActions.viewGrid);
+    this.canViewDetails = this.standardJobsService.hasAccess(eStandardJobsAccessActions.viewDetail);
+
+    this.canCreateJob = this.standardJobsService.hasAccess(eStandardJobsAccessActions.createJob);
+    this.canEditJob = this.standardJobsService.hasAccess(eStandardJobsAccessActions.editJob);
+    this.canDeleteJob = this.standardJobsService.hasAccess(eStandardJobsAccessActions.deleteJob);
   }
 
-  private delete(record: StandardJobResult) {
-    // TODO, check status if inActive - return
-    of(record).subscribe(() => {
+  private loadFunctionsTree() {
+    this.standardJobsService
+      .getStandardJobFunctions()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((flatTree) => {
+        this.setFunctionsFlatTree(flatTree);
+      });
+  }
+
+  private setFunctionsFlatTree(flatTree: FunctionsFlatTreeNode[]) {
+    this.upsertFormService.functionsFlatTree$.next(flatTree);
+  }
+
+  private deleteStandardJob() {
+    this.standardJobsService.deleteStandardJob(this.currentRow.uid).subscribe(() => {
+      this.isConfirmDeleteVisible = false;
+      this.currentRow = undefined;
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);
     });
   }
 
-  private loadFunctionsTree() {
-    // TODO fixme to generic request with no vessel_uid
-    const vesselUid = this.cds.userDetails?.vessel_uid ?? '3EEF2E1B-2533-45C7-82C7-C13D6AA79559';
-    if (vesselUid) {
-      this.techApiSvc
-        .getComponentFunctionTreeData(vesselUid)
-        .pipe(takeUntil(this.unsubscribe$))
-        .subscribe((res) => {
-          this.setFunctionsTree(<FunctionsTreeNode[]>res.records);
-        });
-    }
-  }
-
-  private setFunctionsTree(records: FunctionsTreeNode[]) {
-    this.upsertFormService.functionsTree$.next(
-      records.map((rec) => {
-        return { ...rec, selectable: rec.isParentComponent === 3 };
-      })
-    );
+  private setPageTitle() {
+    this.title.setTitle('Standard Jobs');
   }
 }

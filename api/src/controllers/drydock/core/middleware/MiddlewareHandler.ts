@@ -3,23 +3,35 @@ import { Request, Response } from 'express';
 import * as httpStatus from 'http-status-codes';
 import { AccessRights } from 'j2utils';
 
-import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
-import { AuthorizationException } from '../../../../bll/drydock/core/exceptions/AuthorizationException';
-import { BusinessException } from '../../../../bll/drydock/core/exceptions/BusinessException';
+import {
+    ApplicationException,
+    AuthorizationException,
+    BusinessException,
+} from '../../../../bll/drydock/core/exceptions';
 import { log } from '../../../../logger';
 import { ProblemDetails, ProblemDetailsType } from '../ProblemDetails';
 import { ExceptionLogDataDto } from './ExceptionLogDataDto';
 
-type NextFunction<TResult> = (req: Request, res: Response) => Promise<TResult>;
+type ResultGetterRequestHandler<TResult> = (req: Request, res: Response) => Promise<TResult>;
 
 export class MiddlewareHandler {
-    public async ExecuteAsync<TResult>(req: Request, res: Response, func: NextFunction<TResult>) {
-        await this.ExceptionHandler(req, res, func);
+    functionCode?: string;
+
+    constructor(functionCode?: string) {
+        this.functionCode = functionCode;
     }
 
-    private async ExceptionHandler<TResult>(req: Request, res: Response, next: NextFunction<TResult>): Promise<void> {
+    public async ExecuteAsync<TResult>(req: Request, res: Response, getResult: ResultGetterRequestHandler<TResult>) {
+        await this.ExceptionHandler(req, res, getResult);
+    }
+
+    private async ExceptionHandler<TResult>(
+        req: Request,
+        res: Response,
+        getResult: ResultGetterRequestHandler<TResult>,
+    ): Promise<void> {
         try {
-            const result = await next(req, res);
+            const result = await getResult(req, res);
 
             res.status(httpStatus.OK).json(result);
 
@@ -31,11 +43,11 @@ export class MiddlewareHandler {
             const logData = new ExceptionLogDataDto();
             logData.Stack = error.stack;
 
-            const method = req.method;
+            const method = req.path;
             const userId = AccessRights.getUserIdFromReq(req);
-            const moduleCode = 'dry_dock';
-            const functionCode = null;
-            const api = req.path;
+            const moduleCode = 'project';
+            const functionCode = this.functionCode || 'project';
+            const api = 'DryDockAPI';
             const locationId = null;
             const isClient = null;
 
@@ -53,7 +65,7 @@ export class MiddlewareHandler {
                 // Business exceptions it is expected behavior
                 log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
 
-                res.status(httpStatus.BAD_REQUEST).json(details.params);
+                res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.params);
 
                 return;
             } else if (exception instanceof AuthorizationException) {
@@ -83,7 +95,7 @@ export class MiddlewareHandler {
 
                 return;
             } else if (exception instanceof Array && exception.length && exception[0] instanceof ValidationError) {
-                //TODO: think how to refactor it, and if we need to log this exceptions into db;
+                //TODO: think how to refactor it;
                 const error = exception[0];
                 let message = 'Valdidation request has failed';
                 let property = 'Something';
@@ -94,6 +106,14 @@ export class MiddlewareHandler {
                         message = error.constraints[keys[0]];
                     }
                 }
+
+                //log to DB
+                const details = new ProblemDetails({
+                    title: 'Request validation error',
+                    type: ProblemDetailsType.ValdidationException,
+                });
+                logData.Details = details;
+                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
 
                 res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
                     title: 'Request validation error',

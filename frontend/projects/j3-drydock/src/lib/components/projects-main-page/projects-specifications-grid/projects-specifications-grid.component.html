@@ -1,4 +1,7 @@
-<section class="proects-specifications-grid">
+<section
+  class="proects-specifications-grid"
+  *ngIf="canView"
+>
   <jb-grid
     #projectsGrid
     [gridName]="gridInputs.gridName"
@@ -11,6 +14,7 @@
     [setActions]="gridInputs.actions"
     [getStyleByContainer]="true"
     (action)="onGridAction($any($event), $event?.payload)"
+    (matrixRequestChanged)="onMatrixRequestChanged()"
   ></jb-grid>
 </section>
 
@@ -35,7 +39,6 @@
   <ng-container jb-dialog-footer>
     <jb-dialog-footer
       [isOkBtnDisabled]="saveNewProjectButtonDisabled$ | async"
-      [isCancelBtnDisabled]="isSaving"
       [okBtnLabel]="CreateBtnLabel"
       (ok)="saveNewProject()"
       (cancel)="showCreateNewDialog(false)"
