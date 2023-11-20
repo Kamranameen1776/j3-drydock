@@ -114,7 +114,7 @@ export class StandardJobsRepository {
             where: {
                 uid: standardJobUid,
             },
-            relations: ['sub_items'],
+            relations: ['subItems'],
         });
         const newSubItems = data.subItems.map((item) => item.uid);
         const existingSubItems = standardJob?.subItems.map((item) => item.uid) || [];
@@ -205,7 +205,7 @@ export class StandardJobsRepository {
                     'CONCAT(sub_items.code, sub_items.number) as code,' +
                     'sub_items.subject as subject,' +
                     'sub_items.description as description,' +
-                    'sub_items.standard_job_uid as standard_job_uid',
+                    'sub_items.standard_job_uid as standardJobUid',
             )
             .where('sub_items.active_status = 1')
             .andWhere(`sub_items.standard_job_uid IN (${uidString})`)
@@ -222,7 +222,7 @@ export class StandardJobsRepository {
             where: {
                 uid: standardJobUid,
             },
-            relations: ['inspection', 'vessel_type'],
+            relations: ['inspection', 'vesselType'],
         });
 
         if (inspectionIds.length) {
