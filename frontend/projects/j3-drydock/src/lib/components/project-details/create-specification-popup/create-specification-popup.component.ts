@@ -55,6 +55,7 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
   private closePopup(isSaved = false) {
     this.closeDialog.emit(isSaved);
     this.isPopupValid = false;
+    this.popupForm?.formGroup.reset();
   }
 
   private save() {
