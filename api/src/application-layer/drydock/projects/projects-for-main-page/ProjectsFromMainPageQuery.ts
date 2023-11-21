@@ -57,6 +57,7 @@ export class ProjectsFromMainPageQuery extends Query<Request, ODataResult<IProje
                     Subject: record.Subject,
                     StartDate: record.StartDate,
                     EndDate: record.EndDate,
+                    TaskManagerUid: record.TaskManagerUid,
                 };
 
                 return project;
