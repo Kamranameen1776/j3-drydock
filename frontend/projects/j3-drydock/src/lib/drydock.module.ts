@@ -38,6 +38,8 @@ import { SelectLinkYardGridComponent } from './components/project-details/yard/r
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
 import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
+import { SpecificationGeneralInformationComponent } from './components/specification-details/specification-general-information/specification-general-information.component';
+import { SpecificationGeneralInformationInputservice } from './components/specification-details/specification-general-information/specification-general-information-inputs';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -76,7 +78,8 @@ export function winEnv(): unknown {
     CreateSpecificationPopupComponent,
     SpecificationFormComponent,
     SpecificationDetailsComponent,
-    SpecificationDetailsHeaderComponent
+    SpecificationDetailsHeaderComponent,
+    SpecificationGeneralInformationComponent
   ],
   imports: [
     CommonModule,
@@ -100,7 +103,8 @@ export function winEnv(): unknown {
     ProjectsService,
     SpecificationDetailsService,
     LeftPanelFilterService,
-    SpecificationCreateFormService
+    SpecificationCreateFormService,
+    SpecificationGeneralInformationInputservice,
   ],
   exports: [],
   entryComponents: []

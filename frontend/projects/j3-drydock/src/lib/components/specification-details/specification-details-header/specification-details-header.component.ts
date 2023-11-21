@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { GetSpecificationDetailsDto } from '../../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { SpecificationDetailsHeaderInputservice } from './specification-details-header-inputs';
 import { takeUntil } from 'rxjs/operators';
@@ -18,7 +18,10 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
   saveButtonDisabled = true;
   topDetailsData: TopFieldsData;
 
-  constructor(private readonly headerInputService: SpecificationDetailsHeaderInputservice) {
+  constructor(
+    private readonly headerInputService: SpecificationDetailsHeaderInputservice,
+    private cd: ChangeDetectorRef
+  ) {
     super();
   }
 
@@ -34,6 +37,7 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
         data.detailedData.assigneeUid = this.specificationDetailsInfo.ProjectManagerUid;
         this.topDetailsData = data;
       });
+    this.cd.markForCheck();
   }
 
   onValueChange(event) {

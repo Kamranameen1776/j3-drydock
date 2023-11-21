@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, WebApiRequest, eCrud } from 'jibe-components';
+import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { GetSpecificationDetailsDto } from '../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
-
+import { map } from 'rxjs/operators';
+import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../models/interfaces/functions-tree-node';
+import { eSpecificationDetailsGeneralInformationFields } from '../../models/enums/specification-details-general-information.enum';
+import f from 'odata-filter-builder';
 @Injectable({
   providedIn: 'root'
 })
@@ -38,5 +41,35 @@ export class SpecificationDetailsService {
       body: data
     };
     return this.apiRequestService.sendApiReq(request);
+  }
+
+  public getPriorityRequest() {
+    const apiRequest: WebApiRequest = {
+      apiBase: eApiBase.MasterAPI,
+      entity: eEntities.Library,
+      action: 'get-library-data-by-code',
+      params: `libraryCode=Urgencys`,
+      crud: eCrud.Post,
+      odata: {
+        count: 'false',
+        filter: f().eq('active_status', true)
+      }
+    };
+    return apiRequest;
+  }
+
+  public getStandardJobsFiltersRequest(fieldName: eSpecificationDetailsGeneralInformationFields) {
+    const apiRequest: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'standard-jobs/get-standard-jobs-filters',
+      crud: eCrud.Post,
+      entity: 'drydock',
+      body: {
+        key: fieldName
+      }
+    };
+    return apiRequest;
   }
 }
