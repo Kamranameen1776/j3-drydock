@@ -21,10 +21,10 @@ export class SpecificationDetailsEntity {
 
     @Column('varchar', {
         nullable: false,
-        name: 'function_path',
+        name: 'function',
         length: 250,
     })
-    FunctionPath: string;
+    Function: string;
 
     @Column('varchar', {
         nullable: true,

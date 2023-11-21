@@ -54,7 +54,7 @@ export class SpecificationDetailsRepository {
                 'tm.Code as SpecificationCode',
                 'tm.Status as Status',
                 'spec.FunctionUid as FunctionUid',
-                'spec.FunctionPath as FunctionPath',
+                'spec.Function as "Function"',
                 'spec.AccountCode as AccountCode',
 
                 //TODO: clarify where it's from

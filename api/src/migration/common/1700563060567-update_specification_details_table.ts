@@ -15,10 +15,10 @@ export class UpdateSpecificationDetailsTable1700563060567 implements MigrationIn
             await queryRunner.query(
                 `
                 ALTER TABLE [dry_dock].[specification_details]
-                ADD function_path VARCHAR(250);
+                ADD [function] VARCHAR(250);
 
                 UPDATE [dry_dock].[specification_details]
-                SET [function_path] = 'Electrical > Miscellaneous'
+                SET [function] = 'Electrical > Miscellaneous'
             `,
             );
 
@@ -46,7 +46,7 @@ export class UpdateSpecificationDetailsTable1700563060567 implements MigrationIn
             await queryRunner.query(`
         
             ALTER TABLE [dry_dock].[specification_details]
-            DROP COLUMN function_path;
+            DROP COLUMN [function];
         `);
 
             await MigrationUtilsService.migrationLog(
