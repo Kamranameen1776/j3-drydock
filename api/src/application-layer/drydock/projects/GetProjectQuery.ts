@@ -55,6 +55,7 @@ export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordD
             Subject: record.Subject,
             StartDate: record.StartDate,
             EndDate: record.EndDate,
+            TaskManagerUid: record.TaskManagerUid,
         };
 
         return project;
