@@ -1,6 +1,7 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export class v32311422CreateTableScriptOfSpecificationDetails1697522126447 implements MigrationInterface {
     /**
      * @description Create table script of 'specification_details'

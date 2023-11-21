@@ -1,0 +1,11 @@
+:host {
+    ::ng-deep {
+        .ui-table-scrollable-body {
+            height: 250px !important;
+        }
+    }
+
+    .a-readonly {
+        pointer-events: none !important;
+    }
+}

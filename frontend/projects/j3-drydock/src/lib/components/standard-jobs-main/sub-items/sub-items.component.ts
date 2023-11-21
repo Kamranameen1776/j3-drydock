@@ -35,7 +35,7 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
 
   gridRowActions: GridRowActions[] = [];
 
-  subItems: SubItem[];
+  subItems: SubItem[] = [];
 
   confirmationPopUp = {
     ...getSmallPopup(),

@@ -20,7 +20,7 @@ const routes: Routes = [
     runGuardsAndResolvers: 'paramsOrQueryParamsChange'
   },
   {
-    path: 'project',
+    path: 'project/:projectId',
     component: ProjectDetailsComponent,
     canActivate: [AuthGuardService],
     runGuardsAndResolvers: 'paramsOrQueryParamsChange'

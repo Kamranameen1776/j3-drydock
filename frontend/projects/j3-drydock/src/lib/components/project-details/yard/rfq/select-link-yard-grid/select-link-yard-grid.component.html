@@ -1,0 +1,11 @@
+<jb-grid
+  [gridName]="gridInputs.gridName"
+  [colData]="gridInputs.columns"
+  [tableData]="items | staticGridSearch: (searchTerm$ | async) : searchFn"
+  [getStyleByContainer]="true"
+  [isDisplayAdvancedFilter]="false"
+  [isDisplayAdvancedSettings]="false"
+  [selectionMode]="'multiple'"
+  [matrixSelectedValue]="selected"
+  (matrixSelection)="onSelect($event)"
+></jb-grid>

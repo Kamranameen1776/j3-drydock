@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
 import { StandardJobResult } from '../../models/interfaces/standard-jobs';
 import { Component, OnInit } from '@angular/core';
@@ -13,6 +12,7 @@ import { getSmallPopup } from '../../models/constants/popup';
 import { StandardJobsService } from '../../services/standard-jobs.service';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { Title } from '@angular/platform-browser';
+import { eStandardJobsAccessActions } from '../../models/enums/access-actions.enum';
 
 @Component({
   selector: 'jb-standard-jobs-main',
@@ -40,6 +40,16 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
 
   eStandardJobsMainFields = eStandardJobsMainFields;
 
+  canView = false;
+
+  private canViewDetails = false;
+
+  private canCreateJob = false;
+
+  private canEditJob = false;
+
+  private canDeleteJob = false;
+
   constructor(
     private standardJobsGridService: StandardJobsGridService,
     private standardJobsService: StandardJobsService,
@@ -61,13 +71,12 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
 
   onGridAction({ type, payload }: GridAction<string, unknown>): void {
     switch (type) {
-      case eGridRowActions.DoubleClick:
       case eGridRowActions.Edit:
         this.editRow(<StandardJobResult>payload);
         break;
 
       case this.gridInputs.gridButton.label:
-        this.isUpsertPopupVisible = true;
+        this.createNewRow();
         break;
 
       case eGridRowActions.Delete:
@@ -96,6 +105,10 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     }
   }
 
+  private createNewRow() {
+    this.isUpsertPopupVisible = true;
+  }
+
   private editRow(row: StandardJobResult) {
     this.currentRow = row;
     this.isUpsertPopupVisible = true;
@@ -110,23 +123,31 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     this.gridRowActions.length = 0;
     this.gridRowActions.push({ name: eGridRowActions.DoubleClick });
 
-    // TODO Access rights
-    this.gridRowActions.push({
-      name: eGridRowActions.Edit
-    });
+    if (this.canEditJob) {
+      this.gridRowActions.push({
+        name: eGridRowActions.Edit
+      });
+    }
 
-    // TODO Access rights
-    this.gridRowActions.push({
-      name: eGridRowActions.Delete
-    });
+    if (this.canDeleteJob) {
+      this.gridRowActions.push({
+        name: eGridRowActions.Delete
+      });
+    }
   }
 
   private setGridInputs() {
     this.gridInputs = this.standardJobsGridService.getGridInputs();
+    this.gridInputs.gridButton.show = this.canCreateJob;
   }
 
   private setAccessRights() {
-    //TODO
+    this.canView = this.standardJobsService.hasAccess(eStandardJobsAccessActions.viewGrid);
+    this.canViewDetails = this.standardJobsService.hasAccess(eStandardJobsAccessActions.viewDetail);
+
+    this.canCreateJob = this.standardJobsService.hasAccess(eStandardJobsAccessActions.createJob);
+    this.canEditJob = this.standardJobsService.hasAccess(eStandardJobsAccessActions.editJob);
+    this.canDeleteJob = this.standardJobsService.hasAccess(eStandardJobsAccessActions.deleteJob);
   }
 
   private loadFunctionsTree() {

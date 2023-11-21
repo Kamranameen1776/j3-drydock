@@ -17,7 +17,7 @@ export class DeleteStatementsOfFactsCommand extends Command<Request, void> {
         this.uow = new UnitOfWork();
     }
 
-    protected async AuthorizationHandlerAsync(request: Request): Promise<void> {
+    protected async AuthorizationHandlerAsync(): Promise<void> {
         return;
     }
 

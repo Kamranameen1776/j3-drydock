@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export class updateJcdsLibraryData1698058006302 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const itemCategoryQuery = `

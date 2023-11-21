@@ -9,7 +9,7 @@ async function deleteStandardJobs(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new DeleteStandardJobsCommand();
 
-        return await command.ExecuteAsync(request);
+        return command.ExecuteAsync(request);
     });
 }
 

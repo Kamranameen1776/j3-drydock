@@ -13,10 +13,13 @@ import {
 } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto';
 import { UpdateStandardJobSubItemsRequestDto } from '../../../application-layer/drydock/standard-jobs/dto/UpdateStandardJobSubItemsRequestDto';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
-import { standard_jobs } from '../../../entity/standard_jobs';
-import { standard_jobs_sub_items } from '../../../entity/standard_jobs_sub_items';
-import { RequestWithOData } from '../../../shared/interfaces';
-import { FiltersDataResponse } from '../../../shared/interfaces/filters-data-response.interface';
+import {
+    StandardJobs,
+    StandardJobsSubItems,
+    StandardJobsSurveyCertificateAuthorityEntity,
+    StandardJobsVesselTypeEntity,
+} from '../../../entity/drydock';
+import { FiltersDataResponse, RequestWithOData } from '../../../shared/interfaces';
 
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
@@ -86,14 +89,18 @@ export class StandardJobsRepository {
         data: CreateStandardJobsRequestDto,
         createdBy: string,
         queryRunner: QueryRunner,
-    ): Promise<standard_jobs> {
+    ): Promise<StandardJobs> {
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         standardJob.created_by = createdBy;
         standardJob.uid = new DataUtilService().newUid();
 
-        const entity: standard_jobs = queryRunner.manager.create(standard_jobs, standardJob);
+        const entity: StandardJobs = queryRunner.manager.create(StandardJobs, standardJob);
 
-        return queryRunner.manager.save(standard_jobs, entity);
+        const result = await queryRunner.manager.save(StandardJobs, entity);
+
+        await this.updateStandardJobRelations(result.uid, data.inspectionId, data.vesselTypeId, queryRunner);
+
+        return result;
     }
 
     public async updateStandardJobSubItems(
@@ -103,23 +110,23 @@ export class StandardJobsRepository {
     ): Promise<void> {
         const standardJobUid = data.uid;
 
-        const standardJob = await queryRunner.manager.findOne(standard_jobs, {
+        const standardJob = await queryRunner.manager.findOne(StandardJobs, {
             where: {
                 uid: standardJobUid,
             },
-            relations: ['sub_items'],
+            relations: ['subItems'],
         });
         const newSubItems = data.subItems.map((item) => item.uid);
-        const existingSubItems = standardJob?.sub_items.map((item) => item.uid) || [];
+        const existingSubItems = standardJob?.subItems.map((item) => item.uid) || [];
         const subItemsToDelete = existingSubItems.filter((item) => !newSubItems.includes(item));
 
         const subItems = this.standardJobsService.mapStandardJobSubItemsDtoToEntity(data.subItems, data.uid, userUid);
         const deleteData = this.standardJobsService.addDeleteStandardJobsFields(userUid);
 
-        await queryRunner.manager.save(standard_jobs_sub_items, subItems);
+        await queryRunner.manager.save(StandardJobsSubItems, subItems);
         if (subItemsToDelete.length > 0) {
             await queryRunner.manager.update(
-                standard_jobs_sub_items,
+                StandardJobsSubItems,
                 {
                     uid: In(subItemsToDelete),
                     active_status: 1,
@@ -133,28 +140,26 @@ export class StandardJobsRepository {
         data: UpdateStandardJobsRequestDto,
         updatedBy: string,
         queryRunner: QueryRunner,
-    ): Promise<standard_jobs> {
+    ): Promise<StandardJobs> {
         const uid = data.uid;
 
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         const updateStandardJobData = this.standardJobsService.addUpdateStandardJobsFields(standardJob, updatedBy);
 
-        const entity: standard_jobs = queryRunner.manager.create(standard_jobs, updateStandardJobData);
+        const entity: StandardJobs = queryRunner.manager.create(StandardJobs, updateStandardJobData);
         entity.uid = uid;
 
-        await queryRunner.manager.save(standard_jobs, {
-            uid,
-            vessel_type: [],
-            inspection: [],
-        });
+        const result = await queryRunner.manager.save(StandardJobs, entity);
 
-        return queryRunner.manager.save(standard_jobs, entity);
+        await this.updateStandardJobRelations(result.uid, data.inspectionId, data.vesselTypeId, queryRunner);
+
+        return result;
     }
 
     public async deleteStandardJob(uid: string, deletedBy: string, queryRunner: QueryRunner): Promise<UpdateResult> {
         const updateStandardJobData = this.standardJobsService.addDeleteStandardJobsFields(deletedBy);
 
-        return queryRunner.manager.update(standard_jobs, { uid, active_status: 1 }, updateStandardJobData);
+        return queryRunner.manager.update(StandardJobs, { uid, active_status: 1 }, updateStandardJobData);
     }
 
     public async getStandardJobFilters(
@@ -180,7 +185,7 @@ export class StandardJobsRepository {
         if (tableName) {
             switch (filterKey) {
                 case 'inspection':
-                    return await getManager()
+                    return getManager()
                         .createQueryBuilder(tableName, 'lsca')
                         .select(`DISTINCT lsca.ID as uid, lsca.Authority as displayName`)
                         .where('lsca.active_status = 1')
@@ -191,19 +196,86 @@ export class StandardJobsRepository {
         return [];
     }
 
-    public getStandardJobSubItems(uids: string[]): Promise<standard_jobs_sub_items[]> {
+    public getStandardJobSubItems(uids: string[]): Promise<StandardJobsSubItems[]> {
         const uidString = uids.map((uid) => `'${uid}'`).join(',');
         return getManager()
-            .createQueryBuilder(standard_jobs_sub_items, 'sub_items')
+            .createQueryBuilder(StandardJobsSubItems, 'sub_items')
             .select(
                 'sub_items.uid as uid,' +
-                    'sub_items.code as code,' +
+                    'CONCAT(sub_items.code, sub_items.number) as code,' +
                     'sub_items.subject as subject,' +
                     'sub_items.description as description,' +
-                    'sub_items.standard_job_uid as standard_job_uid',
+                    'sub_items.standard_job_uid as standardJobUid',
             )
             .where('sub_items.active_status = 1')
             .andWhere(`sub_items.standard_job_uid IN (${uidString})`)
             .getRawMany();
+    }
+
+    private async updateStandardJobRelations(
+        standardJobUid: string,
+        inspectionIds: number[],
+        vesselTypeIds: number[],
+        queryRunner: QueryRunner,
+    ) {
+        const relations = await queryRunner.manager.findOne(StandardJobs, {
+            where: {
+                uid: standardJobUid,
+            },
+            relations: ['inspection', 'vesselType'],
+        });
+
+        if (inspectionIds && inspectionIds.length) {
+            const inspectionsToDelete =
+                relations?.inspection.filter((item) => !inspectionIds.includes(item.ID as number)).map((i) => i.ID) ||
+                [];
+            const inspectionsToAdd = inspectionIds.filter(
+                (item) => !relations?.inspection.map((i) => i.ID).includes(item),
+            );
+
+            if (inspectionsToDelete.length) {
+                await queryRunner.manager.delete(StandardJobsSurveyCertificateAuthorityEntity, {
+                    standard_job_uid: standardJobUid,
+                    survey_id: In(inspectionsToDelete),
+                });
+            }
+            if (inspectionsToAdd.length) {
+                const inspections = inspectionsToAdd.map((id) => {
+                    const inspection = new StandardJobsSurveyCertificateAuthorityEntity();
+                    inspection.survey_id = id;
+                    inspection.standard_job_uid = standardJobUid;
+
+                    return inspection;
+                });
+
+                await queryRunner.manager.save(StandardJobsSurveyCertificateAuthorityEntity, inspections);
+            }
+        }
+        if (vesselTypeIds && vesselTypeIds.length) {
+            const vesselTypesToDelete =
+                relations?.vesselType.filter((item) => !vesselTypeIds.includes(item.ID as number)).map((i) => i.ID) ||
+                [];
+            const vesselTypesToAdd = vesselTypeIds.filter(
+                (item) => !relations?.vesselType.map((i) => i.ID).includes(item),
+            );
+
+            if (vesselTypesToDelete.length) {
+                await queryRunner.manager.delete(StandardJobsVesselTypeEntity, {
+                    standard_job_uid: standardJobUid,
+                    vessel_type_id: In(vesselTypesToDelete),
+                });
+            }
+            if (vesselTypesToAdd.length) {
+                const vesselTypes = vesselTypesToAdd.map((id) => {
+                    const vesselType = new StandardJobsVesselTypeEntity();
+                    vesselType.vessel_type_id = id;
+                    vesselType.standard_job_uid = standardJobUid;
+
+                    return vesselType;
+                });
+
+                await queryRunner.manager.save(StandardJobsVesselTypeEntity, vesselTypes);
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-export class IInspectionsResultDto {
+export class InspectionsResultDto {
     InspectionId: number;
     InspectionText: string;
 }

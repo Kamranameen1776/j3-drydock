@@ -9,7 +9,7 @@ async function updateStandardJobs(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new UpdateStandardJobsCommand();
 
-        return await command.ExecuteAsync(request);
+        return command.ExecuteAsync(request);
     });
 }
 

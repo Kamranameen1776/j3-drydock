@@ -31,5 +31,12 @@ module.exports = {
             },
         ],
         'no-empty-function': 'off',
+        "@typescript-eslint/naming-convention": [
+            "error",
+            {
+                selector: ['class'],
+                format: ['StrictPascalCase'],
+            },
+        ],
     },
 };

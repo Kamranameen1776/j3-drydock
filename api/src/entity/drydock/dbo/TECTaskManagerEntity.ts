@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('tec_task_manager', { schema: 'dbo' })
-export class TECTaskManagerEntity {
+export class TecTaskManagerEntity {
     @PrimaryGeneratedColumn()
     uid: string;
 

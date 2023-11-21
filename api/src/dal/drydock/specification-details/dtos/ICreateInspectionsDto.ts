@@ -1,4 +1,4 @@
-export class ICreateInspectionsDto {
+export class CreateInspectionsDto {
     LIBSurveyCertificateAuthorityID: number;
     SpecificationDetailsUid: string;
 }

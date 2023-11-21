@@ -1,4 +1,7 @@
-<section class="proects-specifications-grid">
+<section
+  class="proects-specifications-grid"
+  *ngIf="canView"
+>
   <jb-grid
     #projectsGrid
     [gridName]="gridInputs.gridName"
@@ -11,7 +14,7 @@
     [setActions]="gridInputs.actions"
     [getStyleByContainer]="true"
     (action)="onGridAction($any($event), $event?.payload)"
-    (matrixRequestChanged)="onMatrixRequestChanged($event)"
+    (matrixRequestChanged)="onMatrixRequestChanged()"
   ></jb-grid>
 </section>
 

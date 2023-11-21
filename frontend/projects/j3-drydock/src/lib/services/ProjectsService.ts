@@ -1,12 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
-import { ApiRequestService, eCrud, WebApiRequest } from 'jibe-components';
+import { ApiRequestService, eCrud, UserRightsService, WebApiRequest } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { DeleteProjectDto, ProjectCreate, ProjectEdit } from '../models/interfaces/projects';
 import { IGroupProjectStatusesDto } from './dtos/IGroupProjectStatusesDto';
+import { IProjectStatusDto } from './dtos/IProjectStatusDto';
+import { eModule } from '../models/enums/module.enum';
+import { eFunction } from '../models/enums/function.enum';
+import { eProjectsAccessActions } from '../models/enums/access-actions.enum';
 
 @Injectable()
 export class ProjectsService {
-  constructor(private apiRequestService: ApiRequestService) {}
+  constructor(
+    private apiRequestService: ApiRequestService,
+    private userRights: UserRightsService
+  ) {}
 
   public getProjectsForMainPageGridRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
@@ -15,18 +23,6 @@ export class ProjectsService {
       apiBase: 'dryDockAPI',
       action: 'projects/get-projects-for-main-page',
       crud: eCrud.Post,
-      entity: 'drydock'
-    };
-    return apiRequest;
-  }
-
-  public getAllProjectTypesRequest(): WebApiRequest {
-    const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
-      action: 'dictionaries/project-types',
-      crud: eCrud.Get,
       entity: 'drydock'
     };
     return apiRequest;
@@ -92,6 +88,12 @@ export class ProjectsService {
     return apiRequest;
   }
 
+  public getProjectStatuses(): Observable<IProjectStatusDto> {
+    const apiRequest = this.getProjectStatusesRequest();
+
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
   public getFleetsRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
       apiBase: 'dryDockAPI',
@@ -148,5 +150,9 @@ export class ProjectsService {
     };
 
     return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
+  public hasAccess(action: eProjectsAccessActions, func = eFunction.DryDock): boolean {
+    return !!this.userRights.getUserRights(eModule.Project, func, action);
   }
 }

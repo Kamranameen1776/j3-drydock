@@ -1,6 +1,7 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export class createStatementOfFacts1699259400456 implements MigrationInterface {
     tableName = 'statement_of_facts';
     schemaName = 'dry_dock';

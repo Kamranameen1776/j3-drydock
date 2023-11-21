@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LeftPanelFilterService } from '../../services/LeftPanelFilterService';
-import { IGroupProjectStatusesDto } from 'projects/j3-drydock/src/lib/services/dtos/IGroupProjectStatusesDto';
+import { IGroupProjectStatusesDto } from '../../../../services/dtos/IGroupProjectStatusesDto';
 
 @Component({
   selector: 'jb-project-status-filter',

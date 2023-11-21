@@ -31,6 +31,10 @@ import { SpecificationCreateFormService } from './components/project-details/spe
 import { ProjectTypesLeftPanelComponent } from './components/projects-main-page/project-types-left-panel/project-types-left-panel.component';
 import { ProjectStatusFilterComponent } from './components/projects-main-page/project-types-left-panel/project-status-filter/project-status-filter.component';
 import { LeftPanelFilterService } from './components/projects-main-page/services/LeftPanelFilterService';
+import { RfqComponent } from './components/project-details/yard/rfq/rfq.component';
+import { ComparisonComponent } from './components/project-details/yard/comparison/comparison.component';
+import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
+import { SelectLinkYardGridComponent } from './components/project-details/yard/rfq/select-link-yard-grid/select-link-yard-grid.component';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
 import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
@@ -65,6 +69,10 @@ export function winEnv(): unknown {
     StandardJobsStatusNamePipe,
     StandardJobsStatusColorPipe,
     StaticGridSearchPipe,
+    RfqComponent,
+    ComparisonComponent,
+    LinkYardPopupComponent,
+    SelectLinkYardGridComponent,
     CreateSpecificationPopupComponent,
     SpecificationFormComponent,
     SpecificationDetailsComponent,

@@ -6,7 +6,7 @@ import { FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { DeleteProjectDto, ProjectCreate } from '../../../models/interfaces/projects';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { ProjectsGridOdataKeys } from '../../../models/enums/ProjectsGridOdataKeys';
@@ -16,6 +16,9 @@ import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { NewTabService } from '../../../services/new-tab-service';
 import moment from 'moment';
+import { IProjectStatusDto } from '../../../services/dtos/IProjectStatusDto';
+import { eProjectsAccessActions } from '../../../models/enums/access-actions.enum';
+import { eFunction } from '../../../models/enums/function.enum';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -27,7 +30,19 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   @ViewChild('projectsGrid')
   projectsGrid: GridComponent;
 
-  readonly allProjectsProjectTypeId = 'all_projects';
+  private readonly allProjectsProjectTypeId = 'all_projects';
+
+  private readonly closeProjectStatusId = 'CLOSE';
+
+  private accessActions = eProjectsAccessActions;
+
+  private canViewDetails = false;
+
+  private canCreateProject = false;
+
+  private canDeleteProject = false;
+
+  public canView = false;
 
   public DeleteBtnLabel = 'Delete';
 
@@ -66,15 +81,20 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     private projectsGridService: ProjectsSpecificationGridService,
     private projectsService: ProjectsService,
     private leftPanelFilterService: LeftPanelFilterService,
-    private newTabService: NewTabService
+    private newTabService: NewTabService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.gridInputs = this.projectsGridService.getGridInputs();
+    this.setAccessRights();
+    this.setGridInputs();
+
     this.createProjectForm = this.projectsGridService.getCreateProjectForm();
     this.deleteProjectForm = this.projectsGridService.getDeleteProjectForm();
+
+    this.projectsService.getProjectStatuses().pipe(takeUntil(this.unsubscribe$)).subscribe(this.selectGridDefaultStatuses.bind(this));
   }
 
   ngAfterViewInit(): void {
@@ -118,14 +138,14 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
         throw new Error('Project is null');
       }
 
-      // TODO: re-check navigation params
-      this.newTabService.navigate(['project-monitoring', project.ProjectId]);
+      this.newTabService.navigate(['../project', project.ProjectId], { relativeTo: this.activatedRoute });
     } else if (type === this.gridInputs.gridButton.label) {
       this.showCreateNewDialog();
     }
   }
 
   public showCreateNewDialog(value = true) {
+    this.createProjectFormGroup.reset();
     this.createNewDialogVisible = value;
   }
 
@@ -157,23 +177,25 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   public saveNewProject() {
     this.saveNewProjectButtonDisabled$.next(true);
-    if (this.createProjectFormGroup.valid) {
-      const values: ProjectCreate = this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId];
 
-      const endDate = moment(values.EndDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
-      values.EndDate = endDate;
-
-      const startDate = moment(values.StartDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
-      values.StartDate = startDate;
-
-      this.projectsService.createProject(values).subscribe(() => {
-        this.saveNewProjectButtonDisabled$.next(false);
-        this.showCreateNewDialog(false);
-        this.projectsGrid.fetchMatrixData();
-      });
-    } else {
+    if (!this.createProjectFormGroup.valid) {
       this.createProjectFormGroup.markAllAsTouched();
+      return;
     }
+
+    const values: ProjectCreate = this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId];
+
+    const endDate = moment(values.EndDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
+    values.EndDate = endDate;
+
+    const startDate = moment(values.StartDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
+    values.StartDate = startDate;
+
+    this.projectsService.createProject(values).subscribe(() => {
+      this.saveNewProjectButtonDisabled$.next(false);
+      this.showCreateNewDialog(false);
+      this.projectsGrid.fetchMatrixData();
+    });
   }
 
   public deleteProject() {
@@ -187,5 +209,48 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
       this.showDeleteDialog(false);
       this.projectsGrid.fetchMatrixData();
     });
+  }
+
+  private selectGridDefaultStatuses(statuses: IProjectStatusDto[]) {
+    this.gridInputs.filters.find((filter) => filter.FieldName === this.projectsGridService.ProjectStatusesFilterName).selectedValues =
+      statuses.filter((status) => status.ProjectStatusId !== this.closeProjectStatusId).map((status) => status.ProjectStatusId);
+  }
+
+  private setAccessRights() {
+    this.canView = this.hasAccess(this.accessActions.viewGrid) || this.hasAccess(this.accessActions.viewGridVessel);
+    this.canViewDetails =
+      this.hasAccess(this.accessActions.viewDetail, eFunction.DryDock) ||
+      this.hasAccess(this.accessActions.viewDetailVessel, eFunction.DryDock);
+
+    this.canCreateProject = this.hasAccess(this.accessActions.createProject);
+    this.canDeleteProject = this.hasAccess(this.accessActions.deleteProject);
+  }
+
+  private setGridInputs() {
+    this.gridInputs = this.projectsGridService.getGridInputs();
+    this.gridInputs.gridButton.show = this.canCreateProject;
+    this.setGridActions();
+  }
+
+  private setGridActions() {
+    this.gridInputs.actions.length = 0;
+
+    if (this.canViewDetails) {
+      this.gridInputs.actions.push({
+        name: eGridRowActions.Edit,
+        label: 'Edit'
+      });
+    }
+
+    if (this.canDeleteProject) {
+      this.gridInputs.actions.push({
+        name: eGridRowActions.Delete,
+        label: 'Delete'
+      });
+    }
+  }
+
+  private hasAccess(action: eProjectsAccessActions, func = eFunction.Project): boolean {
+    return this.projectsService.hasAccess(action, func);
   }
 }
