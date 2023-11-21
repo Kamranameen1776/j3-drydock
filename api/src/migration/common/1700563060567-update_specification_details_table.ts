@@ -15,10 +15,10 @@ export class UpdateSpecificationDetailsTable1700563060567 implements MigrationIn
             await queryRunner.query(
                 `
                 ALTER TABLE [dry_dock].[specification_details]
-                ADD function_text VARCHAR(1000);
+                ADD function_path VARCHAR(1000);
 
                 UPDATE [dry_dock].[specification_details]
-                SET [function_text] = 'qwerty'
+                SET [function_path] = 'qwerty'
             `,
             );
 
@@ -46,7 +46,7 @@ export class UpdateSpecificationDetailsTable1700563060567 implements MigrationIn
             await queryRunner.query(`
         
             ALTER TABLE [dry_dock].[specification_details]
-            DROP COLUMN function_text;
+            DROP COLUMN function_path;
         `);
 
             await MigrationUtilsService.migrationLog(
