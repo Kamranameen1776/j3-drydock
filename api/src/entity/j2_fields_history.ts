@@ -138,5 +138,3 @@ export class J2FieldsHistory {
     })
     section: string | null;
 }
-
-export type J2FieldsHistoryKeys = Pick<J2FieldsHistory, 'key_1' | 'key_2' | 'key_3'>;
