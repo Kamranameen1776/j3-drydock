@@ -1,6 +1,7 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
+import { SynchronizerService } from 'j2utils';
 
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
@@ -54,7 +55,7 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
                 token,
             );
             request.body.TecTaskManagerUid = taskManagerData.uid;
-            const specData = await this.specificationDetailsRepository.CreateSpecificationDetails(
+            const specId = await this.specificationDetailsRepository.CreateSpecificationDetails(
                 request.body,
                 queryRunner,
             );
@@ -63,12 +64,13 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
                 const data = Inspections.map((item: number) => {
                     return {
                         LIBSurveyCertificateAuthorityID: item,
-                        SpecificationDetailsUid: specData,
+                        SpecificationDetailsUid: specId,
                     };
                 });
                 await this.specificationDetailsRepository.CreateSpecificationInspection(data, queryRunner);
             }
-            return specData;
+            await SynchronizerService.dataSynchronize('dry_dock.specification_details', 'uid', specId, vessel.VesselId);
+            return specId;
         });
     }
 }

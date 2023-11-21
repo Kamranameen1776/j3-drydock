@@ -127,7 +127,6 @@ export class SpecificationDetailsRepository {
         data.CreatedAt = new Date();
         data.ActiveStatus = true;
 
-        //TODO: think how to return uid from insert request, why it return undefined?
         data.uid = new DataUtilService().newUid();
         await queryRunner.manager.insert(SpecificationDetailsEntity, data);
         return data.uid;
