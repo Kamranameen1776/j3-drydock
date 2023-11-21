@@ -1,6 +1,7 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
+import { AccessRights } from 'j2utils';
 
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/standard_jobs/specification-details-audit.service';
@@ -41,10 +42,14 @@ export class CreateSpecificationDetailsCommand extends Command<Request, string> 
     }
 
     protected async AfterExecution(request: Request, uid: string): Promise<void> {
-        await this.specificationDetailsAudit.auditCreatedSpecificationDetails({
-            uid,
-            ...request.body,
-        });
+        const { UserID: createdBy } = AccessRights.authorizationDecode(request);
+        await this.specificationDetailsAudit.auditCreatedSpecificationDetails(
+            {
+                uid,
+                ...request.body,
+            },
+            createdBy,
+        );
     }
 
     /**
@@ -52,7 +57,7 @@ export class CreateSpecificationDetailsCommand extends Command<Request, string> 
      * @param request data for creation of specification details
      * @returns data of specification details
      */
-    protected MainHandlerAsync(request: Request): Promise<string> {
+    protected async MainHandlerAsync(request: Request): Promise<string> {
         const token: string = request.headers.authorization as string;
         return this.uow.ExecuteAsync(async (queryRunner) => {
             const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);

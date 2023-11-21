@@ -1,10 +1,12 @@
+import { Request } from 'express';
+import { AccessRights } from 'j2utils';
+
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/standard_jobs/specification-details-audit.service';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { DeleteSpecificationDetailsDto } from './dtos/DeleteSpecificationDetailsDto';
 
-export class DeleteSpecificationDetailsCommand extends Command<DeleteSpecificationDetailsDto, void> {
+export class DeleteSpecificationDetailsCommand extends Command<Request, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
@@ -21,20 +23,21 @@ export class DeleteSpecificationDetailsCommand extends Command<DeleteSpecificati
         return;
     }
 
-    protected async ValidationHandlerAsync(request: DeleteSpecificationDetailsDto): Promise<void> {
-        if (!request) {
+    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+        if (!request.body) {
             throw new Error('Request is null');
         }
     }
 
-    protected async AfterExecution(request: DeleteSpecificationDetailsDto): Promise<void> {
-        await this.specificationDetailsAudit.auditDeletedSpecificationDetails(request.uid);
+    protected async AfterExecution(request: Request): Promise<void> {
+        const { UserID: createdBy } = AccessRights.authorizationDecode(request);
+        await this.specificationDetailsAudit.auditDeletedSpecificationDetails(request.body.uid, createdBy);
     }
 
-    protected async MainHandlerAsync(request: DeleteSpecificationDetailsDto) {
+    protected async MainHandlerAsync(request: Request) {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const updatedSpecData = await this.specificationDetailsRepository.DeleteSpecificationDetails(
-                request.uid,
+                request.body.uid,
                 queryRunner,
             );
             return updatedSpecData;

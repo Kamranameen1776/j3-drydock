@@ -1,9 +1,8 @@
 import { getManager, Repository } from 'typeorm';
 
 import { UpdateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationDetailsDto';
-import { ISpecificationDetailsResultDto } from '../../../dal/drydock/specification-details/dtos';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
-import { J2FieldsHistory, J2FieldsHistoryKeys } from '../../../entity/j2_fields_history';
+import { J2FieldsHistory } from '../../../entity/j2_fields_history';
 import { TaskManagerConstants } from '../../../shared/constants/task-manager';
 
 export class SpecificationDetailsAuditService {
@@ -11,98 +10,61 @@ export class SpecificationDetailsAuditService {
     private readonly specificationDetailsRepository: SpecificationDetailsRepository =
         new SpecificationDetailsRepository();
 
-    private keysFromSpecificationDetails(SpecificationDetails: UpdateSpecificationDetailsDto): J2FieldsHistoryKeys {
+    private generateCommonFields(uid: string): Partial<J2FieldsHistory> {
         return {
-            key_1: 'specification_details',
-            key_2: SpecificationDetails.uid,
+            key_1: uid,
+            key_2: '0',
             key_3: '',
+            module_code: TaskManagerConstants.project.module_code,
+            function_code: TaskManagerConstants.project.function_code,
+            is_current: true,
+            version_number: 1,
+            table_name: 'specification_details',
+            section: 'Header Section',
         };
     }
 
-    private fieldsFromCreateSpecificationDetails(
+    public async auditCreatedSpecificationDetails(
         specificationDetail: UpdateSpecificationDetailsDto,
-    ): Partial<J2FieldsHistory> {
-        return {
-            key_1: specificationDetail.uid,
-            key_3: '',
-            module_code: TaskManagerConstants.project.module_code,
-            function_code: TaskManagerConstants.project.function_code,
-            created_by: '', // TODO: add created by
-            created_date: new Date(), // TODO: add created date
-            is_current: true,
-            version_number: 1,
-            table_name: 'specification_details',
-            display_text: 'Specification Details Created',
-            value: '', // TODO: add value
-            column_name: '', // TODO: add column name
-        };
+        createdById: string,
+    ): Promise<void> {
+        const now = new Date();
+        const fields = Object.entries(specificationDetail).map(([key, value]) => ({
+            ...this.generateCommonFields(specificationDetail.uid),
+            display_text: key,
+            value: value,
+            action_name: 'Created',
+            created_date: now,
+            created_by: createdById,
+        }));
+
+        await this.fieldsHistoryRepository.insert(fields as J2FieldsHistory[]);
     }
 
-    private fieldsFromUpdateSpecificationDetails(
+    public async auditDeletedSpecificationDetails(uid: string, deletedById: string): Promise<void> {
+        const deleteField = {
+            ...this.generateCommonFields(uid),
+            action_name: 'Deleted',
+            created_by: deletedById,
+        };
+
+        await this.fieldsHistoryRepository.save(deleteField as J2FieldsHistory);
+    }
+
+    public async auditUpdatedSpecificationDetails(
         specificationDetail: UpdateSpecificationDetailsDto,
-    ): Partial<J2FieldsHistory> {
-        return {
-            key_1: 'specification_details',
-            key_2: specificationDetail.uid,
-            key_3: '',
-            module_code: TaskManagerConstants.project.module_code,
-            function_code: TaskManagerConstants.project.function_code,
-            modified_date: new Date(),
-            is_current: true,
-            version_number: 1,
-            table_name: 'specification_details',
-            display_text: 'Specification Details Updated',
-            value: '', // TODO: add value
-            column_name: '', // TODO: add column name
-        };
-    }
+        updatedById: string,
+    ): Promise<void> {
+        const now = new Date();
+        const fields = Object.entries(specificationDetail).map(([key, value]) => ({
+            ...this.generateCommonFields(specificationDetail.uid),
+            display_text: key,
+            value: value,
+            action_name: 'Amended',
+            created_date: now,
+            created_by: updatedById,
+        }));
 
-    private fieldsFromDeleteSpecificationDetails(
-        specificationDetail: ISpecificationDetailsResultDto,
-    ): Partial<J2FieldsHistory> {
-        return {
-            key_1: 'specification_details',
-            key_2: specificationDetail.uid,
-            key_3: '',
-            module_code: TaskManagerConstants.project.module_code,
-            function_code: TaskManagerConstants.project.function_code,
-            modified_date: new Date(),
-            is_current: true,
-            version_number: 1,
-            table_name: 'specification_details',
-            display_text: 'Specification Details Deleted',
-            value: '', // TODO: add value
-            column_name: '', // TODO: add column name
-        };
-    }
-
-    public async auditCreatedSpecificationDetails(specificationDetail: UpdateSpecificationDetailsDto): Promise<void> {
-        await this.fieldsHistoryRepository.save({
-            ...this.fieldsFromCreateSpecificationDetails(specificationDetail),
-            action_name: 'CREATE',
-        });
-    }
-
-    public async auditDeletedSpecificationDetails(uid: string): Promise<void> {
-        const [specificationDetail] = await this.specificationDetailsRepository.findOneBySpecificationUid(uid);
-        if (specificationDetail) {
-            await this.fieldsHistoryRepository.save({
-                ...this.fieldsFromDeleteSpecificationDetails(specificationDetail),
-                action_name: 'DELETE',
-            });
-        }
-    }
-
-    public async auditUpdatedSpecificationDetails(specificationDetail: UpdateSpecificationDetailsDto): Promise<void> {
-        const keys = this.keysFromSpecificationDetails(specificationDetail);
-
-        const exists = await this.fieldsHistoryRepository.findOne({ where: keys });
-
-        if (!exists) {
-            await this.fieldsHistoryRepository.save({
-                ...this.fieldsFromUpdateSpecificationDetails(specificationDetail),
-                action_name: 'UPDATE',
-            });
-        }
+        await this.fieldsHistoryRepository.insert(fields as J2FieldsHistory[]);
     }
 }

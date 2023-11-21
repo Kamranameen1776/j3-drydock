@@ -2,6 +2,7 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
+import { AccessRights } from 'j2utils';
 import { ParsedQs } from 'qs';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/standard_jobs/specification-details-audit.service';
@@ -37,7 +38,8 @@ export class UpdateSpecificationDetailsCommand extends Command<Request, void> {
     }
 
     protected AfterExecution(request: Request): Promise<void> {
-        return this.specificationDetailsAudit.auditUpdatedSpecificationDetails(request.body);
+        const { UserID: createdBy } = AccessRights.authorizationDecode(request);
+        return this.specificationDetailsAudit.auditUpdatedSpecificationDetails(request.body, createdBy);
     }
 
     protected async MainHandlerAsync(request: Request): Promise<void> {
