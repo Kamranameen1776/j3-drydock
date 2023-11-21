@@ -130,6 +130,13 @@ export class J2FieldsHistory {
         name: 'action_name',
     })
     action_name: string | null;
+
+    @Column('varchar', {
+        nullable: true,
+        length: 200,
+        name: 'section',
+    })
+    section: string | null;
 }
 
 export type J2FieldsHistoryKeys = Pick<J2FieldsHistory, 'key_1' | 'key_2' | 'key_3'>;
