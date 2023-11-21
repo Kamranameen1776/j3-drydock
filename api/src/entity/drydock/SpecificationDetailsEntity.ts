@@ -22,7 +22,7 @@ export class SpecificationDetailsEntity {
     @Column('varchar', {
         nullable: false,
         name: 'function_path',
-        length: 1000,
+        length: 250,
     })
     FunctionPath: string;
 

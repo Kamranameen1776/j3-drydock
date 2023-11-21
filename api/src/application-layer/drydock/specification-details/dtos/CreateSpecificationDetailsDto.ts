@@ -9,7 +9,7 @@ export class CreateSpecificationDetailsDto {
 
     @IsString()
     @MinLength(1)
-    @MaxLength(1000)
+    @MaxLength(250)
     FunctionPath: string;
 
     @MinLength(1)
