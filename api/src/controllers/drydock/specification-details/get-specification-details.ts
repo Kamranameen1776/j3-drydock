@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 
 import { GetSpecificationDetailsQuery } from '../../../application-layer/drydock/specification-details/GetSpecificationDetailsQuery';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
+import {
+    GetSpecificationByUidDto
+} from "../../../application-layer/drydock/specification-details/dtos/GetSpecificationByUidDto";
 
 /**
  * @exports
@@ -16,7 +19,7 @@ export async function getSpecificationDetails(req: Request, res: Response) {
         const query = new GetSpecificationDetailsQuery();
 
         // Execute query
-        const specDetails = await query.ExecuteAsync(request);
+        const specDetails = await query.ExecuteAsync(request, GetSpecificationByUidDto, 'query');
 
         return specDetails;
     });

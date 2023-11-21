@@ -43,7 +43,7 @@ export class SpecificationDetailsRepository {
             .execute();
     }
 
-    public async findOneBySpecificationUid(uid: string): Promise<Array<SpecificationDetailsResultDto>> {
+    public async findOneBySpecificationUid(uid: string): Promise<SpecificationDetailsResultDto> {
         const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
 
         return specificationRepository
@@ -76,15 +76,15 @@ export class SpecificationDetailsRepository {
                 `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
                 'usr.uid AS ProjectManagerUid',
             ])
-            .innerJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
+            .leftJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'spec.DoneByUid = db.uid')
             .leftJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
-            .innerJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
-            .innerJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
-            .innerJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
+            .leftJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
+            .leftJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
+            .leftJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
             .where('spec.ActiveStatus = 1')
             .andWhere('spec.uid = :uid', { uid })
-            .execute();
+            .getRawOne();
     }
 
     public async GetManySpecificationDetails(
@@ -183,10 +183,8 @@ export class SpecificationDetailsRepository {
                 'port.PORT_NAME as port',
                 'rq.description as description',
                 'urg.urgencys as priority',
-                'po.uid as poUid',
                 'po.poDate as poDate',
                 'po.total_value as amount',
-                'cr.uid as crUid',
                 'po.total_value as value',
             ])
             .where(`sd.uid = '${specificationUid}'`)
