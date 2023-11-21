@@ -30,8 +30,8 @@ export class DeleteSpecificationDetailsCommand extends Command<Request, void> {
     }
 
     protected async AfterExecution(request: Request): Promise<void> {
-        const { UserID: createdBy } = AccessRights.authorizationDecode(request);
-        await this.specificationDetailsAudit.auditDeletedSpecificationDetails(request.body.uid, createdBy);
+        const { UserID: deletedBy } = AccessRights.authorizationDecode(request);
+        await this.specificationDetailsAudit.auditDeletedSpecificationDetails(request.body.uid, deletedBy);
     }
 
     protected async MainHandlerAsync(request: Request) {

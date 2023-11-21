@@ -38,8 +38,8 @@ export class UpdateSpecificationDetailsCommand extends Command<Request, void> {
     }
 
     protected AfterExecution(request: Request): Promise<void> {
-        const { UserID: createdBy } = AccessRights.authorizationDecode(request);
-        return this.specificationDetailsAudit.auditUpdatedSpecificationDetails(request.body, createdBy);
+        const { UserID: updatedBy } = AccessRights.authorizationDecode(request);
+        return this.specificationDetailsAudit.auditUpdatedSpecificationDetails(request.body, updatedBy);
     }
 
     protected async MainHandlerAsync(request: Request): Promise<void> {
