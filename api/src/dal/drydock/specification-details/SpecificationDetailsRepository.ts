@@ -139,6 +139,7 @@ export class SpecificationDetailsRepository {
                     'tm.Code as code',
                     'tm.Status as status',
                     'tm.title as subject',
+                    'sd.project_uid',
                 ])
                 .where('sd.active_status = 1')
                 .getSql();
