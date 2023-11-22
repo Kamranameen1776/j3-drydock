@@ -9,6 +9,22 @@ import { Observable } from 'rxjs';
 export class TaskManagerService {
   constructor(private apiReqService: ApiRequestService) {}
 
+  getWorkflow(uid: string, workFlowType: string, vesselId: number): Observable<any> {
+    return this.apiReqService.sendApiReq({
+      apiBase: eApiBase.J3TaskManagerAPI,
+      entity: eEntities.TaskManager,
+      crud: eCrud.Post,
+      action: 'get-task-manager-by-uid',
+      body: {
+        vesselId,
+        task_manager_uid: uid,
+        wl_type: [workFlowType],
+        odata: {}
+      }
+    });
+  }
+
+  // TODO maybe don't need this
   getWorkflowData(uid: string, workFlowType: string): Observable<any> {
     return this.apiReqService.sendApiReq({
       apiBase: eApiBase.J3TaskManagerAPI,
