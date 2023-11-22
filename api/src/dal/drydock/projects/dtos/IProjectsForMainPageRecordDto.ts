@@ -23,4 +23,6 @@ export interface IProjectsForMainPageRecordDto {
     StartDate: Date;
 
     EndDate: Date;
+
+    TaskManagerUid: string;
 }

@@ -69,10 +69,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     this.hideSideMenu();
   }
 
-  setVesselUid(vesselUid: string) {
-    this.vesselUid = vesselUid;
-  }
-
   private initSideMenu() {
     this.jbMenuService.setSlideLayout.next('static');
     this.jbMenuService.setSlideMenuConfig.next({
