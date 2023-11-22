@@ -32,41 +32,29 @@ export class createProjects1698663404365 implements MigrationInterface {
                  CONSTRAINT [pk_project] PRIMARY KEY CLUSTERED 
                 (
                     [uid] ASC
-                )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+                )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
                 ) ON [PRIMARY]
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (newid()) FOR [uid]
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (getutcdate()) FOR [created_at]
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT ((1)) FOR [active_status]
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}]  WITH CHECK ADD  CONSTRAINT [FK_project_project_state] FOREIGN KEY([project_state_id])
                 REFERENCES [${this.schemaName}].[project_state] ([id])
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}] CHECK CONSTRAINT [FK_project_project_state]
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}]  WITH CHECK ADD  CONSTRAINT [FK_project_project_type] FOREIGN KEY([project_type_uid])
                 REFERENCES [${this.schemaName}].[project_type] ([uid])
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}] CHECK CONSTRAINT [FK_project_project_type]
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}]  WITH CHECK ADD  CONSTRAINT [fk_project_tm_key] FOREIGN KEY([task_manager_uid])
                 REFERENCES [dbo].[tec_task_manager] ([uid])
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}] CHECK CONSTRAINT [fk_project_tm_key]
-                GO
-                
-                
     END`);
 
             await MigrationUtilsService.migrationLog(

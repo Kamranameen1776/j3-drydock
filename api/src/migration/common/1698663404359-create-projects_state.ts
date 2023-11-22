@@ -25,23 +25,17 @@ export class createProjectsState1698663404359 implements MigrationInterface {
                  CONSTRAINT [pk_project_state] PRIMARY KEY CLUSTERED 
                 (
                     [id] ASC
-                )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+                )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
                 ) ON [PRIMARY]
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (getutcdate()) FOR [created_at]
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT ((1)) FOR [active_status]
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}]  WITH CHECK ADD  CONSTRAINT [FK_project_type] FOREIGN KEY([project_type_uid])
                 REFERENCES [${this.schemaName}].[project_type] ([uid])
-                GO
                 
                 ALTER TABLE [${this.schemaName}].[${this.tableName}] CHECK CONSTRAINT [FK_project_type]
-                GO
-                
     END`);
 
             await MigrationUtilsService.migrationLog(
