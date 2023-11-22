@@ -33,9 +33,9 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
 
   private getFields(): FieldSetModel {
     const formFields: FieldSetModel = {
-      [eSpecificationDetailsGeneralInformationFields.FunctionPath]: {
+      [eSpecificationDetailsGeneralInformationFields.Function]: {
         type: eFieldControlType.Text,
-        label: eSpecificationDetailsGeneralInformationLabels.FunctionPath,
+        label: eSpecificationDetailsGeneralInformationLabels.Function,
         sectionID: this.sectionId,
         enabled: false,
         validatorRequired: true,
@@ -173,7 +173,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
       keyID: this.genralInformatonFormId,
       values: {
         [this.genralInformatonFormId]: {
-          [eSpecificationDetailsGeneralInformationFields.FunctionPath]: specificationDetailsInfo.FunctionPath,
+          [eSpecificationDetailsGeneralInformationFields.Function]: specificationDetailsInfo.Function,
           [eSpecificationDetailsGeneralInformationFields.AccountCode]: specificationDetailsInfo.AccountCode,
           [eSpecificationDetailsGeneralInformationFields.ItemSource]: specificationDetailsInfo.ItemSourceUid,
           [eSpecificationDetailsGeneralInformationFields.ItemNumber]: specificationDetailsInfo.ItemNumber,

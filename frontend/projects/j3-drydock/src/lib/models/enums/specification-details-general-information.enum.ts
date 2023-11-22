@@ -1,5 +1,5 @@
 export enum eSpecificationDetailsGeneralInformationLabels {
-  FunctionPath = 'Function',
+  Function = 'Function',
   FunctionUid = 'Function Uid',
   AccountCode = 'Account Code',
   ItemSource = 'Item Source',
@@ -12,7 +12,7 @@ export enum eSpecificationDetailsGeneralInformationLabels {
 }
 
 export enum eSpecificationDetailsGeneralInformationFields {
-  FunctionPath = 'functionPath',
+  Function = 'function',
   FunctionUid = 'functionUid',
   AccountCode = 'accountCode',
   ItemSource = 'itemSourceUid',

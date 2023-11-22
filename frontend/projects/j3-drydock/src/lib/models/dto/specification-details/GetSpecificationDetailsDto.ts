@@ -6,7 +6,7 @@ export interface GetSpecificationDetailsDto {
   DoneByUid: string;
   EquipmentDescription: string;
   FunctionUid: string;
-  FunctionPath: string;
+  Function: string;
   Inspections: InspectionsDto[];
   ItemNumber: string;
   ItemSourceText: string;
