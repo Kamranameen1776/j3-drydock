@@ -6,12 +6,13 @@ import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.en
 import { projectDetailsMenuData } from './project-details-menu';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { ActivatedRoute } from '@angular/router';
+import { CurrentProjectService } from '../../services/current-project.service';
 
 @Component({
   selector: 'jb-project-details',
   templateUrl: './project-details.component.html',
   styleUrls: ['./project-details.component.scss'],
-  providers: [GrowlMessageService]
+  providers: [GrowlMessageService, CurrentProjectService]
 })
 export class ProjectDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @ViewChild(eProjectDetailsSideMenuId.General) [eProjectDetailsSideMenuId.General]: ElementRef;
@@ -38,7 +39,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   constructor(
     private jbMenuService: JbMenuService,
     private growlMessageService: GrowlMessageService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private currentProject: CurrentProjectService
   ) {
     super();
   }
@@ -51,8 +53,16 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         map((params) => params.get('projectId'))
       )
       .subscribe((projectId) => {
-        this.projectId = projectId;
+        this.currentProject.projectId.next(projectId);
       });
+
+    this.currentProject.projectId.pipe(takeUntil(this.unsubscribe$)).subscribe((projectId) => {
+      this.projectId = projectId;
+    });
+
+    this.currentProject.vesselUid.pipe(takeUntil(this.unsubscribe$)).subscribe((vesselUid) => {
+      this.vesselUid = vesselUid;
+    });
   }
 
   ngOnDestroy() {

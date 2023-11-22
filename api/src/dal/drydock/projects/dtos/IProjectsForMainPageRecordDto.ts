@@ -14,6 +14,7 @@ export interface IProjectsForMainPageRecordDto {
     Subject: string;
 
     ProjectManager: string;
+    ProjectManagerUid?: string;
 
     ProjectStatusName: string;
 

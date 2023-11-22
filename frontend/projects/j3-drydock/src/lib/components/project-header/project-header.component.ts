@@ -1,9 +1,9 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { SpecificationTopDetailsService, TopFieldsData } from '../../services/specifications/specification-top-details.service';
-import { finalize, map, switchMap, takeUntil } from 'rxjs/operators';
-import { ActivatedRoute } from '@angular/router';
-import { AdvancedSettings, ShowSettings } from 'jibe-components';
+import { finalize, first, switchMap, takeUntil } from 'rxjs/operators';
+import { AdvancedSettings } from 'jibe-components';
+import { CurrentProjectService } from '../../services/current-project.service';
 
 @Component({
   selector: 'jb-project-header',
@@ -31,12 +31,9 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     }
   ];
 
-  @Output()
-  vesselUid = new EventEmitter<string>();
-
   constructor(
     private specsTopDetailsService: SpecificationTopDetailsService,
-    private route: ActivatedRoute
+    private currentProject: CurrentProjectService
   ) {
     super();
   }
@@ -44,24 +41,22 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   ngOnInit(): void {
     this.loading = true;
 
-    this.route.paramMap
+    this.currentProject.projectId
       .pipe(
         takeUntil(this.unsubscribe$),
-        map((params) => params.get('projectId')),
         switchMap((projectId) => this.specsTopDetailsService.getTopDetailsData(projectId).pipe(takeUntil(this.unsubscribe$))),
         finalize(() => (this.loading = false))
       )
       .subscribe((data) => {
         this.topDetailsData = data;
-        this.vesselUid.next(data.detailedData?.vesselUid as string);
+        this.currentProject.vesselUid.next(data.detailedData?.vesselUid as string);
       });
   }
 
   save() {
-    return this.route.paramMap
+    return this.currentProject.projectId
       .pipe(
-        takeUntil(this.unsubscribe$),
-        map((params) => params.get('projectId')),
+        first(),
         switchMap((projectId) => this.specsTopDetailsService.save(projectId, this.topDetailsData.detailedData))
       )
       .toPromise();

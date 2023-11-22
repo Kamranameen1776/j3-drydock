@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, ITopSectionFieldSet, TopFieldConfig, WebApiRequest, eCrud } from 'jibe-components';
+import { ITopSectionFieldSet } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProjectsService } from '../ProjectsService';
+import { omit } from 'lodash';
 
 export interface TopFieldsData {
   topFieldsConfig: ITopSectionFieldSet;
@@ -12,71 +13,7 @@ export interface TopFieldsData {
 
 @Injectable()
 export class SpecificationTopDetailsService {
-  bottomFieldsConfig: TopFieldConfig[] = [
-    {
-      id: 'ProjectManager',
-      label: 'Project Manager',
-      isRequired: false,
-      isEditable: true,
-      type: 'dropdown',
-      getFieldName: 'ProjectManager',
-      saveFieldName: 'ProjectManager',
-      controlContent: {
-        id: 'ProjectManager',
-        apiRequest: this.projectsService.getProjectsManagersRequest()
-      }
-    },
-    {
-      id: 'StartDate',
-      label: 'Start date',
-      isRequired: false,
-      isEditable: true,
-      type: 'date',
-      getFieldName: 'StartDate',
-      saveFieldName: 'StartDate',
-      formatDate: true,
-      controlContent: {
-        id: 'StartDate',
-        type: 'date',
-        placeholder: 'Select',
-        calendarWithInputIcon: true
-      }
-    },
-    {
-      id: 'EndDate',
-      label: 'Due date',
-      isRequired: false,
-      isEditable: true,
-      type: 'date',
-      getFieldName: 'EndDate',
-      saveFieldName: 'EndDate',
-      formatDate: true,
-      controlContent: {
-        id: 'EndDate',
-        type: 'date',
-        placeholder: 'Select',
-        calendarWithInputIcon: true
-      }
-    },
-    {
-      id: 'ShipYard',
-      label: 'Yard Name',
-      isRequired: false,
-      isEditable: true,
-      type: 'dropdown',
-      getFieldName: 'ShipYard',
-      saveFieldName: 'ShipYardTemp',
-      controlContent: {
-        id: 'ShipYard',
-        apiRequest: this.projectsService.getProjectsShipsYardsRequest()
-      }
-    }
-  ];
-
-  constructor(
-    private apiService: ApiRequestService,
-    private projectsService: ProjectsService
-  ) {}
+  constructor(private projectsService: ProjectsService) {}
 
   detailedData = {
     StartDate: new Date(),
@@ -88,15 +25,7 @@ export class SpecificationTopDetailsService {
   canEdit = true;
 
   getTopDetailsData(projectId: string): Observable<TopFieldsData> {
-    const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
-      crud: eCrud.Get,
-      action: 'projects/get-project',
-      params: `uid=${projectId}`
-    };
-
-    return this.apiService.sendApiReq(apiReq).pipe(
+    return this.projectsService.getProject(projectId).pipe(
       map((response) => {
         return {
           topFieldsConfig: {
@@ -112,7 +41,74 @@ export class SpecificationTopDetailsService {
             jobCardNo: response.ProjectCode,
             vesselName: response.VesselName,
             jobTitle: response.Subject,
-            bottomFieldsConfig: this.bottomFieldsConfig
+            bottomFieldsConfig: [
+              {
+                id: 'ProjectManager',
+                label: 'Project Manager',
+                isRequired: false,
+                isEditable: true,
+                type: 'dropdown',
+                getFieldName: 'ProjectManagerUid',
+                saveFieldName: 'ProjectManagerUid',
+                controlContent: {
+                  id: 'ProjectManager',
+                  value: 'ManagerId',
+                  label: 'FullName',
+                  selectedValue: response.ProjectManagerUid,
+                  selectedLabel: response.ProjectManager,
+                  apiRequest: this.projectsService.getProjectsManagersRequest()
+                }
+              },
+              {
+                id: 'StartDate',
+                label: 'Start date',
+                isRequired: false,
+                isEditable: true,
+                type: 'date',
+                getFieldName: 'StartDate',
+                saveFieldName: 'StartDate',
+                formatDate: true,
+                controlContent: {
+                  id: 'StartDate',
+                  type: 'date',
+                  placeholder: 'Select',
+                  calendarWithInputIcon: true
+                }
+              },
+              {
+                id: 'EndDate',
+                label: 'Due date',
+                isRequired: false,
+                isEditable: true,
+                type: 'date',
+                getFieldName: 'EndDate',
+                saveFieldName: 'EndDate',
+                formatDate: true,
+                controlContent: {
+                  id: 'EndDate',
+                  type: 'date',
+                  placeholder: 'Select',
+                  calendarWithInputIcon: true
+                }
+              },
+              {
+                id: 'ShipYard',
+                label: 'Yard Name',
+                isRequired: false,
+                isEditable: true,
+                type: 'dropdown',
+                getFieldName: 'ShipYard',
+                saveFieldName: 'ShipYardTemp',
+                controlContent: {
+                  id: 'ShipYard',
+                  value: 'ShipYardId',
+                  label: 'ShipYardName',
+                  selectedLabel: response.ShipYard,
+                  selectedValue: response.ShipYard,
+                  apiRequest: this.projectsService.getProjectsShipsYardsRequest()
+                }
+              }
+            ]
           },
           detailedData: response,
           canEdit: this.canEdit
@@ -122,17 +118,19 @@ export class SpecificationTopDetailsService {
   }
 
   save(projectId: string, data) {
-    const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
-      crud: eCrud.Post,
-      action: 'projects/update-project',
-      body: {
-        ...data,
-        uid: projectId
-      }
-    };
-
-    return this.apiService.sendApiReq(apiReq);
+    return this.projectsService.updateProject({
+      ...omit(data, [
+        'ProjectId',
+        'ProjectManager',
+        'ShipYard',
+        'ProjectCode',
+        'ProjectStatusName',
+        'ProjectTypeName',
+        'Specification',
+        'ProjectState',
+        'VesselName'
+      ]),
+      uid: projectId
+    } as any);
   }
 }

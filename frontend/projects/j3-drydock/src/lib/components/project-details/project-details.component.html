@@ -1,8 +1,5 @@
 <jb-details-layout-figma>
-  <jb-project-header
-    (vesselUid)="setVessetUid($event)"
-    alayout-header
-  ></jb-project-header>
+  <jb-project-header alayout-header></jb-project-header>
   <ng-container alayout-content>
     <ng-container [ngSwitch]="currentSectionId">
       <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.General">
