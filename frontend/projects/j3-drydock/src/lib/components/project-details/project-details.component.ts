@@ -1,10 +1,11 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IJbMenuItem, JbMenuService, JiBeTheme } from 'jibe-components';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.enum';
 import { projectDetailsMenuData } from './project-details-menu';
 import { GrowlMessageService } from '../../services/growl-message.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'jb-project-details',
@@ -31,22 +32,35 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   growlMessage$ = this.growlMessageService.growlMessage$;
 
-  // fixme temporary
-  readonly projectId = '12963993-9397-4B5E-849E-0046FB90F564';
+  projectId: string;
+  vesselUid: string;
 
   constructor(
     private jbMenuService: JbMenuService,
-    private growlMessageService: GrowlMessageService
+    private growlMessageService: GrowlMessageService,
+    private route: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit() {
     this.initSideMenu();
+    this.route.paramMap
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map((params) => params.get('projectId'))
+      )
+      .subscribe((projectId) => {
+        this.projectId = projectId;
+      });
   }
 
   ngOnDestroy() {
     this.hideSideMenu();
+  }
+
+  setVesselUid(vesselUid: string) {
+    this.vesselUid = vesselUid;
   }
 
   private initSideMenu() {

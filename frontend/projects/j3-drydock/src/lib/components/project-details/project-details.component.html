@@ -1,5 +1,8 @@
 <jb-details-layout-figma>
-  <jb-project-header alayout-header></jb-project-header>
+  <jb-project-header
+    (vesselUid)="setVessetUid($event)"
+    alayout-header
+  ></jb-project-header>
   <ng-container alayout-content>
     <ng-container [ngSwitch]="currentSectionId">
       <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.General">
@@ -9,7 +12,10 @@
       <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.Specifications">
         <div #specifications>
           <div #technical_specification>
-            <jb-specifications></jb-specifications>
+            <jb-specifications
+              [projectId]="projectId"
+              [vesselUid]="vesselUid"
+            ></jb-specifications>
           </div>
           <div #requisition>TODO insert requisition component here</div>
         </div>
