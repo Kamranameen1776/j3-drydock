@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { SpecificationTopDetailsService, TopFieldsData } from '../../services/specifications/specification-top-details.service';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, first, switchMap, takeUntil } from 'rxjs/operators';
+import { AdvancedSettings } from 'jibe-components';
+import { CurrentProjectService } from '../../services/current-project.service';
 
 @Component({
   selector: 'jb-project-header',
@@ -10,17 +12,53 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class ProjectHeaderComponent extends UnsubscribeComponent implements OnInit {
   topDetailsData: TopFieldsData;
+  loading = true;
+  threeDotsActions: AdvancedSettings[] = [
+    {
+      show: true,
+      color: 'status-0',
+      label: 'Export'
+    },
+    {
+      show: true,
+      color: 'status-0',
+      label: 'Rework'
+    },
+    {
+      show: true,
+      color: 'status-0',
+      label: 'Re-sync'
+    }
+  ];
 
-  constructor(private specsTopDetailsService: SpecificationTopDetailsService) {
+  constructor(
+    private specsTopDetailsService: SpecificationTopDetailsService,
+    private currentProject: CurrentProjectService
+  ) {
     super();
   }
 
   ngOnInit(): void {
-    this.specsTopDetailsService
-      .getTopDetailsData()
-      .pipe(takeUntil(this.unsubscribe$))
+    this.loading = true;
+
+    this.currentProject.projectId
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        switchMap((projectId) => this.specsTopDetailsService.getTopDetailsData(projectId).pipe(takeUntil(this.unsubscribe$))),
+        finalize(() => (this.loading = false))
+      )
       .subscribe((data) => {
         this.topDetailsData = data;
+        this.currentProject.vesselUid.next(data.detailedData?.vesselUid as string);
       });
+  }
+
+  save() {
+    return this.currentProject.projectId
+      .pipe(
+        first(),
+        switchMap((projectId) => this.specsTopDetailsService.save(projectId, this.topDetailsData.detailedData))
+      )
+      .toPromise();
   }
 }

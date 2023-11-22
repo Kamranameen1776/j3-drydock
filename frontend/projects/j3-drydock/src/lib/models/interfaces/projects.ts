@@ -13,6 +13,7 @@ export interface Project extends ProjectCreate {
 }
 
 export interface ProjectEdit {
+  uid: string;
   FleetId: number;
   VesselId: number;
   ProjectTypeId: number;

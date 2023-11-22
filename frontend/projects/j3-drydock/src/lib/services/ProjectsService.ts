@@ -121,9 +121,21 @@ export class ProjectsService {
     const apiRequest: WebApiRequest = {
       apiBase: 'dryDockAPI',
       action: 'projects/update-project',
-      crud: eCrud.Post,
+      crud: eCrud.Put,
       entity: 'drydock',
       body: data
+    };
+
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
+  public getProject(projectId: string) {
+    const apiRequest: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      crud: eCrud.Get,
+      action: 'projects/get-project',
+      params: `uid=${projectId}`
     };
 
     return this.apiRequestService.sendApiReq(apiRequest);

@@ -13,8 +13,16 @@
       <jb-button
         type="NoButton"
         label="Save"
+        (click)="save()"
       ></jb-button>
       <jb-button label="Complete"></jb-button>
+      <!-- <jb-workflow-actions
+        [isCustomThreeDots]="true"
+        [showSaveButton]="true"
+        [saveButtonType]="NoButton"
+        [threeDotsActions]="threeDotsActions"
+        (saveActionClick)="save()"
+      ></jb-workflow-actions> -->
     </div>
   </jb-details-top-section>
 </div>

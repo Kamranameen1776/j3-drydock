@@ -71,8 +71,6 @@ export class SpecificationGridService {
       action: action,
       body: {
         ...formValue,
-        ProjectUid: 'D6280FCA-E58D-4993-8A6D-070432E12758',
-        VesselUid: '3EEF2E1B-2533-45C7-82C7-C13D6AA79559',
         // HardCoded for future
         ItemSourceUid: '3EEF2E1B-2533-45C7-82C7-C13D6AA79559',
         Inspections: [],

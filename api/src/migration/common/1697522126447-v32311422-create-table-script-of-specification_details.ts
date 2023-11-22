@@ -49,18 +49,14 @@ export class v32311422CreateTableScriptOfSpecificationDetails1697522126447 imple
                  CONSTRAINT [pk_specification_details_uid] PRIMARY KEY CLUSTERED 
                 (
                     [uid] ASC
-                )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+                )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
                 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-                GO
                 
                 ALTER TABLE [dry_dock].[specification_details] ADD  CONSTRAINT [DF_specification_details_uid]  DEFAULT (newid()) FOR [uid]
-                GO
                 
                 ALTER TABLE [dry_dock].[specification_details] ADD  DEFAULT ((1)) FOR [active_status]
-                GO
                 
                 ALTER TABLE [dry_dock].[specification_details] ADD  DEFAULT (getutcdate()) FOR [created_at]
-                GO
                 END      
             `,
             );

@@ -42,6 +42,7 @@ export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordD
             ProjectCode: record.ProjectCode,
             ProjectTypeName: record.ProjectTypeName,
             ProjectManager: record.ProjectManager,
+            ProjectManagerUid: record.ProjectManagerUid,
 
             // TODO: replace with real data
             ShipYard: 'Country ave.Name 123',
@@ -51,6 +52,7 @@ export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordD
             ProjectState: record.ProjectStateName,
 
             VesselName: record.VesselName,
+            VesselUid: record.VesselUid,
 
             Subject: record.Subject,
             StartDate: record.StartDate,

@@ -1,16 +1,18 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IJbMenuItem, JbMenuService, JiBeTheme } from 'jibe-components';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.enum';
 import { projectDetailsMenuData } from './project-details-menu';
 import { GrowlMessageService } from '../../services/growl-message.service';
+import { ActivatedRoute } from '@angular/router';
+import { CurrentProjectService } from '../../services/current-project.service';
 
 @Component({
   selector: 'jb-project-details',
   templateUrl: './project-details.component.html',
   styleUrls: ['./project-details.component.scss'],
-  providers: [GrowlMessageService]
+  providers: [GrowlMessageService, CurrentProjectService]
 })
 export class ProjectDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @ViewChild(eProjectDetailsSideMenuId.General) [eProjectDetailsSideMenuId.General]: ElementRef;
@@ -31,19 +33,36 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   growlMessage$ = this.growlMessageService.growlMessage$;
 
-  // fixme temporary
-  // readonly projectId = '12963993-9397-4B5E-849E-0046FB90F564';
-  readonly projectId = '63DEB614-166F-4D25-97E9-B082EF960476';
+  projectId: string;
+  vesselUid: string;
 
   constructor(
     private jbMenuService: JbMenuService,
-    private growlMessageService: GrowlMessageService
+    private growlMessageService: GrowlMessageService,
+    private route: ActivatedRoute,
+    private currentProject: CurrentProjectService
   ) {
     super();
   }
 
   ngOnInit() {
     this.initSideMenu();
+    this.route.paramMap
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map((params) => params.get('projectId'))
+      )
+      .subscribe((projectId) => {
+        this.currentProject.projectId.next(projectId);
+      });
+
+    this.currentProject.projectId.pipe(takeUntil(this.unsubscribe$)).subscribe((projectId) => {
+      this.projectId = projectId;
+    });
+
+    this.currentProject.vesselUid.pipe(takeUntil(this.unsubscribe$)).subscribe((vesselUid) => {
+      this.vesselUid = vesselUid;
+    });
   }
 
   ngOnDestroy() {

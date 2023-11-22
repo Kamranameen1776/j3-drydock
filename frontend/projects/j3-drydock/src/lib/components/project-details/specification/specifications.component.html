@@ -54,6 +54,8 @@
   </p-tabView>-->
     <jb-create-specification-popup
       [isOpen]="isCreatePopupVisible"
+      [projectId]="projectId"
+      [vesselUid]="vesselUid"
       (closeDialog)="onCloseCreatePopup($event)"
     ></jb-create-specification-popup>
   </div>

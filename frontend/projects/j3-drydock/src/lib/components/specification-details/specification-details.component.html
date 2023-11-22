@@ -10,11 +10,22 @@
     <ng-container [ngSwitch]="currentSectionId">
       <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.SpecificationDetails">
         <div #specifications>
-          <div #general_specification>TODO insert general Informatioon component here</div>
+          <div #generalInformation>
+            <jb-specification-general-information
+              *ngIf="specificationDetailsInfo"
+              [specificationDetailsInfo]="specificationDetailsInfo"
+            ></jb-specification-general-information>
+          </div>
           <div #subitem></div>
         </div>
       </ng-container>
     </ng-container>
+  </ng-container>
+  <ng-container
+    style="width: 400px"
+    alayout-aside
+  >
+    <jb-discussion-feed></jb-discussion-feed>
   </ng-container>
 </jb-details-layout-figma>
 <jb-growl [content]="growlMessage$ | async"></jb-growl>
