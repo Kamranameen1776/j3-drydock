@@ -25,7 +25,14 @@ export class addSpecificationRequisitionsTable1699603984473 implements Migration
 
             await MigrationUtilsService.migrationLog(this.className, '', 'S', 'dry_dock', this.description);
         } catch (error) {
-            await MigrationUtilsService.migrationLog(this.className, error, 'E', 'dry_dock', this.description, true);
+            await MigrationUtilsService.migrationLog(
+                this.className,
+                JSON.stringify(error),
+                'E',
+                'dry_dock',
+                this.description,
+                true,
+            );
         }
     }
 
@@ -49,7 +56,7 @@ export class addSpecificationRequisitionsTable1699603984473 implements Migration
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error,
+                JSON.stringify(error),
                 'E',
                 'dry_dock',
                 `${this.description} (Down migration)`,
