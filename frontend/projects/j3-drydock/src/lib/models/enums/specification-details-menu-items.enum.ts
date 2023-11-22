@@ -33,6 +33,7 @@ export const specificationDetailsMenuData = [
     label: eSpecificationDetailsPageMenuLabels.SpecificationDetails,
     id: eSpecificationDetailsPageMenuIds.SpecificationDetails,
     icon: 'icons8-more-details-2',
+    isOpen: true,
     items: [
       { label: eSpecificationDetailsPageMenuLabels.GeneralInformation, id: eSpecificationDetailsPageMenuIds.GeneralInformation },
       { label: eSpecificationDetailsPageMenuLabels.SubItems, id: eSpecificationDetailsPageMenuIds.SubItems },
@@ -45,9 +46,9 @@ export const specificationDetailsMenuData = [
       {
         label: eSpecificationDetailsPageMenuLabels.SpecificationAttachments,
         id: eSpecificationDetailsPageMenuIds.SpecificationAttachments
-      },
-      { label: eSpecificationDetailsPageMenuLabels.Attachments, id: eSpecificationDetailsPageMenuIds.Attachments },
-      { label: eSpecificationDetailsPageMenuLabels.AuditTrail, id: eSpecificationDetailsPageMenuIds.AuditTrail }
-    ]
-  }
+      }],
+      
+  },
+  { label: eSpecificationDetailsPageMenuLabels.Attachments, id: eSpecificationDetailsPageMenuIds.Attachments, icon: 'icons8-attach' },
+  { label: eSpecificationDetailsPageMenuLabels.AuditTrail, id: eSpecificationDetailsPageMenuIds.AuditTrail, icon: 'icons8-order-history-3' }
 ];

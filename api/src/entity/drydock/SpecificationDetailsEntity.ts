@@ -20,6 +20,13 @@ export class SpecificationDetailsEntity {
     FunctionUid: string;
 
     @Column('varchar', {
+        nullable: false,
+        name: 'function',
+        length: 250,
+    })
+    Function: string;
+
+    @Column('varchar', {
         nullable: true,
         name: 'account_code',
         length: 200,
