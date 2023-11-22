@@ -128,7 +128,9 @@ export class SpecificationTopDetailsService {
         'ProjectTypeName',
         'Specification',
         'ProjectState',
-        'VesselName'
+        'VesselName',
+        'VesselId',
+        'ProjectTypeCode'
       ]),
       uid: projectId
     } as any);
