@@ -1,7 +1,7 @@
 import { Column, Entity } from 'typeorm';
 
 @Entity('j3_prc_company_registry', { schema: 'prc' })
-export class J3PrcCompanyRegistry {
+export class J3PrcCompanyRegistryEntity {
     @Column('uniqueidentifier', { primary: true, name: 'uid' })
     uid: string;
     @Column('varchar', { name: 'registered_name', length: 100 })
