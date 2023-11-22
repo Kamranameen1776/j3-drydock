@@ -1,7 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
-import { SynchronizerService } from 'j2utils';
 
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
@@ -69,7 +68,12 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
                 });
                 await this.specificationDetailsRepository.CreateSpecificationInspection(data, queryRunner);
             }
-            await SynchronizerService.dataSynchronize('dry_dock.specification_details', 'uid', specId, vessel.VesselId);
+            this.pushSyncData({
+                TableName: 'dry_dock.specification_details',
+                PKKey: 'uid',
+                PKValue: specId,
+                VesselId: vessel.VesselId,
+            });
             return specId;
         });
     }

@@ -35,6 +35,13 @@ export class UpdateSpecificationDetailsCommand extends Command<Request, void> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const { Inspections } = request.body;
             await this.specificationDetailsRepository.UpdateSpecificationDetails(request.body, queryRunner);
+            this.pushSyncData({
+                TableName: 'dry_dock.specification_details',
+                PKKey: 'uid',
+                PKValue: request.body.uid,
+                VesselId: this.specificationDetailsRepository.getVesselIdBySpecification(request.body.uid),
+            });
+
             if (Inspections !== undefined) {
                 const data = Inspections.map((item: number) => {
                     return {

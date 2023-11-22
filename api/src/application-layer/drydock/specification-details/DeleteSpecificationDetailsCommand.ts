@@ -30,6 +30,12 @@ export class DeleteSpecificationDetailsCommand extends Command<DeleteSpecificati
                 request.uid,
                 queryRunner,
             );
+            this.pushSyncData({
+                TableName: 'dry_dock.specification_details',
+                PKKey: 'uid',
+                PKValue: request.uid,
+                VesselId: this.specificationDetailsRepository.getVesselIdBySpecification(request.uid),
+            });
             return updatedSpecData;
         });
 

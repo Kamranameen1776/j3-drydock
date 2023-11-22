@@ -32,6 +32,28 @@ import {
 } from './dtos';
 
 export class SpecificationDetailsRepository {
+    public getVesselIdBySpecification(uid: string): () => Promise<number> {
+        return async () => {
+            const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
+
+            const res = await specificationRepository
+                .createQueryBuilder('spec')
+                .select([
+                    'spec.uid as uid',
+
+                    'ves.VesselName AS VesselName',
+                    'ves.uid AS VesselUid',
+                    'ves.VesselId as VesselId',
+                ])
+                .innerJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
+                .innerJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
+                .where('spec.ActiveStatus = 1')
+                .andWhere('spec.uid = :uid', { uid })
+                .execute();
+            return res[0].VesselId;
+        };
+    }
+
     public async findSpecInspections(uid: string): Promise<Array<InspectionsResultDto>> {
         const inspectionRepository = getManager().getRepository(SpecificationInspectionEntity);
 
