@@ -6,7 +6,7 @@ import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.en
 import { projectDetailsMenuData } from './project-details-menu';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { ActivatedRoute } from '@angular/router';
-import { CurrentProjectService } from '../../services/current-project.service';
+import { CurrentProjectService } from './current-project.service';
 
 @Component({
   selector: 'jb-project-details',
@@ -53,14 +53,14 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         map((params) => params.get('projectId'))
       )
       .subscribe((projectId) => {
-        this.currentProject.projectId.next(projectId);
+        this.currentProject.projectId$.next(projectId);
       });
 
-    this.currentProject.projectId.pipe(takeUntil(this.unsubscribe$)).subscribe((projectId) => {
+    this.currentProject.projectId$.pipe(takeUntil(this.unsubscribe$)).subscribe((projectId) => {
       this.projectId = projectId;
     });
 
-    this.currentProject.vesselUid.pipe(takeUntil(this.unsubscribe$)).subscribe((vesselUid) => {
+    this.currentProject.vesselUid$.pipe(takeUntil(this.unsubscribe$)).subscribe((vesselUid) => {
       this.vesselUid = vesselUid;
     });
   }

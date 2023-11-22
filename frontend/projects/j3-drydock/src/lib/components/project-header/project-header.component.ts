@@ -3,7 +3,7 @@ import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { SpecificationTopDetailsService, TopFieldsData } from '../../services/specifications/specification-top-details.service';
 import { finalize, first, switchMap, takeUntil } from 'rxjs/operators';
 import { AdvancedSettings } from 'jibe-components';
-import { CurrentProjectService } from '../../services/current-project.service';
+import { CurrentProjectService } from '../project-details/current-project.service';
 
 @Component({
   selector: 'jb-project-header',
@@ -41,7 +41,7 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   ngOnInit(): void {
     this.loading = true;
 
-    this.currentProject.projectId
+    this.currentProject.projectId$
       .pipe(
         takeUntil(this.unsubscribe$),
         switchMap((projectId) => this.specsTopDetailsService.getTopDetailsData(projectId).pipe(takeUntil(this.unsubscribe$))),
@@ -49,12 +49,12 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       )
       .subscribe((data) => {
         this.topDetailsData = data;
-        this.currentProject.vesselUid.next(data.detailedData?.vesselUid as string);
+        this.currentProject.projectId$.next(data.detailedData?.vesselUid as string);
       });
   }
 
   save() {
-    return this.currentProject.projectId
+    return this.currentProject.projectId$
       .pipe(
         first(),
         switchMap((projectId) => this.specsTopDetailsService.save(projectId, this.topDetailsData.detailedData))
