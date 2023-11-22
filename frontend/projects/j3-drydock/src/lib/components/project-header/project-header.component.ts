@@ -49,7 +49,7 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       )
       .subscribe((data) => {
         this.topDetailsData = data;
-        this.currentProject.vesselUid.next(data.detailedData?.vesselUid as string);
+        this.currentProject.vesselUid.next(data.detailedData?.VesselUid as string);
       });
   }
 
