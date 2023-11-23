@@ -1,0 +1,31 @@
+<jb-details-layout-figma>
+  <jb-specification-details-header
+    alayout-header
+    *ngIf="specificationDetailsInfo"
+    [specificationDetailsInfo]="specificationDetailsInfo"
+    (saveButtonClick)="save()"
+  ></jb-specification-details-header>
+
+  <ng-container alayout-content>
+    <ng-container [ngSwitch]="currentSectionId">
+      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.SpecificationDetails">
+        <div #specifications>
+          <div #generalInformation>
+            <jb-specification-general-information
+              *ngIf="specificationDetailsInfo"
+              [specificationDetailsInfo]="specificationDetailsInfo"
+            ></jb-specification-general-information>
+          </div>
+          <div #subitem></div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <ng-container
+    style="width: 400px"
+    alayout-aside
+  >
+    <jb-discussion-feed></jb-discussion-feed>
+  </ng-container>
+</jb-details-layout-figma>
+<jb-growl [content]="growlMessage$ | async"></jb-growl>

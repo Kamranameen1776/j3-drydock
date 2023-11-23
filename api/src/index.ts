@@ -3,15 +3,11 @@ import { MssqlDBConnection } from 'j2utils';
 import { Connection, createConnection, getConnectionOptions } from 'typeorm';
 
 import app from './app';
-import { options } from './express-swagger.config';
 import { log } from './logger';
 
 const PORT = process.env.PORT || 3020;
+console.log(PORT);
 process.env.basedir = __dirname;
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const expressSwagger = require('express-swagger-generator')(app); // exposes web api's help page
-expressSwagger(options(+PORT)); // http://localhost:3020/api-docs/#/
 
 let server: Server | undefined;
 

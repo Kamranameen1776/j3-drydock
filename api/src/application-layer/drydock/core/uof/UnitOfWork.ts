@@ -1,8 +1,6 @@
 import { getConnection } from 'typeorm';
 import { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 
-import { TransactionException } from '../../../../bll/drydock/core/exceptions/TransactionException';
-
 type Work<TResult> = (queryRunner: QueryRunner) => Promise<TResult>;
 
 export class UnitOfWork {
@@ -22,8 +20,7 @@ export class UnitOfWork {
             await queryRunner.rollbackTransaction();
 
             // TODO: implement retry pattern
-            // TODO: implement logging
-            throw new TransactionException('Db transaction failed');
+            throw exception;
         } finally {
             await queryRunner.release();
         }

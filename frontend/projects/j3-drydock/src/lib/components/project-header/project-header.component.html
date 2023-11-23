@@ -1,0 +1,28 @@
+<div jb-detail-top-section>
+  <jb-details-top-section
+    *ngIf="topDetailsData"
+    [topFieldsConfig]="topDetailsData.topFieldsConfig"
+    [detailsData]="topDetailsData.detailedData"
+    [canEdit]="topDetailsData.canEdit"
+  >
+    <div
+      class="header-actions"
+      jb-workflow-section
+    >
+      <jb-grid-advanced-settings></jb-grid-advanced-settings>
+      <jb-button
+        type="NoButton"
+        label="Save"
+        (click)="save()"
+      ></jb-button>
+      <jb-button label="Complete"></jb-button>
+      <!-- <jb-workflow-actions
+        [isCustomThreeDots]="true"
+        [showSaveButton]="true"
+        [saveButtonType]="NoButton"
+        [threeDotsActions]="threeDotsActions"
+        (saveActionClick)="save()"
+      ></jb-workflow-actions> -->
+    </div>
+  </jb-details-top-section>
+</div>
