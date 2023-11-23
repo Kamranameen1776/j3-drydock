@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { SpecificationTopDetailsService, TopFieldsData } from '../../services/specifications/specification-top-details.service';
-import { finalize, first, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, finalize, first, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { AdvancedSettings } from 'jibe-components';
 import { CurrentProjectService } from '../project-details/current-project.service';
 import { TaskManagerService } from '../../services/task-manager.service';
@@ -55,12 +55,14 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   private loadTopDetailsData() {
-    this.loading = true;
-
     this.currentProject.projectId$
       .pipe(
-        takeUntil(this.unsubscribe$),
+        filter((projectId) => !!projectId),
+        tap(() => {
+          this.loading = true;
+        }),
         switchMap((projectId) => this.specsTopDetailsService.getTopDetailsData(projectId).pipe(takeUntil(this.unsubscribe$))),
+        takeUntil(this.unsubscribe$),
         finalize(() => (this.loading = false))
       )
       .subscribe((data) => {
