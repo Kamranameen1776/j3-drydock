@@ -1,4 +1,10 @@
 <div class="specification-requisitions">
+  <div class="specification-requisitions-header">
+    <h3 class="title">Requisitions</h3>
+    <div class="buttons">
+      <jb-button label="Link Requisitions" type='NoButton'></jb-button>
+    </div>
+  </div>
   <jb-grid
     *ngIf="gridData"
     [gridName]="gridData.gridName"
@@ -7,5 +13,8 @@
     [setActions]="gridData.actions"
     [searchFields]="gridData.searchFields"
     [getStyleByContainer]="true"
+    [isDisplayAdvancedSettings]="false"
+    [isDisplayAdvancedFilter]="false"
+    (action)="onGridAction($any($event))"
   ></jb-grid>
 </div>

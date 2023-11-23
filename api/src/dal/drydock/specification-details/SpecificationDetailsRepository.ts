@@ -25,6 +25,7 @@ import {
     TmDdLibItemCategory,
     TmDdLibMaterialSuppliedBy,
 } from '../../../entity/drydock';
+import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
 import { ODataResult } from '../../../shared/interfaces';
 import {
     CreateInspectionsDto,
@@ -33,7 +34,6 @@ import {
     IUpdateSpecificationDetailsDto,
     SpecificationDetailsResultDto,
 } from './dtos';
-import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
 
 export class SpecificationDetailsRepository {
     public async findSpecInspections(uid: string): Promise<Array<InspectionsResultDto>> {

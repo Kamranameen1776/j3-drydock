@@ -39,4 +39,19 @@ export class SpecificationDetailsService {
     };
     return this.apiRequestService.sendApiReq(request);
   }
+
+  deleteSpecificationRequisition(specificationUid: string, requisitionUid: string) {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      action: 'specification-details/delete-specification-requisition',
+      crud: eCrud.Post,
+      body: {
+        specificationUid,
+        requisitionUid,
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(request);
+  }
 }

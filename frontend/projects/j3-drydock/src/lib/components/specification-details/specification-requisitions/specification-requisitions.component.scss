@@ -1,5 +1,19 @@
-:host ::ng-deep .specification-requisitions {
-  .cell_allignment_number {
-    text-align: left;
+:host {
+  ::ng-deep .specification-requisitions {
+
+    .cell_allignment_number {
+      text-align: left;
+    }
+  }
+
+
+  .specification-requisitions {
+
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      align-items: center;
+    }
   }
 }

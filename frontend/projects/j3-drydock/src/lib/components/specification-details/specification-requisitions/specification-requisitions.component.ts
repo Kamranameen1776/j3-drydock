@@ -1,16 +1,25 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { UnsubscribeComponent } from "../../../shared/classes/unsubscribe.base";
-import { GridInputsWithRequest } from "../../../models/interfaces/grid-inputs";
-import { Column, eCrud, eFieldControlType, SearchField, WebApiRequest } from "jibe-components";
+import { Component, Input, OnInit } from '@angular/core';
+import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
+import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import {
-  SpecificationRequisitionsDisplayTexts,
-  SpecificationRequisitionsFieldNames
-} from "../enum/specification-requisitions.enum";
+  Column,
+  eCrud,
+  eFieldControlType, eGridRefreshType,
+  eGridRowActions,
+  GridRowActions, GridService,
+  SearchField,
+  ShowSettings,
+  WebApiRequest
+} from "jibe-components";
+import { SpecificationRequisitionsDisplayTexts, SpecificationRequisitionsFieldNames } from '../enum/specification-requisitions.enum';
+import { GridAction } from 'jibe-components/lib/grid/models/grid-action.model';
+import { SpecificationRequisition } from '../../../models/interfaces/specification-requisition';
+import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 
 @Component({
-  selector: "jb-specification-requisitions",
-  templateUrl: "./specification-requisitions.component.html",
-  styleUrls: ["./specification-requisitions.component.scss"]
+  selector: 'jb-specification-requisitions',
+  templateUrl: './specification-requisitions.component.html',
+  styleUrls: ['./specification-requisitions.component.scss']
 })
 export class SpecificationRequisitionsComponent extends UnsubscribeComponent implements OnInit {
   @Input() specificationUid: string;
@@ -58,7 +67,7 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
       IsVisible: true,
       ReadOnly: true,
       FieldType: eFieldControlType.Date,
-      ControlType: eFieldControlType.Date,
+      ControlType: eFieldControlType.Date
     },
     {
       DisplayText: SpecificationRequisitionsDisplayTexts.DeliveryDate,
@@ -68,7 +77,7 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
       IsVisible: true,
       ReadOnly: true,
       FieldType: eFieldControlType.Date,
-      ControlType: eFieldControlType.Date,
+      ControlType: eFieldControlType.Date
     },
     {
       DisplayText: SpecificationRequisitionsDisplayTexts.Port,
@@ -86,7 +95,7 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
       IsVisible: true,
       ReadOnly: true,
       FieldType: eFieldControlType.Number,
-      Precision: '1.2-2',
+      Precision: '1.2-2'
     },
     {
       DisplayText: SpecificationRequisitionsDisplayTexts.Status,
@@ -101,13 +110,28 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
   private searchFields: SearchField[] = [
     {
       field: SpecificationRequisitionsFieldNames.Number,
-      pattern: "contains"
+      pattern: 'contains'
     },
     {
       field: SpecificationRequisitionsFieldNames.Subject,
-      pattern: "contains"
+      pattern: 'contains'
     }
   ];
+
+  private showSettings: ShowSettings = {
+    showButton: true,
+    showAdditionalFilters: false,
+    showThreeDotsMenu: false,
+    showSearchBox: true,
+    showFilterChips: false
+  };
+
+  constructor(
+    private specificationDetailsService: SpecificationDetailsService,
+    private gridService: GridService
+  ) {
+    super();
+  }
 
   async ngOnInit(): Promise<void> {
     this.setGridData();
@@ -120,17 +144,48 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
       request: this.getApiRequest(),
       searchFields: this.searchFields,
       advancedSettings: [],
+      showSettings: this.showSettings,
+      actions: []
+    };
+
+    this.gridData.actions = this.getGridRowActions();
+  }
+
+  onGridAction(event: GridAction<eGridRowActions, SpecificationRequisition>) {
+    switch (event.type) {
+      case eGridRowActions.Delete:
+        this.deleteSpecificationRequisition(event.payload);
+        break;
+    }
+  }
+
+  private getGridRowActions() {
+    const actions: GridRowActions[] = [];
+
+    actions.push({
+      name: eGridRowActions.Delete,
+      gridName: this.gridData.gridName
+    });
+
+    return actions;
+  }
+
+  private getApiRequest(): WebApiRequest {
+    return {
+      // apiBase: eApiBase.DryDockApi,
+      apiBase: 'dryDockAPI',
+      action: 'specification-details/get-specification-requisitions',
+      crud: eCrud.Post,
+      entity: 'drydock',
+      body: { uid: this.specificationUid }
     };
   }
 
-  getApiRequest(): WebApiRequest {
-    return {
-      // apiBase: eApiBase.DryDockApi,
-      apiBase: "dryDockAPI",
-      action: "specification-details/get-specification-requisitions",
-      crud: eCrud.Post,
-      entity: "drydock",
-      body: { uid: this.specificationUid }
-    };
+  private deleteSpecificationRequisition(specificationRequisition: SpecificationRequisition) {
+    this.specificationDetailsService
+      .deleteSpecificationRequisition(this.specificationUid, specificationRequisition.uid)
+      .subscribe(() => {
+        this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+      });
   }
 }
