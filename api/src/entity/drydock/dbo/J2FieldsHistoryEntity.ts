@@ -1,7 +1,7 @@
 import { Column, Entity } from 'typeorm';
 
 @Entity('j2_fields_history', { schema: 'dbo' })
-export class J2FieldsHistory {
+export class J2FieldsHistoryEntity {
     @Column('uniqueidentifier', {
         nullable: false,
         primary: true,

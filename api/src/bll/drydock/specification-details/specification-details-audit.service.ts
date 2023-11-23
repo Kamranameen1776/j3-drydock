@@ -1,16 +1,12 @@
-import { getManager, Repository } from 'typeorm';
-
 import { UpdateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationDetailsDto';
-import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
-import { J2FieldsHistory } from '../../../entity/j2_fields_history';
+import { FieldsHistoryRepository } from '../../../dal/drydock/fields-history/fieldsHistoryRepository';
+import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
 import { TaskManagerConstants } from '../../../shared/constants/task-manager';
 
 export class SpecificationDetailsAuditService {
-    private readonly fieldsHistoryRepository: Repository<J2FieldsHistory> = getManager().getRepository(J2FieldsHistory);
-    private readonly specificationDetailsRepository: SpecificationDetailsRepository =
-        new SpecificationDetailsRepository();
+    private readonly fieldsHistoryRepository = new FieldsHistoryRepository();
 
-    private generateCommonFields(uid: string): Partial<J2FieldsHistory> {
+    private generateCommonFields(uid: string): Partial<J2FieldsHistoryEntity> {
         return {
             key_1: uid,
             key_2: '0',
@@ -38,7 +34,7 @@ export class SpecificationDetailsAuditService {
             created_by: createdById,
         }));
 
-        await this.fieldsHistoryRepository.insert(fields as J2FieldsHistory[]);
+        await this.fieldsHistoryRepository.insertMany(fields as J2FieldsHistoryEntity[]);
     }
 
     public async auditDeletedSpecificationDetails(uid: string, deletedById: string): Promise<void> {
@@ -48,7 +44,7 @@ export class SpecificationDetailsAuditService {
             created_by: deletedById,
         };
 
-        await this.fieldsHistoryRepository.save(deleteField as J2FieldsHistory);
+        await this.fieldsHistoryRepository.saveFieldsHistory(deleteField as J2FieldsHistoryEntity);
     }
 
     public async auditUpdatedSpecificationDetails(
@@ -65,6 +61,6 @@ export class SpecificationDetailsAuditService {
             created_by: updatedById,
         }));
 
-        await this.fieldsHistoryRepository.insert(fields as J2FieldsHistory[]);
+        await this.fieldsHistoryRepository.insertMany(fields as J2FieldsHistoryEntity[]);
     }
 }
