@@ -3,7 +3,6 @@ import { ITopSectionFieldSet } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProjectsService } from '../ProjectsService';
-import { omit } from 'lodash';
 import { ProjectDetails } from '../../models/interfaces/project-details';
 
 export interface TopFieldsData<T> {
@@ -118,19 +117,22 @@ export class SpecificationTopDetailsService {
     );
   }
 
-  save(projectId: string, data) {
+  save(projectId: string, formData) {
+    function fastDateTransform(date: string) {
+      const [day, month, year] = date.split('-');
+
+      return new Date(`${year}-${month}-${day}`).toString();
+    }
+
+    const data = {
+      Subject: formData.Job_Short_Description,
+      ProjectManagerUid: formData.ProjectManager,
+      EndDate: fastDateTransform(formData.EndDate),
+      StartDate: fastDateTransform(formData.StartDate)
+    };
+
     return this.projectsService.updateProject({
-      ...omit(data, [
-        'ProjectId',
-        'ProjectManager',
-        'ShipYard',
-        'ProjectCode',
-        'ProjectStatusName',
-        'ProjectTypeName',
-        'Specification',
-        'ProjectState',
-        'VesselName'
-      ]),
+      ...data,
       uid: projectId
     } as any);
   }
