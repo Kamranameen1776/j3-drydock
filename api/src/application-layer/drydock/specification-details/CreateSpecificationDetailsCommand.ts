@@ -10,6 +10,7 @@ import { SpecificationDetailsRepository } from '../../../dal/drydock/specificati
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
+import { CreateSpecificationDetailsDto } from './dtos/CreateSpecificationDetailsDto';
 
 export class CreateSpecificationDetailsCommand extends Command<AuthRequest, string> {
     specificationDetailsRepository: SpecificationDetailsRepository;
@@ -31,11 +32,11 @@ export class CreateSpecificationDetailsCommand extends Command<AuthRequest, stri
     }
 
     protected async ValidationHandlerAsync(request: Request): Promise<void> {
-        // const body: CreateSpecificationDetailsDto = plainToClass(CreateSpecificationDetailsDto, request.body);
-        // const result = await validate(body);
-        // if (result.length) {
-        //     throw result;
-        // }
+        const body: CreateSpecificationDetailsDto = plainToClass(CreateSpecificationDetailsDto, request.body);
+        const result = await validate(body);
+        if (result.length) {
+            throw result;
+        }
         return;
     }
 
@@ -47,33 +48,33 @@ export class CreateSpecificationDetailsCommand extends Command<AuthRequest, stri
     protected async MainHandlerAsync(request: AuthRequest): Promise<string> {
         const token: string = request.headers.authorization as string;
         return this.uow.ExecuteAsync(async (queryRunner) => {
-            // const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
-            // const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(project.VesselUid);
+            const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
+            const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(project.VesselUid);
 
-            // const taskManagerData = await this.specificationDetailsService.TaskManagerIntegration(
-            //     request.body,
-            //     vessel,
-            //     token,
-            // );
-            // request.body.TecTaskManagerUid = taskManagerData.uid;
-            // const specData = await this.specificationDetailsRepository.CreateSpecificationDetails(
-            //     request.body,
-            //     queryRunner,
-            // );
-            // const { Inspections } = request.body;
-            // if (Inspections.length) {
-            //     const data = Inspections.map((item: number) => {
-            //         return {
-            //             LIBSurveyCertificateAuthorityID: item,
-            //             SpecificationDetailsUid: specData,
-            //         };
-            //     });
-            //     await this.specificationDetailsRepository.CreateSpecificationInspection(data, queryRunner);
-            // }
+            const taskManagerData = await this.specificationDetailsService.TaskManagerIntegration(
+                request.body,
+                vessel,
+                token,
+            );
+            request.body.TecTaskManagerUid = taskManagerData.uid;
+            const specData = await this.specificationDetailsRepository.CreateSpecificationDetails(
+                request.body,
+                queryRunner,
+            );
+            const { Inspections } = request.body;
+            if (Inspections.length) {
+                const data = Inspections.map((item: number) => {
+                    return {
+                        LIBSurveyCertificateAuthorityID: item,
+                        SpecificationDetailsUid: specData,
+                    };
+                });
+                await this.specificationDetailsRepository.CreateSpecificationInspection(data, queryRunner);
+            }
             await this.specificationDetailsAudit.auditCreatedSpecificationDetails(
                 {
                     ...request.body,
-                    uid: 'specData22',
+                    uid: specData,
                 },
                 request.authUser.UserID,
                 queryRunner,

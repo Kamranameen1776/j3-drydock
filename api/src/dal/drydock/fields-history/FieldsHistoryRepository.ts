@@ -2,7 +2,7 @@ import { QueryRunner } from 'typeorm';
 
 import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
 
-export type CreateSpecificationDetailsDto = {
+export type CreateFieldsHistoryDto = {
     key1: string;
     key2: string;
     key3: string;
@@ -20,7 +20,7 @@ export type CreateSpecificationDetailsDto = {
 }
 export class FieldsHistoryRepository {
     public async saveFieldsHistory(
-        fieldsHistory: CreateSpecificationDetailsDto,
+        fieldsHistory: CreateFieldsHistoryDto,
         queryRunner: QueryRunner,
     ): Promise<J2FieldsHistoryEntity> {
         const fieldsHistoryRepository = queryRunner.manager.getRepository(J2FieldsHistoryEntity);
@@ -28,7 +28,7 @@ export class FieldsHistoryRepository {
         return data;
     }
 
-    public async insertMany(fieldsHistories: CreateSpecificationDetailsDto[], queryRunner: QueryRunner): Promise<void> {
+    public async insertMany(fieldsHistories: CreateFieldsHistoryDto[], queryRunner: QueryRunner): Promise<void> {
         const fieldsHistoryRepository = queryRunner.manager.getRepository(J2FieldsHistoryEntity);
         await fieldsHistoryRepository.insert(fieldsHistories);
     }

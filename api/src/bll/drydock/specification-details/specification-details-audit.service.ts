@@ -2,7 +2,7 @@ import { QueryRunner } from 'typeorm';
 
 import { UpdateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationDetailsDto';
 import {
-    CreateSpecificationDetailsDto,
+    CreateFieldsHistoryDto,
     FieldsHistoryRepository,
 } from '../../../dal/drydock/fields-history/FieldsHistoryRepository';
 import { TaskManagerConstants } from '../../../shared/constants/task-manager';
@@ -10,7 +10,7 @@ import { TaskManagerConstants } from '../../../shared/constants/task-manager';
 export class SpecificationDetailsAuditService {
     private readonly fieldsHistoryRepository = new FieldsHistoryRepository();
 
-    private generateCommonFields(uid: string): Partial<CreateSpecificationDetailsDto> {
+    private generateCommonFields(uid: string): Partial<CreateFieldsHistoryDto> {
         return {
             key1: uid,
             key2: '0',
@@ -39,7 +39,7 @@ export class SpecificationDetailsAuditService {
             createdBy: createdById,
         }));
 
-        await this.fieldsHistoryRepository.insertMany(fields as CreateSpecificationDetailsDto[], queryRunner);
+        await this.fieldsHistoryRepository.insertMany(fields as CreateFieldsHistoryDto[], queryRunner);
     }
 
     public async auditDeletedSpecificationDetails(
@@ -53,7 +53,7 @@ export class SpecificationDetailsAuditService {
             created_by: deletedById,
         };
 
-        await this.fieldsHistoryRepository.saveFieldsHistory(deleteField as CreateSpecificationDetailsDto, queryRunner);
+        await this.fieldsHistoryRepository.saveFieldsHistory(deleteField as CreateFieldsHistoryDto, queryRunner);
     }
 
     public async auditUpdatedSpecificationDetails(
@@ -71,6 +71,6 @@ export class SpecificationDetailsAuditService {
             createdBy: updatedById,
         }));
 
-        await this.fieldsHistoryRepository.insertMany(fields as CreateSpecificationDetailsDto[], queryRunner);
+        await this.fieldsHistoryRepository.insertMany(fields as CreateFieldsHistoryDto[], queryRunner);
     }
 }
