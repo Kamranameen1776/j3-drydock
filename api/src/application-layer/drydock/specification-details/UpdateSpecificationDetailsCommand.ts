@@ -3,13 +3,13 @@ import { validate } from 'class-validator';
 import { Request } from 'express';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
+import { AuthRequest } from '../../../controllers/drydock/core/auth-req.type';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
-import { UserFromToken } from '../core/cqrs/UserDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateSpecificationDetailsDto } from './dtos/UpdateSpecificationDetailsDto';
 
-export class UpdateSpecificationDetailsCommand extends Command<Request, void> {
+export class UpdateSpecificationDetailsCommand extends Command<AuthRequest, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
@@ -35,11 +35,7 @@ export class UpdateSpecificationDetailsCommand extends Command<Request, void> {
         return;
     }
 
-    protected AfterExecution(request: Request, _: void, user: UserFromToken): Promise<void> {
-        return this.specificationDetailsAudit.auditUpdatedSpecificationDetails(request.body, user.UserID);
-    }
-
-    protected async MainHandlerAsync(request: Request): Promise<void> {
+    protected async MainHandlerAsync(request: AuthRequest): Promise<void> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const { Inspections } = request.body;
             await this.specificationDetailsRepository.UpdateSpecificationDetails(request.body, queryRunner);
@@ -56,6 +52,11 @@ export class UpdateSpecificationDetailsCommand extends Command<Request, void> {
                     queryRunner,
                 );
             }
+            await this.specificationDetailsAudit.auditUpdatedSpecificationDetails(
+                request.body,
+                request.authUser.UserID,
+                queryRunner,
+            );
         });
 
         return;

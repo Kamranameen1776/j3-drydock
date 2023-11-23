@@ -1,16 +1,35 @@
-import { getManager } from 'typeorm';
+import { QueryRunner } from 'typeorm';
 
 import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
 
+export type CreateSpecificationDetailsDto = {
+    key1: string;
+    key2: string;
+    key3: string;
+    moduleCode: string;
+    functionCode: string;
+    isCurrent: boolean;
+    versionNumber: number;
+    tableName: string;
+    section: string;
+    displayText: string;
+    value: string;
+    actionName: string;
+    createdDate: Date;
+    createdBy: string;
+}
 export class FieldsHistoryRepository {
-    public async saveFieldsHistory(fieldsHistory: J2FieldsHistoryEntity): Promise<J2FieldsHistoryEntity> {
-        const fieldsHistoryRepository = getManager().getRepository(J2FieldsHistoryEntity);
+    public async saveFieldsHistory(
+        fieldsHistory: CreateSpecificationDetailsDto,
+        queryRunner: QueryRunner,
+    ): Promise<J2FieldsHistoryEntity> {
+        const fieldsHistoryRepository = queryRunner.manager.getRepository(J2FieldsHistoryEntity);
         const data = await fieldsHistoryRepository.save(fieldsHistory);
         return data;
     }
 
-    public async insertMany(fieldsHistories: J2FieldsHistoryEntity[]): Promise<void> {
-        const fieldsHistoryRepository = getManager().getRepository(J2FieldsHistoryEntity);
+    public async insertMany(fieldsHistories: CreateSpecificationDetailsDto[], queryRunner: QueryRunner): Promise<void> {
+        const fieldsHistoryRepository = queryRunner.manager.getRepository(J2FieldsHistoryEntity);
         await fieldsHistoryRepository.insert(fieldsHistories);
     }
 }

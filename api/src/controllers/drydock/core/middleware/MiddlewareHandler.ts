@@ -3,16 +3,18 @@ import { Request, Response } from 'express';
 import * as httpStatus from 'http-status-codes';
 import { AccessRights } from 'j2utils';
 
+import { UserFromToken } from '../../../../application-layer/drydock/core/cqrs/UserDto';
 import {
     ApplicationException,
     AuthorizationException,
     BusinessException,
 } from '../../../../bll/drydock/core/exceptions';
 import { log } from '../../../../logger';
+import { AuthRequest } from '../auth-req.type';
 import { ProblemDetails, ProblemDetailsType } from '../ProblemDetails';
 import { ExceptionLogDataDto } from './ExceptionLogDataDto';
 
-type ResultGetterRequestHandler<TResult> = (req: Request, res: Response) => Promise<TResult>;
+type ResultGetterRequestHandler<TResult> = (req: AuthRequest, res: Response) => Promise<TResult>;
 
 export class MiddlewareHandler {
     functionCode?: string;
@@ -22,11 +24,22 @@ export class MiddlewareHandler {
     }
 
     public async ExecuteAsync<TResult>(req: Request, res: Response, getResult: ResultGetterRequestHandler<TResult>) {
-        await this.ExceptionHandler(req, res, getResult);
+        const authReq = this.decodeAuthorizationMiddleware(req);
+        await this.ExceptionHandler(authReq, res, getResult);
+    }
+
+    private decodeAuthorizationMiddleware(req: Request): AuthRequest {
+        try {
+            const authReq = req as AuthRequest;
+            authReq.authUser = AccessRights.authorizationDecode(req) as UserFromToken;
+            return authReq;
+        } catch (error) {
+            throw new Error('Cannot decode authorization token');
+        }
     }
 
     private async ExceptionHandler<TResult>(
-        req: Request,
+        req: AuthRequest,
         res: Response,
         getResult: ResultGetterRequestHandler<TResult>,
     ): Promise<void> {

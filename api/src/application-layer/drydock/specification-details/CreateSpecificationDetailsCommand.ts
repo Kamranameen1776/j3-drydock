@@ -4,16 +4,14 @@ import { Request } from 'express';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
+import { AuthRequest } from '../../../controllers/drydock/core/auth-req.type';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
-import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { Command } from '../core/cqrs/Command';
-import { UserFromToken } from '../core/cqrs/UserDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { CreateSpecificationDetailsDto } from './dtos/CreateSpecificationDetailsDto';
 
-export class CreateSpecificationDetailsCommand extends Command<Request, string> {
+export class CreateSpecificationDetailsCommand extends Command<AuthRequest, string> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     vesselsRepository: VesselsRepository;
     specificationDetailsService: SpecificationService;
@@ -33,22 +31,12 @@ export class CreateSpecificationDetailsCommand extends Command<Request, string> 
     }
 
     protected async ValidationHandlerAsync(request: Request): Promise<void> {
-        const body: CreateSpecificationDetailsDto = plainToClass(CreateSpecificationDetailsDto, request.body);
-        const result = await validate(body);
-        if (result.length) {
-            throw result;
-        }
+        // const body: CreateSpecificationDetailsDto = plainToClass(CreateSpecificationDetailsDto, request.body);
+        // const result = await validate(body);
+        // if (result.length) {
+        //     throw result;
+        // }
         return;
-    }
-
-    protected async AfterExecution(request: Request, uid: string, user: UserFromToken): Promise<void> {
-        await this.specificationDetailsAudit.auditCreatedSpecificationDetails(
-            {
-                uid,
-                ...request.body,
-            },
-            user.UserID,
-        );
     }
 
     /**
@@ -56,33 +44,41 @@ export class CreateSpecificationDetailsCommand extends Command<Request, string> 
      * @param request data for creation of specification details
      * @returns data of specification details
      */
-    protected async MainHandlerAsync(request: Request): Promise<string> {
+    protected async MainHandlerAsync(request: AuthRequest): Promise<string> {
         const token: string = request.headers.authorization as string;
         return this.uow.ExecuteAsync(async (queryRunner) => {
-            const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
-            const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(project.VesselUid);
+            // const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
+            // const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(project.VesselUid);
 
-            const taskManagerData = await this.specificationDetailsService.TaskManagerIntegration(
-                request.body,
-                vessel,
-                token,
-            );
-            request.body.TecTaskManagerUid = taskManagerData.uid;
-            const specData = await this.specificationDetailsRepository.CreateSpecificationDetails(
-                request.body,
+            // const taskManagerData = await this.specificationDetailsService.TaskManagerIntegration(
+            //     request.body,
+            //     vessel,
+            //     token,
+            // );
+            // request.body.TecTaskManagerUid = taskManagerData.uid;
+            // const specData = await this.specificationDetailsRepository.CreateSpecificationDetails(
+            //     request.body,
+            //     queryRunner,
+            // );
+            // const { Inspections } = request.body;
+            // if (Inspections.length) {
+            //     const data = Inspections.map((item: number) => {
+            //         return {
+            //             LIBSurveyCertificateAuthorityID: item,
+            //             SpecificationDetailsUid: specData,
+            //         };
+            //     });
+            //     await this.specificationDetailsRepository.CreateSpecificationInspection(data, queryRunner);
+            // }
+            await this.specificationDetailsAudit.auditCreatedSpecificationDetails(
+                {
+                    ...request.body,
+                    uid: 'specData22',
+                },
+                request.authUser.UserID,
                 queryRunner,
             );
-            const { Inspections } = request.body;
-            if (Inspections.length) {
-                const data = Inspections.map((item: number) => {
-                    return {
-                        LIBSurveyCertificateAuthorityID: item,
-                        SpecificationDetailsUid: specData,
-                    };
-                });
-                await this.specificationDetailsRepository.CreateSpecificationInspection(data, queryRunner);
-            }
-            return specData;
+            return 'specData';
         });
     }
 }

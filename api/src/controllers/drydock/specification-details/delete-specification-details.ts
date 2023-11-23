@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 
 import { DeleteSpecificationDetailsCommand } from '../../../application-layer/drydock/specification-details/DeleteSpecificationDetailsCommand';
+import { AuthRequest } from '../core/auth-req.type';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 async function deleteSpecificationDetails(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
+    await middlewareHandler.ExecuteAsync(req, res, async (request: AuthRequest) => {
         const command = new DeleteSpecificationDetailsCommand();
 
         return command.ExecuteAsync(request);

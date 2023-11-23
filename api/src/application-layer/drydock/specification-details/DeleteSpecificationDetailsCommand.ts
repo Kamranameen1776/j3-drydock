@@ -1,12 +1,13 @@
 import { Request } from 'express';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
+import { AuthRequest } from '../../../controllers/drydock/core/auth-req.type';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UserFromToken } from '../core/cqrs/UserDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 
-export class DeleteSpecificationDetailsCommand extends Command<Request, void> {
+export class DeleteSpecificationDetailsCommand extends Command<AuthRequest, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
@@ -29,14 +30,15 @@ export class DeleteSpecificationDetailsCommand extends Command<Request, void> {
         }
     }
 
-    protected async AfterExecution(request: Request, _: void, user: UserFromToken): Promise<void> {
-        await this.specificationDetailsAudit.auditDeletedSpecificationDetails(request.body.uid, user.UserID);
-    }
-
-    protected async MainHandlerAsync(request: Request) {
+    protected async MainHandlerAsync(request: AuthRequest) {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const updatedSpecData = await this.specificationDetailsRepository.DeleteSpecificationDetails(
                 request.body.uid,
+                queryRunner,
+            );
+            await this.specificationDetailsAudit.auditDeletedSpecificationDetails(
+                request.body.uid,
+                (request.authUser as UserFromToken).UserID,
                 queryRunner,
             );
             return updatedSpecData;

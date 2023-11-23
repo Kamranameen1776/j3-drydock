@@ -1,12 +1,16 @@
+import { QueryRunner } from 'typeorm';
+
 import { UpdateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationDetailsDto';
-import { FieldsHistoryRepository } from '../../../dal/drydock/fields-history/fieldsHistoryRepository';
-import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
+import {
+    CreateSpecificationDetailsDto,
+    FieldsHistoryRepository,
+} from '../../../dal/drydock/fields-history/FieldsHistoryRepository';
 import { TaskManagerConstants } from '../../../shared/constants/task-manager';
 
 export class SpecificationDetailsAuditService {
     private readonly fieldsHistoryRepository = new FieldsHistoryRepository();
 
-    private generateCommonFields(uid: string): Partial<J2FieldsHistoryEntity> {
+    private generateCommonFields(uid: string): Partial<CreateSpecificationDetailsDto> {
         return {
             key1: uid,
             key2: '0',
@@ -23,44 +27,50 @@ export class SpecificationDetailsAuditService {
     public async auditCreatedSpecificationDetails(
         specificationDetail: UpdateSpecificationDetailsDto,
         createdById: string,
+        queryRunner: QueryRunner,
     ): Promise<void> {
         const now = new Date();
         const fields = Object.entries(specificationDetail).map(([key, value]) => ({
             ...this.generateCommonFields(specificationDetail.uid),
-            display_text: key,
+            displayText: key,
             value: value,
-            action_name: 'Created',
-            created_date: now,
-            created_by: createdById,
+            actionName: 'Created',
+            createdDate: now,
+            createdBy: createdById,
         }));
 
-        await this.fieldsHistoryRepository.insertMany(fields as J2FieldsHistoryEntity[]);
+        await this.fieldsHistoryRepository.insertMany(fields as CreateSpecificationDetailsDto[], queryRunner);
     }
 
-    public async auditDeletedSpecificationDetails(uid: string, deletedById: string): Promise<void> {
+    public async auditDeletedSpecificationDetails(
+        uid: string,
+        deletedById: string,
+        queryRunner: QueryRunner,
+    ): Promise<void> {
         const deleteField = {
             ...this.generateCommonFields(uid),
             action_name: 'Deleted',
             created_by: deletedById,
         };
 
-        await this.fieldsHistoryRepository.saveFieldsHistory(deleteField as J2FieldsHistoryEntity);
+        await this.fieldsHistoryRepository.saveFieldsHistory(deleteField as CreateSpecificationDetailsDto, queryRunner);
     }
 
     public async auditUpdatedSpecificationDetails(
         specificationDetail: UpdateSpecificationDetailsDto,
         updatedById: string,
+        queryRunner: QueryRunner,
     ): Promise<void> {
         const now = new Date();
         const fields = Object.entries(specificationDetail).map(([key, value]) => ({
             ...this.generateCommonFields(specificationDetail.uid),
-            display_text: key,
+            displayText: key,
             value: value,
-            action_name: 'Amended',
-            created_date: now,
-            created_by: updatedById,
+            actionName: 'Amended',
+            createdDate: now,
+            createdBy: updatedById,
         }));
 
-        await this.fieldsHistoryRepository.insertMany(fields as J2FieldsHistoryEntity[]);
+        await this.fieldsHistoryRepository.insertMany(fields as CreateSpecificationDetailsDto[], queryRunner);
     }
 }
