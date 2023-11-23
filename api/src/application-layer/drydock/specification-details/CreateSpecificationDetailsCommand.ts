@@ -79,7 +79,7 @@ export class CreateSpecificationDetailsCommand extends Command<AuthRequest, stri
                 request.authUser.UserID,
                 queryRunner,
             );
-            return 'specData';
+            return specData;
         });
     }
 }
