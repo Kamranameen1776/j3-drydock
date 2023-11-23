@@ -8,14 +8,14 @@ export class SpecificationDetailsAuditService {
 
     private generateCommonFields(uid: string): Partial<J2FieldsHistoryEntity> {
         return {
-            key_1: uid,
-            key_2: '0',
-            key_3: '',
-            module_code: TaskManagerConstants.project.module_code,
-            function_code: TaskManagerConstants.project.function_code,
-            is_current: true,
-            version_number: 1,
-            table_name: 'specification_details',
+            key1: uid,
+            key2: '0',
+            key3: '',
+            moduleCode: TaskManagerConstants.project.module_code,
+            functionCode: TaskManagerConstants.project.function_code,
+            isCurrent: true,
+            versionNumber: 1,
+            tableName: 'specification_details',
             section: 'Header Section',
         };
     }
