@@ -18,27 +18,23 @@ export class createSpecification_details_LIB_Survey_CertificateAuthority16999584
                 IF NOT Exists(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'[dry_dock].[specification_details_LIB_Survey_CertificateAuthority]') AND type in (N'U'))
                 BEGIN
                 
-CREATE TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority](
-	[uid] [uniqueidentifier] NOT NULL,
-	[specification_details_uid] [uniqueidentifier] NOT NULL,
-	[LIB_Survey_CertificateAuthority_ID] [int] NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[uid] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
+                CREATE TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority](
+                    [uid] [uniqueidentifier] NOT NULL,
+                    [specification_details_uid] [uniqueidentifier] NOT NULL,
+                    [LIB_Survey_CertificateAuthority_ID] [int] NOT NULL,
+                PRIMARY KEY CLUSTERED 
+                (
+                    [uid] ASC
+                )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+                ) ON [PRIMARY]
 
-ALTER TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority] ADD  DEFAULT (newid()) FOR [uid]
-GO
+                ALTER TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority] ADD  DEFAULT (newid()) FOR [uid]
 
-ALTER TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority]  WITH CHECK ADD FOREIGN KEY([LIB_Survey_CertificateAuthority_ID])
-REFERENCES [dbo].[LIB_Survey_CertificateAuthority] ([ID])
-GO
+                ALTER TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority]  WITH CHECK ADD FOREIGN KEY([LIB_Survey_CertificateAuthority_ID])
+                REFERENCES [dbo].[LIB_Survey_CertificateAuthority] ([ID])
 
-ALTER TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority]  WITH CHECK ADD FOREIGN KEY([specification_details_uid])
-REFERENCES [dry_dock].[specification_details] ([uid])
-GO
+                ALTER TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority]  WITH CHECK ADD FOREIGN KEY([specification_details_uid])
+                REFERENCES [dry_dock].[specification_details] ([uid])
                 END      
             `,
             );

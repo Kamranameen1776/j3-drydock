@@ -14,6 +14,7 @@ export interface IProjectsForMainPageRecordDto {
     Subject: string;
 
     ProjectManager: string;
+    ProjectManagerUid?: string;
 
     ProjectStatusName: string;
 
@@ -22,4 +23,6 @@ export interface IProjectsForMainPageRecordDto {
     StartDate: Date;
 
     EndDate: Date;
+
+    TaskManagerUid: string;
 }

@@ -1,9 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { GetSpecificationDetailsDto } from '../../../models/dto/specification-details/GetSpecificationDetailsDto';
-import { SpecificationDetailsHeaderInputservice } from './specification-details-header-inputs';
+import { SpecificationDetailsHeaderInputs, SpecificationDetailsHeaderInputservice } from './specification-details-header-inputs';
 import { takeUntil } from 'rxjs/operators';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
-import { TopFieldsData } from '../../../services/specifications/specification-top-details.service';
 
 @Component({
   selector: 'jb-specification-details-header',
@@ -16,9 +15,12 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
   @Output() saveButtonClick = new EventEmitter<void>();
 
   saveButtonDisabled = true;
-  topDetailsData: TopFieldsData;
+  topDetailsData: SpecificationDetailsHeaderInputs;
 
-  constructor(private readonly headerInputService: SpecificationDetailsHeaderInputservice) {
+  constructor(
+    private readonly headerInputService: SpecificationDetailsHeaderInputservice,
+    private cd: ChangeDetectorRef
+  ) {
     super();
   }
 
@@ -34,6 +36,7 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
         data.detailedData.assigneeUid = this.specificationDetailsInfo.ProjectManagerUid;
         this.topDetailsData = data;
       });
+    this.cd.markForCheck();
   }
 
   onValueChange(event) {

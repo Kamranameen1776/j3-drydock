@@ -15,6 +15,8 @@ import { SpecificationGridService } from '../../../services/specifications/speci
 })
 export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
   @Input() isOpen: boolean;
+  @Input() projectId: string;
+  @Input() vesselUid: string;
 
   @Output() closeDialog = new EventEmitter<boolean>();
 
@@ -55,6 +57,7 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
   private closePopup(isSaved = false) {
     this.closeDialog.emit(isSaved);
     this.isPopupValid = false;
+    this.popupForm?.formGroup.reset();
   }
 
   private save() {
@@ -63,7 +66,7 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
     this.isSaving = true;
 
     this.specificationService
-      .createSpecification(value)
+      .createSpecification({ ...value, ProjectUid: this.projectId, VesselUid: this.vesselUid })
       .pipe(
         finalize(() => {
           this.isSaving = false;

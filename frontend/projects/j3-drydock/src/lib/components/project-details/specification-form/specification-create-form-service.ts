@@ -25,7 +25,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
         label: '',
         formID: this.formId,
         gridRowStart: 1,
-        gridRowEnd: 6,
+        gridRowEnd: 5,
         gridColStart: 1,
         gridColEnd: 12,
         fields: {
@@ -40,7 +40,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
             gridColStart: 1,
             gridColEnd: 1,
             inputWithDlgConfig: {
-              inputLabelKey: 'DisplayText',
+              inputLabelKey: 'jb_value_label',
               dlgConfiguration: { appendTo: '' }
             }
           },
@@ -56,30 +56,14 @@ export class SpecificationCreateFormService extends FormServiceBase {
             gridColStart: 1,
             gridColEnd: 1
           },
-          ItemCategoryUid: {
-            type: eFieldControlType.Dropdown,
-            label: 'Item Category',
-            sectionID: this.formId,
-            enabled: true,
-            validatorRequired: true,
-            gridRowStart: 3,
-            gridRowEnd: 4,
-            gridColStart: 1,
-            gridColEnd: 1,
-            listRequest: {
-              labelKey: 'displayName',
-              valueKey: 'uid',
-              webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory)
-            }
-          },
           DoneByUid: {
             type: eFieldControlType.Dropdown,
             label: 'Done By',
             sectionID: this.formId,
             enabled: true,
             validatorRequired: false,
-            gridRowStart: 4,
-            gridRowEnd: 5,
+            gridRowStart: 3,
+            gridRowEnd: 4,
             gridColStart: 1,
             gridColEnd: 1,
             listRequest: {
@@ -96,7 +80,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
             validatorRequired: true,
             maxTextLength: 1000,
             gridRowStart: 1,
-            gridRowEnd: 5,
+            gridRowEnd: 4,
             gridColStart: 2,
             gridColEnd: 12
           }

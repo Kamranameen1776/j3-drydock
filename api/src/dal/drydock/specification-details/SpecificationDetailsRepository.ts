@@ -6,6 +6,7 @@ import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-
 import { GetRequisitionsResponseDto } from '../../../application-layer/drydock/specification-details/dtos/GetRequisitionsResponseDto';
 import { GetSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto';
 import { LinkSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/LinkSpecificationRequisitionsRequestDto';
+import { UpdateSpecificationPmsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationPMSRequestDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import {
     J3PrcRequisition,
@@ -16,6 +17,7 @@ import {
     ProjectEntity,
     SpecificationDetailsEntity,
     SpecificationInspectionEntity,
+    SpecificationPmsEntity,
     SpecificationRequisitionsEntity,
     TecTaskManagerEntity,
     TmDdLibDoneBy,
@@ -28,10 +30,35 @@ import {
     ICreateSpecificationDetailsDto,
     InspectionsResultDto,
     IUpdateSpecificationDetailsDto,
+    PmsJobsData,
     SpecificationDetailsResultDto,
 } from './dtos';
 
 export class SpecificationDetailsRepository {
+    public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {
+        const specificationUid = data.uid;
+        const array = `'${data.PmsIds.join(`','`)}'`;
+        await queryRunner.manager
+            .createQueryBuilder(SpecificationPmsEntity, 'sr')
+            .delete()
+            .where(`SpecificationUid = '${specificationUid}'`)
+            .andWhere(`PMSUid IN (${array})`)
+            .execute();
+    }
+
+    public async addSpecificationPms(data: Array<PmsJobsData>, queryRunner: QueryRunner) {
+        await queryRunner.manager.insert(SpecificationPmsEntity, data);
+    }
+
+    public async getSpecificationPMSJobs(uid: string): Promise<Array<SpecificationPmsEntity>> {
+        const pmsRepository = getManager().getRepository(SpecificationPmsEntity);
+        return pmsRepository.find({
+            where: {
+                SpecificationUid: uid,
+            },
+        });
+    }
+
     public async findSpecInspections(uid: string): Promise<Array<InspectionsResultDto>> {
         const inspectionRepository = getManager().getRepository(SpecificationInspectionEntity);
 
@@ -54,6 +81,7 @@ export class SpecificationDetailsRepository {
                 'tm.Code as SpecificationCode',
                 'tm.Status as Status',
                 'spec.FunctionUid as FunctionUid',
+                'spec.Function as "Function"',
                 'spec.AccountCode as AccountCode',
 
                 //TODO: clarify where it's from
@@ -111,6 +139,7 @@ export class SpecificationDetailsRepository {
                     'tm.Code as code',
                     'tm.Status as status',
                     'tm.title as subject',
+                    'sd.project_uid',
                 ])
                 .where('sd.active_status = 1')
                 .getSql();
