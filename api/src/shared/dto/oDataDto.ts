@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
 
 import { ODataRequest } from '../interfaces';

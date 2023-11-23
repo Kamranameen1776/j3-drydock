@@ -1,27 +1,24 @@
-import { IInspectionsResultDto } from './InspectionsResultDto';
-
+import { InspectionsDto } from './IInspectionsResultDto';
 export interface GetSpecificationDetailsDto {
-  uid: string;
-  Subject: string;
-  SpecificationCode: string;
-  Status: string;
-  FunctionUid: string;
   AccountCode: string;
-
-  ItemSourceUid: string;
-  ItemSourceText: string;
-
-  ItemNumber: string;
-
-  DoneByUid: string;
-  DoneByDisplayName: string;
-  EquipmentDescription: string;
   Description: string;
-  PriorityUid: string;
+  DoneByDisplayName: string;
+  DoneByUid: string;
+  EquipmentDescription: string;
+  FunctionUid: string;
+  Function: string;
+  Inspections: InspectionsDto[];
+  ItemNumber: string;
+  ItemSourceText: string;
+  ItemSourceUid: string;
   PriorityName: string;
-  VesselName: string;
-  VesselUid: string;
+  PriorityUid: string;
   ProjectManager: string;
   ProjectManagerUid: string;
-  Inspections: Array<IInspectionsResultDto>;
+  SpecificationCode: string;
+  Status: string;
+  Subject: string;
+  VesselName: string;
+  VesselUid: string;
+  uid: string;
 }

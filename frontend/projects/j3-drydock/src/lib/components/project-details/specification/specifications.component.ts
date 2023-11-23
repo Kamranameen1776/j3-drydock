@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { SpecificationGridService, SpecificationType } from '../../../services/specifications/specification.service';
 import { ApiRequestService, GridService, JmsTechApiService, WebApiRequest, eGridRefreshType, eJbTreeEvents } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
@@ -10,7 +10,11 @@ import { SpecificationCreateFormService } from '../specification-form/specificat
   templateUrl: './specifications.component.html',
   styleUrls: ['./specifications.component.scss']
 })
-export class SpecificationsComponent extends UnsubscribeComponent implements OnInit {
+export class SpecificationsComponent extends UnsubscribeComponent implements OnInit, OnChanges {
+  @Input()
+  projectId: string;
+  @Input()
+  vesselUid: string;
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
   treeData: WebApiRequest;
   gridData: GridInputsWithRequest;
@@ -63,10 +67,22 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   ngOnInit(): void {
     this.treeData = this.jmsTechService.getComponentFunctionTree;
-    this.treeData.params = `vesselUid=3EEF2E1B-2533-45C7-82C7-C13D6AA79559`;
+    this.treeData.params = `vesselUid=${this.vesselUid}`;
     this.gridData = this.getData();
 
     this.loadFunctions();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.vesselUid) {
+      this.treeData.params = `vesselUid=${changes.vesselUid.currentValue}`;
+      this.loadFunctions();
+      this.functionUIDs = [];
+    }
+
+    if (changes.projectId) {
+      this.getData(changes.projectId.currentValue);
+    }
   }
 
   onCloseCreatePopup(hasSaved: boolean) {
@@ -100,8 +116,8 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     }
   }
 
-  private getData() {
-    const gridData = this.specsService.getGridData(null, this.functionUIDs);
+  private getData(projectId?: string) {
+    const gridData = this.specsService.getGridData(projectId || this.projectId, this.functionUIDs);
     const statusCol = gridData.columns.find((col) => col.FieldName === 'status');
     statusCol.cellTemplate = this.statusTemplate;
     return gridData;
