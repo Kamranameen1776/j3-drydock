@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProjectsService } from '../ProjectsService';
 import { omit } from 'lodash';
+import { ProjectDetails } from '../../models/interfaces/project-details';
 
-export interface TopFieldsData {
+export interface TopFieldsData<T> {
   topFieldsConfig: ITopSectionFieldSet;
-  detailedData: Record<string, unknown>;
+  detailedData: T;
   canEdit: boolean;
 }
 
@@ -24,7 +25,7 @@ export class SpecificationTopDetailsService {
 
   canEdit = true;
 
-  getTopDetailsData(projectId: string): Observable<TopFieldsData> {
+  getTopDetailsData(projectId: string): Observable<TopFieldsData<ProjectDetails>> {
     return this.projectsService.getProject(projectId).pipe(
       map((response) => {
         return {
