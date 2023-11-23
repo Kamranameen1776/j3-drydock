@@ -38,7 +38,7 @@ export class DeleteSpecificationDetailsCommand extends Command<AuthRequest, void
             );
             await this.specificationDetailsAudit.auditDeletedSpecificationDetails(
                 request.body.uid,
-                (request.authUser as UserFromToken).UserID,
+                request.authUser.UserID,
                 queryRunner,
             );
             return updatedSpecData;
