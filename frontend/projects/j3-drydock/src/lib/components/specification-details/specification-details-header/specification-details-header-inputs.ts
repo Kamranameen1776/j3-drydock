@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import f from 'odata-filter-builder';
 import { ITopSectionFieldSet, eAction, eApiBase, eCrud, eEntities, eUserStatus } from 'jibe-components';
 import { Observable } from 'rxjs';
-import { TopFieldsData } from '../../../services/specifications/specification-top-details.service';
 
 export type SpecificationDetailsHeaderInputs = {
   topFieldsConfig: ITopSectionFieldSet;
@@ -65,7 +64,7 @@ export class SpecificationDetailsHeaderInputservice {
 
   canEdit = true;
 
-  public getInputs(): Observable<TopFieldsData> {
+  public getInputs(): Observable<SpecificationDetailsHeaderInputs> {
     return new Observable((sub) => {
       sub.next({
         topFieldsConfig: this.topFieldsConfig,

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { SpecificationTopDetailsService, TopFieldsData } from '../../services/specifications/specification-top-details.service';
-import { finalize, first, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, finalize, first, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { AdvancedSettings } from 'jibe-components';
-import { CurrentProjectService } from '../../services/current-project.service';
+import { CurrentProjectService } from '../project-details/current-project.service';
+import { TaskManagerService } from '../../services/task-manager.service';
+import { ProjectDetails } from '../../models/interfaces/project-details';
 
 @Component({
   selector: 'jb-project-header',
@@ -11,7 +13,7 @@ import { CurrentProjectService } from '../../services/current-project.service';
   styleUrls: ['./project-header.component.scss']
 })
 export class ProjectHeaderComponent extends UnsubscribeComponent implements OnInit {
-  topDetailsData: TopFieldsData;
+  topDetailsData: TopFieldsData<ProjectDetails>;
   loading = true;
   threeDotsActions: AdvancedSettings[] = [
     {
@@ -33,32 +35,39 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
   constructor(
     private specsTopDetailsService: SpecificationTopDetailsService,
-    private currentProject: CurrentProjectService
+    private currentProject: CurrentProjectService,
+    private taskManagerService: TaskManagerService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.loading = true;
-
-    this.currentProject.projectId
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        switchMap((projectId) => this.specsTopDetailsService.getTopDetailsData(projectId).pipe(takeUntil(this.unsubscribe$))),
-        finalize(() => (this.loading = false))
-      )
-      .subscribe((data) => {
-        this.topDetailsData = data;
-        this.currentProject.vesselUid.next(data.detailedData?.vesselUid as string);
-      });
+    this.loadTopDetailsData();
   }
 
   save() {
-    return this.currentProject.projectId
+    return this.currentProject.projectId$
       .pipe(
         first(),
         switchMap((projectId) => this.specsTopDetailsService.save(projectId, this.topDetailsData.detailedData))
       )
       .toPromise();
+  }
+
+  private loadTopDetailsData() {
+    this.currentProject.projectId$
+      .pipe(
+        filter((projectId) => !!projectId),
+        tap(() => {
+          this.loading = true;
+        }),
+        switchMap((projectId) => this.specsTopDetailsService.getTopDetailsData(projectId).pipe(takeUntil(this.unsubscribe$))),
+        takeUntil(this.unsubscribe$),
+        finalize(() => (this.loading = false))
+      )
+      .subscribe((data) => {
+        this.topDetailsData = data;
+        this.currentProject.savedProject$.next(data.detailedData);
+      });
   }
 }
