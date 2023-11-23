@@ -1,9 +1,9 @@
 import { Request } from 'express';
-import { AccessRights } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
+import { UserFromToken } from '../core/cqrs/UserDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 
 export class DeleteSpecificationDetailsCommand extends Command<Request, void> {
@@ -29,9 +29,8 @@ export class DeleteSpecificationDetailsCommand extends Command<Request, void> {
         }
     }
 
-    protected async AfterExecution(request: Request): Promise<void> {
-        const { UserID: deletedBy } = AccessRights.authorizationDecode(request);
-        await this.specificationDetailsAudit.auditDeletedSpecificationDetails(request.body.uid, deletedBy);
+    protected async AfterExecution(request: Request, _: void, user: UserFromToken): Promise<void> {
+        await this.specificationDetailsAudit.auditDeletedSpecificationDetails(request.body.uid, user.UserID);
     }
 
     protected async MainHandlerAsync(request: Request) {

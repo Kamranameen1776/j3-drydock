@@ -1,7 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
-import { AccessRights } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
@@ -10,6 +9,7 @@ import { SpecificationDetailsRepository } from '../../../dal/drydock/specificati
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { Command } from '../core/cqrs/Command';
+import { UserFromToken } from '../core/cqrs/UserDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateSpecificationDetailsDto } from './dtos/CreateSpecificationDetailsDto';
 
@@ -41,14 +41,13 @@ export class CreateSpecificationDetailsCommand extends Command<Request, string> 
         return;
     }
 
-    protected async AfterExecution(request: Request, uid: string): Promise<void> {
-        const { UserID: createdBy } = AccessRights.authorizationDecode(request);
+    protected async AfterExecution(request: Request, uid: string, user: UserFromToken): Promise<void> {
         await this.specificationDetailsAudit.auditCreatedSpecificationDetails(
             {
                 uid,
                 ...request.body,
             },
-            createdBy,
+            user.UserID,
         );
     }
 

@@ -1,13 +1,11 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
-import { ParamsDictionary } from 'express-serve-static-core';
-import { AccessRights } from 'j2utils';
-import { ParsedQs } from 'qs';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
+import { UserFromToken } from '../core/cqrs/UserDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateSpecificationDetailsDto } from './dtos/UpdateSpecificationDetailsDto';
 
@@ -37,9 +35,8 @@ export class UpdateSpecificationDetailsCommand extends Command<Request, void> {
         return;
     }
 
-    protected AfterExecution(request: Request): Promise<void> {
-        const { UserID: updatedBy } = AccessRights.authorizationDecode(request);
-        return this.specificationDetailsAudit.auditUpdatedSpecificationDetails(request.body, updatedBy);
+    protected AfterExecution(request: Request, _: void, user: UserFromToken): Promise<void> {
+        return this.specificationDetailsAudit.auditUpdatedSpecificationDetails(request.body, user.UserID);
     }
 
     protected async MainHandlerAsync(request: Request): Promise<void> {
