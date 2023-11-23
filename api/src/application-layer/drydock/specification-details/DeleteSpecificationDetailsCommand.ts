@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
-import { SpecificationDetailsAuditService } from '../../../bll/drydock/standard_jobs/specification-details-audit.service';
+import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';

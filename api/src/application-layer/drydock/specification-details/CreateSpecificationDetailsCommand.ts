@@ -3,8 +3,8 @@ import { validate } from 'class-validator';
 import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
+import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
-import { SpecificationDetailsAuditService } from '../../../bll/drydock/standard_jobs/specification-details-audit.service';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';

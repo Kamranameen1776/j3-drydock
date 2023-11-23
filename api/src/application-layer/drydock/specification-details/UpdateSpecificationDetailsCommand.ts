@@ -5,7 +5,7 @@ import { ParamsDictionary } from 'express-serve-static-core';
 import { AccessRights } from 'j2utils';
 import { ParsedQs } from 'qs';
 
-import { SpecificationDetailsAuditService } from '../../../bll/drydock/standard_jobs/specification-details-audit.service';
+import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
