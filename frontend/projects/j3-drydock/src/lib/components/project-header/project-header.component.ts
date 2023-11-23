@@ -6,6 +6,7 @@ import { AdvancedSettings } from 'jibe-components';
 import { CurrentProjectService } from '../project-details/current-project.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { ProjectDetails } from '../../models/interfaces/project-details';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'jb-project-header',
@@ -32,6 +33,8 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       label: 'Re-sync'
     }
   ];
+  formGroup: FormGroup;
+  isValueChange = false;
 
   constructor(
     private specsTopDetailsService: SpecificationTopDetailsService,
@@ -46,12 +49,28 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   save() {
-    return this.currentProject.projectId$
-      .pipe(
-        first(),
-        switchMap((projectId) => this.specsTopDetailsService.save(projectId, this.topDetailsData.detailedData))
-      )
-      .toPromise();
+    if (this.formGroup) {
+      return this.currentProject.projectId$
+        .pipe(
+          first(),
+          switchMap((projectId) => this.specsTopDetailsService.save(projectId, this.formGroup.value)),
+          finalize(() => (this.isValueChange = false))
+        )
+        .toPromise();
+    }
+
+    return Promise.reject();
+  }
+
+  onFormCreate(form: FormGroup) {
+    this.formGroup = form;
+  }
+
+  onValueChange(form: FormGroup) {
+    this.formGroup = form;
+    if (form && form.dirty) {
+      this.isValueChange = form.dirty;
+    }
   }
 
   private loadTopDetailsData() {
