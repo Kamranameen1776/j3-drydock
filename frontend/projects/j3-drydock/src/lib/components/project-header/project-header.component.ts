@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { SpecificationTopDetailsService } from '../../services/specifications/specification-top-details.service';
 import { filter, finalize, first, switchMap, takeUntil, tap } from 'rxjs/operators';
@@ -11,8 +11,10 @@ import {
   ShowSettings,
   UserService,
   eAppLocation,
-  eGridColors
+  eGridColors,
+  JbDetailsTopSectionComponent
 } from 'jibe-components';
+
 import { CurrentProjectService } from '../project-details/current-project.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { ProjectDetails, ProjectTopHeaderDetails } from '../../models/interfaces/project-details';
@@ -34,6 +36,8 @@ export enum eProjectHeader3DotActions {
   styleUrls: ['./project-header.component.scss']
 })
 export class ProjectHeaderComponent extends UnsubscribeComponent implements OnInit {
+  @ViewChild('detailsTopSection') detailsTopSection: JbDetailsTopSectionComponent;
+
   canEdit = false;
 
   detailedData: ProjectTopHeaderDetails;
@@ -134,7 +138,12 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       return this.currentProject.projectId$
         .pipe(
           first(),
-          switchMap((projectId) => this.specsTopDetailsService.save(projectId, this.formGroup.value)),
+          switchMap((projectId) =>
+            this.specsTopDetailsService.save(projectId, {
+              ...this.formGroup.value,
+              Job_Short_Description: this.detailsTopSection.titleBoxContent.value
+            })
+          ),
           finalize(() => (this.isValueChange = false))
         )
         .toPromise();
