@@ -16,12 +16,15 @@
               [specificationDetailsInfo]="specificationDetailsInfo"
             ></jb-specification-general-information>
           </div>
-          <div #subitem></div>
-          <div #requisitions>
+          <div #subItems>
+            <jb-specification-sub-items
+              *ngIf="specificationDetailsInfo"
+              [specificationDetailsInfo]="specificationDetailsInfo"
+            ></jb-specification-sub-items>
+          </div>
+          <div #requisition>
             <jb-specification-requisitions [specificationUid]="specificationUid"></jb-specification-requisitions>
           </div>
-        </div>
-      </ng-container>
     </ng-container>
   </ng-container>
   <ng-container
