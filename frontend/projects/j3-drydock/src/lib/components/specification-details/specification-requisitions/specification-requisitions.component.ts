@@ -6,7 +6,9 @@ import {
   eCrud,
   eFieldControlType, eGridRefreshType,
   eGridRowActions,
-  GridRowActions, GridService,
+  eLayoutWidgetSize,
+  GridRowActions,
+  GridService, JbButtonType,
   SearchField,
   ShowSettings,
   WebApiRequest
@@ -25,6 +27,8 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
   @Input() specificationUid: string;
 
   gridData: GridInputsWithRequest;
+  protected readonly eLayoutWidgetSize = eLayoutWidgetSize;
+  protected readonly JbButtonType = JbButtonType;
 
   private columns: Column[] = [
     {
