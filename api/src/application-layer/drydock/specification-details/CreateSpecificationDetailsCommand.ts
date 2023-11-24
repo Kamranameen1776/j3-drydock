@@ -1,18 +1,18 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Request } from 'express';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
-import { AuthRequest } from '../../../controllers/drydock/core/auth-req.type';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { Command } from '../core/cqrs/Command';
+import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateSpecificationDetailsDto } from './dtos/CreateSpecificationDetailsDto';
 
-export class CreateSpecificationDetailsCommand extends Command<AuthRequest, string> {
+export class CreateSpecificationDetailsCommand extends Command<CommandRequest, string> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     vesselsRepository: VesselsRepository;
     specificationDetailsService: SpecificationService;
@@ -31,7 +31,7 @@ export class CreateSpecificationDetailsCommand extends Command<AuthRequest, stri
         this.specificationDetailsAudit = new SpecificationDetailsAuditService();
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+    protected async ValidationHandlerAsync({ request }: CommandRequest): Promise<void> {
         const body: CreateSpecificationDetailsDto = plainToClass(CreateSpecificationDetailsDto, request.body);
         const result = await validate(body);
         if (result.length) {
@@ -45,7 +45,7 @@ export class CreateSpecificationDetailsCommand extends Command<AuthRequest, stri
      * @param request data for creation of specification details
      * @returns data of specification details
      */
-    protected async MainHandlerAsync(request: AuthRequest): Promise<string> {
+    protected async MainHandlerAsync({ request, user }: CommandRequest): Promise<string> {
         const token: string = request.headers.authorization as string;
         return this.uow.ExecuteAsync(async (queryRunner) => {
             const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
@@ -76,7 +76,7 @@ export class CreateSpecificationDetailsCommand extends Command<AuthRequest, stri
                     ...request.body,
                     uid: specData,
                 },
-                request.authUser.UserID,
+                user.UserID,
                 queryRunner,
             );
             return specData;

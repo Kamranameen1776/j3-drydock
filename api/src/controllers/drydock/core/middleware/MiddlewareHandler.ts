@@ -10,12 +10,10 @@ import {
     BusinessException,
 } from '../../../../bll/drydock/core/exceptions';
 import { log } from '../../../../logger';
-import { AuthRequest } from '../auth-req.type';
 import { ProblemDetails, ProblemDetailsType } from '../ProblemDetails';
 import { ExceptionLogDataDto } from './ExceptionLogDataDto';
 
-type ResultGetterRequestHandler<TResult> = (req: AuthRequest, res: Response) => Promise<TResult>;
-
+type ResultGetterRequestHandler<TResult> = (req: Request, res: Response, user: UserFromToken) => Promise<TResult>;
 export class MiddlewareHandler {
     functionCode?: string;
 
@@ -24,27 +22,17 @@ export class MiddlewareHandler {
     }
 
     public async ExecuteAsync<TResult>(req: Request, res: Response, getResult: ResultGetterRequestHandler<TResult>) {
-        const authReq = this.decodeAuthorizationMiddleware(req);
-        await this.ExceptionHandler(authReq, res, getResult);
-    }
-
-    private decodeAuthorizationMiddleware(req: Request): AuthRequest {
-        try {
-            const authReq = req as AuthRequest;
-            authReq.authUser = AccessRights.authorizationDecode(req) as UserFromToken;
-            return authReq;
-        } catch (error) {
-            throw new Error('Cannot decode authorization token');
-        }
+        await this.ExceptionHandler(req, res, getResult);
     }
 
     private async ExceptionHandler<TResult>(
-        req: AuthRequest,
+        req: Request,
         res: Response,
         getResult: ResultGetterRequestHandler<TResult>,
     ): Promise<void> {
         try {
-            const result = await getResult(req, res);
+            const authUser = AccessRights.authorizationDecode(req) as UserFromToken;
+            const result = await getResult(req, res, authUser);
 
             res.status(httpStatus.OK).json(result);
 

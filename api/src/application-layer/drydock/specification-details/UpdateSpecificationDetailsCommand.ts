@@ -1,15 +1,14 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Request } from 'express';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
-import { AuthRequest } from '../../../controllers/drydock/core/auth-req.type';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
+import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateSpecificationDetailsDto } from './dtos/UpdateSpecificationDetailsDto';
 
-export class UpdateSpecificationDetailsCommand extends Command<AuthRequest, void> {
+export class UpdateSpecificationDetailsCommand extends Command<CommandRequest, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
@@ -26,7 +25,7 @@ export class UpdateSpecificationDetailsCommand extends Command<AuthRequest, void
         return;
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+    protected async ValidationHandlerAsync({ request }: CommandRequest): Promise<void> {
         const body: UpdateSpecificationDetailsDto = plainToClass(UpdateSpecificationDetailsDto, request.body);
         const result = await validate(body);
         if (result.length) {
@@ -35,7 +34,7 @@ export class UpdateSpecificationDetailsCommand extends Command<AuthRequest, void
         return;
     }
 
-    protected async MainHandlerAsync(request: AuthRequest): Promise<void> {
+    protected async MainHandlerAsync({ request, user }: CommandRequest): Promise<void> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const { Inspections } = request.body;
             await this.specificationDetailsRepository.UpdateSpecificationDetails(request.body, queryRunner);
@@ -54,7 +53,7 @@ export class UpdateSpecificationDetailsCommand extends Command<AuthRequest, void
             }
             await this.specificationDetailsAudit.auditUpdatedSpecificationDetails(
                 request.body,
-                request.authUser.UserID,
+                user.UserID,
                 queryRunner,
             );
         });

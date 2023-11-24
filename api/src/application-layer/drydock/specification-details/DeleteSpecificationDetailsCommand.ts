@@ -1,13 +1,10 @@
-import { Request } from 'express';
-
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
-import { AuthRequest } from '../../../controllers/drydock/core/auth-req.type';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Command } from '../core/cqrs/Command';
-import { UserFromToken } from '../core/cqrs/UserDto';
+import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 
-export class DeleteSpecificationDetailsCommand extends Command<AuthRequest, void> {
+export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
@@ -24,13 +21,13 @@ export class DeleteSpecificationDetailsCommand extends Command<AuthRequest, void
         return;
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+    protected async ValidationHandlerAsync({ request }: CommandRequest): Promise<void> {
         if (!request.body) {
             throw new Error('Request is null');
         }
     }
 
-    protected async MainHandlerAsync(request: AuthRequest) {
+    protected async MainHandlerAsync({ request, user }: CommandRequest) {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const updatedSpecData = await this.specificationDetailsRepository.DeleteSpecificationDetails(
                 request.body.uid,
@@ -38,7 +35,7 @@ export class DeleteSpecificationDetailsCommand extends Command<AuthRequest, void
             );
             await this.specificationDetailsAudit.auditDeletedSpecificationDetails(
                 request.body.uid,
-                request.authUser.UserID,
+                user.UserID,
                 queryRunner,
             );
             return updatedSpecData;
