@@ -8,6 +8,7 @@ import { TaskManagerService } from '../../services/task-manager.service';
 import { ProjectDetails, ProjectTopHeaderDetails } from '../../models/interfaces/project-details';
 import { eFunction } from '../../models/enums/function.enum';
 import { eModule } from '../../models/enums/module.enum';
+import { FormGroup } from '@angular/forms';
 
 export enum eProjectHeader3DotActions {
   Export = 'Export',
@@ -43,6 +44,8 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       label: eProjectHeader3DotActions.Resync
     }
   ];
+  formGroup: FormGroup;
+  isValueChange = false;
 
   threeDotsActionsShow: ShowSettings = {
     [eProjectHeader3DotActions.Export]: true,
@@ -66,12 +69,28 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   save() {
-    return this.currentProject.projectId$
-      .pipe(
-        first(),
-        switchMap((projectId) => this.specsTopDetailsService.save(projectId, this.detailedData))
-      )
-      .toPromise();
+    if (this.formGroup) {
+      return this.currentProject.projectId$
+        .pipe(
+          first(),
+          switchMap((projectId) => this.specsTopDetailsService.save(projectId, this.formGroup.value)),
+          finalize(() => (this.isValueChange = false))
+        )
+        .toPromise();
+    }
+
+    return Promise.reject();
+  }
+
+  onFormCreate(form: FormGroup) {
+    this.formGroup = form;
+  }
+
+  onValueChange(form: FormGroup) {
+    this.formGroup = form;
+    if (form && form.dirty) {
+      this.isValueChange = form.dirty;
+    }
   }
 
   threeDotActionClicked(event: { type: string; payload: ProjectTopHeaderDetails }) {

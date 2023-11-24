@@ -4,6 +4,8 @@
     [topFieldsConfig]="topFieldsConfig"
     [detailsData]="detailedData"
     [canEdit]="canEdit"
+    (onCreate)="onFormCreate($event)"
+    (onValueChange)="onValueChange($event)"
   >
     <div
       class="header-actions"
@@ -13,6 +15,7 @@
       <jb-button
         type="NoButton"
         label="Save"
+        [disabled]="!isValueChange"
         (click)="save()"
       ></jb-button>
       <jb-button label="Complete"></jb-button> -->
