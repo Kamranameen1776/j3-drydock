@@ -6,6 +6,7 @@ export const environment = (window['environment'] = {
   operationsAPI: `https://j3-dev.jibe.solutions/api/operation/`,
   crewAPI: `https://j3-dev.jibe.solutions/api/crew/`,
   technicalAPI: `https://j3-dev.jibe.solutions/api/technical/`,
+  j3TaskManagerAPI: `https://j3-dev.jibe.solutions/api/j3-task-manager/`,
   accountingAPI: `https://j3-dev.jibe.solutions/api/accounting/`,
   j3PrcCatalogAPI: `https://j3-dev.jibe.solutions/api/j3-prc-catalog/`,
   j3ProcurementAPI: `https://j3-dev.jibe.solutions/api/j3-procurement/`,

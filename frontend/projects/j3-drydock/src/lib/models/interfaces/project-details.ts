@@ -1,3 +1,5 @@
+import { eFunction } from '../enums/function.enum';
+import { eModule } from '../enums/module.enum';
 import { eRfqFields } from '../enums/rfq.enum';
 
 export interface YardLink {
@@ -36,4 +38,13 @@ export interface ProjectDetails {
   TaskManagerUid: string;
   ProjectStatusCode?: string;
   VesselId?: number;
+}
+
+export interface ProjectTopHeaderDetails extends ProjectDetails {
+  taskManager: { status: { code: string } };
+  officeId: number;
+  vessel: { uid: string };
+  _id: string;
+  functionCode: eFunction;
+  moduleCode: eModule;
 }

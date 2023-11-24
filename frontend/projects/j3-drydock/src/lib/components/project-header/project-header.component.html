@@ -1,28 +1,34 @@
 <div jb-detail-top-section>
   <jb-details-top-section
-    *ngIf="topDetailsData"
-    [topFieldsConfig]="topDetailsData.topFieldsConfig"
-    [detailsData]="topDetailsData.detailedData"
-    [canEdit]="topDetailsData.canEdit"
+    *ngIf="detailedData"
+    [topFieldsConfig]="topFieldsConfig"
+    [detailsData]="detailedData"
+    [canEdit]="canEdit"
   >
     <div
       class="header-actions"
       jb-workflow-section
     >
-      <jb-grid-advanced-settings></jb-grid-advanced-settings>
+      <!-- <jb-grid-advanced-settings></jb-grid-advanced-settings>
       <jb-button
         type="NoButton"
         label="Save"
         (click)="save()"
       ></jb-button>
-      <jb-button label="Complete"></jb-button>
-      <!-- <jb-workflow-actions
-        [isCustomThreeDots]="true"
+      <jb-button label="Complete"></jb-button> -->
+      <jb-workflow-actions
+        [isCustomThreeDots]="false"
         [showSaveButton]="true"
-        [saveButtonType]="NoButton"
+        saveButtonType="NoButton"
+        [jobDetails]="detailedData"
+        [functionCode]="detailedData.functionCode"
+        [moduleCode]="detailedData.moduleCode"
+        [workListType]="detailedData.ProjectStatusCode"
         [threeDotsActions]="threeDotsActions"
+        [threeDotsActionsShow]="threeDotsActionsShow"
+        (threeDotOptionClick)="threeDotActionClicked($event)"
         (saveActionClick)="save()"
-      ></jb-workflow-actions> -->
+      ></jb-workflow-actions>
     </div>
   </jb-details-top-section>
 </div>
