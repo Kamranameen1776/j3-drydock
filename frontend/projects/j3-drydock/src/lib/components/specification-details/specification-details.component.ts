@@ -17,6 +17,9 @@ import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-de
 })
 export class SpecificationDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationDetails) [eSpecificationDetailsPageMenuIds.SpecificationDetails]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.SubItems) [eSpecificationDetailsPageMenuIds.SubItems]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.PMSJobs) [eSpecificationDetailsPageMenuIds.PMSJobs]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.Contacts) [eSpecificationDetailsPageMenuIds.Contacts]: ElementRef;
 
   private pageTitle = 'Specification Details';
   public specificationDetailsInfo: GetSpecificationDetailsDto;
@@ -24,7 +27,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   public specificationUid: string;
 
   private readonly menuId = 'specification-details-menu';
-  currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
+  currentSectionId = eSpecificationDetailsPageMenuIds.GeneralInformation;
   eProjectDetailsSideMenuId = eSpecificationDetailsPageMenuIds;
   growlMessage$ = this.growlMessageService.growlMessage$;
 
@@ -83,7 +86,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   }
 
   private isMenuSection(menuItem: IJbMenuItem) {
-    return menuItem.id === eSpecificationDetailsPageMenuIds.SpecificationDetails || !!menuItem.items?.length;
+    return menuItem.id === eSpecificationDetailsPageMenuIds.GeneralInformation || !!menuItem.items?.length;
   }
 
   public async save(): Promise<void> {
