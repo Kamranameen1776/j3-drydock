@@ -19,7 +19,7 @@ export interface YardToLink {
   isLinked?: boolean;
   isDisable?: boolean;
 }
-// TODO fixme remove optionals once api is merged
+
 export interface ProjectDetails {
   ProjectId: string;
   ProjectCode: string;
@@ -36,8 +36,8 @@ export interface ProjectDetails {
   StartDate: string;
   EndDate: string;
   TaskManagerUid: string;
-  ProjectStatusCode?: string;
-  VesselId?: number;
+  ProjectTypeCode: string;
+  VesselId: number;
 }
 
 export interface ProjectTopHeaderDetails extends ProjectDetails {
