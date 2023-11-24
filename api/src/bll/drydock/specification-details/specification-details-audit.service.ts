@@ -49,8 +49,8 @@ export class SpecificationDetailsAuditService {
     ): Promise<void> {
         const deleteField = {
             ...this.generateCommonFields(uid),
-            action_name: 'Deleted',
-            created_by: deletedById,
+            actionName: 'Deleted',
+            createdBy: deletedById,
         };
 
         await this.fieldsHistoryRepository.saveFieldsHistory(deleteField as CreateFieldsHistoryDto, queryRunner);
