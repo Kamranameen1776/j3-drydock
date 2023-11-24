@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProjectsService } from '../ProjectsService';
 import { ProjectDetails } from '../../models/interfaces/project-details';
+import { getISOStringFromDateString } from '../../utils/to-iso-string';
 
 export interface TopFieldsData<T> {
   topFieldsConfig: ITopSectionFieldSet;
@@ -118,17 +119,11 @@ export class SpecificationTopDetailsService {
   }
 
   save(projectId: string, formData) {
-    function fastDateTransform(date: string) {
-      const [day, month, year] = date.split('-');
-
-      return new Date(`${year}-${month}-${day}`).toISOString();
-    }
-
     const data = {
       Subject: formData.Job_Short_Description,
       ProjectManagerUid: formData.ProjectManager,
-      EndDate: fastDateTransform(formData.EndDate),
-      StartDate: fastDateTransform(formData.StartDate)
+      EndDate: getISOStringFromDateString(formData.EndDate),
+      StartDate: getISOStringFromDateString(formData.StartDate)
     };
 
     return this.projectsService.updateProject({

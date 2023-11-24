@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { SpecificationTopDetailsService, TopFieldsData } from '../../services/specifications/specification-top-details.service';
 import { filter, finalize, first, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { AdvancedSettings } from 'jibe-components';
+import { AdvancedSettings, JbDetailsTopSectionComponent } from 'jibe-components';
 import { CurrentProjectService } from '../project-details/current-project.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { ProjectDetails } from '../../models/interfaces/project-details';
@@ -14,6 +14,7 @@ import { FormGroup } from '@angular/forms';
   styleUrls: ['./project-header.component.scss']
 })
 export class ProjectHeaderComponent extends UnsubscribeComponent implements OnInit {
+  @ViewChild('detailsTopSection') detailsTopSection: JbDetailsTopSectionComponent;
   topDetailsData: TopFieldsData<ProjectDetails>;
   loading = true;
   threeDotsActions: AdvancedSettings[] = [
@@ -53,7 +54,12 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       return this.currentProject.projectId$
         .pipe(
           first(),
-          switchMap((projectId) => this.specsTopDetailsService.save(projectId, this.formGroup.value)),
+          switchMap((projectId) =>
+            this.specsTopDetailsService.save(projectId, {
+              ...this.formGroup.value,
+              Job_Short_Description: this.detailsTopSection.titleBoxContent.value
+            })
+          ),
           finalize(() => (this.isValueChange = false))
         )
         .toPromise();
