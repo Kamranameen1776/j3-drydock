@@ -29,30 +29,29 @@ export class FieldsHistoryRepository {
     }
 
     private async insertQuery(fieldsHistory: CreateFieldsHistoryDto, queryRunner: QueryRunner): Promise<void> {
-        const sql = `
-            INSERT INTO j2_fields_history
-            (key_1, key_2, key_3, module_code, function_code, is_current, version_number, table_name, section,
-             display_text, value, action_name, created_date, created_by)
-            VALUES
-            (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12, @13)
-        `;
+        // Create the query builder for the insert operation
+        const queryBuilder = queryRunner.manager.createQueryBuilder().insert().into(J2FieldsHistoryEntity).values({
+            key1: fieldsHistory.key1,
+            key2: fieldsHistory.key2,
+            key3: fieldsHistory.key3,
+            moduleCode: fieldsHistory.moduleCode,
+            functionCode: fieldsHistory.functionCode,
+            isCurrent: fieldsHistory.isCurrent,
+            versionNumber: fieldsHistory.versionNumber,
+            tableName: fieldsHistory.tableName,
+            section: fieldsHistory.section,
+            displayText: fieldsHistory.displayText,
+            value: fieldsHistory.value,
+            actionName: fieldsHistory.actionName,
+            createdDate: fieldsHistory.createdDate,
+            createdBy: fieldsHistory.createdBy,
+        });
 
-        await queryRunner.manager.query(sql, [
-            fieldsHistory.key1,
-            fieldsHistory.key2,
-            fieldsHistory.key3,
-            fieldsHistory.moduleCode,
-            fieldsHistory.functionCode,
-            fieldsHistory.isCurrent,
-            fieldsHistory.versionNumber,
-            fieldsHistory.tableName,
-            fieldsHistory.section,
-            fieldsHistory.displayText,
-            fieldsHistory.value,
-            fieldsHistory.actionName,
-            fieldsHistory.createdDate,
-            fieldsHistory.createdBy,
-        ]);
+        // Get the SQL and parameters from the query builder
+        const [sql, parameters] = queryBuilder.getQueryAndParameters();
+
+        // Execute the raw SQL with parameters using queryRunner
+        await queryRunner.query(sql, parameters);
     }
 
     private async insertManyQuery(fieldsHistories: CreateFieldsHistoryDto[], queryRunner: QueryRunner): Promise<void> {
