@@ -3,8 +3,8 @@ import { ITopSectionFieldSet } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProjectsService } from '../ProjectsService';
-import { omit } from 'lodash';
 import { ProjectDetails } from '../../models/interfaces/project-details';
+import { getISOStringFromDateString } from '../../utils/to-iso-string';
 
 export interface TopFieldsData<T> {
   topFieldsConfig: ITopSectionFieldSet;
@@ -118,19 +118,16 @@ export class SpecificationTopDetailsService {
     );
   }
 
-  save(projectId: string, data) {
+  save(projectId: string, formData) {
+    const data = {
+      Subject: formData.Job_Short_Description,
+      ProjectManagerUid: formData.ProjectManager,
+      EndDate: getISOStringFromDateString(formData.EndDate),
+      StartDate: getISOStringFromDateString(formData.StartDate)
+    };
+
     return this.projectsService.updateProject({
-      ...omit(data, [
-        'ProjectId',
-        'ProjectManager',
-        'ShipYard',
-        'ProjectCode',
-        'ProjectStatusName',
-        'ProjectTypeName',
-        'Specification',
-        'ProjectState',
-        'VesselName'
-      ]),
+      ...data,
       uid: projectId
     } as any);
   }
