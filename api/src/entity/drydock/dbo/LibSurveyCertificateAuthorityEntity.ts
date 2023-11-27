@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { StandardJobs } from '../';

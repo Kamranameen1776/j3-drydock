@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Column, Entity } from 'typeorm';
 
 @Entity('j2_inf_admin_library', { schema: 'dbo' })
