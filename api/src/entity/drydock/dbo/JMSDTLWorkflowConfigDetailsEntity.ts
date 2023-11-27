@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('JMS_DTL_Workflow_config_Details', { schema: 'dbo' })
