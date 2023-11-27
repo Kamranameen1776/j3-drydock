@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { DataUtilService, ODataService } from 'j2utils';
+import { ApiRequestService, DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
@@ -28,6 +28,7 @@ import {
     TmDdLibMaterialSuppliedBy,
 } from '../../../entity/drydock';
 import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
+import { SpecificationSubItemEntity } from '../../../entity/drydock/SpecificationSubItemEntity';
 import { ODataResult } from '../../../shared/interfaces';
 import {
     CreateInspectionsDto,
@@ -37,6 +38,7 @@ import {
     PmsJobsData,
     SpecificationDetailsResultDto,
 } from './dtos';
+import { PrcItemData } from './dtos/IPrcItemData';
 
 export class SpecificationDetailsRepository {
     public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {
@@ -52,6 +54,36 @@ export class SpecificationDetailsRepository {
 
     public async addSpecificationPms(data: Array<PmsJobsData>, queryRunner: QueryRunner) {
         await queryRunner.manager.insert(SpecificationPmsEntity, data);
+    }
+
+    public async addSpecificationSubItemFromPrcItem(token: string, data: PrcItemData, queryRunner: QueryRunner) {
+        const prcItem = (await new ApiRequestService().prcCatalog(
+            token,
+            `prc-catalog/items/${data.itemUid}`,
+            'GET',
+        )) as any as { oum: string; subject: string };
+        await queryRunner.manager.insert(SpecificationSubItemEntity, {
+            SpecificationUid: data.uid,
+            Subject: prcItem.subject,
+            unitUid: prcItem.oum,
+            quantity: data.qty,
+            PrcCatalogItemId: data.itemUid,
+        });
+    }
+
+    public async addSpecificationSubItemFromPrcJob(token: string, data: PrcItemData, queryRunner: QueryRunner) {
+        const prcItem = (await new ApiRequestService().prcCatalog(
+            token,
+            `prc-catalog/items/${data.itemUid}`,
+            'GET',
+        )) as any as { oum: string; subject: string };
+        await queryRunner.manager.insert(SpecificationSubItemEntity, {
+            SpecificationUid: data.uid,
+            Subject: prcItem.subject,
+            unitUid: prcItem.oum,
+            quantity: data.qty,
+            PrcCatalogItemId: data.itemUid,
+        });
     }
 
     public async getSpecificationPMSJobs(uid: string): Promise<Array<SpecificationPmsEntity>> {
