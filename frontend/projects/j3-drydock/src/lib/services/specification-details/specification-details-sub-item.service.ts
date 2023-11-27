@@ -11,6 +11,7 @@ import {
   eIconNames
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
+import { eSpecificationDetailsSubItemsFields, eSpecificationDetailsSubItemsLabels } from '../../models/enums/specification-details-sub-items.enum';
 
 export enum SpecificationStatus {
   RAISED = 'Raised',
@@ -36,13 +37,14 @@ export class SpecificationDetailsSubItemsGridService {
     };
   }
 
-  getGridData(): GridInputsWithRequest {
+  getGridData(specificationUid): GridInputsWithRequest {
     return {
       columns: this.columns,
       gridName: this.gridName,
       actions: this.gridRowActions,
       filters: this.filters,
-      filtersLists: this.filtersLists
+      filtersLists: this.filtersLists,
+      request: this.getApiRequest(specificationUid)
     };
   }
 
@@ -51,8 +53,8 @@ export class SpecificationDetailsSubItemsGridService {
   private readonly columns: Column[] = [
     {
       DisableSort: true,
-      DisplayText: 'Item No',
-      FieldName: 'item_number',
+      DisplayText: eSpecificationDetailsSubItemsLabels.ItemNumber,
+      FieldName: eSpecificationDetailsSubItemsFields.ItemNumber,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -61,8 +63,8 @@ export class SpecificationDetailsSubItemsGridService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Subject',
-      FieldName: 'subject',
+      DisplayText: eSpecificationDetailsSubItemsLabels.Subject,
+      FieldName: eSpecificationDetailsSubItemsFields.Subject,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -71,8 +73,8 @@ export class SpecificationDetailsSubItemsGridService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Unit',
-      FieldName: 'kind',
+      DisplayText: eSpecificationDetailsSubItemsLabels.Unit,
+      FieldName: eSpecificationDetailsSubItemsFields.Unit,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -81,8 +83,8 @@ export class SpecificationDetailsSubItemsGridService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Quantity',
-      FieldName: 'db_done_by',
+      DisplayText: eSpecificationDetailsSubItemsLabels.Quantity,
+      FieldName: eSpecificationDetailsSubItemsFields.Quantity,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -91,8 +93,8 @@ export class SpecificationDetailsSubItemsGridService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Unit Price',
-      FieldName: 'inspection',
+      DisplayText: eSpecificationDetailsSubItemsLabels.UnitPrice,
+      FieldName: eSpecificationDetailsSubItemsFields.UnitPrice,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -101,8 +103,8 @@ export class SpecificationDetailsSubItemsGridService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Discount %',
-      FieldName: 'status',
+      DisplayText: eSpecificationDetailsSubItemsLabels.Discount,
+      FieldName:  eSpecificationDetailsSubItemsFields.Discount,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -111,8 +113,8 @@ export class SpecificationDetailsSubItemsGridService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Cost',
-      FieldName: 'status',
+      DisplayText: eSpecificationDetailsSubItemsLabels.Cost,
+      FieldName: eSpecificationDetailsSubItemsFields.Cost,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,

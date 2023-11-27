@@ -40,7 +40,7 @@ import { SpecificationGeneralInformationComponent } from './components/specifica
 import { SpecificationGeneralInformationInputservice } from './components/specification-details/specification-general-information/specification-general-information-inputs';
 import { SpecificationRequisitionsComponent } from './components/specification-details/specification-requisitions/specification-requisitions.component';
 import { SpecificationSubItemsComponent } from './components/specification-details/specification-sub-items/specification-sub-items.component';
-import { SpecificationDetailsSubItemsGridService } from './services/specification-details/sub-item.service';
+import { SpecificationDetailsSubItemsGridService } from './services/specification-details/specification-details-sub-item.service';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
