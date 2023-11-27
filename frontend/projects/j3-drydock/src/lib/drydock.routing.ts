@@ -5,6 +5,8 @@ import { ProjectDetailsComponent } from './components/project-details/project-de
 import { StandardJobsMainComponent } from './components/standard-jobs-main/standard-jobs-main.component';
 import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
+import { Statement } from '@angular/compiler';
+import { StatementOfFactsComponent } from './components/project-monitoring/statement-of-facts/statement-of-facts.component';
 
 const routes: Routes = [
   {
@@ -34,6 +36,12 @@ const routes: Routes = [
   {
     path: 'specification-details/:specificationUid',
     component: SpecificationDetailsComponent,
+    canActivate: [AuthGuardService],
+    runGuardsAndResolvers: 'paramsOrQueryParamsChange'
+  },
+  {
+    path: 'project-monitoring/statement-of-facts/:projectUid',
+    component: StatementOfFactsComponent,
     canActivate: [AuthGuardService],
     runGuardsAndResolvers: 'paramsOrQueryParamsChange'
   }

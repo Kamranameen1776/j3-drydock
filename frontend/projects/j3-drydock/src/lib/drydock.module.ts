@@ -43,6 +43,7 @@ import { SpecificationGeneralInformationInputservice } from './components/specif
 import {
   SpecificationRequisitionsComponent
 } from "./components/specification-details/specification-requisitions/specification-requisitions.component";
+import { StatementOfFactsComponent } from './components/project-monitoring/statement-of-facts/statement-of-facts.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -84,6 +85,7 @@ export function winEnv(): unknown {
     SpecificationDetailsHeaderComponent,
     SpecificationGeneralInformationComponent,
     SpecificationRequisitionsComponent,
+    StatementOfFactsComponent,
   ],
   imports: [
     CommonModule,
