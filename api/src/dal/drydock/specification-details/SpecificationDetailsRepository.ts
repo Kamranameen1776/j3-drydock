@@ -13,6 +13,7 @@ import {
     J3PrcPo,
     J3PrcRequisition,
     J3PrcRfqEntity,
+    LibItemSourceEntity,
     LibSurveyCertificateAuthority,
     LibUserEntity,
     LibVesselsEntity,
@@ -88,9 +89,8 @@ export class SpecificationDetailsRepository {
                 'spec.Function as "Function"',
                 'spec.AccountCode as AccountCode',
 
-                //TODO: clarify where it's from
                 'spec.ItemSourceUid as ItemSourceUid',
-                `'PMS' as ItemSourceText`,
+                'its.DisplayName as ItemSourceText',
 
                 'spec.ItemNumber as ItemNumber',
 
@@ -109,6 +109,7 @@ export class SpecificationDetailsRepository {
                 'usr.uid AS ProjectManagerUid',
             ])
             .leftJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
+            .leftJoin(className(LibItemSourceEntity), 'its', 'spec.ItemSourceUid = its.uid')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'spec.DoneByUid = db.uid')
             .leftJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
             .leftJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 
@@ -13,8 +14,10 @@ export abstract class RequestPipeline<TRequest, TResponse> {
         return this.MainHandlerAsync(request);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-    protected async AuthorizationHandlerAsync(request: TRequest): Promise<void> {}
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected async AuthorizationHandlerAsync(request: TRequest): Promise<void> {
+        return;
+    }
 
     protected async ValidationHandlerAsync(
         request: TRequest,

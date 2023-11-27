@@ -37,6 +37,10 @@ module.exports = {
                 selector: ['class'],
                 format: ['StrictPascalCase'],
             },
+            {
+                selector: ['classProperty'],
+                format: ['camelCase', 'StrictPascalCase'],
+            },
         ],
     },
 };
