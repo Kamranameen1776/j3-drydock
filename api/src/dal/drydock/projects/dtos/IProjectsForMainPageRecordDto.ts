@@ -11,6 +11,7 @@ export interface IProjectsForMainPageRecordDto {
     ProjectTypeCode?: string;
 
     ProjectStateName: string;
+    ProjectStatusId?: string;
 
     Subject: string;
 
