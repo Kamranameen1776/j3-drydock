@@ -7,10 +7,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule as PrimeNgModule } from 'primeng';
 import { JiBeTheme, JibeComponentsModule } from 'jibe-components';
 import { ProjectDetailsComponent } from './components/project-details/project-details.component';
-import { SpecificationGridService } from './services/specifications/specification.service';
+import { SpecificationGridService } from './services/project/specification.service';
 import { SpecificationStatusPipe } from './components/project-details/specification/specification-status.pipe';
 import { StatusCodeColorPipe } from './shared/pipes/status-code-color.pipe';
-import { SpecificationTopDetailsService } from './services/specifications/specification-top-details.service';
 import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
 import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
 import { FunctionsTreeSelectComponent } from './shared/components/functions-tree-select/functions-tree-select.component';
@@ -23,7 +22,6 @@ import { StandardJobsStatusNamePipe } from './components/standard-jobs-main/pipe
 import { StandardJobsStatusColorPipe } from './components/standard-jobs-main/pipes/status-color.pipe';
 import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
 import { ProjectsSpecificationsGridComponent } from './components/projects-main-page/projects-specifications-grid/projects-specifications-grid.component';
-import { ProjectsService } from './services/ProjectsService';
 import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
 import { CreateSpecificationPopupComponent } from './components/project-details/create-specification-popup/create-specification-popup.component';
 import { SpecificationFormComponent } from './components/project-details/specification-form/specification-form.component';
@@ -99,12 +97,10 @@ export function winEnv(): unknown {
   providers: [
     DatePipe,
     SpecificationGridService,
-    SpecificationTopDetailsService,
-    ProjectsService,
     SpecificationDetailsService,
     LeftPanelFilterService,
     SpecificationCreateFormService,
-    SpecificationGeneralInformationInputservice,
+    SpecificationGeneralInformationInputservice
   ],
   exports: [],
   entryComponents: []

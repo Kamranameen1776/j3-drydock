@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
-import { SpecificationTopDetailsService } from '../../services/specifications/specification-top-details.service';
+import { ProjectTopDetailsService } from '../../services/project/project-top-details.service';
 import { concatMap, finalize, takeUntil } from 'rxjs/operators';
 import {
   AdvancedSettings,
@@ -39,7 +39,7 @@ export enum eProjectHeader3DotActions {
 export class ProjectHeaderComponent extends UnsubscribeComponent implements OnInit {
   @ViewChild('detailsTopSection') detailsTopSection: JbDetailsTopSectionComponent;
 
-  canEdit = false;
+  canEdit = true;
 
   detailedData: ProjectTopHeaderDetails;
 
@@ -123,7 +123,7 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   constructor(
-    private specsTopDetailsService: SpecificationTopDetailsService,
+    private topDetailsService: ProjectTopDetailsService,
     private currentProject: CurrentProjectService,
     private taskManagerService: TaskManagerService
   ) {
@@ -218,7 +218,7 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
     const projectId = this.currentProject.projectId$.getValue();
 
-    return this.specsTopDetailsService
+    return this.topDetailsService
       .save(projectId, {
         ...this.formGroup.value,
         Job_Short_Description: this.detailsTopSection.titleBoxContent.value
@@ -231,14 +231,13 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
     this.loading = true;
 
-    this.specsTopDetailsService
+    this.topDetailsService
       .getTopDetailsData(projectId)
       .pipe(
         takeUntil(this.unsubscribe$),
         finalize(() => (this.loading = false))
       )
       .subscribe((data) => {
-        this.canEdit = data.canEdit;
         this.topFieldsConfig = data.topFieldsConfig;
 
         this.detailedData = {
@@ -258,7 +257,7 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
   private initTaskManger(savedProject: ProjectDetails) {
     this.taskManagerService
-      .getWorkflow(savedProject.TaskManagerUid, 'dry_dock')
+      .getWorkflow(savedProject.TaskManagerUid, savedProject.ProjectTypeCode)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((res) => {
         this.getNextWorkFlow(res?.task_status);

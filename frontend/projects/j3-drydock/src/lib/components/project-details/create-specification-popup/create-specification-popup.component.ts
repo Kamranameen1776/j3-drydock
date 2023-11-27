@@ -6,7 +6,7 @@ import { SpecificationCreateFormService } from '../specification-form/specificat
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { finalize } from 'rxjs/operators';
 import { GrowlMessageService } from '../../../services/growl-message.service';
-import { SpecificationGridService } from '../../../services/specifications/specification.service';
+import { SpecificationGridService } from '../../../services/project/specification.service';
 
 @Component({
   selector: 'jb-create-specification-popup',
