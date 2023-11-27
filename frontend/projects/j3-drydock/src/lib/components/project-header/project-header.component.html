@@ -32,11 +32,11 @@
         [moduleCode]="detailedData.moduleCode"
         [workListType]="detailedData.ProjectTypeCode"
         [showWorkflowAction]="true"
-        [workflowActionData]="workflowActionData"
+        [workflowActionData]="nextWorkflowData"
         [threeDotsActions]="threeDotsActions"
         [threeDotsActionsShow]="threeDotsActionsShow"
         (threeDotOptionClick)="onThreeDotActionClicked($event)"
-        (saveActionClick)="save()"
+        (saveActionClick)="onSave()"
         (workflowActionClick)="onGoToNextStatusClicked($event.actionName)"
       ></jb-workflow-actions>
     </div>

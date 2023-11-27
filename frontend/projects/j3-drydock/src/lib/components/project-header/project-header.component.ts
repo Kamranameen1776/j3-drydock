@@ -2,7 +2,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { SpecificationTopDetailsService } from '../../services/specifications/specification-top-details.service';
-import { filter, finalize, first, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { concatMap, finalize, takeUntil } from 'rxjs/operators';
 import {
   AdvancedSettings,
   IJbDialog,
@@ -23,6 +23,7 @@ import { eModule } from '../../models/enums/module.enum';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NextWorkflow } from '../../models/interfaces/task-manager';
 import { getSmallPopup } from '../../models/constants/popup';
+import { of } from 'rxjs';
 
 export enum eProjectHeader3DotActions {
   Export = 'Export',
@@ -79,7 +80,7 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
   isWorkflowButtonEnable = true;
 
-  workflowActionData: {
+  nextWorkflowData: {
     dialogName: string;
     actionName: string;
     buttonDisplayName: string;
@@ -130,26 +131,11 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   ngOnInit(): void {
-    this.loadTopDetailsData();
+    this.initDetailsData();
   }
 
-  save() {
-    if (this.formGroup) {
-      return this.currentProject.projectId$
-        .pipe(
-          first(),
-          switchMap((projectId) =>
-            this.specsTopDetailsService.save(projectId, {
-              ...this.formGroup.value,
-              Job_Short_Description: this.detailsTopSection.titleBoxContent.value
-            })
-          ),
-          finalize(() => (this.isValueChange = false))
-        )
-        .toPromise();
-    }
-
-    return Promise.reject();
+  onSave() {
+    this.save().subscribe();
   }
 
   onFormCreate(form: FormGroup) {
@@ -185,7 +171,7 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
   onGoToNextStatusClicked(actionName: string) {
     console.log(actionName);
-    const confirmationMessage = 'TODO for needed actions';
+    const confirmationMessage = 'Add Follow Up';
 
     this.confirmationPopup.dialogHeader = confirmationMessage;
 
@@ -200,19 +186,22 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     const remark: string = this.confirmationForm.controls.textMessage.value;
     console.log(remark);
 
-    //   const payload = {
-    //     uid: this.topSectionDetails.uid,
-    //     Office_ID: this.topSectionDetails.Office_ID,
-    //     Job_Short_Description: this.topSectionDetails.Job_Short_Description,
-    //     Vessel_ID: this.topSectionDetails.Vessel_ID,
-    //     Is_Office: this.isOffice,
-    //     wl_type: this.topSectionDetails.WL_TYPE,
-    //     vessel_uid: this.topSectionDetails.vessel_uid,
-    //     raised_location: this.isOffice,
-    //     task_status: event.reworkStatusId,
-    //     assigned_to: this.selectedUserUid,
-    //     right_code: this.nextWorkFlowRightCode
-    // };
+    const payload = {
+      uid: this.detailedData.TaskManagerUid,
+      Office_ID: this.detailedData.officeId,
+      Job_Short_Description: this.detailsTopSection.titleBoxContent.value,
+      Vessel_ID: this.detailedData.VesselId,
+      Is_Office: this.isOffice,
+      wl_type: this.detailedData.ProjectTypeCode,
+      vessel_uid: this.detailedData.VesselUid,
+      raised_location: this.isOffice,
+      task_status: this.nextWorkflowData.actionName,
+      right_code: this.nextWorkFlowRightCode
+    };
+
+    this.save()
+      .pipe(concatMap(() => this.taskManagerService.transitionToNextWorkflowStatus(payload)))
+      .subscribe();
 
     this.isConfirmationPopupVisible = false;
   }
@@ -222,14 +211,29 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     this.isConfirmationPopupVisible = false;
   }
 
-  private loadTopDetailsData() {
-    this.currentProject.projectId$
+  private save() {
+    if (!this.formGroup) {
+      return of(null);
+    }
+
+    const projectId = this.currentProject.projectId$.getValue();
+
+    return this.specsTopDetailsService
+      .save(projectId, {
+        ...this.formGroup.value,
+        Job_Short_Description: this.detailsTopSection.titleBoxContent.value
+      })
+      .pipe(finalize(() => (this.isValueChange = false)));
+  }
+
+  private initDetailsData() {
+    const projectId = this.currentProject.projectId$.getValue();
+
+    this.loading = true;
+
+    this.specsTopDetailsService
+      .getTopDetailsData(projectId)
       .pipe(
-        filter((projectId) => !!projectId),
-        tap(() => {
-          this.loading = true;
-        }),
-        switchMap((projectId) => this.specsTopDetailsService.getTopDetailsData(projectId).pipe(takeUntil(this.unsubscribe$))),
         takeUntil(this.unsubscribe$),
         finalize(() => (this.loading = false))
       )
@@ -257,7 +261,6 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       .getWorkflow(savedProject.TaskManagerUid, 'dry_dock')
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((res) => {
-        console.log(res);
         this.getNextWorkFlow(res?.task_status);
       });
   }
@@ -296,10 +299,10 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   private setWorkflowActionsData(nextWorkFlow: NextWorkflow) {
-    this.workflowActionData = {
-      dialogName: nextWorkFlow.Display_name_pass || 'TODO',
-      actionName: nextWorkFlow.Display_name_action || 'TODO',
-      buttonDisplayName: nextWorkFlow.Display_name_pass || 'TODO'
+    this.nextWorkflowData = {
+      dialogName: nextWorkFlow.Display_name_pass,
+      actionName: nextWorkFlow.Display_name_action,
+      buttonDisplayName: nextWorkFlow.Display_name_pass
     };
   }
 }
