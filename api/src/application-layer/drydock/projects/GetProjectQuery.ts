@@ -49,6 +49,7 @@ export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordD
             ShipYard: 'Country ave.Name 123',
             Specification: '330/500',
             ProjectStatusName: record.ProjectStatusName,
+            ProjectStatusId: record.ProjectStatusId,
 
             ProjectState: record.ProjectStateName,
 
