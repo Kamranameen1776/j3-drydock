@@ -41,7 +41,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   async ngOnInit(): Promise<void> {
     const { snapshot } = this.activatedRoute;
     this.specificationUid = snapshot.params.specificationUid;
-
     this.specificationDetailsInfo = await this.specificatioDetailService.getSpecificationDetails(this.specificationUid).toPromise();
     this.pageTitle = `Specification ${this.specificationDetailsInfo.SpecificationCode}`;
     this.title.setTitle(this.pageTitle);

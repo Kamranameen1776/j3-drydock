@@ -9,7 +9,10 @@ import { LinkSpecificationRequisitionsRequestDto } from '../../../application-la
 import { UpdateSpecificationPmsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationPMSRequestDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import {
+    J3PrcCompanyRegistryEntity,
+    J3PrcPo,
     J3PrcRequisition,
+    J3PrcRfqEntity,
     LibSurveyCertificateAuthority,
     LibUserEntity,
     LibVesselsEntity,
@@ -24,6 +27,7 @@ import {
     TmDdLibItemCategory,
     TmDdLibMaterialSuppliedBy,
 } from '../../../entity/drydock';
+import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
 import { ODataResult } from '../../../shared/interfaces';
 import {
     CreateInspectionsDto,
@@ -70,7 +74,7 @@ export class SpecificationDetailsRepository {
             .execute();
     }
 
-    public async findOneBySpecificationUid(uid: string): Promise<Array<SpecificationDetailsResultDto>> {
+    public async findOneBySpecificationUid(uid: string): Promise<SpecificationDetailsResultDto> {
         const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
 
         return specificationRepository
@@ -104,15 +108,15 @@ export class SpecificationDetailsRepository {
                 `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
                 'usr.uid AS ProjectManagerUid',
             ])
-            .innerJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
+            .leftJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'spec.DoneByUid = db.uid')
             .leftJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
-            .innerJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
-            .innerJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
-            .innerJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
+            .leftJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
+            .leftJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
+            .leftJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
             .where('spec.ActiveStatus = 1')
             .andWhere('spec.uid = :uid', { uid })
-            .execute();
+            .getRawOne();
     }
 
     public async GetManySpecificationDetails(
@@ -194,20 +198,31 @@ export class SpecificationDetailsRepository {
 
         const query = getManager()
             .createQueryBuilder(J3PrcRequisition, 'rq')
-            .innerJoin('specification_requisitions', 'sr', 'sr.requisition_uid = rq.uid')
-            .innerJoin('specification_details', 'sd', 'sr.specification_uid = sd.uid AND sd.active_status = 1')
-            .leftJoin('Lib_Ports', 'port', 'rq.delivery_port_id = port.PORT_ID')
-            .leftJoin('lib_urgency', 'urg', 'urg.uid = rq.urgency_uid')
+            .distinct(true)
             .select([
                 'rq.uid as uid',
                 'rq.requisition_number as number',
-                'rq.status_uid as status',
+                'ts.statusId statusId',
+                'ts.statusDisplayName statusDisplayName',
                 'rq.delivery_date as deliveryDate',
                 'port.PORT_NAME as port',
                 'rq.description as description',
                 'urg.urgencys as priority',
+                'po.poDate as poDate',
+                'po.total_value as amount',
+                'po.total_value as value',
+                'supplier.registered_name as supplier',
             ])
+            .innerJoin(SpecificationRequisitionsEntity, 'sr', 'sr.requisition_uid = rq.uid')
+            .innerJoin(SpecificationDetailsEntity, 'sd', 'sr.specification_uid = sd.uid AND sd.active_status = 1')
+            .innerJoin('Lib_Ports', 'port', 'rq.delivery_port_id = port.PORT_ID')
+            .innerJoin('lib_urgency', 'urg', 'urg.uid = rq.urgency_uid')
+            .innerJoin(J3PrcPo, 'po', 'rq.uid = po.requisition_uid')
+            .innerJoin(J3PrcRfqEntity, 'rfq', 'rq.uid = rfq.requisition_uid')
+            .innerJoin(J3PrcCompanyRegistryEntity, 'supplier', 'rfq.supplier_uid = supplier.uid')
+            .innerJoin(J3PrcTaskStatusEntity, 'ts', 'rq.uid = ts.objectUid')
             .where(`sd.uid = '${specificationUid}'`)
+            .andWhere('rq.active_status = 1')
             .getSql();
 
         return oDataService.getJoinResult(query);
