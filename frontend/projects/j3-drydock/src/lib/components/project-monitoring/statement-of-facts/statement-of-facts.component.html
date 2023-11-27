@@ -1,1 +1,13 @@
-<p>statement-of-facts works!</p>
+<section class="statement-of-facts-grid">
+  <jb-grid
+    #statementOfFactsGrid
+    [gridName]="gridInputs.gridName"
+    [colData]="gridInputs.columns"
+    [tableDataReq]="gridInputs.request"
+    [searchFields]="gridInputs.searchFields"
+    [button]="gridInputs.gridButton"
+    [setActions]="gridInputs.actions"
+    [getStyleByContainer]="true"
+    (action)="onGridAction($any($event), $event?.payload)"
+  ></jb-grid>
+</section>
