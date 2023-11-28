@@ -1,5 +1,4 @@
-import { plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
+import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 
 /**
  * Request pipeline from Command Query Responsibility Segregation pattern
@@ -22,11 +21,7 @@ export abstract class RequestPipeline<TRequest, TResponse> {
         validationKey = 'body',
     ): Promise<void> {
         if (validationClass) {
-            const dto = plainToInstance(validationClass, (request as any)[validationKey]);
-            const result = await validate(dto as any);
-            if (result.length) {
-                throw result;
-            }
+            await validateAgainstModel(validationClass, (request as any)[validationKey]);
         }
     }
 

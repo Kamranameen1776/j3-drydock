@@ -8,21 +8,21 @@ export class AddTableGroupProjectStatus1698663404380 implements MigrationInterfa
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
             await queryRunner.query(`
-            
+
             CREATE TABLE [dry_dock].[group_project_status](
                 [uid] [uniqueidentifier] NOT NULL DEFAULT(NEWID()),
-            
+
                 -- Completed, Planned, Active
                 [group_status_id] [varchar](50) NOT NULL,
-            
+
                 -- [TEC_LIB_Worklist_Type] -> [Worklist_Type]
                 [Worklist_Type] [varchar](50) NOT NULL,
-                
+
                 -- [JMS_DTL_Workflow_config_Details] -> [WrokFlowType_ID]
                 [WorkFlowType_ID] [varchar](50) NOT NULL,
-            
+
                 [active_status] [bit] NOT NULL DEFAULT(1),
-             CONSTRAINT [PK_testtable123] PRIMARY KEY CLUSTERED 
+             CONSTRAINT [PK_testtable123] PRIMARY KEY CLUSTERED
             (
                 [uid] ASC
             )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
