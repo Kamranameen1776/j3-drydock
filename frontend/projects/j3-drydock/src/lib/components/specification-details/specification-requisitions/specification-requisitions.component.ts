@@ -27,8 +27,8 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
   @Input() specificationUid: string;
 
   gridData: GridInputsWithRequest;
-  protected readonly eLayoutWidgetSize = eLayoutWidgetSize;
-  protected readonly JbButtonType = JbButtonType;
+  readonly eLayoutWidgetSize = eLayoutWidgetSize;
+  readonly JbButtonType = JbButtonType;
 
   private columns: Column[] = [
     {

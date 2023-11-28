@@ -50,10 +50,7 @@
 >
   <div jb-dialog-body>
     <form [formGroup]="confirmationForm">
-      <jb-textarea
-        [content]="confirmationMessageSettings"
-        *ngIf="!isChangingTemplate"
-      ></jb-textarea>
+      <jb-textarea [content]="confirmationMessageSettings"></jb-textarea>
     </form>
   </div>
   <ng-container jb-dialog-footer>
