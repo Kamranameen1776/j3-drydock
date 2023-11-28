@@ -73,7 +73,6 @@ export class SpecificationGridService {
         ...formValue,
         // HardCoded for future
         ItemSourceUid: '3EEF2E1B-2533-45C7-82C7-C13D6AA79559',
-        Inspections: [],
         FunctionUid: formValue.FunctionUid.Child_ID || '',
         Function: formValue.FunctionUid.jb_value_label || ''
       }
