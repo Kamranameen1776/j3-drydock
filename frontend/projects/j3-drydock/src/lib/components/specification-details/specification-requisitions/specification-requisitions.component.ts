@@ -4,15 +4,17 @@ import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import {
   Column,
   eCrud,
-  eFieldControlType, eGridRefreshType,
+  eFieldControlType,
+  eGridRefreshType,
   eGridRowActions,
   eLayoutWidgetSize,
   GridRowActions,
-  GridService, JbButtonType,
+  GridService,
+  JbButtonType,
   SearchField,
   ShowSettings,
   WebApiRequest
-} from "jibe-components";
+} from 'jibe-components';
 import { SpecificationRequisitionsDisplayTexts, SpecificationRequisitionsFieldNames } from '../enum/specification-requisitions.enum';
 import { GridAction } from 'jibe-components/lib/grid/models/grid-action.model';
 import { SpecificationRequisition } from '../../../models/interfaces/specification-requisition';
@@ -156,6 +158,7 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
   }
 
   onGridAction(event: GridAction<eGridRowActions, SpecificationRequisition>) {
+    // eslint-disable-next-line default-case
     switch (event.type) {
       case eGridRowActions.Delete:
         this.deleteSpecificationRequisition(event.payload);
@@ -186,10 +189,8 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
   }
 
   private deleteSpecificationRequisition(specificationRequisition: SpecificationRequisition) {
-    this.specificationDetailsService
-      .deleteSpecificationRequisition(this.specificationUid, specificationRequisition.uid)
-      .subscribe(() => {
-        this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
-      });
+    this.specificationDetailsService.deleteSpecificationRequisition(this.specificationUid, specificationRequisition.uid).subscribe(() => {
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+    });
   }
 }

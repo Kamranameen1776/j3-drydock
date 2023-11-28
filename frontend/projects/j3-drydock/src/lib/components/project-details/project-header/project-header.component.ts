@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { ProjectTopDetailsService } from '../../../services/project/project-top-details.service';
@@ -158,8 +157,6 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       return;
     }
 
-    console.log(event);
-
     // eslint-disable-next-line default-case
     switch (event.type) {
       case eProjectHeader3DotActions.Export:
@@ -174,7 +171,6 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   onGoToNextStatusClicked(actionName: string) {
-    console.log(actionName);
     // TODO remove it once we have a requirements for steps
     this.onConfirmationPopupOk();
     // TODO uncomment it
@@ -189,7 +185,6 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
   onConfirmationPopupOk() {
     const remark: string = this.confirmationForm.controls.textMessage.value;
-    console.log(remark);
 
     const payload = {
       uid: this.detailedData.TaskManagerUid,
