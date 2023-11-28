@@ -1,23 +1,7 @@
 import { Injectable } from '@angular/core';
-import {
-  Column,
-  Filter,
-  FilterListSet,
-  GridButton,
-  GridRowActions,
-  UserService,
-  eGridColumnsWidth,
-  eFieldControlType,
-  FormModel,
-  SystemLevelFiltersService,
-  Datasource
-} from 'jibe-components';
+import { Column, GridButton, GridRowActions, UserService, eGridColumnsWidth, SystemLevelFiltersService } from 'jibe-components';
 import { nameOf } from '../../../utils/nameOf';
-import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
-import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
-import { eProjectsDeleteDisplayNames, eProjectsDeleteFieldNames } from '../../../models/enums/projects-delete.enum';
-import { ProjectsGridOdataKeys } from '../../../models/enums/ProjectsGridOdataKeys';
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { StatementOfFactsService } from '../../../services/project-monitoring/statement-of-facts/StatementOfFactsService';
 
@@ -25,7 +9,9 @@ import { StatementOfFactsService } from '../../../services/project-monitoring/st
 export class StatementOfFactsGridService {
   public readonly gridName: string = 'statementOfFactsGrid';
 
-  public readonly dateFormat = this.userService.getUserDetails().Date_Format;
+  public readonly dateFormat = this.userService.getUserDetails().Date_Format.toLocaleUpperCase();
+
+  public readonly dateTimeFormat = `${this.dateFormat} HH:MM`;
 
   initDate: Date = new Date();
 
@@ -48,13 +34,17 @@ export class StatementOfFactsGridService {
       width: eGridColumnsWidth.ShortDescription
     },
     {
-      DisplayText: 'Date & time',
+      DisplayText: 'Date & Time',
       FieldName: nameOf<IStatementOfFactDto>((prop) => prop.DateAndTime),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.ShortDescription
+      width: eGridColumnsWidth.ShortDescription,
+      pipe: {
+        value: 'date',
+        format: this.dateTimeFormat
+      }
     }
   ];
 
@@ -81,10 +71,11 @@ export class StatementOfFactsGridService {
       columns: this.columns,
       gridName: this.gridName,
       searchFields: this.searchFields,
-      // TODO: get project uid from the route
-      request: this.statementOfFactsService.getStatementOfFactsRequest('123'),
+      request: this.statementOfFactsService.getStatementOfFactsRequest(),
       gridButton: this.gridButton,
-      actions: this.gridActions
+      actions: this.gridActions,
+      sortField: nameOf<IStatementOfFactDto>((prop) => prop.DateAndTime),
+      sortOrder: -1
     };
   }
 }

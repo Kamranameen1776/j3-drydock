@@ -7,7 +7,10 @@
     [searchFields]="gridInputs.searchFields"
     [button]="gridInputs.gridButton"
     [setActions]="gridInputs.actions"
+    [sortField]="gridInputs.sortField"
+    [sortOrder]="gridInputs.sortOrder"
     [getStyleByContainer]="true"
     (action)="onGridAction($any($event), $event?.payload)"
+    (matrixRequestChanged)="onMatrixRequestChanged()"
   ></jb-grid>
 </section>
