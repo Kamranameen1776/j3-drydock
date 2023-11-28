@@ -1,8 +1,8 @@
 import { ApiRequestService, ConfigurationService } from 'j2utils';
 
 import { CreateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/CreateSpecificationDetailsDto';
-import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
-import { TaskManagerConstants } from '../../../shared/constants/task-manager';
+import { LibVesselsEntity } from '../../../entity/drydock';
+import { TaskManagerConstants } from '../../../shared/constants';
 
 export class SpecificationService {
     apiRequestService = new ApiRequestService();

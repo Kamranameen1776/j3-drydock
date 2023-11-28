@@ -1,22 +1,24 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Request } from 'express';
 
+import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { Command } from '../core/cqrs/Command';
+import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateSpecificationDetailsDto } from './dtos/CreateSpecificationDetailsDto';
 
-export class CreateSpecificationDetailsCommand extends Command<Request, void> {
+export class CreateSpecificationDetailsCommand extends Command<CommandRequest, string> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     vesselsRepository: VesselsRepository;
     specificationDetailsService: SpecificationService;
     projectRepository: ProjectsRepository;
     uow: UnitOfWork;
+    specificationDetailsAudit: SpecificationDetailsAuditService;
 
     constructor() {
         super();
@@ -26,9 +28,10 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
         this.specificationDetailsService = new SpecificationService();
         this.uow = new UnitOfWork();
         this.projectRepository = new ProjectsRepository();
+        this.specificationDetailsAudit = new SpecificationDetailsAuditService();
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+    protected async ValidationHandlerAsync({ request }: CommandRequest): Promise<void> {
         const body: CreateSpecificationDetailsDto = plainToClass(CreateSpecificationDetailsDto, request.body);
         const result = await validate(body);
         if (result.length) {
@@ -42,9 +45,9 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
      * @param request data for creation of specification details
      * @returns data of specification details
      */
-    protected async MainHandlerAsync(request: Request): Promise<void> {
+    protected async MainHandlerAsync({ request, user }: CommandRequest): Promise<string> {
         const token: string = request.headers.authorization as string;
-        await this.uow.ExecuteAsync(async (queryRunner) => {
+        return this.uow.ExecuteAsync(async (queryRunner) => {
             const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
             const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(project.VesselUid);
 
@@ -68,6 +71,14 @@ export class CreateSpecificationDetailsCommand extends Command<Request, void> {
                 });
                 await this.specificationDetailsRepository.CreateSpecificationInspection(data, queryRunner);
             }
+            await this.specificationDetailsAudit.auditCreatedSpecificationDetails(
+                {
+                    ...request.body,
+                    uid: specData,
+                },
+                user.UserID,
+                queryRunner,
+            );
             return specData;
         });
     }
