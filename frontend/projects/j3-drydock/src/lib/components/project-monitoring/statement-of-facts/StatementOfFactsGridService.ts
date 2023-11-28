@@ -75,7 +75,8 @@ export class StatementOfFactsGridService {
       gridButton: this.gridButton,
       actions: this.gridActions,
       sortField: nameOf<IStatementOfFactDto>((prop) => prop.DateAndTime),
-      sortOrder: -1
+      sortOrder: -1,
+      name: 'Statement of Facts',
     };
   }
 }

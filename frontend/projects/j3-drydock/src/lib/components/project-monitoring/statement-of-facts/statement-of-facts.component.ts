@@ -5,6 +5,7 @@ import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { StatementOfFactsGridService } from './StatementOfFactsGridService';
 import { StatementOfFactsGridOdataKeys } from '../../../models/enums/StatementOfFactsGridOdataKeys';
 import { ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'jb-statement-of-facts',
@@ -16,16 +17,20 @@ export class StatementOfFactsComponent implements OnInit {
   @ViewChild('statementOfFactsGrid')
   statementOfFactsGrid: GridComponent;
 
+  private readonly pageTitle = 'Statement of Facts';
+
   public gridInputs: GridInputsWithRequest;
 
   private projectUid: string;
 
   constructor(
     private statementOfFactsGridService: StatementOfFactsGridService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private title: Title
   ) {}
 
   ngOnInit(): void {
+    this.title.setTitle(this.pageTitle);
     this.projectUid = this.route.snapshot.paramMap.get('projectUid');
     this.setGridInputs();
   }
