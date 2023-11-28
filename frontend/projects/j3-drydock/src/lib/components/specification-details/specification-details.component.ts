@@ -4,7 +4,7 @@ import { SpecificationDetailsService } from '../../services/specification-detail
 import { GetSpecificationDetailsDto } from '../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { ActivatedRoute } from '@angular/router';
 import { eSpecificationDetailsPageMenuIds, specificationDetailsMenuData } from '../../models/enums/specification-details-menu-items.enum';
-import { IJbMenuItem, JbDatePipe, JbMenuService, JiBeTheme } from 'jibe-components';
+import { IJbAttachment, IJbMenuItem, JbDatePipe, JbMenuService, JiBeTheme } from 'jibe-components';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
@@ -21,6 +21,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   @ViewChild(eSpecificationDetailsPageMenuIds.SubItems) [eSpecificationDetailsPageMenuIds.SubItems]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.PMSJobs) [eSpecificationDetailsPageMenuIds.PMSJobs]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.Requisition) [eSpecificationDetailsPageMenuIds.Requisition]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.Requisition) [eSpecificationDetailsPageMenuIds.Requisition]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.Source) [eSpecificationDetailsPageMenuIds.Source]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationAttachments)
   [eSpecificationDetailsPageMenuIds.SpecificationAttachments]: ElementRef;
@@ -31,6 +32,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   public specificationDetailsInfo: GetSpecificationDetailsDto;
   public updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
   public specificationUid: string;
+  public attachmentConfig: IJbAttachment;
 
   private readonly menuId = 'specification-details-menu';
   currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
@@ -54,10 +56,25 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     this.pageTitle = `Specification ${this.specificationDetailsInfo.SpecificationCode}`;
     this.title.setTitle(this.pageTitle);
     this.initSideMenu();
+    this.initializeAttachments(this.specificationUid);
   }
 
   ngOnDestroy() {
     this.hideSideMenu();
+  }
+
+  private initializeAttachments(id: string): void {
+    this.attachmentConfig = {
+      Module_Code: 'j3_drydock',
+      Function_Code: 'specification_details',
+      Key1: id,
+      // for some reason jb-components doesn't show actions by default, these are a copy from jb-attachment.json
+      actions: [
+        { name: 'Edit', icon: 'icons8-edit' },
+        { name: 'Delete', icon: 'icons8-delete' },
+        { name: 'Download', icon: 'icons8-download' }
+      ]
+    };
   }
 
   private initSideMenu() {
@@ -91,7 +108,12 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   }
 
   private isMenuSection(menuItem: IJbMenuItem) {
-    return menuItem.id === eSpecificationDetailsPageMenuIds.SpecificationDetails || !!menuItem.items?.length;
+    return (
+      menuItem.id === eSpecificationDetailsPageMenuIds.SpecificationDetails ||
+      menuItem.id === eSpecificationDetailsPageMenuIds.Attachments ||
+      menuItem.id === eSpecificationDetailsPageMenuIds.AuditTrail ||
+      !!menuItem.items?.length
+    );
   }
 
   public async save(): Promise<void> {
