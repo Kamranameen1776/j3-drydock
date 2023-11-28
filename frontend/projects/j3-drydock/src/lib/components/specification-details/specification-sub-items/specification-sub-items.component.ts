@@ -15,19 +15,32 @@ export class SpecificationSubItemsComponent implements OnInit {
   gridData: GridInputsWithRequest;
   protected readonly JbButtonType = JbButtonType;
 
+  public menuItems: { label: string; command: () => void }[] = [];
+
   constructor(
     private subItemsGridService: SpecificationDetailsSubItemsGridService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.gridData = this.getData()
+    this.gridData = this.getData();
+
+    this.menuItems = this.getAddSubItemsMenu();
   }
 
-  public async linkRequisitions() {
+  private async linkRequisitions() {
     await this.router.navigate([`/procurement/general-browsing-page/specification-detail/${this.specificationDetailsInfo.uid}`], {
       queryParams: { vesselUid: this.specificationDetailsInfo?.VesselUid }
     });
+  }
+
+  private getAddSubItemsMenu() {
+    return [
+      {
+        label: 'PMS / Findings',
+        command: () => this.linkRequisitions(),
+      },
+    ];
   }
 
   private getData() {
