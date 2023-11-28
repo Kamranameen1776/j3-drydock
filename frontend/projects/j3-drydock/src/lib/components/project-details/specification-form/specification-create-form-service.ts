@@ -56,14 +56,30 @@ export class SpecificationCreateFormService extends FormServiceBase {
             gridColStart: 1,
             gridColEnd: 1
           },
+          Inspections: {
+            type: eFieldControlType.MultiSelect,
+            label: 'Inspections',
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 3,
+            gridRowEnd: 4,
+            gridColStart: 1,
+            gridColEnd: 1,
+            listRequest: {
+              labelKey: 'displayName',
+              valueKey: 'uid',
+              webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection)
+            }
+          },
           DoneByUid: {
             type: eFieldControlType.Dropdown,
             label: 'Done By',
             sectionID: this.formId,
             enabled: true,
             validatorRequired: false,
-            gridRowStart: 3,
-            gridRowEnd: 4,
+            gridRowStart: 4,
+            gridRowEnd: 5,
             gridColStart: 1,
             gridColEnd: 1,
             listRequest: {
@@ -80,7 +96,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
             validatorRequired: true,
             maxTextLength: 1000,
             gridRowStart: 1,
-            gridRowEnd: 4,
+            gridRowEnd: 5,
             gridColStart: 2,
             gridColEnd: 12
           }
