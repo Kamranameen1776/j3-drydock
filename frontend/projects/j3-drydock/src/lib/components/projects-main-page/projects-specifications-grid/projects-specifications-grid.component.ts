@@ -217,7 +217,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   }
 
   private setAccessRights() {
-    this.canView = true; this.hasAccess(this.accessActions.viewGrid) || this.hasAccess(this.accessActions.viewGridVessel);
+    this.canView = this.hasAccess(this.accessActions.viewGrid) || this.hasAccess(this.accessActions.viewGridVessel);
     this.canViewDetails =
       this.hasAccess(this.accessActions.viewDetail, eFunction.DryDock) ||
       this.hasAccess(this.accessActions.viewDetailVessel, eFunction.DryDock);
