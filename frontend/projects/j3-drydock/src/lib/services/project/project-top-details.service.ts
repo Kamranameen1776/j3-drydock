@@ -40,7 +40,7 @@ export class ProjectTopDetailsService {
       showStatus: true,
       showVessel: true,
       showJobCard: true,
-      jobStatus: 'raise',
+      jobStatus: details.ProjectStatusId.toUpperCase(),
       jobStatusDisplayName: details.ProjectStatusName,
       typeIconClass: 'icons8-document-4',
       worklistType: details.ProjectTypeCode,

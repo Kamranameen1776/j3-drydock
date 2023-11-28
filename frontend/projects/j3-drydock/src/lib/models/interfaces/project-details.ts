@@ -29,6 +29,7 @@ export interface ProjectDetails {
   ShipYard: string;
   Specification: string;
   ProjectStatusName: string;
+  ProjectStatusId: string;
   ProjectState: string;
   VesselName: string;
   VesselUid: string;

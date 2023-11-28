@@ -38,9 +38,7 @@ import { SpecificationDetailsService } from './services/specification-details/sp
 import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
 import { SpecificationGeneralInformationComponent } from './components/specification-details/specification-general-information/specification-general-information.component';
 import { SpecificationGeneralInformationInputservice } from './components/specification-details/specification-general-information/specification-general-information-inputs';
-import {
-  SpecificationRequisitionsComponent
-} from "./components/specification-details/specification-requisitions/specification-requisitions.component";
+import { SpecificationRequisitionsComponent } from './components/specification-details/specification-requisitions/specification-requisitions.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -81,7 +79,7 @@ export function winEnv(): unknown {
     SpecificationDetailsComponent,
     SpecificationDetailsHeaderComponent,
     SpecificationGeneralInformationComponent,
-    SpecificationRequisitionsComponent,
+    SpecificationRequisitionsComponent
   ],
   imports: [
     CommonModule,

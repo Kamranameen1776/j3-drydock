@@ -114,15 +114,16 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     return UserService.getUserDetails().AppLocation === eAppLocation.Office ? 1 : 0;
   }
 
-  private get currentTaskStatus(): string {
+  private get currentTaskStatusCode(): string {
     return this.detailedData?.taskManager.status.code;
   }
 
-  private set currentTaskStatus(val: string) {
+  private set currentTaskStatusCode(val: string) {
     if (!this.detailedData) {
       return;
     }
     this.detailedData.taskManager.status.code = val;
+    this.detailedData.ProjectStatusId = val;
   }
 
   constructor(
@@ -205,8 +206,11 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
     this.save()
       .pipe(concatMap(() => this.taskManagerService.transitionToNextWorkflowStatus(payload)))
-      .subscribe(() => {
-        // TODO send to feed ad discussion if it is required in other US
+      .subscribe((res) => {
+        // TODO send to feed and discussion if it is required in other US
+        this.detailedData.ProjectStatusName = res.statusData?.[0].status_display_name;
+        this.currentTaskStatusCode = this.nextWorkflowTaskStatus;
+        this.topFieldsConfig = this.topDetailsService.getTopSecConfig(this.detailedData);
         this.getNextWorkFlow(this.nextWorkflowTaskStatus);
       });
 
@@ -276,11 +280,11 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   private getNextWorkFlow(taskStatus: string): void {
-    this.currentTaskStatus = taskStatus;
+    this.currentTaskStatusCode = taskStatus;
 
     const nextWorkFlowParams =
       `wlType=${this.detailedData.ProjectTypeCode}&taskUid=${this.detailedData.TaskManagerUid}&isOffice=${this.isOffice}&` +
-      `jobStatus=${this.currentTaskStatus}&vesselId=${this.detailedData.VesselId}&officeId=${this.isOffice}`;
+      `jobStatus=${this.currentTaskStatusCode}&vesselId=${this.detailedData.VesselId}&officeId=${this.isOffice}`;
 
     this.taskManagerService
       .getNextTaskManagerState(nextWorkFlowParams)
