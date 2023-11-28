@@ -132,4 +132,12 @@ export class ProjectTopDetailsService {
       uid: projectId
     } as any);
   }
+
+  getStatusForWorkflowActionsJbComponent(status: string) {
+    return `${status}_::_`;
+  }
+
+  getStatusFromWorkflowActionsJbComponent(status: string) {
+    return status.replace('_::_', '');
+  }
 }

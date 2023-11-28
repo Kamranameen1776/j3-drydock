@@ -13,7 +13,7 @@ import { StatusCodeColorPipe } from './shared/pipes/status-code-color.pipe';
 import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
 import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
 import { FunctionsTreeSelectComponent } from './shared/components/functions-tree-select/functions-tree-select.component';
-import { ProjectHeaderComponent } from './components/project-header/project-header.component';
+import { ProjectHeaderComponent } from './components/project-details/project-header/project-header.component';
 import { SpecificationsComponent } from './components/project-details/specification/specifications.component';
 import { SubItemsComponent } from './components/standard-jobs-main/sub-items/sub-items.component';
 import { UpsertSubItemFormComponent } from './components/standard-jobs-main/sub-items/upsert-sub-item-form/upsert-sub-item-form.component';
