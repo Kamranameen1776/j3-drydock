@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any */
 import { ApiRequestService } from 'j2utils';
 
 export class TaskManagerRequestDto {
@@ -21,6 +20,7 @@ export class TaskManagerRequestDto {
 }
 
 export class TaskManagerService {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public async TaskManagerIntegration(body: TaskManagerRequestDto, token: string): Promise<any> {
         // Method is used to save sign off task manager details.
         const apiPath = `task-manager/save-task-manager-jobs`;
