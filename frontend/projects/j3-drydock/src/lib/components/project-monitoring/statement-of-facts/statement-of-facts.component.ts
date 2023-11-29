@@ -12,7 +12,7 @@ import { BehaviorSubject } from 'rxjs';
 import { IDeleteStatementOfFactDto } from '../../../services/project-monitoring/statement-of-facts/IDeleteStatementOfFactDto';
 import { StatementOfFactsService } from '../../../services/project-monitoring/statement-of-facts/StatementOfFactsService';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'jb-statement-of-facts',
@@ -54,11 +54,19 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
   ngOnInit(): void {
     this.title.setTitle(this.pageTitle);
 
-    this.projectUid = this.route.snapshot.paramMap.get('projectUid');
+    this.route.paramMap
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map((params) => params.get('projectUid'))
+      )
+      .subscribe((projectId) => {
+        if (projectId !== this.projectUid) {
+          this.projectUid = projectId;
+          this.setGridInputs();
+        }
+      });
 
     this.deleteStatementOfFactForm = this.statementOfFactsGridService.getDeleteStatementOfFactForm();
-
-    this.setGridInputs();
   }
 
   public onGridAction({ type }: GridAction<string, string>, statementOfFact: IStatementOfFactDto): void {
