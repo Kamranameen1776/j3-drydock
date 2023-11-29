@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
-import { ProjectTopDetailsService } from '../../../services/project/project-top-details.service';
+import { ProjectTopDetailsService } from './project-top-details.service';
 import { concatMap, finalize, takeUntil } from 'rxjs/operators';
 import {
   AdvancedSettings,
@@ -22,6 +22,7 @@ import { eModule } from '../../../models/enums/module.enum';
 import { FormControl, FormGroup } from '@angular/forms';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { of } from 'rxjs';
+import { Title } from '@angular/platform-browser';
 
 export enum eProjectHeader3DotActions {
   Export = 'Export',
@@ -37,7 +38,7 @@ export enum eProjectHeader3DotActions {
 export class ProjectHeaderComponent extends UnsubscribeComponent implements OnInit {
   @ViewChild('detailsTopSection') detailsTopSection: JbDetailsTopSectionComponent;
 
-  canEdit = true;
+  canEdit = false;
 
   detailedData: ProjectTopHeaderDetails;
 
@@ -123,17 +124,20 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     }
     this.detailedData.taskManager.status.code = val;
     this.detailedData.ProjectStatusId = val;
+    this.canEdit = this.topDetailsService.isStatusBeforeComplete(val);
   }
 
   constructor(
     private topDetailsService: ProjectTopDetailsService,
     private currentProject: CurrentProjectService,
-    private taskManagerService: TaskManagerService
+    private taskManagerService: TaskManagerService,
+    private titleService: Title
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.titleService.setTitle('');
     this.initDetailsData();
   }
 
@@ -255,6 +259,8 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
           functionCode: eFunction.Project, // fixme - clarify what to use
           moduleCode: eModule.Project // fixme - clarify what to use
         };
+
+        this.titleService.setTitle(`${this.detailedData.ProjectTypeName} ${this.detailedData.ProjectCode}`);
 
         const vesselUid = data.detailedData.VesselUid;
         if (this.currentProject.vesselUid$.getValue() !== vesselUid) {

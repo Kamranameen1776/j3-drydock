@@ -34,6 +34,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   growlMessage$ = this.growlMessageService.growlMessage$;
 
   projectId: string;
+
   vesselUid: string;
 
   constructor(
@@ -47,6 +48,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   ngOnInit() {
     this.initSideMenu();
+
     this.route.paramMap
       .pipe(
         takeUntil(this.unsubscribe$),
