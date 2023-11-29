@@ -53,8 +53,8 @@ export class SpecificationDetailsSubItemsGridService {
   private readonly columns: Column[] = [
     {
       DisableSort: true,
-      DisplayText: eSpecificationDetailsSubItemsLabels.ItemNumber,
-      FieldName: eSpecificationDetailsSubItemsFields.ItemNumber,
+      DisplayText: eSpecificationDetailsSubItemsLabels.Number,
+      FieldName: eSpecificationDetailsSubItemsFields.Number,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
