@@ -15,3 +15,31 @@
     (matrixRequestChanged)="onMatrixRequestChanged()"
   ></jb-grid>
 </section>
+
+<jb-dialog
+  (closeDialog)="showDeleteDialog(false)"
+  [(dialogVisible)]="deleteDialogVisible"
+  [dialogContent]="deleteStatementOfFactDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-form
+      (jbFormGroup)="initDeleteStatementOfFactFormGroup($any($event))"
+      [formStructure]="deleteStatementOfFactForm"
+      [isVerticalLabel]="true"
+      class="form-generator-log"
+    ></jb-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="deleteStatementOfFactButtonDisabled$ | async"
+      [okBtnLabel]="DeleteBtnLabel"
+      (ok)="deleteStatementOfFact()"
+      (cancel)="showStatementOfFactDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

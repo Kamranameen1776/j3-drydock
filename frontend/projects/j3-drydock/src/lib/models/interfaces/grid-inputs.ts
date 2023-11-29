@@ -24,10 +24,11 @@ export interface GridInputs {
   showSettings?: ShowSettings;
   sortField?: string;
   sortOrder?: number;
+
   /**
    * Grid title, in the header
    */
-  name: string;
+  name?: string;
 }
 
 export interface GridInputsWithRequest extends GridInputs {

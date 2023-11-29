@@ -1,9 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Column, GridButton, GridRowActions, UserService, eGridColumnsWidth, SystemLevelFiltersService } from 'jibe-components';
+import {
+  Column,
+  GridButton,
+  GridRowActions,
+  UserService,
+  eGridColumnsWidth,
+  SystemLevelFiltersService,
+  FormModel,
+  eFieldControlType
+} from 'jibe-components';
 import { nameOf } from '../../../utils/nameOf';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { StatementOfFactsService } from '../../../services/project-monitoring/statement-of-facts/StatementOfFactsService';
+import {
+  eStatementOfFactsDeleteFieldNames,
+  eStatementOfFactsDeleteDisplayNames
+} from '../../../models/enums/statement-of-fact-delete.enum';
 
 @Injectable()
 export class StatementOfFactsGridService {
@@ -13,7 +26,11 @@ export class StatementOfFactsGridService {
 
   public readonly dateTimeFormat = `${this.dateFormat} HH:MM`;
 
-  initDate: Date = new Date();
+  public readonly createStatementOfFactFormId = 'statementOfFactCreate';
+
+  public readonly deleteStatementOfFactFormId = 'statementOfFactDelete';
+
+  private initDate: Date = new Date();
 
   private readonly columns: Column[] = [
     {
@@ -56,10 +73,6 @@ export class StatementOfFactsGridService {
   private searchFields: string[] = [nameOf<IStatementOfFactDto>((prop) => prop.Fact)];
   private gridActions: GridRowActions[] = [];
 
-  public createStatementOfFactFormId = 'statementOfFactCreate';
-
-  public deleteStatementOfFactFormId = 'statementOfFactDelete';
-
   constructor(
     private userService: UserService,
     private statementOfFactsService: StatementOfFactsService,
@@ -76,7 +89,37 @@ export class StatementOfFactsGridService {
       actions: this.gridActions,
       sortField: nameOf<IStatementOfFactDto>((prop) => prop.DateAndTime),
       sortOrder: -1,
-      name: 'Statement of Facts',
+      name: 'Statement of Facts'
+    };
+  }
+
+  public getDeleteStatementOfFactForm(): FormModel {
+    return {
+      id: 'deleteStatementOfFact',
+      label: '',
+      type: 'form',
+      sections: {
+        [this.deleteStatementOfFactFormId]: {
+          type: 'grid',
+          label: '',
+          formID: this.deleteStatementOfFactFormId,
+          gridRowStart: 1,
+          gridRowEnd: 1,
+          gridColStart: 1,
+          gridColEnd: 1,
+          fields: {
+            [eStatementOfFactsDeleteFieldNames.AreYouSureYouWantToDeleteThisStatementOfFact]: {
+              label: eStatementOfFactsDeleteDisplayNames.AreYouSureYouWantToDeleteThisStatementOfFact,
+              type: eFieldControlType.String,
+              sectionID: this.deleteStatementOfFactFormId,
+              gridRowStart: 1,
+              gridRowEnd: 1,
+              gridColStart: 1,
+              gridColEnd: 1
+            }
+          }
+        }
+      }
     };
   }
 }

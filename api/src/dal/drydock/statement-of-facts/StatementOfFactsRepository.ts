@@ -18,9 +18,9 @@ export class StatementOfFactsRepository {
         await queryRunner.manager.insert(StatementOfFactsEntity, sof);
     }
 
-    public async DeleteStatementOfFacts(uid: string, queryRunner: QueryRunner): Promise<void> {
+    public async DeleteStatementOfFacts(statementOfFactUid: string, queryRunner: QueryRunner): Promise<void> {
         const sof = new StatementOfFactsEntity();
-        sof.uid = uid;
+        sof.uid = statementOfFactUid;
         sof.ActiveStatus = false;
 
         await queryRunner.manager.update(StatementOfFactsEntity, sof.uid, sof);
