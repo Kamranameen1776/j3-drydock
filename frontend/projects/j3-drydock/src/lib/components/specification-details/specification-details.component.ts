@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { SpecificationDetailsService } from '../../services/specification-details/specification-details.service';
-import { GetSpecificationDetailsDto } from '../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { ActivatedRoute } from '@angular/router';
 import { eSpecificationDetailsPageMenuIds, specificationDetailsMenuData } from '../../models/enums/specification-details-menu-items.enum';
 import { IJbAttachment, IJbMenuItem, JbDatePipe, JbMenuService, JiBeTheme } from 'jibe-components';
@@ -11,6 +10,7 @@ import { GrowlMessageService } from '../../services/growl-message.service';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
 import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
+import { SpecificationDetails } from '../../models/interfaces/specification-details';
 @Component({
   selector: 'jb-specification-details',
   templateUrl: './specification-details.component.html',
@@ -30,7 +30,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   @ViewChild(eSpecificationDetailsPageMenuIds.AuditTrail) [eSpecificationDetailsPageMenuIds.AuditTrail]: ElementRef;
 
   private pageTitle = 'Specification Details';
-  public specificationDetailsInfo: GetSpecificationDetailsDto;
+  public specificationDetailsInfo: SpecificationDetails;
   public updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
   public specificationUid: string;
   public attachmentConfig: IJbAttachment;

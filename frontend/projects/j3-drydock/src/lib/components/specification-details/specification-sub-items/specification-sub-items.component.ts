@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { GetSpecificationDetailsDto } from '../../../models/dto/specification-details/GetSpecificationDetailsDto';
+import { SpecificationDetails } from '../../../models/interfaces/specification-details';
 import { SpecificationDetailsSubItemsGridService } from '../../../services/specification-details/specification-details-sub-item.service';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 
@@ -9,7 +9,7 @@ import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
   styleUrls: ['./specification-sub-items.component.scss']
 })
 export class SpecificationSubItemsComponent implements OnInit {
-  @Input() specificationDetailsInfo: GetSpecificationDetailsDto;
+  @Input() specificationDetailsInfo: SpecificationDetails;
 
   constructor(private subItemsGridService: SpecificationDetailsSubItemsGridService) {}
   gridData: GridInputsWithRequest;

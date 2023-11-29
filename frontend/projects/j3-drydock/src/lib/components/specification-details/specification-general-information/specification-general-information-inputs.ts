@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormModel, FormValues, eFieldControlType } from 'jibe-components';
 import { FieldSetModel } from 'jibe-components/lib/interfaces/field.model';
-import { GetSpecificationDetailsDto } from '../../../models/dto/specification-details/GetSpecificationDetailsDto';
 import {
   eSpecificationDetailsGeneralInformationFields,
   eSpecificationDetailsGeneralInformationLabels
@@ -10,6 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
+import { SpecificationDetails } from '../../../models/interfaces/specification-details';
 
 @Injectable()
 export class SpecificationGeneralInformationInputservice extends FormServiceBase {
@@ -24,7 +24,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
     super();
   }
 
-  public getFormModelAndInitialValues(specificationDetailsInfo: GetSpecificationDetailsDto) {
+  public getFormModelAndInitialValues(specificationDetailsInfo: SpecificationDetails) {
     const formModel: FormModel = this.getFormModel();
     const formValues: FormValues = this.getInitialFormValues(specificationDetailsInfo);
 
@@ -169,7 +169,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
     return formFields;
   }
 
-  getInitialFormValues(specificationDetailsInfo: GetSpecificationDetailsDto): FormValues {
+  getInitialFormValues(specificationDetailsInfo: SpecificationDetails): FormValues {
     if (specificationDetailsInfo == null) {
       return null;
     }

@@ -1,78 +1,70 @@
 import { Injectable } from '@angular/core';
-import f from 'odata-filter-builder';
-import { ITopSectionFieldSet, eAction, eApiBase, eCrud, eEntities, eUserStatus } from 'jibe-components';
+import { ITopSectionFieldSet } from 'jibe-components';
 import { Observable } from 'rxjs';
+import { SpecificationDetails, SpecificationDetailsTopHeaderDetails } from '../../../models/interfaces/specification-details';
+import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 
-export type SpecificationDetailsHeaderInputs = {
+export type SpecificationDetailsHeaderInputs<T> = {
   topFieldsConfig: ITopSectionFieldSet;
-  detailedData: Record<string, unknown>;
-  canEdit: boolean;
+  detailedData: T;
 };
-
 @Injectable()
 export class SpecificationDetailsHeaderInputservice {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor() {}
+  constructor(private specificatioDetailService: SpecificationDetailsService) {}
 
-  topFieldsConfig: ITopSectionFieldSet = {
-    showStatus: true,
-    showVessel: true,
-    showJobCard: true,
-    jobStatus: 'raise',
-    statusClass: 'status-9',
-    jobStatusDisplayName: 'Raised',
-    typeIconClass: 'icons8-document-4',
-    worklistType: 'drydock',
-    worklistDisplayName: 'Specification',
-    jobCardNo: '',
-    vesselName: '',
-    jobTitle: '',
-    bottomFieldsConfig: [
-      {
-        id: 'assigneeUid',
-        label: 'Assigned To',
-        isRequired: false,
-        isEditable: true,
-        type: 'dropdown',
-        getFieldName: 'First_Name',
-        saveFieldName: 'uid',
-        controlContent: {
-          label: 'First_Name',
-          value: 'uid',
+  getTopSecConfig(details: SpecificationDetails | SpecificationDetailsTopHeaderDetails): ITopSectionFieldSet {
+    return {
+      showStatus: true,
+      showVessel: true,
+      showJobCard: true,
+      jobStatus: details.StatusId,
+      statusClass: 'status-9',
+      jobStatusDisplayName: details.StatusName,
+      typeIconClass: 'icons8-document-4',
+      worklistType: details.SpecificationTypeCode,
+      worklistDisplayName: details.SpecificationTypeName,
+      jobCardNo: details.SpecificationCode,
+      vesselName: details.VesselName,
+      jobTitle: details.Subject,
+      bottomFieldsConfig: [
+        {
           id: 'assigneeUid',
-          isValidation: false,
-          apiRequest: {
-            apiBase: eApiBase.MasterAPI,
-            entity: eEntities.Master,
-            action: eAction.GetDataSource,
-            crud: eCrud.Get,
-            params: `dataSourceName=user`,
-            odata: {
-              filter: new f().eq(eUserStatus.ActiveStatus, true),
-              orderby: 'UserID',
-              select: 'First_Name,uid,Active_Status'
-            }
+          label: 'Assigned To',
+          isRequired: false,
+          isEditable: false,
+          type: 'dropdown',
+          getFieldName: 'ProjectManagerUid',
+          saveFieldName: 'ProjectManagerUid',
+          controlContent: {
+            id: 'assigneeUid',
+            value: 'ManagerId',
+            label: 'FullName',
+            selectedValue: details.ProjectManagerUid,
+            selectedLabel: details.ProjectManager,
+            apiRequest: this.specificatioDetailService.getProjectsManagersRequest()
           }
         }
-      }
-    ]
-  };
+      ]
+    };
+  }
 
-  detailedData = {
-    assigneeUid: ''
-  };
-
-  canEdit = true;
-
-  public getInputs(): Observable<SpecificationDetailsHeaderInputs> {
+  public getInputs(specificationDetailsInfo: SpecificationDetails): Observable<SpecificationDetailsHeaderInputs<SpecificationDetails>> {
     return new Observable((sub) => {
       sub.next({
-        topFieldsConfig: this.topFieldsConfig,
-        detailedData: this.detailedData,
-        canEdit: this.canEdit
+        topFieldsConfig: this.getTopSecConfig(specificationDetailsInfo),
+        detailedData: specificationDetailsInfo
       });
 
       sub.complete();
     });
+  }
+
+  getStatusForWorkflowActionsJbComponent(status: string) {
+    return `${status}_::_`;
+  }
+
+  getStatusFromWorkflowActionsJbComponent(status: string) {
+    return status.replace('_::_', '');
   }
 }

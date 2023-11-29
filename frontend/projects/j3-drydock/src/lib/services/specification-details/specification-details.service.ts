@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities } from 'jibe-components';
 import { Observable } from 'rxjs';
-import { GetSpecificationDetailsDto } from '../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
 import { eSpecificationDetailsGeneralInformationFields } from '../../models/enums/specification-details-general-information.enum';
 import f from 'odata-filter-builder';
+import { SpecificationDetails } from '../../models/interfaces/specification-details';
 @Injectable({
   providedIn: 'root'
 })
 export class SpecificationDetailsService {
   constructor(private apiRequestService: ApiRequestService) {}
 
-  getSpecificationDetails(specificationUid: string): Observable<GetSpecificationDetailsDto> {
+  getSpecificationDetails(specificationUid: string): Observable<SpecificationDetails> {
     const request: WebApiRequest = {
       // TODO:update jibe lib
       // apiBase: eApiBase.DryDockAPI,
@@ -82,6 +82,18 @@ export class SpecificationDetailsService {
       body: {
         key: fieldName
       }
+    };
+    return apiRequest;
+  }
+
+  public getProjectsManagersRequest(): WebApiRequest {
+    const apiRequest: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'projects/projects-managers',
+      crud: eCrud.Get,
+      entity: 'drydock'
     };
     return apiRequest;
   }

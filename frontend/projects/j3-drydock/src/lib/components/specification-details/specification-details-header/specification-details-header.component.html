@@ -1,24 +1,42 @@
 <div jb-detail-top-section>
   <jb-details-top-section
     *ngIf="topDetailsData"
-    [topFieldsConfig]="topDetailsData.topFieldsConfig"
-    [detailsData]="topDetailsData.detailedData"
-    [canEdit]="topDetailsData.canEdit"
-    (onValueChange)="onValueChange()"
+    [topFieldsConfig]="topFieldsConfig"
+    [detailsData]="topDetailsData"
+    [canEdit]="canEdit"
+    (onValueChange)="onValueChange($event)"
   >
     >
-    <div
-      class="header-actions"
-      jb-workflow-section
-    >
-      <jb-grid-advanced-settings></jb-grid-advanced-settings>
+    <div jb-workflow-section>
+      <!-- <jb-grid-advanced-settings></jb-grid-advanced-settings>
       <jb-button
         type="NoButton"
         label="Save"
         (click)="save()"
         [disabled]="saveButtonDisabled"
       ></jb-button>
-      <jb-button label="Complete"></jb-button>
+      <jb-button label="Complete"></jb-button> -->
+
+      <jb-workflow-actions
+        [isWorkflowButtonEnable]="isWorkflowButtonEnable"
+        [isWorkflowDisable]="false"
+        [disableSave]="!isValueChange"
+        [isCustomThreeDots]="false"
+        [showSaveButton]="true"
+        saveButtonType="NoButton"
+        [jobDetails]="topDetailsData"
+        [functionCode]="topDetailsData.functionCode"
+        [moduleCode]="topDetailsData.moduleCode"
+        [workListType]="topDetailsData.SpecificationTypeCode"
+        [showWorkflowAction]="true"
+        [workflowActionData]="nextWorkflowData"
+        [threeDotsActions]="threeDotsActions"
+        [threeDotsActionsShow]="threeDotsActionsShow"
+        (threeDotOptionClick)="onThreeDotActionClicked($event)"
+        (saveActionClick)="onSave()"
+        (workflowActionClick)="onGoToNextStatusClicked($event.actionName)"
+      ></jb-workflow-actions>
+
     </div>
   </jb-details-top-section>
 </div>

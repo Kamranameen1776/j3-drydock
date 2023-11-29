@@ -1,3 +1,4 @@
 export enum eModule {
-  Project = 'project'
+  Project = 'project',
+  SpecificationDetails = 'specification_details'
 }
