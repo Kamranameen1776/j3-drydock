@@ -67,13 +67,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     this.attachmentConfig = {
       Module_Code: 'j3_drydock',
       Function_Code: 'specification_details',
-      Key1: id,
-      // for some reason jb-components doesn't show actions by default, these are a copy from jb-attachment.json
-      actions: [
-        { name: 'Edit', icon: 'icons8-edit' },
-        { name: 'Delete', icon: 'icons8-delete' },
-        { name: 'Download', icon: 'icons8-download' }
-      ]
+      Key1: id
     };
   }
 
