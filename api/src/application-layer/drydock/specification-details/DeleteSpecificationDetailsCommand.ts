@@ -3,18 +3,22 @@ import { SpecificationDetailsRepository } from '../../../dal/drydock/specificati
 import { Command } from '../core/cqrs/Command';
 import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
+import {VesselsRepository} from '../../../dal/drydock/vessels/VesselsRepository';
+import {SynchronizerService} from 'j2utils';
 
 export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
-
+    tableName: 'dry_dock.specification_details';
+    vesselsRepository: VesselsRepository;
     constructor() {
         super();
 
         this.specificationDetailsRepository = new SpecificationDetailsRepository();
         this.uow = new UnitOfWork();
         this.specificationDetailsAudit = new SpecificationDetailsAuditService();
+        this.vesselsRepository = new VesselsRepository();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -29,12 +33,21 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
 
     protected async MainHandlerAsync({ request, user }: CommandRequest) {
         await this.uow.ExecuteAsync(async (queryRunner) => {
+            const { uid } = request.body;
             const updatedSpecData = await this.specificationDetailsRepository.DeleteSpecificationDetails(
-                request.body.uid,
+                uid,
                 queryRunner,
             );
+            const vessel = await this.vesselsRepository.GetVesselBySpecification(uid);
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                this.tableName,
+                'uid',
+                uid,
+                vessel.VesselId,
+            );
             await this.specificationDetailsAudit.auditDeletedSpecificationDetails(
-                request.body.uid,
+                uid,
                 user.UserID,
                 queryRunner,
             );

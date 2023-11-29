@@ -4,7 +4,7 @@ import {
     GetSpecificationBodyDto,
     GetSpecificationRequisitionsRequestDto,
 } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto';
-import { GetSpecificationRequisitionsQuery } from '../../../application-layer/drydock/specification-details/GetSpecificationRequisitionsQuery';
+import { GetSpecificationRequisitionsQuery } from '../../../application-layer/drydock/specification-details/requisitions/GetSpecificationRequisitionsQuery';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 async function getSpecificationRequisitions(req: Request, res: Response) {

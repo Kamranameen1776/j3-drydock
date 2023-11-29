@@ -6,15 +6,20 @@ import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-fa
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateStatementsOfFactsDto } from './dtos/CreateStatementsOfFactsDto';
+import {VesselsRepository} from '../../../dal/drydock/vessels/VesselsRepository';
+import {SynchronizerService} from 'j2utils';
 
 export class CreateStatementsOfFactsCommand extends Command<Request, void> {
     repository: StatementOfFactsRepository;
     uow: UnitOfWork;
+    tableName = 'dry_dock.statement_of_facts';
+    vesselRepository: VesselsRepository;
 
     constructor() {
         super();
         this.repository = new StatementOfFactsRepository();
         this.uow = new UnitOfWork();
+        this.vesselRepository = new VesselsRepository();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -41,7 +46,15 @@ export class CreateStatementsOfFactsCommand extends Command<Request, void> {
         const createProjectDto: CreateStatementsOfFactsDto = request.body as CreateStatementsOfFactsDto;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            await this.repository.CreateStatementOfFacts(createProjectDto, queryRunner);
+            const uid = await this.repository.CreateStatementOfFacts(createProjectDto, queryRunner);
+            const vessel = await this.vesselRepository.GetVesselByProjectUid(createProjectDto.ProjectUid);
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                this.tableName,
+                'uid',
+                uid,
+                vessel.VesselId,
+            );
             return;
         });
 

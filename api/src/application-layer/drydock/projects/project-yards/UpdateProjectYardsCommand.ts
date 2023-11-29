@@ -1,10 +1,11 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
-import { AccessRights } from 'j2utils';
+import { AccessRights, SynchronizerService } from 'j2utils';
 
 import { BusinessException } from '../../../../bll/drydock/core/exceptions/BusinessException';
 import { YardsProjectsRepository } from '../../../../dal/drydock/project-yards/YardsProjectsRepository';
+import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { UpdateProjectYardsDto } from './dtos/UpdateProjectYardsDto';
@@ -12,12 +13,15 @@ import { UpdateProjectYardsDto } from './dtos/UpdateProjectYardsDto';
 export class UpdateProjectYardsCommand extends Command<Request, void> {
     yardProjectsRepository: YardsProjectsRepository;
     uow: UnitOfWork;
+    vesselRepository: VesselsRepository;
+    tableName = 'dry_dock.yards_projects';
 
     constructor() {
         super();
 
         this.yardProjectsRepository = new YardsProjectsRepository();
         this.uow = new UnitOfWork();
+        this.vesselRepository = new VesselsRepository();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -57,6 +61,9 @@ export class UpdateProjectYardsCommand extends Command<Request, void> {
         const body: UpdateProjectYardsDto = request.body;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
+            const yardProject = await this.yardProjectsRepository.get(body.uid);
+            const vessel = await this.vesselRepository.GetVesselByProjectUid(yardProject.projectUid);
+
             await this.yardProjectsRepository.update(
                 {
                     updatedBy: updatedBy,
@@ -66,6 +73,13 @@ export class UpdateProjectYardsCommand extends Command<Request, void> {
                     updatedAt: new Date(),
                 },
                 queryRunner,
+            );
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                this.tableName,
+                'uid',
+                body.uid,
+                vessel.VesselId,
             );
         });
 
