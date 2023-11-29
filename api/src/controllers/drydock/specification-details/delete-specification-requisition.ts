@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
-import { DeleteSpecificationRequisitionCommand } from '../../../application-layer/drydock/specification-details/requisitions/DeleteSpecificationRequisitionCommand';
 import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
+import { DeleteSpecificationRequisitionCommand } from '../../../application-layer/drydock/specification-details/requisitions/DeleteSpecificationRequisitionCommand';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 async function deleteSpecificationRequisitions(req: Request, res: Response) {

@@ -1,13 +1,13 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
+import { SynchronizerService } from 'j2utils';
 
 import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-facts/StatementOfFactsRepository';
+import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateStatementsOfFactsDto } from './dtos/CreateStatementsOfFactsDto';
-import {VesselsRepository} from '../../../dal/drydock/vessels/VesselsRepository';
-import {SynchronizerService} from 'j2utils';
 
 export class CreateStatementsOfFactsCommand extends Command<Request, void> {
     repository: StatementOfFactsRepository;

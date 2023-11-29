@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { DataUtilService, ODataService} from 'j2utils';
+import { DataUtilService, ODataService } from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
