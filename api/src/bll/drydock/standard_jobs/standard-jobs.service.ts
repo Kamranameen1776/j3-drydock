@@ -5,8 +5,8 @@ import {
     GetStandardJobsQueryResult,
     GetStandardJobsResult,
     GetStandardJobsResultDto,
+    GetStandardJobSubItemsResultDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
-import { GetStandardJobSubItemsResultDto } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobSubItemsResultDto';
 import { StandardJobs, StandardJobsSubItems } from '../../../entity/drydock';
 
 export class StandardJobsService {
