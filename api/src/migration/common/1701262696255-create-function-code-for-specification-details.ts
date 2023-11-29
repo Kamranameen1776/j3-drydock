@@ -11,7 +11,7 @@ export class CreateFunctionCodeForSpecificationDetails1701262696255 implements M
     public readonly name = this.constructor.name;
     protected readonly moduleCode = 'project';
     protected readonly functionCode = 'specification_details';
-    protected readonly functionUid = '660941d8-b00b-4c58-ad32-1f0a144b1c88';
+    protected readonly functionUid = '660941D8-B00B-4C58-AD32-1F0A144B1C88';
 
     protected log(status: Status, details = ''): Promise<void> {
         const deleteMigration = status === Status.Error;
@@ -25,11 +25,11 @@ export class CreateFunctionCodeForSpecificationDetails1701262696255 implements M
                 update
                     INF_Lib_Module
                 set
-                    [Modified_By] = @0,
+                    [Modified_By] = 1,
                     [Date_Of_Modification] = getdate()
                 where
-                    [Module_Code] = @1;
-            `, [this.name, this.moduleCode]);
+                    [Module_Code] = @0;
+            `, [this.moduleCode]);
 
             await queryRunner.query(`
                 insert into inf_lib_function
@@ -50,14 +50,19 @@ export class CreateFunctionCodeForSpecificationDetails1701262696255 implements M
                     )
                 values
                     (
-                        6000,
-                        @3,
+                        1 + (
+                            select
+                                max(FunctionId)
+                            from
+                                inf_lib_function
+                        ),
+                        @2,
                         @0,
                         @1,
                         'Specification Details',
-                        @2,
+                        1,
                         getdate(),
-                        @2,
+                        1,
                         NULL,
                         1,
                         NULL,
@@ -71,7 +76,7 @@ export class CreateFunctionCodeForSpecificationDetails1701262696255 implements M
                         ),
                         NULL
                     );
-            `, [this.moduleCode, this.functionCode, this.name, this.functionUid]);
+            `, [this.moduleCode, this.functionCode, this.functionUid]);
 
             await this.log(Status.Success, `Created function code '${this.functionCode}' in module '${this.moduleCode}'`);
         } catch (error) {
@@ -85,11 +90,11 @@ export class CreateFunctionCodeForSpecificationDetails1701262696255 implements M
                 update
                     INF_Lib_Module
                 set
-                    [Modified_By] = @0,
+                    [Modified_By] = 1,
                     [Date_Of_Modification] = getdate()
                 where
-                    [Module_Code] = @1;
-            `, [this.name, this.moduleCode]);
+                    [Module_Code] = @0;
+            `, [this.moduleCode]);
 
             await queryRunner.query(`
                 delete from
