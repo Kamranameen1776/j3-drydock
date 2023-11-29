@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { DeleteSpecificationRequisitionCommand } from '../../../application-layer/drydock/specification-details/DeleteSpecificationRequisitionCommand';
+import { DeleteSpecificationRequisitionCommand } from '../../../application-layer/drydock/specification-details/requisitions/DeleteSpecificationRequisitionCommand';
 import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 

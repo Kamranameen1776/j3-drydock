@@ -2,7 +2,7 @@
 // UpdateProjectDto should be a part of the Infrastructure layer(DAL)
 import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { Request } from 'express';
-import { ODataService } from 'j2utils';
+import {DataUtilService, ODataService} from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
@@ -247,8 +247,9 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async CreateProject(data: ICreateNewProjectDto, queryRunner: QueryRunner): Promise<void> {
+    public async CreateProject(data: ICreateNewProjectDto, queryRunner: QueryRunner): Promise<string> {
         const project = new ProjectEntity();
+        project.uid = new DataUtilService().newUid();
         project.CreatedAtOffice = !!data.CreatedAtOffice;
         project.VesselUid = data.VesselUid;
         project.ProjectTypeUid = data.ProjectTypeUid;
@@ -260,6 +261,7 @@ export class ProjectsRepository {
         project.TaskManagerUid = data.TaskManagerUid as string;
 
         await queryRunner.manager.insert(ProjectEntity, project);
+        return project.uid;
     }
 
     // TODO: check if this method is used

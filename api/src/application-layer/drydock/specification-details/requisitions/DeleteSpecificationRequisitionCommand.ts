@@ -1,9 +1,9 @@
 import { Request } from 'express';
 
-import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
-import { Command } from '../core/cqrs/Command';
-import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { DeleteSpecificationRequisitionsRequestDto } from './dtos/DeleteSpecificationRequisitionsRequestDto';
+import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
+import { Command } from '../../core/cqrs/Command';
+import { UnitOfWork } from '../../core/uof/UnitOfWork';
+import { DeleteSpecificationRequisitionsRequestDto } from '../dtos/DeleteSpecificationRequisitionsRequestDto';
 
 export class DeleteSpecificationRequisitionCommand extends Command<Request, void> {
     specificationDetailsRepository = new SpecificationDetailsRepository();
