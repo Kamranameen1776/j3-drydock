@@ -8,8 +8,6 @@ import {
   IJbTextArea,
   ITopSectionFieldSet,
   ShowSettings,
-  UserService,
-  eAppLocation,
   eGridColors,
   JbDetailsTopSectionComponent
 } from 'jibe-components';
@@ -23,6 +21,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { of } from 'rxjs';
 import { Title } from '@angular/platform-browser';
+import { DetailsService } from '../../../services/details.service';
 
 export enum eProjectHeader3DotActions {
   Export = 'Export',
@@ -111,7 +110,7 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   private nextWorkFlowRightCode: string;
 
   private get isOffice(): 1 | 0 {
-    return UserService.getUserDetails().AppLocation === eAppLocation.Office ? 1 : 0;
+    return this.detailsService.isOffice();
   }
 
   private get currentTaskStatusCode(): string {
@@ -131,7 +130,8 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     private topDetailsService: ProjectTopDetailsService,
     private currentProject: CurrentProjectService,
     private taskManagerService: TaskManagerService,
-    private titleService: Title
+    private titleService: Title,
+    private detailsService: DetailsService
   ) {
     super();
   }

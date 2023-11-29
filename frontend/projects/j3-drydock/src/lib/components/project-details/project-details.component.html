@@ -32,6 +32,23 @@
       </ng-container>
     </ng-container>
   </ng-container>
+
+  <ng-container alayout-aside>
+    <jb-layout-widget
+      [size]="'auto'"
+      [hideHeader]="true"
+      class="discussion-feed"
+    >
+      <jb-discussion-feed
+        awidget-content
+        [detail]="discussionFeedDetails"
+        [canAdd]="true"
+        [function_code]="discussionFeedFunctionCode"
+        [module_code]="discussionFeedModuleCode"
+        [isCloseView]="true"
+      ></jb-discussion-feed>
+    </jb-layout-widget>
+  </ng-container>
 </jb-details-layout-figma>
 
 <jb-growl [content]="growlMessage$ | async"></jb-growl>

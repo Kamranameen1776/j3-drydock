@@ -10,11 +10,11 @@
       background: transparent !important;
     }
 
-    .ui-tabview.ui-tabview-top > .ui-tabview-nav {
+    .ui-tabview.ui-tabview-top>.ui-tabview-nav {
       border-bottom: 1px solid $jibe-grey-blue-200 !important;
     }
 
-    .ui-tabview.ui-tabview-top > .ui-tabview-nav > li {
+    .ui-tabview.ui-tabview-top>.ui-tabview-nav>li {
       border: none;
       background: transparent !important;
       border-bottom: 1px solid transparent !important;
@@ -45,6 +45,16 @@
           font-weight: 700;
         }
       }
+    }
+  }
+}
+
+@mixin discussion-feed-fix {
+  .jb-details-layout-aside-wrapper {
+    overflow: initial !important;
+
+    .discussion-feed {
+      height: 100% !important;
     }
   }
 }

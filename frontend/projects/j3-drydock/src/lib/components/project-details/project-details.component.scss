@@ -1,0 +1,8 @@
+@import '../../styles/mixins';
+
+
+:host {
+    ::ng-deep {
+        @include discussion-feed-fix;
+    }
+}
