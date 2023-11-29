@@ -3,6 +3,7 @@ import { getConnection, getManager, In, QueryRunner, UpdateResult } from 'typeor
 
 import {
     CreateStandardJobsRequestDto,
+    GetStandardJobPopupDto,
     GetStandardJobsQueryResult,
     StandardJobsFiltersAllowedKeys,
     StandardJobsFilterTablesMap,
@@ -11,13 +12,16 @@ import {
     UpdateStandardJobSubItemsRequestDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
+import { className } from '../../../common/drydock/ts-helpers/className';
 import {
     StandardJobs,
     StandardJobsSubItems,
     StandardJobsSurveyCertificateAuthorityEntity,
     StandardJobsVesselTypeEntity,
 } from '../../../entity/drydock';
-import { FiltersDataResponse, RequestWithOData } from '../../../shared/interfaces';
+import { ODataRequestDto } from '../../../shared/dto';
+import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
+import { FiltersDataResponse, ODataResult, RequestWithOData } from '../../../shared/interfaces';
 
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
@@ -208,6 +212,33 @@ export class StandardJobsRepository {
             .where('sub_items.active_status = 1')
             .andWhere(`sub_items.standard_job_uid IN (${uidString})`)
             .getRawMany();
+    }
+
+    public async getStandardJobsPopupData(data: ODataRequestDto): Promise<ODataResult<GetStandardJobPopupDto>> {
+        const oDataService = new ODataService(data, getConnection);
+
+        const query = getManager()
+            .createQueryBuilder(StandardJobs, 'sj')
+            .select([
+                'sj.uid as uid',
+                'sj.function_uid as functionUid',
+                'sj.subject as subject',
+                'sj.number as number',
+                'sj."function" as "function"',
+                `IIF(COUNT("sjscae"."survey_id") > 0, '${QueryStrings.Yes}', '${QueryStrings.No}') as inspection`,
+                `IIF(COUNT("sjsi"."uid") > 0, '${QueryStrings.Yes}', '${QueryStrings.No}') as subItems`,
+            ])
+            .leftJoin(
+                className(StandardJobsSurveyCertificateAuthorityEntity),
+                'sjscae',
+                'sj.uid = sjscae.standard_job_uid',
+            )
+            .leftJoin(className(StandardJobsSubItems), 'sjsi', 'sj.uid = sjsi.standard_job_uid')
+            .where('sj.active_status = 1')
+            .groupBy('sj.uid, sj.function_uid, sj.number, sj."function", sj.active_status, sj.subject')
+            .getSql();
+
+        return oDataService.getJoinResult(query);
     }
 
     private async updateStandardJobRelations(
