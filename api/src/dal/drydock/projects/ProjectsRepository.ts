@@ -185,7 +185,6 @@ export class ProjectsRepository {
 
         if (uid) {
             query = query.where('pr.uid = :uid', { uid });
-            query.execute().then(console.log);
         }
         return query;
     }
