@@ -8,6 +8,7 @@ import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'type
 
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { JmsDtlWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
+import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
 import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
 import { TecLibWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
@@ -165,10 +166,11 @@ export class ProjectsRepository {
             .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'tm.uid = pr.TaskManagerUid')
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', 'wc.job_type = pt.WorklistType')
             .innerJoin(
                 className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
-                'wdetails.ConfigId = wt.ID and wdetails.WorkflowTypeID = tm.Status',
+                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
             )
             .innerJoin(
                 className(GroupProjectStatusEntity),

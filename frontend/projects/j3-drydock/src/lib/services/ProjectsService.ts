@@ -9,7 +9,9 @@ import { eModule } from '../models/enums/module.enum';
 import { eFunction } from '../models/enums/function.enum';
 import { eProjectsAccessActions } from '../models/enums/access-actions.enum';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ProjectsService {
   constructor(
     private apiRequestService: ApiRequestService,
