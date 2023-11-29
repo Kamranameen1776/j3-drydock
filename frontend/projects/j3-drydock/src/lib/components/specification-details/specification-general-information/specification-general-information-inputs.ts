@@ -71,7 +71,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         listRequest: {
           labelKey: 'display_name',
           valueKey: 'uid',
-          webApiRequest: this.specificatioDetailService.getItemSource()
+          webApiRequest: this.specificatioDetailService.getItemSourceRequest()
         }
       },
       [eSpecificationDetailsGeneralInformationFields.ItemNumber]: {

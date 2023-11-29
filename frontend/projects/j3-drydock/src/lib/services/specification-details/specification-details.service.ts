@@ -56,7 +56,7 @@ export class SpecificationDetailsService {
     return apiRequest;
   }
 
-  public getItemSource() {
+  public getItemSourceRequest() {
     const apiRequest: WebApiRequest = {
       apiBase: eApiBase.MasterAPI,
       entity: eEntities.Library,
