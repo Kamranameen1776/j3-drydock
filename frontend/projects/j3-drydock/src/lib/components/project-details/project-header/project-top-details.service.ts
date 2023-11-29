@@ -136,6 +136,10 @@ export class ProjectTopDetailsService {
   }
 
   isStatusBeforeComplete(status: string) {
-    return status === eProjectWorklowStatusAction.Raise || status === eProjectWorklowStatusAction['In Progress'];
+    const lowStatus = status.toLowerCase();
+    return (
+      lowStatus === eProjectWorklowStatusAction.Raise.toLowerCase() ||
+      lowStatus === eProjectWorklowStatusAction['In Progress'].toLowerCase()
+    );
   }
 }

@@ -2,7 +2,9 @@
 
 
 :host {
+    position: relative;
+    
     ::ng-deep {
-        @include discussion-feed-fix;
+        @include details-page-fix;
     }
 }

@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { IJbMenuItem, JbMenuService, JiBeTheme } from 'jibe-components';
+import { IJbMenuItem, JbAttachmentsComponent, JbMenuService, JiBeTheme, eAttachmentButtonTypes } from 'jibe-components';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { map, takeUntil } from 'rxjs/operators';
 import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.enum';
@@ -27,6 +27,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild(eProjectDetailsSideMenuId.YardSelection) [eProjectDetailsSideMenuId.YardSelection]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.RFQ) [eProjectDetailsSideMenuId.RFQ]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.Comparison) [eProjectDetailsSideMenuId.Comparison]: ElementRef;
+  @ViewChild(eProjectDetailsSideMenuId.Attachments) [eProjectDetailsSideMenuId.Attachments]: ElementRef;
+
+  @ViewChild('attachmentsComponent') attachmentsComponent: JbAttachmentsComponent;
 
   private readonly menuId = 'project-details-menu';
 
@@ -43,6 +46,13 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   isDiscussionFeedVisible = true;
 
   discussionFeedDetails;
+
+  attachmentConfig;
+
+  attachmentButton = {
+    buttonLabel: 'Add New',
+    buttonType: eAttachmentButtonTypes.NoButton
+  };
 
   get discussionFeedFunctionCode() {
     return eFunction.DryDock;
@@ -73,6 +83,11 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       .subscribe((projectId) => {
         this.currentProject.projectId$.next(projectId);
         this.discussionFeedDetails = this.detailsService.getDiscussionFeedSetting(projectId);
+        this.attachmentConfig = {
+          Module_Code: eFunction.DryDock,
+          Function_Code: eModule.Project,
+          Key1: projectId
+        };
       });
 
     this.currentProject.projectId$.pipe(takeUntil(this.unsubscribe$)).subscribe((projectId) => {
@@ -86,6 +101,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   ngOnDestroy() {
     this.hideSideMenu();
+  }
+
+  onAddAttachment() {
+    this.attachmentsComponent.dialogOnDemand();
   }
 
   private initSideMenu() {
