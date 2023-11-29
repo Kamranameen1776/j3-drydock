@@ -2,7 +2,7 @@
 // UpdateProjectDto should be a part of the Infrastructure layer(DAL)
 import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { Request } from 'express';
-import {DataUtilService, ODataService} from 'j2utils';
+import { DataUtilService, ODataService} from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 

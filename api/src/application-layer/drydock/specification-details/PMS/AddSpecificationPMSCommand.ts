@@ -1,9 +1,10 @@
+import { DataUtilService, SynchronizerService } from 'j2utils';
+
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
+import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { UpdateSpecificationPmsRequestDto } from '../dtos/UpdateSpecificationPMSRequestDto';
-import {VesselsRepository} from '../../../../dal/drydock/vessels/VesselsRepository';
-import {DataUtilService, SynchronizerService} from 'j2utils';
 
 export class AddSpecificationPmsCommand extends Command<UpdateSpecificationPmsRequestDto, void> {
     specificationDetailsRepository = new SpecificationDetailsRepository();

@@ -3,7 +3,7 @@ import { validate } from 'class-validator';
 import { Request } from 'express';
 import { AccessRights, SynchronizerService } from 'j2utils';
 
-import { BusinessException } from '../../../../bll/drydock/core/exceptions/BusinessException';
+import { BusinessException } from '../../../../bll/drydock/core/exceptions';
 import { YardsProjectsRepository } from '../../../../dal/drydock/project-yards/YardsProjectsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { Command } from '../../core/cqrs/Command';
