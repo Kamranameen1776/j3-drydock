@@ -1,10 +1,11 @@
+import { SynchronizerService } from 'j2utils';
+
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
+import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { Command } from '../core/cqrs/Command';
 import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import {VesselsRepository} from '../../../dal/drydock/vessels/VesselsRepository';
-import {SynchronizerService} from 'j2utils';
 
 export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
@@ -46,11 +47,7 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
                 uid,
                 vessel.VesselId,
             );
-            await this.specificationDetailsAudit.auditDeletedSpecificationDetails(
-                uid,
-                user.UserID,
-                queryRunner,
-            );
+            await this.specificationDetailsAudit.auditDeletedSpecificationDetails(uid, user.UserID, queryRunner);
             return updatedSpecData;
         });
 
