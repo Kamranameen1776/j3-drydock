@@ -175,12 +175,9 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   onGoToNextStatusClicked(actionName: string) {
-    // TODO remove it once we have a requirements for steps
-    this.onConfirmationPopupOk();
-    // TODO uncomment it
-    // const confirmationMessage = 'Add Follow Up';
-    // this.confirmationPopup.dialogHeader = confirmationMessage;
-    // this.isConfirmationPopupVisible = true;
+    const confirmationMessage = 'Add Follow Up';
+    this.confirmationPopup.dialogHeader = confirmationMessage;
+    this.isConfirmationPopupVisible = true;
   }
 
   onCloseConfirmationPopup() {
@@ -206,11 +203,11 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     this.save()
       .pipe(concatMap(() => this.taskManagerService.transitionToNextWorkflowStatus(payload)))
       .subscribe((res) => {
-        // TODO send to feed and discussion if it is required in other US
+        this.currentTaskStatusCode = payload.task_status;
         this.detailedData.ProjectStatusName = res.statusData?.[0].status_display_name;
-        this.currentTaskStatusCode = this.nextWorkflowTaskStatus;
+        this.sendStatusChangeToWorkflowAndFollow(remark, this.currentTaskStatusCode, this.detailedData.ProjectStatusName);
         this.topFieldsConfig = this.topDetailsService.getTopSecConfig(this.detailedData);
-        this.getNextWorkFlow(this.nextWorkflowTaskStatus);
+        this.getNextWorkFlow(this.currentTaskStatusCode);
       });
 
     this.isConfirmationPopupVisible = false;
@@ -315,5 +312,19 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       actionName: this.topDetailsService.getStatusForWorkflowActionsJbComponent(actionName),
       buttonDisplayName: buttonName
     };
+  }
+
+  private sendStatusChangeToWorkflowAndFollow(remark: string, statusCode: string, statusName: string) {
+    this.detailsService
+      .sendStatusChangeToWorkflowAndFollow({
+        uid: this.detailedData.TaskManagerUid,
+        function: eFunction.DryDock,
+        module: eModule.Project,
+        wlType: this.detailedData.ProjectTypeCode,
+        statusCode,
+        statusName,
+        remark
+      })
+      .subscribe();
   }
 }
