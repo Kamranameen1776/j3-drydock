@@ -1,0 +1,15 @@
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+:host ::ng-deep {
+  .jb-top-section-status-bar {
+    display: none;
+  }
+  
+  jb-grid-advanced-settings {
+    display: flex !important;
+  }
+}
+

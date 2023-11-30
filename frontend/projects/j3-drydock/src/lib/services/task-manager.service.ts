@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities } from 'jibe-components';
 import { Observable } from 'rxjs';
+import { Workflow } from '../models/interfaces/task-manager';
 
 @Injectable({
   providedIn: 'root'
@@ -85,6 +86,17 @@ export class TaskManagerService {
       crud: eCrud.Post,
       action: 'jb-event/saveWorkFlowEvents',
       body: data
+    };
+    return this.apiReqService.sendApiReq(saveWorkFlowAndFollowData);
+  }
+
+  getAllWorkflowStatuses(taskType: string): Observable<Workflow[]> {
+    const saveWorkFlowAndFollowData: WebApiRequest = {
+      apiBase: eApiBase.J3TaskManagerAPI,
+      entity: eEntities.TaskManager,
+      crud: eCrud.Get,
+      action: 'task-manager-workflow/get-tm-all-wf-config-details-by-task-type',
+      params: `taskType=${taskType}`
     };
     return this.apiReqService.sendApiReq(saveWorkFlowAndFollowData);
   }

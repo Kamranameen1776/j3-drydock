@@ -1,6 +1,7 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { J3PrcRequisition } from './prc/j3_prc_requisition';
+import { J3PrcRequisition } from './';
+import { SpecificationDetailsSubItemEntity } from './SpecificationDetailsSubItemEntity';
 
 @Entity('specification_details', { schema: 'dry_dock' })
 export class SpecificationDetailsEntity {
@@ -188,4 +189,7 @@ export class SpecificationDetailsEntity {
         },
     })
     requisitions: Partial<J3PrcRequisition>[];
+
+    @OneToMany(() => SpecificationDetailsSubItemEntity, (subItem) => subItem.specificationDetails)
+    SubItems: SpecificationDetailsSubItemEntity[];
 }
