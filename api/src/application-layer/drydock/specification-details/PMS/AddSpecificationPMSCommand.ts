@@ -9,7 +9,7 @@ import { UpdateSpecificationPmsRequestDto } from '../dtos/UpdateSpecificationPMS
 export class AddSpecificationPmsCommand extends Command<UpdateSpecificationPmsRequestDto, void> {
     specificationDetailsRepository = new SpecificationDetailsRepository();
     uow = new UnitOfWork();
-    tableName: 'dry_dock.specification_details';
+    tableName: 'dry_dock.specification_details_j3_pms_agg_job';
     vesselsRepository: VesselsRepository = new VesselsRepository();
     protected async MainHandlerAsync(request: UpdateSpecificationPmsRequestDto) {
         const data = request.body.PmsIds.map((PMSUid) => {
@@ -22,17 +22,13 @@ export class AddSpecificationPmsCommand extends Command<UpdateSpecificationPmsRe
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.specificationDetailsRepository.addSpecificationPms(data, queryRunner);
             const vessel = await this.vesselsRepository.GetVesselBySpecification(request.body.uid);
-            //TODO: think, if promise.all can be replaced with SynchronizerService.dataSynchronizeByConditionManager
-            const promises = data.map((item: { uid: string }) =>
-                SynchronizerService.dataSynchronizeManager(
-                    queryRunner.manager,
-                    this.tableName,
-                    'uid',
-                    item.uid,
-                    vessel.VesselId,
-                ),
+            const condition = `uid IN ('${data.map((i) => i.uid).join(`','`)}')`;
+            await SynchronizerService.dataSynchronizeByConditionManager(
+                queryRunner.manager,
+                this.tableName,
+                vessel.VesselId,
+                condition,
             );
-            await Promise.all(promises);
             return;
         });
     }
