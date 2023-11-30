@@ -78,10 +78,6 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
   public initDeleteStatementOfFactFormGroup(action: FormGroup): void {
     this.deleteStatementOfFactFormGroup = action;
-
-    this.deleteStatementOfFactFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      this.deleteStatementOfFactButtonDisabled = this.deleteStatementOfFactFormGroup.valid;
-    });
   }
 
   public deleteStatementOfFact() {
