@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, UserService, eAppLocation, eJMSWorkflowKeys } from 'jibe-components';
+import { ApiRequestService, DiscussionFeedService, UserService, eAppLocation, eJMSWorkflowKeys } from 'jibe-components';
 import { TaskManagerService } from './task-manager.service';
 import { SaveWorklowChangeToDiscussionFeed } from '../models/interfaces/task-manager';
+import { UnsubscribeComponent } from '../shared/classes/unsubscribe.base';
+import { takeUntil } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DetailsService {
+export class DetailsService extends UnsubscribeComponent {
   constructor(
     private apiRequestService: ApiRequestService,
-    private taskManagerService: TaskManagerService
-  ) {}
+    private taskManagerService: TaskManagerService,
+    private feedSvc: DiscussionFeedService
+  ) {
+    super();
+  }
 
   isOffice(): 1 | 0 {
     return UserService.getUserDetails().AppLocation === eAppLocation.Office ? 1 : 0;
@@ -43,6 +48,11 @@ export class DetailsService {
       action_code: val.statusName
     };
 
-    return this.taskManagerService.saveWorkFlowAndFollow(saveEventsObj);
+    this.taskManagerService
+      .saveWorkFlowAndFollow(saveEventsObj)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.feedSvc.refreshDiscussionComponent();
+      });
   }
 }

@@ -314,18 +314,16 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   private sendStatusChangeToWorkflowAndFollow(remark: string, statusCode: string, statusName: string) {
-    this.detailsService
-      .sendStatusChangeToWorkflowAndFollow({
-        uid: this.detailedData.ProjectId,
-        function: eFunction.DryDock,
-        module: eModule.Project,
-        wlType: this.detailedData.ProjectTypeCode,
-        statusCode,
-        statusName,
-        remark,
-        jobCardNo: this.detailedData.ProjectCode,
-        vesselId: this.detailedData.VesselId
-      })
-      .subscribe();
+    this.detailsService.sendStatusChangeToWorkflowAndFollow({
+      uid: this.detailedData.ProjectId,
+      function: eFunction.DryDock,
+      module: eModule.Project,
+      wlType: this.detailedData.ProjectTypeCode,
+      statusCode,
+      statusName,
+      remark,
+      jobCardNo: this.detailedData.ProjectCode,
+      vesselId: this.detailedData.VesselId
+    });
   }
 }
