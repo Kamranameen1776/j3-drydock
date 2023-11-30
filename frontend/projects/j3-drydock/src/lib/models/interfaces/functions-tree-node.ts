@@ -17,6 +17,7 @@ export interface FunctionsFlatTreeNode {
   DisplayText: string;
   selectable: boolean;
   icon?: string;
+  tag?: string;
 
   jb_value_label?: string;
 }

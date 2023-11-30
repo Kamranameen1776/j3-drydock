@@ -23,9 +23,9 @@
     awidget-content
   >
     <jb-tree
-      [nodeAPIReq]="treeData"
+      [staticNodes]="treeData | async"
       [showSetting]="{ showSearch: true, showButtons: false }"
-      filterPlaceholder="Search Function / Component"
+      filterPlaceholder="Search Function"
       (nodeData)="setNodeData($event)"
       [eventsList]="eventsList"
       [virtualScroll]="true"
