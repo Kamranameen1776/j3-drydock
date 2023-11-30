@@ -2,6 +2,7 @@ export * from './CreateStandardJobsRequestDto';
 export * from './CreateStandardJobsResultDto';
 export * from './DeteleStandardJobsRequestDto';
 export * from './GetStandardJobPopupDto';
+export * from './GetStandardJobPopupRequestDto';
 export * from './GetStandardJobsFiltersRequestDto';
 export * from './GetStandardJobsResultDto';
 export * from './GetStandardJobSubItemsResultDto';

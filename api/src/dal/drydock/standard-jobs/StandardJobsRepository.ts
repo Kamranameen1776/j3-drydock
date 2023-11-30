@@ -4,6 +4,7 @@ import { getConnection, getManager, In, QueryRunner, UpdateResult } from 'typeor
 import {
     CreateStandardJobsRequestDto,
     GetStandardJobPopupDto,
+    GetStandardJobPopupRequestDto,
     GetStandardJobsQueryResult,
     StandardJobsFiltersAllowedKeys,
     StandardJobsFilterTablesMap,
@@ -14,12 +15,12 @@ import {
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import {
+    LibVesseltypes,
     StandardJobs,
     StandardJobsSubItems,
     StandardJobsSurveyCertificateAuthorityEntity,
     StandardJobsVesselTypeEntity,
 } from '../../../entity/drydock';
-import { ODataRequestDto } from '../../../shared/dto';
 import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
 import { FiltersDataResponse, ODataResult, RequestWithOData } from '../../../shared/interfaces';
 
@@ -214,8 +215,11 @@ export class StandardJobsRepository {
             .getRawMany();
     }
 
-    public async getStandardJobsPopupData(data: ODataRequestDto): Promise<ODataResult<GetStandardJobPopupDto>> {
+    public async getStandardJobsPopupData(
+        data: GetStandardJobPopupRequestDto,
+    ): Promise<ODataResult<GetStandardJobPopupDto>> {
         const oDataService = new ODataService(data, getConnection);
+        const body = data.body;
 
         const query = getManager()
             .createQueryBuilder(StandardJobs, 'sj')
@@ -234,7 +238,10 @@ export class StandardJobsRepository {
                 'sj.uid = sjscae.standard_job_uid',
             )
             .leftJoin(className(StandardJobsSubItems), 'sjsi', 'sj.uid = sjsi.standard_job_uid')
+            .leftJoin(className(StandardJobsVesselTypeEntity), 'sjvt', 'sj.uid = sjvt.standard_job_uid')
+            .leftJoin(className(LibVesseltypes), 'vt', 'sjvt.vessel_type_id = vt.ID')
             .where('sj.active_status = 1')
+            .where(`vt.uid = '${body.vesselUid}'`)
             .groupBy('sj.uid, sj.function_uid, sj.number, sj."function", sj.active_status, sj.subject')
             .getSql();
 

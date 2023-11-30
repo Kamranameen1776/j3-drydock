@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
 
 import { GetStandardJobPopupQuery } from '../../../application-layer/drydock/standard-jobs';
-import { ODataRequestDto } from '../../../shared/dto';
+import {
+    GetStandardJobPopupRequestBodyDto,
+    GetStandardJobPopupRequestDto,
+} from '../../../application-layer/drydock/standard-jobs/dto';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 /**
@@ -19,7 +22,7 @@ export async function getStandardJobsPopup(req: Request, res: Response) {
         const query = new GetStandardJobPopupQuery();
 
         // Execute query
-        return query.ExecuteAsync(request as ODataRequestDto, ODataRequestDto);
+        return query.ExecuteAsync(request as GetStandardJobPopupRequestDto, GetStandardJobPopupRequestBodyDto);
     });
 }
 
