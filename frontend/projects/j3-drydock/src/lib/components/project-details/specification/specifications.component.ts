@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
-import { SpecificationGridService, SpecificationType } from '../../../services/specifications/specification.service';
-import { ApiRequestService, GridService, eGridRefreshType, eJbTreeEvents } from 'jibe-components';
+import { SpecificationGridService, SpecificationType } from '../../../services/project/specification.service';
+import { GridService, eGridRefreshType, eJbTreeEvents } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SpecificationCreateFormService } from '../specification-form/specification-create-form-service';

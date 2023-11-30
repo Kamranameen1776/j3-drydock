@@ -60,8 +60,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       this.projectId = projectId;
     });
 
-    this.currentProject.savedProject$.pipe(takeUntil(this.unsubscribe$)).subscribe((project) => {
-      this.vesselUid = project?.VesselUid;
+    this.currentProject.vesselUid$.pipe(takeUntil(this.unsubscribe$)).subscribe((vesselUid) => {
+      this.vesselUid = vesselUid;
     });
   }
 
