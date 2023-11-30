@@ -74,7 +74,8 @@ export class SpecificationGridService {
         // HardCoded for future
         ItemSourceUid: '3EEF2E1B-2533-45C7-82C7-C13D6AA79559',
         FunctionUid: formValue.FunctionUid.Child_ID || '',
-        Function: formValue.FunctionUid.jb_value_label || ''
+        Function: formValue.FunctionUid.jb_value_label || '',
+        Inspections: formValue.Inspections || []
       }
     };
     return this.apiRequestService.sendApiReq(apiReq);

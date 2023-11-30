@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Column, Entity } from 'typeorm';
 
 @Entity('standard_jobs_survey_certificate_authority', { schema: 'dry_dock' })

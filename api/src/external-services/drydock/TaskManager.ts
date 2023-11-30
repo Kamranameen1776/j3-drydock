@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { ApiRequestService } from 'j2utils';
 
 export class TaskManagerRequestDto {
