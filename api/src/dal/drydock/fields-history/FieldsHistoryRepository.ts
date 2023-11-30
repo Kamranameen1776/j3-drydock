@@ -1,4 +1,4 @@
-import { getConnection, QueryRunner } from 'typeorm';
+import { QueryRunner } from 'typeorm';
 
 import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
 

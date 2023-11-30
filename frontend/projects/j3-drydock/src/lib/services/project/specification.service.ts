@@ -73,7 +73,6 @@ export class SpecificationGridService {
         ...formValue,
         // HardCoded for future
         ItemSourceUid: '3EEF2E1B-2533-45C7-82C7-C13D6AA79559',
-        Inspections: [],
         FunctionUid: formValue.FunctionUid.Child_ID || '',
         Function: formValue.FunctionUid.jb_value_label || ''
       }
@@ -113,8 +112,7 @@ export class SpecificationGridService {
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
-      ReadOnly: true,
-      width: '123px'
+      ReadOnly: true
     },
     {
       DisableSort: true,
@@ -123,19 +121,8 @@ export class SpecificationGridService {
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
-      ReadOnly: true,
-      width: '324px'
+      ReadOnly: true
     },
-    /*{
-      DisableSort: true,
-      DisplayText: 'Item source',
-      FieldName: 'kind',
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: true,
-      ReadOnly: true,
-      width: '83px'
-    },*/
     {
       DisableSort: true,
       DisplayText: 'Done by',
@@ -143,19 +130,17 @@ export class SpecificationGridService {
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
-      ReadOnly: true,
-      width: '84px'
+      ReadOnly: true
     },
-    /*{
+    {
       DisableSort: true,
       DisplayText: 'Inspection / Survey',
       FieldName: 'inspection',
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
-      ReadOnly: true,
-      width: '130px'
-    },*/
+      ReadOnly: true
+    },
     {
       DisableSort: true,
       DisplayText: 'Status',
@@ -163,22 +148,11 @@ export class SpecificationGridService {
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
-      ReadOnly: true,
-      width: '182px'
+      ReadOnly: true
     }
   ];
 
   private readonly filters: Filter[] = [
-    {
-      DisplayText: 'Item Category',
-      FieldName: 'ic_item_category',
-      placeholder: 'Select',
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      DisplayCode: 'displayName',
-      FieldID: 1,
-      default: true
-    },
     /*{
       DisplayText: 'Material Supplied By',
       FieldName: 'msb_material_supplied_by',
@@ -188,13 +162,18 @@ export class SpecificationGridService {
       DisplayCode: 'displayName',
       FieldID: 4,
       default: false
-    },
-    /*{
+    },*/
+    {
       DisplayText: 'Inspection / Survey',
       FieldName: 'inspection',
       placeholder: 'Select',
-      default: true
-    },*/
+      default: true,
+      FieldID: 1,
+      DisplayCode: 'displayName',
+      type: 'multiselect',
+      Active_Status: true,
+      Active_Status_Config_Filter: true
+    },
     {
       DisplayText: 'Status',
       FieldName: 'status',
@@ -273,12 +252,12 @@ export class SpecificationGridService {
       odataKey: 'item_category_uid',
       listValueKey: 'uid'
     },
-    /*[eStandardJobsMainFields.Inspection]: {
+    inspection: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection),
       type: eFieldControlType.MultiSelect,
-      odataKey: eStandardJobsMainFields.InspectionID,
+      odataKey: 'inspectionId',
       listValueKey: 'uid'
-    },*/
+    },
     msb_material_supplied_by: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.MaterialSuppliedBy),
       type: eFieldControlType.MultiSelect,
