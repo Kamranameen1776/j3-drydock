@@ -13,6 +13,7 @@ import {
     J3PrcPo,
     J3PrcRequisition,
     J3PrcRfqEntity,
+    LibItemSourceEntity,
     LibSurveyCertificateAuthority,
     LibUserEntity,
     LibVesselsEntity,
@@ -88,9 +89,8 @@ export class SpecificationDetailsRepository {
                 'spec.Function as "Function"',
                 'spec.AccountCode as AccountCode',
 
-                //TODO: clarify where it's from
                 'spec.ItemSourceUid as ItemSourceUid',
-                `'PMS' as ItemSourceText`,
+                'its.DisplayName as ItemSourceText',
 
                 'spec.ItemNumber as ItemNumber',
 
@@ -109,6 +109,7 @@ export class SpecificationDetailsRepository {
                 'usr.uid AS ProjectManagerUid',
             ])
             .leftJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
+            .leftJoin(className(LibItemSourceEntity), 'its', 'spec.ItemSourceUid = its.uid')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'spec.DoneByUid = db.uid')
             .leftJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
             .leftJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
@@ -130,6 +131,12 @@ export class SpecificationDetailsRepository {
                 .leftJoin(className(TmDdLibItemCategory), 'ic', 'sd.item_category_uid = ic.uid')
                 .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.done_by_uid = db.uid')
                 .leftJoin(className(TmDdLibMaterialSuppliedBy), 'msb', 'sd.material_supplied_by_uid = msb.uid')
+                .leftJoin(className(SpecificationInspectionEntity), 'si', 'si.specification_details_uid = sd.uid')
+                .leftJoin(
+                    className(LibSurveyCertificateAuthority),
+                    'lsc',
+                    'lsc.ID = si.LIB_Survey_CertificateAuthority_ID and lsc.Active_Status = 1',
+                )
                 .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
                 .select([
                     'sd.uid as uid',
@@ -144,7 +151,25 @@ export class SpecificationDetailsRepository {
                     'tm.Status as status',
                     'tm.title as subject',
                     'sd.project_uid',
+                    "STRING_AGG(lsc.ID, ',') as inspectionId",
+                    "STRING_AGG(lsc.Authority, ',') as inspection",
                 ])
+                .groupBy(
+                    [
+                        'sd.uid',
+                        'sd.function_uid',
+                        'sd.component_uid',
+                        'sd.item_number',
+                        'db.done_by',
+                        'ic.item_category',
+                        'sd.active_status',
+                        'msb.materialSuppliedBy',
+                        'tm.Code',
+                        'tm.Status',
+                        'tm.title',
+                        'sd.project_uid',
+                    ].join(', '),
+                )
                 .where('sd.active_status = 1')
                 .getSql();
 
