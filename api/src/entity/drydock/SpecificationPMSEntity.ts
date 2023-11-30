@@ -15,5 +15,6 @@ export class SpecificationPmsEntity {
         nullable: false,
         name: 'j3_pms_agg_job_uid',
     })
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     PMSUid: string;
 }

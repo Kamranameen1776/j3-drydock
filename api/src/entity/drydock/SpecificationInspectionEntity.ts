@@ -15,5 +15,6 @@ export class SpecificationInspectionEntity {
         nullable: false,
         name: 'LIB_Survey_CertificateAuthority_ID',
     })
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     LIBSurveyCertificateAuthorityID: number;
 }
