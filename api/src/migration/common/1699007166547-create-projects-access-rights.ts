@@ -34,8 +34,8 @@ export class createProjectsAccessRights1699007166547 implements MigrationInterfa
 
             await queryRunner.query(`
                 MERGE INTO inf_lib_function AS TARGET
-USING (VALUES (3160, 'af1c36a1-9cd0-43c4-b4e2-62f500729fd4', 'project', 'project', 'Project', 1, getdate(), 1, NULL, 1, NULL, 'crew', NULL),
-				(3160, 'f808da39-ba82-482b-90d8-912ecb41bc04', 'project', 'dry_dock', 'Dry Dock', 1, getdate(), 1, NULL, 1, NULL, 'crew', NULL))
+USING (VALUES (3160, 'af1c36a1-9cd0-43c4-b4e2-62f500729fd4', 'project', 'project', 'Project', 1, getdate(), 1, NULL, 1, NULL, 'crew', 'project_attachment'),
+				(3160, 'f808da39-ba82-482b-90d8-912ecb41bc04', 'project', 'dry_dock', 'Dry Dock', 1, getdate(), 1, NULL, 1, NULL, 'crew', 'dry_dock_attachment'))
     AS SOURCE ([FunctionId], [Function_UID], [Module_Code], [Function_Code], [Function_Name], [Created_By],
                [Date_Of_Creation], [Modified_By], [Date_Of_Modification], [Active_Status], [parent_function_code],
                [parent_module_code], [attach_prefix])

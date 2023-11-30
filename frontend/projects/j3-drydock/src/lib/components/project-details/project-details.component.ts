@@ -84,12 +84,11 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         this.currentProject.projectId$.next(projectId);
         this.discussionFeedDetails = this.detailsService.getDiscussionFeedSetting(projectId);
         this.attachmentConfig = {
-          Module_Code: eFunction.DryDock,
-          Function_Code: eModule.Project,
+          Module_Code: 'project',
+          Function_Code: 'dry_dock',
           Key1: projectId
         };
       });
-
     this.currentProject.projectId$.pipe(takeUntil(this.unsubscribe$)).subscribe((projectId) => {
       this.projectId = projectId;
     });
