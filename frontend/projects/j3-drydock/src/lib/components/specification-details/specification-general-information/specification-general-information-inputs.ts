@@ -67,7 +67,12 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         gridRowEnd: 3,
         gridColStart: 1,
         gridColEnd: 2,
-        placeHolder: 'Select Item Source'
+        placeHolder: 'Select Item Source',
+        listRequest: {
+          labelKey: 'display_name',
+          valueKey: 'uid',
+          webApiRequest: this.specificatioDetailService.getItemSourceRequest()
+        }
       },
       [eSpecificationDetailsGeneralInformationFields.ItemNumber]: {
         type: eFieldControlType.Text,

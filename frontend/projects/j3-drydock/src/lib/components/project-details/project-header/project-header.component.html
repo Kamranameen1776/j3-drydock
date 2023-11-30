@@ -1,0 +1,64 @@
+<div jb-detail-top-section>
+  <jb-details-top-section
+    #detailsTopSection
+    *ngIf="detailedData"
+    [topFieldsConfig]="topFieldsConfig"
+    [detailsData]="detailedData"
+    [canEdit]="canEdit"
+    (onCreate)="onFormCreate($event)"
+    (onValueChange)="onValueChange($event)"
+  >
+    <div
+      class="header-actions"
+      jb-workflow-section
+    >
+      <!-- <jb-grid-advanced-settings></jb-grid-advanced-settings>
+      <jb-button
+        type="NoButton"
+        label="Save"
+        [disabled]="!isValueChange"
+        (click)="save()"
+      ></jb-button>
+      <jb-button label="Complete"></jb-button> -->
+      <jb-workflow-actions
+        [isWorkflowButtonEnable]="isWorkflowButtonEnable"
+        [isWorkflowDisable]="false"
+        [disableSave]="!isValueChange"
+        [isCustomThreeDots]="false"
+        [showSaveButton]="true"
+        saveButtonType="NoButton"
+        [jobDetails]="detailedData"
+        [functionCode]="detailedData.functionCode"
+        [moduleCode]="detailedData.moduleCode"
+        [workListType]="detailedData.ProjectTypeCode"
+        [showWorkflowAction]="true"
+        [workflowActionData]="nextWorkflowData"
+        [threeDotsActions]="threeDotsActions"
+        [threeDotsActionsShow]="threeDotsActionsShow"
+        (threeDotOptionClick)="onThreeDotActionClicked($event)"
+        (saveActionClick)="onSave()"
+        (workflowActionClick)="onGoToNextStatusClicked($event.actionName)"
+      ></jb-workflow-actions>
+    </div>
+  </jb-details-top-section>
+</div>
+
+<jb-dialog
+  [(dialogVisible)]="isConfirmationPopupVisible"
+  [dialogContent]="confirmationPopup"
+  (closeDialog)="onCloseConfirmationPopup()"
+>
+  <div jb-dialog-body>
+    <form [formGroup]="confirmationForm">
+      <jb-textarea [content]="confirmationMessageSettings"></jb-textarea>
+    </form>
+  </div>
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="!isConfirmationPopupVisible"
+      [okBtnLabel]="confirmationPopupOkBtnLabel"
+      (ok)="onConfirmationPopupOk()"
+      (cancel)="onConfirmationPopupCancel()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

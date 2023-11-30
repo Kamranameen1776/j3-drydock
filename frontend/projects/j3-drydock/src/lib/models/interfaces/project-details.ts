@@ -1,3 +1,5 @@
+import { eFunction } from '../enums/function.enum';
+import { eModule } from '../enums/module.enum';
 import { eRfqFields } from '../enums/rfq.enum';
 
 export interface YardLink {
@@ -17,7 +19,7 @@ export interface YardToLink {
   isLinked?: boolean;
   isDisable?: boolean;
 }
-// TODO fixme remove optionals once api is merged
+
 export interface ProjectDetails {
   ProjectId: string;
   ProjectCode: string;
@@ -27,6 +29,7 @@ export interface ProjectDetails {
   ShipYard: string;
   Specification: string;
   ProjectStatusName: string;
+  ProjectStatusId: string;
   ProjectState: string;
   VesselName: string;
   VesselUid: string;
@@ -34,6 +37,15 @@ export interface ProjectDetails {
   StartDate: string;
   EndDate: string;
   TaskManagerUid: string;
-  ProjectStatusCode?: string;
-  VesselId?: number;
+  ProjectTypeCode: string;
+  VesselId: number;
+}
+
+export interface ProjectTopHeaderDetails extends ProjectDetails {
+  taskManager: { status: { code: string } };
+  officeId: number;
+  vessel: { uid: string };
+  _id: string;
+  functionCode: eFunction;
+  moduleCode: eModule;
 }

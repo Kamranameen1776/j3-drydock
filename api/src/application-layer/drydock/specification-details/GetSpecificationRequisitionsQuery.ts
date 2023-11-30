@@ -10,7 +10,9 @@ export class GetSpecificationRequisitionsQuery extends Query<
 > {
     specificationDetailsRepository = new SpecificationDetailsRepository();
 
-    protected async MainHandlerAsync(request: GetSpecificationRequisitionsRequestDto) {
+    protected async MainHandlerAsync(
+        request: GetSpecificationRequisitionsRequestDto,
+    ): Promise<ODataResult<GetRequisitionsResponseDto>> {
         return this.specificationDetailsRepository.getSpecificationRequisitions(request);
     }
 }
