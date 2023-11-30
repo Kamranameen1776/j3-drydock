@@ -2,17 +2,17 @@ import { Injectable } from '@angular/core';
 import { ApiRequestService, UserRightsService, WebApiRequest, eApiBase, eCrud, eEntities, eJMSFilterDataKeys } from 'jibe-components';
 import { ODataFilterBuilder } from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../models/enums/standard-jobs-main.enum';
-import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../models/interfaces/functions-tree-node';
-import { map } from 'rxjs/operators';
 import { SubItem } from '../models/interfaces/sub-items';
 import { eModule } from '../models/enums/module.enum';
 import { eFunction } from '../models/enums/function.enum';
+import { FunctionsService } from './functions.service';
 
 @Injectable({ providedIn: 'root' })
 export class StandardJobsService {
   constructor(
     private apiRequestService: ApiRequestService,
-    private userRights: UserRightsService
+    private userRights: UserRightsService,
+    private functionsService: FunctionsService
   ) {}
 
   getStandardJobsRequest(): WebApiRequest {
@@ -101,25 +101,7 @@ export class StandardJobsService {
   }
 
   getStandardJobFunctions() {
-    const apiRequest: WebApiRequest = {
-      apiBase: eApiBase.TechnicalAPI,
-      entity: eEntities.PMS,
-      crud: eCrud.Post,
-      action: 'lib/functions/get-all-pms-function',
-      odata: {
-        skip: '0',
-        top: '10000000'
-      }
-    };
-
-    return this.apiRequestService.sendApiReq(apiRequest).pipe(
-      map((res) => {
-        if (!res.records) {
-          return [];
-        }
-        return res.records.map((record) => this.createFlatNode(record));
-      })
-    );
+    return this.functionsService.getFunctions();
   }
 
   getVesselSpevificList() {
@@ -146,16 +128,6 @@ export class StandardJobsService {
       [eStandardJobsMainFields.UID]: uid || '',
       [eStandardJobsMainFields.Function]: formValue.function.jb_value_label || '',
       [eStandardJobsMainFields.FunctionUid]: formValue.function.Child_ID || ''
-    };
-  }
-
-  private createFlatNode(comp: ShellFunctionTreeResponseNode): FunctionsFlatTreeNode {
-    return {
-      Child_ID: comp.uid,
-      Parent_ID: comp.parent_function_uid || 0,
-      DisplayText: comp.name,
-      selectable: false,
-      icon: 'icons8-cloud-function'
     };
   }
 }
