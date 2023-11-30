@@ -41,4 +41,5 @@ export interface SaveWorklowChangeToDiscussionFeed {
   statusName: string;
   remark: string;
   jobCardNo: string;
+  vesselId?: number;
 }

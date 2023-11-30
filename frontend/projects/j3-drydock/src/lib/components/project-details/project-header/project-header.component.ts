@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { cloneDeep } from 'lodash';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { ProjectTopDetailsService } from './project-top-details.service';
 import { concatMap, finalize, takeUntil } from 'rxjs/operators';
@@ -35,6 +36,8 @@ export enum eProjectHeader3DotActions {
   styleUrls: ['./project-header.component.scss']
 })
 export class ProjectHeaderComponent extends UnsubscribeComponent implements OnInit {
+  @Input() projectId: string;
+
   @ViewChild('detailsTopSection') detailsTopSection: JbDetailsTopSectionComponent;
 
   canEdit = false;
@@ -223,10 +226,8 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       return of(null);
     }
 
-    const projectId = this.currentProject.projectId$.getValue();
-
     return this.topDetailsService
-      .save(projectId, {
+      .save(this.projectId, {
         ...this.formGroup.value,
         Job_Short_Description: this.detailsTopSection.titleBoxContent.value
       })
@@ -234,12 +235,10 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   private initDetailsData() {
-    const projectId = this.currentProject.projectId$.getValue();
-
     this.loading = true;
 
     this.topDetailsService
-      .getTopDetailsData(projectId)
+      .getTopDetailsData(this.projectId)
       .pipe(
         takeUntil(this.unsubscribe$),
         finalize(() => (this.loading = false))
@@ -259,9 +258,9 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
         this.titleService.setTitle(`${this.detailedData.ProjectTypeName} ${this.detailedData.ProjectCode}`);
 
-        const vesselUid = data.detailedData.VesselUid;
-        if (this.currentProject.vesselUid$.getValue() !== vesselUid) {
-          this.currentProject.vesselUid$.next(vesselUid);
+        const projectId = data.detailedData.ProjectId;
+        if (this.currentProject.initialProject$.getValue()?.ProjectId !== projectId) {
+          this.currentProject.initialProject$.next(cloneDeep(data.detailedData));
         }
 
         this.initTaskManger(data.detailedData);
@@ -317,14 +316,15 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   private sendStatusChangeToWorkflowAndFollow(remark: string, statusCode: string, statusName: string) {
     this.detailsService
       .sendStatusChangeToWorkflowAndFollow({
-        uid: this.detailedData.TaskManagerUid,
+        uid: this.detailedData.ProjectId,
         function: eFunction.DryDock,
         module: eModule.Project,
         wlType: this.detailedData.ProjectTypeCode,
         statusCode,
         statusName,
         remark,
-        jobCardNo: this.detailedData.ProjectCode
+        jobCardNo: this.detailedData.ProjectCode,
+        vesselId: this.detailedData.VesselId
       })
       .subscribe();
   }

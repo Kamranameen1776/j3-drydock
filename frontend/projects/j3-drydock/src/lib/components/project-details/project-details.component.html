@@ -2,6 +2,7 @@
   <jb-project-header
     alayout-header
     *ngIf="projectId"
+    [projectId]="projectId"
   ></jb-project-header>
   <ng-container alayout-content>
     <ng-container [ngSwitch]="currentSectionId">

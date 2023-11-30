@@ -81,20 +81,20 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         map((params) => params.get('projectId'))
       )
       .subscribe((projectId) => {
-        this.currentProject.projectId$.next(projectId);
-        this.discussionFeedDetails = this.detailsService.getDiscussionFeedSetting(projectId);
+        this.projectId = projectId;
+
         this.attachmentConfig = {
           Module_Code: eModule.Project,
           Function_Code: eFunction.DryDock,
           Key1: projectId
         };
       });
-    this.currentProject.projectId$.pipe(takeUntil(this.unsubscribe$)).subscribe((projectId) => {
-      this.projectId = projectId;
-    });
 
-    this.currentProject.vesselUid$.pipe(takeUntil(this.unsubscribe$)).subscribe((vesselUid) => {
-      this.vesselUid = vesselUid;
+    this.currentProject.initialProject$.pipe(takeUntil(this.unsubscribe$)).subscribe((project) => {
+      this.vesselUid = project?.VesselUid;
+      if (project) {
+        this.discussionFeedDetails = this.detailsService.getDiscussionFeedSetting(project.ProjectId, project.VesselId);
+      }
     });
   }
 

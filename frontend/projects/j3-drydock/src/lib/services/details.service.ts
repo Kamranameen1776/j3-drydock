@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, UserService, eAppLocation } from 'jibe-components';
+import { ApiRequestService, UserService, eAppLocation, eJMSWorkflowKeys } from 'jibe-components';
 import { TaskManagerService } from './task-manager.service';
 import { SaveWorklowChangeToDiscussionFeed } from '../models/interfaces/task-manager';
 
@@ -16,11 +16,11 @@ export class DetailsService {
     return UserService.getUserDetails().AppLocation === eAppLocation.Office ? 1 : 0;
   }
 
-  getDiscussionFeedSetting(uid: string) {
+  getDiscussionFeedSetting(uid: string, vesseld: number) {
     return {
       key1: uid,
       key2: String(this.isOffice()),
-      key3: '0',
+      key3: String(vesseld),
       uid: uid
     };
   }
@@ -30,14 +30,16 @@ export class DetailsService {
       module_code: val.module,
       function_code: val.function,
       key1: val.uid,
-      key2: String(this.isOffice()),
-      key3: '0',
+      key2: String(this.isOffice()), // or raised_location from job???
+      key3: String(val.vesselId),
       details: JSON.stringify({
         wl_type: val.wlType,
         job_card_no: val.jobCardNo,
-        status: val.statusCode
+        status: null
       }),
       remark: val.remark,
+      remark_type: eJMSWorkflowKeys.IsActive,
+      sync_to: val.vesselId,
       action_code: val.statusName
     };
 
