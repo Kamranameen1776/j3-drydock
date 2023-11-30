@@ -17,6 +17,9 @@ import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-de
 })
 export class SpecificationDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationDetails) [eSpecificationDetailsPageMenuIds.SpecificationDetails]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.SubItems) [eSpecificationDetailsPageMenuIds.SubItems]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.PMSJobs) [eSpecificationDetailsPageMenuIds.PMSJobs]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.Contacts) [eSpecificationDetailsPageMenuIds.Contacts]: ElementRef;
 
   private pageTitle = 'Specification Details';
   public specificationDetailsInfo: GetSpecificationDetailsDto;
