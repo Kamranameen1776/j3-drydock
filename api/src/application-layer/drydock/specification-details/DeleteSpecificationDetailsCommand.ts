@@ -11,7 +11,7 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
-    tableName: 'dry_dock.specification_details';
+    tableName = 'dry_dock.specification_details';
     vesselsRepository: VesselsRepository;
     constructor() {
         super();
