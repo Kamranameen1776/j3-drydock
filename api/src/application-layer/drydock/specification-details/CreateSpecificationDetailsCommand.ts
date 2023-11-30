@@ -83,17 +83,14 @@ export class CreateSpecificationDetailsCommand extends Command<CommandRequest, s
                     };
                 });
                 await this.specificationDetailsRepository.CreateSpecificationInspection(data, queryRunner);
-                // SYNC inspection, TODO: think, if promise.all can be replaced with SynchronizerService.dataSynchronizeByConditionManager
-                const promises = data.map((item: { uid: string }) =>
-                    SynchronizerService.dataSynchronizeManager(
-                        queryRunner.manager,
-                        this.tableNameInspections,
-                        'uid',
-                        item.uid,
-                        vessel.VesselId,
-                    ),
+                // SYNC inspection
+                const condition = `uid IN ('${data.map((i: { uid: string }) => i.uid).join(`','`)}')`;
+                await SynchronizerService.dataSynchronizeByConditionManager(
+                    queryRunner.manager,
+                    this.tableName,
+                    vessel.VesselId,
+                    condition,
                 );
-                await Promise.all(promises);
             }
             // AUDIT
             await this.specificationDetailsAudit.auditCreatedSpecificationDetails(

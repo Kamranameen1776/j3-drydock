@@ -51,17 +51,13 @@ export class CreateProjectYardsCommand extends Command<Request, void> {
                 queryRunner,
             );
             const vessel = await this.vesselRepository.GetVesselByProjectUid(body.projectUid);
-            // TODO: probably need to use SyncServ.byCondition method, check later
-            const promises = uids.map((uid) =>
-                SynchronizerService.dataSynchronizeManager(
-                    queryRunner.manager,
-                    this.tableName,
-                    'uid',
-                    uid,
-                    vessel.VesselId,
-                ),
+            const condition = `uid IN ('${uids.join(`','`)}')`;
+            await SynchronizerService.dataSynchronizeByConditionManager(
+                queryRunner.manager,
+                this.tableName,
+                vessel.VesselId,
+                condition,
             );
-            await Promise.all(promises);
         });
 
         return;
