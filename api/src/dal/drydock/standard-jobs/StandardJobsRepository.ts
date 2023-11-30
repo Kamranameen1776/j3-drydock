@@ -226,11 +226,13 @@ export class StandardJobsRepository {
         const oDataService = new ODataService(data, getConnection);
         const body = data.body;
 
-        const query = getManager()
-            .createQueryBuilder(StandardJobs, 'sj')
+        const standardJobsRepository = getManager().getRepository(StandardJobs);
+
+        const query = standardJobsRepository
+            .createQueryBuilder('sj')
             .select([
                 'sj.uid as uid',
-                'sj.function_uid as functionUid',
+                'sj.functionUid as functionUid',
                 'sj.subject as subject',
                 'sj.number as number',
                 'sj."function" as "function"',
