@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { SpecificationGeneralInformationInputservice } from './specification-general-information-inputs';
 import { FormModel, FormValues } from 'jibe-components';
@@ -11,6 +11,7 @@ import { SpecificationDetails } from '../../../models/interfaces/specification-d
 })
 export class SpecificationGeneralInformationComponent implements OnInit {
   @Input() specificationDetailsInfo: SpecificationDetails;
+  @Output() formData = new EventEmitter<FormGroup>();
 
   formStructure: FormModel;
   formValues: FormValues;
@@ -27,5 +28,6 @@ export class SpecificationGeneralInformationComponent implements OnInit {
 
   handleDispatchForm(event: FormGroup) {
     this.formGroup = event;
+    this.formData.emit(event);
   }
 }

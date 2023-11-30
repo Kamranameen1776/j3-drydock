@@ -3,7 +3,7 @@
     alayout-header
     *ngIf="specificationDetailsInfo"
     [specificationDetailsInfo]="specificationDetailsInfo"
-    (saveButtonClick)="save()"
+    (saveButtonClick)="save($event)"
   ></jb-specification-details-header>
 
   <ng-container alayout-content>
@@ -14,6 +14,7 @@
             <jb-specification-general-information
               *ngIf="specificationDetailsInfo"
               [specificationDetailsInfo]="specificationDetailsInfo"
+              (formData)="validateDetail($event)"
             ></jb-specification-general-information>
           </div>
           <div #subItems>

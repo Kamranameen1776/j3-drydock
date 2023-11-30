@@ -11,6 +11,7 @@ import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-de
 import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { SpecificationDetails } from '../../models/interfaces/specification-details';
+import { FormGroup } from '@angular/forms';
 @Component({
   selector: 'jb-specification-details',
   templateUrl: './specification-details.component.html',
@@ -36,6 +37,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   public attachmentConfig: IJbAttachment;
 
   private readonly menuId = 'specification-details-menu';
+  public detailForm: FormGroup;
   currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
   eProjectDetailsSideMenuId = eSpecificationDetailsPageMenuIds;
   growlMessage$ = this.growlMessageService.growlMessage$;
@@ -111,10 +113,23 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     );
   }
 
-  public async save(): Promise<void> {
+  validateDetail(form: FormGroup) {
+    if (form.valid) {
+      this.detailForm = form;
+    }
+  }
+
+  public async save(headerform: FormGroup): Promise<void> {
+    const generalInformationData = this.detailForm.controls.generalInformation.value;
+
     const data: UpdateSpecificationDetailsDto = {
       uid: this.specificationDetailsInfo.uid,
-      Subject: this.specificationDetailsInfo.Subject
+      Subject: headerform.controls.Job_Short_Description.value,
+      AccountCode: generalInformationData.accountCode,
+      DoneByUid: generalInformationData.doneBy,
+      Description: generalInformationData.description,
+      PriorityUid: generalInformationData.priorityUid,
+      Inspections: generalInformationData.inspectionId
     };
 
     try {

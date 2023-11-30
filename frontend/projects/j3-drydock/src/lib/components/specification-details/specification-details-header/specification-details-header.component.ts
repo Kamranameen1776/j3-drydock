@@ -32,7 +32,7 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
   @ViewChild('detailsTopSection') detailsTopSection: JbDetailsTopSectionComponent;
 
   @Input() specificationDetailsInfo: SpecificationDetails;
-  @Output() saveButtonClick = new EventEmitter<void>();
+  @Output() saveButtonClick = new EventEmitter<FormGroup>();
 
   saveButtonDisabled = true;
   topDetailsData: SpecificationDetailsTopHeaderDetails;
@@ -203,13 +203,15 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
 
   onValueChange(form: FormGroup) {
     this.formGroup = form;
-    if (form && form.dirty) {
+
+    if (form && form.dirty && !this.isValueChange) {
       this.isValueChange = form.dirty;
     }
   }
 
   onSave(): void {
-    this.saveButtonClick.emit();
+    this.saveButtonClick.emit(this.formGroup);
+    this.isValueChange = false;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
