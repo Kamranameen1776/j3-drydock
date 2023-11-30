@@ -15,7 +15,7 @@ export class SpecificationSubItemsComponent implements OnInit {
   gridData: GridInputsWithRequest;
 
   ngOnInit(): void {
-    this.gridData = this.getData()
+    this.gridData = this.getData();
   }
 
   private getData() {
