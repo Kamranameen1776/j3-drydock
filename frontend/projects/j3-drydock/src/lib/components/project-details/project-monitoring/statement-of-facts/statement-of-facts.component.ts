@@ -39,7 +39,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
   deleteStatementOfFactFormGroup: FormGroup;
 
-  deleteStatementOfFactButtonDisabled$ = new BehaviorSubject(false);
+  deleteStatementOfFactButtonDisabled = false;
 
   constructor(
     private statementOfFactsGridService: StatementOfFactsGridService,
@@ -59,8 +59,8 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
   public onGridAction({ type }: GridAction<string, string>, statementOfFact: IStatementOfFactDto): void {
     if (type === eGridRowActions.Delete) {
-      this.deleteStatementOfFactFormGroup.value.StatementOfFact = statementOfFact;
       this.showDeleteDialog();
+      this.deleteStatementOfFactFormGroup.value.StatementOfFact = statementOfFact;
     } else if (type === eGridRowActions.Edit) {
       if (!statementOfFact) {
         throw new Error('StatementOfFact is null');
@@ -75,6 +75,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
   }
 
   public showDeleteDialog(value = true) {
+    this.deleteStatementOfFactFormGroup.reset();
     this.deleteDialogVisible = value;
   }
 
@@ -84,17 +85,15 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
   public initDeleteStatementOfFactFormGroup(action: FormGroup): void {
     this.deleteStatementOfFactFormGroup = action;
+
     this.deleteStatementOfFactFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      if (this.deleteStatementOfFactFormGroup.valid) {
-        this.deleteStatementOfFactButtonDisabled$.next(false);
-      } else {
-        this.deleteStatementOfFactButtonDisabled$.next(true);
-      }
+      this.deleteStatementOfFactButtonDisabled = this.deleteStatementOfFactFormGroup.valid;
     });
   }
 
   public deleteStatementOfFact() {
-    this.deleteStatementOfFactButtonDisabled$.next(true);
+    this.deleteStatementOfFactButtonDisabled = true;
+
     const data: IDeleteStatementOfFactDto = {
       StatementOfFactUid: this.deleteStatementOfFactFormGroup.value.StatementOfFact.StatementOfFactsUid
     };
@@ -103,7 +102,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
       .deleteStatementOfFact(data)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
-        this.deleteStatementOfFactButtonDisabled$.next(false);
+        this.deleteStatementOfFactButtonDisabled = false;
         this.showDeleteDialog(false);
         this.statementOfFactsGrid.fetchMatrixData();
       });

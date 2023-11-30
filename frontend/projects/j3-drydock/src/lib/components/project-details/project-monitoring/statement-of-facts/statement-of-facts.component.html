@@ -36,7 +36,7 @@
 
   <ng-container jb-dialog-footer>
     <jb-dialog-footer
-      [isOkBtnDisabled]="deleteStatementOfFactButtonDisabled$ | async"
+      [isOkBtnDisabled]="deleteStatementOfFactButtonDisabled"
       [okBtnLabel]="deleteBtnLabel"
       (ok)="deleteStatementOfFact()"
       (cancel)="showDeleteDialog(false)"
