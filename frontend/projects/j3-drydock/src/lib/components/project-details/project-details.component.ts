@@ -25,6 +25,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild(eProjectDetailsSideMenuId.RFQ) [eProjectDetailsSideMenuId.RFQ]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.Comparison) [eProjectDetailsSideMenuId.Comparison]: ElementRef;
 
+  @ViewChild(eProjectDetailsSideMenuId.ProjectMonitoring) [eProjectDetailsSideMenuId.ProjectMonitoring]: ElementRef;
+  @ViewChild(eProjectDetailsSideMenuId.StatementOfFacts) [eProjectDetailsSideMenuId.StatementOfFacts]: ElementRef;
+
   private readonly menuId = 'project-details-menu';
 
   currentSectionId = eProjectDetailsSideMenuId.General;

@@ -9,14 +9,14 @@ import {
   FormModel,
   eFieldControlType
 } from 'jibe-components';
-import { nameOf } from '../../../utils/nameOf';
-import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
-import { StatementOfFactsService } from '../../../services/project-monitoring/statement-of-facts/StatementOfFactsService';
+import { nameOf } from 'projects/j3-drydock/src/lib/utils/nameOf';
+import { StatementOfFactsService } from 'projects/j3-drydock/src/lib/services/project-monitoring/statement-of-facts/StatementOfFactsService';
+import { GridInputsWithRequest } from 'projects/j3-drydock/src/lib/models/interfaces/grid-inputs';
 import {
-  eStatementOfFactsDeleteFieldNames,
-  eStatementOfFactsDeleteDisplayNames
-} from '../../../models/enums/statement-of-fact-delete.enum';
+  eStatementOfFactsDeleteDisplayNames,
+  eStatementOfFactsDeleteFieldNames
+} from 'projects/j3-drydock/src/lib/models/enums/statement-of-fact-delete.enum';
 
 @Injectable()
 export class StatementOfFactsGridService {
@@ -29,8 +29,6 @@ export class StatementOfFactsGridService {
   public readonly createStatementOfFactFormId = 'statementOfFactCreate';
 
   public readonly deleteStatementOfFactFormId = 'statementOfFactDelete';
-
-  private initDate: Date = new Date();
 
   private readonly columns: Column[] = [
     {
@@ -75,8 +73,7 @@ export class StatementOfFactsGridService {
 
   constructor(
     private userService: UserService,
-    private statementOfFactsService: StatementOfFactsService,
-    private slfService: SystemLevelFiltersService
+    private statementOfFactsService: StatementOfFactsService
   ) {}
 
   public getGridInputs(): GridInputsWithRequest {

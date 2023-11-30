@@ -1,18 +1,17 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { eGridRowActions, FormModel, GridAction, GridComponent, IJbDialog } from 'jibe-components';
-import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { StatementOfFactsGridService } from './StatementOfFactsGridService';
-import { StatementOfFactsGridOdataKeys } from '../../../models/enums/StatementOfFactsGridOdataKeys';
-import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FormGroup } from '@angular/forms';
-import { getSmallPopup } from '../../../models/constants/popup';
 import { BehaviorSubject } from 'rxjs';
-import { IDeleteStatementOfFactDto } from '../../../services/project-monitoring/statement-of-facts/IDeleteStatementOfFactDto';
-import { StatementOfFactsService } from '../../../services/project-monitoring/statement-of-facts/StatementOfFactsService';
-import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
-import { map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
+import { UnsubscribeComponent } from 'projects/j3-drydock/src/lib/shared/classes/unsubscribe.base';
+import { GridInputsWithRequest } from 'projects/j3-drydock/src/lib/models/interfaces/grid-inputs';
+import { getSmallPopup } from 'projects/j3-drydock/src/lib/models/constants/popup';
+import { StatementOfFactsService } from 'projects/j3-drydock/src/lib/services/project-monitoring/statement-of-facts/StatementOfFactsService';
+import { StatementOfFactsGridOdataKeys } from 'projects/j3-drydock/src/lib/models/enums/StatementOfFactsGridOdataKeys';
+import { IDeleteStatementOfFactDto } from 'projects/j3-drydock/src/lib/services/project-monitoring/statement-of-facts/IDeleteStatementOfFactDto';
 
 @Component({
   selector: 'jb-statement-of-facts',
@@ -21,16 +20,16 @@ import { map, takeUntil } from 'rxjs/operators';
   providers: [StatementOfFactsGridService]
 })
 export class StatementOfFactsComponent extends UnsubscribeComponent implements OnInit {
+  @Input() projectId: string;
+
   @ViewChild('statementOfFactsGrid')
   statementOfFactsGrid: GridComponent;
-
-  private projectUid: string;
 
   private readonly pageTitle = 'Statement of Facts';
 
   public gridInputs: GridInputsWithRequest;
 
-  public DeleteBtnLabel = 'Delete';
+  public deleteBtnLabel = 'Delete';
 
   public deleteDialogVisible = false;
 
@@ -45,7 +44,6 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
   constructor(
     private statementOfFactsGridService: StatementOfFactsGridService,
     private statementOfFactsService: StatementOfFactsService,
-    private route: ActivatedRoute,
     private title: Title
   ) {
     super();
@@ -54,17 +52,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
   ngOnInit(): void {
     this.title.setTitle(this.pageTitle);
 
-    this.route.paramMap
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        map((params) => params.get('projectUid'))
-      )
-      .subscribe((projectId) => {
-        if (projectId !== this.projectUid) {
-          this.projectUid = projectId;
-          this.setGridInputs();
-        }
-      });
+    this.setGridInputs();
 
     this.deleteStatementOfFactForm = this.statementOfFactsGridService.getDeleteStatementOfFactForm();
   }
@@ -91,7 +79,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
   }
 
   public onMatrixRequestChanged() {
-    this.statementOfFactsGrid.odata.filter.eq(StatementOfFactsGridOdataKeys.ProjectUid, this.projectUid);
+    this.statementOfFactsGrid.odata.filter.eq(StatementOfFactsGridOdataKeys.ProjectUid, this.projectId);
   }
 
   public initDeleteStatementOfFactFormGroup(action: FormGroup): void {

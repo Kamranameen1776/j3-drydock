@@ -39,7 +39,7 @@ import { SpecificationDetailsHeaderComponent } from './components/specification-
 import { SpecificationGeneralInformationComponent } from './components/specification-details/specification-general-information/specification-general-information.component';
 import { SpecificationGeneralInformationInputservice } from './components/specification-details/specification-general-information/specification-general-information-inputs';
 import { SpecificationRequisitionsComponent } from './components/specification-details/specification-requisitions/specification-requisitions.component';
-import { StatementOfFactsComponent } from './components/project-monitoring/statement-of-facts/statement-of-facts.component';
+import { StatementOfFactsComponent } from './components/project-details/project-monitoring/statement-of-facts/statement-of-facts.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
