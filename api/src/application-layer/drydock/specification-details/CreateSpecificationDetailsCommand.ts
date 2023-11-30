@@ -20,8 +20,8 @@ export class CreateSpecificationDetailsCommand extends Command<CommandRequest, s
     projectRepository: ProjectsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
-    tableName: 'dry_dock.specification_details';
-    tableNameInspections: 'dry_dock.specification_details_LIB_Survey_CertificateAuthority';
+    tableName = 'dry_dock.specification_details';
+    tableNameInspections = 'dry_dock.specification_details_LIB_Survey_CertificateAuthority';
     constructor() {
         super();
 
@@ -65,6 +65,7 @@ export class CreateSpecificationDetailsCommand extends Command<CommandRequest, s
                 queryRunner,
             );
             // SYNCING specification_details
+            console.log(specData, this.tableName);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,
@@ -87,7 +88,7 @@ export class CreateSpecificationDetailsCommand extends Command<CommandRequest, s
                 const condition = `uid IN ('${data.map((i: { uid: string }) => i.uid).join(`','`)}')`;
                 await SynchronizerService.dataSynchronizeByConditionManager(
                     queryRunner.manager,
-                    this.tableName,
+                    this.tableNameInspections,
                     vessel.VesselId,
                     condition,
                 );

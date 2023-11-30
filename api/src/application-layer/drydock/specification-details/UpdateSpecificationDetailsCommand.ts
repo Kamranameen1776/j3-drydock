@@ -12,7 +12,7 @@ export class UpdateSpecificationDetailsCommand extends Command<CommandRequest, v
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
-    tableName: 'dry_dock.specification_details';
+    tableName = 'dry_dock.specification_details';
     constructor() {
         super();
 

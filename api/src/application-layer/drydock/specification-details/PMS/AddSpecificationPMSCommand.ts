@@ -9,7 +9,7 @@ import { UpdateSpecificationPmsRequestDto } from '../dtos/UpdateSpecificationPMS
 export class AddSpecificationPmsCommand extends Command<UpdateSpecificationPmsRequestDto, void> {
     specificationDetailsRepository = new SpecificationDetailsRepository();
     uow = new UnitOfWork();
-    tableName: 'dry_dock.specification_details_j3_pms_agg_job';
+    tableName = 'dry_dock.specification_details_j3_pms_agg_job';
     vesselsRepository: VesselsRepository = new VesselsRepository();
     protected async MainHandlerAsync(request: UpdateSpecificationPmsRequestDto) {
         const data = request.body.PmsIds.map((PMSUid) => {
