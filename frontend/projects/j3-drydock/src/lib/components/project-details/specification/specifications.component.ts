@@ -20,7 +20,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   @Input()
   vesselUid: string;
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
-  treeData: Observable<FunctionsFlatTreeNode[]>;
+  treeData$: Observable<FunctionsFlatTreeNode[]>;
   gridData: GridInputsWithRequest;
   eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.Select, eJbTreeEvents.UnSelect];
   activeIndex = 0;
@@ -69,7 +69,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   }
 
   ngOnInit(): void {
-    this.treeData = this.functionsService.getFunctions().pipe(
+    this.treeData$ = this.functionsService.getFunctions().pipe(
       takeUntil(this.unsubscribe$),
       map((functions) => {
         return functions.map((func) => this.functionsService.calculateSelectable(func, functions));
@@ -94,7 +94,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   }
 
   loadFunctionsToForm(): void {
-    this.treeData.subscribe((flatTree) => {
+    this.treeData$.subscribe((flatTree) => {
       this.formService.functionsFlatTree$.next(flatTree);
     });
   }

@@ -23,7 +23,7 @@
     awidget-content
   >
     <jb-tree
-      [staticNodes]="treeData | async"
+      [staticNodes]="treeData$ | async"
       [showSetting]="{ showSearch: true, showButtons: false }"
       filterPlaceholder="Search Function"
       (nodeData)="setNodeData($event)"
