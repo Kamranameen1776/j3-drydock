@@ -49,23 +49,22 @@ export class CreateSpecificationDetailsCommand extends Command<CommandRequest, s
      */
     protected async MainHandlerAsync({ request, user }: CommandRequest): Promise<string> {
         const token: string = request.headers.authorization as string;
-        return this.uow.ExecuteAsync(async (queryRunner) => {
-            const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
-            const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(project.VesselUid);
+        const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
+        const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(project.VesselUid);
 
-            // Create Specification
-            const taskManagerData = await this.specificationDetailsService.TaskManagerIntegration(
-                request.body,
-                vessel,
-                token,
-            );
+        // Create Specification
+        const taskManagerData = await this.specificationDetailsService.TaskManagerIntegration(
+            request.body,
+            vessel,
+            token,
+        );
+        return this.uow.ExecuteAsync(async (queryRunner) => {
             request.body.TecTaskManagerUid = taskManagerData.uid;
             const specData = await this.specificationDetailsRepository.CreateSpecificationDetails(
                 request.body,
                 queryRunner,
             );
             // SYNCING specification_details
-            console.log(specData, this.tableName);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,

@@ -35,10 +35,10 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
      * @returns New created project result
      */
     protected async MainHandlerAsync(request: UpdateProjectDto): Promise<void> {
+        const { uid } = request;
+        const vessel = await this.vesselRepository.GetVesselByProjectUid(uid);
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const { uid } = request;
             const projectId = await this.projectsRepository.UpdateProject(request, queryRunner);
-            const vessel = await this.vesselRepository.GetVesselByProjectUid(uid);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,

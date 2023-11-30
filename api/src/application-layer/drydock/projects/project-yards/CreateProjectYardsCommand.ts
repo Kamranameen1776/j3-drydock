@@ -39,6 +39,7 @@ export class CreateProjectYardsCommand extends Command<Request, void> {
     protected async MainHandlerAsync(request: Request): Promise<void> {
         const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
         const body: CreateProjectYardsDto = request.body;
+        const vessel = await this.vesselRepository.GetVesselByProjectUid(body.projectUid);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const uids = await this.yardProjectsRepository.create(
@@ -50,7 +51,6 @@ export class CreateProjectYardsCommand extends Command<Request, void> {
                 },
                 queryRunner,
             );
-            const vessel = await this.vesselRepository.GetVesselByProjectUid(body.projectUid);
             const condition = `uid IN ('${uids.join(`','`)}')`;
             await SynchronizerService.dataSynchronizeByConditionManager(
                 queryRunner.manager,

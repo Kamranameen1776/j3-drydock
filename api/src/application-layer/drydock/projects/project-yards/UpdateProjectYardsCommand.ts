@@ -59,11 +59,10 @@ export class UpdateProjectYardsCommand extends Command<Request, void> {
     protected async MainHandlerAsync(request: Request): Promise<void> {
         const { UserUID: updatedBy } = AccessRights.authorizationDecode(request);
         const body: UpdateProjectYardsDto = request.body;
+        const yardProject = await this.yardProjectsRepository.get(body.uid);
+        const vessel = await this.vesselRepository.GetVesselByProjectUid(yardProject.projectUid);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const yardProject = await this.yardProjectsRepository.get(body.uid);
-            const vessel = await this.vesselRepository.GetVesselByProjectUid(yardProject.projectUid);
-
             await this.yardProjectsRepository.update(
                 {
                     updatedBy: updatedBy,

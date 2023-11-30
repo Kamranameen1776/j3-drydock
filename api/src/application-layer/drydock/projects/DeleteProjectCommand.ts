@@ -35,10 +35,10 @@ export class DeleteProjectCommand extends Command<IDeleteProjectDto, void> {
      * @returns New created project result
      */
     protected async MainHandlerAsync(request: IDeleteProjectDto): Promise<void> {
+        const { ProjectId } = request;
+        const vessel = await this.vesselRepository.GetVesselByProjectUid(ProjectId);
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const { ProjectId } = request;
             const projectId = await this.projectsRepository.DeleteProject(ProjectId, queryRunner);
-            const vessel = await this.vesselRepository.GetVesselByProjectUid(ProjectId);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,
