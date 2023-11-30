@@ -13,13 +13,6 @@ import {
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { eSpecificationDetailsSubItemsFields, eSpecificationDetailsSubItemsLabels } from '../../models/enums/specification-details-sub-items.enum';
 
-export enum SpecificationStatus {
-  RAISED = 'Raised',
-  APPROVED = 'Approved',
-  COMPLETED = 'Completed',
-  REJECTED = 'Rejected'
-}
-
 @Injectable()
 export class SpecificationDetailsSubItemsGridService {
   constructor() {}
