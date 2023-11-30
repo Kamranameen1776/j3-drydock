@@ -2,9 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { eGridRowActions, FormModel, GridAction, GridComponent, IJbDialog } from 'jibe-components';
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { StatementOfFactsGridService } from './StatementOfFactsGridService';
-import { Title } from '@angular/platform-browser';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UnsubscribeComponent } from 'projects/j3-drydock/src/lib/shared/classes/unsubscribe.base';
 import { GridInputsWithRequest } from 'projects/j3-drydock/src/lib/models/interfaces/grid-inputs';
@@ -25,8 +23,6 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
   @ViewChild('statementOfFactsGrid')
   statementOfFactsGrid: GridComponent;
 
-  private readonly pageTitle = 'Statement of Facts';
-
   public gridInputs: GridInputsWithRequest;
 
   public deleteBtnLabel = 'Delete';
@@ -43,15 +39,12 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
   constructor(
     private statementOfFactsGridService: StatementOfFactsGridService,
-    private statementOfFactsService: StatementOfFactsService,
-    private title: Title
+    private statementOfFactsService: StatementOfFactsService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.title.setTitle(this.pageTitle);
-
     this.setGridInputs();
 
     this.deleteStatementOfFactForm = this.statementOfFactsGridService.getDeleteStatementOfFactForm();
