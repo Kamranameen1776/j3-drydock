@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Column } from 'typeorm';
 
 export abstract class BaseDatesEntity {
