@@ -41,8 +41,3 @@ export class ODataBodyDto {
     @ValidateNested()
     odata: ODataDto;
 }
-
-export class ODataRequestDto {
-    @ValidateNested()
-    body: ODataBodyDto;
-}
