@@ -34,7 +34,7 @@ export class DetailsService {
       key3: '0',
       details: JSON.stringify({
         wl_type: val.wlType,
-        job_card_no: val.uid,
+        job_card_no: val.jobCardNo,
         status: val.statusCode
       }),
       remark: val.remark,

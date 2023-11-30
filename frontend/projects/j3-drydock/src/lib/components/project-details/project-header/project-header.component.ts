@@ -323,7 +323,8 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
         wlType: this.detailedData.ProjectTypeCode,
         statusCode,
         statusName,
-        remark
+        remark,
+        jobCardNo: this.detailedData.ProjectCode
       })
       .subscribe();
   }

@@ -40,4 +40,5 @@ export interface SaveWorklowChangeToDiscussionFeed {
   statusCode: string;
   statusName: string;
   remark: string;
+  jobCardNo: string;
 }
