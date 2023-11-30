@@ -20,9 +20,9 @@ export class DeleteSubItemCommand extends Command<DeleteOneParams, void> {
     }
 
     public async MainHandlerAsync(): Promise<void> {
+        const vessel = await this.vesselsRepository.GetVesselBySpecification(this.params.specificationDetailsUid);
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.subItemsRepo.deleteOneExistingByUid(this.params, queryRunner);
-            const vessel = await this.vesselsRepository.GetVesselBySpecification(this.params.specificationDetailsUid);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,

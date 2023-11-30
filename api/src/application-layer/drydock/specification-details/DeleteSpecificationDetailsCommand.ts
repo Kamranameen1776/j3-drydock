@@ -33,13 +33,13 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
     }
 
     protected async MainHandlerAsync({ request, user }: CommandRequest) {
+        const vessel = await this.vesselsRepository.GetVesselBySpecification(request.body.uid);
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const { uid } = request.body;
             const updatedSpecData = await this.specificationDetailsRepository.DeleteSpecificationDetails(
                 uid,
                 queryRunner,
             );
-            const vessel = await this.vesselsRepository.GetVesselBySpecification(uid);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,

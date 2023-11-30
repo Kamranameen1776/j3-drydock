@@ -44,11 +44,11 @@ export class UpdateStatementOfFactsCommand extends Command<Request, void> {
      */
     protected async MainHandlerAsync(request: Request): Promise<void> {
         const updateStatementOfFactsDto: UpdateStatementOfFactsDto = request.body as UpdateStatementOfFactsDto;
+        const { uid } = updateStatementOfFactsDto;
+        const vessel = await this.vesselRepository.GetVesselByStatementOfFact(uid);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const { uid } = updateStatementOfFactsDto;
             await this.repository.UpdateStatementOfFacts(updateStatementOfFactsDto, queryRunner);
-            const vessel = await this.vesselRepository.GetVesselByStatementOfFact(uid);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,

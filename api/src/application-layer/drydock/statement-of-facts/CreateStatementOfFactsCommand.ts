@@ -44,10 +44,10 @@ export class CreateStatementsOfFactsCommand extends Command<Request, void> {
      */
     protected async MainHandlerAsync(request: Request): Promise<void> {
         const createProjectDto: CreateStatementsOfFactsDto = request.body as CreateStatementsOfFactsDto;
+        const vessel = await this.vesselRepository.GetVesselByProjectUid(createProjectDto.ProjectUid);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const uid = await this.repository.CreateStatementOfFacts(createProjectDto, queryRunner);
-            const vessel = await this.vesselRepository.GetVesselByProjectUid(createProjectDto.ProjectUid);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,

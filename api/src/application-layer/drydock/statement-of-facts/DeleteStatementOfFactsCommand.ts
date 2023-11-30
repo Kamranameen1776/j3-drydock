@@ -44,11 +44,11 @@ export class DeleteStatementsOfFactsCommand extends Command<Request, void> {
      */
     protected async MainHandlerAsync(request: Request): Promise<void> {
         const deleteStatementOfFactsDto: DeleteStatementOfFactsDto = request.body as DeleteStatementOfFactsDto;
+        const { uid } = deleteStatementOfFactsDto;
+        const vessel = await this.vesselRepository.GetVesselByStatementOfFact(uid);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const { uid } = deleteStatementOfFactsDto;
             await this.repository.DeleteStatementOfFacts(uid, queryRunner);
-            const vessel = await this.vesselRepository.GetVesselByStatementOfFact(uid);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,
