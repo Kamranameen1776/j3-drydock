@@ -46,8 +46,8 @@ export const specificationDetailsMenuData = [
       {
         label: eSpecificationDetailsPageMenuLabels.SpecificationAttachments,
         id: eSpecificationDetailsPageMenuIds.SpecificationAttachments
-      }],
-      
+      }
+    ]
   },
   { label: eSpecificationDetailsPageMenuLabels.Attachments, id: eSpecificationDetailsPageMenuIds.Attachments, icon: 'icons8-attach' },
   { label: eSpecificationDetailsPageMenuLabels.AuditTrail, id: eSpecificationDetailsPageMenuIds.AuditTrail, icon: 'icons8-order-history-3' }
