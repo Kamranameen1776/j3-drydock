@@ -11,6 +11,7 @@ import { GrowlMessageService } from '../../services/growl-message.service';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
 import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
+import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
 @Component({
   selector: 'jb-specification-details',
   templateUrl: './specification-details.component.html',
@@ -34,6 +35,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   public updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
   public specificationUid: string;
   public attachmentConfig: IJbAttachment;
+  canView = false;
+  canViewSubItems = false;
 
   private readonly menuId = 'specification-details-menu';
   currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
@@ -58,6 +61,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     this.title.setTitle(this.pageTitle);
     this.initSideMenu();
     this.initializeAttachments(this.specificationUid);
+    this.setAccessRights();
   }
 
   ngOnDestroy() {
@@ -100,6 +104,11 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       id: this.menuId,
       menuData: null
     });
+  }
+
+  private setAccessRights() {
+    this.canView = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.viewSpecificationDetail);
+    this.canViewSubItems = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.viewSubItemsSection);
   }
 
   private isMenuSection(menuItem: IJbMenuItem) {

@@ -19,6 +19,7 @@ import { SpecificationRequisitionsDisplayTexts, SpecificationRequisitionsFieldNa
 import { GridAction } from 'jibe-components/lib/grid/models/grid-action.model';
 import { SpecificationRequisition } from '../../../models/interfaces/specification-requisition';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
+import { eSpecificationAccessActions } from '../../../models/enums/access-actions.enum';
 
 @Component({
   selector: 'jb-specification-requisitions',
@@ -29,8 +30,11 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
   @Input() specificationUid: string;
 
   gridData: GridInputsWithRequest;
+  canView = false;
   readonly eLayoutWidgetSize = eLayoutWidgetSize;
   readonly JbButtonType = JbButtonType;
+
+  canEditRequisition = false;
 
   private columns: Column[] = [
     {
@@ -141,6 +145,12 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
 
   async ngOnInit(): Promise<void> {
     this.setGridData();
+    this.setAccessRights();
+  }
+
+  private setAccessRights() {
+    this.canView = this.specificationDetailsService.hasAccess(eSpecificationAccessActions.viewRequisitionSection);
+    this.canEditRequisition = this.specificationDetailsService.hasAccess(eSpecificationAccessActions.editRequisition);
   }
 
   setGridData() {
@@ -170,11 +180,14 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
 
   private getGridRowActions() {
     const actions: GridRowActions[] = [];
+    const canEditRequisition = this.specificationDetailsService.hasAccess(eSpecificationAccessActions.editRequisition);
 
-    actions.push({
-      name: eGridRowActions.Delete,
-      gridName: this.gridData.gridName
-    });
+    if (canEditRequisition) {
+      actions.push({
+        name: eGridRowActions.Delete,
+        gridName: this.gridData.gridName
+      });
+    }
 
     return actions;
   }

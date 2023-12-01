@@ -1,4 +1,4 @@
-<div class="specification-requisitions">
+<div class="specification-requisitions" *ngIf="canView">
   <jb-layout-widget
     titleText="Requisitions"
     [size]="eLayoutWidgetSize.Auto"
@@ -10,6 +10,7 @@
       <jb-button
         label="Link Requisitions"
         [type]="JbButtonType.NoButton"
+        [disabled]="!canEditRequisition"
       ></jb-button>
     </div>
     <div

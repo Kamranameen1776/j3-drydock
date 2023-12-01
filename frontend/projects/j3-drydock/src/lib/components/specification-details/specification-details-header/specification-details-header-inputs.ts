@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import f from 'odata-filter-builder';
-import { ITopSectionFieldSet, eAction, eApiBase, eCrud, eEntities, eUserStatus } from 'jibe-components';
+import { ITopSectionFieldSet, UserRightsService, eAction, eApiBase, eCrud, eEntities, eUserStatus } from 'jibe-components';
 import { Observable } from 'rxjs';
+import { eSpecificationAccessActions } from '../../../models/enums/access-actions.enum';
+import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 
 export type SpecificationDetailsHeaderInputs = {
   topFieldsConfig: ITopSectionFieldSet;
@@ -11,8 +13,7 @@ export type SpecificationDetailsHeaderInputs = {
 
 @Injectable()
 export class SpecificationDetailsHeaderInputservice {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor() {}
+  constructor(private specificationDetailsService: SpecificationDetailsService) {}
 
   topFieldsConfig: ITopSectionFieldSet = {
     showStatus: true,
@@ -69,7 +70,7 @@ export class SpecificationDetailsHeaderInputservice {
       sub.next({
         topFieldsConfig: this.topFieldsConfig,
         detailedData: this.detailedData,
-        canEdit: this.canEdit
+        canEdit: this.specificationDetailsService.hasAccess(eSpecificationAccessActions.editHeaderSection)
       });
 
       sub.complete();

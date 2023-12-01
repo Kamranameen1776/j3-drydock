@@ -3,6 +3,8 @@ import { GetSpecificationDetailsDto } from '../../../models/dto/specification-de
 import { SpecificationDetailsHeaderInputs, SpecificationDetailsHeaderInputservice } from './specification-details-header-inputs';
 import { takeUntil } from 'rxjs/operators';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
+import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
+import { eSpecificationAccessActions } from '../../../models/enums/access-actions.enum';
 
 @Component({
   selector: 'jb-specification-details-header',
@@ -15,10 +17,12 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
   @Output() saveButtonClick = new EventEmitter<void>();
 
   saveButtonDisabled = true;
+  completeButtonDisabled = true;
   topDetailsData: SpecificationDetailsHeaderInputs;
 
   constructor(
     private readonly headerInputService: SpecificationDetailsHeaderInputservice,
+    private readonly specificationDetailsService: SpecificationDetailsService,
     private cd: ChangeDetectorRef
   ) {
     super();
@@ -37,10 +41,8 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
         this.topDetailsData = data;
       });
     this.cd.markForCheck();
-  }
-
-  onValueChange() {
-    this.saveButtonDisabled = false;
+    this.saveButtonDisabled = !this.specificationDetailsService.hasAccess(eSpecificationAccessActions.editGeneralInformation);
+    this.completeButtonDisabled = !this.specificationDetailsService.hasAccess(eSpecificationAccessActions.editWorkflow);
   }
 
   save(): void {

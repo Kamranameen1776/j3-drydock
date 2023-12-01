@@ -1,4 +1,4 @@
-<jb-details-layout-figma>
+<jb-details-layout-figma *ngIf="canView">
   <jb-specification-details-header
     alayout-header
     *ngIf="specificationDetailsInfo"
@@ -18,7 +18,7 @@
           </div>
           <div #subItems>
             <jb-specification-sub-items
-              *ngIf="specificationDetailsInfo"
+              *ngIf="canViewSubItems && specificationDetailsInfo"
               [specificationDetailsInfo]="specificationDetailsInfo"
             ></jb-specification-sub-items>
           </div>
