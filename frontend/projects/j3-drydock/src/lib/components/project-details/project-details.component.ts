@@ -31,6 +31,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   @ViewChild('attachmentsComponent') attachmentsComponent: JbAttachmentsComponent;
 
+  @ViewChild(eProjectDetailsSideMenuId.ProjectMonitoring) [eProjectDetailsSideMenuId.ProjectMonitoring]: ElementRef;
+  @ViewChild(eProjectDetailsSideMenuId.StatementOfFacts) [eProjectDetailsSideMenuId.StatementOfFacts]: ElementRef;
+
   private readonly menuId = 'project-details-menu';
 
   currentSectionId = eProjectDetailsSideMenuId.General;

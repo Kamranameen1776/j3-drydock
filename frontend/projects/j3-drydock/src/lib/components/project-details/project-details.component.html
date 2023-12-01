@@ -58,6 +58,14 @@
           <div #comparison>TODO insert comparison component here</div>
         </div>
       </ng-container>
+
+      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.ProjectMonitoring">
+        <div #project_monitoring>
+          <div #statement_of_facts>
+            <jb-statement-of-facts [projectId]="projectId"></jb-statement-of-facts>
+          </div>
+        </div>
+      </ng-container>
     </ng-container>
   </ng-container>
 
