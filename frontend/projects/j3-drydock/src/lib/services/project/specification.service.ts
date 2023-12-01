@@ -14,6 +14,8 @@ import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
 import { StandardJobsService } from '../standard-jobs.service';
+import { SpecificationDetailsService } from '../specification-details/specification-details.service';
+import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
 
 export enum SpecificationType {
   ALL = 'All',
@@ -34,7 +36,8 @@ export enum SpecificationStatus {
 export class SpecificationGridService {
   constructor(
     private standardJobsService: StandardJobsService,
-    private apiRequestService: ApiRequestService
+    private apiRequestService: ApiRequestService,
+    private specificationDetailsService: SpecificationDetailsService
   ) {}
 
   public getSpecificationDetailsAPIRequest(projectId: string | null, functionUIDs: string[]): WebApiRequest {
@@ -86,7 +89,7 @@ export class SpecificationGridService {
       columns: this.columns,
       gridName: this.gridName,
       request: this.getSpecificationDetailsAPIRequest(projectId, functionUIDs),
-      actions: this.gridActions,
+      actions: this.getGridActions(),
       filters: this.filters,
       filtersLists: this.filtersLists
     };
@@ -285,8 +288,11 @@ export class SpecificationGridService {
     }
   };
 
-  private gridActions: GridRowActions[] = [
-    { name: eGridAction.Edit, icon: 'icons8-edit' },
-    { name: eGridAction.Delete, icon: 'icons8-delete' }
-  ];
+  private getGridActions(): GridRowActions[] {
+    const actions = [{ name: eGridAction.Edit, icon: 'icons8-edit' }];
+    if (this.specificationDetailsService.hasAccess(eSpecificationAccessActions.deleteSpecificationDetail)) {
+      actions.push({ name: eGridAction.Delete, icon: 'icons8-edit' });
+    }
+    return actions;
+  }
 }

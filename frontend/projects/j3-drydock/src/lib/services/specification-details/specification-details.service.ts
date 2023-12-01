@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities } from 'jibe-components';
+import { ApiRequestService, UserRightsService, WebApiRequest, eApiBase, eCrud, eEntities } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { GetSpecificationDetailsDto } from '../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
 import { eSpecificationDetailsGeneralInformationFields } from '../../models/enums/specification-details-general-information.enum';
 import f from 'odata-filter-builder';
+import { eModule } from '../../models/enums/module.enum';
+import { eFunction } from '../../models/enums/function.enum';
 @Injectable({
   providedIn: 'root'
 })
 export class SpecificationDetailsService {
-  constructor(private apiRequestService: ApiRequestService) {}
+  constructor(
+    private apiRequestService: ApiRequestService,
+    private userRights: UserRightsService
+  ) {}
 
   getSpecificationDetails(specificationUid: string): Observable<GetSpecificationDetailsDto> {
     const request: WebApiRequest = {
@@ -99,5 +104,9 @@ export class SpecificationDetailsService {
     };
 
     return this.apiRequestService.sendApiReq(request);
+  }
+
+  hasAccess(action: string) {
+    return !!this.userRights.getUserRights(eModule.Project, eFunction.SpecificationDetails, action);
   }
 }
