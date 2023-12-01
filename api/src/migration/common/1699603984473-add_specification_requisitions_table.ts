@@ -17,12 +17,9 @@ export class addSpecificationRequisitionsTable1699603984473 implements Migration
     BEGIN
         CREATE TABLE [${this.schemaName}].[${this.tableName}]
         (
-            [uid]                            [uniqueidentifier] NOT NULL DEFAULT NEWID(),
             [specification_uid]              [uniqueidentifier] NOT NULL,
             [requisition_uid]                [uniqueidentifier] NOT NULL,
-            [active_status]                  [bit]              NOT NULL DEFAULT 1,
-            CONSTRAINT UC_SPECIFICATION_REQUISITIONS UNIQUE (specification_uid, requisition_uid),
-            PRIMARY KEY ([uid])
+            PRIMARY KEY ([specification_uid],[requisition_uid])
         ) ON [PRIMARY]
     END`);
 
