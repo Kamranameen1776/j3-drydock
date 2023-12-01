@@ -11,6 +11,7 @@ export class AddSpecificationPmsCommand extends Command<UpdateSpecificationPmsRe
     uow = new UnitOfWork();
     tableName = 'dry_dock.specification_details_j3_pms_agg_job';
     vesselsRepository: VesselsRepository = new VesselsRepository();
+
     protected async MainHandlerAsync(request: UpdateSpecificationPmsRequestDto) {
         const data = request.body.PmsIds.map((PMSUid) => {
             return {
@@ -19,8 +20,9 @@ export class AddSpecificationPmsCommand extends Command<UpdateSpecificationPmsRe
                 PMSUid,
             };
         });
-        const vessel = await this.vesselsRepository.GetVesselBySpecification(request.body.uid);
         await this.uow.ExecuteAsync(async (queryRunner) => {
+            const vessel = await this.vesselsRepository.GetVesselBySpecification(request.body.uid, queryRunner);
+
             await this.specificationDetailsRepository.addSpecificationPms(data, queryRunner);
             const condition = `uid IN ('${data.map((i) => i.uid).join(`','`)}')`;
             await SynchronizerService.dataSynchronizeByConditionManager(

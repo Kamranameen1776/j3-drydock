@@ -15,13 +15,13 @@ export class DeleteSubItemCommand extends Command<DeleteOneParams, void> {
 
     private params: DeleteOneParams;
 
-    protected async ValidationHandlerAsync(request: DeleteOneParams): Promise<void> {
-        this.params = await validateAgainstModel(DeleteOneParams, request);
-    }
-
     public async MainHandlerAsync(): Promise<void> {
-        const vessel = await this.vesselsRepository.GetVesselBySpecification(this.params.specificationDetailsUid);
         await this.uow.ExecuteAsync(async (queryRunner) => {
+            const vessel = await this.vesselsRepository.GetVesselBySpecification(
+                this.params.specificationDetailsUid,
+                queryRunner,
+            );
+
             await this.subItemsRepo.deleteOneExistingByUid(this.params, queryRunner);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
@@ -31,5 +31,9 @@ export class DeleteSubItemCommand extends Command<DeleteOneParams, void> {
                 vessel.VesselId,
             );
         });
+    }
+
+    protected async ValidationHandlerAsync(request: DeleteOneParams): Promise<void> {
+        this.params = await validateAgainstModel(DeleteOneParams, request);
     }
 }

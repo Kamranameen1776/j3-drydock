@@ -21,8 +21,12 @@ export class DeleteSubItemsCommand extends Command<DeleteManyParams, EntityExist
     }
 
     protected async MainHandlerAsync(): Promise<EntityExistenceMap> {
-        const vessel = await this.vesselsRepository.GetVesselBySpecification(this.params.specificationDetailsUid);
         return this.uow.ExecuteAsync(async (queryRunner) => {
+            const vessel = await this.vesselsRepository.GetVesselBySpecification(
+                this.params.specificationDetailsUid,
+                queryRunner,
+            );
+
             const res = await this.subItemsRepo.deleteManyByUids(this.params, queryRunner);
             const condition = `uid IN ('${this.params.uids.join(`','`)}')`;
             await SynchronizerService.dataSynchronizeByConditionManager(

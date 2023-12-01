@@ -24,8 +24,12 @@ export class UpdateSubItemCommand extends Command<UpdateOneParams, Specification
     }
 
     protected async MainHandlerAsync(): Promise<SpecificationDetailsSubItemEntity> {
-        const vessel = await this.vesselsRepository.GetVesselBySpecification(this.params.specificationDetailsUid);
         return this.uow.ExecuteAsync(async (queryRunner) => {
+            const vessel = await this.vesselsRepository.GetVesselBySpecification(
+                this.params.specificationDetailsUid,
+                queryRunner,
+            );
+
             const res = await this.subItemRepo.updateOneExistingByUid(this.params, queryRunner);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
