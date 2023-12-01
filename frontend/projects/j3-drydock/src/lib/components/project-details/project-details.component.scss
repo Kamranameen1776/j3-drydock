@@ -1,0 +1,10 @@
+@import '../../styles/mixins';
+
+
+:host {
+    position: relative;
+    
+    ::ng-deep {
+        @include details-page-fix;
+    }
+}

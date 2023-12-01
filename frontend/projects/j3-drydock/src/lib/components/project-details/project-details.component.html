@@ -2,6 +2,7 @@
   <jb-project-header
     alayout-header
     *ngIf="projectId"
+    [projectId]="projectId"
   ></jb-project-header>
   <ng-container alayout-content>
     <ng-container [ngSwitch]="currentSectionId">
@@ -17,7 +18,34 @@
               [vesselUid]="vesselUid"
             ></jb-specifications>
           </div>
-          <div #requisition>TODO insert requisition component here</div>
+
+          <div #requisition>
+            <!-- TODO insert requisition component here -->
+          </div>
+
+          <div #attachments>
+            <jb-layout-widget
+              *ngIf="attachmentConfig"
+              [size]="'auto'"
+              titleText="Attachments"
+            >
+              <ng-container awidget-header-buttons>
+                <jb-button
+                  [type]="attachmentButton.buttonType"
+                  (click)="onAddAttachment()"
+                  [label]="attachmentButton.buttonLabel"
+                ></jb-button>
+              </ng-container>
+              <jb-attachments
+                #attachmentsComponent
+                awidget-content
+                class="attachments"
+                [attachConfig]="attachmentConfig"
+                [onUploadBtn]="false"
+                [defaultActions]="true"
+              ></jb-attachments>
+            </jb-layout-widget>
+          </div>
         </div>
       </ng-container>
 
@@ -31,6 +59,24 @@
         </div>
       </ng-container>
     </ng-container>
+  </ng-container>
+
+  <ng-container alayout-aside>
+    <jb-layout-widget
+      [size]="'auto'"
+      [hideHeader]="true"
+      class="discussion-feed"
+      *ngIf="isDiscussionFeedVisible && discussionFeedDetails"
+    >
+      <jb-discussion-feed
+        awidget-content
+        [detail]="discussionFeedDetails"
+        [canAdd]="true"
+        [function_code]="discussionFeedFunctionCode"
+        [module_code]="discussionFeedModuleCode"
+        [isCloseView]="true"
+      ></jb-discussion-feed>
+    </jb-layout-widget>
   </ng-container>
 </jb-details-layout-figma>
 
