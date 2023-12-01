@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { DataUtilService, ODataService } from 'j2utils';
+import { DataUtilService, ODataService, SynchronizerService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
@@ -30,6 +30,7 @@ import {
 } from '../../../entity/drydock';
 import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
 import { ODataResult } from '../../../shared/interfaces';
+import { VesselsRepository } from '../vessels/VesselsRepository';
 import {
     CreateInspectionsDto,
     ICreateSpecificationDetailsDto,
@@ -40,6 +41,8 @@ import {
 } from './dtos';
 
 export class SpecificationDetailsRepository {
+    private vesselRepository = new VesselsRepository();
+
     public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {
         const specificationUid = data.uid;
         const array = `'${data.PmsIds.join(`','`)}'`;
@@ -120,9 +123,10 @@ export class SpecificationDetailsRepository {
             .getRawOne();
     }
 
-    public async GetManySpecificationDetails(
-        data: Request,
-    ): Promise<{ records: SpecificationDetailsEntity[]; count?: number }> {
+    public async GetManySpecificationDetails(data: Request): Promise<{
+        records: SpecificationDetailsEntity[];
+        count?: number;
+    }> {
         try {
             const oDataService = new ODataService(data, getConnection);
 
@@ -253,21 +257,44 @@ export class SpecificationDetailsRepository {
         return oDataService.getJoinResult(query);
     }
 
-    public linkSpecificationRequisitions(
+    public async linkSpecificationRequisitions(
         data: LinkSpecificationRequisitionsRequestDto,
         queryRunner: QueryRunner,
     ): Promise<SpecificationRequisitionsEntity[]> {
         const specificationUid = data.specificationUid;
         const requisitionUid = data.requisitionUid;
 
-        const entities = requisitionUid.map((uid) => {
+        const existingEntities = await queryRunner.manager
+            .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
+            .select(['sr.specificationUid', 'sr.requisitionUid', 'sr.uid', 'sr.activeStatus'])
+            .where(`sr.specificationUid = '${specificationUid}'`)
+            .andWhere(`sr.requisitionUid IN ('${requisitionUid.join(`','`)}')`)
+            .getMany();
+
+        const existingRequisitionUid = existingEntities.map((entity) => entity.requisitionUid);
+        const newRequisitionUid = requisitionUid.filter((uid) => !existingRequisitionUid.includes(uid));
+
+        const newEntities = [...existingEntities.map((entity) => ({ ...entity, activeStatus: true }))];
+
+        newRequisitionUid.forEach((uid) => {
             const specificationRequisition = new SpecificationRequisitionsEntity();
             specificationRequisition.specificationUid = specificationUid;
             specificationRequisition.requisitionUid = uid;
-            return specificationRequisition;
+            newEntities.push(specificationRequisition);
         });
 
-        return queryRunner.manager.save(SpecificationRequisitionsEntity, entities);
+        const result = await queryRunner.manager.save(SpecificationRequisitionsEntity, newEntities);
+
+        const vessel = await this.vesselRepository.GetVesselBySpecification(specificationUid, queryRunner);
+
+        await SynchronizerService.dataSynchronizeByConditionManager(
+            queryRunner.manager,
+            'dry_dock.specification_requisitions',
+            vessel.VesselId,
+            `specification_uid = '${specificationUid}' AND requisition_uid IN ('${requisitionUid.join(`','`)}')`,
+        );
+
+        return result;
     }
 
     public async deleteSpecificationRequisitions(
@@ -279,9 +306,19 @@ export class SpecificationDetailsRepository {
 
         await queryRunner.manager
             .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
-            .delete()
+            .update()
+            .set({ activeStatus: false })
             .where(`specification_uid = '${specificationUid}'`)
             .andWhere(`requisition_uid = '${requisitionUid}'`)
             .execute();
+
+        const vessel = await this.vesselRepository.GetVesselBySpecification(specificationUid, queryRunner);
+
+        await SynchronizerService.dataSynchronizeByConditionManager(
+            queryRunner.manager,
+            'dry_dock.specification_requisitions',
+            vessel.VesselId,
+            `specification_uid = '${specificationUid}' AND requisition_uid = '${requisitionUid}'`,
+        );
     }
 }

@@ -1,8 +1,12 @@
-import { getManager } from 'typeorm';
+import { getManager, QueryRunner } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
-import { ProjectEntity, SpecificationDetailsEntity, StatementOfFactsEntity } from '../../../entity/drydock';
-import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
+import {
+    LibVesselsEntity,
+    ProjectEntity,
+    SpecificationDetailsEntity,
+    StatementOfFactsEntity,
+} from '../../../entity/drydock';
 
 export class VesselsRepository {
     public async GetVessel(vesselId: number): Promise<LibVesselsEntity> {
@@ -28,6 +32,7 @@ export class VesselsRepository {
 
         return data;
     }
+
     public async GetVesselByProjectUid(projectUid: string): Promise<LibVesselsEntity> {
         const projectRepository = getManager().getRepository(ProjectEntity);
         const project = await projectRepository.findOneOrFail({
@@ -37,6 +42,7 @@ export class VesselsRepository {
         });
         return this.GetVesselByUID(project.VesselUid);
     }
+
     public async GetVesselByStatementOfFact(uid: string): Promise<LibVesselsEntity> {
         const specificationRepository = getManager().getRepository(StatementOfFactsEntity);
 
@@ -49,8 +55,9 @@ export class VesselsRepository {
             .execute();
         return this.GetVesselByUID(res[0].VesselUid);
     }
-    public async GetVesselBySpecification(uid: string): Promise<LibVesselsEntity> {
-        const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
+
+    public async GetVesselBySpecification(uid: string, queryRunner: QueryRunner): Promise<LibVesselsEntity> {
+        const specificationRepository = queryRunner.manager.getRepository(SpecificationDetailsEntity);
 
         const res = await specificationRepository
             .createQueryBuilder('spec')

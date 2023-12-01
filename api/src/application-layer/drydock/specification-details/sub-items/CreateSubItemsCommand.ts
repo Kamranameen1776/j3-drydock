@@ -21,8 +21,12 @@ export class CreateSubItemsCommand extends Command<CreateManyParams, Specificati
     }
 
     protected async MainHandlerAsync(): Promise<SpecificationDetailsSubItemEntity[]> {
-        const vessel = await this.vesselsRepository.GetVesselBySpecification(this.params.specificationDetailsUid);
         return this.uow.ExecuteAsync(async (queryRunner) => {
+            const vessel = await this.vesselsRepository.GetVesselBySpecification(
+                this.params.specificationDetailsUid,
+                queryRunner,
+            );
+
             const res = await this.subItemRepo.createMany(this.params, queryRunner);
             const condition = `uid IN ('${res.map((i) => i.uid).join(`','`)}')`;
             await SynchronizerService.dataSynchronizeByConditionManager(
