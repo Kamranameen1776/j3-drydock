@@ -1,3 +1,6 @@
+import { eFunction } from '../enums/function.enum';
+import { eModule } from '../enums/module.enum';
+
 export interface Workflow {
   ID: number;
   Config_ID: 97;
@@ -27,4 +30,16 @@ export interface Workflow {
   last_Display_name_action?: string;
   last_status_right_code?: string;
   Is_Vessel_Install?: boolean;
+}
+
+export interface SaveWorklowChangeToDiscussionFeed {
+  uid: string;
+  function: eFunction;
+  module: eModule;
+  wlType: string;
+  statusCode: string;
+  statusName: string;
+  remark: string;
+  jobCardNo: string;
+  vesselId?: number;
 }

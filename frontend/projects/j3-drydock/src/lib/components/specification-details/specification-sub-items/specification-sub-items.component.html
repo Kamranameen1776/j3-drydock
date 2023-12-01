@@ -1,0 +1,23 @@
+<jb-layout-widget
+  titleIconClass="icons8-more-details-2"
+  titleText="Sub items"
+>
+  <div
+    class="grid-container"
+    awidget-content
+  >
+    <jb-grid
+      *ngIf="gridData"
+      [gridName]="gridData.gridName"
+      [colData]="gridData.columns"
+      [tableDataReq]="gridData.request"
+      [setActions]="gridData.actions"
+      [filterData]="gridData.filters"
+      [filterListsSet]="gridData.filtersLists"
+      [getStyleByContainer]="true"
+      [isDisplayAdvancedSettings]="false"
+      [isDisplayAdvancedFilter]="false"
+      [isDisplaySearchField]="false"
+    ></jb-grid>
+  </div>
+</jb-layout-widget>

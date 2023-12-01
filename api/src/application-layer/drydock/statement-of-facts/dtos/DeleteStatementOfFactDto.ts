@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
-export class DeleteStatementOfFactsDto {
+export class DeleteStatementOfFactDto {
     @IsNotEmpty()
     @IsUUID(4)
-    uid: string;
+    StatementOfFactUid: string;
 }

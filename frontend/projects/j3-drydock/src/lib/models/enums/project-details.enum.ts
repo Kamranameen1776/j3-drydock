@@ -47,3 +47,14 @@ export enum eProjectDetailsSideMenuId {
   ProjectReport = 'project_report',
   Evaluations = 'evaluations'
 }
+
+export enum eProjectWorklowStatusAction {
+  Raise = 'Raise',
+  'In Progress' = 'In Progress',
+  Complete = 'Complete',
+  Verify = 'Verify',
+  Review = 'Review',
+  Approve = 'Approve',
+  Close = 'Close',
+  Unclose = 'Unclose'
+}

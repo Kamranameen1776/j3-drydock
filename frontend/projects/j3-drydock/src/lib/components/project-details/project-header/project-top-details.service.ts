@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { ITopSectionFieldSet } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ProjectsService } from '../ProjectsService';
-import { ProjectDetails, ProjectTopHeaderDetails } from '../../models/interfaces/project-details';
-import { getISOStringFromDateString } from '../../utils/to-iso-string';
+import { ProjectsService } from '../../../services/ProjectsService';
+import { ProjectDetails, ProjectTopHeaderDetails } from '../../../models/interfaces/project-details';
+import { getISOStringFromDateString } from '../../../utils/to-iso-string';
+import { eProjectWorklowStatusAction } from '../../../models/enums/project-details.enum';
 
 export interface TopFieldsData<T> {
   topFieldsConfig: ITopSectionFieldSet;
@@ -16,13 +17,6 @@ export interface TopFieldsData<T> {
 })
 export class ProjectTopDetailsService {
   constructor(private projectsService: ProjectsService) {}
-
-  detailedData = {
-    StartDate: new Date(),
-    EndDate: new Date(),
-    ProjectManager: 'Alexander Crisan',
-    ShipYard: 'Cochin Shipyard Limited'
-  };
 
   getTopDetailsData(projectId: string): Observable<TopFieldsData<ProjectDetails>> {
     return this.projectsService.getProject(projectId).pipe(
@@ -53,7 +47,7 @@ export class ProjectTopDetailsService {
           id: 'ProjectManager',
           label: 'Project Manager',
           isRequired: false,
-          isEditable: true,
+          isEditable: this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'dropdown',
           getFieldName: 'ProjectManagerUid',
           saveFieldName: 'ProjectManagerUid',
@@ -68,9 +62,9 @@ export class ProjectTopDetailsService {
         },
         {
           id: 'StartDate',
-          label: 'Start date',
+          label: 'Start Date',
           isRequired: false,
-          isEditable: true,
+          isEditable: this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'StartDate',
           saveFieldName: 'StartDate',
@@ -84,9 +78,9 @@ export class ProjectTopDetailsService {
         },
         {
           id: 'EndDate',
-          label: 'Due date',
+          label: 'End Date',
           isRequired: false,
-          isEditable: true,
+          isEditable: this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'EndDate',
           saveFieldName: 'EndDate',
@@ -102,7 +96,7 @@ export class ProjectTopDetailsService {
           id: 'ShipYard',
           label: 'Yard Name',
           isRequired: false,
-          isEditable: true,
+          isEditable: false,
           type: 'dropdown',
           getFieldName: 'ShipYard',
           saveFieldName: 'ShipYardTemp',
@@ -110,7 +104,7 @@ export class ProjectTopDetailsService {
             id: 'ShipYard',
             value: 'ShipYardId',
             label: 'ShipYardName',
-            selectedLabel: details.ShipYard,
+            selectedLabel: '',
             selectedValue: details.ShipYard,
             apiRequest: this.projectsService.getProjectsShipsYardsRequest()
           }
@@ -139,5 +133,17 @@ export class ProjectTopDetailsService {
 
   getStatusFromWorkflowActionsJbComponent(status: string) {
     return status.replace('_::_', '');
+  }
+
+  isStatusBeforeComplete(status: string) {
+    const lowStatus = status.toLowerCase();
+    return (
+      lowStatus === eProjectWorklowStatusAction.Raise.toLowerCase() ||
+      lowStatus === eProjectWorklowStatusAction['In Progress'].toLowerCase()
+    );
+  }
+
+  areStatusesSame(status: string, statusToCompare: string): boolean {
+    return status.toLowerCase() === statusToCompare.toLowerCase();
   }
 }

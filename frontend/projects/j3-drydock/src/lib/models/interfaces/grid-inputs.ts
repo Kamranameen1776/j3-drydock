@@ -23,6 +23,12 @@ export interface GridInputs {
   searchFields?: SearchField[];
   showSettings?: ShowSettings;
   sortField?: string;
+  sortOrder?: number;
+
+  /**
+   * Grid title, in the header
+   */
+  name?: string;
 }
 
 export interface GridInputsWithRequest extends GridInputs {

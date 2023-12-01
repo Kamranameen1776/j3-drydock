@@ -1,0 +1,45 @@
+<section class="statement-of-facts-grid">
+  <jb-grid
+    #statementOfFactsGrid
+    [gridName]="gridInputs.gridName"
+    [colData]="gridInputs.columns"
+    [tableDataReq]="gridInputs.request"
+    [searchFields]="gridInputs.searchFields"
+    [button]="gridInputs.gridButton"
+    [setActions]="gridInputs.actions"
+    [sortField]="gridInputs.sortField"
+    [sortOrder]="gridInputs.sortOrder"
+    [getStyleByContainer]="true"
+    [name]="gridInputs.name"
+    (action)="onGridAction($any($event), $event?.payload)"
+    (matrixRequestChanged)="onMatrixRequestChanged()"
+  ></jb-grid>
+</section>
+
+<jb-dialog
+  (closeDialog)="showDeleteDialog(false)"
+  [(dialogVisible)]="deleteDialogVisible"
+  [dialogContent]="deleteStatementOfFactDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-form
+      (jbFormGroup)="initDeleteStatementOfFactFormGroup($any($event))"
+      [formStructure]="deleteStatementOfFactForm"
+      [isVerticalLabel]="true"
+      class="form-generator-log"
+    ></jb-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="deleteStatementOfFactButtonDisabled"
+      [okBtnLabel]="deleteBtnLabel"
+      (ok)="deleteStatementOfFact()"
+      (cancel)="showDeleteDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
