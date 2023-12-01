@@ -23,11 +23,14 @@ import { getSmallPopup } from '../../../models/constants/popup';
 import { of } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { DetailsService } from '../../../services/details.service';
+import { Workflow } from '../../../models/interfaces/task-manager';
+import { eProjectWorklowStatusAction } from '../../../models/enums/project-details.enum';
 
 export enum eProjectHeader3DotActions {
   Export = 'Export',
   Rework = 'Rework',
-  Resync = 'Re-sync'
+  Resync = 'Re-sync',
+  Delete = 'Delete'
 }
 
 @Component({
@@ -51,18 +54,33 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   threeDotsActions: AdvancedSettings[] = [
     {
       show: true,
+      icon: 'icons8-export',
       color: eGridColors.JbBlack,
       label: eProjectHeader3DotActions.Export
     },
     {
       show: true,
+      icon: 'icons8-rescheduling-a-task',
       color: eGridColors.JbBlack,
       label: eProjectHeader3DotActions.Rework
     },
     {
       show: true,
+      icon: 'icons8-update',
       color: eGridColors.JbBlack,
       label: eProjectHeader3DotActions.Resync
+    },
+    {
+      show: true,
+      icon: 'icons8-change-4',
+      color: eGridColors.JbBlack,
+      label: '' // must setup as '' in order to find it and change the label dynamically later
+    },
+    {
+      show: true,
+      icon: 'icons8-delete',
+      color: eGridColors.JbBlack,
+      label: eProjectHeader3DotActions.Delete
     }
   ];
 
@@ -74,6 +92,7 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     [eProjectHeader3DotActions.Export]: true,
     [eProjectHeader3DotActions.Rework]: true,
     [eProjectHeader3DotActions.Resync]: true,
+    [eProjectHeader3DotActions.Delete]: true,
     showDefaultLables: false
   };
 
@@ -105,6 +124,10 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   };
 
   confirmationPopupOkBtnLabel = 'OK';
+
+  isOpenExport = false;
+
+  private changeStatusToActionLabel: string;
 
   private get nextWorkflowTaskStatus(): string {
     return this.topDetailsService.getStatusFromWorkflowActionsJbComponent(this.nextWorkflowData.actionName);
@@ -252,7 +275,7 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
           officeId: this.isOffice,
           vessel: { uid: data.detailedData.VesselUid },
           _id: data.detailedData.TaskManagerUid,
-          functionCode: eFunction.Project, // fixme - clarify what to use
+          functionCode: eFunction.DryDock, // fixme - clarify what to use
           moduleCode: eModule.Project // fixme - clarify what to use
         };
 
@@ -278,7 +301,6 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
   private getNextWorkFlow(taskStatus: string): void {
     this.currentTaskStatusCode = taskStatus;
-
     const nextWorkFlowParams =
       `wlType=${this.detailedData.ProjectTypeCode}&taskUid=${this.detailedData.TaskManagerUid}&isOffice=${this.isOffice}&` +
       `jobStatus=${this.currentTaskStatusCode}&vesselId=${this.detailedData.VesselId}&officeId=${this.isOffice}`;
@@ -287,17 +309,33 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       .getNextTaskManagerState(nextWorkFlowParams)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((nextWorkFlow) => {
+        this.setThreeDotsChangeStatusToLabel(nextWorkFlow.last_WorkflowType);
         this.setWorkflowActionsData(nextWorkFlow.Display_name_action, nextWorkFlow.Display_name_pass);
-        this.setThreeDotsActionsShow(nextWorkFlow.is_rework);
+        this.setThreeDotsActionsShow(nextWorkFlow);
         this.setNextWorkflowRightCode(nextWorkFlow.Display_name_action, nextWorkFlow.right_code);
       });
   }
 
-  private setThreeDotsActionsShow(canBeReworked: boolean) {
+  private setThreeDotsActionsShow(nextWorkFlow: Workflow) {
+    const actionName = nextWorkFlow.Display_name_action;
+
     this.threeDotsActionsShow = {
       ...this.threeDotsActionsShow,
-      [eProjectHeader3DotActions.Rework]: canBeReworked
+      [eProjectHeader3DotActions.Rework]: nextWorkFlow.is_rework,
+      [eProjectHeader3DotActions.Delete]: this.areStatusesSame(this.detailedData.ProjectStatusId, eProjectWorklowStatusAction.Raise)
     };
+    if (this.changeStatusToActionLabel) {
+      this.threeDotsActionsShow[this.changeStatusToActionLabel] = !this.areStatusesSame(actionName, eProjectWorklowStatusAction.Unclose);
+    }
+  }
+
+  private setThreeDotsChangeStatusToLabel(lastWfType: string) {
+    const changeStatusToAction = this.threeDotsActions.find((action) => action.label === '');
+    if (changeStatusToAction && lastWfType) {
+      changeStatusToAction.label = `Change Status to ${lastWfType}`;
+      this.changeStatusToActionLabel = changeStatusToAction.label;
+    }
+    return changeStatusToAction;
   }
 
   private setNextWorkflowRightCode(actionName: string, rightCode: string) {
@@ -325,5 +363,9 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       jobCardNo: this.detailedData.ProjectCode,
       vesselId: this.detailedData.VesselId
     });
+  }
+
+  private areStatusesSame(status: string, statusToCompare: string): boolean {
+    return this.topDetailsService.areStatusesSame(status, statusToCompare);
   }
 }

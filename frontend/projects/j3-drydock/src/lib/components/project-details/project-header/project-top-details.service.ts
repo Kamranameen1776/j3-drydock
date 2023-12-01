@@ -142,4 +142,8 @@ export class ProjectTopDetailsService {
       lowStatus === eProjectWorklowStatusAction['In Progress'].toLowerCase()
     );
   }
+
+  areStatusesSame(status: string, statusToCompare: string): boolean {
+    return status.toLowerCase() === statusToCompare.toLowerCase();
+  }
 }
