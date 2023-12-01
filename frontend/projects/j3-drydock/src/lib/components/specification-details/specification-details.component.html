@@ -15,6 +15,7 @@
               *ngIf="specificationDetailsInfo"
               [specificationDetailsInfo]="specificationDetailsInfo"
               (formData)="validateDetail($event)"
+              (valueChanged)="onValueChange($event)"
             ></jb-specification-general-information>
           </div>
           <div #subItems>

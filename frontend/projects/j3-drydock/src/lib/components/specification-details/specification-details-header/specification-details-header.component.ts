@@ -32,6 +32,7 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
   @ViewChild('detailsTopSection') detailsTopSection: JbDetailsTopSectionComponent;
 
   @Input() specificationDetailsInfo: SpecificationDetails;
+  @Input() detailDataChanged: boolean;
   @Output() saveButtonClick = new EventEmitter<FormGroup>();
 
   saveButtonDisabled = true;

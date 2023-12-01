@@ -38,6 +38,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   private readonly menuId = 'specification-details-menu';
   public detailForm: FormGroup;
+  public detailDataChanged = false;
   currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
   eProjectDetailsSideMenuId = eSpecificationDetailsPageMenuIds;
   growlMessage$ = this.growlMessageService.growlMessage$;
@@ -117,6 +118,10 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     if (form.valid) {
       this.detailForm = form;
     }
+  }
+
+  onValueChange($event) {
+    this.detailDataChanged = $event;
   }
 
   public async save(headerform: FormGroup): Promise<void> {
