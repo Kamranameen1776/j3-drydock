@@ -3,10 +3,19 @@
     titleText="Requisitions"
     [size]="eLayoutWidgetSize.Auto"
   >
-    <div class="buttons" awidget-header-buttons>
-      <jb-button label="Link Requisitions" [type]="JbButtonType.NoButton"></jb-button>
+    <div
+      class="buttons"
+      awidget-header-buttons
+    >
+      <jb-button
+        label="Link Requisitions"
+        [type]="JbButtonType.NoButton"
+      ></jb-button>
     </div>
-    <div awidget-content class="grid">
+    <div
+      awidget-content
+      class="grid"
+    >
       <jb-grid
         *ngIf="gridData"
         [gridName]="gridData.gridName"
