@@ -39,6 +39,7 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
     this.cd.markForCheck();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onValueChange(event) {
     this.saveButtonDisabled = false;
   }
