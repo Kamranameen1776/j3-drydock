@@ -7,7 +7,7 @@ import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-fa
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { DeleteStatementOfFactsDto } from './dtos/DeleteStatementOfFactsDto';
+import { DeleteStatementOfFactDto } from './dtos/DeleteStatementOfFactDto';
 
 export class DeleteStatementsOfFactsCommand extends Command<Request, void> {
     repository: StatementOfFactsRepository;
@@ -30,7 +30,7 @@ export class DeleteStatementsOfFactsCommand extends Command<Request, void> {
         if (!request) {
             throw new Error('Request is null');
         }
-        const deleteStatementOfFacts: DeleteStatementOfFactsDto = plainToClass(DeleteStatementOfFactsDto, request.body);
+        const deleteStatementOfFacts: DeleteStatementOfFactDto = plainToClass(DeleteStatementOfFactDto, request.body);
         const result = await validate(deleteStatementOfFacts);
         if (result.length) {
             throw result;
@@ -43,17 +43,17 @@ export class DeleteStatementsOfFactsCommand extends Command<Request, void> {
      * @returns New created project result
      */
     protected async MainHandlerAsync(request: Request): Promise<void> {
-        const deleteStatementOfFactsDto: DeleteStatementOfFactsDto = request.body as DeleteStatementOfFactsDto;
-        const { uid } = deleteStatementOfFactsDto;
-        const vessel = await this.vesselRepository.GetVesselByStatementOfFact(uid);
+        const deleteStatementOfFactsDto: DeleteStatementOfFactDto = request.body as DeleteStatementOfFactDto;
+        const { StatementOfFactUid } = deleteStatementOfFactsDto;
+        const vessel = await this.vesselRepository.GetVesselByStatementOfFact(StatementOfFactUid);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            await this.repository.DeleteStatementOfFacts(uid, queryRunner);
+            await this.repository.DeleteStatementOfFacts(StatementOfFactUid, queryRunner);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,
                 'uid',
-                uid,
+                StatementOfFactUid,
                 vessel.VesselId,
             );
             return;
