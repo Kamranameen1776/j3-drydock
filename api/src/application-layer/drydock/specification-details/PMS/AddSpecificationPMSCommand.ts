@@ -20,9 +20,9 @@ export class AddSpecificationPmsCommand extends Command<UpdateSpecificationPmsRe
                 PMSUid,
             };
         });
-        await this.uow.ExecuteAsync(async (queryRunner) => {
-            const vessel = await this.vesselsRepository.GetVesselBySpecification(request.body.uid, queryRunner);
+        const vessel = await this.vesselsRepository.GetVesselBySpecification(request.body.uid);
 
+        await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.specificationDetailsRepository.addSpecificationPms(data, queryRunner);
             const condition = `uid IN ('${data.map((i) => i.uid).join(`','`)}')`;
             await SynchronizerService.dataSynchronizeByConditionManager(

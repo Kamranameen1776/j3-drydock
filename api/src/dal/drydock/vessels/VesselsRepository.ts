@@ -1,4 +1,4 @@
-import { getManager, QueryRunner } from 'typeorm';
+import { getConnection, QueryRunner } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
 import {
@@ -9,8 +9,11 @@ import {
 } from '../../../entity/drydock';
 
 export class VesselsRepository {
-    public async GetVessel(vesselId: number): Promise<LibVesselsEntity> {
-        const vesselRepository = getManager().getRepository(LibVesselsEntity);
+    public async GetVessel(
+        vesselId: number,
+        queryRunner: QueryRunner = getConnection().createQueryRunner(),
+    ): Promise<LibVesselsEntity> {
+        const vesselRepository = queryRunner.manager.getRepository(LibVesselsEntity);
 
         const data = await vesselRepository.findOneOrFail({
             where: {
@@ -21,8 +24,11 @@ export class VesselsRepository {
         return data;
     }
 
-    public async GetVesselByUID(vesselUID: string): Promise<LibVesselsEntity> {
-        const vesselRepository = getManager().getRepository(LibVesselsEntity);
+    public async GetVesselByUID(
+        vesselUID: string,
+        queryRunner: QueryRunner = getConnection().createQueryRunner(),
+    ): Promise<LibVesselsEntity> {
+        const vesselRepository = queryRunner.manager.getRepository(LibVesselsEntity);
 
         const data = await vesselRepository.findOneOrFail({
             where: {
@@ -33,8 +39,11 @@ export class VesselsRepository {
         return data;
     }
 
-    public async GetVesselByProjectUid(projectUid: string): Promise<LibVesselsEntity> {
-        const projectRepository = getManager().getRepository(ProjectEntity);
+    public async GetVesselByProjectUid(
+        projectUid: string,
+        queryRunner: QueryRunner = getConnection().createQueryRunner(),
+    ): Promise<LibVesselsEntity> {
+        const projectRepository = queryRunner.manager.getRepository(ProjectEntity);
         const project = await projectRepository.findOneOrFail({
             where: {
                 uid: projectUid,
@@ -43,8 +52,11 @@ export class VesselsRepository {
         return this.GetVesselByUID(project.VesselUid);
     }
 
-    public async GetVesselByStatementOfFact(uid: string): Promise<LibVesselsEntity> {
-        const specificationRepository = getManager().getRepository(StatementOfFactsEntity);
+    public async GetVesselByStatementOfFact(
+        uid: string,
+        queryRunner: QueryRunner = getConnection().createQueryRunner(),
+    ): Promise<LibVesselsEntity> {
+        const specificationRepository = queryRunner.manager.getRepository(StatementOfFactsEntity);
 
         const res = await specificationRepository
             .createQueryBuilder('sof')
@@ -53,10 +65,13 @@ export class VesselsRepository {
             .where('sof.ActiveStatus = 1')
             .andWhere('sof.uid = :uid', { uid })
             .execute();
-        return this.GetVesselByUID(res[0].VesselUid);
+        return this.GetVesselByUID(res[0].VesselUid, queryRunner);
     }
 
-    public async GetVesselBySpecification(uid: string, queryRunner: QueryRunner): Promise<LibVesselsEntity> {
+    public async GetVesselBySpecification(
+        uid: string,
+        queryRunner: QueryRunner = getConnection().createQueryRunner(),
+    ): Promise<LibVesselsEntity> {
         const specificationRepository = queryRunner.manager.getRepository(SpecificationDetailsEntity);
 
         const res = await specificationRepository
@@ -66,6 +81,6 @@ export class VesselsRepository {
             .where('spec.ActiveStatus = 1')
             .andWhere('spec.uid = :uid', { uid })
             .execute();
-        return this.GetVesselByUID(res[0].VesselUid);
+        return this.GetVesselByUID(res[0].VesselUid, queryRunner);
     }
 }

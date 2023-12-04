@@ -1,6 +1,5 @@
 import { Request } from 'express';
-
-import { DataUtilService, ODataService, SynchronizerService } from 'j2utils';
+import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, In, QueryRunner } from 'typeorm';
 
 import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
@@ -31,7 +30,6 @@ import {
 } from '../../../entity/drydock';
 import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
 import { ODataResult } from '../../../shared/interfaces';
-import { VesselsRepository } from '../vessels/VesselsRepository';
 import {
     CreateInspectionsDto,
     ICreateSpecificationDetailsDto,
@@ -42,8 +40,6 @@ import {
 } from './dtos';
 
 export class SpecificationDetailsRepository {
-    private vesselRepository = new VesselsRepository();
-
     public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {
         const repository = queryRunner.manager.getRepository(SpecificationPmsEntity);
         await repository.update(
@@ -316,18 +312,7 @@ export class SpecificationDetailsRepository {
             newEntities.push(specificationRequisition);
         });
 
-        const result = await queryRunner.manager.save(SpecificationRequisitionsEntity, newEntities);
-
-        const vessel = await this.vesselRepository.GetVesselBySpecification(specificationUid, queryRunner);
-
-        await SynchronizerService.dataSynchronizeByConditionManager(
-            queryRunner.manager,
-            'dry_dock.specification_requisitions',
-            vessel.VesselId,
-            `specification_uid = '${specificationUid}' AND requisition_uid IN ('${requisitionUid.join(`','`)}')`,
-        );
-
-        return result;
+        return queryRunner.manager.save(SpecificationRequisitionsEntity, newEntities);
     }
 
     public async deleteSpecificationRequisitions(
@@ -344,14 +329,5 @@ export class SpecificationDetailsRepository {
             .where(`specification_uid = '${specificationUid}'`)
             .andWhere(`requisition_uid = '${requisitionUid}'`)
             .execute();
-
-        const vessel = await this.vesselRepository.GetVesselBySpecification(specificationUid, queryRunner);
-
-        await SynchronizerService.dataSynchronizeByConditionManager(
-            queryRunner.manager,
-            'dry_dock.specification_requisitions',
-            vessel.VesselId,
-            `specification_uid = '${specificationUid}' AND requisition_uid = '${requisitionUid}'`,
-        );
     }
 }
