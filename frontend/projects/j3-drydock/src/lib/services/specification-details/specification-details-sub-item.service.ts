@@ -1,27 +1,14 @@
 import { Injectable } from '@angular/core';
-import {
-  Column,
-  Filter,
-  FilterListSet,
-  GridRowActions,
-  WebApiRequest,
-  eColor,
-  eCrud,
-  eGridRowActions,
-  eIconNames
-} from 'jibe-components';
+import { Column, Filter, FilterListSet, GridRowActions, WebApiRequest, eColor, eCrud, eGridRowActions, eIconNames } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
-import { eSpecificationDetailsSubItemsFields, eSpecificationDetailsSubItemsLabels } from '../../models/enums/specification-details-sub-items.enum';
-
-export enum SpecificationStatus {
-  RAISED = 'Raised',
-  APPROVED = 'Approved',
-  COMPLETED = 'Completed',
-  REJECTED = 'Rejected'
-}
+import {
+  eSpecificationDetailsSubItemsFields,
+  eSpecificationDetailsSubItemsLabels
+} from '../../models/enums/specification-details-sub-items.enum';
 
 @Injectable()
 export class SpecificationDetailsSubItemsGridService {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
 
   public getApiRequest(specificationUid): WebApiRequest {
@@ -33,7 +20,7 @@ export class SpecificationDetailsSubItemsGridService {
       entity: 'drydock',
       body: {
         specificationDetailsUid: specificationUid
-      },
+      }
     };
   }
 
@@ -53,8 +40,8 @@ export class SpecificationDetailsSubItemsGridService {
   private readonly columns: Column[] = [
     {
       DisableSort: true,
-      DisplayText: eSpecificationDetailsSubItemsLabels.ItemNumber,
-      FieldName: eSpecificationDetailsSubItemsFields.ItemNumber,
+      DisplayText: eSpecificationDetailsSubItemsLabels.Number,
+      FieldName: eSpecificationDetailsSubItemsFields.Number,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -104,7 +91,7 @@ export class SpecificationDetailsSubItemsGridService {
     {
       DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Discount,
-      FieldName:  eSpecificationDetailsSubItemsFields.Discount,
+      FieldName: eSpecificationDetailsSubItemsFields.Discount,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -135,5 +122,4 @@ export class SpecificationDetailsSubItemsGridService {
   private readonly filters: Filter[] = [];
 
   private filtersLists: FilterListSet = {};
-
 }

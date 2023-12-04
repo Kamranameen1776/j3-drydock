@@ -3,8 +3,6 @@ import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities } from 'ji
 import { Observable } from 'rxjs';
 import { GetSpecificationDetailsDto } from '../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
-import { map } from 'rxjs/operators';
-import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../models/interfaces/functions-tree-node';
 import { eSpecificationDetailsGeneralInformationFields } from '../../models/enums/specification-details-general-information.enum';
 import f from 'odata-filter-builder';
 @Injectable({
@@ -58,6 +56,21 @@ export class SpecificationDetailsService {
     return apiRequest;
   }
 
+  public getItemSourceRequest() {
+    const apiRequest: WebApiRequest = {
+      apiBase: eApiBase.MasterAPI,
+      entity: eEntities.Library,
+      action: 'get-library-data-by-code',
+      params: `libraryCode=itemSource`,
+      crud: eCrud.Post,
+      odata: {
+        count: 'false',
+        filter: f().eq('active_status', true)
+      }
+    };
+    return apiRequest;
+  }
+
   public getStandardJobsFiltersRequest(fieldName: eSpecificationDetailsGeneralInformationFields) {
     const apiRequest: WebApiRequest = {
       // TODO:update jibe lib
@@ -71,5 +84,20 @@ export class SpecificationDetailsService {
       }
     };
     return apiRequest;
+  }
+
+  deleteSpecificationRequisition(specificationUid: string, requisitionUid: string) {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      action: 'specification-details/delete-specification-requisition',
+      crud: eCrud.Post,
+      body: {
+        specificationUid,
+        requisitionUid
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(request);
   }
 }

@@ -1,9 +1,13 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
-import { SpecificationGridService, SpecificationType } from '../../../services/specifications/specification.service';
-import { ApiRequestService, GridService, JmsTechApiService, WebApiRequest, eGridRefreshType, eJbTreeEvents } from 'jibe-components';
+import { SpecificationGridService, SpecificationType } from '../../../services/project/specification.service';
+import { GridService, eGridRefreshType, eJbTreeEvents } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SpecificationCreateFormService } from '../specification-form/specification-create-form-service';
+import { FunctionsService } from '../../../services/functions.service';
+import { Observable } from 'rxjs';
+import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
+import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'jb-specifications',
@@ -16,7 +20,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   @Input()
   vesselUid: string;
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
-  treeData: WebApiRequest;
+  treeData$: Observable<FunctionsFlatTreeNode[]>;
   gridData: GridInputsWithRequest;
   eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.Select, eJbTreeEvents.UnSelect];
   activeIndex = 0;
@@ -53,9 +57,8 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   constructor(
     private specsService: SpecificationGridService,
-    private jmsTechService: JmsTechApiService,
     private formService: SpecificationCreateFormService,
-    private apiRequestService: ApiRequestService,
+    private functionsService: FunctionsService,
     private gridService: GridService
   ) {
     super();
@@ -66,20 +69,17 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   }
 
   ngOnInit(): void {
-    this.treeData = this.jmsTechService.getComponentFunctionTree;
-    this.treeData.params = `vesselUid=${this.vesselUid}`;
+    this.treeData$ = this.functionsService.getFunctions().pipe(
+      takeUntil(this.unsubscribe$),
+      map((functions) => {
+        return functions.map((func) => this.functionsService.calculateSelectable(func, functions));
+      })
+    );
+    this.loadFunctionsToForm();
     this.gridData = this.getData();
-
-    this.loadFunctions();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.vesselUid) {
-      this.treeData.params = `vesselUid=${changes.vesselUid.currentValue}`;
-      this.loadFunctions();
-      this.functionUIDs = [];
-    }
-
     if (changes.projectId) {
       this.getData(changes.projectId.currentValue);
     }
@@ -93,9 +93,9 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     }
   }
 
-  loadFunctions(): void {
-    this.apiRequestService.sendApiReq(this.treeData).subscribe((flatTree) => {
-      this.formService.functionsFlatTree$.next(flatTree.records.map((leaf) => ({ ...leaf, selectable: true })));
+  loadFunctionsToForm(): void {
+    this.treeData$.subscribe((flatTree) => {
+      this.formService.functionsFlatTree$.next(flatTree);
     });
   }
 
@@ -106,11 +106,11 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   setNodeData(event) {
     if (event?.type === eJbTreeEvents.NodeSelect) {
-      this.functionUIDs = [...this.functionUIDs, event.payload.uid];
+      this.functionUIDs = [...this.functionUIDs, event.payload.Child_ID];
       this.gridData = this.getData();
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
     } else if (event?.type === eJbTreeEvents.UnSelect) {
-      this.functionUIDs = this.functionUIDs.filter((uid) => uid !== event.payload.uid);
+      this.functionUIDs = this.functionUIDs.filter((uid) => uid !== event.payload.Child_ID);
       this.gridData = this.getData();
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
     }

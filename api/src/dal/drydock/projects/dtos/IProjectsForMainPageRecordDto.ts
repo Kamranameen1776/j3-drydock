@@ -8,8 +8,10 @@ export interface IProjectsForMainPageRecordDto {
     VesselName: string;
 
     ProjectTypeName: string;
+    ProjectTypeCode?: string;
 
     ProjectStateName: string;
+    ProjectStatusId?: string;
 
     Subject: string;
 
@@ -19,6 +21,7 @@ export interface IProjectsForMainPageRecordDto {
     ProjectStatusName: string;
 
     VesselUid: string;
+    VesselId?: string;
 
     StartDate: Date;
 

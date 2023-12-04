@@ -23,13 +23,13 @@
     awidget-content
   >
     <jb-tree
-      [nodeAPIReq]="treeData"
+      [staticNodes]="treeData$ | async"
       [showSetting]="{ showSearch: true, showButtons: false }"
-      filterPlaceholder="Search Function / Component"
+      filterPlaceholder="Search Function"
       (nodeData)="setNodeData($event)"
       [eventsList]="eventsList"
       [virtualScroll]="true"
-      scrollHeight="582px"
+      scrollHeight="544px"
     ></jb-tree>
     <!--        <p-tabView
     class="jb-tabview"

@@ -12,7 +12,9 @@ import { Router } from '@angular/router';
 })
 export class SpecificationSubItemsComponent implements OnInit {
   @Input() specificationDetailsInfo: GetSpecificationDetailsDto;
+
   gridData: GridInputsWithRequest;
+
   protected readonly JbButtonType = JbButtonType;
 
   public menuItems: { label: string; command: () => void }[] = [];
@@ -38,8 +40,8 @@ export class SpecificationSubItemsComponent implements OnInit {
     return [
       {
         label: 'PMS / Findings',
-        command: () => this.linkRequisitions(),
-      },
+        command: () => this.linkRequisitions()
+      }
     ];
   }
 

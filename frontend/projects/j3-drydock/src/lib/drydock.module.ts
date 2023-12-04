@@ -7,14 +7,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule as PrimeNgModule } from 'primeng';
 import { JiBeTheme, JibeComponentsModule } from 'jibe-components';
 import { ProjectDetailsComponent } from './components/project-details/project-details.component';
-import { SpecificationGridService } from './services/specifications/specification.service';
+import { SpecificationGridService } from './services/project/specification.service';
 import { SpecificationStatusPipe } from './components/project-details/specification/specification-status.pipe';
 import { StatusCodeColorPipe } from './shared/pipes/status-code-color.pipe';
-import { SpecificationTopDetailsService } from './services/specifications/specification-top-details.service';
 import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
 import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
 import { FunctionsTreeSelectComponent } from './shared/components/functions-tree-select/functions-tree-select.component';
-import { ProjectHeaderComponent } from './components/project-header/project-header.component';
+import { ProjectHeaderComponent } from './components/project-details/project-header/project-header.component';
 import { SpecificationsComponent } from './components/project-details/specification/specifications.component';
 import { SubItemsComponent } from './components/standard-jobs-main/sub-items/sub-items.component';
 import { UpsertSubItemFormComponent } from './components/standard-jobs-main/sub-items/upsert-sub-item-form/upsert-sub-item-form.component';
@@ -23,7 +22,6 @@ import { StandardJobsStatusNamePipe } from './components/standard-jobs-main/pipe
 import { StandardJobsStatusColorPipe } from './components/standard-jobs-main/pipes/status-color.pipe';
 import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
 import { ProjectsSpecificationsGridComponent } from './components/projects-main-page/projects-specifications-grid/projects-specifications-grid.component';
-import { ProjectsService } from './services/ProjectsService';
 import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
 import { CreateSpecificationPopupComponent } from './components/project-details/create-specification-popup/create-specification-popup.component';
 import { SpecificationFormComponent } from './components/project-details/specification-form/specification-form.component';
@@ -40,8 +38,10 @@ import { SpecificationDetailsService } from './services/specification-details/sp
 import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
 import { SpecificationGeneralInformationComponent } from './components/specification-details/specification-general-information/specification-general-information.component';
 import { SpecificationGeneralInformationInputservice } from './components/specification-details/specification-general-information/specification-general-information-inputs';
+import { SpecificationRequisitionsComponent } from './components/specification-details/specification-requisitions/specification-requisitions.component';
 import { SpecificationSubItemsComponent } from './components/specification-details/specification-sub-items/specification-sub-items.component';
 import { SpecificationDetailsSubItemsGridService } from './services/specification-details/specification-details-sub-item.service';
+import { StatementOfFactsComponent } from './components/project-details/project-monitoring/statement-of-facts/statement-of-facts.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -82,7 +82,9 @@ export function winEnv(): unknown {
     SpecificationDetailsComponent,
     SpecificationDetailsHeaderComponent,
     SpecificationGeneralInformationComponent,
-    SpecificationSubItemsComponent
+    SpecificationRequisitionsComponent,
+    SpecificationSubItemsComponent,
+    StatementOfFactsComponent
   ],
   imports: [
     CommonModule,
@@ -102,8 +104,6 @@ export function winEnv(): unknown {
   providers: [
     DatePipe,
     SpecificationGridService,
-    SpecificationTopDetailsService,
-    ProjectsService,
     SpecificationDetailsService,
     LeftPanelFilterService,
     SpecificationCreateFormService,

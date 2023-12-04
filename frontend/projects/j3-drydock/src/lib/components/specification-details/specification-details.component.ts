@@ -9,6 +9,7 @@ import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
+import { BehaviorSubject } from "rxjs";
 @Component({
   selector: 'jb-specification-details',
   templateUrl: './specification-details.component.html',
@@ -75,6 +76,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         this[selectedMenu.id]?.nativeElement.scrollIntoView({ behavior: 'smooth' });
       }
     });
+    console.log(this.currentSectionId);
   }
 
   private hideSideMenu() {

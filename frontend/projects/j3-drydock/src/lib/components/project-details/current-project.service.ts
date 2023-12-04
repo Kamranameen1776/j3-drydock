@@ -4,6 +4,5 @@ import { ProjectDetails } from '../../models/interfaces/project-details';
 
 @Injectable()
 export class CurrentProjectService {
-  projectId$ = new BehaviorSubject(null);
-  savedProject$ = new BehaviorSubject<ProjectDetails>(null);
+  initialProject$ = new BehaviorSubject<ProjectDetails>(null);
 }

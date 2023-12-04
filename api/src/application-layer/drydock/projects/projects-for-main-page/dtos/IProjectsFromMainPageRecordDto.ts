@@ -5,10 +5,12 @@ export interface IProjectsFromMainPageRecordDto {
 
     VesselName: string;
     VesselUid?: string;
+    VesselId?: string;
 
     Subject: string;
 
     ProjectTypeName: string;
+    ProjectTypeCode?: string;
 
     ProjectManager: string;
     ProjectManagerUid?: string;
@@ -18,6 +20,7 @@ export interface IProjectsFromMainPageRecordDto {
     ShipYard: string;
 
     ProjectStatusName: string;
+    ProjectStatusId?: string;
 
     ProjectState: string;
 
