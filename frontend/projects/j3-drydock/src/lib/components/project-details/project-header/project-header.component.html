@@ -62,3 +62,14 @@
 >
   <span>Are you sure want to change the status of this record to {{ lastWorkflowType }} with its child records if any ?</span>
 </jb-drydock-simple-confirmation-popup>
+
+<jb-drydock-simple-confirmation-popup
+  [config]="{ dialogHeader: 'Re-Sync Record' }"
+  [isOpen]="isReSyncPopupVisible"
+  (confirmed)="onReSyncPopupConfirm($event)"
+>
+  <span>
+    Re-syncing the record will override all existing data in both office and vessel. This action cannot be reversed. Are you sure you want
+    to proceed?
+  </span>
+</jb-drydock-simple-confirmation-popup>

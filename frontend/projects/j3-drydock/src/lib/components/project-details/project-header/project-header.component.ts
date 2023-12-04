@@ -110,10 +110,6 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
   isConfirmationPopupVisible = false;
 
-  isSkipWorkflowPopupVisible = false;
-
-  isSkippingWorkflowToLastStatus = false;
-
   confirmationForm = new FormGroup({ textMessage: new FormControl('') });
 
   confirmationMessage = '';
@@ -128,6 +124,12 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   };
 
   confirmationPopupOkBtnLabel = 'OK';
+
+  isSkipWorkflowPopupVisible = false;
+
+  isSkippingWorkflowToLastStatus = false;
+
+  isReSyncPopupVisible = false;
 
   isOpenExport = false;
 
@@ -208,6 +210,10 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
         this.threeDotAction = eProjectHeader3DotActions.Rework;
         break;
 
+      case eProjectHeader3DotActions.Resync:
+        this.isReSyncPopupVisible = true;
+        break;
+
       case this.changeStatusToActionLabel:
         if (this.changeStatusToActionLabel) {
           this.isSkipWorkflowPopupVisible = true;
@@ -281,6 +287,16 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     if (isConfirmed) {
       this.isSkippingWorkflowToLastStatus = true;
       this.isConfirmationPopupVisible = true;
+    }
+  }
+
+  onReSyncPopupConfirm(isConfirmed: boolean) {
+    this.isReSyncPopupVisible = false;
+    if (isConfirmed) {
+      this.taskManagerService
+        .reSyncWorkflow(this.detailedData.TaskManagerUid, this.detailedData.ProjectTypeCode)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe();
     }
   }
 

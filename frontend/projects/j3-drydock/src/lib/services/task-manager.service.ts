@@ -100,4 +100,15 @@ export class TaskManagerService {
     };
     return this.apiReqService.sendApiReq(saveWorkFlowAndFollowData);
   }
+
+  reSyncWorkflow(task_manager_uid: string, wl_type: string) {
+    const saveWorkflow: WebApiRequest = {
+      apiBase: eApiBase.J3TaskManagerAPI,
+      entity: eEntities.TaskManager,
+      action: 'task-manager-sync',
+      crud: eCrud.Post,
+      body: { task_manager_uid, wl_type }
+    };
+    return this.apiReqService.sendApiReq(saveWorkflow);
+  }
 }
