@@ -88,6 +88,7 @@ export class SpecificationDetailsRepository {
                 'spec.FunctionUid as FunctionUid',
                 'spec.Function as "Function"',
                 'spec.AccountCode as AccountCode',
+                'spec.TecTaskManagerUid as TaskManagerUid',
 
                 'spec.ItemSourceUid as ItemSourceUid',
                 'its.DisplayName as ItemSourceText',
@@ -105,6 +106,7 @@ export class SpecificationDetailsRepository {
 
                 'ves.VesselName AS VesselName',
                 'ves.uid AS VesselUid',
+                'ves.VesselId AS VesselId',
                 `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
                 'usr.uid AS ProjectManagerUid',
             ])
