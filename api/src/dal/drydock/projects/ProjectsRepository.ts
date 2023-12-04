@@ -156,7 +156,7 @@ export class ProjectsRepository {
                 'cast(pr.EndDate as datetimeoffset) AS EndDate',
                 'gps.GroupProjectStatusId as GroupProjectStatusId',
                 'vessel.VesselId as VesselId',
-                'vessel.Vessel_type as VesselType',
+                'vessel.VesselType as VesselType',
                 'pr.VesselUid as VesselUid',
                 'vessel.FleetCode as FleetCode',
                 'pr.TaskManagerUid as TaskManagerUid',
