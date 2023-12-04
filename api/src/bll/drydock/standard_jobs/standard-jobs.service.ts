@@ -8,7 +8,7 @@ import {
     GetStandardJobSubItemsResultDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
 import { StandardJobs, StandardJobsSubItems } from '../../../entity/drydock';
-import { QueryStrings } from "../../../shared/enum/queryStrings.enum";
+import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
 
 export class StandardJobsService {
     notSelectedValueLabel = '-';
@@ -96,7 +96,6 @@ export class StandardJobsService {
 
                 item.hasSubItems = item.subItems.length > 0 ? QueryStrings.Yes : QueryStrings.No;
             });
-
         }
 
         return {
