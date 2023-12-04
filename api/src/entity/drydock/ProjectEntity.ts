@@ -18,6 +18,12 @@ export class ProjectEntity {
     })
     VesselUid: string;
 
+    @Column('int', {
+        nullable: false,
+        name: 'Vessel_type',
+    })
+    VesselType: string;
+
     @Column('uniqueidentifier', {
         nullable: false,
         name: 'project_type_uid',
