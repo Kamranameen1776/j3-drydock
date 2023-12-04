@@ -29,6 +29,7 @@ import {
     TmDdLibItemCategory,
     TmDdLibMaterialSuppliedBy,
 } from '../../../entity/drydock';
+import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
 import { ODataResult } from '../../../shared/interfaces';
 import {
@@ -39,7 +40,6 @@ import {
     PmsJobsData,
     SpecificationDetailsResultDto,
 } from './dtos';
-import {JmsDtlWorkflowConfigEntity} from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 
 export class SpecificationDetailsRepository {
     public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {
