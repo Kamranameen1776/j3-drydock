@@ -3,8 +3,6 @@ import { getConnection, getManager, In, QueryRunner, UpdateResult } from 'typeor
 
 import {
     CreateStandardJobsRequestDto,
-    GetStandardJobPopupDto,
-    GetStandardJobPopupRequestDto,
     GetStandardJobsQueryResult,
     StandardJobsFiltersAllowedKeys,
     StandardJobsFilterTablesMap,
@@ -16,6 +14,7 @@ import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard
 import { className } from '../../../common/drydock/ts-helpers/className';
 import {
     LibVesseltypes,
+    ProjectEntity,
     StandardJobs,
     StandardJobsSubItems,
     StandardJobsSurveyCertificateAuthorityEntity,
@@ -213,41 +212,6 @@ export class StandardJobsRepository {
             .where('sub_items.active_status = 1')
             .andWhere(`sub_items.standard_job_uid IN (${uidString})`)
             .getRawMany();
-    }
-
-    public async getStandardJobsPopupData(
-        data: GetStandardJobPopupRequestDto,
-    ): Promise<ODataResult<GetStandardJobPopupDto>> {
-        const oDataService = new ODataService(data, getConnection);
-        const body = data.body;
-
-        const standardJobsRepository = getManager().getRepository(StandardJobs);
-
-        const query = standardJobsRepository
-            .createQueryBuilder('sj')
-            .select([
-                'sj.uid as uid',
-                'sj.functionUid as functionUid',
-                'sj.subject as subject',
-                'sj.number as number',
-                'sj."function" as "function"',
-                `IIF(COUNT("sjscae"."survey_id") > 0, '${QueryStrings.Yes}', '${QueryStrings.No}') as inspection`,
-                `IIF(COUNT("sjsi"."uid") > 0, '${QueryStrings.Yes}', '${QueryStrings.No}') as subItems`,
-            ])
-            .leftJoin(
-                className(StandardJobsSurveyCertificateAuthorityEntity),
-                'sjscae',
-                'sj.uid = sjscae.standard_job_uid',
-            )
-            .leftJoin(className(StandardJobsSubItems), 'sjsi', 'sj.uid = sjsi.standard_job_uid')
-            .leftJoin(className(StandardJobsVesselTypeEntity), 'sjvt', 'sj.uid = sjvt.standard_job_uid')
-            .leftJoin(className(LibVesseltypes), 'vt', 'sjvt.vessel_type_id = vt.ID')
-            .where('sj.active_status = 1')
-            .where(`vt.uid = '${body.vesselUid}'`)
-            .groupBy('sj.uid, sj.function_uid, sj.number, sj."function", sj.active_status, sj.subject')
-            .getSql();
-
-        return oDataService.getJoinResult(query);
     }
 
     private async updateStandardJobRelations(
