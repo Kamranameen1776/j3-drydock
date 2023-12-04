@@ -13,6 +13,7 @@ import {
     J3PrcPo,
     J3PrcRequisition,
     J3PrcRfqEntity,
+    JmsDtlWorkflowConfigDetailsEntity,
     LibItemSourceEntity,
     LibSurveyCertificateAuthority,
     LibUserEntity,
@@ -38,6 +39,7 @@ import {
     PmsJobsData,
     SpecificationDetailsResultDto,
 } from './dtos';
+import {JmsDtlWorkflowConfigEntity} from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 
 export class SpecificationDetailsRepository {
     public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {
@@ -84,7 +86,9 @@ export class SpecificationDetailsRepository {
                 'spec.uid as uid',
                 'spec.subject as Subject',
                 'tm.Code as SpecificationCode',
-                'tm.Status as Status',
+                'tm.Status as StatusId',
+                'wdetails.DisplayNameAction as StatusName',
+
                 'spec.FunctionUid as FunctionUid',
                 'spec.Function as "Function"',
                 'spec.AccountCode as AccountCode',
@@ -117,6 +121,12 @@ export class SpecificationDetailsRepository {
             .leftJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
             .leftJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
             .leftJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
+            .innerJoin(
+                className(JmsDtlWorkflowConfigDetailsEntity),
+                'wdetails',
+                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+            )
             .where('spec.ActiveStatus = 1')
             .andWhere('spec.uid = :uid', { uid })
             .getRawOne();
