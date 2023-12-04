@@ -76,7 +76,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         this[selectedMenu.id]?.nativeElement.scrollIntoView({ behavior: 'smooth' });
       }
     });
-    console.log(this.currentSectionId);
   }
 
   private hideSideMenu() {
