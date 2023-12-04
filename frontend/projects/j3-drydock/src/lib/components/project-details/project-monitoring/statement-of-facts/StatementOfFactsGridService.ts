@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Column, GridButton, GridRowActions, UserService, eGridColumnsWidth, FormModel, eFieldControlType } from 'jibe-components';
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
-import { nameOf } from 'projects/j3-drydock/src/lib/utils/nameOf';
-import { StatementOfFactsService } from 'projects/j3-drydock/src/lib/services/project-monitoring/statement-of-facts/StatementOfFactsService';
-import { GridInputsWithRequest } from 'projects/j3-drydock/src/lib/models/interfaces/grid-inputs';
+import { nameOf } from '../../../../utils/nameOf';
+import { StatementOfFactsService } from '../../../../services/project-monitoring/statement-of-facts/StatementOfFactsService';
+import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
 import {
   eStatementOfFactsDeleteDisplayNames,
   eStatementOfFactsDeleteFieldNames
-} from 'projects/j3-drydock/src/lib/models/enums/statement-of-fact-delete.enum';
+} from '../../../../models/enums/statement-of-fact-delete.enum';
 
 @Injectable()
 export class StatementOfFactsGridService {
