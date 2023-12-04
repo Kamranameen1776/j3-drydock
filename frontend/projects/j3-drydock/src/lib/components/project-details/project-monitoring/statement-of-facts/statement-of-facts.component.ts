@@ -4,12 +4,12 @@ import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { StatementOfFactsGridService } from './StatementOfFactsGridService';
 import { FormGroup } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
-import { UnsubscribeComponent } from 'projects/j3-drydock/src/lib/shared/classes/unsubscribe.base';
-import { GridInputsWithRequest } from 'projects/j3-drydock/src/lib/models/interfaces/grid-inputs';
-import { getSmallPopup } from 'projects/j3-drydock/src/lib/models/constants/popup';
-import { StatementOfFactsService } from 'projects/j3-drydock/src/lib/services/project-monitoring/statement-of-facts/StatementOfFactsService';
-import { StatementOfFactsGridOdataKeys } from 'projects/j3-drydock/src/lib/models/enums/StatementOfFactsGridOdataKeys';
-import { IDeleteStatementOfFactDto } from 'projects/j3-drydock/src/lib/services/project-monitoring/statement-of-facts/IDeleteStatementOfFactDto';
+import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
+import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
+import { getSmallPopup } from '../../../../models/constants/popup';
+import { StatementOfFactsService } from '../../../../services/project-monitoring/statement-of-facts/StatementOfFactsService';
+import { StatementOfFactsGridOdataKeys } from '../../../../models/enums/StatementOfFactsGridOdataKeys';
+import { IDeleteStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/IDeleteStatementOfFactDto';
 
 @Component({
   selector: 'jb-statement-of-facts',
