@@ -106,9 +106,13 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     buttonDisplayName: string;
   };
 
-  confirmationPopup: IJbDialog = { ...getSmallPopup(), dialogHeader: '' };
+  confirmationPopup: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Add Follow Up' };
 
   isConfirmationPopupVisible = false;
+
+  isSkipWorkflowPopupVisible = false;
+
+  isSkippingWorkflowToLastStatus = false;
 
   confirmationForm = new FormGroup({ textMessage: new FormControl('') });
 
@@ -126,6 +130,12 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   confirmationPopupOkBtnLabel = 'OK';
 
   isOpenExport = false;
+
+  private lastWorklowStatusInfo: {
+    last_Display_name_action: string;
+    last_WorkflowType: string;
+    last_status_right_code: string;
+  };
 
   private changeStatusToActionLabel: string;
 
@@ -197,12 +207,16 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       case eProjectHeader3DotActions.Rework.toLowerCase():
         this.threeDotAction = eProjectHeader3DotActions.Rework;
         break;
+
+      case this.changeStatusToActionLabel:
+        if (this.changeStatusToActionLabel) {
+          this.isSkipWorkflowPopupVisible = true;
+        }
+        break;
     }
   }
 
   onGoToNextStatusClicked(actionName: string) {
-    const confirmationMessage = 'Add Follow Up';
-    this.confirmationPopup.dialogHeader = confirmationMessage;
     this.isConfirmationPopupVisible = true;
   }
 
@@ -211,6 +225,19 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   }
 
   onConfirmationPopupOk() {
+    if (this.isSkippingWorkflowToLastStatus) {
+      const lastWfRightCode = this.lastWorklowStatusInfo.last_status_right_code;
+
+      const nextRighCode = lastWfRightCode ? JSON.parse(lastWfRightCode)[0] : '';
+      const nextTaskAction = this.lastWorklowStatusInfo.last_Display_name_action;
+
+      this.goToStatus(nextTaskAction, nextRighCode);
+    } else {
+      this.goToStatus(this.nextWorkflowTaskStatus, this.nextWorkFlowRightCode);
+    }
+  }
+
+  private goToStatus(nextAction: string, nextRightCode: string) {
     const remark: string = this.confirmationForm.controls.textMessage.value;
 
     const payload = {
@@ -222,12 +249,17 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       wl_type: this.detailedData.ProjectTypeCode,
       vessel_uid: this.detailedData.VesselUid,
       raised_location: this.isOffice,
-      task_status: this.nextWorkflowTaskStatus,
-      right_code: this.nextWorkFlowRightCode
+      task_status: nextAction,
+      right_code: nextRightCode
     };
 
     this.save()
-      .pipe(concatMap(() => this.taskManagerService.transitionToNextWorkflowStatus(payload)))
+      .pipe(
+        concatMap(() => this.taskManagerService.transitionToNextWorkflowStatus(payload)),
+        finalize(() => {
+          this.isSkippingWorkflowToLastStatus = false;
+        })
+      )
       .subscribe((res) => {
         this.currentTaskStatusCode = payload.task_status;
         this.detailedData.ProjectStatusName = res.statusData?.[0].status_display_name;
@@ -242,6 +274,14 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   onConfirmationPopupCancel() {
     this.confirmationForm.reset();
     this.isConfirmationPopupVisible = false;
+  }
+
+  onSkipWorkflowPopupConfirm(isConfirmed: boolean) {
+    this.isSkipWorkflowPopupVisible = false;
+    if (isConfirmed) {
+      this.isSkippingWorkflowToLastStatus = true;
+      this.isConfirmationPopupVisible = true;
+    }
   }
 
   private save() {
@@ -275,8 +315,8 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
           officeId: this.isOffice,
           vessel: { uid: data.detailedData.VesselUid },
           _id: data.detailedData.TaskManagerUid,
-          functionCode: eFunction.DryDock, // fixme - clarify what to use
-          moduleCode: eModule.Project // fixme - clarify what to use
+          functionCode: eFunction.DryDock, // fixme - clarify what to use - and why on back-end on workflow response another code tm_dry_ock_project??
+          moduleCode: eModule.Project // fixme - clarify what to use tm_drydock?
         };
 
         this.titleService.setTitle(`${this.detailedData.ProjectTypeName} ${this.detailedData.ProjectCode}`);
@@ -309,11 +349,23 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       .getNextTaskManagerState(nextWorkFlowParams)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((nextWorkFlow) => {
+        this.setLastWorkflowInfo(nextWorkFlow);
         this.setThreeDotsChangeStatusToLabel(nextWorkFlow.last_WorkflowType);
         this.setWorkflowActionsData(nextWorkFlow.Display_name_action, nextWorkFlow.Display_name_pass);
         this.setThreeDotsActionsShow(nextWorkFlow);
         this.setNextWorkflowRightCode(nextWorkFlow.Display_name_action, nextWorkFlow.right_code);
       });
+  }
+
+  private setLastWorkflowInfo(nextWorkFlow: Workflow) {
+    if (!nextWorkFlow?.last_WorkflowType) {
+      return;
+    }
+    this.lastWorklowStatusInfo = {
+      last_Display_name_action: nextWorkFlow.last_Display_name_action,
+      last_WorkflowType: nextWorkFlow.last_WorkflowType,
+      last_status_right_code: nextWorkFlow.last_status_right_code
+    };
   }
 
   private setThreeDotsActionsShow(nextWorkFlow: Workflow) {
@@ -331,11 +383,11 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
   private setThreeDotsChangeStatusToLabel(lastWfType: string) {
     const changeStatusToAction = this.threeDotsActions.find((action) => action.label === '');
+
     if (changeStatusToAction && lastWfType) {
       changeStatusToAction.label = `Change Status to ${lastWfType}`;
       this.changeStatusToActionLabel = changeStatusToAction.label;
     }
-    return changeStatusToAction;
   }
 
   private setNextWorkflowRightCode(actionName: string, rightCode: string) {
