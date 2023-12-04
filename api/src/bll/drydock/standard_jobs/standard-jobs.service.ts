@@ -96,6 +96,7 @@ export class StandardJobsService {
 
                 item.hasSubItems = item.subItems.length > 0 ? QueryStrings.Yes : QueryStrings.No;
             });
+
         }
 
         return {
