@@ -39,6 +39,9 @@ import { SpecificationDetailsHeaderComponent } from './components/specification-
 import { SpecificationGeneralInformationComponent } from './components/specification-details/specification-general-information/specification-general-information.component';
 import { SpecificationGeneralInformationInputservice } from './components/specification-details/specification-general-information/specification-general-information-inputs';
 import { SpecificationRequisitionsComponent } from './components/specification-details/specification-requisitions/specification-requisitions.component';
+import { SpecificationSubItemsComponent } from './components/specification-details/specification-sub-items/specification-sub-items.component';
+import { SpecificationDetailsSubItemsGridService } from './services/specification-details/specification-details-sub-item.service';
+import { StatementOfFactsComponent } from './components/project-details/project-monitoring/statement-of-facts/statement-of-facts.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -79,7 +82,9 @@ export function winEnv(): unknown {
     SpecificationDetailsComponent,
     SpecificationDetailsHeaderComponent,
     SpecificationGeneralInformationComponent,
-    SpecificationRequisitionsComponent
+    SpecificationRequisitionsComponent,
+    SpecificationSubItemsComponent,
+    StatementOfFactsComponent
   ],
   imports: [
     CommonModule,
@@ -102,7 +107,8 @@ export function winEnv(): unknown {
     SpecificationDetailsService,
     LeftPanelFilterService,
     SpecificationCreateFormService,
-    SpecificationGeneralInformationInputservice
+    SpecificationGeneralInformationInputservice,
+    SpecificationDetailsSubItemsGridService
   ],
   exports: [],
   entryComponents: []

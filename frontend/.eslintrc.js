@@ -33,7 +33,7 @@ module.exports = {
         'no-confusing-arrow': 'error',
         'no-console': 'error',
         'no-else-return': 'error',
-        'no-empty-function': ['error', { allow: ['constructors'] }],
+        '@typescript-eslint/no-empty-function': ['error', { allow: ['constructors'] }],
         'no-var': 'error',
         'max-lines': ['error', 1000],
 

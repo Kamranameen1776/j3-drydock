@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Column, Entity, OneToMany } from 'typeorm';
 
 import { BaseDatesEntity } from '../baseDatesEntity';

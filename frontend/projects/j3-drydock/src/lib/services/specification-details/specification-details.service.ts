@@ -94,7 +94,7 @@ export class SpecificationDetailsService {
       crud: eCrud.Post,
       body: {
         specificationUid,
-        requisitionUid,
+        requisitionUid
       }
     };
 

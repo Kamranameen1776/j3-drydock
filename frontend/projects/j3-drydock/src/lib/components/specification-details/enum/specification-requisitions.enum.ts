@@ -7,7 +7,7 @@ export enum SpecificationRequisitionsFieldNames {
   DeliveryDate = 'deliveryDate',
   Port = 'port',
   Amount = 'amount',
-  Status = 'statusDisplayName',
+  Status = 'statusDisplayName'
 }
 
 export enum SpecificationRequisitionsDisplayTexts {
@@ -19,5 +19,5 @@ export enum SpecificationRequisitionsDisplayTexts {
   DeliveryDate = 'Delivery Date',
   Port = 'Port',
   Amount = 'Amount',
-  Status = 'Status',
+  Status = 'Status'
 }

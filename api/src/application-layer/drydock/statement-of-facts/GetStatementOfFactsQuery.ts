@@ -3,12 +3,12 @@ import { validate } from 'class-validator';
 import { Request } from 'express';
 import { ODataResult } from 'shared/interfaces';
 
+import { IStatementOfFactsDto } from '../../../dal/drydock/statement-of-facts/IStatementOfFactsDto';
 import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-facts/StatementOfFactsRepository';
 import { Query } from '../core/cqrs/Query';
 import { GetStatementOfFactsDto } from './dtos/GetStatementOfFactsDto';
-import { GetStatementOfFactsResultDto } from './dtos/GetStatementOfFactsResultDto';
 
-export class GetStatementOfFactsQuery extends Query<Request, ODataResult<GetStatementOfFactsResultDto>> {
+export class GetStatementOfFactsQuery extends Query<Request, ODataResult<IStatementOfFactsDto>> {
     repository: StatementOfFactsRepository;
 
     constructor() {
@@ -34,8 +34,9 @@ export class GetStatementOfFactsQuery extends Query<Request, ODataResult<GetStat
     /**
      * @returns All specification details
      */
-    protected async MainHandlerAsync(request: Request): Promise<ODataResult<GetStatementOfFactsResultDto>> {
+    protected async MainHandlerAsync(request: Request): Promise<ODataResult<IStatementOfFactsDto>> {
         const data = await this.repository.GetStatementOfFacts(request);
+
         return data;
     }
 }
