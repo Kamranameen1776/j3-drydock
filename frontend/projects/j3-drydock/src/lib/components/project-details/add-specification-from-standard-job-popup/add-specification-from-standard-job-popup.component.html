@@ -1,0 +1,43 @@
+<jb-dialog
+  [dialogContent]="popupConfig"
+  [(dialogVisible)]="isOpen"
+  (closeDialog)="onCancel()"
+>
+  <div jb-dialog-body>
+    <div class="dialog-body">
+      <jb-tree
+        *ngIf="treeData$ | async"
+        [staticNodes]="treeData$ | async"
+        [showSetting]="{ showSearch: true, showButtons: false }"
+        filterPlaceholder="Search Function"
+        (nodeData)="setNodeData($event)"
+        [eventsList]="eventsList"
+        treeName="addFromStandardJobsTree"
+        [virtualScroll]="true"
+      ></jb-tree>
+
+      <jb-grid
+        *ngIf="gridData"
+        [gridName]="gridData.gridName"
+        [colData]="gridData.columns"
+        [tableDataReq]="gridData.request"
+        [filterData]="gridData.filters"
+        [filterListsSet]="gridData.filtersLists"
+        [getStyleByContainer]="true"
+        [selectionMode]="'multiple'"
+        [matrixSelectedValue]="selected"
+        (matrixSelection)="onSelect($event)"
+      ></jb-grid>
+    </div>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="!isPopupValid || isSaving"
+      [isCancelBtnDisabled]="isSaving"
+      okBtnLabel="Save"
+      (ok)="onSubmit()"
+      (cancel)="onCancel()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

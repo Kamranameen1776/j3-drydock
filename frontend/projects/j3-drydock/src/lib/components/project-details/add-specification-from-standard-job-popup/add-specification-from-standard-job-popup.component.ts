@@ -1,0 +1,96 @@
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { getSmallPopup } from '../../../models/constants/popup';
+import { eGridRefreshType, eJbTreeEvents, GridService, IJbDialog } from "jibe-components";
+import { SpecificationFormComponent } from '../specification-form/specification-form.component';
+import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
+import { Observable } from "rxjs";
+import { FunctionsFlatTreeNode } from "../../../models/interfaces/functions-tree-node";
+import { GridInputsWithRequest } from "../../../models/interfaces/grid-inputs";
+import { StandardJobsService } from "../../../services/standard-jobs.service";
+import { map, takeUntil } from "rxjs/operators";
+import { FunctionsService } from "../../../services/functions.service";
+
+@Component({
+  selector: 'jb-add-specification-from-standard-job-popup',
+  templateUrl: './add-specification-from-standard-job-popup.component.html',
+  styleUrls: ['./add-specification-from-standard-job-popup.component.scss']
+})
+export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeComponent implements OnInit {
+  @Input() isOpen: boolean;
+  @Input() vesselType: number;
+  treeData$: Observable<FunctionsFlatTreeNode[]>;
+
+  @Output() closeDialog = new EventEmitter<boolean>();
+
+  @ViewChild(SpecificationFormComponent) popupForm: SpecificationFormComponent;
+
+  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false, dialogHeader: 'Add from Standard Job' };
+
+  eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.Select, eJbTreeEvents.UnSelect];
+
+  isPopupValid = false;
+
+  isSaving: boolean;
+
+  functionUIDs: string[] = [];
+  gridData: GridInputsWithRequest;
+  selected: any[] = [];
+
+  constructor(
+    private standardJobsService: StandardJobsService,
+    private gridService: GridService,
+    private functionsService: FunctionsService,
+  ) {
+    super();
+  }
+
+  ngOnInit() {
+    this.treeData$ = this.functionsService.getFunctions().pipe(
+      takeUntil(this.unsubscribe$),
+      map((functions) => {
+        return functions.map(func => this.functionsService.calculateSelectable(func, functions));
+      })
+    );
+
+    this.gridData = this.getData();
+  }
+
+  onCancel() {
+    this.closePopup();
+  }
+
+  onSubmit() {
+    this.save();
+  }
+
+  private closePopup(isSaved = false) {
+    this.closeDialog.emit(isSaved);
+    this.isPopupValid = false;
+    this.popupForm?.formGroup.reset();
+  }
+
+  private save() {
+  }
+
+  setNodeData(event) {
+    if (event?.type === eJbTreeEvents.NodeSelect) {
+      this.functionUIDs = [...this.functionUIDs, event.payload.Child_ID];
+      this.gridData = this.getData();
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+    } else if (event?.type === eJbTreeEvents.UnSelect) {
+      this.functionUIDs = this.functionUIDs.filter((uid) => uid !== event.payload.Child_ID);
+      this.gridData = this.getData();
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+    }
+  }
+
+  onSelect(rows: any[]) {
+    this.selected = rows;
+
+    console.log(this.selected);
+  }
+
+  private getData() {
+    return this.standardJobsService.getSelectionPopupGridData(this.vesselType, this.functionUIDs);
+  }
+}

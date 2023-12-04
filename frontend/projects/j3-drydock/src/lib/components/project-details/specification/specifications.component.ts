@@ -15,10 +15,9 @@ import { map, takeUntil } from 'rxjs/operators';
   styleUrls: ['./specifications.component.scss']
 })
 export class SpecificationsComponent extends UnsubscribeComponent implements OnInit, OnChanges {
-  @Input()
-  projectId: string;
-  @Input()
-  vesselUid: string;
+  @Input() projectId: string;
+  @Input() vesselUid: string;
+  @Input() vesselType: number;
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
   treeData$: Observable<FunctionsFlatTreeNode[]>;
   gridData: GridInputsWithRequest;
@@ -27,24 +26,13 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   functionUIDs: string[] = [];
   types = [SpecificationType.ALL, SpecificationType.PMS, SpecificationType.FINDINGS, SpecificationType.STANDARD, SpecificationType.ADHOC];
   isCreatePopupVisible = false;
+  addFromStandardJobPopupVisible = false;
 
   createNewItems = [
-    /*{
-      label: 'Add from PMS',
-      command: () => {
-        this.openPopup();
-      }
-    },
-    {
-      label: 'Add from Findings',
-      command: () => {
-        this.openPopup();
-      }
-    },*/
     {
       label: 'Add from Standard Jobs',
       command: () => {
-        this.openPopup();
+        this.addFromStandardJob();
       }
     },
     {
@@ -68,6 +56,10 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     this.isCreatePopupVisible = true;
   }
 
+  addFromStandardJob() {
+    this.addFromStandardJobPopupVisible = true;
+  }
+
   ngOnInit(): void {
     this.treeData$ = this.functionsService.getFunctions().pipe(
       takeUntil(this.unsubscribe$),
@@ -87,6 +79,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   onCloseCreatePopup(hasSaved: boolean) {
     this.isCreatePopupVisible = false;
+    this.addFromStandardJobPopupVisible = false;
 
     if (hasSaved) {
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);

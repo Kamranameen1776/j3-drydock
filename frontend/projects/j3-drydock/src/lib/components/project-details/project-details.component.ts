@@ -45,6 +45,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   projectId: string;
 
   vesselUid: string;
+  vesselType: number;
 
   isDiscussionFeedVisible = true;
 
@@ -95,6 +96,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
     this.currentProject.initialProject$.pipe(takeUntil(this.unsubscribe$)).subscribe((project) => {
       this.vesselUid = project?.VesselUid;
+      this.vesselType = project?.VesselType;
       if (project) {
         this.discussionFeedDetails = this.detailsService.getDiscussionFeedSetting(project.ProjectId, project.VesselId);
       }

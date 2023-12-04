@@ -33,6 +33,7 @@ export interface ProjectDetails {
   ProjectState: string;
   VesselName: string;
   VesselUid: string;
+  VesselType: number;
   Subject: string;
   StartDate: string;
   EndDate: string;

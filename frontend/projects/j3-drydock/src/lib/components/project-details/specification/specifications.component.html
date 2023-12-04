@@ -50,8 +50,13 @@
       [filterListsSet]="gridData.filtersLists"
       [getStyleByContainer]="true"
     ></jb-grid>
-    <!--           </p-tabPanel> 
+    <!--           </p-tabPanel>
   </p-tabView>-->
+    <jb-add-specification-from-standard-job-popup
+      [isOpen]="addFromStandardJobPopupVisible"
+      [vesselType]="vesselType"
+      (closeDialog)="onCloseCreatePopup($event)"
+    ></jb-add-specification-from-standard-job-popup>
     <jb-create-specification-popup
       [isOpen]="isCreatePopupVisible"
       [projectId]="projectId"
