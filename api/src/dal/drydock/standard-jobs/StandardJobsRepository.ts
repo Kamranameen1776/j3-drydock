@@ -11,17 +11,13 @@ import {
     UpdateStandardJobSubItemsRequestDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
-import { className } from '../../../common/drydock/ts-helpers/className';
 import {
-    LibVesseltypes,
-    ProjectEntity,
     StandardJobs,
     StandardJobsSubItems,
     StandardJobsSurveyCertificateAuthorityEntity,
     StandardJobsVesselTypeEntity,
 } from '../../../entity/drydock';
-import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
-import { FiltersDataResponse, ODataResult, RequestWithOData } from '../../../shared/interfaces';
+import { FiltersDataResponse, RequestWithOData } from '../../../shared/interfaces';
 
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
