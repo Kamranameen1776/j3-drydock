@@ -21,7 +21,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   @ViewChild(eSpecificationDetailsPageMenuIds.SubItems) [eSpecificationDetailsPageMenuIds.SubItems]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.PMSJobs) [eSpecificationDetailsPageMenuIds.PMSJobs]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.Requisition) [eSpecificationDetailsPageMenuIds.Requisition]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.Requisition) [eSpecificationDetailsPageMenuIds.Requisition]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.Source) [eSpecificationDetailsPageMenuIds.Source]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationAttachments)
   [eSpecificationDetailsPageMenuIds.SpecificationAttachments]: ElementRef;
@@ -65,7 +64,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   private initializeAttachments(id: string): void {
     this.attachmentConfig = {
-      Module_Code: 'j3_drydock',
+      Module_Code: 'project',
       Function_Code: 'specification_details',
       Key1: id
     };
