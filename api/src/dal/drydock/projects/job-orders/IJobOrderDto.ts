@@ -1,7 +1,7 @@
 import { JobOrderStatus } from './JobOrderStatus';
 
 export interface IJobOrderDto {
-    IJobOrderUid: string;
+    JobOrderUid: string;
 
     Code: string;
 

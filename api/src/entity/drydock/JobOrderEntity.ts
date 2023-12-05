@@ -17,13 +17,43 @@ export class JobOrderEntity {
     })
     SpecificationUid: string;
 
-
+    @Column('uuid', {
+        nullable: false,
+        name: 'responsible_uid',
+    })
+    ResponsibleUid: string;
 
     @Column('varchar', {
         nullable: false,
-        name: 'date',
+        name: 'last_updated',
     })
-    DateAndTime: Date;
+    LastUpdated: Date;
+
+    @Column('varchar', {
+        nullable: false,
+        name: 'subject',
+        length: 200,
+    })
+    Subject: string;
+
+    @Column('varchar', {
+        nullable: true,
+        name: 'remark',
+        length: 2000,
+    })
+    Remark: string;
+
+    @Column('decimal', {
+        nullable: false,
+        name: 'progress',
+    })
+    Progress: number;
+
+    @Column('datetime2', {
+        nullable: false,
+        name: 'created_at',
+    })
+    CreatedAt: Date;
 
     @Column('bit', {
         nullable: false,

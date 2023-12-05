@@ -1,3 +1,4 @@
+import { JobOrderEntity } from 'entity/drydock/JobOrderEntity';
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
@@ -7,7 +8,7 @@ import { IJobOrderDto } from './IJobOrderDto';
 
 export class JobOrdersRepository {
     public async GetJobOrders(request: Request): Promise<ODataResult<IJobOrderDto>> {
-        const projectRepository = getManager().getRepository(StatementOfFactsEntity);
+        const projectRepository = getManager().getRepository(JobOrderEntity);
 
         const query: string = projectRepository
             .createQueryBuilder('sof')
