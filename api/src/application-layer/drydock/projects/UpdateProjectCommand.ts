@@ -4,8 +4,9 @@ import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsReposi
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateProjectDto } from './dtos/UpdateProjectDto';
+import { IProjectsFromMainPageRecordDto } from './projects-for-main-page/dtos/IProjectsFromMainPageRecordDto';
 
-export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
+export class UpdateProjectCommand extends Command<UpdateProjectDto, IProjectsFromMainPageRecordDto> {
     projectsRepository: ProjectsRepository;
     projectsService: ProjectService;
     uow: UnitOfWork;
@@ -29,12 +30,12 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
      * @param request Project data for creation of the new project
      * @returns New created project result
      */
-    protected async MainHandlerAsync(request: UpdateProjectDto): Promise<void> {
+    protected async MainHandlerAsync(request: UpdateProjectDto): Promise<IProjectsFromMainPageRecordDto> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.projectsRepository.UpdateProject(request, queryRunner);
-
-            const [record] = await this.projectsRepository.GetProject(request.uid);
-            return new ProjectMapper().map(record);
         });
+
+        const [record] = await this.projectsRepository.GetProject(request.uid);
+        return new ProjectMapper().map(record);
     }
 }
