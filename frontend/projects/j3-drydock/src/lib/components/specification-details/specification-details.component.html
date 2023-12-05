@@ -27,6 +27,30 @@
           </div>
         </div>
       </ng-container>
+      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.Attachments">
+        <jb-layout-widget
+          *ngIf="currentSectionId === eProjectDetailsSideMenuId.Attachments && attachmentConfig"
+          #attachment
+          id="attachments-section"
+          titleText="Attachments"
+          titleIconClass="icons8-resume-template"
+        >
+          <jb-attachments
+            awidget-content
+            #attachments
+            [attachConfig]="attachmentConfig"
+            [defaultActions]="true"
+          ></jb-attachments>
+          <div awidget-header-buttons>
+            <jb-button
+              type="NoButton"
+              (click)="attachments.dialogOnDemand()"
+              label="Attach file"
+              [disabled]="false"
+            ></jb-button>
+          </div>
+        </jb-layout-widget>
+      </ng-container>
     </ng-container>
   </ng-container>
   <ng-container

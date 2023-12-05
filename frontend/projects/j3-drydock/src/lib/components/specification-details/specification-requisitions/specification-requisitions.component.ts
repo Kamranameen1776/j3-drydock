@@ -163,6 +163,8 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
       case eGridRowActions.Delete:
         this.deleteSpecificationRequisition(event.payload);
         break;
+      default:
+        break;
     }
   }
 
