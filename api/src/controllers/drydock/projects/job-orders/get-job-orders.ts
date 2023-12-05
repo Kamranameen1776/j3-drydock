@@ -1,5 +1,7 @@
-import { MiddlewareHandler } from 'controllers/drydock/core/middleware/MiddlewareHandler';
 import { Request, Response } from 'express';
+
+import { GetJobOrdersQuery } from '../../../../application-layer/drydock/projects/job-orders/GetJobOrdersQuery';
+import { MiddlewareHandler } from '../../../../controllers/drydock/core/middleware/MiddlewareHandler';
 
 /**
  * This handler returns all available shipments
