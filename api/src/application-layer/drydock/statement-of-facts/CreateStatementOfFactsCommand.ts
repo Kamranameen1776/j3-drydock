@@ -1,8 +1,10 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
+import { SynchronizerService } from 'j2utils';
 
 import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-facts/StatementOfFactsRepository';
+import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateStatementsOfFactsDto } from './dtos/CreateStatementsOfFactsDto';
@@ -10,11 +12,14 @@ import { CreateStatementsOfFactsDto } from './dtos/CreateStatementsOfFactsDto';
 export class CreateStatementsOfFactsCommand extends Command<Request, void> {
     repository: StatementOfFactsRepository;
     uow: UnitOfWork;
+    tableName = 'dry_dock.statement_of_facts';
+    vesselRepository: VesselsRepository;
 
     constructor() {
         super();
         this.repository = new StatementOfFactsRepository();
         this.uow = new UnitOfWork();
+        this.vesselRepository = new VesselsRepository();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -39,9 +44,17 @@ export class CreateStatementsOfFactsCommand extends Command<Request, void> {
      */
     protected async MainHandlerAsync(request: Request): Promise<void> {
         const createProjectDto: CreateStatementsOfFactsDto = request.body as CreateStatementsOfFactsDto;
+        const vessel = await this.vesselRepository.GetVesselByProjectUid(createProjectDto.ProjectUid);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            await this.repository.CreateStatementOfFacts(createProjectDto, queryRunner);
+            const uid = await this.repository.CreateStatementOfFacts(createProjectDto, queryRunner);
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                this.tableName,
+                'uid',
+                uid,
+                vessel.VesselId,
+            );
             return;
         });
 

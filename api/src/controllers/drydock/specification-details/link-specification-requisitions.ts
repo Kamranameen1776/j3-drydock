@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { LinkSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/LinkSpecificationRequisitionsRequestDto';
-import { LinkSpecificationRequisitionCommand } from '../../../application-layer/drydock/specification-details/LinkSpecificationRequisitionCommand';
+import { LinkSpecificationRequisitionCommand } from '../../../application-layer/drydock/specification-details/requisitions/LinkSpecificationRequisitionCommand';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 async function linkSpecificationRequisitions(req: Request, res: Response) {

@@ -17,4 +17,11 @@ export class SpecificationPmsEntity {
     })
     // eslint-disable-next-line @typescript-eslint/naming-convention
     PMSUid: string;
+
+    @Column('bit', {
+        nullable: false,
+        name: 'active_status',
+        default: true,
+    })
+    ActiveStatus: boolean;
 }
