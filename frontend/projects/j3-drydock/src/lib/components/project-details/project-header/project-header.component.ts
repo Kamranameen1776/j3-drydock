@@ -273,7 +273,7 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
     this.taskManagerService.reOpen(payload).subscribe((res) => {
       const statusData = res.statusData?.[0];
-      this.procesStatusChanged(statusData.Status_Configure_Type, statusData.status_display_name, remark);
+      this.procesStatusChanged(statusData?.Status_Configure_Type, statusData?.status_display_name, remark);
     });
 
     this.isConfirmationPopupVisible = false;
