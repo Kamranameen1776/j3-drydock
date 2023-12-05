@@ -111,4 +111,15 @@ export class TaskManagerService {
     };
     return this.apiReqService.sendApiReq(saveWorkflow);
   }
+
+  reOpen(body) {
+    const saveWorkflow: WebApiRequest = {
+      apiBase: eApiBase.J3TaskManagerAPI,
+      entity: eEntities.TaskManager,
+      action: 'task-manager-workflow/save-task-manager-unclose-wf-action',
+      crud: eCrud.Post,
+      body: body
+    };
+    return this.apiReqService.sendApiReq(saveWorkflow);
+  }
 }
