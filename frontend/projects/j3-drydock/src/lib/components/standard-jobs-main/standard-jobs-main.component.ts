@@ -42,8 +42,6 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
 
   canView = false;
 
-  private canViewDetails = false;
-
   private canCreateJob = false;
 
   private canEditJob = false;
@@ -143,7 +141,6 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
 
   private setAccessRights() {
     this.canView = this.standardJobsService.hasAccess(eStandardJobsAccessActions.viewGrid);
-    this.canViewDetails = this.standardJobsService.hasAccess(eStandardJobsAccessActions.viewDetail);
 
     this.canCreateJob = this.standardJobsService.hasAccess(eStandardJobsAccessActions.createJob);
     this.canEditJob = this.standardJobsService.hasAccess(eStandardJobsAccessActions.editJob);

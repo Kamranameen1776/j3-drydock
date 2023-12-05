@@ -43,9 +43,9 @@ export class v3234213DryDockAndStandardJobAccessRights1700745113232 implements M
             MERGE INTO INF_Lib_Function AS TARGET USING (
             VALUES
             (@maxfunction_id+1, N'02F858F1-0064-4F20-A3E4-E87FB8E0FE02', N'project', N'project_index', N'Project Main', 1, getdate(), NULL, NULL, 1, 'project', N'crew', N'proj_main'),               
-            (@maxfunction_id+2, N'AF1C36A1-9CD0-43C4-B4E2-62F500729FD4', N'crew', N'project', N'Project', 1, getdate(), NULL, NULL, 1, null, N'crew', null),
-            (@maxfunction_id+3, N'F808DA39-BA82-482B-90D8-912ECB41BC04', N'project', N'dry_dock', N'Dry Dock', 1, getdate(), NULL, NULL, 1, N'project', N'crew', null),
-            (@maxfunction_id+4, N'9C79EF57-A1C6-40B4-A343-968976325150', N'project', N'standard_job', N'Standard Job', 1, getdate(), NULL, NULL, 1, N'project', N'crew', null)                
+            (@maxfunction_id+2, N'AF1C36A1-9CD0-43C4-B4E2-62F500729FD4', N'crew', N'project', N'Project', 1, getdate(), NULL, NULL, 1, null, N'crew', 'project_attachment'),
+            (@maxfunction_id+3, N'F808DA39-BA82-482B-90D8-912ECB41BC04', N'project', N'dry_dock', N'Dry Dock', 1, getdate(), NULL, NULL, 1, N'project', N'crew', 'dry_dock_attachment'),
+            (@maxfunction_id+4, N'9C79EF57-A1C6-40B4-A343-968976325150', N'project', N'standard_job', N'Standard Job', 1, getdate(), NULL, NULL, 1, N'project', N'crew', 'standard_job_attachment')                
             )
             
             AS SOURCE ([FunctionId], [Function_UID], [Module_Code], [Function_Code], [Function_Name], [Created_By], [Date_Of_Creation], [Modified_By], [Date_Of_Modification], [Active_Status], [parent_function_code], [parent_module_code], [attach_prefix])

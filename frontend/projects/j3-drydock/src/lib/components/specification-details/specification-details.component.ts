@@ -9,6 +9,7 @@ import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
+import { BehaviorSubject } from "rxjs";
 @Component({
   selector: 'jb-specification-details',
   templateUrl: './specification-details.component.html',
@@ -27,7 +28,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   public specificationUid: string;
 
   private readonly menuId = 'specification-details-menu';
-  currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
+  currentSectionId = eSpecificationDetailsPageMenuIds.GeneralInformation;
   eProjectDetailsSideMenuId = eSpecificationDetailsPageMenuIds;
   growlMessage$ = this.growlMessageService.growlMessage$;
 
@@ -44,6 +45,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   async ngOnInit(): Promise<void> {
     const { snapshot } = this.activatedRoute;
     this.specificationUid = snapshot.params.specificationUid;
+
     this.specificationDetailsInfo = await this.specificatioDetailService.getSpecificationDetails(this.specificationUid).toPromise();
     this.pageTitle = `Specification ${this.specificationDetailsInfo.SpecificationCode}`;
     this.title.setTitle(this.pageTitle);
@@ -85,7 +87,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   }
 
   private isMenuSection(menuItem: IJbMenuItem) {
-    return menuItem.id === eSpecificationDetailsPageMenuIds.SpecificationDetails || !!menuItem.items?.length;
+    return menuItem.id === eSpecificationDetailsPageMenuIds.GeneralInformation || !!menuItem.items?.length;
   }
 
   public async save(): Promise<void> {

@@ -3,6 +3,16 @@
   titleText="Sub items"
 >
   <div
+    class="buttons"
+    awidget-header-buttons
+  >
+    <jb-split-button
+      [type]="JbButtonType.NoButton"
+      label="Add Sub Items"
+      [model]="menuItems"
+    ></jb-split-button>
+  </div>
+  <div
     class="grid-container"
     awidget-content
   >

@@ -8,19 +8,15 @@
 
   <ng-container alayout-content>
     <ng-container [ngSwitch]="currentSectionId">
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.SpecificationDetails">
+      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.GeneralInformation">
         <div #specifications>
           <div #generalInformation>
             <jb-specification-general-information
-              *ngIf="specificationDetailsInfo"
               [specificationDetailsInfo]="specificationDetailsInfo"
             ></jb-specification-general-information>
           </div>
           <div #subItems>
-            <jb-specification-sub-items
-              *ngIf="specificationDetailsInfo"
-              [specificationDetailsInfo]="specificationDetailsInfo"
-            ></jb-specification-sub-items>
+            <jb-specification-sub-items [specificationDetailsInfo]="specificationDetailsInfo"></jb-specification-sub-items>
           </div>
           <div #requisition>
             <jb-specification-requisitions [specificationUid]="specificationUid"></jb-specification-requisitions>

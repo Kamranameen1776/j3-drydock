@@ -8,11 +8,15 @@
         "dtos",
         "endregion",
         "hemant",
+        "Inputservice",
         "isslfapplied",
         "isslfsession",
+        "JMSDTL",
         "odata",
         "primeng",
+        "TECLIB",
         "typeorm",
+        "uniqueidentifier",
         "wdetails",
         "Worklist"
     ]

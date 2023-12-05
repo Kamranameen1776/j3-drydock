@@ -1,11 +1,29 @@
+<style>
+  p button {
+    margin: 20px;
+  }
+  div a {
+    margin-bottom: 10px;
+  }
+</style>
 <p>
-  <button (click)="login()">Login</button>
-</p>
-<section style="display: flex; flex-direction: column">
-  <a
-    *ngFor="let link of links$ | async"
-    [routerLink]="[link.path]"
+  <button
+    class="btn btn-primary"
+    (click)="login()"
   >
-    {{ link.name }}
-  </a>
+    Login
+  </button>
+</p>
+
+<section style="display: flex; flex-direction: column">
+  <div class="list-group">
+    <a
+      class="list-group-item"
+      *ngFor="let link of links$ | async"
+      [routerLink]="[link.path]"
+      target="_blank"
+    >
+      {{ link.name }}
+    </a>
+  </div>
 </section>
