@@ -135,9 +135,7 @@ export class SpecificationDetailsRepository {
             .getRawOne();
     }
 
-    public async GetManySpecificationDetails(
-        data: Request,
-    ): Promise<{ records: SpecificationDetailsEntity[]; count?: number }> {
+    public async GetManySpecificationDetails(data: Request): Promise<ODataResult<SpecificationDetailsEntity>> {
         try {
             const oDataService = new ODataService(data, getConnection);
 

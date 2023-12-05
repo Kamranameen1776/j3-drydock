@@ -5,9 +5,10 @@ import {
     GetStandardJobsQueryResult,
     GetStandardJobsResult,
     GetStandardJobsResultDto,
+    GetStandardJobSubItemsResultDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
-import { GetStandardJobSubItemsResultDto } from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobSubItemsResultDto';
 import { StandardJobs, StandardJobsSubItems } from '../../../entity/drydock';
+import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
 
 export class StandardJobsService {
     notSelectedValueLabel = '-';
@@ -42,6 +43,7 @@ export class StandardJobsService {
                 vesselTypeId: [],
                 vesselType: 'All',
                 subItems: [],
+                hasSubItems: QueryStrings.No,
             };
 
             if (standardJob.inspectionId) {
@@ -91,6 +93,8 @@ export class StandardJobsService {
                             standardJobUid: item.uid,
                         };
                     });
+
+                item.hasSubItems = item.subItems.length > 0 ? QueryStrings.Yes : QueryStrings.No;
             });
         }
 

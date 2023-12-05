@@ -6,6 +6,7 @@ export interface IProjectsFromMainPageRecordDto {
     VesselName: string;
     VesselUid?: string;
     VesselId?: string;
+    VesselType?: string;
 
     Subject: string;
 
