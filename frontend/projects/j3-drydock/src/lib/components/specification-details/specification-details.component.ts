@@ -9,6 +9,8 @@ import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
+import { eModule } from '../../models/enums/module.enum';
+import { eFunction } from '../../models/enums/function.enum';
 @Component({
   selector: 'jb-specification-details',
   templateUrl: './specification-details.component.html',
@@ -64,8 +66,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   private initializeAttachments(id: string): void {
     this.attachmentConfig = {
-      Module_Code: 'project',
-      Function_Code: 'specification_details',
+      Module_Code: eModule.Project,
+      Function_Code: eFunction.SpecificationDetails,
       Key1: id
     };
   }
