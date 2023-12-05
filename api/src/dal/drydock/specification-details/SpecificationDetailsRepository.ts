@@ -113,6 +113,9 @@ export class SpecificationDetailsRepository {
                 'ves.VesselId AS VesselId',
                 `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
                 'usr.uid AS ProjectManagerUid',
+                //TODO: strange constants, but Specifications doesnt have type. probably should stay that way
+                `'dry_dock' as SpecificationTypeCode`,
+                `'Dry Dock' as SpecificationTypeName`,
             ])
             .leftJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
             .leftJoin(className(LibItemSourceEntity), 'its', 'spec.ItemSourceUid = its.uid')
@@ -121,7 +124,7 @@ export class SpecificationDetailsRepository {
             .leftJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
             .leftJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
             .leftJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
-            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesnt have type. probably should stay that way
             .innerJoin(
                 className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
