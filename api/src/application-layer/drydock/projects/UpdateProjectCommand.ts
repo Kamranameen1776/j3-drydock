@@ -1,3 +1,4 @@
+import { ProjectMapper } from '../../../bll/drydock/projects/ProjectMapper';
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { Command } from '../core/cqrs/Command';
@@ -30,8 +31,10 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
      */
     protected async MainHandlerAsync(request: UpdateProjectDto): Promise<void> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const projectId = await this.projectsRepository.UpdateProject(request, queryRunner);
-            return projectId;
+            await this.projectsRepository.UpdateProject(request, queryRunner);
+
+            const [record] = await this.projectsRepository.GetProject(request.uid);
+            return new ProjectMapper().map(record);
         });
     }
 }
