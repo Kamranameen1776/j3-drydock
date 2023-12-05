@@ -13,6 +13,7 @@ import {
     J3PrcPo,
     J3PrcRequisition,
     J3PrcRfqEntity,
+    JmsDtlWorkflowConfigDetailsEntity,
     LibItemSourceEntity,
     LibSurveyCertificateAuthority,
     LibUserEntity,
@@ -28,6 +29,7 @@ import {
     TmDdLibItemCategory,
     TmDdLibMaterialSuppliedBy,
 } from '../../../entity/drydock';
+import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
 import { ODataResult } from '../../../shared/interfaces';
 import {
@@ -84,10 +86,13 @@ export class SpecificationDetailsRepository {
                 'spec.uid as uid',
                 'spec.subject as Subject',
                 'tm.Code as SpecificationCode',
-                'tm.Status as Status',
+                'tm.Status as StatusId',
+                'wdetails.DisplayNameAction as StatusName',
+
                 'spec.FunctionUid as FunctionUid',
                 'spec.Function as "Function"',
                 'spec.AccountCode as AccountCode',
+                'spec.TecTaskManagerUid as TaskManagerUid',
 
                 'spec.ItemSourceUid as ItemSourceUid',
                 'its.DisplayName as ItemSourceText',
@@ -105,8 +110,12 @@ export class SpecificationDetailsRepository {
 
                 'ves.VesselName AS VesselName',
                 'ves.uid AS VesselUid',
+                'ves.VesselId AS VesselId',
                 `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
                 'usr.uid AS ProjectManagerUid',
+                //TODO: strange constants, but Specifications doesnt have type. probably should stay that way
+                `'dry_dock' as SpecificationTypeCode`,
+                `'Dry Dock' as SpecificationTypeName`,
             ])
             .leftJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
             .leftJoin(className(LibItemSourceEntity), 'its', 'spec.ItemSourceUid = its.uid')
@@ -115,6 +124,12 @@ export class SpecificationDetailsRepository {
             .leftJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
             .leftJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
             .leftJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesnt have type. probably should stay that way
+            .innerJoin(
+                className(JmsDtlWorkflowConfigDetailsEntity),
+                'wdetails',
+                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+            )
             .where('spec.ActiveStatus = 1')
             .andWhere('spec.uid = :uid', { uid })
             .getRawOne();
