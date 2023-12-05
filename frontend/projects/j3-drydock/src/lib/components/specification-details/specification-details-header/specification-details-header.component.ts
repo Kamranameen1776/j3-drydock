@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { SpecificationDetailsHeaderInputservice } from './specification-details-header-inputs';
 import { takeUntil } from 'rxjs/operators';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
@@ -32,14 +32,13 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
   @ViewChild('detailsTopSection') detailsTopSection: JbDetailsTopSectionComponent;
 
   @Input() specificationDetailsInfo: SpecificationDetails;
-  @Input() detailDataChanged: boolean;
+  @Input() isValueChange: boolean;
   @Output() saveButtonClick = new EventEmitter<FormGroup>();
 
   saveButtonDisabled = true;
   topDetailsData: SpecificationDetailsTopHeaderDetails;
   topFieldsConfig: ITopSectionFieldSet;
   isWorkflowButtonEnable = true;
-  isValueChange = false;
   formGroup: FormGroup;
   private nextWorkFlowRightCode: string;
   canEdit = true;
@@ -101,7 +100,6 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
 
   constructor(
     private readonly headerInputService: SpecificationDetailsHeaderInputservice,
-    private cd: ChangeDetectorRef,
     private taskManagerService: TaskManagerService
   ) {
     super();
@@ -109,7 +107,6 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
 
   async ngOnInit(): Promise<void> {
     this.initSpecificatioDetailsData();
-    this.cd.markForCheck();
   }
 
   private initSpecificatioDetailsData() {
@@ -128,11 +125,6 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
           functionCode: eFunction.Project, // TODO: - clarify what to use
           moduleCode: eModule.Project // TODO: - clarify what to use
         };
-
-        // const vesselUid = data.detailedData.VesselUid;
-        // if (this.currentProject.vesselUid$.getValue() !== vesselUid) {
-        //   this.currentProject.vesselUid$.next(vesselUid);
-        // }
 
         this.initTaskManger(data.detailedData);
       });

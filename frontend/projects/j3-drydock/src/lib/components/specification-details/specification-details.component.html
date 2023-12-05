@@ -4,6 +4,7 @@
     *ngIf="specificationDetailsInfo"
     [specificationDetailsInfo]="specificationDetailsInfo"
     (saveButtonClick)="save($event)"
+    [isValueChange]="detailData"
   ></jb-specification-details-header>
 
   <ng-container alayout-content>
@@ -15,7 +16,6 @@
               *ngIf="specificationDetailsInfo"
               [specificationDetailsInfo]="specificationDetailsInfo"
               (formData)="validateDetail($event)"
-              (valueChanged)="onValueChange($event)"
             ></jb-specification-general-information>
           </div>
           <div #subItems>
