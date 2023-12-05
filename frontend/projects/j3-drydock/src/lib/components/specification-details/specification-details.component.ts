@@ -12,7 +12,6 @@ import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { SpecificationDetails } from '../../models/interfaces/specification-details';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'jb-specification-details',
   templateUrl: './specification-details.component.html',
@@ -39,7 +38,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   private readonly menuId = 'specification-details-menu';
   public detailForm: FormGroup;
-  detailData: boolean = false;
+  detailData: boolean;
   currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
   eProjectDetailsSideMenuId = eSpecificationDetailsPageMenuIds;
   growlMessage$ = this.growlMessageService.growlMessage$;
@@ -116,23 +115,20 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   }
 
   validateDetail(form: FormGroup) {
-
     form.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       if (form.valid) {
         this.detailData = true;
         this.detailForm = form;
       }
-    })
-    
+    });
   }
 
   public async save(headerform: FormGroup): Promise<void> {
-    
     const generalInformationData = this.detailForm?.controls.generalInformation.value;
-    
+
     const data: UpdateSpecificationDetailsDto = {
       uid: this.specificationDetailsInfo.uid,
-      Subject: headerform? headerform.controls.Job_Short_Description.value : this.specificationDetailsInfo.Subject,
+      Subject: headerform ? headerform.controls.Job_Short_Description.value : this.specificationDetailsInfo.Subject,
       AccountCode: generalInformationData.accountCode,
       DoneByUid: generalInformationData.doneBy,
       Description: generalInformationData.description,
