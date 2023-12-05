@@ -22,7 +22,7 @@ export class DeleteSpecificationRequisitionCommand extends Command<Request, void
                 AND requisition_uid = '${body.requisitionUid}')`;
             await SynchronizerService.dataSynchronizeByConditionManager(
                 queryRunner.manager,
-                'dry_dock.specification_requisitions',
+                this.tableName,
                 vessel.VesselId,
                 condition,
             );

@@ -64,8 +64,8 @@ export class VesselsRepository {
             .innerJoin(className(ProjectEntity), 'proj', 'sof.ProjectUid = proj.uid')
             .where('sof.ActiveStatus = 1')
             .andWhere('sof.uid = :uid', { uid })
-            .execute();
-        return this.GetVesselByUID(res[0].VesselUid, queryRunner);
+            .getRawOne();
+        return this.GetVesselByUID(res.VesselUid, queryRunner);
     }
 
     public async GetVesselBySpecification(
@@ -80,7 +80,7 @@ export class VesselsRepository {
             .innerJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
             .where('spec.ActiveStatus = 1')
             .andWhere('spec.uid = :uid', { uid })
-            .execute();
-        return this.GetVesselByUID(res[0].VesselUid, queryRunner);
+            .getRawOne();
+        return this.GetVesselByUID(res.VesselUid, queryRunner);
     }
 }

@@ -23,7 +23,7 @@ export class LinkSpecificationRequisitionCommand extends Command<Request, Specif
                 AND requisition_uid IN ('${body.requisitionUid.join(`','`)}')`;
             await SynchronizerService.dataSynchronizeByConditionManager(
                 queryRunner.manager,
-                'dry_dock.specification_requisitions',
+                this.tableName,
                 vessel.VesselId,
                 condition,
             );
