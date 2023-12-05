@@ -22,6 +22,7 @@ export interface IProjectsForMainPageRecordDto {
 
     VesselUid: string;
     VesselId?: string;
+    VesselType?: string;
 
     StartDate: Date;
 

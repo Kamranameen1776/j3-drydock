@@ -4,14 +4,12 @@ import { getConnection, getManager, In, QueryRunner, UpdateResult } from 'typeor
 import {
     CreateStandardJobsRequestDto,
     GetStandardJobsQueryResult,
-    UpdateStandardJobsRequestDto,
-} from '../../../application-layer/drydock/standard-jobs/dto';
-import {
     StandardJobsFiltersAllowedKeys,
     StandardJobsFilterTablesMap,
     StandardJobsLibraryValuesMap,
-} from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto';
-import { UpdateStandardJobSubItemsRequestDto } from '../../../application-layer/drydock/standard-jobs/dto/UpdateStandardJobSubItemsRequestDto';
+    UpdateStandardJobsRequestDto,
+    UpdateStandardJobSubItemsRequestDto,
+} from '../../../application-layer/drydock/standard-jobs/dto';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
 import {
     StandardJobs,
