@@ -1,8 +1,8 @@
 export const TaskManagerConstants = {
     project: {
         wlType: 'dry_dock',
-        module_code: 'tm_drydock',
-        function_code: 'tm_drydock_project',
+        module_code: 'project',
+        function_code: 'dry_dock',
         status: {
             Planned: 'RAISE',
             InProgress: 'In Porgress',
