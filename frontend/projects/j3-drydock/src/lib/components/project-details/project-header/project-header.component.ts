@@ -133,6 +133,12 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
   isOpenExport = false;
 
+  isShowSaveButton = false;
+
+  private readonly functionCode = eFunction.DryDock;
+
+  private readonly moduleCode = eModule.Project;
+
   private lastWorklowStatusInfo: {
     last_Display_name_action: string;
     last_WorkflowType: string;
@@ -233,14 +239,44 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   onConfirmationPopupOk() {
     if (this.isSkippingWorkflowToLastStatus) {
       const lastWfRightCode = this.lastWorklowStatusInfo.last_status_right_code;
-
-      const nextRighCode = lastWfRightCode ? JSON.parse(lastWfRightCode)[0] : '';
+      const nextRighCode = lastWfRightCode || '';
       const nextTaskAction = this.lastWorklowStatusInfo.last_Display_name_action;
 
       this.goToStatus(nextTaskAction, nextRighCode);
+    } else if (this.areStatusesSame(this.nextWorkflowTaskStatus, eProjectWorklowStatusAction.Unclose)) {
+      this.reOpen();
     } else {
       this.goToStatus(this.nextWorkflowTaskStatus, this.nextWorkFlowRightCode);
     }
+  }
+
+  private reOpen() {
+    const remark: string = this.confirmationForm.controls.textMessage.value;
+
+    const payload = {
+      Is_Office: this.isOffice,
+      Job_Status: this.currentTaskStatusCode,
+      Job_card_No: this.detailedData.ProjectCode,
+      Vessel_ID: this.detailedData.VesselId,
+      WL_TYPE: this.detailedData.ProjectTypeCode,
+      additional_discussion: null,
+      function_code: this.functionCode,
+      isTextEncrypted: true,
+      module_code: this.moduleCode,
+      raised_location: this.isOffice,
+      remark,
+      right_code: this.nextWorkFlowRightCode,
+      task_status: this.currentTaskStatusCode,
+      uid: this.detailedData.TaskManagerUid,
+      wl_type: this.detailedData.ProjectTypeCode
+    };
+
+    this.taskManagerService.reOpen(payload).subscribe((res) => {
+      const statusData = res.statusData?.[0];
+      this.procesStatusChanged(statusData.Status_Configure_Type, statusData.status_display_name, remark);
+    });
+
+    this.isConfirmationPopupVisible = false;
   }
 
   private goToStatus(nextAction: string, nextRightCode: string) {
@@ -267,11 +303,8 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
         })
       )
       .subscribe((res) => {
-        this.currentTaskStatusCode = payload.task_status;
-        this.detailedData.ProjectStatusName = res.statusData?.[0].status_display_name;
-        this.sendStatusChangeToWorkflowAndFollow(remark, this.currentTaskStatusCode, this.detailedData.ProjectStatusName);
-        this.topFieldsConfig = this.topDetailsService.getTopSecConfig(this.detailedData);
-        this.getNextWorkFlow(this.currentTaskStatusCode);
+        const statusData = res.statusData?.[0];
+        this.procesStatusChanged(statusData.Status_Configure_Type, statusData.status_display_name, remark);
       });
 
     this.isConfirmationPopupVisible = false;
@@ -304,7 +337,6 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     if (!this.formGroup) {
       return of(null);
     }
-
     return this.topDetailsService
       .save(this.projectId, {
         ...this.formGroup.value,
@@ -331,8 +363,8 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
           officeId: this.isOffice,
           vessel: { uid: data.detailedData.VesselUid },
           _id: data.detailedData.TaskManagerUid,
-          functionCode: eFunction.DryDock, // fixme - clarify what to use - and why on back-end on workflow response another code tm_dry_ock_project??
-          moduleCode: eModule.Project // fixme - clarify what to use tm_drydock?
+          functionCode: this.functionCode,
+          moduleCode: this.moduleCode
         };
 
         this.titleService.setTitle(`${this.detailedData.ProjectTypeName} ${this.detailedData.ProjectCode}`);
@@ -365,12 +397,17 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       .getNextTaskManagerState(nextWorkFlowParams)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((nextWorkFlow) => {
+        this.setIsShowSaveButtonFromNextAction(nextWorkFlow.Display_name_action);
         this.setLastWorkflowInfo(nextWorkFlow);
         this.setThreeDotsChangeStatusToLabel(nextWorkFlow.last_WorkflowType);
         this.setWorkflowActionsData(nextWorkFlow.Display_name_action, nextWorkFlow.Display_name_pass);
         this.setThreeDotsActionsShow(nextWorkFlow);
         this.setNextWorkflowRightCode(nextWorkFlow.Display_name_action, nextWorkFlow.right_code);
       });
+  }
+
+  private setIsShowSaveButtonFromNextAction(action: string) {
+    this.isShowSaveButton = !this.areStatusesSame(action, eProjectWorklowStatusAction.Unclose);
   }
 
   private setLastWorkflowInfo(nextWorkFlow: Workflow) {
@@ -422,8 +459,8 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   private sendStatusChangeToWorkflowAndFollow(remark: string, statusCode: string, statusName: string) {
     this.detailsService.sendStatusChangeToWorkflowAndFollow({
       uid: this.detailedData.ProjectId,
-      function: eFunction.DryDock,
-      module: eModule.Project,
+      function: this.functionCode,
+      module: this.moduleCode,
       wlType: this.detailedData.ProjectTypeCode,
       statusCode,
       statusName,
@@ -435,5 +472,14 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
 
   private areStatusesSame(status: string, statusToCompare: string): boolean {
     return this.topDetailsService.areStatusesSame(status, statusToCompare);
+  }
+
+  private procesStatusChanged(statusCode: string, statusName: string, remark: string) {
+    this.currentTaskStatusCode = statusCode;
+    this.detailedData.ProjectStatusName = statusName;
+    this.sendStatusChangeToWorkflowAndFollow(remark, this.currentTaskStatusCode, this.detailedData.ProjectStatusName);
+    // TODO need to add code after saving record to update this.detailedData to actual
+    this.topFieldsConfig = this.topDetailsService.getTopSecConfig(this.detailedData);
+    this.getNextWorkFlow(this.currentTaskStatusCode);
   }
 }
