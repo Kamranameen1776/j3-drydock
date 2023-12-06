@@ -9,6 +9,8 @@ export interface IJobOrderDto {
 
     Subject: string;
 
+    Remarks: string;
+
     ItemSource: string;
 
     Status: JobOrderStatus;

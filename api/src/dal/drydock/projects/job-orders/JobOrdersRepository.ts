@@ -21,6 +21,7 @@ export class JobOrdersRepository {
                 'jo.Subject AS Subject',
                 'sd.ItemSourceUid AS ItemSource',
                 'jo.Status AS Status',
+                'jo.Remarks AS Remarks',
                 'jo.Progress AS Progress',
                 '123 AS Responsible',
                 // TODO: get from JobOrderUpdatesEntity
