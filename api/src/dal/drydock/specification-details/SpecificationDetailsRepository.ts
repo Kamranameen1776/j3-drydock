@@ -24,6 +24,7 @@ import {
     SpecificationInspectionEntity,
     SpecificationPmsEntity,
     SpecificationRequisitionsEntity,
+    StandardJobs,
     TecTaskManagerEntity,
     TmDdLibDoneBy,
     TmDdLibItemCategory,
@@ -31,6 +32,7 @@ import {
 } from '../../../entity/drydock';
 import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
+import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { ODataResult } from '../../../shared/interfaces';
 import {
     CreateInspectionsDto,
@@ -40,6 +42,7 @@ import {
     PmsJobsData,
     SpecificationDetailsResultDto,
 } from './dtos';
+import { CreateSpecificationFromStandardJobDto } from './dtos/ICreateSpecificationFromStandardJobDto';
 
 export class SpecificationDetailsRepository {
     public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {
@@ -209,6 +212,61 @@ export class SpecificationDetailsRepository {
         data.uid = new DataUtilService().newUid();
         await queryRunner.manager.insert(SpecificationDetailsEntity, data);
         return data.uid;
+    }
+
+    public async createSpecificationFromStandardJob(
+        data: CreateSpecificationFromStandardJobDto,
+        createdBy: string,
+        queryRunner: QueryRunner,
+    ) {
+        const standardJobRepository = getManager().getRepository(StandardJobs);
+
+        const standardJobs = await standardJobRepository.find({
+            where: {
+                uid: In(data.StandardJobUid),
+            },
+            select: ['functionUid', 'description', 'subject'],
+            relations: ['subItems', 'inspection', 'doneBy', 'category', 'materialSuppliedBy'],
+        });
+
+        const specifications = standardJobs.map((standardJob) => {
+            const specification = new SpecificationDetailsEntity();
+            specification.uid = new DataUtilService().newUid();
+            specification.FunctionUid = standardJob.functionUid;
+            specification.Description = standardJob.description;
+            specification.Subject = standardJob.subject;
+            specification.CreatedByUid = createdBy;
+            specification.CreatedAt = new Date();
+            specification.ActiveStatus = true;
+            specification.MaterialSuppliedByUid = standardJob.materialSuppliedBy?.uid!;
+            specification.DoneByUid = standardJob.doneBy?.uid!;
+            specification.ItemCategoryUid = standardJob.category?.uid!;
+            specification.ProjectUid = data.ProjectUid;
+            specification.inspections = standardJob.inspection.map((inspection) => {
+                const item = new LibSurveyCertificateAuthority();
+                item.ID = inspection.ID!;
+
+                return item;
+            }) as LibSurveyCertificateAuthority[];
+            specification.SubItems = standardJob.subItems.map((subItem) => {
+                const item = new SpecificationDetailsSubItemEntity();
+                item.uid = new DataUtilService().newUid();
+                item.subject = subItem.subject;
+
+                return item;
+            });
+            return specification;
+        });
+
+        await queryRunner.manager.insert(SpecificationDetailsEntity, specifications);
+
+        return specifications;
+    }
+
+    public async updateSpecificationTmUid(specificationUid: string, taskManagerUid: string, queryRunner: QueryRunner) {
+        const specification = new SpecificationDetailsEntity();
+        specification.TecTaskManagerUid = taskManagerUid;
+        return queryRunner.manager.update(SpecificationDetailsEntity, specificationUid, specification);
     }
 
     public async CreateSpecificationInspection(data: Array<CreateInspectionsDto>, queryRunner: QueryRunner) {

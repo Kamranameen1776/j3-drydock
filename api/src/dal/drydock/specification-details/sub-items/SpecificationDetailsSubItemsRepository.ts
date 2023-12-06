@@ -1,15 +1,16 @@
 import { ODataService } from 'j2utils';
-import { getConnection, getManager, In, type QueryRunner } from 'typeorm';
+import { getConnection, getManager, In, QueryRunner } from 'typeorm';
 
 import { BusinessException } from '../../../../bll/drydock/core/exceptions';
 import {
     calculateEntityExistenceMap,
-    type EntityExistenceMap,
+    EntityExistenceMap,
 } from '../../../../common/drydock/ts-helpers/calculate-entity-existence-map';
 import { entriesOf } from '../../../../common/drydock/ts-helpers/entries-of';
+import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import { SpecificationDetailsSubItemEntity as SubItem } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { UnitTypeEntity } from '../../../../entity/drydock/UnitTypeEntity';
-import { type ODataResult } from '../../../../shared/interfaces/odata-result.interface';
+import { ODataResult } from '../../../../shared/interfaces';
 import { CreateManyParams } from './dto/CreateManyParams';
 import { CreateOneParams } from './dto/CreateOneParams';
 import { DeleteManyParams } from './dto/DeleteManyParams';
@@ -46,18 +47,6 @@ export class SpecificationDetailsSubItemsRepository {
         return subItemsFound;
     }
 
-    protected async getManyByUids(params: GetManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
-        const subItems = await queryRunner.manager.find(SubItem, {
-            where: {
-                specificationDetailsUid: params.specificationDetailsUid,
-                uid: In(params.uids),
-                active_status: true,
-            },
-        });
-
-        return subItems;
-    }
-
     public async getOneByUid(params: GetOneParams, queryRunner: QueryRunner): Promise<SubItem | null> {
         const subItem = await queryRunner.manager.findOne(SubItem, {
             where: {
@@ -78,23 +67,6 @@ export class SpecificationDetailsSubItemsRepository {
         }
 
         return subItem;
-    }
-
-    protected async assertAllUnitTypesExistByUids(unitTypeUids: string[], queryRunner: QueryRunner): Promise<void> {
-        const unitTypes = await queryRunner.manager.find(UnitTypeEntity, {
-            where: {
-                uid: In(unitTypeUids),
-                activeStatus: true,
-            },
-        });
-
-        const unitTypeExistenceMap = calculateEntityExistenceMap(unitTypes, unitTypeUids);
-
-        for (const [unitTypeUid, exists] of entriesOf(unitTypeExistenceMap)) {
-            if (!exists) {
-                throw new UnitTypeNotFoundByUidError(unitTypeUid);
-            }
-        }
     }
 
     public async createOne(params: CreateOneParams, queryRunner: QueryRunner): Promise<SubItem> {
@@ -132,6 +104,27 @@ export class SpecificationDetailsSubItemsRepository {
         return newSubItems;
     }
 
+    public async createRawSubItems(params: CreateManyParams, queryRunner: QueryRunner) {
+        const subItems = params.subItems.map((prop): SubItem => {
+            const item = new SubItem();
+            item.subject = prop.subject;
+            item.specificationDetails = {
+                uid: params.specificationDetailsUid,
+            } as SpecificationDetailsEntity;
+            item.created_by = params.createdBy;
+            item.created_at = new Date();
+            item.quantity = 0;
+            item.unitPrice = 0;
+            item.discount = 0;
+            // #TODO how to get unit type uid
+            // item.unitType = {};
+
+            return item;
+        });
+
+        return queryRunner.manager.save(SubItem, subItems);
+    }
+
     public async updateOneExistingByUid(params: UpdateOneParams, queryRunner: QueryRunner): Promise<SubItem> {
         const subItem = await this.getOneExistingByUid(params, queryRunner);
 
@@ -148,12 +141,6 @@ export class SpecificationDetailsSubItemsRepository {
         await queryRunner.manager.save(subItem);
 
         return subItem;
-    }
-
-    protected markAsDeleted(subItem: SubItem, deletedBy: string): void {
-        subItem.active_status = false;
-        subItem.deleted_by = deletedBy;
-        subItem.deleted_at = new Date();
     }
 
     public async deleteOneExistingByUid(params: DeleteOneParams, queryRunner: QueryRunner): Promise<void> {
@@ -179,6 +166,41 @@ export class SpecificationDetailsSubItemsRepository {
         const deleted = calculateEntityExistenceMap(subItemsToDelete, params.uids);
 
         return deleted;
+    }
+
+    protected async getManyByUids(params: GetManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
+        const subItems = await queryRunner.manager.find(SubItem, {
+            where: {
+                specificationDetailsUid: params.specificationDetailsUid,
+                uid: In(params.uids),
+                active_status: true,
+            },
+        });
+
+        return subItems;
+    }
+
+    protected async assertAllUnitTypesExistByUids(unitTypeUids: string[], queryRunner: QueryRunner): Promise<void> {
+        const unitTypes = await queryRunner.manager.find(UnitTypeEntity, {
+            where: {
+                uid: In(unitTypeUids),
+                activeStatus: true,
+            },
+        });
+
+        const unitTypeExistenceMap = calculateEntityExistenceMap(unitTypes, unitTypeUids);
+
+        for (const [unitTypeUid, exists] of entriesOf(unitTypeExistenceMap)) {
+            if (!exists) {
+                throw new UnitTypeNotFoundByUidError(unitTypeUid);
+            }
+        }
+    }
+
+    protected markAsDeleted(subItem: SubItem, deletedBy: string): void {
+        subItem.active_status = false;
+        subItem.deleted_by = deletedBy;
+        subItem.deleted_at = new Date();
     }
 }
 

@@ -1,6 +1,6 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { J3PrcRequisition } from './';
+import { J3PrcRequisition, LibSurveyCertificateAuthority } from './';
 import { SpecificationDetailsSubItemEntity } from './SpecificationDetailsSubItemEntity';
 
 @Entity('specification_details', { schema: 'dry_dock' })
@@ -192,4 +192,19 @@ export class SpecificationDetailsEntity {
 
     @OneToMany(() => SpecificationDetailsSubItemEntity, (subItem) => subItem.specificationDetails)
     SubItems: SpecificationDetailsSubItemEntity[];
+
+    @ManyToMany(() => LibSurveyCertificateAuthority)
+    @JoinTable({
+        name: 'specification_details_LIB_Survey_CertificateAuthority',
+        schema: 'dry_dock',
+        joinColumn: {
+            name: 'specification_details_uid',
+            referencedColumnName: 'uid',
+        },
+        inverseJoinColumn: {
+            name: 'LIB_Survey_CertificateAuthority_ID',
+            referencedColumnName: 'ID',
+        },
+    })
+    inspections: Partial<LibSurveyCertificateAuthority>[];
 }

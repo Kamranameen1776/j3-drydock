@@ -28,7 +28,7 @@ const SUBJECT_COLUMN_LENGTH = 512; // next power of 2
 @Index('idx_specification_details_sub_item_subject', ['subject'])
 export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
-    readonly uid: string;
+    uid: string;
 
     @Column({
         name: 'number',
@@ -98,7 +98,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     specificationDetails: SpecificationDetailsEntity;
 
     @RelationId<SpecificationDetailsSubItemEntity>((subItem) => subItem.specificationDetails)
-    readonly specificationDetailsUid: string;
+    specificationDetailsUid: string;
 
     @OneToOne(() => UnitTypeEntity, (unitType) => unitType.specificationDetailsSubItem)
     @JoinColumn({
