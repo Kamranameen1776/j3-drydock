@@ -1,13 +1,13 @@
-import { className } from 'common/drydock/ts-helpers/className';
-import { ProjectEntity, SpecificationDetailsEntity } from 'entity/drydock';
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager } from 'typeorm';
 
+import { className } from '../../../../common/drydock/ts-helpers/className';
+import { ProjectEntity, SpecificationDetailsEntity } from '../../../../entity/drydock';
 import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
+import { JobOrderUpdatesEntity } from '../../../../entity/drydock/JobOrderUpdatesEntity';
 import { IJobOrderDto } from './IJobOrderDto';
-import { JobOrderUpdatesEntity } from 'entity/drydock/JobOrderUpdatesEntity';
 
 export class JobOrdersRepository {
     public async GetJobOrders(request: Request): Promise<ODataResult<IJobOrderDto>> {

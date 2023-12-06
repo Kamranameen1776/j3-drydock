@@ -1,7 +1,8 @@
-import { JobOrderStatus } from 'dal/drydock/projects/job-orders/JobOrderStatus';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('job_order', { schema: 'dry_dock' })
+import * as JobOrderStatus from '../../dal/drydock/projects/job-orders/JobOrderStatus';
+
+@Entity('job_orders', { schema: 'dry_dock' })
 export class JobOrderEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
@@ -37,7 +38,7 @@ export class JobOrderEntity {
         name: 'remark',
         length: 50,
     })
-    Status: JobOrderStatus;
+    Status: JobOrderStatus.JobOrderStatus;
 
     @Column('int', {
         nullable: false,
