@@ -18,6 +18,7 @@ export class ProjectMapper {
             VesselName: record.VesselName,
             VesselUid: record.VesselUid,
             VesselId: record.VesselId,
+            VesselType: record.VesselType,
             Subject: record.Subject,
             StartDate: record.StartDate,
             EndDate: record.EndDate,
