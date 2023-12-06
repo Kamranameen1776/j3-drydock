@@ -7,15 +7,18 @@ import {
   eCrud,
   eEntities,
   eJMSFilterDataKeys,
-  Column, Filter, FilterListSet, eFieldControlType
-} from "jibe-components";
+  Column,
+  Filter,
+  FilterListSet,
+  eFieldControlType
+} from 'jibe-components';
 import { ODataFilterBuilder } from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../models/enums/standard-jobs-main.enum';
 import { SubItem } from '../models/interfaces/sub-items';
 import { eModule } from '../models/enums/module.enum';
 import { eFunction } from '../models/enums/function.enum';
 import { FunctionsService } from './functions.service';
-import { GridInputsWithRequest } from "../models/interfaces/grid-inputs";
+import { GridInputsWithRequest } from '../models/interfaces/grid-inputs';
 
 @Injectable({ providedIn: 'root' })
 export class StandardJobsService {
@@ -87,7 +90,7 @@ export class StandardJobsService {
       ValueCode: 'label',
       FieldID: 2,
       default: true
-    },
+    }
   ];
 
   private filtersLists: FilterListSet = {
@@ -95,12 +98,12 @@ export class StandardJobsService {
       list: [
         {
           label: 'Yes',
-          value: 'Yes',
+          value: 'Yes'
         },
         {
           label: 'No',
-          value: 'No',
-        },
+          value: 'No'
+        }
       ],
       type: eFieldControlType.MultiSelect,
       odataKey: 'subItmes'
@@ -109,16 +112,16 @@ export class StandardJobsService {
       list: [
         {
           label: 'Yes',
-          value: 'Yes',
+          value: 'Yes'
         },
         {
           label: 'No',
-          value: 'No',
-        },
+          value: 'No'
+        }
       ],
       type: eFieldControlType.MultiSelect,
       odataKey: 'inspection'
-    },
+    }
   };
 
   constructor(
@@ -153,7 +156,7 @@ export class StandardJobsService {
   }
 
   public getStandardJobsRequestWithFilters(vesselType: number, functionUIDs: string[]): WebApiRequest {
-    let filter = ODataFilterBuilder('and');
+    const filter = ODataFilterBuilder('and');
 
     if (vesselType) {
       filter.contains('vesselTypeId', vesselType.toString());

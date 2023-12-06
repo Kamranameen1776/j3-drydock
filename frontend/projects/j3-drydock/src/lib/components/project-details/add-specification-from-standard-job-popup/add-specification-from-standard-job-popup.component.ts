@@ -1,14 +1,15 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { getSmallPopup } from '../../../models/constants/popup';
-import { eGridRefreshType, eJbTreeEvents, GridService, IJbDialog } from "jibe-components";
+import { eGridRefreshType, eJbTreeEvents, GridService, IJbDialog } from 'jibe-components';
 import { SpecificationFormComponent } from '../specification-form/specification-form.component';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
-import { Observable } from "rxjs";
-import { FunctionsFlatTreeNode } from "../../../models/interfaces/functions-tree-node";
-import { GridInputsWithRequest } from "../../../models/interfaces/grid-inputs";
-import { StandardJobsService } from "../../../services/standard-jobs.service";
-import { map, takeUntil } from "rxjs/operators";
-import { FunctionsService } from "../../../services/functions.service";
+import { BehaviorSubject, Observable } from 'rxjs';
+import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
+import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
+import { StandardJobsService } from '../../../services/standard-jobs.service';
+import { map, takeUntil } from 'rxjs/operators';
+import { FunctionsService } from '../../../services/functions.service';
+import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 
 @Component({
   selector: 'jb-add-specification-from-standard-job-popup',
@@ -18,6 +19,7 @@ import { FunctionsService } from "../../../services/functions.service";
 export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeComponent implements OnInit {
   @Input() isOpen: boolean;
   @Input() vesselType: number;
+  @Input() projectUid: string;
   treeData$: Observable<FunctionsFlatTreeNode[]>;
 
   @Output() closeDialog = new EventEmitter<boolean>();
@@ -28,9 +30,9 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
 
   eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.Select, eJbTreeEvents.UnSelect];
 
-  isPopupValid = false;
+  isPopupValid$ = new BehaviorSubject<boolean>(false);
 
-  isSaving: boolean;
+  isSaving$ = new BehaviorSubject<boolean>(false);
 
   functionUIDs: string[] = [];
   gridData: GridInputsWithRequest;
@@ -40,6 +42,7 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
     private standardJobsService: StandardJobsService,
     private gridService: GridService,
     private functionsService: FunctionsService,
+    private specificationService: SpecificationDetailsService
   ) {
     super();
   }
@@ -48,7 +51,7 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
     this.treeData$ = this.functionsService.getFunctions().pipe(
       takeUntil(this.unsubscribe$),
       map((functions) => {
-        return functions.map(func => this.functionsService.calculateSelectable(func, functions));
+        return functions.map((func) => this.functionsService.calculateSelectable(func, functions));
       })
     );
 
@@ -61,15 +64,6 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
 
   onSubmit() {
     this.save();
-  }
-
-  private closePopup(isSaved = false) {
-    this.closeDialog.emit(isSaved);
-    this.isPopupValid = false;
-    this.popupForm?.formGroup.reset();
-  }
-
-  private save() {
   }
 
   setNodeData(event) {
@@ -86,8 +80,22 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
 
   onSelect(rows: any[]) {
     this.selected = rows;
+    this.isPopupValid$.next(rows.length > 0);
+  }
 
-    console.log(this.selected);
+  private closePopup(isSaved = false) {
+    this.closeDialog.emit(isSaved);
+    this.isPopupValid$.next(false);
+    this.popupForm?.formGroup.reset();
+  }
+
+  private save() {
+    const selectedUids = this.selected.map((row) => row.uid);
+    this.isSaving$.next(true);
+    this.specificationService.createSpecificationFromStandardJob(this.projectUid, selectedUids).subscribe(() => {
+      this.isSaving$.next(false);
+      this.closePopup(true);
+    });
   }
 
   private getData() {

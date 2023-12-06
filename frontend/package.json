@@ -9,6 +9,7 @@
     "prettier": "prettier --write projects/j3-drydock/src/lib/**/*.{js,ts,json,html,css,scss}",
     "test": "[ \"$TF_BUILD\" != \"True\" ] && ng test || echo \"Tests are not ready for running in CI, skipping\"",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "e2e": "ng e2e"
   },
   "lint-staged": {
