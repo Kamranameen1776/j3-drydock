@@ -1,8 +1,10 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
+import { SynchronizerService } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
+import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { Command } from '../core/cqrs/Command';
 import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
@@ -12,10 +14,13 @@ export class UpdateSpecificationDetailsCommand extends Command<CommandRequest, v
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
+    vesselsRepository: VesselsRepository;
+    tableName = 'dry_dock.specification_details';
+    tableNameInspections = 'dry_dock.specification_details_LIB_Survey_CertificateAuthority';
 
     constructor() {
         super();
-
+        this.vesselsRepository = new VesselsRepository();
         this.specificationDetailsRepository = new SpecificationDetailsRepository();
         this.uow = new UnitOfWork();
         this.specificationDetailsAudit = new SpecificationDetailsAuditService();
@@ -35,9 +40,17 @@ export class UpdateSpecificationDetailsCommand extends Command<CommandRequest, v
     }
 
     protected async MainHandlerAsync({ request, user }: CommandRequest): Promise<void> {
+        const vessel = await this.vesselsRepository.GetVesselBySpecification(request.body.uid);
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const { Inspections } = request.body;
             await this.specificationDetailsRepository.UpdateSpecificationDetails(request.body, queryRunner);
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                this.tableName,
+                'uid',
+                request.body.uid,
+                vessel.VesselId,
+            );
             if (Inspections !== undefined) {
                 const data = Inspections.map((item: number) => {
                     return {
@@ -49,6 +62,13 @@ export class UpdateSpecificationDetailsCommand extends Command<CommandRequest, v
                     data,
                     request.body.uid,
                     queryRunner,
+                );
+                const condition = `specification_details_uid = '${request.body.uid}'`;
+                await SynchronizerService.dataSynchronizeByConditionManager(
+                    queryRunner.manager,
+                    this.tableNameInspections,
+                    vessel.VesselId,
+                    condition,
                 );
             }
             await this.specificationDetailsAudit.auditUpdatedSpecificationDetails(

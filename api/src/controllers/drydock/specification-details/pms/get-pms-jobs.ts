@@ -4,7 +4,7 @@ import {
     GetSpecificationPmsRequestDto,
     GetSpecificationQueryDto,
 } from '../../../../application-layer/drydock/specification-details/dtos/GetSpecificationPMSRequestDto';
-import { GetSpecificationPmsQuery } from '../../../../application-layer/drydock/specification-details/GetSpecificationPMSQuery';
+import { GetSpecificationPmsQuery } from '../../../../application-layer/drydock/specification-details/PMS/GetSpecificationPMSQuery';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 /**
  * This handler returns all available shipments

@@ -11,6 +11,12 @@ export class LibVesselsEntity {
     })
     VesselId: number;
 
+    @Column('int', {
+        nullable: false,
+        name: 'Vessel_type',
+    })
+    VesselType: number;
+
     @Column('varchar', {
         nullable: true,
         name: 'Vessel_Name',

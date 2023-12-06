@@ -86,7 +86,8 @@ export function winEnv(): unknown {
     SpecificationRequisitionsComponent,
     SpecificationSubItemsComponent,
     StatementOfFactsComponent,
-    JobOrdersComponent
+    JobOrdersComponent,
+    SpecificationRequisitionsComponent
   ],
   imports: [
     CommonModule,
@@ -110,7 +111,8 @@ export function winEnv(): unknown {
     LeftPanelFilterService,
     SpecificationCreateFormService,
     SpecificationGeneralInformationInputservice,
-    SpecificationDetailsSubItemsGridService
+    SpecificationDetailsSubItemsGridService,
+    SpecificationGeneralInformationInputservice
   ],
   exports: [],
   entryComponents: []

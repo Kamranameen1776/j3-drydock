@@ -17,4 +17,11 @@ export class SpecificationInspectionEntity {
     })
     // eslint-disable-next-line @typescript-eslint/naming-convention
     LIBSurveyCertificateAuthorityID: number;
+
+    @Column('bit', {
+        nullable: false,
+        name: 'active_status',
+        default: true,
+    })
+    ActiveStatus: boolean;
 }

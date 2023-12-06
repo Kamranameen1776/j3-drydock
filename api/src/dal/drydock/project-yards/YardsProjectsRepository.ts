@@ -43,7 +43,7 @@ export class YardsProjectsRepository {
             .getRawOne();
     }
 
-    public async create(data: ICreateProjectYardsDto, queryRunner: QueryRunner) {
+    public async create(data: ICreateProjectYardsDto, queryRunner: QueryRunner): Promise<string[]> {
         const yardProjects: YardsProjectsEntity[] = data.yardsUids.map((yardUid) =>
             this.createYardProject(yardUid, data),
         );
@@ -54,7 +54,7 @@ export class YardsProjectsRepository {
             .into(YardsProjectsEntity)
             .values(yardProjects)
             .execute();
-        return;
+        return yardProjects.map((item) => item.uid);
     }
 
     private createYardProject(yardUid: string, data: ICreateProjectYardsDto): YardsProjectsEntity {

@@ -39,7 +39,7 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
     this.cd.markForCheck();
   }
 
-  onValueChange(event) {
+  onValueChange() {
     this.saveButtonDisabled = false;
   }
 

@@ -43,6 +43,7 @@ export interface GetStandardJobsResult
     inspectionId: number[];
     vesselTypeId: number[];
     subItems: GetStandardJobSubItemsResultDto[];
+    hasSubItems: string;
 }
 
 export type GetStandardJobsQueryResult = ODataResult<GetStandardJobsQueryData>;
