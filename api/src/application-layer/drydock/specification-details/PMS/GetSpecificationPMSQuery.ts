@@ -1,6 +1,6 @@
-import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
-import { Query } from '../core/cqrs/Query';
-import { GetSpecificationPmsRequestDto } from './dtos/GetSpecificationPMSRequestDto';
+import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
+import { Query } from '../../core/cqrs/Query';
+import { GetSpecificationPmsRequestDto } from '../dtos/GetSpecificationPMSRequestDto';
 
 export class GetSpecificationPmsQuery extends Query<GetSpecificationPmsRequestDto, Array<string>> {
     specificationDetailsRepository = new SpecificationDetailsRepository();

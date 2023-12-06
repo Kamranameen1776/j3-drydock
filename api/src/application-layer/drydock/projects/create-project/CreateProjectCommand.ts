@@ -1,6 +1,7 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
+import { SynchronizerService } from 'j2utils';
 
 import { CreateProjectDto } from '../../../../bll/drydock/projects/dtos/ICreateProjectDto';
 import { ProjectService } from '../../../../bll/drydock/projects/ProjectService';
@@ -25,6 +26,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
     vesselsRepository: VesselsRepository;
     uow: UnitOfWork;
 
+    tableName = 'dry_dock.project';
     constructor() {
         super();
 
@@ -80,6 +82,13 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const projectId = await this.projectsRepository.CreateProject(newProjectDto, queryRunner);
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                this.tableName,
+                'uid',
+                projectId,
+                vessel.VesselId,
+            );
             return projectId;
         });
     }

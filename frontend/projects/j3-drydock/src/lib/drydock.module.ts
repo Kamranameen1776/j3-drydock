@@ -114,7 +114,8 @@ export function winEnv(): unknown {
     LeftPanelFilterService,
     SpecificationCreateFormService,
     SpecificationGeneralInformationInputservice,
-    SpecificationDetailsSubItemsGridService
+    SpecificationDetailsSubItemsGridService,
+    SpecificationGeneralInformationInputservice
   ],
   exports: [],
   entryComponents: []

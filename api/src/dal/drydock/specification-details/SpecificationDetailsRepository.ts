@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, QueryRunner } from 'typeorm';
+import { getConnection, getManager, In, QueryRunner } from 'typeorm';
 
 import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
 import { GetRequisitionsResponseDto } from '../../../application-layer/drydock/specification-details/dtos/GetRequisitionsResponseDto';
@@ -41,14 +41,16 @@ import {
 
 export class SpecificationDetailsRepository {
     public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {
-        const specificationUid = data.uid;
-        const array = `'${data.PmsIds.join(`','`)}'`;
-        await queryRunner.manager
-            .createQueryBuilder(SpecificationPmsEntity, 'sr')
-            .delete()
-            .where(`SpecificationUid = '${specificationUid}'`)
-            .andWhere(`PMSUid IN (${array})`)
-            .execute();
+        const repository = queryRunner.manager.getRepository(SpecificationPmsEntity);
+        await repository.update(
+            {
+                SpecificationUid: data.uid,
+                PMSUid: In(data.PmsIds),
+            },
+            {
+                ActiveStatus: false,
+            },
+        );
     }
 
     public async addSpecificationPms(data: Array<PmsJobsData>, queryRunner: QueryRunner) {
@@ -60,6 +62,7 @@ export class SpecificationDetailsRepository {
         return pmsRepository.find({
             where: {
                 SpecificationUid: uid,
+                ActiveStatus: true,
             },
         });
     }
@@ -72,6 +75,7 @@ export class SpecificationDetailsRepository {
             .select(['ca.ID as InspectionId', 'ca.Authority as InspectionText'])
             .innerJoin(className(LibSurveyCertificateAuthority), 'ca', 'insp.LIBSurveyCertificateAuthorityID = ca.ID')
             .where('insp.SpecificationDetailsUid = :uid', { uid })
+            .andWhere('insp.ActiveStatus = 1')
             .execute();
     }
 
@@ -120,9 +124,10 @@ export class SpecificationDetailsRepository {
             .getRawOne();
     }
 
-    public async GetManySpecificationDetails(
-        data: Request,
-    ): Promise<{ records: SpecificationDetailsEntity[]; count?: number }> {
+    public async GetManySpecificationDetails(data: Request): Promise<{
+        records: SpecificationDetailsEntity[];
+        count?: number;
+    }> {
         try {
             const oDataService = new ODataService(data, getConnection);
 
@@ -200,8 +205,36 @@ export class SpecificationDetailsRepository {
         SpecificationDetailsUid: string,
         queryRunner: QueryRunner,
     ) {
-        await queryRunner.manager.delete(SpecificationInspectionEntity, { SpecificationDetailsUid });
-        return this.CreateSpecificationInspection(data, queryRunner);
+        //get all by specUid
+        const repository = queryRunner.manager.getRepository(SpecificationInspectionEntity);
+        const allRecords = await repository.find({
+            where: {
+                SpecificationDetailsUid,
+                ActiveStatus: true,
+            },
+        });
+        //filter all need to be removed, remove
+        const remove = allRecords.filter((r) => {
+            return !data.find((d) => d.LIBSurveyCertificateAuthorityID === r.LIBSurveyCertificateAuthorityID);
+        });
+        if (remove.length) {
+            await repository.update(
+                {
+                    uid: In(remove.map((i) => i.uid)),
+                },
+                {
+                    ActiveStatus: false,
+                },
+            );
+        }
+        //filter all need to be created, create
+        const create = data.filter((d) => {
+            return !allRecords.find((r) => d.LIBSurveyCertificateAuthorityID === r.LIBSurveyCertificateAuthorityID);
+        });
+        if (create.length) {
+            await this.CreateSpecificationInspection(create, queryRunner);
+        }
+        return;
     }
 
     public async UpdateSpecificationDetails(data: IUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
@@ -253,21 +286,33 @@ export class SpecificationDetailsRepository {
         return oDataService.getJoinResult(query);
     }
 
-    public linkSpecificationRequisitions(
+    public async linkSpecificationRequisitions(
         data: LinkSpecificationRequisitionsRequestDto,
         queryRunner: QueryRunner,
     ): Promise<SpecificationRequisitionsEntity[]> {
         const specificationUid = data.specificationUid;
         const requisitionUid = data.requisitionUid;
 
-        const entities = requisitionUid.map((uid) => {
+        const existingEntities = await queryRunner.manager
+            .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
+            .select(['sr.specificationUid', 'sr.requisitionUid', 'sr.uid', 'sr.activeStatus'])
+            .where(`sr.specificationUid = '${specificationUid}'`)
+            .andWhere(`sr.requisitionUid IN ('${requisitionUid.join(`','`)}')`)
+            .getMany();
+
+        const existingRequisitionUid = existingEntities.map((entity) => entity.requisitionUid);
+        const newRequisitionUid = requisitionUid.filter((uid) => !existingRequisitionUid.includes(uid));
+
+        const newEntities = [...existingEntities.map((entity) => ({ ...entity, activeStatus: true }))];
+
+        newRequisitionUid.forEach((uid) => {
             const specificationRequisition = new SpecificationRequisitionsEntity();
             specificationRequisition.specificationUid = specificationUid;
             specificationRequisition.requisitionUid = uid;
-            return specificationRequisition;
+            newEntities.push(specificationRequisition);
         });
 
-        return queryRunner.manager.save(SpecificationRequisitionsEntity, entities);
+        return queryRunner.manager.save(SpecificationRequisitionsEntity, newEntities);
     }
 
     public async deleteSpecificationRequisitions(
@@ -279,7 +324,8 @@ export class SpecificationDetailsRepository {
 
         await queryRunner.manager
             .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
-            .delete()
+            .update()
+            .set({ activeStatus: false })
             .where(`specification_uid = '${specificationUid}'`)
             .andWhere(`requisition_uid = '${requisitionUid}'`)
             .execute();
