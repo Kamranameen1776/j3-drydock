@@ -43,6 +43,8 @@ import { SpecificationSubItemsComponent } from './components/specification-detai
 import { SpecificationDetailsSubItemsGridService } from './services/specification-details/specification-details-sub-item.service';
 import { SimpleConfirmationPopupComponent } from './shared/components/simple-confirmation-popup/simple-confirmation-popup.component';
 import { StatementOfFactsComponent } from './components/project-details/project-monitoring/statement-of-facts/statement-of-facts.component';
+import { ReworkPopupFormComponent } from './shared/components/rework-popup/rework-popup-form/rework-popup-form.component';
+import { ReworkPopupComponent } from './shared/components/rework-popup/rework-popup.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -86,7 +88,9 @@ export function winEnv(): unknown {
     SpecificationRequisitionsComponent,
     SpecificationSubItemsComponent,
     SimpleConfirmationPopupComponent,
-    StatementOfFactsComponent
+    StatementOfFactsComponent,
+    ReworkPopupFormComponent,
+    ReworkPopupComponent
   ],
   imports: [
     CommonModule,

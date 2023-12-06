@@ -8,9 +8,10 @@ import { getSmallPopup } from '../../../models/constants/popup';
 export class SimpleConfirmationPopupComponent {
   @Input() set config(val) {
     if (!val) {
+      this.popupConfig = getSmallPopup();
       return;
     }
-    this.popupConfig = { ...this.popupConfig, ...val };
+    this.popupConfig = { ...getSmallPopup(), ...val };
   }
 
   @Input() isOpen = false;

@@ -73,3 +73,8 @@
     to proceed?
   </span>
 </jb-drydock-simple-confirmation-popup>
+
+<jb-drydock-rework-popup
+  [isOpen]="isReworkPopupVisible"
+  (closeDialog)="onReworkDone($event)"
+></jb-drydock-rework-popup>

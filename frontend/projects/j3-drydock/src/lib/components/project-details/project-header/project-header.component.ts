@@ -96,8 +96,6 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     showDefaultLables: false
   };
 
-  threeDotAction: eProjectHeader3DotActions = null;
-
   isWorkflowButtonEnable = true;
 
   nextWorkflowData: {
@@ -134,6 +132,8 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
   isOpenExport = false;
 
   isShowSaveButton = false;
+
+  isReworkPopupVisible = false;
 
   private readonly functionCode = eFunction.DryDock;
 
@@ -208,12 +208,11 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
     // eslint-disable-next-line default-case
     switch (event.type) {
       case eProjectHeader3DotActions.Export:
-        this.threeDotAction = event.type;
         // TODO method to export
         break;
       // for some reason only this action is transformed to lowercase in jb-components
       case eProjectHeader3DotActions.Rework.toLowerCase():
-        this.threeDotAction = eProjectHeader3DotActions.Rework;
+        this.isReworkPopupVisible = true;
         break;
 
       case eProjectHeader3DotActions.Resync:
@@ -247,6 +246,14 @@ export class ProjectHeaderComponent extends UnsubscribeComponent implements OnIn
       this.reOpen();
     } else {
       this.goToStatus(this.nextWorkflowTaskStatus, this.nextWorkFlowRightCode);
+    }
+  }
+
+  onReworkDone(isSuccess: boolean) {
+    this.isReworkPopupVisible = false;
+    if (isSuccess) {
+      // TODO process after rework is done
+      // this.initDetailsData();
     }
   }
 
