@@ -3,7 +3,6 @@ import { validate } from 'class-validator';
 import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
-import { BusinessException } from '../../../bll/drydock/core/exceptions/BusinessException';
 import { DailyReportsRepository } from '../../../dal/drydock/daily-reports/DailyReportsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
@@ -30,25 +29,6 @@ export class UpdateDailyReportsCommand extends Command<Request, void> {
         if (result.length) {
             throw result;
         }
-
-        const yardProject = await this.dailyReportsRepository.get(body.uid);
-        if (!yardProject || yardProject.activeStatus === false) {
-            throw new BusinessException(
-                `The project yard identified by UID: ${body.uid} could not be found or has been deleted.`,
-            );
-        }
-
-        if (body.isSelected) {
-            const yardsProjects = await this.dailyReportsRepository.getAllByProject(yardProject.projectUid);
-            if (
-                !yardsProjects ||
-                yardsProjects.some((yardProject) => yardProject.isSelected && yardProject.uid !== body.uid)
-            ) {
-                throw new BusinessException(
-                    `Multiple yard selection for the same project ${yardProject.projectUid} is not allowed.`,
-                );
-            }
-        }
         return;
     }
 
@@ -59,10 +39,10 @@ export class UpdateDailyReportsCommand extends Command<Request, void> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.dailyReportsRepository.update(
                 {
-                    updatedBy: updatedBy,
-                    isSelected: body.isSelected,
-                    lastExportedDate: body.lastExportedDate,
                     uid: body.uid,
+                    reportName: body.reportName,
+                    description: body.description,
+                    updatedBy: updatedBy,
                     updatedAt: new Date(),
                 },
                 queryRunner,

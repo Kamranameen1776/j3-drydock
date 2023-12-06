@@ -1,5 +1,6 @@
+import { IsNotEmpty } from 'class-validator';
+
 export class GetDailyReportsResultDto {
-    uid: string;
-    reportName: string;
-    reporyDate: Date;
+    @IsNotEmpty()
+    odata: object;
 }

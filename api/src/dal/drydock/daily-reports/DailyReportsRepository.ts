@@ -1,46 +1,32 @@
-import { DailyReportsEntity } from 'entity/drydock/DailyReportsEntity';
-import { DataUtilService } from 'j2utils';
-import { getManager, QueryRunner } from 'typeorm';
+import { Request } from 'express';
+import { DataUtilService, ODataService } from 'j2utils';
+import { getConnection, getManager, QueryRunner } from 'typeorm';
 
-import { YardsProjectsEntity } from '../../../entity/drydock';
+import { DailyReportsEntity } from '../../../entity/drydock/DailyReportsEntity';
+import { ODataResult } from '../../../shared/interfaces';
 import { ICreateDailyReportsDto } from './dtos/ICreateDailyReportsDto';
 import { IDailyReportsResultDto } from './dtos/IDailyReportsResultDto';
 import { IDeleteDailyReportsDto } from './dtos/IDeleteDailyReportsDto';
 import { IUpdateDailyReportsDto } from './dtos/IUpdateDailyReportsDto';
 
 export class DailyReportsRepository {
-    public async getAllByProject(uid: string): Promise<IDailyReportsResultDto[]> {
-        const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
-        return yardProjectsRepository
-            .createQueryBuilder('yp')
-            .leftJoinAndSelect('yp.yard', 'y')
-            .select(
-                `yp.uid as uid,
-                yp.project_uid as projectUid,
-                yp.yard_uid as yardUid,
-                y.yard_name as yardName,
-                y.yard_location as yardLocation,
-                cast(yp.last_exported_date as datetimeoffset) AS lastExportedDate,
-                yp.is_selected as isSelected`,
-            )
-            .where('yp.active_status = 1 and yp.project_uid = :uid', { uid })
-            .execute();
-    }
+    public async get(data: Request): Promise<ODataResult<IDailyReportsResultDto>> {
+        const dailyReportsRepository = getManager().getRepository(DailyReportsEntity);
 
-    public async get(uid: string): Promise<IDailyReportsResultDto> {
-        const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
-        return yardProjectsRepository
-            .createQueryBuilder('yp')
-            .select(
-                `yp.uid as uid,
-                yp.project_uid as projectUid,
-                yp.yard_uid as yardUid,
-                yp.is_selected as isSelected,
-                yp.last_exported_date as lastExportedDate,
-                yp.active_status as activeStatus`,
-            )
-            .where('yp.uid = :uid', { uid })
-            .getRawOne();
+        const query: string = dailyReportsRepository
+            .createQueryBuilder('dr')
+            .select([
+                'dr.uid AS uid',
+                'dr.report_name AS reportName',
+                'dr.description AS description',
+                'dr.created_by AS createdBy',
+                'dr.created_at AS createdAt',
+                'dr.active_status AS activeStatus',
+            ])
+            .where('dr.active_status = 1')
+            .getQuery();
+        const oDataService = new ODataService(data, getConnection);
+        return oDataService.getJoinResult(query);
     }
 
     public async create(data: ICreateDailyReportsDto, queryRunner: QueryRunner) {
@@ -62,15 +48,15 @@ export class DailyReportsRepository {
 
     public async update(data: IUpdateDailyReportsDto, queryRunner: QueryRunner) {
         const uid = data.uid;
-        const yardProjectsRepository = queryRunner.manager.getRepository(YardsProjectsEntity);
-        return yardProjectsRepository
+        const dailyReportsRepository = queryRunner.manager.getRepository(DailyReportsEntity);
+        return dailyReportsRepository
             .createQueryBuilder('yp')
-            .update(YardsProjectsEntity)
+            .update(DailyReportsEntity)
             .set({
-                last_exported_date: data.lastExportedDate,
-                is_selected: data.isSelected,
-                updated_at: data.updatedAt,
+                report_name: data.reportName,
+                description: data.description,
                 updated_by: data.updatedBy,
+                updated_at: data.updatedAt,
             })
             .where('uid = :uid', { uid })
             .execute();

@@ -12,4 +12,8 @@ export class UpdateDailyReportsDto {
     @IsOptional()
     @IsDateString()
     reportDate: Date;
+
+    @IsArray()
+    @ArrayMinSize(0)
+    description: string;
 }

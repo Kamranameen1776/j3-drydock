@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import { GetDailyReportsQuery } from '../../../application-layer/drydock/daily-reports/GetDailyReportsQuery';
+import { RequestWithOData } from '../../../shared/interfaces';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 /**
@@ -14,8 +15,7 @@ export async function getDailyReportsQuery(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const query = new GetDailyReportsQuery();
 
-        const uid = request.query.uid as string;
-        const result = await query.ExecuteAsync(uid);
+        const result = await query.ExecuteAsync(request as RequestWithOData);
 
         return result;
     });

@@ -1,7 +1,7 @@
 export interface IUpdateDailyReportsDto {
     uid: string;
-    lastExportedDate?: Date;
-    isSelected: boolean;
+    reportName: string;
+    description: string;
     updatedBy: string;
     updatedAt: Date;
 }

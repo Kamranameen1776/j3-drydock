@@ -3,7 +3,6 @@ import { validate } from 'class-validator';
 import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
-import { BusinessException } from '../../../bll/drydock/core/exceptions/BusinessException';
 import { DailyReportsRepository } from '../../../dal/drydock/daily-reports/DailyReportsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
@@ -25,20 +24,14 @@ export class DeleteDailyReportsCommand extends Command<Request, void> {
     }
 
     protected async ValidationHandlerAsync(request: Request): Promise<void> {
-        const body: DeleteDailyReportsDto = plainToClass(DeleteDailyReportsDto, request.body);
-        const result = await validate(body);
+        if (!request) {
+            throw new Error('Request is null');
+        }
+        const deleteStatementOfFacts: DeleteDailyReportsDto = plainToClass(DeleteDailyReportsDto, request);
+        const result = await validate(deleteStatementOfFacts);
         if (result.length) {
             throw result;
         }
-
-        const dailyReport = await this.dailyReportsRepository.get(body.uid);
-        if (!dailyReport || dailyReport.activeStatus === false) {
-            throw new BusinessException(
-                `The daily report identified by UID: ${body.uid} could not be found or has been deleted.`,
-            );
-        }
-
-        return;
     }
 
     protected async MainHandlerAsync(request: Request) {
