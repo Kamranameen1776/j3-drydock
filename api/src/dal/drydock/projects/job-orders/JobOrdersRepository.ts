@@ -1,3 +1,5 @@
+import { className } from 'common/drydock/ts-helpers/className';
+import { ProjectEntity, SpecificationDetailsEntity } from 'entity/drydock';
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
@@ -5,6 +7,7 @@ import { getConnection, getManager } from 'typeorm';
 
 import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
 import { IJobOrderDto } from './IJobOrderDto';
+import { JobOrderUpdatesEntity } from 'entity/drydock/JobOrderUpdatesEntity';
 
 export class JobOrdersRepository {
     public async GetJobOrders(request: Request): Promise<ODataResult<IJobOrderDto>> {
@@ -16,14 +19,24 @@ export class JobOrdersRepository {
                 'jo.SpecificationUid AS SpecificationUid',
                 '123 AS Code',
                 'jo.Subject AS Subject',
-                '123 AS ItemSource',
+                'sd.ItemSourceUid AS ItemSource',
                 'jo.Status AS Status',
                 'jo.Progress AS Progress',
                 '123 AS Responsible',
+                // TODO: get from JobOrderUpdatesEntity
                 '123 AS Updates',
+                // TODO: get from JobOrderUpdatesEntity
                 'cast(getdate() as datetimeoffset) AS LastUpdated',
+
+                'sd.ProjectUid AS ProjectUid',
             ])
+            .innerJoin(className(ProjectEntity), 'p', 'p.uid = jo.ProjectUid')
+            .innerJoin(className(SpecificationDetailsEntity), 'sd', 'sd.uid = jo.SpecificationUid')
+            // .innerJoin(className(JobOrderUpdatesEntity), 'jou', 'jo.uid = jou.JobOrderUid')
             .where('jo.ActiveStatus = 1')
+            .where('jou.ActiveStatus = 1')
+            .where('p.ActiveStatus = 1')
+            .where('sd.ActiveStatus = 1')
             .getQuery();
 
         const oDataService = new ODataService(request, getConnection);

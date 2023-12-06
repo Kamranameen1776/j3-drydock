@@ -1,3 +1,4 @@
+import { JobOrderStatus } from 'dal/drydock/projects/job-orders/JobOrderStatus';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('job_order', { schema: 'dry_dock' })
@@ -17,18 +18,6 @@ export class JobOrderEntity {
     })
     SpecificationUid: string;
 
-    @Column('uuid', {
-        nullable: false,
-        name: 'responsible_uid',
-    })
-    ResponsibleUid: string;
-
-    @Column('varchar', {
-        nullable: false,
-        name: 'last_updated',
-    })
-    LastUpdated: Date;
-
     @Column('varchar', {
         nullable: false,
         name: 'subject',
@@ -43,7 +32,14 @@ export class JobOrderEntity {
     })
     Remark: string;
 
-    @Column('decimal', {
+    @Column('varchar', {
+        nullable: true,
+        name: 'remark',
+        length: 50,
+    })
+    Status: JobOrderStatus;
+
+    @Column('int', {
         nullable: false,
         name: 'progress',
     })
