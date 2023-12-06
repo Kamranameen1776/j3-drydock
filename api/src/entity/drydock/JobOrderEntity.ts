@@ -35,7 +35,7 @@ export class JobOrderEntity {
 
     @Column('varchar', {
         nullable: true,
-        name: 'remark',
+        name: 'status',
         length: 50,
     })
     Status: JobOrderStatus.JobOrderStatus;
