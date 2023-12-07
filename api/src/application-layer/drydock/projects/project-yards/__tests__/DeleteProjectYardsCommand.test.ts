@@ -1,7 +1,10 @@
 import { Request } from 'express';
 
+import * as tableName from '../../../../../common/drydock/ts-helpers/tableName';
 import { DeleteProjectYardsCommand } from '../DeleteProjectYardsCommand';
 import { DeleteProjectYardsDto } from '../dtos/DeleteProjectYardsDto';
+
+jest.mock('../../../../../common/drydock/ts-helpers/tableName');
 
 describe('DeleteProjectYardsCommand', () => {
     let command: DeleteProjectYardsCommand;
@@ -14,6 +17,7 @@ describe('DeleteProjectYardsCommand', () => {
                 uid: '12963993-9397-4B5E-849E-0046FB90F564',
             } as DeleteProjectYardsDto,
         };
+        (tableName.getTableName as jest.Mock).mockImplementation(() => 'string');
     });
 
     describe('ValidationHandlerAsync', () => {

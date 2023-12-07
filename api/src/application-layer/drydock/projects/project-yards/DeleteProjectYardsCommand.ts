@@ -4,8 +4,10 @@ import { Request } from 'express';
 import { AccessRights, SynchronizerService } from 'j2utils';
 
 import { BusinessException } from '../../../../bll/drydock/core/exceptions';
+import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { YardsProjectsRepository } from '../../../../dal/drydock/project-yards/YardsProjectsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
+import { YardsProjectsEntity } from '../../../../entity/drydock';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { DeleteProjectYardsDto } from './dtos/DeleteProjectYardsDto';
@@ -13,7 +15,7 @@ export class DeleteProjectYardsCommand extends Command<Request, void> {
     yardProjectsRepository: YardsProjectsRepository;
     uow: UnitOfWork;
     vesselRepository: VesselsRepository;
-    tableName = 'dry_dock.yards_projects';
+    tableName = getTableName(YardsProjectsEntity);
     constructor() {
         super();
 

@@ -3,8 +3,11 @@ import { validate } from 'class-validator';
 import { SynchronizerService } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { SpecificationDetailsEntity, SpecificationInspectionEntity } from '../../../entity/drydock';
+import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
 import { Command } from '../core/cqrs/Command';
 import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
@@ -15,8 +18,9 @@ export class UpdateSpecificationDetailsCommand extends Command<CommandRequest, v
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
     vesselsRepository: VesselsRepository;
-    tableName = 'dry_dock.specification_details';
-    tableNameInspections = 'dry_dock.specification_details_LIB_Survey_CertificateAuthority';
+    tableName = getTableName(SpecificationDetailsEntity);
+    tableNameInspections = getTableName(SpecificationInspectionEntity);
+    tableNameAudit = getTableName(J2FieldsHistoryEntity);
 
     constructor() {
         super();
@@ -71,10 +75,17 @@ export class UpdateSpecificationDetailsCommand extends Command<CommandRequest, v
                     condition,
                 );
             }
-            await this.specificationDetailsAudit.auditUpdatedSpecificationDetails(
+            const ids = await this.specificationDetailsAudit.auditUpdatedSpecificationDetails(
                 request.body,
                 user.UserID,
                 queryRunner,
+            );
+            const condition = `uid IN ('${ids.join(`','`)}')`;
+            await SynchronizerService.dataSynchronizeByConditionManager(
+                queryRunner.manager,
+                this.tableNameAudit,
+                vessel.VesselId,
+                condition,
             );
         });
 

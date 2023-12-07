@@ -5,9 +5,11 @@ import { SynchronizerService } from 'j2utils';
 
 import { CreateProjectDto } from '../../../../bll/drydock/projects/dtos/ICreateProjectDto';
 import { ProjectService } from '../../../../bll/drydock/projects/ProjectService';
+import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { ICreateNewProjectDto } from '../../../../dal/drydock/projects/dtos/ICreateNewProjectDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
+import { ProjectEntity } from '../../../../entity/drydock';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { CreateProjectDataDto } from './CreateProjectDataDto';
@@ -26,7 +28,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
     vesselsRepository: VesselsRepository;
     uow: UnitOfWork;
 
-    tableName = 'dry_dock.project';
+    tableName = getTableName(ProjectEntity);
     constructor() {
         super();
 

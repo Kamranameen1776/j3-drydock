@@ -1,16 +1,18 @@
 import { validate } from 'class-validator';
 import { SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-facts/StatementOfFactsRepository';
 import { UpdateStatementOfFactsDto } from '../../../dal/drydock/statement-of-facts/UpdateStatementOfFactsDto';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { StatementOfFactsEntity } from '../../../entity/drydock';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 
 export class UpdateStatementOfFactsCommand extends Command<UpdateStatementOfFactsDto, void> {
     repository: StatementOfFactsRepository;
     uow: UnitOfWork;
-    tableName = 'dry_dock.statement_of_facts';
+    tableName = getTableName(StatementOfFactsEntity);
     vesselRepository: VesselsRepository;
 
     constructor() {
