@@ -80,7 +80,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async createOne(params: CreateSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
-        await this.assertAllUnitTypesExistByUids([params.unitUid], queryRunner);
+        await this.assertAllUnitTypesExistByUids([params.unitTypeUid], queryRunner);
 
         const { createdBy: created_by, ...props } = params;
 
@@ -99,9 +99,9 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async createMany(params: CreateManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
-        const unitUids = params.subItems.map((props) => props.unitUid);
+        const unitTypeUids = params.subItems.map((props) => props.unitTypeUid);
 
-        await this.assertAllUnitTypesExistByUids(unitUids, queryRunner);
+        await this.assertAllUnitTypesExistByUids(unitTypeUids, queryRunner);
 
         const newSubItems = params.subItems.map((props): SubItem => {
             return queryRunner.manager.create(SubItem, {
@@ -125,8 +125,8 @@ export class SpecificationDetailsSubItemsRepository {
     public async updateOneExistingByUid(params: UpdateSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
         const existingSubItem = await this.getOneExistingByUid(params, queryRunner);
 
-        if (params.props.unitUid != null) {
-            await this.assertAllUnitTypesExistByUids([params.props.unitUid], queryRunner);
+        if (params.props.unitTypeUid != null) {
+            await this.assertAllUnitTypesExistByUids([params.props.unitTypeUid], queryRunner);
         }
 
         const subItemData = this.mapSubItemDtoToEntity(params.props, existingSubItem);
@@ -246,11 +246,13 @@ export class SpecificationDetailsSubItemsRepository {
         });
     }
 
-    protected async assertAllUnitTypesExistByUids(unitTypeUids: string[], queryRunner: QueryRunner): Promise<void> {
-        unitTypeUids = unitTypeUids.filter((uid) => uid !== undefined);
+    protected async assertAllUnitTypesExistByUids(uids: string[], queryRunner: QueryRunner): Promise<void> {
+        const unitTypeUids = uids.filter((uid) => uid != null);
+
         if (unitTypeUids.length === 0) {
             return;
         }
+
         const unitTypes = await queryRunner.manager.find(UnitTypeEntity, {
             where: {
                 uid: In(unitTypeUids),
@@ -287,9 +289,9 @@ export class SpecificationDetailsSubItemsRepository {
         specificationDetails.uid = subItemData.specificationDetailsUid!;
         newSubItem.specificationDetails = specificationDetails;
 
-        if (subItemData.unitUid) {
+        if (subItemData.unitTypeUid) {
             const unitType = new UnitTypeEntity();
-            unitType.uid = subItemData.unitUid;
+            unitType.uid = subItemData.unitTypeUid;
             newSubItem.unitType = unitType;
         }
 

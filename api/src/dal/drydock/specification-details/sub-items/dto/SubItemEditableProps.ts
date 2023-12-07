@@ -15,6 +15,7 @@ import {
 import {
     DISCOUNT_MAX,
     DISCOUNT_MIN,
+    type SpecificationDetailsSubItemEntity,
     SUBJECT_MAX_LENGTH,
 } from '../../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 
@@ -26,7 +27,13 @@ const IsNormalNumber = () =>
         maxDecimalPlaces: 4,
     });
 
-export class SubItemEditableProps {
+/** @private */
+type SubItemEditableExcerpt = Pick<
+    SpecificationDetailsSubItemEntity,
+    'subject' | 'unitTypeUid' | 'unitPrice' | 'quantity' | 'discount'
+>;
+
+export class SubItemEditableProps implements SubItemEditableExcerpt {
     @IsString()
     @IsNotEmpty()
     @MaxLength(SUBJECT_MAX_LENGTH)
@@ -34,7 +41,7 @@ export class SubItemEditableProps {
 
     @IsUUID('4')
     @IsOptional()
-    readonly unitUid: string;
+    readonly unitTypeUid: string;
 
     @Type(() => Number)
     @IsInt()
