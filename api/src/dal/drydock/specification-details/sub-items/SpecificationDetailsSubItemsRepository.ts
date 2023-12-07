@@ -80,43 +80,47 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async createOne(params: CreateSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
-        await this.assertAllUnitTypesExistByUids([params.unitTypeUid], queryRunner);
+        const [subItem] = await this.batchCreate({ ...params, subItems: [params] }, queryRunner);
 
-        const { createdBy: created_by, ...props } = params;
-
-        const subItemData = this.mapSubItemDtoToEntity(props, {
-            uid: DataUtilService.newUid(),
-        });
-
-        subItemData.created_by = created_by;
-        subItemData.created_at = new Date();
-
-        const subItem = queryRunner.manager.create(SubItem, subItemData);
-
-        await queryRunner.manager.save(subItem);
-
-        return subItemData;
+        return subItem;
     }
 
-    public async createMany(params: CreateManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
+    /**
+     * Construct a sub-item object without making any asynchronous calls.
+     * The method is a safe wrapper over `queryRunner.manager.create(…)`.
+     */
+    protected constructSubItem(params: CreateSubItemParams, queryRunner: QueryRunner): SubItem {
+        return queryRunner.manager.create(SubItem, {
+            specificationDetailsUid: params.specificationDetailsUid,
+            subject: params.subject,
+            unitTypeUid: params.unitTypeUid,
+            quantity: params.quantity,
+            unitPrice: params.unitPrice,
+            discount: params.discount,
+            created_by: params.createdBy,
+            created_at: new Date(),
+        });
+    }
+
+    protected async batchCreate(params: CreateManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
         const unitTypeUids = params.subItems.map((props) => props.unitTypeUid);
 
         await this.assertAllUnitTypesExistByUids(unitTypeUids, queryRunner);
 
-        const newSubItems = params.subItems.map((props): SubItem => {
-            return queryRunner.manager.create(SubItem, {
-                ...props,
-                specificationDetailsUid: params.specificationDetailsUid,
-                created_by: params.createdBy,
-                created_at: new Date(),
-            });
-        });
+        const newSubItems = params.subItems.map(
+            (props): SubItem => this.constructSubItem({ ...params, ...props }, queryRunner),
+        );
 
         await queryRunner.manager.save(newSubItems);
 
         return newSubItems;
     }
 
+    public createMany(params: CreateManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
+        return this.batchCreate(params, queryRunner);
+    }
+
+    /** @deprecated Use {@link createMany} instead */
     public async createRawSubItems(subItemsData: SubItem[], queryRunner: QueryRunner) {
         const newSubItems = subItemsData.map((data) => queryRunner.manager.create(SubItem, data));
         return queryRunner.manager.save(newSubItems);
@@ -165,6 +169,7 @@ export class SpecificationDetailsSubItemsRepository {
         return calculateEntityExistenceMap(subItemsToDelete, params.uids);
     }
 
+    // FIXME: extract into SpecificationSubItemPmsRepository
     public addSubItemPmsJobs(subItemUid: string, pmsJobUids: string[], queryRunner: QueryRunner) {
         const subItemPmsJob: SpecificationSubItemPmsEntity[] = pmsJobUids.map((uid) => {
             return queryRunner.manager.create(SpecificationSubItemPmsEntity, {
@@ -177,6 +182,7 @@ export class SpecificationDetailsSubItemsRepository {
         return queryRunner.manager.save(SpecificationSubItemPmsEntity, subItemPmsJob);
     }
 
+    // FIXME: extract into SpecificationSubItemPmsRepository
     public addSubItemFindings(subItemUid: string, findingUids: string[], queryRunner: QueryRunner) {
         const subItemPmsJob: SpecificationSubItemFindingEntity[] = findingUids.map((uid) => {
             return queryRunner.manager.create(SpecificationSubItemFindingEntity, {
@@ -189,6 +195,7 @@ export class SpecificationDetailsSubItemsRepository {
         return queryRunner.manager.save(SpecificationSubItemFindingEntity, subItemPmsJob);
     }
 
+    // FIXME: extract into SpecificationSubItemPmsRepository
     public async deleteAllSubItemRelations(uid: string, queryRunner: QueryRunner) {
         await queryRunner.manager.update(SpecificationSubItemPmsEntity, { SubItemUid: uid }, { ActiveStatus: false });
         await queryRunner.manager.update(
@@ -198,6 +205,7 @@ export class SpecificationDetailsSubItemsRepository {
         );
     }
 
+    // FIXME: extract into SpecificationSubItemPmsRepository
     public deleteSubItemPmsJobs(subItemUid: string, pmsJobUid: string[], queryRunner: QueryRunner) {
         return queryRunner.manager.update(
             SpecificationSubItemPmsEntity,
@@ -206,6 +214,7 @@ export class SpecificationDetailsSubItemsRepository {
         );
     }
 
+    // FIXME: extract into SpecificationSubItemPmsRepository
     public deleteSubItemFindings(subItemUid: string, findingUid: string[], queryRunner: QueryRunner) {
         return queryRunner.manager.update(
             SpecificationSubItemFindingEntity,
@@ -228,8 +237,8 @@ export class SpecificationDetailsSubItemsRepository {
                 'spec.uid = sub_item.specification_details_uid and spec.active_status = 1',
             )
             .select('count(sub_item_pms.uid) as count')
-            .where(`sub_item_pms.j3_pms_agg_job_uid = '${pmsJobUid}'`)
-            .andWhere(`spec.uid = '${specificationUid}'`)
+            .where(`sub_item_pms.j3_pms_agg_job_uid = '${pmsJobUid}'`) // FIXME:
+            .andWhere(`spec.uid = '${specificationUid}'`) // FIXME:
             .andWhere('sub_item_pms.active_status = 1')
             .execute();
 
@@ -275,6 +284,7 @@ export class SpecificationDetailsSubItemsRepository {
         subItem.deleted_at = new Date();
     }
 
+    /** @deprecated Use {@link constructSubItem} instead */
     private mapSubItemDtoToEntity(subItemData: Partial<CreateSubItemParams>, subItem: Partial<SubItem>): SubItem {
         const newSubItem: Partial<SubItem> = {
             ...subItem,

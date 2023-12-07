@@ -64,4 +64,12 @@ export class SubItemEditableProps implements SubItemEditableExcerpt {
     @IsString()
     @IsOptional()
     readonly description: string;
+
+    @IsUUID('4', { each: true })
+    @IsOptional()
+    readonly pmsJobUid?: string[];
+
+    @IsUUID('4', { each: true })
+    @IsOptional()
+    readonly findingUid?: string[];
 }
