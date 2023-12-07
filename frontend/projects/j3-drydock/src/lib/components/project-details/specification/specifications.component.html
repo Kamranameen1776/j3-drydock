@@ -29,6 +29,7 @@
       (nodeData)="setNodeData($event)"
       [eventsList]="eventsList"
       [virtualScroll]="true"
+      treeName="specificationTree"
       scrollHeight="544px"
     ></jb-tree>
     <!--        <p-tabView
@@ -53,6 +54,8 @@
     <!--           </p-tabPanel>
   </p-tabView>-->
     <jb-add-specification-from-standard-job-popup
+      *ngIf="addFromStandardJobPopupVisible"
+      [treeData]="treeData$ | async"
       [isOpen]="addFromStandardJobPopupVisible"
       [vesselType]="vesselType"
       [projectUid]="projectId"

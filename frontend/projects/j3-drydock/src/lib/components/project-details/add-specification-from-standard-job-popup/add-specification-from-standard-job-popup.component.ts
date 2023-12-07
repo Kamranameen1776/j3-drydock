@@ -3,11 +3,10 @@ import { getSmallPopup } from '../../../models/constants/popup';
 import { eGridRefreshType, eJbTreeEvents, GridService, IJbDialog } from 'jibe-components';
 import { SpecificationFormComponent } from '../specification-form/specification-form.component';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { StandardJobsService } from '../../../services/standard-jobs.service';
-import { map, takeUntil } from 'rxjs/operators';
 import { FunctionsService } from '../../../services/functions.service';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 
@@ -20,7 +19,7 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   @Input() isOpen: boolean;
   @Input() vesselType: number;
   @Input() projectUid: string;
-  treeData$: Observable<FunctionsFlatTreeNode[]>;
+  @Input() treeData: FunctionsFlatTreeNode[];
 
   @Output() closeDialog = new EventEmitter<boolean>();
 
@@ -31,7 +30,6 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.Select, eJbTreeEvents.UnSelect];
 
   isPopupValid$ = new BehaviorSubject<boolean>(false);
-
   isSaving$ = new BehaviorSubject<boolean>(false);
 
   functionUIDs: string[] = [];
@@ -48,13 +46,6 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   }
 
   ngOnInit() {
-    this.treeData$ = this.functionsService.getFunctions().pipe(
-      takeUntil(this.unsubscribe$),
-      map((functions) => {
-        return functions.map((func) => this.functionsService.calculateSelectable(func, functions));
-      })
-    );
-
     this.gridData = this.getData();
   }
 

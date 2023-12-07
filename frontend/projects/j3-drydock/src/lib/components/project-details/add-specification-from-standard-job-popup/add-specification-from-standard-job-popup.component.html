@@ -6,14 +6,15 @@
   <div jb-dialog-body>
     <div class="dialog-body">
       <jb-tree
-        *ngIf="treeData$ | async"
-        [staticNodes]="treeData$ | async"
+        *ngIf="treeData.length > 0"
+        [staticNodes]="treeData"
         [showSetting]="{ showSearch: true, showButtons: false }"
         filterPlaceholder="Search Function"
         (nodeData)="setNodeData($event)"
         [eventsList]="eventsList"
         treeName="addFromStandardJobsTree"
         [virtualScroll]="true"
+        scrollHeight="544px"
       ></jb-tree>
 
       <jb-grid
