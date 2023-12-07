@@ -6,7 +6,6 @@ import { getConnection, getManager } from 'typeorm';
 import { className } from '../../../../common/drydock/ts-helpers/className';
 import { ProjectEntity, SpecificationDetailsEntity } from '../../../../entity/drydock';
 import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
-import { JobOrderUpdatesEntity } from '../../../../entity/drydock/JobOrderUpdatesEntity';
 import { IJobOrderDto } from './IJobOrderDto';
 
 export class JobOrdersRepository {
@@ -24,16 +23,12 @@ export class JobOrdersRepository {
                 'jo.Remarks AS Remarks',
                 'jo.Progress AS Progress',
                 '123 AS Responsible',
-                // TODO: get from JobOrderUpdatesEntity
-                '123 AS Updates',
-                // TODO: get from JobOrderUpdatesEntity
-                'cast(getdate() as datetimeoffset) AS LastUpdated',
+                'jo.LastUpdated AS LastUpdated',
 
                 'sd.ProjectUid AS ProjectUid',
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = jo.ProjectUid')
             .innerJoin(className(SpecificationDetailsEntity), 'sd', 'sd.uid = jo.SpecificationUid')
-            // .innerJoin(className(JobOrderUpdatesEntity), 'jou', 'jo.uid = jou.JobOrderUid')
             .where('jo.ActiveStatus = 1')
             .where('jou.ActiveStatus = 1')
             .where('p.ActiveStatus = 1')

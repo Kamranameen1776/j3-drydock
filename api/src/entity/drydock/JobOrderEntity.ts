@@ -46,7 +46,13 @@ export class JobOrderEntity {
     })
     Progress: number;
 
-    @Column('datetime2', {
+    @Column('datetimeoffset', {
+        nullable: false,
+        name: 'last_updated',
+    })
+    LastUpdated: Date;
+
+    @Column('datetimeoffset', {
         nullable: false,
         name: 'created_at',
     })

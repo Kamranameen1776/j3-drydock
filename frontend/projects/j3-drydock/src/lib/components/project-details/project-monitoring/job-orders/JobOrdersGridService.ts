@@ -88,15 +88,6 @@ export class JobOrdersGridService {
         value: 'date',
         format: this.dateTimeFormat
       }
-    },
-    {
-      DisplayText: 'Updates',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.Responsible),
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: true,
-      ReadOnly: true,
-      width: eGridColumnsWidth.ShortDescription
     }
   ];
 
