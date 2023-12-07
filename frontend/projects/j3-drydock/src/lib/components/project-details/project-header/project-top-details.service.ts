@@ -98,8 +98,8 @@ export class ProjectTopDetailsService {
           isRequired: false,
           isEditable: false,
           type: 'dropdown',
-          getFieldName: 'ShipYard',
-          saveFieldName: 'ShipYardTemp',
+          getFieldName: 'ShipYardId',
+          saveFieldName: 'ShipYardId',
           controlContent: {
             id: 'ShipYard',
             value: 'ShipYardId',
