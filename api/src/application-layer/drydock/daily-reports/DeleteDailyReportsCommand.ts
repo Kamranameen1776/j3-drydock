@@ -1,5 +1,3 @@
-import { plainToClass } from 'class-transformer';
-import { validate } from 'class-validator';
 import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
@@ -26,11 +24,6 @@ export class DeleteDailyReportsCommand extends Command<Request, void> {
     protected async ValidationHandlerAsync(request: Request): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
-        }
-        const deleteStatementOfFacts: DeleteDailyReportsDto = plainToClass(DeleteDailyReportsDto, request);
-        const result = await validate(deleteStatementOfFacts);
-        if (result.length) {
-            throw result;
         }
     }
 

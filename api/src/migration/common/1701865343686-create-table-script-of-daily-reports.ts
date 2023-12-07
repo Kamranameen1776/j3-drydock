@@ -11,18 +11,18 @@ public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
         IF NOT EXISTS (Select * from INFORMATION_SCHEMA.TABLES where TABLE_NAME = '${this.tableName}' AND TABLE_SCHEMA = '${this.schemaName}')
         BEGIN
-        CREATE TABLE [dry_dock].[daily_reports](
+        CREATE TABLE [${this.schemaName}].[${this.tableName}](
             [uid] [uniqueidentifier] NOT NULL,
             [report_name] [varchar](200) NULL,
             [report_date] [datetime2](7) NULL,
-            [description] [varchar](max) NULL,
+            [description] [varchar](5000) NULL,
             [active_status] [bit] NOT NULL,
             [created_by] [uniqueidentifier] NULL,
-            [created_at] [datetime2](7) NOT NULL,
+            [created_at] [datetimeoffset](7) NOT NULL,
             [updated_by] [uniqueidentifier] NULL,
-            [updated_at] [datetime2](7) NULL,
+            [updated_at] [datetimeoffset](7) NULL,
             [deleted_by] [uniqueidentifier] NULL,
-            [deleted_at] [datetime2](7) NULL,
+            [deleted_at] [datetimeoffset](7) NULL,
         PRIMARY KEY CLUSTERED 
             (
                 [uid] ASC
@@ -53,6 +53,32 @@ public async up(queryRunner: QueryRunner): Promise<void> {
     }
 }
 
-public async down(queryRunner: QueryRunner): Promise<void> {}
+public async down(queryRunner: QueryRunner): Promise<void> {
+    try {
+        await queryRunner.query(`
+        IF Exists(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[${this.schemaName}].[${this.tableName}]') AND type in (N'U'))
+        BEGIN
+            DROP TABLE [${this.schemaName}].[${this.tableName}];
+        END
+        `);
+
+        await MigrationUtilsService.migrationLog(
+            this.className,
+            '',
+            'S',
+            this.moduleName,
+            'Create table daily_reports (Down migration)',
+        );
+    } catch (error) {
+        await MigrationUtilsService.migrationLog(
+            this.className,
+            error as string,
+            'E',
+            this.moduleName,
+            'Create table daily_reports (Down migration)',
+            true,
+        );
+    }
+}
 }
 

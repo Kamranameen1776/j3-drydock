@@ -1,19 +1,19 @@
-import { ArrayMinSize, IsArray, IsDateString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateDailyReportsDto {
     @IsNotEmpty()
     @IsUUID()
     uid: string;
 
-    @IsArray()
-    @ArrayMinSize(0)
+    @MinLength(1)
+    @MaxLength(200)
     reportName: string;
 
     @IsOptional()
     @IsDateString()
     reportDate: Date;
 
-    @IsArray()
-    @ArrayMinSize(0)
+    @MinLength(1)
+    @MaxLength(5000)
     description: string;
 }

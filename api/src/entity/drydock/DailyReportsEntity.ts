@@ -24,7 +24,7 @@ export class DailyReportsEntity extends BaseDatesEntity {
     @Column('varchar', {
         nullable: true,
         name: 'description',
-        length: 500,
+        length: 5000,
     })
     description: string;
 }

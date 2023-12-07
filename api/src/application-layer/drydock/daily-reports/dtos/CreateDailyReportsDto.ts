@@ -1,8 +1,8 @@
-import { ArrayMinSize, IsArray, IsDateString, IsOptional } from 'class-validator';
+import { IsDateString, IsOptional, MaxLength, MinLength } from 'class-validator';
 
 export class CreateDailyReportsDto {
-    @IsArray()
-    @ArrayMinSize(0)
+    @MinLength(1)
+    @MaxLength(200)
     reportName: string;
 
     @IsOptional()
