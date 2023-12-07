@@ -27,7 +27,7 @@ export class JobOrdersRepository {
                 'jo.Status AS Status',
                 'jo.Remarks AS Remarks',
                 'jo.Progress AS Progress',
-                // TODO: take from SpecificationDetails -> AssignedTo property
+                // TODO: take from SpecificationDetails -> AssignedTo property, once it is implemented
                 "'-' AS Responsible",
                 'jo.LastUpdated AS LastUpdated',
 
