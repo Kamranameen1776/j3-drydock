@@ -98,7 +98,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async createOne(params: CreateOneParams, queryRunner: QueryRunner): Promise<SubItem> {
-        await this.assertAllUnitTypesExistByUids([params.unitUid], queryRunner);
+        await this.assertAllUnitTypesExistByUids([params.unitTypeUid], queryRunner);
 
         const { createdBy: created_by, ...props } = params;
 
@@ -114,9 +114,9 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async createMany(params: CreateManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
-        const unitUids = params.subItems.map((props) => props.unitUid);
+        const unitTypeUids = params.subItems.map((props) => props.unitTypeUid);
 
-        await this.assertAllUnitTypesExistByUids(unitUids, queryRunner);
+        await this.assertAllUnitTypesExistByUids(unitTypeUids, queryRunner);
 
         const newSubItems = params.subItems.map((props): SubItem => {
             return queryRunner.manager.create(SubItem, {
@@ -135,8 +135,8 @@ export class SpecificationDetailsSubItemsRepository {
     public async updateOneExistingByUid(params: UpdateOneParams, queryRunner: QueryRunner): Promise<SubItem> {
         const subItem = await this.getOneExistingByUid(params, queryRunner);
 
-        if (params.props.unitUid != null) {
-            await this.assertAllUnitTypesExistByUids([params.props.unitUid], queryRunner);
+        if (params.props.unitTypeUid != null) {
+            await this.assertAllUnitTypesExistByUids([params.props.unitTypeUid], queryRunner);
         }
 
         Object.assign(subItem, params.props);
