@@ -91,11 +91,6 @@ export class JobOrdersGridService {
     }
   ];
 
-  private readonly gridButton: GridButton = {
-    label: 'Add Job',
-    show: true
-  };
-
   private searchFields: string[] = [nameOf<IJobOrderDto>((prop) => prop.Subject)];
   private gridActions: GridRowActions[] = [];
 
@@ -110,7 +105,6 @@ export class JobOrdersGridService {
       gridName: this.gridName,
       searchFields: this.searchFields,
       request: this.jobOrdersService.getJobOrdersRequest(),
-      gridButton: this.gridButton,
       actions: this.gridActions,
       sortField: nameOf<IJobOrderDto>((prop) => prop.LastUpdated),
       sortOrder: -1,

@@ -4,7 +4,12 @@ import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager } from 'typeorm';
 
 import { className } from '../../../../common/drydock/ts-helpers/className';
-import { LibItemSourceEntity, ProjectEntity, SpecificationDetailsEntity, TecTaskManagerEntity } from '../../../../entity/drydock';
+import {
+    LibItemSourceEntity,
+    ProjectEntity,
+    SpecificationDetailsEntity,
+    TecTaskManagerEntity,
+} from '../../../../entity/drydock';
 import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
 import { IJobOrderDto } from './IJobOrderDto';
 
@@ -22,6 +27,7 @@ export class JobOrdersRepository {
                 'jo.Status AS Status',
                 'jo.Remarks AS Remarks',
                 'jo.Progress AS Progress',
+                // TODO: take from SpecificationDetails -> AssignedTo property
                 "'-' AS Responsible",
                 'jo.LastUpdated AS LastUpdated',
 
