@@ -31,8 +31,7 @@ export class CreateStatementsOfFactsCommand extends Command<CreateStatementsOfFa
         if (!request) {
             throw new Error('Request is null');
         }
-        const createProjectDto: CreateStatementsOfFactsDto = plainToClass(CreateStatementsOfFactsDto, request);
-        const result = await validate(createProjectDto);
+        const result = await validate(request);
         if (result.length) {
             throw result;
         }
@@ -56,9 +55,6 @@ export class CreateStatementsOfFactsCommand extends Command<CreateStatementsOfFa
                 uid,
                 vessel.VesselId,
             );
-            return;
         });
-
-        return;
     }
 }
