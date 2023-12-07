@@ -10,9 +10,9 @@ import { IJobOrderDto } from './IJobOrderDto';
 
 export class JobOrdersRepository {
     public async GetJobOrders(request: Request): Promise<ODataResult<IJobOrderDto>> {
-        const JobOrdersRepository = getManager().getRepository(JobOrderEntity);
+        const SpecificationDetailsRepository = getManager().getRepository(SpecificationDetailsEntity);
 
-        const query: string = JobOrdersRepository.createQueryBuilder('jo')
+        const query: string = SpecificationDetailsRepository.createQueryBuilder('sd')
             .select([
                 'jo.uid AS JobOrderUid',
                 'jo.SpecificationUid AS SpecificationUid',
@@ -27,8 +27,8 @@ export class JobOrdersRepository {
 
                 'sd.ProjectUid AS ProjectUid',
             ])
-            .innerJoin(className(ProjectEntity), 'p', 'p.uid = jo.ProjectUid')
-            .innerJoin(className(SpecificationDetailsEntity), 'sd', 'sd.uid = jo.SpecificationUid')
+            .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid')
+            .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid')
             .where('jo.ActiveStatus = 1')
             .where('jou.ActiveStatus = 1')
             .where('p.ActiveStatus = 1')

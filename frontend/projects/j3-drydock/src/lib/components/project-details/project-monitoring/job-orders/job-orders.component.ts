@@ -17,7 +17,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   @Input() projectId: string;
 
   @ViewChild('jobOrdersGrid')
-  statementOfFactsGrid: GridComponent;
+  jobOrdersGrid: GridComponent;
 
   public gridInputs: GridInputsWithRequest;
 
@@ -50,7 +50,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   }
 
   public onMatrixRequestChanged() {
-    this.statementOfFactsGrid.odata.filter.eq(JobOrdersGridOdataKeys.ProjectUid, this.projectId);
+    this.jobOrdersGrid.odata.filter.eq(JobOrdersGridOdataKeys.ProjectUid, this.projectId);
   }
 
   private setGridInputs() {

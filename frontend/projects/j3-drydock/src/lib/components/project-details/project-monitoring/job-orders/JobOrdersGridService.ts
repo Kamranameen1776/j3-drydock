@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class JobOrdersGridService {
-  public readonly gridName: string = 'statementOfFactsGrid';
+  public readonly gridName: string = 'jobOrdersGrid';
 
   public readonly dateFormat = this.userService.getUserDetails().Date_Format.toLocaleUpperCase();
 
@@ -16,7 +16,7 @@ export class JobOrdersGridService {
   private readonly columns: Column[] = [
     {
       DisplayText: 'JobOrderUid',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.IJobOrderUid),
+      FieldName: nameOf<IJobOrderDto>((prop) => prop.JobOrderUid),
       IsActive: true,
       IsMandatory: true,
       IsVisible: false,

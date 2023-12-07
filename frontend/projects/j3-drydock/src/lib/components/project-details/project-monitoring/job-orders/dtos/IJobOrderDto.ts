@@ -1,5 +1,5 @@
 export interface IJobOrderDto {
-  IJobOrderUid: string;
+  JobOrderUid: string;
 
   Code: string;
 
