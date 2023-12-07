@@ -1,6 +1,9 @@
+import { SynchronizerService } from 'j2utils';
+
 import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 import { CreateOneParams } from '../../../../dal/drydock/specification-details/sub-items/dto/CreateOneParams';
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
+import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
@@ -8,6 +11,8 @@ import { UnitOfWork } from '../../core/uof/UnitOfWork';
 export class CreateSubItemCommand extends Command<CreateOneParams, SpecificationDetailsSubItemEntity> {
     protected readonly subItemRepo = new SpecificationDetailsSubItemsRepository();
     protected readonly uow = new UnitOfWork();
+    protected readonly tableName = 'dry_dock.specification_details_sub_item';
+    protected readonly vesselsRepository = new VesselsRepository();
 
     private params: CreateOneParams;
 
@@ -21,7 +26,20 @@ export class CreateSubItemCommand extends Command<CreateOneParams, Specification
 
     protected async MainHandlerAsync(): Promise<SpecificationDetailsSubItemEntity> {
         return this.uow.ExecuteAsync(async (queryRunner) => {
-            return this.subItemRepo.createOne(this.params, queryRunner);
+            const vessel = await this.vesselsRepository.GetVesselBySpecification(
+                this.params.specificationDetailsUid,
+                queryRunner,
+            );
+
+            const res = await this.subItemRepo.createOne(this.params, queryRunner);
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                this.tableName,
+                'uid',
+                res.uid,
+                vessel.VesselId,
+            );
+            return res;
         });
     }
 }

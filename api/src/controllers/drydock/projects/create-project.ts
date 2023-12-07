@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { CreateProjectCommand } from '../../../application-layer/drydock/projects/create-project/CreateProjectCommand';
+import { CreateProjectCommand } from '../../../application-layer/drydock/projects';
 import { CreateProjectDataDto } from '../../../application-layer/drydock/projects/create-project/CreateProjectDataDto';
 import { CreateProjectDto } from '../../../bll/drydock/projects/dtos/ICreateProjectDto';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
@@ -17,7 +17,7 @@ async function createProject(req: Request, res: Response) {
             ProjectDto: createProjectDto,
         };
 
-        const command = new CreateProjectCommand();
+        const command: CreateProjectCommand = new CreateProjectCommand();
 
         return command.ExecuteAsync(createProjectDataDto);
     });
