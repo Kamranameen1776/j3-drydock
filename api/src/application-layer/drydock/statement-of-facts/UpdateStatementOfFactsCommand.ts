@@ -3,8 +3,10 @@ import { validate } from 'class-validator';
 import { Request } from 'express';
 import { SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-facts/StatementOfFactsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { StatementOfFactsEntity } from '../../../entity/drydock';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateStatementOfFactsDto } from './dtos/UpdateStatementOfFactsDto';
@@ -12,7 +14,7 @@ import { UpdateStatementOfFactsDto } from './dtos/UpdateStatementOfFactsDto';
 export class UpdateStatementOfFactsCommand extends Command<Request, void> {
     repository: StatementOfFactsRepository;
     uow: UnitOfWork;
-    tableName = 'dry_dock.statement_of_facts';
+    tableName = getTableName(StatementOfFactsEntity);
     vesselRepository: VesselsRepository;
 
     constructor() {

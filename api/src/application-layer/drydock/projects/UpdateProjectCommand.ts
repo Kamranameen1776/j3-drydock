@@ -1,8 +1,10 @@
 import { SynchronizerService } from 'j2utils';
 
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { ProjectEntity } from '../../../entity/drydock';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateProjectDto } from './dtos/UpdateProjectDto';
@@ -12,7 +14,7 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
     projectsService: ProjectService;
     uow: UnitOfWork;
     vesselRepository: VesselsRepository;
-    tableName = 'dry_dock.project';
+    tableName = getTableName(ProjectEntity);
 
     constructor() {
         super();
