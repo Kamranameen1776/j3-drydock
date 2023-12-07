@@ -12,6 +12,7 @@
     [getStyleByContainer]="true"
     [name]="gridInputs.name"
     (action)="onGridAction($any($event), $event?.payload)"
+    (cellPlainTextClick)="onCellPlainTextClick($event)"
     (matrixRequestChanged)="onMatrixRequestChanged()"
   ></jb-grid>
 </section>

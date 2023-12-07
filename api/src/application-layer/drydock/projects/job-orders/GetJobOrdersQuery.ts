@@ -28,7 +28,7 @@ export class GetJobOrdersQuery extends Query<Request, ODataResult<IJobOrderDto>>
         const createProjectDto: GetJobOrdersDto = plainToClass(GetJobOrdersDto, request.body);
 
         const result = await validate(createProjectDto);
-        
+
         if (result.length) {
             throw result;
         }

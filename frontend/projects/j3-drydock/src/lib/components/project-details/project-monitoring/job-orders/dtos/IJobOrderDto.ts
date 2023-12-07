@@ -1,4 +1,6 @@
 export interface IJobOrderDto {
+  SpecificationUid: string;
+
   JobOrderUid: string;
 
   Code: string;

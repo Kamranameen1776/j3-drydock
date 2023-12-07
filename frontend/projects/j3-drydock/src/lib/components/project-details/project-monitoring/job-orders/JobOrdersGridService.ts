@@ -15,6 +15,14 @@ export class JobOrdersGridService {
 
   private readonly columns: Column[] = [
     {
+      DisplayText: 'SpecificationUid',
+      FieldName: nameOf<IJobOrderDto>((prop) => prop.SpecificationUid),
+      IsActive: true,
+      IsMandatory: true,
+      IsVisible: false,
+      ReadOnly: true
+    },
+    {
       DisplayText: 'JobOrderUid',
       FieldName: nameOf<IJobOrderDto>((prop) => prop.JobOrderUid),
       IsActive: true,
@@ -29,6 +37,7 @@ export class JobOrdersGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
+      hyperlink: true,
       width: eGridColumnsWidth.ShortDescription
     },
     {
