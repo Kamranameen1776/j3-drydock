@@ -4,7 +4,7 @@ import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager } from 'typeorm';
 
 import { className } from '../../../../common/drydock/ts-helpers/className';
-import { ProjectEntity, SpecificationDetailsEntity } from '../../../../entity/drydock';
+import { LibItemSourceEntity, ProjectEntity, SpecificationDetailsEntity, TecTaskManagerEntity } from '../../../../entity/drydock';
 import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
 import { IJobOrderDto } from './IJobOrderDto';
 
@@ -16,23 +16,21 @@ export class JobOrdersRepository {
             .select([
                 'jo.uid AS JobOrderUid',
                 'jo.SpecificationUid AS SpecificationUid',
-                '123 AS Code',
+                'tm.Code AS Code',
                 'jo.Subject AS Subject',
-                'sd.ItemSourceUid AS ItemSource',
+                'its.DisplayName as ItemSource',
                 'jo.Status AS Status',
                 'jo.Remarks AS Remarks',
                 'jo.Progress AS Progress',
-                '123 AS Responsible',
+                "'-' AS Responsible",
                 'jo.LastUpdated AS LastUpdated',
 
                 'sd.ProjectUid AS ProjectUid',
             ])
-            .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid')
-            .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid')
-            .where('jo.ActiveStatus = 1')
-            .where('jou.ActiveStatus = 1')
-            .where('p.ActiveStatus = 1')
-            .where('sd.ActiveStatus = 1')
+            .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
+            .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1')
+            .leftJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
+            .leftJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .getQuery();
 
         const oDataService = new ODataService(request, getConnection);
