@@ -1,10 +1,10 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
-import { ODataResult } from 'shared/interfaces';
 
 import { IStatementOfFactsDto } from '../../../dal/drydock/statement-of-facts/IStatementOfFactsDto';
 import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-facts/StatementOfFactsRepository';
+import { ODataResult } from '../../../shared/interfaces/odata-result.interface';
 import { Query } from '../core/cqrs/Query';
 import { GetStatementOfFactsDto } from './dtos/GetStatementOfFactsDto';
 

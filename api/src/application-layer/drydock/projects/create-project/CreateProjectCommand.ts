@@ -1,6 +1,5 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { SynchronizerService } from 'j2utils';
 
 import { CreateProjectDto } from '../../../../bll/drydock/projects/dtos/ICreateProjectDto';
@@ -9,7 +8,8 @@ import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { ICreateNewProjectDto } from '../../../../dal/drydock/projects/dtos/ICreateNewProjectDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
-import { ProjectEntity } from '../../../../entity/drydock';
+import { LibVesselsEntity } from '../../../../entity/drydock/dbo/LibVesselsEntity';
+import { ProjectEntity } from '../../../../entity/drydock/ProjectEntity';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { CreateProjectDataDto } from './CreateProjectDataDto';
