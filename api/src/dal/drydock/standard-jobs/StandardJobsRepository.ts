@@ -11,12 +11,14 @@ import {
     UpdateStandardJobSubItemsRequestDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
+import { className } from '../../../common/drydock/ts-helpers/className';
 import {
     StandardJobs,
     StandardJobsSubItems,
     StandardJobsSurveyCertificateAuthorityEntity,
     StandardJobsVesselTypeEntity,
 } from '../../../entity/drydock';
+import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
 import { FiltersDataResponse, RequestWithOData } from '../../../shared/interfaces';
 
 export class StandardJobsRepository {
@@ -38,6 +40,7 @@ export class StandardJobsRepository {
                 'msb',
                 `msb.uid = sj.material_supplied_by_uid AND msb.active_status = 1`,
             )
+            .leftJoin(className(StandardJobsSubItems), 'sjsi', `sjsi.standard_job_uid = sj.uid`)
             .select(
                 'distinct sj.uid as uid,' +
                     'sj.subject as subject,' +
@@ -63,6 +66,8 @@ export class StandardJobsRepository {
                 // `STRING_AGG(lsca.Authority, ',') as inspection`,
                 // `STRING_AGG(vt.ID, ',') as vesselTypeId,` +
                 // `STRING_AGG(vt.VesselTypes, ',') as vesselType,` +
+                    `IIF(COUNT(lsca.ID) > 0, '${QueryStrings.Yes}', '${QueryStrings.No}') as hasInspection,` +
+                    `IIF(COUNT(sjsi.uid) > 0, '${QueryStrings.Yes}', '${QueryStrings.No}') as hasSubItems`,
             )
             .groupBy(
                 `sj.uid` +
