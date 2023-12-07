@@ -24,8 +24,11 @@ export class GetJobOrdersQuery extends Query<Request, ODataResult<IJobOrderDto>>
         if (!request) {
             throw new Error('Request is null');
         }
+
         const createProjectDto: GetJobOrdersDto = plainToClass(GetJobOrdersDto, request.body);
+
         const result = await validate(createProjectDto);
+        
         if (result.length) {
             throw result;
         }
