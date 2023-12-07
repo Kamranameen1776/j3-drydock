@@ -4,7 +4,16 @@ import { SpecificationDetailsService } from '../../services/specification-detail
 import { GetSpecificationDetailsDto } from '../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { ActivatedRoute } from '@angular/router';
 import { eSpecificationDetailsPageMenuIds, specificationDetailsMenuData } from '../../models/enums/specification-details-menu-items.enum';
-import { IJbAttachment, IJbMenuItem, JbDatePipe, JbMenuService, JiBeTheme } from 'jibe-components';
+import {
+  GridRowActions,
+  IJbAttachment,
+  IJbMenuItem,
+  JbDatePipe,
+  JbMenuService,
+  JiBeTheme,
+  eAttachmentAction,
+  eGridRowActions
+} from 'jibe-components';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
@@ -37,6 +46,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   public attachmentConfig: IJbAttachment;
   canView = false;
   canViewSubItems = false;
+  addAttachemnt = false;
 
   private readonly menuId = 'specification-details-menu';
   currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
@@ -69,10 +79,34 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   }
 
   private initializeAttachments(id: string): void {
+    const actions: GridRowActions[] = [];
+    const canEditAttachments = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.editAttachments);
+    const canDeleteAttachments = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.deleteAttachments);
+
+    if (canEditAttachments) {
+      actions.push({
+        name: eGridRowActions.Edit,
+        icon: 'icons8-edit'
+      });
+    }
+
+    if (canDeleteAttachments) {
+      actions.push({
+        name: eGridRowActions.Delete,
+        icon: 'icons8-delete'
+      });
+    }
+
+    actions.push({
+      name: eAttachmentAction.Download,
+      icon: 'icons8-download'
+    });
+
     this.attachmentConfig = {
       Module_Code: eModule.Project,
       Function_Code: eFunction.SpecificationDetails,
-      Key1: id
+      Key1: id,
+      actions: actions
     };
   }
 
@@ -109,6 +143,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   private setAccessRights() {
     this.canView = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.viewSpecificationDetail);
     this.canViewSubItems = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.viewSubItemsSection);
+    this.addAttachemnt = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.addAttachments);
   }
 
   private isMenuSection(menuItem: IJbMenuItem) {
