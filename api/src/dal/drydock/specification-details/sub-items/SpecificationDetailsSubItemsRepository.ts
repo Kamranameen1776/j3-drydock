@@ -97,39 +97,45 @@ export class SpecificationDetailsSubItemsRepository {
         }
     }
 
-    public async createOne(params: CreateOneParams, queryRunner: QueryRunner): Promise<SubItem> {
-        await this.assertAllUnitTypesExistByUids([params.unitTypeUid], queryRunner);
-
-        const { createdBy: created_by, ...props } = params;
-
-        const subItem = queryRunner.manager.create(SubItem, {
-            ...props,
-            created_by,
+    /**
+     * Construct a sub-item object without making any asynchronous calls.
+     * The method is a safe wrapper over `queryRunner.manager.create(…)`.
+     */
+    protected constructSubItem(params: CreateOneParams, queryRunner: QueryRunner): SubItem {
+        return queryRunner.manager.create(SubItem, {
+            specificationDetailsUid: params.specificationDetailsUid,
+            subject: params.subject,
+            unitTypeUid: params.unitTypeUid,
+            quantity: params.quantity,
+            unitPrice: params.unitPrice,
+            discount: params.discount,
+            created_by: params.createdBy,
             created_at: new Date(),
         });
-
-        await queryRunner.manager.save(subItem);
-
-        return subItem;
     }
 
-    public async createMany(params: CreateManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
+    protected async batchCreate(params: CreateManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
         const unitTypeUids = params.subItems.map((props) => props.unitTypeUid);
 
         await this.assertAllUnitTypesExistByUids(unitTypeUids, queryRunner);
 
-        const newSubItems = params.subItems.map((props): SubItem => {
-            return queryRunner.manager.create(SubItem, {
-                ...props,
-                specificationDetailsUid: params.specificationDetailsUid,
-                created_by: params.createdBy,
-                created_at: new Date(),
-            });
-        });
+        const newSubItems = params.subItems.map(
+            (props): SubItem => this.constructSubItem({ ...params, ...props }, queryRunner),
+        );
 
         await queryRunner.manager.save(newSubItems);
 
         return newSubItems;
+    }
+
+    public createMany(params: CreateManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
+        return this.batchCreate(params, queryRunner);
+    }
+
+    public async createOne(params: CreateOneParams, queryRunner: QueryRunner): Promise<SubItem> {
+        const [subItem] = await this.batchCreate({ ...params, subItems: [params] }, queryRunner);
+
+        return subItem;
     }
 
     public async updateOneExistingByUid(params: UpdateOneParams, queryRunner: QueryRunner): Promise<SubItem> {
