@@ -2,6 +2,7 @@ import { Request } from 'express';
 import { AccessRights, SynchronizerService } from 'j2utils'; // Import the AccessRights module
 import { QueryRunner } from 'typeorm';
 
+import * as tableName from '../../../../../common/drydock/ts-helpers/tableName';
 import { YardsProjectsRepository } from '../../../../../dal/drydock/project-yards/YardsProjectsRepository';
 import { VesselsRepository } from '../../../../../dal/drydock/vessels/VesselsRepository';
 import { LibVesselsEntity } from '../../../../../entity/drydock';
@@ -9,6 +10,7 @@ import { UnitOfWork } from '../../../core/uof/UnitOfWork';
 import { CreateProjectYardsCommand } from '../CreateProjectYardsCommand';
 import { CreateProjectYardsDto } from '../dtos/CreateProjectYardsDto';
 
+jest.mock('../../../../../common/drydock/ts-helpers/tableName');
 jest.mock('../../../../../dal/drydock/project-yards/YardsProjectsRepository');
 jest.mock('j2utils');
 
@@ -30,6 +32,7 @@ describe('CreateProjectYardsCommand', () => {
         command.yardProjectsRepository = mockYardProjectsRepository;
         command.uow = mockUnitOfWork;
         command.vesselRepository = mockVesselRepository;
+        (tableName.getTableName as jest.Mock).mockImplementation(() => 'string');
     });
 
     describe('ValidationHandlerAsync', () => {

@@ -63,7 +63,7 @@
         "start:build": "node -r dotenv/config build/index.js",
         "local": "nodemon -r dotenv/config src/index.ts",
         "localpm2": "pm2 start . -n %npm_package_name% --watch && concurrently --kill-others \"tsc -w\" \"pm2 logs\"",
-        "test": "jest --runInBand --forceExit --detectOpenHandles",
+        "test": "clear && jest --runInBand --forceExit --detectOpenHandles",
         "test:coverage": "npm run test -- --coverage",
         "test:integration": "npm run test -- --c jest.integration.config.js",
         "test:watch": "jest --watch",

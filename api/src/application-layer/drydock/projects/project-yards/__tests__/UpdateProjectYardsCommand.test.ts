@@ -1,7 +1,10 @@
 import { Request } from 'express';
 
+import * as tableName from '../../../../../common/drydock/ts-helpers/tableName';
 import { UpdateProjectYardsDto } from '../dtos/UpdateProjectYardsDto';
 import { UpdateProjectYardsCommand } from '../UpdateProjectYardsCommand';
+
+jest.mock('../../../../../common/drydock/ts-helpers/tableName');
 
 describe('UpdateProjectYardsCommand', () => {
     let command: UpdateProjectYardsCommand;
@@ -15,6 +18,7 @@ describe('UpdateProjectYardsCommand', () => {
                 isSelected: true,
             } as UpdateProjectYardsDto,
         };
+        (tableName.getTableName as jest.Mock).mockImplementation(() => 'string');
     });
 
     describe('ValidationHandlerAsync', () => {
