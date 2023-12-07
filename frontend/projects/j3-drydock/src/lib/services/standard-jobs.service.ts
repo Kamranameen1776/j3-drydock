@@ -10,7 +10,8 @@ import {
   Column,
   Filter,
   FilterListSet,
-  eFieldControlType
+  eFieldControlType,
+  SearchField
 } from 'jibe-components';
 import { ODataFilterBuilder } from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../models/enums/standard-jobs-main.enum';
@@ -27,7 +28,7 @@ export class StandardJobsService {
   private readonly columns: Column[] = [
     {
       DisableSort: true,
-      DisplayText: 'Item No',
+      DisplayText: 'Item Number',
       FieldName: 'code',
       hyperlink: true,
       IsActive: true,
@@ -47,7 +48,7 @@ export class StandardJobsService {
     {
       DisableSort: true,
       DisplayText: 'Inspection / Survey',
-      FieldName: 'inspection',
+      FieldName: 'hasInspection',
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -68,33 +69,32 @@ export class StandardJobsService {
   private readonly filters: Filter[] = [
     {
       DisplayText: 'Inspection / Survey',
-      FieldName: 'inspection',
+      FieldName: 'hasInspection',
       placeholder: 'Select',
       default: true,
       FieldID: 1,
       DisplayCode: 'displayName',
       type: 'multiselect',
       Active_Status: true,
-      Active_Status_Config_Filter: true
+      Active_Status_Config_Filter: true,
+      includeFilter: true
     },
     {
       DisplayText: 'Sub Items',
-      FieldName: 'subItems',
-      type: 'multiselect',
+      FieldName: 'hasSubItems',
       placeholder: 'Select',
+      default: true,
+      FieldID: 2,
+      DisplayCode: 'displayName',
+      type: 'multiselect',
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      ControlType: 'simple',
-      Details: 'Status',
-      DisplayCode: 'label',
-      ValueCode: 'label',
-      FieldID: 2,
-      default: true
+      includeFilter: true
     }
   ];
 
   private filtersLists: FilterListSet = {
-    subItmes: {
+    hasSubItems: {
       list: [
         {
           label: 'Yes',
@@ -106,9 +106,10 @@ export class StandardJobsService {
         }
       ],
       type: eFieldControlType.MultiSelect,
-      odataKey: 'subItmes'
+      odataKey: 'hasSubItems',
+      includeFilter: true
     },
-    inspection: {
+    hasInspection: {
       list: [
         {
           label: 'Yes',
@@ -120,9 +121,21 @@ export class StandardJobsService {
         }
       ],
       type: eFieldControlType.MultiSelect,
-      odataKey: 'inspection'
+      odataKey: 'hasInspection',
+      includeFilter: true
     }
   };
+
+  private searchFields: SearchField[] = [
+    {
+      field: 'code',
+      pattern: 'contains'
+    },
+    {
+      field: 'subject',
+      pattern: 'contains'
+    }
+  ];
 
   constructor(
     private apiRequestService: ApiRequestService,
@@ -145,13 +158,14 @@ export class StandardJobsService {
     return apiRequest;
   }
 
-  getSelectionPopupGridData(vesselType: number, functionUIDs: string[]): GridInputsWithRequest {
+  getStandardJobPopupGridData(vesselType: number, functionUIDs: string[]): GridInputsWithRequest {
     return {
       columns: this.columns,
       gridName: this.popupGridName,
       request: this.getStandardJobsRequestWithFilters(vesselType, functionUIDs),
       filters: this.filters,
-      filtersLists: this.filtersLists
+      filtersLists: this.filtersLists,
+      searchFields: this.searchFields
     };
   }
 
@@ -163,7 +177,7 @@ export class StandardJobsService {
     }
 
     if (functionUIDs?.length > 0) {
-      filter.in('function_uid', functionUIDs);
+      filter.in('functionUid', functionUIDs);
     }
 
     const apiRequest: WebApiRequest = {
@@ -174,7 +188,8 @@ export class StandardJobsService {
       crud: eCrud.Post,
       entity: 'drydock',
       odata: {
-        filter
+        filter,
+        orderby: 'code asc'
       }
     };
     return apiRequest;

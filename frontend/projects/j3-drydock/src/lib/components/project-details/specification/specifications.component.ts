@@ -30,7 +30,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   createNewItems = [
     {
-      label: 'Add from Standard Jobs',
+      label: 'Standard Jobs',
       command: () => {
         this.addFromStandardJob();
       }

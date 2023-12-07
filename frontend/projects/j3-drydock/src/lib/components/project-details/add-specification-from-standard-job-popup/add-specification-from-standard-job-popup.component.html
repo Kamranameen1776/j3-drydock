@@ -24,6 +24,7 @@
         [tableDataReq]="gridData.request"
         [filterData]="gridData.filters"
         [filterListsSet]="gridData.filtersLists"
+        [searchFields]="gridData.searchFields"
         [getStyleByContainer]="true"
         [selectionMode]="'multiple'"
         [matrixSelectedValue]="selected"
@@ -36,7 +37,7 @@
     <jb-dialog-footer
       [isOkBtnDisabled]="(isPopupValid$ | async) === false || (isSaving$ | async)"
       [isCancelBtnDisabled]="isSaving$ | async"
-      okBtnLabel="Save"
+      okBtnLabel="Add"
       (ok)="onSubmit()"
       (cancel)="onCancel()"
     ></jb-dialog-footer>

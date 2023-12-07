@@ -7,7 +7,6 @@ import { BehaviorSubject } from 'rxjs';
 import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { StandardJobsService } from '../../../services/standard-jobs.service';
-import { FunctionsService } from '../../../services/functions.service';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 
 @Component({
@@ -25,7 +24,7 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
 
   @ViewChild(SpecificationFormComponent) popupForm: SpecificationFormComponent;
 
-  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false, dialogHeader: 'Add from Standard Job' };
+  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false, dialogHeader: 'Standard Jobs' };
 
   eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.Select, eJbTreeEvents.UnSelect];
 
@@ -34,12 +33,11 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
 
   functionUIDs: string[] = [];
   gridData: GridInputsWithRequest;
-  selected: any[] = [];
+  selected = [];
 
   constructor(
     private standardJobsService: StandardJobsService,
     private gridService: GridService,
-    private functionsService: FunctionsService,
     private specificationService: SpecificationDetailsService
   ) {
     super();
@@ -69,7 +67,7 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
     }
   }
 
-  onSelect(rows: any[]) {
+  onSelect(rows: []) {
     this.selected = rows;
     this.isPopupValid$.next(rows.length > 0);
   }
@@ -90,6 +88,6 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   }
 
   private getData() {
-    return this.standardJobsService.getSelectionPopupGridData(this.vesselType, this.functionUIDs);
+    return this.standardJobsService.getStandardJobPopupGridData(this.vesselType, this.functionUIDs);
   }
 }
