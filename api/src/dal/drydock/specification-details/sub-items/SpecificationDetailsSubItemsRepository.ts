@@ -7,7 +7,6 @@ import {
     EntityExistenceMap,
 } from '../../../../common/drydock/ts-helpers/calculate-entity-existence-map';
 import { entriesOf } from '../../../../common/drydock/ts-helpers/entries-of';
-import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import { SpecificationDetailsSubItemEntity as SubItem } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { UnitTypeEntity } from '../../../../entity/drydock/UnitTypeEntity';
 import { ODataResult } from '../../../../shared/interfaces';
@@ -104,24 +103,7 @@ export class SpecificationDetailsSubItemsRepository {
         return newSubItems;
     }
 
-    public async createRawSubItems(params: CreateManyParams, queryRunner: QueryRunner) {
-        const subItems = params.subItems.map((prop): SubItem => {
-            const item = new SubItem();
-            item.subject = prop.subject;
-            item.specificationDetails = {
-                uid: params.specificationDetailsUid,
-            } as SpecificationDetailsEntity;
-            item.created_by = params.createdBy;
-            item.created_at = new Date();
-            item.quantity = 0;
-            item.unitPrice = 0;
-            item.discount = 0;
-            // #TODO how to get unit type uid
-            // item.unitType = {};
-
-            return item;
-        });
-
+    public async createRawSubItems(subItems: SubItem[], queryRunner: QueryRunner) {
         return queryRunner.manager.save(SubItem, subItems);
     }
 

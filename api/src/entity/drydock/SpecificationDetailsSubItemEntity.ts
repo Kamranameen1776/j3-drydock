@@ -50,7 +50,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     @Column({
         name: 'quantity',
         type: 'int',
-        nullable: false,
+        nullable: true,
     })
     quantity: number;
 
@@ -59,7 +59,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         type: 'decimal',
         precision: 10,
         scale: 2,
-        nullable: false,
+        nullable: true,
     })
     unitPrice: number;
 
@@ -84,7 +84,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         type: 'decimal',
         precision: 10,
         scale: 4,
-        nullable: false,
+        nullable: true,
     })
     protected cost: number;
 

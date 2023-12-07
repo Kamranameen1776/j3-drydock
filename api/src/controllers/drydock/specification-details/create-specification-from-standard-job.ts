@@ -10,7 +10,7 @@ async function createSpecificationFromStandardJobs(req: Request, res: Response) 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new CreateSpecificationFromStandardJobsCommand();
 
-        return command.ExecuteAsync(request, CreateSpecificationFromStandardJobDto);
+        return command.ExecuteAsync(request, CreateSpecificationFromStandardJobDto, 'body');
     });
 }
 
