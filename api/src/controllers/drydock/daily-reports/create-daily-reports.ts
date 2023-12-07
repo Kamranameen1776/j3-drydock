@@ -9,7 +9,7 @@ async function createDailyReports(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new CreateDailyReportsCommand();
 
-        return command.ExecuteAsync(request);
+        return command.ExecuteAsync(request.body);
     });
 }
 

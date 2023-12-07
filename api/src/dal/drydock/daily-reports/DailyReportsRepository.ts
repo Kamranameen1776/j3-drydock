@@ -10,7 +10,7 @@ import { IDeleteDailyReportsDto } from './dtos/IDeleteDailyReportsDto';
 import { IUpdateDailyReportsDto } from './dtos/IUpdateDailyReportsDto';
 
 export class DailyReportsRepository {
-    public async get(data: Request): Promise<ODataResult<IDailyReportsResultDto>> {
+    public async getDailyReports(data: Request): Promise<ODataResult<IDailyReportsResultDto>> {
         const dailyReportsRepository = getManager().getRepository(DailyReportsEntity);
 
         const query: string = dailyReportsRepository
@@ -22,7 +22,7 @@ export class DailyReportsRepository {
         return oDataService.getJoinResult(query);
     }
 
-    public async create(data: ICreateDailyReportsDto, queryRunner: QueryRunner) {
+    public async createDailyReport(data: ICreateDailyReportsDto, queryRunner: QueryRunner) {
         const dailyReportsRepository = queryRunner.manager.getRepository(DailyReportsEntity);
         await dailyReportsRepository
             .createQueryBuilder('dr')
@@ -39,7 +39,7 @@ export class DailyReportsRepository {
             .execute();
     }
 
-    public async update(data: IUpdateDailyReportsDto, queryRunner: QueryRunner) {
+    public async updateDailyReport(data: IUpdateDailyReportsDto, queryRunner: QueryRunner) {
         const uid = data.uid;
         const dailyReportsRepository = queryRunner.manager.getRepository(DailyReportsEntity);
         return dailyReportsRepository
@@ -55,7 +55,7 @@ export class DailyReportsRepository {
             .execute();
     }
 
-    public async delete(data: IDeleteDailyReportsDto, queryRunner: QueryRunner) {
+    public async deleteDailyReport(data: IDeleteDailyReportsDto, queryRunner: QueryRunner) {
         const uid = data.uid;
         const dailyReportsRepository = queryRunner.manager.getRepository(DailyReportsEntity);
         return dailyReportsRepository

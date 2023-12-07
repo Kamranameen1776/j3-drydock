@@ -1,6 +1,5 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 
 import { DailyReportsRepository } from '../../../dal/drydock/daily-reports/DailyReportsRepository';
@@ -8,7 +7,7 @@ import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateDailyReportsDto } from './dtos/CreateDailyReportsDto';
 
-export class CreateDailyReportsCommand extends Command<Request, void> {
+export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, void> {
     dailyReportsRepository: DailyReportsRepository;
     uow: UnitOfWork;
 
@@ -23,8 +22,8 @@ export class CreateDailyReportsCommand extends Command<Request, void> {
         return;
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
-        const body: CreateDailyReportsDto = plainToClass(CreateDailyReportsDto, request.body);
+    protected async ValidationHandlerAsync(data: CreateDailyReportsDto): Promise<void> {
+        const body: CreateDailyReportsDto = plainToClass(CreateDailyReportsDto, data);
         const result = await validate(body);
         if (result.length) {
             throw result;
@@ -32,14 +31,14 @@ export class CreateDailyReportsCommand extends Command<Request, void> {
         return;
     }
 
-    protected async MainHandlerAsync(request: Request): Promise<void> {
-        const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
+    protected async MainHandlerAsync(data: CreateDailyReportsDto): Promise<void> {
+        const { UserUID: createdBy } = AccessRights.authorizationDecode(data);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            await this.dailyReportsRepository.create(
+            await this.dailyReportsRepository.createDailyReport(
                 {
-                    reportName: request.body.reportName,
-                    description: request.body.description,
+                    reportName: data.reportName,
+                    description: data.description,
                     createdBy: createdBy,
                     createdAt: new Date(),
                 },

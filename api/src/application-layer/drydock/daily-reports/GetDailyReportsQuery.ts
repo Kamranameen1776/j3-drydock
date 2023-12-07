@@ -31,7 +31,7 @@ export class GetDailyReportsQuery extends Query<Request, ODataResult<IDailyRepor
     }
 
     protected async MainHandlerAsync(request: Request): Promise<ODataResult<IDailyReportsResultDto>> {
-        const data = await this.dailyReportsRepository.get(request);
+        const data = await this.dailyReportsRepository.getDailyReports(request);
         return data;
     }
 }
