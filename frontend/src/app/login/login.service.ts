@@ -13,12 +13,12 @@ export interface LoginResult {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class LoginService {
   constructor(
     private apiRequestService: ApiRequestService,
-    private authenticationService: AuthenticationService,
+    private authenticationService: AuthenticationService
   ) {}
 
   login(data: any): Observable<LoginResult> {
@@ -27,7 +27,7 @@ export class LoginService {
       apiBase: 'infraAPI',
       entity: 'infra',
       action: 'auth/login',
-      body: data,
+      body: data
     };
     return this.apiRequestService.sendApiReq(authenUser);
   }
