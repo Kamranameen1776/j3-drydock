@@ -7,7 +7,7 @@ export class CreateStatementsOfFactsDto {
 
     @IsNotEmpty()
     @IsDateString()
-    DateAndTime: Date;
+    DateTime: Date;
 
     @IsUUID('4')
     @IsNotEmpty()

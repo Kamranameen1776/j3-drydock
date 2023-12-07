@@ -1,21 +1,24 @@
 import { Request } from 'express';
-import { ODataService } from 'j2utils';
+import { DataUtilService, ODataService } from 'j2utils';
 import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
-import { CreateStatementsOfFactsDto } from '../../../application-layer/drydock/statement-of-facts/dtos/CreateStatementsOfFactsDto';
-import { UpdateStatementOfFactsDto } from '../../../application-layer/drydock/statement-of-facts/dtos/UpdateStatementOfFactsDto';
 import { StatementOfFactsEntity } from '../../../entity/drydock/StatementOfFactsEntity';
+import { CreateStatementsOfFactsDto } from './CreateStatementsOfFactsDto';
 import { IStatementOfFactsDto } from './IStatementOfFactsDto';
+import { UpdateStatementOfFactsDto } from './UpdateStatementOfFactsDto';
 
 export class StatementOfFactsRepository {
-    public async CreateStatementOfFacts(data: CreateStatementsOfFactsDto, queryRunner: QueryRunner): Promise<void> {
+    public async CreateStatementOfFacts(data: CreateStatementsOfFactsDto, queryRunner: QueryRunner): Promise<string> {
         const sof = new StatementOfFactsEntity();
-        sof.DateAndTime = data.DateAndTime;
+        sof.uid = new DataUtilService().newUid();
+        sof.DateAndTime = data.DateTime;
         sof.Fact = data.Fact;
         sof.ProjectUid = data.ProjectUid;
 
-        await queryRunner.manager.insert(StatementOfFactsEntity, sof);
+        await queryRunner.manager.save(sof);
+
+        return sof.uid;
     }
 
     public async DeleteStatementOfFacts(statementOfFactUid: string, queryRunner: QueryRunner): Promise<void> {
@@ -27,7 +30,11 @@ export class StatementOfFactsRepository {
     }
 
     public async UpdateStatementOfFacts(data: UpdateStatementOfFactsDto, queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.manager.update(StatementOfFactsEntity, data.uid, data);
+        const sof = new StatementOfFactsEntity();
+        sof.DateAndTime = data.DateTime;
+        sof.Fact = data.Fact;
+
+        await queryRunner.manager.update(StatementOfFactsEntity, data.StatementOfFactUid, sof);
     }
 
     public async GetStatementOfFacts(request: Request): Promise<ODataResult<IStatementOfFactsDto>> {

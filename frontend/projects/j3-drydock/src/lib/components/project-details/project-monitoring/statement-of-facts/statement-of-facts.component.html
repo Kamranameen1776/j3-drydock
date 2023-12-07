@@ -43,3 +43,59 @@
     ></jb-dialog-footer>
   </ng-container>
 </jb-dialog>
+
+<jb-dialog
+  (closeDialog)="showCreateDialog(false)"
+  [(dialogVisible)]="createDialogVisible"
+  [dialogContent]="createStatementOfFactDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-form
+      (jbFormGroup)="initCreateStatementOfFactFormGroup($any($event))"
+      [formStructure]="createStatementOfFactForm"
+      [isVerticalLabel]="true"
+      class="form-generator-log"
+    ></jb-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="createStatementOfFactButtonDisabled"
+      [okBtnLabel]="createBtnLabel"
+      (ok)="createStatementOfFact()"
+      (cancel)="showCreateDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<jb-dialog
+  (closeDialog)="showUpdateDialog(false)"
+  [(dialogVisible)]="updateDialogVisible"
+  [dialogContent]="updateStatementOfFactDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-form
+      (jbFormGroup)="initUpdateStatementOfFactFormGroup($any($event))"
+      [formStructure]="updateStatementOfFactForm"
+      [isVerticalLabel]="true"
+      class="form-generator-log"
+    ></jb-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="updateStatementOfFactButtonDisabled"
+      [okBtnLabel]="updateBtnLabel"
+      (ok)="updateStatementOfFact()"
+      (cancel)="showUpdateDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
