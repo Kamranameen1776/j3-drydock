@@ -15,7 +15,7 @@ export class SpecificationDetailsAuditService {
         specificationDetail: UpdateSpecificationDetailsDto,
         createdById: string,
         queryRunner: QueryRunner,
-    ): Promise<void> {
+    ): Promise<string[]> {
         const fields: CreateFieldsHistoryDto[] = this.generateFieldsData(specificationDetail, createdById);
 
         await this.fieldsHistoryRepository.insertMany(fields as CreateFieldsHistoryDto[], queryRunner);
@@ -33,6 +33,8 @@ export class SpecificationDetailsAuditService {
         });
 
         await this.fieldsHistoryRepository.insertMany(fields.flat() as CreateFieldsHistoryDto[], queryRunner);
+
+        return fields.map((i) => i.uid);
     }
 
     public async auditDeletedSpecificationDetails(

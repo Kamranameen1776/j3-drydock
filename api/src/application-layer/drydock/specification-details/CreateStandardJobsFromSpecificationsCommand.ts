@@ -3,13 +3,15 @@ import { AccessRights, DataUtilService, SynchronizerService } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { CreateInspectionsDto } from '../../../dal/drydock/specification-details/dtos';
 import { CreateSpecificationFromStandardJobDto } from '../../../dal/drydock/specification-details/dtos/ICreateSpecificationFromStandardJobDto';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { SpecificationDetailsSubItemsRepository } from '../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
-import { LibVesselsEntity, SpecificationDetailsEntity } from '../../../entity/drydock';
+import { LibVesselsEntity, SpecificationDetailsEntity, SpecificationInspectionEntity } from '../../../entity/drydock';
+import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
 import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
@@ -24,9 +26,10 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<Request,
     subItemsRepository = new SpecificationDetailsSubItemsRepository();
     specificationDetailsAudit = new SpecificationDetailsAuditService();
 
-    tableName = 'dry_dock.specification_details';
-    tableNameInspections = 'dry_dock.specification_details_LIB_Survey_CertificateAuthority';
-    tableNameSubItems = 'dry_dock.specification_details_sub_item';
+    tableName = getTableName(SpecificationDetailsEntity);
+    tableNameInspections = getTableName(SpecificationInspectionEntity);
+    tableNameSubItems = getTableName(SpecificationDetailsSubItemEntity);
+    tableNameAudit = getTableName(J2FieldsHistoryEntity);
 
     protected async MainHandlerAsync(request: Request) {
         const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
@@ -140,10 +143,18 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<Request,
             );
 
             // AUDIT
-            await this.specificationDetailsAudit.auditManyCreatedSpecificationDetails(
+            const auditUids = await this.specificationDetailsAudit.auditManyCreatedSpecificationDetails(
                 specificationAuditData,
                 createdBy,
                 queryRunner,
+            );
+
+            const auditCondition = `uid IN ('${auditUids.join(`','`)}')`;
+            await SynchronizerService.dataSynchronizeByConditionManager(
+                queryRunner.manager,
+                this.tableNameAudit,
+                vessel.VesselId,
+                auditCondition,
             );
 
             return specifications;
