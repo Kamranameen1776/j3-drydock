@@ -37,19 +37,19 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
      * @returns All specification details
      */
     protected async MainHandlerAsync(request: UpdateJobOrderDto): Promise<void> {
-        // 1. get specification
-        // 2. update specification start date, end date
         const specification = await this.specificationDetailsRepository.TryGetSpecification(request.SpecificationUid);
 
         if (!specification) {
             throw new ApplicationException(`Specification ${request.SpecificationUid} not found`);
         }
 
+        // 2. update specification start date, end date
+
         // 3. load job order
 
         const jobOrder = await this.jobOrderRepository.TryGetJobOrderBySpecification(specification.uid);
 
-        if (!data) {
+        if (!jobOrder) {
             // 4. if job order exists, create it
             // TODO: implement
             // const data = await this.repository.CreateJobOrderBySpecification(request.SpecificationUid);
