@@ -30,6 +30,11 @@ export class JobOrdersRepository {
                 // TODO: take from SpecificationDetails -> AssignedTo property, once it is implemented
                 "'-' AS Responsible",
                 'jo.LastUpdated AS LastUpdated',
+                'sd.Status AS SpecificationStatus',
+                'sd.StartDate AS SpecificationStartDate',
+                'sd.Subject AS SpecificationSubject',
+                // TODO: implement once end date is implemented in specification details page
+                //'sd.EndDate AS SpecificationEndDate',
 
                 'sd.ProjectUid AS ProjectUid',
             ])
@@ -42,5 +47,17 @@ export class JobOrdersRepository {
         const oDataService = new ODataService(request, getConnection);
 
         return oDataService.getJoinResult(query);
+    }
+
+    public async TryGetJobOrderBySpecification(specificationUid: string): Promise<JobOrderEntity | undefined> {
+        const jobOrdersRepository = getManager().getRepository(JobOrderEntity);
+
+        const jobOrder = await jobOrdersRepository.findOne({
+            where: {
+                SpecificationUid: specificationUid,
+            },
+        });
+
+        return jobOrder;
     }
 }

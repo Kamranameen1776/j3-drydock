@@ -345,4 +345,16 @@ export class SpecificationDetailsRepository {
             .andWhere(`requisition_uid = '${requisitionUid}'`)
             .execute();
     }
+
+    public async TryGetSpecification(specificationUid: string): Promise<SpecificationDetailsEntity | undefined> {
+        const jobOrdersRepository = getManager().getRepository(SpecificationDetailsEntity);
+
+        const jobOrder = await jobOrdersRepository.findOne({
+            where: {
+                SpecificationUid: specificationUid,
+            },
+        });
+
+        return jobOrder;
+    }
 }

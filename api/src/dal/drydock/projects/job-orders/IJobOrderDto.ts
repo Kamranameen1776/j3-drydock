@@ -13,9 +13,17 @@ export interface IJobOrderDto {
 
     Status: string;
 
+    SpecificationStatus: string;
+
     Progress: number;
 
     Responsible: string;
 
     LastUpdated: Date;
+
+    SpecificationStartDate: Date;
+
+    SpecificationEndDate: Date;
+
+    SpecificationSubject: string;
 }
