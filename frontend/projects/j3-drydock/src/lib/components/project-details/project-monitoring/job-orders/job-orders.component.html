@@ -16,3 +16,31 @@
     (matrixRequestChanged)="onMatrixRequestChanged()"
   ></jb-grid>
 </section>
+
+<jb-dialog
+  (closeDialog)="showUpdateDialog(false)"
+  [(dialogVisible)]="updateDialogVisible"
+  [dialogContent]="updateJobOrderDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-form
+      (jbFormGroup)="initUpdateJobOrderFormGroup($any($event))"
+      [formStructure]="updateJobOrderForm"
+      [isVerticalLabel]="true"
+      class="form-generator-log"
+    ></jb-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="updateJobOrderButtonDisabled"
+      [okBtnLabel]="updateBtnLabel"
+      (ok)="updateJobOrder()"
+      (cancel)="showUpdateDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
