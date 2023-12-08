@@ -1,5 +1,3 @@
-import { Request } from 'express';
-
 import { KeyValuePair } from '../../../../common/drydock/ts-helpers/KeyValuePair';
 import { JobOrdersRepository } from '../../../../dal/drydock/projects/job-orders/JobOrdersRepository';
 import { JobOrderStatus } from '../../../../dal/drydock/projects/job-orders/JobOrderStatus';
@@ -17,16 +15,18 @@ export class GetJobOrderStatusesQuery extends Query<void, KeyValuePair<string, s
         return;
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> { }
+    protected async ValidationHandlerAsync(): Promise<void> {
+        return;
+    }
 
     /**
      * @returns All specification details
      */
-    protected async MainHandlerAsync(request: Request): Promise<KeyValuePair<string, string>[]> {
+    protected async MainHandlerAsync(): Promise<KeyValuePair<string, string>[]> {
         const arr: KeyValuePair<string, string>[] = [];
 
         Object.keys(JobOrderStatus).forEach((key) => {
-            const value = JobOrderStatus[key];
+            const value = JobOrderStatus[key as keyof typeof JobOrderStatus];
             arr.push({ Key: key, Value: value });
         });
 

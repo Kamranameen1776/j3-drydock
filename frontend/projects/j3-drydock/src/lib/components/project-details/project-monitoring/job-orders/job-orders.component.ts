@@ -30,7 +30,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
   public updateDialogVisible = false;
 
-  updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Fact' };
+  updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Details' };
 
   updateJobOrderForm: FormModel;
 

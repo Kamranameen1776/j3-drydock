@@ -13,7 +13,7 @@ import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 async function getJobOrderStatuses(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request) => {
+    await middlewareHandler.ExecuteAsync(req, res, async () => {
         const query = new GetJobOrderStatusesQuery();
 
         // Execute query
