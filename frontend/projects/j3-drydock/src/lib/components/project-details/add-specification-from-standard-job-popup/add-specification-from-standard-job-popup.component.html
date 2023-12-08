@@ -5,31 +5,35 @@
 >
   <div jb-dialog-body>
     <div class="dialog-body">
-      <jb-tree
-        *ngIf="treeData.length > 0"
-        [staticNodes]="treeData"
-        [showSetting]="{ showSearch: true, showButtons: false }"
-        filterPlaceholder="Search Function"
-        (nodeData)="setNodeData($event)"
-        [eventsList]="eventsList"
-        treeName="addFromStandardJobsTree"
-        [virtualScroll]="true"
-        scrollHeight="544px"
-      ></jb-tree>
+      <div class="tree">
+        <jb-tree
+          *ngIf="treeData.length > 0"
+          [staticNodes]="treeData"
+          [showSetting]="{ showSearch: true, showButtons: false }"
+          filterPlaceholder="Search Function"
+          (nodeData)="setNodeData($event)"
+          [eventsList]="eventsList"
+          treeName="addFromStandardJobsTree"
+          [virtualScroll]="true"
+          scrollHeight="544px"
+        ></jb-tree>
+      </div>
 
-      <jb-grid
-        *ngIf="gridData"
-        [gridName]="gridData.gridName"
-        [colData]="gridData.columns"
-        [tableDataReq]="gridData.request"
-        [filterData]="gridData.filters"
-        [filterListsSet]="gridData.filtersLists"
-        [searchFields]="gridData.searchFields"
-        [getStyleByContainer]="true"
-        [selectionMode]="'multiple'"
-        [matrixSelectedValue]="selected"
-        (matrixSelection)="onSelect($event)"
-      ></jb-grid>
+      <div class="grid">
+        <jb-grid
+          *ngIf="gridData"
+          [gridName]="gridData.gridName"
+          [colData]="gridData.columns"
+          [tableDataReq]="gridData.request"
+          [filterData]="gridData.filters"
+          [filterListsSet]="gridData.filtersLists"
+          [searchFields]="gridData.searchFields"
+          [getStyleByContainer]="true"
+          [selectionMode]="'multiple'"
+          [matrixSelectedValue]="selected"
+          (matrixSelection)="onSelect($event)"
+        ></jb-grid>
+      </div>
     </div>
   </div>
 

@@ -77,7 +77,8 @@ export class StandardJobsService {
       type: 'multiselect',
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      includeFilter: true
+      includeFilter: true,
+      gridName: this.popupGridName
     },
     {
       DisplayText: 'Sub Items',
@@ -89,7 +90,8 @@ export class StandardJobsService {
       type: 'multiselect',
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      includeFilter: true
+      includeFilter: true,
+      gridName: this.popupGridName
     }
   ];
 

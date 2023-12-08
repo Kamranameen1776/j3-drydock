@@ -1,3 +1,11 @@
 .dialog-body {
   display: flex;
+
+  .tree {
+    flex: 1;
+  }
+
+  .grid {
+    flex: 3;
+  }
 }
