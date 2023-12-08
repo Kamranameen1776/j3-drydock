@@ -1,6 +1,5 @@
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
-import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager } from 'typeorm';
 
 import { className } from '../../../../common/drydock/ts-helpers/className';
@@ -11,6 +10,7 @@ import {
     TecTaskManagerEntity,
 } from '../../../../entity/drydock';
 import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
+import { ODataResult } from '../../../../shared/interfaces';
 import { IJobOrderDto } from './IJobOrderDto';
 
 export class JobOrdersRepository {
