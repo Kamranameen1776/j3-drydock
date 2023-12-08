@@ -46,7 +46,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   public attachmentConfig: IJbAttachment;
   canView = false;
   canViewSubItems = false;
-  addAttachemnt = false;
+  addAttachment = false;
 
   private readonly menuId = 'specification-details-menu';
   currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
@@ -55,7 +55,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   constructor(
     private title: Title,
-    private specificatioDetailService: SpecificationDetailsService,
+    private specificationDetailService: SpecificationDetailsService,
     private readonly activatedRoute: ActivatedRoute,
     private growlMessageService: GrowlMessageService,
     private jbMenuService: JbMenuService
@@ -66,7 +66,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   async ngOnInit(): Promise<void> {
     const { snapshot } = this.activatedRoute;
     this.specificationUid = snapshot.params.specificationUid;
-    this.specificationDetailsInfo = await this.specificatioDetailService.getSpecificationDetails(this.specificationUid).toPromise();
+    this.specificationDetailsInfo = await this.specificationDetailService.getSpecificationDetails(this.specificationUid).toPromise();
     this.pageTitle = `Specification ${this.specificationDetailsInfo.SpecificationCode}`;
     this.title.setTitle(this.pageTitle);
     this.initSideMenu();
@@ -80,8 +80,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   private initializeAttachments(id: string): void {
     const actions: GridRowActions[] = [];
-    const canEditAttachments = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.editAttachments);
-    const canDeleteAttachments = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.deleteAttachments);
+    const canEditAttachments = this.specificationDetailService.hasAccess(eSpecificationAccessActions.editAttachments);
+    const canDeleteAttachments = this.specificationDetailService.hasAccess(eSpecificationAccessActions.deleteAttachments);
 
     if (canEditAttachments) {
       actions.push({
@@ -106,7 +106,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       Module_Code: eModule.Project,
       Function_Code: eFunction.SpecificationDetails,
       Key1: id,
-      actions: actions
+      actions
     };
   }
 
@@ -141,9 +141,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   }
 
   private setAccessRights() {
-    this.canView = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.viewSpecificationDetail);
-    this.canViewSubItems = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.viewSubItemsSection);
-    this.addAttachemnt = this.specificatioDetailService.hasAccess(eSpecificationAccessActions.addAttachments);
+    this.canView = this.specificationDetailService.hasAccess(eSpecificationAccessActions.viewSpecificationDetail);
+    this.canViewSubItems = this.specificationDetailService.hasAccess(eSpecificationAccessActions.viewSubItemsSection);
+    this.addAttachment = this.specificationDetailService.hasAccess(eSpecificationAccessActions.addAttachments);
   }
 
   private isMenuSection(menuItem: IJbMenuItem) {
@@ -162,7 +162,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     };
 
     try {
-      this.specificatioDetailService.updateSpecification(data).toPromise();
+      this.specificationDetailService.updateSpecification(data).toPromise();
       this.growlMessageService.setSuccessMessage("Specification's information has been saved successfully.");
     } catch (err) {
       this.growlMessageService.setErrorMessage(err.error);
