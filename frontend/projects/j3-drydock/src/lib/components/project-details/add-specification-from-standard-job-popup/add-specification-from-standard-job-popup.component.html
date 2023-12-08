@@ -7,7 +7,7 @@
     <div class="dialog-body">
       <div class="tree">
         <jb-tree
-          *ngIf="treeData.length > 0"
+          *ngIf="treeData && treeData.length > 0"
           [staticNodes]="treeData"
           [showSetting]="{ showSearch: true, showButtons: false }"
           filterPlaceholder="Search Function"

@@ -14,7 +14,7 @@ import {
   SearchField
 } from 'jibe-components';
 import { ODataFilterBuilder } from 'odata-filter-builder';
-import { eStandardJobsMainFields } from '../models/enums/standard-jobs-main.enum';
+import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../models/enums/standard-jobs-main.enum';
 import { SubItem } from '../models/interfaces/sub-items';
 import { eModule } from '../models/enums/module.enum';
 import { eFunction } from '../models/enums/function.enum';
@@ -28,8 +28,8 @@ export class StandardJobsService {
   private readonly columns: Column[] = [
     {
       DisableSort: true,
-      DisplayText: 'Item Number',
-      FieldName: 'code',
+      DisplayText: eStandardJobsMainLabels.Code,
+      FieldName: eStandardJobsMainFields.Code,
       hyperlink: true,
       IsActive: true,
       IsMandatory: true,
@@ -38,8 +38,8 @@ export class StandardJobsService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Subject',
-      FieldName: 'subject',
+      DisplayText: eStandardJobsMainLabels.Subject,
+      FieldName: eStandardJobsMainFields.Subject,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -47,18 +47,17 @@ export class StandardJobsService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Inspection / Survey',
-      FieldName: 'hasInspection',
+      DisplayText: eStandardJobsMainLabels.HasInspection,
+      FieldName: eStandardJobsMainFields.HasInspection,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
-      ReadOnly: true,
-      pipe: { value: 'yesNoValue' }
+      ReadOnly: true
     },
     {
       DisableSort: true,
-      DisplayText: 'Sub Items',
-      FieldName: 'hasSubItems',
+      DisplayText: eStandardJobsMainLabels.HasSubItems,
+      FieldName: eStandardJobsMainFields.HasSubItems,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -68,8 +67,8 @@ export class StandardJobsService {
 
   private readonly filters: Filter[] = [
     {
-      DisplayText: 'Inspection / Survey',
-      FieldName: 'hasInspection',
+      DisplayText: eStandardJobsMainLabels.HasInspection,
+      FieldName: eStandardJobsMainFields.HasInspection,
       placeholder: 'Select',
       default: true,
       FieldID: 1,
@@ -81,8 +80,8 @@ export class StandardJobsService {
       gridName: this.popupGridName
     },
     {
-      DisplayText: 'Sub Items',
-      FieldName: 'hasSubItems',
+      DisplayText: eStandardJobsMainLabels.HasSubItems,
+      FieldName: eStandardJobsMainFields.HasSubItems,
       placeholder: 'Select',
       default: true,
       FieldID: 2,
