@@ -4,10 +4,12 @@ import { DataUtilService, SynchronizerService } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
-import { LibVesselsEntity } from '../../../entity/drydock';
+import { LibVesselsEntity, SpecificationDetailsEntity, SpecificationInspectionEntity } from '../../../entity/drydock';
+import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
 import { Command } from '../core/cqrs/Command';
 import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
@@ -20,8 +22,9 @@ export class CreateSpecificationDetailsCommand extends Command<CommandRequest, s
     projectRepository: ProjectsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
-    tableName = 'dry_dock.specification_details';
-    tableNameInspections = 'dry_dock.specification_details_LIB_Survey_CertificateAuthority';
+    tableName = getTableName(SpecificationDetailsEntity);
+    tableNameInspections = getTableName(SpecificationInspectionEntity);
+    tableNameAudit = getTableName(J2FieldsHistoryEntity);
     constructor() {
         super();
 
@@ -93,13 +96,20 @@ export class CreateSpecificationDetailsCommand extends Command<CommandRequest, s
                 );
             }
             // AUDIT
-            await this.specificationDetailsAudit.auditCreatedSpecificationDetails(
+            const ids = await this.specificationDetailsAudit.auditCreatedSpecificationDetails(
                 {
                     ...request.body,
                     uid: specData,
                 },
                 user.UserID,
                 queryRunner,
+            );
+            const condition = `uid IN ('${ids.join(`','`)}')`;
+            await SynchronizerService.dataSynchronizeByConditionManager(
+                queryRunner.manager,
+                this.tableNameAudit,
+                vessel.VesselId,
+                condition,
             );
             return specData;
         });

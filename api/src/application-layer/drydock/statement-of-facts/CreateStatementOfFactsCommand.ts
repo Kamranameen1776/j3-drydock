@@ -1,16 +1,19 @@
+import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { CreateStatementsOfFactsDto } from '../../../dal/drydock/statement-of-facts/CreateStatementsOfFactsDto';
 import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-facts/StatementOfFactsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { StatementOfFactsEntity } from '../../../entity/drydock';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 
 export class CreateStatementsOfFactsCommand extends Command<CreateStatementsOfFactsDto, void> {
     repository: StatementOfFactsRepository;
     uow: UnitOfWork;
-    tableName = 'dry_dock.statement_of_facts';
+    tableName = getTableName(StatementOfFactsEntity);
     vesselRepository: VesselsRepository;
 
     constructor() {
@@ -28,9 +31,7 @@ export class CreateStatementsOfFactsCommand extends Command<CreateStatementsOfFa
         if (!request) {
             throw new Error('Request is null');
         }
-
         const result = await validate(request);
-
         if (result.length) {
             throw result;
         }

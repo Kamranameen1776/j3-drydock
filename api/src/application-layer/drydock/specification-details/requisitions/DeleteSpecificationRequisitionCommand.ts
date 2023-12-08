@@ -1,8 +1,10 @@
 import { Request } from 'express';
 import { SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
+import { SpecificationRequisitionsEntity } from '../../../../entity/drydock';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { DeleteSpecificationRequisitionsRequestDto } from '../dtos/DeleteSpecificationRequisitionsRequestDto';
@@ -10,7 +12,7 @@ import { DeleteSpecificationRequisitionsRequestDto } from '../dtos/DeleteSpecifi
 export class DeleteSpecificationRequisitionCommand extends Command<Request, void> {
     specificationDetailsRepository = new SpecificationDetailsRepository();
     uow = new UnitOfWork();
-    tableName = 'dry_dock.specification_requisitions';
+    tableName = getTableName(SpecificationRequisitionsEntity);
     vesselsRepository: VesselsRepository = new VesselsRepository();
 
     protected async MainHandlerAsync(request: Request) {

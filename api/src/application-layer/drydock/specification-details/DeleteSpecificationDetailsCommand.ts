@@ -1,8 +1,11 @@
 import { SynchronizerService } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { SpecificationDetailsEntity } from '../../../entity/drydock';
+import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
 import { Command } from '../core/cqrs/Command';
 import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
@@ -11,8 +14,10 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
-    tableName = 'dry_dock.specification_details';
+    tableName = getTableName(SpecificationDetailsEntity);
     vesselsRepository: VesselsRepository;
+    tableNameAudit = getTableName(J2FieldsHistoryEntity);
+
     constructor() {
         super();
 
@@ -48,7 +53,18 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
                 uid,
                 vessel.VesselId,
             );
-            await this.specificationDetailsAudit.auditDeletedSpecificationDetails(uid, user.UserID, queryRunner);
+            const id = await this.specificationDetailsAudit.auditDeletedSpecificationDetails(
+                uid,
+                user.UserID,
+                queryRunner,
+            );
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                this.tableNameAudit,
+                'uid',
+                id,
+                vessel.VesselId,
+            );
             return updatedSpecData;
         });
 

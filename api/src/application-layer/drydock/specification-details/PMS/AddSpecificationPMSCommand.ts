@@ -1,7 +1,9 @@
 import { DataUtilService, SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
+import { SpecificationPmsEntity } from '../../../../entity/drydock';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { UpdateSpecificationPmsRequestDto } from '../dtos/UpdateSpecificationPMSRequestDto';
@@ -9,7 +11,7 @@ import { UpdateSpecificationPmsRequestDto } from '../dtos/UpdateSpecificationPMS
 export class AddSpecificationPmsCommand extends Command<UpdateSpecificationPmsRequestDto, void> {
     specificationDetailsRepository = new SpecificationDetailsRepository();
     uow = new UnitOfWork();
-    tableName = 'dry_dock.specification_details_j3_pms_agg_job';
+    tableName = getTableName(SpecificationPmsEntity);
     vesselsRepository: VesselsRepository = new VesselsRepository();
 
     protected async MainHandlerAsync(request: UpdateSpecificationPmsRequestDto) {

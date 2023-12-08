@@ -1,9 +1,9 @@
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
-import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { StatementOfFactsEntity } from '../../../entity/drydock/StatementOfFactsEntity';
+import { ODataResult } from '../../../shared/interfaces/odata-result.interface';
 import { CreateStatementsOfFactsDto } from './CreateStatementsOfFactsDto';
 import { IStatementOfFactsDto } from './IStatementOfFactsDto';
 import { UpdateStatementOfFactsDto } from './UpdateStatementOfFactsDto';
