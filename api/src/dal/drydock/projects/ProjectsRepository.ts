@@ -137,12 +137,14 @@ export class ProjectsRepository {
 
     private getSpecificationCountQuery(qb: SelectQueryBuilder<SpecificationDetailsEntity>, uid?: string) {
         let query = qb
-            .select(['sd.uid', 'stm.Status as status', 'project_uid as ProjectUid'])
+            .select(['sd.uid as uid', 'stm.Status as status', 'project_uid as ProjectUid'])
             .from(className(SpecificationDetailsEntity), 'sd')
             .innerJoin(className(TecTaskManagerEntity), 'stm', `stm.uid = sd.tec_task_manager_uid`);
 
         if (uid) {
-            query = query.where('sd.project_uid = :uid', { uid });
+            query = query.where('sd.project_uid = :uid AND sd.active_status = 1', { uid });
+        } else {
+            query = query.where('sd.active_status = 1');
         }
 
         return query;
@@ -177,7 +179,7 @@ export class ProjectsRepository {
                 'pr.TaskManagerUid as TaskManagerUid',
                 'yd.yard_name as ShipYard',
                 'yd.uid as ShipYardUid',
-                `CONCAT(COUNT(*) - COUNT(CASE WHEN sc.status = '${TaskManagerConstants.specification.status.Completed}' THEN 1 END) - 1, '/', COUNT(*) - 1) AS Specification`,
+                `CONCAT(COUNT(sc.uid) - COUNT(CASE WHEN sc.status = '${TaskManagerConstants.specification.status.Completed}' THEN 1 END), '/', COUNT(sc.uid)) AS Specification`,
             ])
             .leftJoin((qb) => this.getSpecificationCountQuery(qb, uid), 'sc', 'sc.projectUid = pr.uid')
             .leftJoin(className(YardsProjectsEntity), 'ydp', 'ydp.project_uid = pr.uid')
