@@ -28,33 +28,6 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   types = [SpecificationType.ALL, SpecificationType.PMS, SpecificationType.FINDINGS, SpecificationType.STANDARD, SpecificationType.ADHOC];
   isCreatePopupVisible = false;
 
-  createNewItems = [
-    /*{
-      label: 'Add from PMS',
-      command: () => {
-        this.openPopup();
-      }
-    },
-    {
-      label: 'Add from Findings',
-      command: () => {
-        this.openPopup();
-      }
-    },*/
-    {
-      label: 'Add from Standard Jobs',
-      command: () => {
-        this.openPopup();
-      }
-    },
-    {
-      label: 'Create Ad hoc',
-      command: () => {
-        this.openPopup();
-      }
-    }
-  ];
-
   constructor(
     private specsService: SpecificationGridService,
     private formService: SpecificationCreateFormService,
@@ -64,16 +37,16 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     super();
   }
 
-  openPopup() {
+  public openPopup() {
     this.isCreatePopupVisible = true;
   }
 
   ngOnInit(): void {
     this.treeData$ = this.functionsService.getFunctions().pipe(
-      takeUntil(this.unsubscribe$),
       map((functions) => {
         return functions.map((func) => this.functionsService.calculateSelectable(func, functions));
-      })
+      }),
+      takeUntil(this.unsubscribe$)
     );
     this.loadFunctionsToForm();
     this.gridData = this.getData();

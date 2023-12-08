@@ -6,6 +6,7 @@
     "@angular/core": "^9.1.13"
   },
   "dependencies": {
-    "tslib": "^1.10.0"
+    "tslib": "^1.10.0",
+    "j3-task-manager-ng": "3.234.232-2"
   }
 }

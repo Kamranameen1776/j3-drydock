@@ -26,7 +26,3 @@ export interface ProjectEdit {
 export interface Project extends ProjectEdit {
   uid: string;
 }
-
-export interface DeleteProjectDto {
-  ProjectId: string;
-}

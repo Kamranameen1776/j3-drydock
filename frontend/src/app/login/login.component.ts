@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
   }
 
   private buildLinks(): void {
-    const route = this.router.config.find((item) => item.path === 'j3-drydock');
+    const route = this.router.config.find((item) => item.path === 'dry-dock');
 
     if (!route) {
       return;
