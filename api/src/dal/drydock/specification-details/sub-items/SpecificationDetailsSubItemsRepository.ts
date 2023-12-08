@@ -9,10 +9,7 @@ import {
 import { className } from '../../../../common/drydock/ts-helpers/className';
 import { entriesOf } from '../../../../common/drydock/ts-helpers/entries-of';
 import { SpecificationDetailsEntity } from '../../../../entity/drydock';
-import {
-    SpecificationDetailsSubItemEntity,
-    SpecificationDetailsSubItemEntity as SubItem,
-} from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { SpecificationDetailsSubItemEntity as SubItem } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { SpecificationSubItemFindingEntity } from '../../../../entity/drydock/SpecificationSubItemFindingEntity';
 import { SpecificationSubItemPmsEntity } from '../../../../entity/drydock/SpecificationSubItemPmsJobEntity';
 import { UnitTypeEntity } from '../../../../entity/drydock/UnitTypeEntity';
@@ -28,12 +25,14 @@ import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
 import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
 
 export class SpecificationDetailsSubItemsRepository {
-    public async findMany(params: FindManyParams): Promise<ODataResult<FindManyRecord>> {
+    protected readonly itemNumberDelimiter: RegExp | string = '.';
+
+    public async findMany(params: FindManyParams): Promise<ODataResult<SubItem>> {
         const [script, substitutions] = getManager()
             .createQueryBuilder(SubItem, 'subItem')
             .select([
                 'subItem.uid as uid',
-                'subItem.number as number',
+                'subItem.itemNumber as itemNumber',
                 'subItem.subject as subject',
                 'subItem.quantity as quantity',
                 'subItem.unitPrice as unitPrice',
@@ -91,6 +90,7 @@ export class SpecificationDetailsSubItemsRepository {
      */
     protected constructSubItem(params: CreateSubItemParams, queryRunner: QueryRunner): SubItem {
         return queryRunner.manager.create(SubItem, {
+            // FIXME: set default value for itemNumber in entity definition
             specificationDetailsUid: params.specificationDetailsUid,
             subject: params.subject,
             unitTypeUid: params.unitTypeUid,
@@ -102,16 +102,101 @@ export class SpecificationDetailsSubItemsRepository {
         });
     }
 
+    private calculateNextItemNumberIntegerBySubItem(subItem: SubItem | undefined): number {
+        let currentMax: number;
+
+        if (subItem == null) {
+            currentMax = 0;
+        } else {
+            const [, itemNumberInteger] = subItem.itemNumber.split(this.itemNumberDelimiter);
+
+            currentMax = parseInt(itemNumberInteger, 10);
+        }
+
+        return currentMax + 1;
+    }
+
+    public async test(queryRunner: QueryRunner): Promise<unknown> {
+        const specificationDetailsUid = '9E3060D0-4D3F-4AA2-9708-AE0FA3217A3D';
+
+        console.log('::', 'find spec');
+
+        const specificationDetails = await queryRunner.manager.findOne(SpecificationDetailsEntity, {
+            where: {
+                uid: specificationDetailsUid,
+            },
+        });
+
+        if (specificationDetails == null) {
+            throw new Error(`Could not find specification details "${specificationDetailsUid}"`); // TODO: derive from BusinessException
+        }
+
+        console.log('::', 'find existing sub-item');
+
+        // FIXME: Invalid column name 'item_number' (migration had not been performed)
+        const subItemExisting = await queryRunner.manager.findOne(SubItem, {
+            where: {
+                specificationDetails,
+            },
+            order: {
+                itemNumber: 'DESC',
+            },
+        });
+
+        console.log('::', '\tfound existing sub-item:', subItemExisting?.uid);
+        console.log('::', 'construct new sub-item');
+
+        const subItemNew = this.constructSubItem(
+            {
+                specificationDetailsUid,
+                createdBy: '1',
+                subject: `Whatever subject ${Math.random()}`,
+                discount: 0.2,
+                quantity: 5,
+                unitPrice: 3,
+                unitTypeUid: '10D5827E-0DF2-46D4-9B7D-021C1DDFCFBE',
+                description: '',
+            },
+            queryRunner.manager.queryRunner ?? queryRunner,
+        );
+
+        console.log('::', 'calculateNextItemNumberIntegerBySubItem');
+
+        const nextItemNumberInteger = this.calculateNextItemNumberIntegerBySubItem(subItemExisting);
+
+        console.log('::', '\tcalculated:', nextItemNumberInteger);
+        console.log('::', 'assign itemNumber');
+
+        // Using .assign(…) to bypass `readonly` constraint
+        // Don't do this in other places
+        Object.assign(subItemNew, {
+            itemNumber: `${specificationDetails.ItemNumber}${this.itemNumberDelimiter}${nextItemNumberInteger}`,
+        });
+
+        console.log('::', '\tassigned:', subItemNew.itemNumber);
+        console.log('::', 'save subItem');
+
+        await queryRunner.manager.save(subItemNew);
+        console.log('::', '\tsaved');
+
+        return subItemNew;
+    }
+
     protected async batchCreate(params: CreateManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
         const unitTypeUids = params.subItems.map((props) => props.unitTypeUid);
 
         await this.assertAllUnitTypesExistByUids(unitTypeUids, queryRunner);
+        // FIXME: make sure specification details record exists as well
 
         const newSubItems = params.subItems.map(
             (props): SubItem => this.constructSubItem({ ...params, ...props }, queryRunner),
         );
 
-        await queryRunner.manager.save(newSubItems);
+        await queryRunner.manager.transaction('SERIALIZABLE', async (entityManager) => {
+            // …
+
+            await entityManager.save(newSubItems);
+        });
 
         return newSubItems;
     }
@@ -227,7 +312,7 @@ export class SpecificationDetailsSubItemsRepository {
         const pmsJobs = await getManager()
             .createQueryBuilder(className(SpecificationSubItemPmsEntity), 'sub_item_pms')
             .innerJoin(
-                className(SpecificationDetailsSubItemEntity),
+                className(SubItem),
                 'sub_item',
                 'sub_item.uid = sub_item_pms.specification_sub_item_uid and sub_item.active_status = 1',
             )
