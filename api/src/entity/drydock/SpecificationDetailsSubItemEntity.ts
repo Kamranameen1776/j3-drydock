@@ -31,13 +31,13 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     readonly uid: string;
 
     @Column({
-        name: 'number',
-        type: 'int',
+        name: 'item_number',
+        type: 'varchar',
         nullable: false,
-        generated: 'increment',
         update: false,
+        unique: true,
     })
-    readonly number: number;
+    readonly itemNumber: string;
 
     @Column({
         name: 'subject',
