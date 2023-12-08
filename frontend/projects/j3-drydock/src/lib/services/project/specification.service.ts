@@ -62,6 +62,7 @@ export class SpecificationGridService {
     return apiRequest;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public createSpecification(formValue: any) {
     const action = 'specification-details/create-specification-details';
     const apiReq: WebApiRequest = {
@@ -90,6 +91,17 @@ export class SpecificationGridService {
       filters: this.filters,
       filtersLists: this.filtersLists
     };
+  }
+
+  deleteSpecification(data: { uid: string }) {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      action: 'specification-details/delete-specification-details',
+      crud: eCrud.Put,
+      body: data
+    };
+    return this.apiRequestService.sendApiReq(request);
   }
 
   public readonly gridName: string = 'specificationGrid';
