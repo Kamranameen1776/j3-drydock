@@ -6,7 +6,7 @@ import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SpecificationCreateFormService } from '../specification-form/specification-create-form-service';
 import { FunctionsService } from '../../../services/functions.service';
 import { Observable } from 'rxjs';
-import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
+import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../../models/interfaces/functions-tree-node';
 import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -43,6 +43,12 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     }
   ];
 
+  vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name'> = {
+    uid: 'vesselParent',
+    name: 'Vessel',
+    parent_function_uid: '0'
+  };
+
   constructor(
     private specsService: SpecificationGridService,
     private formService: SpecificationCreateFormService,
@@ -61,9 +67,10 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   }
 
   ngOnInit(): void {
-    this.treeData$ = this.functionsService.getFunctions().pipe(
+    this.treeData$ = this.functionsService.getFunctions(this.vesselNode.uid).pipe(
       takeUntil(this.unsubscribe$),
       map((functions) => {
+        functions.push(this.functionsService.createFlatNode(this.vesselNode));
         return functions.map((func) => this.functionsService.calculateSelectable(func, functions));
       })
     );
