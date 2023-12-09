@@ -171,8 +171,11 @@ export class SpecificationDetailsRepository {
                     'tm.Status as status',
                     'tm.title as subject',
                     'sd.project_uid',
-                    "STRING_AGG(lsc.ID, ',') as inspectionId",
-                    "STRING_AGG(lsc.Authority, ',') as inspection",
+                    // "STRING_AGG(lsc.ID, ',') as inspectionId",
+                    // "STRING_AGG(lsc.Authority, ',') as inspection",
+                    //TODO: temporary dummy values for monday qc. fix it
+                    `'RandomIds' as inspectionId`,
+                    `'RandomInspections' as inspection`,
                 ])
                 .groupBy(
                     [
