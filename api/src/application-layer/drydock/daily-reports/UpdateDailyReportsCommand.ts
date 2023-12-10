@@ -24,7 +24,7 @@ export class UpdateDailyReportsCommand extends Command<Request, void> {
     }
 
     protected async ValidationHandlerAsync(data: Request): Promise<void> {
-        const body: UpdateDailyReportsDto = plainToClass(UpdateDailyReportsDto, data);
+        const body: UpdateDailyReportsDto = plainToClass(UpdateDailyReportsDto, data.body);
         const result = await validate(body);
         if (result.length) {
             throw result;
