@@ -31,6 +31,7 @@ export class DailyReportsRepository {
             .values({
                 uid: new DataUtilService().newUid(),
                 report_name: data.reportName,
+                report_date: data.reportDate,
                 description: data.description,
                 created_by: data.createdBy,
                 created_at: data.createdAt,
