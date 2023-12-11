@@ -58,14 +58,14 @@ export class StandardJobsRepository {
                     'sj.material_supplied_by_uid as materialSuppliedByUid,' +
                     'msb.display_name as materialSuppliedBy,' +
                     //TODO: temporary dummy values for monday qc. fix it
-                    `'RandomIds' as inspectionId` +
-                    `'RandomInspections' as inspection` +
-                    `'RandomVesselIds' as vesselTypeId` +
-                    `'RandomVesselType' as vesselType`,
-                // `STRING_AGG(lsca.ID, ',') as inspectionId,` +
-                // `STRING_AGG(lsca.Authority, ',') as inspection`,
-                // `STRING_AGG(vt.ID, ',') as vesselTypeId,` +
-                // `STRING_AGG(vt.VesselTypes, ',') as vesselType,` +
+                    `'RandomIds' as inspectionId,` +
+                    `'RandomInspections' as inspection,` +
+                    `'RandomVesselIds' as vesselTypeId,` +
+                    `'RandomVesselType' as vesselType,` +
+                    // `STRING_AGG(lsca.ID, ',') as inspectionId,` +
+                    // `STRING_AGG(lsca.Authority, ',') as inspection`,
+                    // `STRING_AGG(vt.ID, ',') as vesselTypeId,` +
+                    // `STRING_AGG(vt.VesselTypes, ',') as vesselType,` +
                     `IIF(COUNT(lsca.ID) > 0, '${QueryStrings.Yes}', '${QueryStrings.No}') as hasInspection,` +
                     `IIF(COUNT(sjsi.uid) > 0, '${QueryStrings.Yes}', '${QueryStrings.No}') as hasSubItems`,
             )
