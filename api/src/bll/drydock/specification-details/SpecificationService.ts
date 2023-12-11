@@ -1,7 +1,7 @@
 import { ApiRequestService, ConfigurationService } from 'j2utils';
 
 import { CreateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/CreateSpecificationDetailsDto';
-import { LibVesselsEntity } from '../../../entity/drydock';
+import { LibVesselsEntity, SpecificationDetailsEntity } from '../../../entity/drydock';
 import { TaskManagerConstants } from '../../../shared/constants';
 
 export class SpecificationService {
@@ -13,7 +13,7 @@ export class SpecificationService {
     }
 
     public async TaskManagerIntegration(
-        request: CreateSpecificationDetailsDto,
+        request: Pick<CreateSpecificationDetailsDto, 'Subject'>,
         vessel: LibVesselsEntity,
         token: string,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

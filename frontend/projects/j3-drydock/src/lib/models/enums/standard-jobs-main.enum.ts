@@ -5,6 +5,7 @@ export enum eStandardJobsMainLabels {
   Status = 'Status',
 
   ItemNumber = 'Item No.',
+  Code = 'Item Number',
   Subject = 'Subject',
   VesselType = 'Vessel Type',
   ItemCategory = 'Item Category',
@@ -14,7 +15,9 @@ export enum eStandardJobsMainLabels {
   Function = 'Function',
   VesselSpecific = 'Vessel Type Specific',
   Description = 'Description',
-  Scope = 'Scope'
+  Scope = 'Scope',
+  HasSubItems = 'Sub Items',
+  HasInspection = 'Inspection / Survey'
 }
 
 export enum eStandardJobsMainFields {
@@ -27,6 +30,7 @@ export enum eStandardJobsMainFields {
   MaterialSuppliedBy = 'materialSuppliedBy',
   VesselSpecific = 'vesselTypeSpecific',
   UID = 'uid',
+  Code = 'code',
 
   Function = 'function',
   FunctionUid = 'functionUid',
@@ -37,7 +41,9 @@ export enum eStandardJobsMainFields {
   Description = 'description',
   InspectionID = 'inspectionId',
   Scope = 'scope',
-  SubItems = 'subItems'
+  SubItems = 'subItems',
+  HasSubItems = 'hasSubItems',
+  HasInspection = 'hasInspection'
 }
 
 export enum eStandardJobsMainStatus {

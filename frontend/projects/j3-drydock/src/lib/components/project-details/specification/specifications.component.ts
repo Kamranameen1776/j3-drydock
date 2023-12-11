@@ -1,24 +1,23 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { SpecificationGridService, SpecificationType } from '../../../services/project/specification.service';
-import { GridService, eGridRefreshType, eJbTreeEvents } from 'jibe-components';
+import { GridService, IGridAction, IJbDialog, eGridRefreshType, eGridRowActions, eJbTreeEvents } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SpecificationCreateFormService } from '../specification-form/specification-create-form-service';
 import { FunctionsService } from '../../../services/functions.service';
 import { Observable } from 'rxjs';
-import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
+import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../../models/interfaces/functions-tree-node';
 import { map, takeUntil } from 'rxjs/operators';
-
+import { getSmallPopup } from '../../../models/constants/popup';
 @Component({
   selector: 'jb-specifications',
   templateUrl: './specifications.component.html',
   styleUrls: ['./specifications.component.scss']
 })
 export class SpecificationsComponent extends UnsubscribeComponent implements OnInit, OnChanges {
-  @Input()
-  projectId: string;
-  @Input()
-  vesselUid: string;
+  @Input() projectId: string;
+  @Input() vesselUid: string;
+  @Input() vesselType: number;
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
   treeData$: Observable<FunctionsFlatTreeNode[]>;
   gridData: GridInputsWithRequest;
@@ -27,33 +26,23 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   functionUIDs: string[] = [];
   types = [SpecificationType.ALL, SpecificationType.PMS, SpecificationType.FINDINGS, SpecificationType.STANDARD, SpecificationType.ADHOC];
   isCreatePopupVisible = false;
+  addFromStandardJobPopupVisible = false;
 
-  createNewItems = [
-    /*{
-      label: 'Add from PMS',
-      command: () => {
-        this.openPopup();
-      }
-    },
-    {
-      label: 'Add from Findings',
-      command: () => {
-        this.openPopup();
-      }
-    },*/
-    {
-      label: 'Add from Standard Jobs',
-      command: () => {
-        this.openPopup();
-      }
-    },
-    {
-      label: 'Create Ad hoc',
-      command: () => {
-        this.openPopup();
-      }
-    }
-  ];
+  deleteSpecificationDialog: IJbDialog = {
+    ...getSmallPopup(),
+    dialogHeader: 'Delete Specification'
+  };
+
+  deleteDialogVisible = false;
+  deleteBtnLabel = 'Delete';
+  deleteDialogMessage = 'Are you sure you want to delete this specification?';
+  specificationUid: string;
+
+  vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name'> = {
+    uid: 'vesselParent',
+    name: 'Vessel',
+    parent_function_uid: '0'
+  };
 
   constructor(
     private specsService: SpecificationGridService,
@@ -64,16 +53,21 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     super();
   }
 
-  openPopup() {
+  public openPopup() {
     this.isCreatePopupVisible = true;
   }
 
+  addFromStandardJob() {
+    this.addFromStandardJobPopupVisible = true;
+  }
+
   ngOnInit(): void {
-    this.treeData$ = this.functionsService.getFunctions().pipe(
-      takeUntil(this.unsubscribe$),
+    this.treeData$ = this.functionsService.getFunctions(this.vesselNode.uid).pipe(
       map((functions) => {
+        functions.push(this.functionsService.createFlatNode(this.vesselNode));
         return functions.map((func) => this.functionsService.calculateSelectable(func, functions));
-      })
+      }),
+      takeUntil(this.unsubscribe$)
     );
     this.loadFunctionsToForm();
     this.gridData = this.getData();
@@ -87,6 +81,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   onCloseCreatePopup(hasSaved: boolean) {
     this.isCreatePopupVisible = false;
+    this.addFromStandardJobPopupVisible = false;
 
     if (hasSaved) {
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
@@ -121,5 +116,32 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     const statusCol = gridData.columns.find((col) => col.FieldName === 'status');
     statusCol.cellTemplate = this.statusTemplate;
     return gridData;
+  }
+
+  async onActionClick({ type, payload }: IGridAction) {
+    const { uid } = payload;
+    this.specificationUid = uid;
+
+    switch (type) {
+      case eGridRowActions.Delete:
+        this.showDeleteDialog(true);
+        break;
+      case eGridRowActions.Edit:
+        // Will to implemented later
+        break;
+      default:
+        return;
+    }
+  }
+
+  public deleteSpecificationHandler() {
+    this.specsService.deleteSpecification({ uid: this.specificationUid }).subscribe(() => {
+      this.showDeleteDialog(false);
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+    });
+  }
+
+  public showDeleteDialog(value: boolean) {
+    this.deleteDialogVisible = value;
   }
 }
