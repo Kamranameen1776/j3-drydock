@@ -13,7 +13,6 @@ import { StatusCodeColorPipe } from './shared/pipes/status-code-color.pipe';
 import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
 import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
 import { FunctionsTreeSelectComponent } from './shared/components/functions-tree-select/functions-tree-select.component';
-import { ProjectHeaderComponent } from './components/project-details/project-header/project-header.component';
 import { SpecificationsComponent } from './components/project-details/specification/specifications.component';
 import { SubItemsComponent } from './components/standard-jobs-main/sub-items/sub-items.component';
 import { UpsertSubItemFormComponent } from './components/standard-jobs-main/sub-items/upsert-sub-item-form/upsert-sub-item-form.component';
@@ -41,7 +40,11 @@ import { SpecificationGeneralInformationInputservice } from './components/specif
 import { SpecificationRequisitionsComponent } from './components/specification-details/specification-requisitions/specification-requisitions.component';
 import { SpecificationSubItemsComponent } from './components/specification-details/specification-sub-items/specification-sub-items.component';
 import { SpecificationDetailsSubItemsGridService } from './services/specification-details/specification-details-sub-item.service';
+import { SimpleConfirmationPopupComponent } from './shared/components/simple-confirmation-popup/simple-confirmation-popup.component';
 import { StatementOfFactsComponent } from './components/project-details/project-monitoring/statement-of-facts/statement-of-facts.component';
+import { ReworkPopupFormComponent } from './shared/components/rework-popup/rework-popup-form/rework-popup-form.component';
+import { ReworkPopupComponent } from './shared/components/rework-popup/rework-popup.component';
+import { JobOrdersComponent } from './components/project-details/project-monitoring/job-orders/job-orders.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -51,7 +54,7 @@ export function winEnv(): unknown {
     origin: window.location.origin + '/'
   };
 }
-
+import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
 @NgModule({
   declarations: [
     SpecificationStatusPipe,
@@ -66,7 +69,6 @@ export function winEnv(): unknown {
     FunctionsTreeSelectComponent,
     ProjectTypesLeftPanelComponent,
     ProjectStatusFilterComponent,
-    ProjectHeaderComponent,
     SubItemsComponent,
     UpsertSubItemFormComponent,
     UpsertSubItemPopupComponent,
@@ -84,7 +86,11 @@ export function winEnv(): unknown {
     SpecificationGeneralInformationComponent,
     SpecificationRequisitionsComponent,
     SpecificationSubItemsComponent,
+    SimpleConfirmationPopupComponent,
     StatementOfFactsComponent,
+    ReworkPopupFormComponent,
+    ReworkPopupComponent,
+    JobOrdersComponent,
     SpecificationRequisitionsComponent
   ],
   imports: [
@@ -93,6 +99,7 @@ export function winEnv(): unknown {
       environment: winEnv,
       theme: JiBeTheme.Figma
     }),
+    J3TaskManagerNgModule,
     DryDockRoutingModule,
     ReactiveFormsModule,
     DropdownModule,

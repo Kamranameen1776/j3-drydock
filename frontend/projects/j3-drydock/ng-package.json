@@ -3,5 +3,9 @@
   "dest": "../../dist/j3-drydock",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "whitelistedNonPeerDependencies": [
+    "tslib",
+    "j3-task-manager-ng"
+  ]
 }
