@@ -20,7 +20,7 @@ export enum eJobOrderUpdateFieldNames {
 
 export enum eJobOrderUpdateDisplayNames {
   SpecificationUid = 'SpecificationUid',
-  
+
   JobOrderUid = 'JobOrderUid',
 
   Code = 'Code',

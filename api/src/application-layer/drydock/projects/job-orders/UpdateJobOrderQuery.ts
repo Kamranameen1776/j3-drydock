@@ -1,20 +1,27 @@
 import { validate } from 'class-validator';
+import { DataUtilService } from 'j2utils';
 
+import { ApplicationException } from '../../../../bll/drydock/core/exceptions';
 import { JobOrdersRepository } from '../../../../dal/drydock/projects/job-orders/JobOrdersRepository';
 import { UpdateJobOrderDto } from '../../../../dal/drydock/projects/job-orders/UpdateJobOrderDto';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
+import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
 import { Query } from '../../core/cqrs/Query';
-import { ApplicationException } from '../../../../bll/drydock/core/exceptions';
+import { UnitOfWork } from '../../core/uof/UnitOfWork';
 
 export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
     jobOrderRepository: JobOrdersRepository;
 
     specificationDetailsRepository: SpecificationDetailsRepository;
 
+    uow: UnitOfWork;
+
     constructor() {
         super();
+
         this.jobOrderRepository = new JobOrdersRepository();
         this.specificationDetailsRepository = new SpecificationDetailsRepository();
+        this.uow = new UnitOfWork();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -34,7 +41,7 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
     }
 
     /**
-     * @returns All specification details
+     * @description Update Job Order
      */
     protected async MainHandlerAsync(request: UpdateJobOrderDto): Promise<void> {
         const specification = await this.specificationDetailsRepository.TryGetSpecification(request.SpecificationUid);
@@ -43,19 +50,27 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
             throw new ApplicationException(`Specification ${request.SpecificationUid} not found`);
         }
 
-        // 2. update specification start date, end date
+        let jobOrder = await this.jobOrderRepository.TryGetJobOrderBySpecification(specification.uid);
 
-        // 3. load job order
+        specification.StartDate = request.SpecificationStartDate;
+        // TODO: update end date once it is implemented in specification details page
+        // specification.EndDate = request.SpecificationEndDate;
 
-        const jobOrder = await this.jobOrderRepository.TryGetJobOrderBySpecification(specification.uid);
+        await this.uow.ExecuteAsync(async (queryRunner) => {
+            this.specificationDetailsRepository.UpdateSpecificationDetails(specification, queryRunner);
 
-        if (!jobOrder) {
-            // 4. if job order exists, create it
-            // TODO: implement
-            // const data = await this.repository.CreateJobOrderBySpecification(request.SpecificationUid);
-        } else {
-            // 5. if job order is not exists, update it
-            // const data = await this.repository.GetJobOrderBySpecification(request);
-        }
+            if (!jobOrder) {
+                jobOrder = new JobOrderEntity();
+            }
+
+            jobOrder.SpecificationUid = specification.uid;
+            jobOrder.uid = new DataUtilService().newUid();
+            jobOrder.LastUpdated = request.LastUpdated;
+            jobOrder.Progress = request.Progress;
+            jobOrder.Status = request.Status;
+            jobOrder.Subject = request.Subject;
+
+            await this.jobOrderRepository.UpdateJobOrder(jobOrder, queryRunner);
+        });
     }
 }

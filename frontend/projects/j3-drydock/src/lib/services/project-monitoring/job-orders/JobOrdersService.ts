@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestService, WebApiRequest, eCrud } from 'jibe-components';
-import { IGetBySpecificationDto } from './IGetBySpecificationDto';
 import { Observable } from 'rxjs';
-import { IGetBySpecificationResponseDto } from './IGetBySpecificationResponseDto';
 import { IUpdateJobOrderDto } from './IUpdateJobOrderDto';
 import { KeyValuePair } from '../../../utils/KeyValuePair';
 @Injectable({

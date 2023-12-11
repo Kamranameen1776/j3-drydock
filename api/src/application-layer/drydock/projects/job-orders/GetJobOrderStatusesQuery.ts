@@ -20,11 +20,12 @@ export class GetJobOrderStatusesQuery extends Query<void, KeyValuePair<string, s
     }
 
     /**
-     * @returns All specification details
+     * @returns All Job Order Statuses
      */
     protected async MainHandlerAsync(): Promise<KeyValuePair<string, string>[]> {
         const arr: KeyValuePair<string, string>[] = [];
 
+        // TODO: check if it is needed to load statuses from the Jibe library
         Object.keys(JobOrderStatus).forEach((key) => {
             const value = JobOrderStatus[key as keyof typeof JobOrderStatus];
             arr.push({ Key: key, Value: value });

@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { ODataService } from 'j2utils';
-import { getConnection, getManager } from 'typeorm';
+import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { className } from '../../../../common/drydock/ts-helpers/className';
 import {
@@ -40,8 +40,11 @@ export class JobOrdersRepository {
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1')
-            .leftJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
+            .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
+
+            // TODO: change to inner join once item source is implemented
             .leftJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
+
             .getQuery();
 
         const oDataService = new ODataService(request, getConnection);
@@ -59,5 +62,9 @@ export class JobOrdersRepository {
         });
 
         return jobOrder;
+    }
+
+    public async UpdateJobOrder(jobOrder: JobOrderEntity, queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.manager.save(jobOrder);
     }
 }

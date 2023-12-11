@@ -3,9 +3,9 @@ import { JobOrderStatus } from './JobOrderStatus';
 export class UpdateJobOrderDto {
     SpecificationUid: string;
 
-    SpecificationStartDate: string;
+    SpecificationStartDate: Date;
 
-    SpecificationEndDate: string;
+    SpecificationEndDate: Date;
 
     Progress: number;
 

@@ -1,5 +1,5 @@
 export interface KeyValuePair<TKey, TValue> {
-    Key: TKey;
+  Key: TKey;
 
-    Value: TValue;
+  Value: TValue;
 }
