@@ -307,19 +307,3 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     this.specificationsComponent?.openPopup();
   }
 }
-
-// need to use it as menu is not working correctly in jb-task-manager-details
-// private scrollToSection(sectionId: eProjectDetailsSideMenuId) {
-//   if (!sectionId) {
-//     return;
-//   }
-
-//   const el = document.getElementById(sectionId) || this[sectionId]?.nativeElement;
-//   el?.scrollIntoView({ behavior: 'smooth' });
-// }
-
-// private listenMenuChanges() {
-//   this.jbMenuService.selectedMenuOpt.subscribe((res) => {
-//     this.scrollToSection(res?.id as eProjectDetailsSideMenuId);
-//   });
-// }
