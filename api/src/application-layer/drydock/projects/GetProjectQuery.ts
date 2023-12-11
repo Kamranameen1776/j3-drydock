@@ -2,6 +2,7 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
 
+import { ProjectMapper } from '../../../bll/drydock/projects/ProjectMapper';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { Query } from '../core/cqrs/Query';
 import { GetProjectByUidDto } from './dtos/GetProjectByUidDto';
@@ -37,33 +38,6 @@ export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordD
      */
     protected async MainHandlerAsync(request: Request): Promise<IProjectsFromMainPageRecordDto> {
         const [record] = await this.projectsRepository.GetProject(request.query.uid as string);
-        const project: IProjectsFromMainPageRecordDto = {
-            ProjectId: record.ProjectId,
-            ProjectCode: record.ProjectCode,
-            ProjectTypeName: record.ProjectTypeName,
-            ProjectTypeCode: record.ProjectTypeCode,
-            ProjectManager: record.ProjectManager,
-            ProjectManagerUid: record.ProjectManagerUid,
-
-            // TODO: replace with real data
-            ShipYard: 'Country ave.Name 123',
-            Specification: '330/500',
-            ProjectStatusName: record.ProjectStatusName,
-            ProjectStatusId: record.ProjectStatusId,
-
-            ProjectState: record.ProjectStateName,
-
-            VesselName: record.VesselName,
-            VesselUid: record.VesselUid,
-            VesselId: record.VesselId,
-            VesselType: record.VesselType,
-
-            Subject: record.Subject,
-            StartDate: record.StartDate,
-            EndDate: record.EndDate,
-            TaskManagerUid: record.TaskManagerUid,
-        };
-
-        return project;
+        return new ProjectMapper().map(record);
     }
 }

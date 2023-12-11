@@ -33,37 +33,10 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     dialogHeader: 'Delete Specification'
   };
 
-  public deleteDialogVisible = false;
-  public deleteBtnLabel = 'Delete';
-  public deleteDialogMessage = 'Are you sure you want to delete this specification?';
-  public specificationUid: string;
-
-  createNewItems = [
-    /*{
-      label: 'Add from PMS',
-      command: () => {
-        this.openPopup();
-      }
-    },
-    {
-      label: 'Add from Findings',
-      command: () => {
-        this.openPopup();
-      }
-    },*/
-    {
-      label: 'Add from Standard Jobs',
-      command: () => {
-        this.openPopup();
-      }
-    },
-    {
-      label: 'Create Ad hoc',
-      command: () => {
-        this.openPopup();
-      }
-    }
-  ];
+  deleteDialogVisible = false;
+  deleteBtnLabel = 'Delete';
+  deleteDialogMessage = 'Are you sure you want to delete this specification?';
+  specificationUid: string;
 
   constructor(
     private specsService: SpecificationGridService,
@@ -74,16 +47,16 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     super();
   }
 
-  openPopup() {
+  public openPopup() {
     this.isCreatePopupVisible = true;
   }
 
   ngOnInit(): void {
     this.treeData$ = this.functionsService.getFunctions().pipe(
-      takeUntil(this.unsubscribe$),
       map((functions) => {
         return functions.map((func) => this.functionsService.calculateSelectable(func, functions));
-      })
+      }),
+      takeUntil(this.unsubscribe$)
     );
     this.loadFunctionsToForm();
     this.gridData = this.getData();

@@ -28,7 +28,7 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
 
   eRfqFields = eRfqFields;
 
-  linked: YardLink[];
+  public linked: YardLink[];
 
   searchTerm$ = this.gridService.storeState$.pipe(
     filter((event: DispatchAction) => event.type === eGridEvents.SearchTable && event.gridName === this.gridInputs.gridName),
