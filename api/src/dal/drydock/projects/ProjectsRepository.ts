@@ -1,11 +1,10 @@
 // TODO: remove references to application-layer
 // UpdateProjectDto should be a part of the Infrastructure layer(DAL)
-import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
-import { ODataResult } from 'shared/interfaces';
 import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
+import { UpdateProjectDto } from '../../../application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { JmsDtlWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
 import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
@@ -17,6 +16,7 @@ import { GroupProjectStatusEntity } from '../../../entity/drydock/GroupProjectSt
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
+import { ODataResult } from '../../../shared/interfaces/odata-result.interface';
 import { ICreateNewProjectDto } from './dtos/ICreateNewProjectDto';
 import { IGroupProjectStatusByProjectTypeDto } from './dtos/IGroupProjectStatusByProjectTypeDto';
 import { IGroupProjectStatusDto } from './dtos/IGroupProjectStatusDto';

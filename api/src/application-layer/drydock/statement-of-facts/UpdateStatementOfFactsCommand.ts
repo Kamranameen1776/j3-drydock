@@ -1,18 +1,18 @@
-import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Request } from 'express';
 import { SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-facts/StatementOfFactsRepository';
+import { UpdateStatementOfFactsDto } from '../../../dal/drydock/statement-of-facts/UpdateStatementOfFactsDto';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { StatementOfFactsEntity } from '../../../entity/drydock';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { UpdateStatementOfFactsDto } from './dtos/UpdateStatementOfFactsDto';
 
-export class UpdateStatementOfFactsCommand extends Command<Request, void> {
+export class UpdateStatementOfFactsCommand extends Command<UpdateStatementOfFactsDto, void> {
     repository: StatementOfFactsRepository;
     uow: UnitOfWork;
-    tableName = 'dry_dock.statement_of_facts';
+    tableName = getTableName(StatementOfFactsEntity);
     vesselRepository: VesselsRepository;
 
     constructor() {
@@ -26,12 +26,11 @@ export class UpdateStatementOfFactsCommand extends Command<Request, void> {
         return;
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+    protected async ValidationHandlerAsync(request: UpdateStatementOfFactsDto): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
         }
-        const updateStatementOfFacts: UpdateStatementOfFactsDto = plainToClass(UpdateStatementOfFactsDto, request.body);
-        const result = await validate(updateStatementOfFacts);
+        const result = await validate(request);
         if (result.length) {
             throw result;
         }
@@ -42,23 +41,21 @@ export class UpdateStatementOfFactsCommand extends Command<Request, void> {
      * @param request Project data for creation of the new project
      * @returns New created project result
      */
-    protected async MainHandlerAsync(request: Request): Promise<void> {
-        const updateStatementOfFactsDto: UpdateStatementOfFactsDto = request.body as UpdateStatementOfFactsDto;
-        const { uid } = updateStatementOfFactsDto;
-        const vessel = await this.vesselRepository.GetVesselByStatementOfFact(uid);
+    protected async MainHandlerAsync(request: UpdateStatementOfFactsDto): Promise<void> {
+        const vessel = await this.vesselRepository.GetVesselByStatementOfFact(request.StatementOfFactUid);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            await this.repository.UpdateStatementOfFacts(updateStatementOfFactsDto, queryRunner);
+            await this.repository.UpdateStatementOfFacts(request, queryRunner);
+            await this.repository.UpdateStatementOfFacts(request, queryRunner);
+
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,
                 'uid',
-                uid,
+                request.StatementOfFactUid,
                 vessel.VesselId,
             );
             return;
         });
-
-        return;
     }
 }
