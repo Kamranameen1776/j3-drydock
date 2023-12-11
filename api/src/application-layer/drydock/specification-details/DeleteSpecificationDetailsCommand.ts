@@ -1,7 +1,6 @@
 import { SynchronizerService } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
-import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
 import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
