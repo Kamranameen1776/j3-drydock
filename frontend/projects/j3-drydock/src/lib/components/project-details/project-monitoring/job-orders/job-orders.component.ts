@@ -102,6 +102,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   public updateJobOrder() {
     this.updateJobOrderButtonDisabled = true;
 
+    debugger;
     const data: IUpdateJobOrderDto = {
       SpecificationUid: this.updateJobOrderFormGroup.value.jobOrderUpdate.SpecificationUid,
       LastUpdated: new Date(),

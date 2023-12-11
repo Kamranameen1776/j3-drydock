@@ -8,6 +8,7 @@ import { SpecificationDetailsRepository } from '../../../../dal/drydock/specific
 import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
 import { Query } from '../../core/cqrs/Query';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
+import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 
 export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
     jobOrderRepository: JobOrdersRepository;
@@ -57,20 +58,24 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
         // specification.EndDate = request.SpecificationEndDate;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            this.specificationDetailsRepository.UpdateSpecificationDetails(specification, queryRunner);
 
-            if (!jobOrder) {
-                jobOrder = new JobOrderEntity();
-            }
+            let updatedSpecification = new SpecificationDetailsEntity();
+            updatedSpecification.uid = specification.uid;
+            updatedSpecification.StartDate = new Date();// new Date(request.SpecificationStartDate); 
+            this.specificationDetailsRepository.UpdateSpecificationDetailsByEntity(updatedSpecification, queryRunner);
 
-            jobOrder.SpecificationUid = specification.uid;
-            jobOrder.uid = new DataUtilService().newUid();
-            jobOrder.LastUpdated = request.LastUpdated;
-            jobOrder.Progress = request.Progress;
-            jobOrder.Status = request.Status;
-            jobOrder.Subject = request.Subject;
+            // if (!jobOrder) {
+            //     jobOrder = new JobOrderEntity();
+            //     jobOrder.SpecificationUid = specification.uid;
+            //     jobOrder.uid = new DataUtilService().newUid();
+            // }
 
-            await this.jobOrderRepository.UpdateJobOrder(jobOrder, queryRunner);
+            // jobOrder.LastUpdated = request.LastUpdated;
+            // jobOrder.Progress = request.Progress;
+            // jobOrder.Status = request.Status;
+            // jobOrder.Subject = request.Subject;
+
+            // await this.jobOrderRepository.UpdateJobOrder(jobOrder, queryRunner);
         });
     }
 }

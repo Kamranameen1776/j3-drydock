@@ -19,8 +19,9 @@ export class JobOrdersRepository {
 
         const query: string = SpecificationDetailsRepository.createQueryBuilder('sd')
             .select([
+                'sd.uid AS SpecificationUid',
+                'sd.ProjectUid AS ProjectUid',
                 'jo.uid AS JobOrderUid',
-                'jo.SpecificationUid AS SpecificationUid',
                 'tm.Code AS Code',
                 'jo.Subject AS Subject',
                 'its.DisplayName as ItemSource',
@@ -30,21 +31,22 @@ export class JobOrdersRepository {
                 // TODO: take from SpecificationDetails -> AssignedTo property, once it is implemented
                 "'-' AS Responsible",
                 'jo.LastUpdated AS LastUpdated',
-                'sd.Status AS SpecificationStatus',
+                'tm.Status AS SpecificationStatus',
                 'sd.StartDate AS SpecificationStartDate',
                 'sd.Subject AS SpecificationSubject',
                 // TODO: implement once end date is implemented in specification details page
                 //'sd.EndDate AS SpecificationEndDate',
 
-                'sd.ProjectUid AS ProjectUid',
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
-            .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
+            .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1')
 
             // TODO: change to inner join once item source is implemented
             .leftJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
 
+      
+            .distinct(true)
             .getQuery();
 
         const oDataService = new ODataService(request, getConnection);
