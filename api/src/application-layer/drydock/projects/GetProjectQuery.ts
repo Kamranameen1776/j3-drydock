@@ -56,6 +56,7 @@ export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordD
             VesselName: record.VesselName,
             VesselUid: record.VesselUid,
             VesselId: record.VesselId,
+            VesselType: record.VesselType,
 
             Subject: record.Subject,
             StartDate: record.StartDate,

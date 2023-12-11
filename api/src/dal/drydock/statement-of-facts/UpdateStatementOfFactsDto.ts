@@ -3,14 +3,12 @@ import { IsDateString, IsNotEmpty, IsOptional, IsUUID, MaxLength, MinLength } fr
 export class UpdateStatementOfFactsDto {
     @IsNotEmpty()
     @IsUUID(4)
-    uid: string;
+    StatementOfFactUid: string;
 
-    @IsOptional()
     @MinLength(1)
     @MaxLength(350)
-    Fact?: string;
+    Fact: string;
 
-    @IsOptional()
     @IsDateString()
-    DateAndTime?: Date;
+    DateTime: Date;
 }

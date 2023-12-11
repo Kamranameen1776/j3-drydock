@@ -1,11 +1,10 @@
 // TODO: remove references to application-layer
 // UpdateProjectDto should be a part of the Infrastructure layer(DAL)
-import { UpdateProjectDto } from 'application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { Request } from 'express';
-import { ODataService } from 'j2utils';
-import { ODataResult } from 'shared/interfaces';
+import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
+import { UpdateProjectDto } from '../../../application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { SpecificationDetailsEntity, YardsEntity, YardsProjectsEntity } from '../../../entity/drydock';
 import { JmsDtlWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
@@ -19,6 +18,7 @@ import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
 import { TaskManagerConstants } from '../../../shared/constants';
+import { ODataResult } from '../../../shared/interfaces/odata-result.interface';
 import { ICreateNewProjectDto } from './dtos/ICreateNewProjectDto';
 import { IGroupProjectStatusByProjectTypeDto } from './dtos/IGroupProjectStatusByProjectTypeDto';
 import { IGroupProjectStatusDto } from './dtos/IGroupProjectStatusDto';
@@ -174,6 +174,7 @@ export class ProjectsRepository {
                 'cast(pr.EndDate as datetimeoffset) AS EndDate',
                 'gps.GroupProjectStatusId as GroupProjectStatusId',
                 'vessel.VesselId as VesselId',
+                'vessel.VesselType as VesselType',
                 'pr.VesselUid as VesselUid',
                 'vessel.FleetCode as FleetCode',
                 'pr.TaskManagerUid as TaskManagerUid',
@@ -297,8 +298,9 @@ export class ProjectsRepository {
         return result;
     }
 
-    public async CreateProject(data: ICreateNewProjectDto, queryRunner: QueryRunner): Promise<void> {
+    public async CreateProject(data: ICreateNewProjectDto, queryRunner: QueryRunner): Promise<string> {
         const project = new ProjectEntity();
+        project.uid = new DataUtilService().newUid();
         project.CreatedAtOffice = !!data.CreatedAtOffice;
         project.VesselUid = data.VesselUid;
         project.ProjectTypeUid = data.ProjectTypeUid;
@@ -310,6 +312,7 @@ export class ProjectsRepository {
         project.TaskManagerUid = data.TaskManagerUid as string;
 
         await queryRunner.manager.insert(ProjectEntity, project);
+        return project.uid;
     }
 
     // TODO: check if this method is used

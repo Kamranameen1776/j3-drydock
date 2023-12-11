@@ -74,7 +74,7 @@ export class CreateFunctionCodeForSpecificationDetails1701262696255 implements M
                             where
                                 [Module_Code] = @0
                         ),
-                        NULL
+                        'specification_attachment'
                     );
             `, [this.moduleCode, this.functionCode, this.functionUid]);
 

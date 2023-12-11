@@ -22,6 +22,13 @@ export class JmsDtlWorkflowConfigDetailsEntity {
 
     @Column('varchar', {
         nullable: true,
+        name: 'display_name_action',
+        length: 100,
+    })
+    DisplayNameAction: string;
+
+    @Column('varchar', {
+        nullable: true,
         name: 'WorkflowType_ID',
         length: 100,
     })

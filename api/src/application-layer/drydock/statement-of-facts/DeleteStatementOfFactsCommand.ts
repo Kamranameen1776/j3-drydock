@@ -1,7 +1,10 @@
-import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
+import { SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-facts/StatementOfFactsRepository';
+import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { StatementOfFactsEntity } from '../../../entity/drydock';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { DeleteStatementOfFactDto } from './dtos/DeleteStatementOfFactDto';
@@ -9,11 +12,14 @@ import { DeleteStatementOfFactDto } from './dtos/DeleteStatementOfFactDto';
 export class DeleteStatementsOfFactsCommand extends Command<DeleteStatementOfFactDto, void> {
     repository: StatementOfFactsRepository;
     uow: UnitOfWork;
+    tableName = getTableName(StatementOfFactsEntity);
+    vesselRepository: VesselsRepository;
 
     constructor() {
         super();
         this.repository = new StatementOfFactsRepository();
         this.uow = new UnitOfWork();
+        this.vesselRepository = new VesselsRepository();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -25,9 +31,7 @@ export class DeleteStatementsOfFactsCommand extends Command<DeleteStatementOfFac
             throw new Error('Request is null');
         }
 
-        const deleteStatementOfFacts: DeleteStatementOfFactDto = plainToClass(DeleteStatementOfFactDto, request);
-
-        const result = await validate(deleteStatementOfFacts);
+        const result = await validate(request);
 
         if (result.length) {
             throw result;
@@ -40,8 +44,18 @@ export class DeleteStatementsOfFactsCommand extends Command<DeleteStatementOfFac
      * @returns New created project result
      */
     protected async MainHandlerAsync(request: DeleteStatementOfFactDto): Promise<void> {
+        const vessel = await this.vesselRepository.GetVesselByStatementOfFact(request.StatementOfFactUid);
+
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.repository.DeleteStatementOfFacts(request.StatementOfFactUid, queryRunner);
+
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                this.tableName,
+                'uid',
+                request.StatementOfFactUid,
+                vessel.VesselId,
+            );
         });
     }
 }

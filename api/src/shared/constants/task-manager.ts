@@ -15,7 +15,7 @@ export const TaskManagerConstants = {
         module_code: 'tm_drydock_spec',
         function_code: 'tm_drydock_spec',
         status: {
-            Raised: 'Raised',
+            Raised: 'Raise',
             Approved: 'Approved',
             Rejected: 'Rejected',
             Completed: 'Completed',

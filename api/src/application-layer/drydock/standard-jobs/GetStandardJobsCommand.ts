@@ -17,6 +17,13 @@ export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandar
 
         const uids = data.records.map((item) => item.uid);
 
+        if (!uids.length) {
+            return {
+                records: [],
+                count: 0,
+            };
+        }
+
         const subItems = await this.standardJobsRepository.getStandardJobSubItems(uids);
 
         return this.standardJobsService.mapStandardJobsDataToDto(data, subItems);

@@ -4,14 +4,12 @@ import { getConnection, getManager, In, QueryRunner, UpdateResult } from 'typeor
 import {
     CreateStandardJobsRequestDto,
     GetStandardJobsQueryResult,
-    UpdateStandardJobsRequestDto,
-} from '../../../application-layer/drydock/standard-jobs/dto';
-import {
     StandardJobsFiltersAllowedKeys,
     StandardJobsFilterTablesMap,
     StandardJobsLibraryValuesMap,
-} from '../../../application-layer/drydock/standard-jobs/dto/GetStandardJobsFiltersRequestDto';
-import { UpdateStandardJobSubItemsRequestDto } from '../../../application-layer/drydock/standard-jobs/dto/UpdateStandardJobSubItemsRequestDto';
+    UpdateStandardJobsRequestDto,
+    UpdateStandardJobSubItemsRequestDto,
+} from '../../../application-layer/drydock/standard-jobs/dto';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
 import {
     StandardJobs,
@@ -56,10 +54,15 @@ export class StandardJobsRepository {
                     'sj.active_status as activeStatus,' +
                     'sj.material_supplied_by_uid as materialSuppliedByUid,' +
                     'msb.display_name as materialSuppliedBy,' +
-                    `STRING_AGG(vt.ID, ',') as vesselTypeId,` +
-                    `STRING_AGG(lsca.ID, ',') as inspectionId,` +
-                    `STRING_AGG(vt.VesselTypes, ',') as vesselType,` +
-                    `STRING_AGG(lsca.Authority, ',') as inspection`,
+                    //TODO: temporary dummy values for monday qc. fix it
+                    `'RandomIds' as inspectionId` +
+                    `'RandomInspections' as inspection` +
+                    `'RandomVesselIds' as vesselTypeId` +
+                    `'RandomVesselType' as vesselType`,
+                // `STRING_AGG(lsca.ID, ',') as inspectionId,` +
+                // `STRING_AGG(lsca.Authority, ',') as inspection`,
+                // `STRING_AGG(vt.ID, ',') as vesselTypeId,` +
+                // `STRING_AGG(vt.VesselTypes, ',') as vesselType,` +
             )
             .groupBy(
                 `sj.uid` +

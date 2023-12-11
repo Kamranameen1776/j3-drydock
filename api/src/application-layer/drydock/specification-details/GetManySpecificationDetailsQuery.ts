@@ -1,7 +1,7 @@
-import { SpecificationDetailsEntity } from 'entity/drydock/SpecificationDetailsEntity';
 import { Request } from 'express';
 
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
+import { SpecificationDetailsEntity } from '../../../entity/drydock/SpecificationDetailsEntity';
 import { Query } from '../core/cqrs/Query';
 
 export class GetManySpecificationDetailsQuery extends Query<

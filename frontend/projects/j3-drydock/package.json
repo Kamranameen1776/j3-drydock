@@ -1,6 +1,6 @@
 {
   "name": "j3-drydock-ng",
-  "version": "3.2311.321",
+  "version": "3.2311.324",
   "peerDependencies": {
     "@angular/common": "^9.1.13",
     "@angular/core": "^9.1.13"

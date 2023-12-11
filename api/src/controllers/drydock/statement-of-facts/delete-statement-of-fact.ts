@@ -1,3 +1,4 @@
+import { plainToClass } from 'class-transformer';
 import { Request, Response } from 'express';
 
 import { DeleteStatementsOfFactsCommand } from '../../../application-layer/drydock/statement-of-facts';
@@ -10,7 +11,7 @@ async function deleteStatementOfFact(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const command = new DeleteStatementsOfFactsCommand();
 
-        return command.ExecuteAsync(request.body as DeleteStatementOfFactDto);
+        return command.ExecuteAsync(plainToClass(DeleteStatementOfFactDto, request.body));
     });
 }
 
