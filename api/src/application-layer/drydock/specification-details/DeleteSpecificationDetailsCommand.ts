@@ -1,6 +1,7 @@
 import { SynchronizerService } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
+import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
 import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
@@ -17,6 +18,7 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
     tableName = getTableName(SpecificationDetailsEntity);
     vesselsRepository: VesselsRepository;
     tableNameAudit = getTableName(J2FieldsHistoryEntity);
+    specificationDetailsService: SpecificationService;
 
     constructor() {
         super();
@@ -38,6 +40,11 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
     }
 
     protected async MainHandlerAsync({ request, user }: CommandRequest) {
+        const specificationDetail = await this.specificationDetailsRepository.getOneByUid(request.body.uid);
+        await this.specificationDetailsService.DeleteTaskManagerIntegration(
+            specificationDetail,
+            request.headers.authorization as string,
+        );
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const vessel = await this.vesselsRepository.GetVesselBySpecification(request.body.uid, queryRunner);
 

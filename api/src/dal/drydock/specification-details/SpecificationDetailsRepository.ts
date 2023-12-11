@@ -70,6 +70,16 @@ export class SpecificationDetailsRepository {
         });
     }
 
+    public getOneByUid(uid: string): Promise<SpecificationDetailsEntity> {
+        const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
+        return specificationRepository.findOneOrFail({
+            where: {
+                uid,
+                ActiveStatus: true,
+            },
+        });
+    }
+
     public async findSpecInspections(uid: string): Promise<Array<InspectionsResultDto>> {
         const inspectionRepository = getManager().getRepository(SpecificationInspectionEntity);
 

@@ -1,7 +1,7 @@
 import { ApiRequestService, ConfigurationService } from 'j2utils';
 
 import { CreateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/CreateSpecificationDetailsDto';
-import { LibVesselsEntity } from '../../../entity/drydock';
+import { LibVesselsEntity, SpecificationDetailsEntity } from '../../../entity/drydock';
 import { TaskManagerConstants } from '../../../shared/constants';
 
 export class SpecificationService {
@@ -43,5 +43,16 @@ export class SpecificationService {
         const apiPath = `task-manager/save-task-manager-jobs`;
         const { data } = await this.apiRequestService.taskManager(token, apiPath, 'post', saveTaskManagerDetails);
         return data.taskManagerJobDetail;
+    }
+
+    public async DeleteTaskManagerIntegration(
+        specificationDetail: SpecificationDetailsEntity,
+        token: string,
+    ): Promise<void> {
+        const data = {
+            task_manager_uid: specificationDetail.TecTaskManagerUid,
+        };
+        const apiPath = `task-manager/delete-task-manager-job-by-uid`;
+        await this.apiRequestService.taskManager(token, apiPath, 'post', data);
     }
 }
