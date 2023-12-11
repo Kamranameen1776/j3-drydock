@@ -11,13 +11,17 @@ import {
     UpdateStandardJobSubItemsRequestDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
+import { className } from '../../../common/drydock/ts-helpers/className';
 import {
+    LibSurveyCertificateAuthority,
+    LibVesseltypes,
     StandardJobs,
     StandardJobsSubItems,
     StandardJobsSurveyCertificateAuthorityEntity,
     StandardJobsVesselTypeEntity,
 } from '../../../entity/drydock';
 import { FiltersDataResponse, RequestWithOData } from '../../../shared/interfaces';
+import { RepoUtils } from '../utils/RepoUtils';
 
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
@@ -27,10 +31,6 @@ export class StandardJobsRepository {
 
         const innerQuery = getManager()
             .createQueryBuilder('standard_jobs', 'sj')
-            .leftJoin('standard_jobs_vessel_type', 'sjvt', `sjvt.standard_job_uid = sj.uid`)
-            .leftJoin('standard_jobs_survey_certificate_authority', 'sjsca', `sjsca.standard_job_uid = sj.uid`)
-            .leftJoin('LIB_Survey_CertificateAuthority', 'lsca', `lsca.ID = sjsca.survey_id and lsca.Active_Status = 1`)
-            .leftJoin('LIB_VESSELTYPES', 'vt', `vt.ID = sjvt.vessel_type_id and vt.Active_Status = 1`)
             .leftJoin('tm_dd_lib_done_by', 'db', `db.uid = sj.done_by_uid AND db.active_status = 1`)
             .leftJoin('tm_dd_lib_item_category', 'ic', `ic.uid = sj.category_uid AND ic.active_status = 1`)
             .leftJoin(
@@ -54,15 +54,47 @@ export class StandardJobsRepository {
                     'sj.active_status as activeStatus,' +
                     'sj.material_supplied_by_uid as materialSuppliedByUid,' +
                     'msb.display_name as materialSuppliedBy,' +
-                    //TODO: temporary dummy values for monday qc. fix it
-                    `'RandomIds' as inspectionId` +
-                    `'RandomInspections' as inspection` +
-                    `'RandomVesselIds' as vesselTypeId` +
-                    `'RandomVesselType' as vesselType`,
-                // `STRING_AGG(lsca.ID, ',') as inspectionId,` +
-                // `STRING_AGG(lsca.Authority, ',') as inspection`,
-                // `STRING_AGG(vt.ID, ',') as vesselTypeId,` +
-                // `STRING_AGG(vt.VesselTypes, ',') as vesselType,` +
+                    RepoUtils.getStringAggJoin(LibVesseltypes, 'ID', 'aliased.active_status = 1', 'vesselTypeId', {
+                        entity: className(StandardJobsVesselTypeEntity),
+                        alias: 'sjvt',
+                        on: 'sjvt.standard_job_uid = sj.uid AND aliased.ID = sjvt.vessel_type_id',
+                    }) +
+                    ',' +
+                    RepoUtils.getStringAggJoin(
+                        LibSurveyCertificateAuthority,
+                        'ID',
+                        'aliased.active_status = 1',
+                        'inspectionId',
+                        {
+                            entity: className(StandardJobsSurveyCertificateAuthorityEntity),
+                            alias: 'sjsca',
+                            on: 'sjsca.standard_job_uid = sj.uid AND aliased.ID = sjsca.survey_id',
+                        },
+                    ) +
+                    ',' +
+                    RepoUtils.getStringAggJoin(
+                        LibVesseltypes,
+                        'VesselTypes',
+                        'aliased.active_status = 1',
+                        'vesselType',
+                        {
+                            entity: className(StandardJobsVesselTypeEntity),
+                            alias: 'sjvt',
+                            on: 'sjvt.standard_job_uid = sj.uid AND aliased.ID = sjvt.vessel_type_id',
+                        },
+                    ) +
+                    ',' +
+                    RepoUtils.getStringAggJoin(
+                        LibSurveyCertificateAuthority,
+                        'Authority',
+                        'aliased.active_status = 1',
+                        'inspection',
+                        {
+                            entity: className(StandardJobsSurveyCertificateAuthorityEntity),
+                            alias: 'sjsca',
+                            on: 'sjsca.standard_job_uid = sj.uid AND aliased.ID = sjsca.survey_id',
+                        },
+                    ),
             )
             .groupBy(
                 `sj.uid` +

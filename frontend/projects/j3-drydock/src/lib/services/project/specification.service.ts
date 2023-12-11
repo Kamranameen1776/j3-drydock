@@ -93,6 +93,17 @@ export class SpecificationGridService {
     };
   }
 
+  deleteSpecification(data: { uid: string }) {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      action: 'specification-details/delete-specification-details',
+      crud: eCrud.Put,
+      body: data
+    };
+    return this.apiRequestService.sendApiReq(request);
+  }
+
   public readonly gridName: string = 'specificationGrid';
 
   private readonly columns: Column[] = [

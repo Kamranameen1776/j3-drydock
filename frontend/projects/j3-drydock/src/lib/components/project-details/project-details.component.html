@@ -18,7 +18,8 @@
     technical_specification: technical_specification,
     attachmentss: attachmentss,
     rfq: rfq,
-    statement_of_facts: statement_of_facts
+    statement_of_facts: statement_of_facts,
+    job_orders: job_orders
   }"
   [sectionHeaderTemplateRef]="{ technical_specification: specificationsButtonsTmpl }"
   [ignoreAccessRights]="true"
@@ -89,6 +90,10 @@
     <ng-container [ngSwitch]="section.SectionCode">
       <div #statement_of_facts>
         <jb-statement-of-facts [projectId]="projectUid"></jb-statement-of-facts>
+      </div>
+
+      <div #job_orders>
+        <jb-job-orders [projectId]="projectId"></jb-job-orders>
       </div>
     </ng-container>
   </ng-template>

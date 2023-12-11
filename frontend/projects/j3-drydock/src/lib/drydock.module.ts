@@ -44,6 +44,7 @@ import { SimpleConfirmationPopupComponent } from './shared/components/simple-con
 import { StatementOfFactsComponent } from './components/project-details/project-monitoring/statement-of-facts/statement-of-facts.component';
 import { ReworkPopupFormComponent } from './shared/components/rework-popup/rework-popup-form/rework-popup-form.component';
 import { ReworkPopupComponent } from './shared/components/rework-popup/rework-popup.component';
+import { JobOrdersComponent } from './components/project-details/project-monitoring/job-orders/job-orders.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -88,7 +89,9 @@ import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
     SimpleConfirmationPopupComponent,
     StatementOfFactsComponent,
     ReworkPopupFormComponent,
-    ReworkPopupComponent
+    ReworkPopupComponent,
+    JobOrdersComponent,
+    SpecificationRequisitionsComponent
   ],
   imports: [
     CommonModule,
