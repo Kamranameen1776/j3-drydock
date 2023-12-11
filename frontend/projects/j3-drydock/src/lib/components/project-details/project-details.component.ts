@@ -300,6 +300,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     //   });
     //   this.jbTMDtlSrv.closeDialog.next(true);
     // })
+    this.jbTMDtlSrv.closeDialog.next(true);
   }
 
   private openSpecificationsPopup() {
