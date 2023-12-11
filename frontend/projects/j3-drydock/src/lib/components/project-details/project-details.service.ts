@@ -162,6 +162,7 @@ export class ProjectDetailsService {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getSectionsConfig(status: string) {
     // TODO return sections config depending on status
     return this.getSpecificationStepSectionsConfig();
@@ -296,6 +297,7 @@ export class ProjectDetailsService {
     return this.projectsService.updateProject({
       ...data,
       uid: projectId
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
   }
 

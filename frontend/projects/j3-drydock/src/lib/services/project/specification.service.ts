@@ -62,6 +62,7 @@ export class SpecificationGridService {
     return apiRequest;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public createSpecification(formValue: any) {
     const action = 'specification-details/create-specification-details';
     const apiReq: WebApiRequest = {
