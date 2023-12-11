@@ -8,27 +8,27 @@ export class UpdateSpecificationDetailsDto {
     @IsOptional()
     @MinLength(1)
     @MaxLength(350)
-    Subject: string;
+    Subject?: string;
 
     @MaxLength(350)
     @IsOptional()
-    AccountCode: string;
+    AccountCode?: string;
 
     @IsUUID()
     @IsOptional()
-    DoneByUid: string;
+    DoneByUid?: string;
 
     @MinLength(1)
     @MaxLength(1000)
     @IsOptional()
-    Description: string;
+    Description?: string;
 
     @IsUUID()
     @IsOptional()
-    PriorityUid: string;
+    PriorityUid?: string;
 
     @IsArray()
     @IsNumber({}, { each: true })
     @IsOptional()
-    Inspections: Array<number>;
+    Inspections?: Array<number>;
 }
