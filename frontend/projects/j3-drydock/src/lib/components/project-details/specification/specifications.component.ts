@@ -33,25 +33,10 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     dialogHeader: 'Delete Specification'
   };
 
-  public deleteDialogVisible = false;
-  public deleteBtnLabel = 'Delete';
-  public deleteDialogMessage = 'Are you sure you want to delete this specification?';
-  public specificationUid: string;
-
-  createNewItems = [
-    {
-      label: 'Standard Jobs',
-      command: () => {
-        this.addFromStandardJob();
-      }
-    },
-    {
-      label: 'Create Ad hoc',
-      command: () => {
-        this.openPopup();
-      }
-    }
-  ];
+  deleteDialogVisible = false;
+  deleteBtnLabel = 'Delete';
+  deleteDialogMessage = 'Are you sure you want to delete this specification?';
+  specificationUid: string;
 
   vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name'> = {
     uid: 'vesselParent',
@@ -68,7 +53,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     super();
   }
 
-  openPopup() {
+  public openPopup() {
     this.isCreatePopupVisible = true;
   }
 
@@ -78,11 +63,11 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   ngOnInit(): void {
     this.treeData$ = this.functionsService.getFunctions(this.vesselNode.uid).pipe(
-      takeUntil(this.unsubscribe$),
       map((functions) => {
         functions.push(this.functionsService.createFlatNode(this.vesselNode));
         return functions.map((func) => this.functionsService.calculateSelectable(func, functions));
-      })
+      }),
+      takeUntil(this.unsubscribe$)
     );
     this.loadFunctionsToForm();
     this.gridData = this.getData();

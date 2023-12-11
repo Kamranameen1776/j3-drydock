@@ -1,75 +1,43 @@
-<jb-layout-widget
-  titleIconClass="icons8-more-details-2"
-  size="auto"
-  titleText="Technical Specification"
->
-  <div
-    class="specs-header-actions"
-    awidget-header-buttons
-  >
-    <jb-button
-      type="NoButton"
-      icon="icons8-anchor"
-      label="Export"
-    ></jb-button>
-    <jb-split-button
-      type="NoButton"
-      label="Create new"
-      [model]="createNewItems"
-    ></jb-split-button>
-  </div>
-  <div
-    class="specs-content"
-    awidget-content
-  >
-    <jb-tree
-      [staticNodes]="treeData$ | async"
-      [showSetting]="{ showSearch: true, showButtons: false }"
-      filterPlaceholder="Search Function"
-      (nodeData)="setNodeData($event)"
-      [eventsList]="eventsList"
-      [virtualScroll]="true"
-      treeName="specificationTree"
-      scrollHeight="544px"
-    ></jb-tree>
-    <!--        <p-tabView
-    class="jb-tabview"
-    [activeIndex]="activeIndex"
-    (activeIndexChange)="activeIndexChange($event)"
-  >
-    <p-tabPanel
-      *ngFor="let item of types"
-      [header]="item"
-    >-->
-    <jb-grid
-      *ngIf="gridData"
-      [gridName]="gridData.gridName"
-      [colData]="gridData.columns"
-      [tableDataReq]="gridData.request"
-      [setActions]="gridData.actions"
-      [filterData]="gridData.filters"
-      [filterListsSet]="gridData.filtersLists"
-      [getStyleByContainer]="true"
-      (action)="onActionClick($event)"
-    ></jb-grid>
-    <!--           </p-tabPanel>
-  </p-tabView>-->
-    <jb-add-specification-from-standard-job-popup
-      *ngIf="addFromStandardJobPopupVisible"
-      [treeData]="treeData$ | async"
-      [isOpen]="addFromStandardJobPopupVisible"
-      [vesselType]="vesselType"
-      [projectUid]="projectId"
-      (closeDialog)="onCloseCreatePopup($event)"
-    ></jb-add-specification-from-standard-job-popup>
-    <jb-create-specification-popup
-      [isOpen]="isCreatePopupVisible"
-      [projectId]="projectId"
-      [vesselUid]="vesselUid"
-      (closeDialog)="onCloseCreatePopup($event)"
-    ></jb-create-specification-popup>
-  </div>
-</jb-layout-widget>
+<div class="specs-content">
+  <jb-tree
+    [staticNodes]="treeData$ | async"
+    [showSetting]="{ showSearch: true, showButtons: false }"
+    filterPlaceholder="Search Function"
+    (nodeData)="setNodeData($event)"
+    [eventsList]="eventsList"
+    [virtualScroll]="true"
+    scrollHeight="544px"
+  ></jb-tree>
+
+  <jb-grid
+    *ngIf="gridData"
+    [gridName]="gridData.gridName"
+    [colData]="gridData.columns"
+    [tableDataReq]="gridData.request"
+    [setActions]="gridData.actions"
+    [filterData]="gridData.filters"
+    [filterListsSet]="gridData.filtersLists"
+    [getStyleByContainer]="true"
+    (action)="onActionClick($event)"
+  ></jb-grid>
+
+  <jb-add-specification-from-standard-job-popup
+    *ngIf="addFromStandardJobPopupVisible"
+    [treeData]="treeData$ | async"
+    [isOpen]="addFromStandardJobPopupVisible"
+    [vesselType]="vesselType"
+    [projectUid]="projectId"
+    (closeDialog)="onCloseCreatePopup($event)"
+  ></jb-add-specification-from-standard-job-popup>
+
+  <jb-create-specification-popup
+    [isOpen]="isCreatePopupVisible"
+    [projectId]="projectId"
+    [vesselUid]="vesselUid"
+    (closeDialog)="onCloseCreatePopup($event)"
+  ></jb-create-specification-popup>
+</div>
+
 <ng-template
   #statusTemplate
   let-rowData

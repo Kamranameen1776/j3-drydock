@@ -49,16 +49,7 @@
   }
 }
 
-@mixin details-page-fix {
-  .jb-details-layout-aside-wrapper {
-    overflow: initial !important;
-
-    .discussion-feed {
-      height: 100% !important;
-      padding: 0 16px !important;
-    }
-  }
-
+@mixin attachments-fix {
   .attachments {
     .ui-dialog {
       height: auto !important;

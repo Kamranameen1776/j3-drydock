@@ -5,7 +5,6 @@ import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ProjectsService } from '../../../services/ProjectsService';
-import { DeleteProjectDto, ProjectCreate } from '../../../models/interfaces/projects';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { getSmallPopup } from '../../../models/constants/popup';
@@ -19,6 +18,7 @@ import moment from 'moment';
 import { IProjectStatusDto } from '../../../services/dtos/IProjectStatusDto';
 import { eProjectsAccessActions } from '../../../models/enums/access-actions.enum';
 import { eFunction } from '../../../models/enums/function.enum';
+import { ProjectCreate } from '../../../models/interfaces/projects';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -200,11 +200,8 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   public deleteProject() {
     this.deleteProjectButtonDisabled$.next(true);
-    const data: DeleteProjectDto = {
-      ProjectId: this.deleteProjectFormGroup.value.Project.ProjectId
-    };
 
-    this.projectsService.deleteProject(data).subscribe(() => {
+    this.projectsService.deleteProject(this.deleteProjectFormGroup.value.Project.ProjectId).subscribe(() => {
       this.deleteProjectButtonDisabled$.next(false);
       this.showDeleteDialog(false);
       this.projectsGrid.fetchMatrixData();

@@ -1,9 +1,9 @@
-import { YardsService } from './../../../../services/yards.service';
-import { YardLink } from './../../../../models/interfaces/project-details';
+import { YardsService } from '../../../../services/yards.service';
+import { YardLink } from '../../../../models/interfaces/project-details';
 import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { RfqGridService } from './rfq-grid.service';
-import { GridInputsWithData } from './../../../../models/interfaces/grid-inputs';
-import { eRfqFields } from './../../../../models/enums/rfq.enum';
+import { GridInputsWithData } from '../../../../models/interfaces/grid-inputs';
+import { eRfqFields } from '../../../../models/enums/rfq.enum';
 import { DispatchAction, GridAction, GridRowActions, GridService, eGridEvents, eGridRowActions, eLayoutWidgetSize } from 'jibe-components';
 import { concatMap, filter, finalize, map, takeUntil } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
@@ -28,7 +28,7 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
 
   eRfqFields = eRfqFields;
 
-  linked: YardLink[];
+  public linked: YardLink[];
 
   searchTerm$ = this.gridService.storeState$.pipe(
     filter((event: DispatchAction) => event.type === eGridEvents.SearchTable && event.gridName === this.gridInputs.gridName),

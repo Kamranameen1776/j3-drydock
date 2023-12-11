@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestService, eCrud, UserRightsService, WebApiRequest } from 'jibe-components';
 import { Observable } from 'rxjs';
-import { DeleteProjectDto, ProjectCreate, ProjectEdit } from '../models/interfaces/projects';
+import { ProjectCreate, ProjectEdit } from '../models/interfaces/projects';
 import { IGroupProjectStatusesDto } from './dtos/IGroupProjectStatusesDto';
 import { IProjectStatusDto } from './dtos/IProjectStatusDto';
 import { eModule } from '../models/enums/module.enum';
@@ -143,13 +143,15 @@ export class ProjectsService {
     return this.apiRequestService.sendApiReq(apiRequest);
   }
 
-  public deleteProject(data: DeleteProjectDto): Observable<any> {
+  public deleteProject(projectUid: string): Observable<any> {
     const apiRequest: WebApiRequest = {
       apiBase: 'dryDockAPI',
       action: 'projects/delete-project',
       crud: eCrud.Post,
       entity: 'drydock',
-      body: data
+      body: {
+        ProjectId: projectUid
+      }
     };
 
     return this.apiRequestService.sendApiReq(apiRequest);
