@@ -34,6 +34,6 @@ export class TaskManagerService {
             task_manager_uid: uid,
         };
         const apiPath = `task-manager/delete-task-manager-job-by-uid`;
-        await await new ApiRequestService().taskManager(token, apiPath, 'post', data);
+        await new ApiRequestService().taskManager(token, apiPath, 'post', data);
     }
 }
