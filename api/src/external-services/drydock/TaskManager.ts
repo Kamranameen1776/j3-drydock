@@ -28,4 +28,12 @@ export class TaskManagerService {
         const { data } = await new ApiRequestService().taskManager(token, apiPath, 'post', body);
         return data.taskManagerJobDetail;
     }
+
+    public async DeleteTaskManagerIntegration(uid: string, token: string): Promise<void> {
+        const data = {
+            task_manager_uid: uid,
+        };
+        const apiPath = `task-manager/delete-task-manager-job-by-uid`;
+        await new ApiRequestService().taskManager(token, apiPath, 'post', data);
+    }
 }
