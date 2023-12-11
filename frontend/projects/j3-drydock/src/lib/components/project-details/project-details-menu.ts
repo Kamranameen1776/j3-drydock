@@ -12,7 +12,7 @@ export const projectDetailsMenuData = [
     id: eProjectDetailsSideMenuId.Specifications,
     icon: 'icons8-more-details-2',
     items: [
-      { label: eProjectDetailsSideMenuLabel.TechnicalSpecification, id: eProjectDetailsSideMenuId.TechnicalSpecification },
+      { label: eProjectDetailsSideMenuLabel.TechnicalSpecification, icon: '', id: 'technical_specification' },
       { label: eProjectDetailsSideMenuLabel.Requisition, id: eProjectDetailsSideMenuId.Requisition },
       { label: eProjectDetailsSideMenuLabel.Contacts, id: eProjectDetailsSideMenuId.Contacts },
       { label: eProjectDetailsSideMenuLabel.Attachments, id: eProjectDetailsSideMenuId.Attachments }

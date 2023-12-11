@@ -30,7 +30,7 @@ export enum eProjectDetailsSideMenuId {
   TechnicalSpecification = 'technical_specification',
   Requisition = 'requisition',
   Contacts = 'contacts',
-  Attachments = 'attachments',
+  Attachments = 'attachmentss',
 
   YardSelection = 'yard_selection',
   RFQ = 'rfq',
@@ -49,12 +49,12 @@ export enum eProjectDetailsSideMenuId {
 }
 
 export enum eProjectWorklowStatusAction {
-  Raise = 'Raise',
-  'In Progress' = 'In Progress',
-  Complete = 'Complete',
-  Verify = 'Verify',
-  Review = 'Review',
-  Approve = 'Approve',
-  Close = 'Close',
-  Unclose = 'Unclose'
+  Raise = 'RAISE',
+  'In Progress' = 'IN PROGRESS',
+  Complete = 'COMPLETE',
+  Verify = 'VERIFY',
+  Review = 'REVIEW',
+  Approve = 'APPROVE',
+  Close = 'CLOSE',
+  Unclose = 'UNCLOSE'
 }

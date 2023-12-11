@@ -13,7 +13,7 @@ const routes: Routes = [
     component: LoginComponent
   },
   {
-    path: 'j3-drydock',
+    path: 'dry-dock',
     loadChildren: () => import('./../../projects/j3-drydock/src/lib/drydock.module').then((m) => m.J3DryDockModule)
   },
   { path: '**', redirectTo: 'login' }

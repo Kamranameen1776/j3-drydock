@@ -1,94 +1,113 @@
-<jb-details-layout-figma>
-  <jb-project-header
-    alayout-header
-    *ngIf="projectId"
-    [projectId]="projectId"
-  ></jb-project-header>
-  <ng-container alayout-content>
-    <ng-container [ngSwitch]="currentSectionId">
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.General">
-        <div #general>TODO insert general component here</div>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.Specifications">
-        <div #specifications>
-          <div #technical_specification>
-            <jb-specifications
-              [projectId]="projectId"
-              [vesselUid]="vesselUid"
-            ></jb-specifications>
-          </div>
-
-          <div #requisition>
-            <!-- TODO insert requisition component here -->
-          </div>
-
-          <div #attachments>
-            <jb-layout-widget
-              *ngIf="attachmentConfig"
-              [size]="'auto'"
-              titleText="Attachments"
-            >
-              <ng-container awidget-header-buttons>
-                <jb-button
-                  [type]="attachmentButton.buttonType"
-                  (click)="onAddAttachment()"
-                  [label]="attachmentButton.buttonLabel"
-                ></jb-button>
-              </ng-container>
-              <jb-attachments
-                #attachmentsComponent
-                awidget-content
-                class="attachments"
-                [attachConfig]="attachmentConfig"
-                [onUploadBtn]="false"
-                [defaultActions]="true"
-              ></jb-attachments>
-            </jb-layout-widget>
-          </div>
-        </div>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.YardSelection">
-        <div #yard_selection>
-          <div #rfq>
-            <!-- TODO projectId from details -->
-            <jb-drydock-rfq [projectId]="projectId"></jb-drydock-rfq>
-          </div>
-          <div #comparison>TODO insert comparison component here</div>
-        </div>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.ProjectMonitoring">
-        <div #project_monitoring>
-          <div #statement_of_facts>
-            <jb-statement-of-facts [projectId]="projectId"></jb-statement-of-facts>
-          </div>
-          <div #job_orders>
-            <jb-job-orders [projectId]="projectId"></jb-job-orders>
-          </div>
-        </div>
-      </ng-container>
+<jb-task-manager-details
+  *ngIf="sectionsConfig"
+  [topSectionConfig]="topSectionConfig"
+  [sectionsConfig]="sectionsConfig"
+  [tmDetails]="tmDetails"
+  [moduleCode]="moduleCode"
+  [functionCode]="functionCode"
+  [hideAuditTrail]="true"
+  [hideAttachments]="true"
+  [showExport]="false"
+  [isViewRight]="canView"
+  (onWorkflowActions)="onWorkflowAction($event)"
+  [templateRefObj]="{
+    general: generalTab,
+    specifications: specificationsTab,
+    yard_selection: yardSelectionTab,
+    project_monitoring: projectMonitoringTab,
+    technical_specification: technical_specification,
+    attachmentss: attachmentss,
+    rfq: rfq,
+    statement_of_facts: statement_of_facts,
+    job_orders: job_orders
+  }"
+  [sectionHeaderTemplateRef]="{ technical_specification: specificationsButtonsTmpl }"
+  [ignoreAccessRights]="true"
+  [slideMenus]="menu"
+>
+  <ng-template
+    #generalTab
+    let-section
+  >
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div *ngSwitchCase="'tasks'">
+        <!-- TODO add tasks component here -->
+      </div>
     </ng-container>
-  </ng-container>
+  </ng-template>
 
-  <ng-container alayout-aside>
-    <jb-layout-widget
-      [size]="'auto'"
-      [hideHeader]="true"
-      class="discussion-feed"
-      *ngIf="isDiscussionFeedVisible && discussionFeedDetails"
-    >
-      <jb-discussion-feed
-        awidget-content
-        [detail]="discussionFeedDetails"
-        [canAdd]="true"
-        [function_code]="discussionFeedFunctionCode"
-        [module_code]="discussionFeedModuleCode"
-        [isCloseView]="true"
-      ></jb-discussion-feed>
-    </jb-layout-widget>
-  </ng-container>
-</jb-details-layout-figma>
+  <ng-template
+    #specificationsTab
+    let-section
+  >
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div *ngSwitchCase="eSideMenuId.TechnicalSpecification">
+        <div #technical_specification>
+          <jb-specifications
+            #specificationsComponent
+            [projectId]="projectUid"
+            [vesselUid]="vesselUid"
+          ></jb-specifications>
+        </div>
+      </div>
 
-<jb-growl [content]="growlMessage$ | async"></jb-growl>
+      <div *ngSwitchCase="eSideMenuId.Attachments">
+        <div #attachmentss>
+          <jb-attachments
+            *ngIf="attachmentConfig"
+            #attachmentsComponent
+            awidget-content
+            class="attachments"
+            [attachConfig]="attachmentConfig"
+            [onUploadBtn]="false"
+            [defaultActions]="true"
+          ></jb-attachments>
+        </div>
+      </div>
+    </ng-container>
+  </ng-template>
+
+  <ng-template
+    #yardSelectionTab
+    let-section
+  >
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div *ngSwitchCase="eSideMenuId.RFQ">
+        <div #rfq>
+          <jb-drydock-rfq
+            [projectId]="projectUid"
+            #rfqComponent
+          ></jb-drydock-rfq>
+        </div>
+      </div>
+    </ng-container>
+  </ng-template>
+
+  <ng-template
+    #projectMonitoringTab
+    let-section
+  >
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div #statement_of_facts>
+        <jb-statement-of-facts [projectId]="projectUid"></jb-statement-of-facts>
+      </div>
+
+      <div #job_orders>
+        <jb-job-orders [projectId]="projectUid"></jb-job-orders>
+      </div>
+    </ng-container>
+  </ng-template>
+</jb-task-manager-details>
+
+<ng-template #specificationsButtonsTmpl>
+  <jb-button
+    type="NoButton"
+    icon="icons8-anchor"
+    label="Export"
+  ></jb-button>
+  <jb-split-button
+    type="NoButton"
+    label="Create new"
+    [model]="specificationsCreateNewItems"
+  ></jb-split-button>
+</ng-template>

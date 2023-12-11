@@ -76,6 +76,7 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
         () => {
           this.closePopup(true);
         },
+        // eslint-disable-next-line rxjs/no-implicit-any-catch
         (err) => {
           if (err?.status === 422) {
             this.growlMessageService.setErrorMessage(err.error);
