@@ -70,7 +70,7 @@ export class SpecificationDetailsRepository {
         });
     }
 
-    public getOneByUid(uid: string): Promise<SpecificationDetailsEntity> {
+    public getRawSpecificationByUid(uid: string): Promise<SpecificationDetailsEntity> {
         const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
         return specificationRepository.findOneOrFail({
             where: {

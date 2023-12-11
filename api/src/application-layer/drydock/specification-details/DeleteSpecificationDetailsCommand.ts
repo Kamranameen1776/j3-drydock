@@ -7,6 +7,7 @@ import { SpecificationDetailsRepository } from '../../../dal/drydock/specificati
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { SpecificationDetailsEntity } from '../../../entity/drydock';
 import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
+import { TaskManagerService } from '../../../external-services/drydock/TaskManager';
 import { Command } from '../core/cqrs/Command';
 import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
@@ -18,7 +19,7 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
     tableName = getTableName(SpecificationDetailsEntity);
     vesselsRepository: VesselsRepository;
     tableNameAudit = getTableName(J2FieldsHistoryEntity);
-    specificationDetailsService: SpecificationService;
+    taskManagerService: TaskManagerService;
 
     constructor() {
         super();
@@ -27,6 +28,7 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
         this.uow = new UnitOfWork();
         this.specificationDetailsAudit = new SpecificationDetailsAuditService();
         this.vesselsRepository = new VesselsRepository();
+        this.taskManagerService = new TaskManagerService();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -40,9 +42,11 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
     }
 
     protected async MainHandlerAsync({ request, user }: CommandRequest) {
-        const specificationDetail = await this.specificationDetailsRepository.getOneByUid(request.body.uid);
-        await this.specificationDetailsService.DeleteTaskManagerIntegration(
-            specificationDetail,
+        const specificationDetail = await this.specificationDetailsRepository.getRawSpecificationByUid(
+            request.body.uid,
+        );
+        await this.taskManagerService.DeleteTaskManagerIntegration(
+            specificationDetail.TecTaskManagerUid,
             request.headers.authorization as string,
         );
         await this.uow.ExecuteAsync(async (queryRunner) => {
