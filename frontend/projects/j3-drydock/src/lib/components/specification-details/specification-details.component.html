@@ -39,9 +39,13 @@
             awidget-content
             #attachments
             [attachConfig]="attachmentConfig"
-            [defaultActions]="true"
+            [defaultActions]="false"
+            [actionRow]="attachmentConfig.actions"
           ></jb-attachments>
-          <div awidget-header-buttons>
+          <div
+            awidget-header-buttons
+            *ngIf="addAttachment"
+          >
             <jb-button
               type="NoButton"
               (click)="attachments.dialogOnDemand()"
