@@ -32,6 +32,7 @@ import {
 import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
 import { ODataResult } from '../../../shared/interfaces';
+import { RepoUtils } from '../utils/RepoUtils';
 import {
     CreateInspectionsDto,
     ICreateSpecificationDetailsDto,
@@ -151,12 +152,6 @@ export class SpecificationDetailsRepository {
                 .leftJoin(className(TmDdLibItemCategory), 'ic', 'sd.item_category_uid = ic.uid')
                 .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.done_by_uid = db.uid')
                 .leftJoin(className(TmDdLibMaterialSuppliedBy), 'msb', 'sd.material_supplied_by_uid = msb.uid')
-                .leftJoin(className(SpecificationInspectionEntity), 'si', 'si.specification_details_uid = sd.uid')
-                .leftJoin(
-                    className(LibSurveyCertificateAuthority),
-                    'lsc',
-                    'lsc.ID = si.LIB_Survey_CertificateAuthority_ID and lsc.Active_Status = 1',
-                )
                 .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
                 .select([
                     'sd.uid as uid',
@@ -171,8 +166,28 @@ export class SpecificationDetailsRepository {
                     'tm.Status as status',
                     'tm.title as subject',
                     'sd.project_uid',
-                    "STRING_AGG(lsc.ID, ',') as inspectionId",
-                    "STRING_AGG(lsc.Authority, ',') as inspection",
+                    RepoUtils.getStringAggJoin(
+                        LibSurveyCertificateAuthority,
+                        'ID',
+                        'aliased.active_status = 1',
+                        'inspectionId',
+                        {
+                            entity: className(SpecificationInspectionEntity),
+                            alias: 'si',
+                            on: 'aliased.ID = si.LIB_Survey_CertificateAuthority_ID AND si.specification_details_uid = sd.uid',
+                        },
+                    ),
+                    RepoUtils.getStringAggJoin(
+                        LibSurveyCertificateAuthority,
+                        'Authority',
+                        'aliased.active_status = 1',
+                        'inspection',
+                        {
+                            entity: className(SpecificationInspectionEntity),
+                            alias: 'si',
+                            on: 'aliased.ID = si.LIB_Survey_CertificateAuthority_ID AND si.specification_details_uid = sd.uid',
+                        },
+                    ),
                 ])
                 .groupBy(
                     [
