@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ProjectsSpecificationGridService } from './ProjectsSpecificationGridService';
 import { eGridRowActions, FormModel, GridAction, GridComponent, IJbDialog } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
@@ -19,6 +19,8 @@ import moment from 'moment';
 import { IProjectStatusDto } from '../../../services/dtos/IProjectStatusDto';
 import { eProjectsAccessActions } from '../../../models/enums/access-actions.enum';
 import { eFunction } from '../../../models/enums/function.enum';
+import { statusBackground, statusIcon } from '../../../shared/statuses';
+import { nameOf } from '../../../utils/nameOf';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -29,6 +31,8 @@ import { eFunction } from '../../../models/enums/function.enum';
 export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
   @ViewChild('projectsGrid')
   projectsGrid: GridComponent;
+
+  @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
 
   private readonly allProjectsProjectTypeId = 'all_projects';
 
@@ -75,6 +79,8 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   leftPanelProjectGroupStatusFilter: IProjectGroupStatusDto;
 
   leftPanelVesselsFilter: number[];
+
+  statusCSS = { statusBackground, statusIcon };
 
   constructor(
     private router: Router,
@@ -229,6 +235,10 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   private setGridInputs() {
     this.gridInputs = this.projectsGridService.getGridInputs();
     this.gridInputs.gridButton.show = this.canCreateProject;
+    const statusCol = this.gridInputs.columns.find(
+      (col) => col.FieldName === nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectStatusName)
+    );
+    statusCol.cellTemplate = this.statusTemplate;
     this.setGridActions();
   }
 

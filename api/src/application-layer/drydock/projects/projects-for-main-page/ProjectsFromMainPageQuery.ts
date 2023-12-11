@@ -49,6 +49,7 @@ export class ProjectsFromMainPageQuery extends Query<Request, ODataResult<IProje
                     ShipYardId: record.ShipYardUid,
                     Specification: record.Specification,
                     ProjectStatusName: record.ProjectStatusName,
+                    ProjectStatusId: record.ProjectStatusId,
 
                     ProjectState: record.ProjectStateName,
 
