@@ -8,9 +8,8 @@ describe('StatementOfFactsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StatementOfFactsComponent ]
-    })
-    .compileComponents();
+      declarations: [StatementOfFactsComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

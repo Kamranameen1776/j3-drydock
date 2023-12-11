@@ -1,5 +1,6 @@
 import { SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 import { CreateOneParams } from '../../../../dal/drydock/specification-details/sub-items/dto/CreateOneParams';
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
@@ -11,7 +12,7 @@ import { UnitOfWork } from '../../core/uof/UnitOfWork';
 export class CreateSubItemCommand extends Command<CreateOneParams, SpecificationDetailsSubItemEntity> {
     protected readonly subItemRepo = new SpecificationDetailsSubItemsRepository();
     protected readonly uow = new UnitOfWork();
-    protected readonly tableName = 'dry_dock.specification_details_sub_item';
+    protected readonly tableName = getTableName(SpecificationDetailsSubItemEntity);
     protected readonly vesselsRepository = new VesselsRepository();
 
     private params: CreateOneParams;

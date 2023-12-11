@@ -1,17 +1,18 @@
 import { SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 import { UpdateOneParams } from '../../../../dal/drydock/specification-details/sub-items/dto/UpdateOneParams';
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
-import { type SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 
 export class UpdateSubItemCommand extends Command<UpdateOneParams, SpecificationDetailsSubItemEntity> {
     protected readonly subItemRepo = new SpecificationDetailsSubItemsRepository();
     protected readonly uow = new UnitOfWork();
-    protected readonly tableName = 'dry_dock.specification_details_sub_item';
+    protected readonly tableName = getTableName(SpecificationDetailsSubItemEntity);
     protected readonly vesselsRepository = new VesselsRepository();
     private params: UpdateOneParams;
 
