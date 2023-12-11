@@ -33,6 +33,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   @ViewChild(eProjectDetailsSideMenuId.ProjectMonitoring) [eProjectDetailsSideMenuId.ProjectMonitoring]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.StatementOfFacts) [eProjectDetailsSideMenuId.StatementOfFacts]: ElementRef;
+  @ViewChild(eProjectDetailsSideMenuId.JobOrders) [eProjectDetailsSideMenuId.JobOrders]: ElementRef;
 
   private readonly menuId = 'project-details-menu';
 
