@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { eFieldControlType, FormModel, FormValues } from 'jibe-components';
 import { reworkPopupFormId } from '../../../../models/constants/constants';
-import { eReworkPopupFields, eReworkPopupLabels } from './../../../../models/enums/rework-popup.enum';
+import { eReworkPopupFields, eReworkPopupLabels } from '../../../../models/enums/rework-popup.enum';
 import { FormServiceBase } from '../../../classes/form-service.base';
 
 @Injectable({

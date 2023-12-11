@@ -1,6 +1,6 @@
-import { YardsService } from './../../../../../services/yards.service';
-import { YardLink, YardToLink } from './../../../../../models/interfaces/project-details';
-import { GrowlMessageService } from './../../../../../services/growl-message.service';
+import { YardsService } from '../../../../../services/yards.service';
+import { YardLink, YardToLink } from '../../../../../models/interfaces/project-details';
+import { GrowlMessageService } from '../../../../../services/growl-message.service';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { getSmallPopup } from '../../../../../models/constants/popup';
 import { IJbDialog } from 'jibe-components';
