@@ -10,10 +10,7 @@ export class deactivateJobOrderWorkflow1702275716808 implements MigrationInterfa
             await queryRunner.query(`
             BEGIN
                 DECLARE @config_id int=(select ID from JMS_DTL_Workflow_config where JOB_Type='job_order' AND Active_Status=1)
-
-                update JMS_DTL_Workflow_config_details
-                set Active_Status = 0, Modified_By = 1, Date_Of_Modification = getdate()
-                where config_ID=@config_id
+			    Delete from jms_dtl_workflow_config_details where config_ID=@config_id
             END
             `);
 
