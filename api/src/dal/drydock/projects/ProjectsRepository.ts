@@ -225,6 +225,7 @@ export class ProjectsRepository {
                     'vessel.vessel_id',
                     'pr.vessel_uid',
                     'vessel.FleetCode',
+                    'vessel.Vessel_type',
                     'pr.task_manager_uid',
                     'yd.yard_name',
                     '"yd"."uid"',
