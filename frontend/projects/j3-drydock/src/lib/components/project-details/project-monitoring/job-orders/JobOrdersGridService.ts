@@ -219,7 +219,9 @@ export class JobOrdersGridService {
               gridRowStart: 2,
               gridRowEnd: 2,
               gridColStart: 1,
-              gridColEnd: 2
+              gridColEnd: 2,
+              maxLength: 200,
+              minLength: 1
             },
 
             [eJobOrderUpdateFieldNames.Status]: {
@@ -248,7 +250,9 @@ export class JobOrdersGridService {
               gridRowStart: 4,
               gridRowEnd: 4,
               gridColStart: 1,
-              gridColEnd: 1
+              gridColEnd: 1,
+              validatorMin: 0,
+              validatorMax: 100
             },
 
             [eJobOrderUpdateFieldNames.SpecificationStartDate]: {
