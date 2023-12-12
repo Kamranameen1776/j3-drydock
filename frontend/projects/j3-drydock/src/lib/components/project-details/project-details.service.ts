@@ -11,12 +11,13 @@ import {
   eProjectWorklowStatusAction
 } from '../../models/enums/project-details.enum';
 import { ITMDetailTabFields } from 'j3-task-manager-ng';
-import { BaseAccessRight } from '../../models/interfaces/access-rights';
+import { AttachmentsAccessRight, BaseAccessRight } from '../../models/interfaces/access-rights';
 import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
+import { eProjectsDetailsAccessActions, eProjectsAccessActions } from '../../models/enums/access-actions.enum';
 
 export interface ProjectDetailsAccessRights extends BaseAccessRight {
-  attachments: BaseAccessRight & { add: boolean };
+  attachments: AttachmentsAccessRight;
 }
 
 export const DEFAULT_PROJECT_DETAILS_ACCESS_RIGHTS: ProjectDetailsAccessRights = {
@@ -45,18 +46,29 @@ export class ProjectDetailsService {
     this.setAccessRights({ ...currentRights, ...rights });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setupAccessRights(tmDetails: ProjectDetailsFull) {
     // TODO maybe handle status if there is some logic for access rights depending on status?
     const isEditableStatus = this.isStatusBeforeComplete(tmDetails.task_status);
-    // TODO correct codes
-    const canView = this.hasAccess('View');
-    const canEdit = this.hasAccess('Edit');
-    const canDelete = this.hasAccess('Delete');
-    const canViewAttachments = isEditableStatus && this.hasAccess('view_attachment');
-    const canEditAttachments = isEditableStatus && this.hasAccess('edit_attachment');
-    const canDeleteAttachments = isEditableStatus && this.hasAccess('delete_attachment');
-    const canAddAttachments = isEditableStatus && this.hasAccess('add_attachment');
+
+    const canView = this.hasAccess(eProjectsAccessActions.viewDetail) || this.hasAccess(eProjectsAccessActions.viewDetailVessel);
+    const canEdit =
+      this.hasAccess(eProjectsDetailsAccessActions.editHeader) || this.hasAccess(eProjectsDetailsAccessActions.editHeaderVessel);
+    const canDelete = this.hasAccess(eProjectsAccessActions.deleteProject);
+    const canViewAttachments =
+      isEditableStatus &&
+      (this.hasAccess(eProjectsDetailsAccessActions.viewAttachments) ||
+        this.hasAccess(eProjectsDetailsAccessActions.viewAttachmentsVessel));
+    const canEditAttachments =
+      isEditableStatus &&
+      (this.hasAccess(eProjectsDetailsAccessActions.editAttachments) ||
+        this.hasAccess(eProjectsDetailsAccessActions.editAttachmentsVessel));
+    const canDeleteAttachments =
+      isEditableStatus &&
+      (this.hasAccess(eProjectsDetailsAccessActions.deleteAttachments) ||
+        this.hasAccess(eProjectsDetailsAccessActions.deleteAttachmentsVessel));
+    const canAddAttachments =
+      isEditableStatus &&
+      (this.hasAccess(eProjectsDetailsAccessActions.addAttachments) || this.hasAccess(eProjectsDetailsAccessActions.addAttachmentsVessel));
 
     this.setAccessRights({
       view: canView,
@@ -219,7 +231,7 @@ export class ProjectDetailsService {
             active_status: true,
             SectionCode: eProjectDetailsSideMenuId.Attachments,
             SectionLabel: eProjectDetailsSideMenuLabel.Attachments,
-            isAddNewButton: true,
+            isAddNewButton: this.accessRights.attachments.add,
             buttonLabel: 'Add New',
             addNewButtonType: JbButtonType.NoButton
           }
@@ -277,9 +289,20 @@ export class ProjectDetailsService {
             SectionCode: eProjectDetailsSideMenuId.StatementOfFacts,
             SectionLabel: eProjectDetailsSideMenuLabel.StatementOfFacts,
             IconClass: 'icons8-more-details-2',
-            isAddNewButton: false,
+            isAddNewButton: true,
             buttonLabel: 'Add Fact',
             addNewButtonType: JbButtonType.NoButton
+          },
+          {
+            GridRowStart: 2,
+            GridRowEnd: 3,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
+            SectionCode: eProjectDetailsSideMenuId.JobOrders,
+            SectionLabel: eProjectDetailsSideMenuLabel.JobOrders,
+            IconClass: 'icons8-more-details-2',
+            isAddNewButton: false
           }
         ]
       }
@@ -313,7 +336,7 @@ export class ProjectDetailsService {
   }
 
   hasAccess(action: string, module = eModule.Project, func = eFunction.DryDock) {
-    return true || !!this.userRights.getUserRights(module, func, action);
+    return !!this.userRights.getUserRights(module, func, action);
   }
 
   private setAccessRights(rights: ProjectDetailsAccessRights) {
