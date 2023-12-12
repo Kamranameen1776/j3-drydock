@@ -329,9 +329,9 @@ export class SpecificationGridService {
       apiBase: 'dryDockAPI',
       action: 'dictionaries/item-source',
       crud: eCrud.Get,
-      entity: 'drydock',
+      entity: 'drydock'
     };
 
-    return apiRequest
+    return apiRequest;
   }
 }
