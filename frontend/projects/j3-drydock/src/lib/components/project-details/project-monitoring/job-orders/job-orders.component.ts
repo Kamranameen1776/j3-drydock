@@ -108,18 +108,23 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   public updateJobOrder() {
     this.updateJobOrderButtonDisabled = true;
 
-    debugger;
+    const jobOrder = this.updateJobOrderFormGroup.value.jobOrderUpdate;
+
+    const zone = new Date().getTimezoneOffset();
+
+    const startDate = moment(jobOrder.SpecificationStartDate, this.jobOrdersGridService.dateTimeFormat).add(-zone, 'minutes').toDate();
+    const endDate = moment(jobOrder.SpecificationEndDate, this.jobOrdersGridService.dateTimeFormat).add(-zone, 'minutes').toDate();
+    
     const data: IUpdateJobOrderDto = {
-      SpecificationUid: this.updateJobOrderFormGroup.value.jobOrderUpdate.SpecificationUid,
-      LastUpdated: new Date(),
-      Progress: this.updateJobOrderFormGroup.value.jobOrderUpdate.Progress,
+      SpecificationUid: jobOrder.SpecificationUid,
+      LastUpdated: moment().add(-zone, 'minutes').toDate(),
+      Progress: jobOrder.Progress,
 
-      // TODO: get static
-      SpecificationEndDate: new Date(), //this.updateJobOrderFormGroup.value.jobOrderUpdate.SpecificationEndDate,
-      SpecificationStartDate: new Date(), // this.updateJobOrderFormGroup.value.jobOrderUpdate.SpecificationStartDate,
+      SpecificationStartDate: startDate,
+      SpecificationEndDate: endDate,
 
-      Status: this.updateJobOrderFormGroup.value.jobOrderUpdate.Status,
-      Subject: this.updateJobOrderFormGroup.value.jobOrderUpdate.Subject
+      Status: jobOrder.Status,
+      Subject: jobOrder.Subject
     };
 
     this.jobOrdersService
