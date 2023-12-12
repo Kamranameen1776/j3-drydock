@@ -13,8 +13,9 @@ public async up(queryRunner: QueryRunner): Promise<void> {
         BEGIN
         CREATE TABLE [${this.schemaName}].[${this.tableName}](
             [uid] [uniqueidentifier] NOT NULL,
-            [report_name] [varchar](200) NULL,
-            [report_date] [datetime2](7) NULL,
+            [project_uid] [uniqueidentifier] NOT NULL,
+            [report_name] [varchar](200) NOT NULL,
+            [report_date] [datetimeoffset](7) NOT NULL,
             [description] [varchar](5000) NULL,
             [active_status] [bit] NOT NULL,
             [created_by] [uniqueidentifier] NULL,
@@ -30,7 +31,7 @@ public async up(queryRunner: QueryRunner): Promise<void> {
             ) ON [PRIMARY]            
             ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (newid()) FOR [uid]            
             ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT ((1)) FOR [active_status]            
-            ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (getdate()) FOR [created_at]
+            ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (getutcdate()) FOR [created_at]
             END
         `);
 

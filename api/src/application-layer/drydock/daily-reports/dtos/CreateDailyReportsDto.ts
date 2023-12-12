@@ -5,7 +5,6 @@ export class CreateDailyReportsDto {
     @MaxLength(200)
     reportName: string;
 
-    @IsOptional()
     @IsDateString()
     reportDate: Date;
 

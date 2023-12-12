@@ -40,6 +40,7 @@ export class CreateDailyReportsCommand extends Command<Request, void> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.dailyReportsRepository.createDailyReport(
                 {
+                    projectUid: data.body.projectUid,
                     reportName: data.body.reportName,
                     reportDate: new Date(),
                     description: data.body.description,
