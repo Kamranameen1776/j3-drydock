@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { IUpdateJobOrderDto } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/IUpdateJobOrderDto';
+import moment from 'moment';
 
 @Component({
   selector: 'jb-job-orders',
@@ -73,13 +74,20 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
       const controls = (this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup).controls;
 
+      const specificationStartDate = jobOrderDto.SpecificationStartDate
+        ? moment(jobOrderDto.SpecificationStartDate).format(this.jobOrdersGridService.dateTimeFormat)
+        : null;
+      const specificationEndDate = jobOrderDto.SpecificationEndDate
+        ? moment(jobOrderDto.SpecificationEndDate).format(this.jobOrdersGridService.dateTimeFormat)
+        : null;
+
       controls.JobOrderUid.setValue(jobOrderDto.JobOrderUid);
       controls.SpecificationUid.setValue(jobOrderDto.SpecificationUid);
       controls.Progress.setValue(jobOrderDto.Progress);
       controls.Status.setValue(jobOrderDto.Status);
       controls.Subject.setValue(jobOrderDto.Subject);
-      controls.SpecificationEndDate.setValue(jobOrderDto.SpecificationEndDate);
-      controls.SpecificationStartDate.setValue(jobOrderDto.SpecificationStartDate);
+      controls.SpecificationStartDate.setValue(specificationStartDate);
+      controls.SpecificationEndDate.setValue(specificationEndDate);
       controls.Code.setValue(jobOrderDto.Code);
     } else if (type === this.gridInputs.gridButton.label) {
       // TODO: implement
@@ -107,8 +115,11 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
       SpecificationUid: this.updateJobOrderFormGroup.value.jobOrderUpdate.SpecificationUid,
       LastUpdated: new Date(),
       Progress: this.updateJobOrderFormGroup.value.jobOrderUpdate.Progress,
-      SpecificationEndDate: this.updateJobOrderFormGroup.value.jobOrderUpdate.SpecificationEndDate,
-      SpecificationStartDate: this.updateJobOrderFormGroup.value.jobOrderUpdate.SpecificationStartDate,
+
+      // TODO: get static
+      SpecificationEndDate: new Date(), //this.updateJobOrderFormGroup.value.jobOrderUpdate.SpecificationEndDate,
+      SpecificationStartDate: new Date(), // this.updateJobOrderFormGroup.value.jobOrderUpdate.SpecificationStartDate,
+
       Status: this.updateJobOrderFormGroup.value.jobOrderUpdate.Status,
       Subject: this.updateJobOrderFormGroup.value.jobOrderUpdate.Subject
     };

@@ -36,17 +36,14 @@ export class JobOrdersRepository {
                 'sd.Subject AS SpecificationSubject',
                 // TODO: implement once end date is implemented in specification details page
                 //'sd.EndDate AS SpecificationEndDate',
-
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
             .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1')
 
-            // TODO: change to inner join once item source is implemented
+            // TODO: change to inner join once item source is implemented, see WI 677735
             .leftJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
 
-      
-            .distinct(true)
             .getQuery();
 
         const oDataService = new ODataService(request, getConnection);

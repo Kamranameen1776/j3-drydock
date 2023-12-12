@@ -224,14 +224,19 @@ export class JobOrdersGridService {
 
             [eJobOrderUpdateFieldNames.Status]: {
               label: eJobOrderUpdateDisplayNames.Status,
-              type: eFieldControlType.Text,
+              type: eFieldControlType.Dropdown,
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               validatorRequired: true,
               gridRowStart: 3,
               gridRowEnd: 3,
               gridColStart: 1,
-              gridColEnd: 1
+              gridColEnd: 1,
+              listRequest: {
+                webApiRequest: this.jobOrdersService.getJobOrderStatusesRequest(),
+                labelKey: 'Value',
+                valueKey: 'Key'
+              }
             },
 
             [eJobOrderUpdateFieldNames.Progress]: {

@@ -5,10 +5,10 @@ import { ApplicationException } from '../../../../bll/drydock/core/exceptions';
 import { JobOrdersRepository } from '../../../../dal/drydock/projects/job-orders/JobOrdersRepository';
 import { UpdateJobOrderDto } from '../../../../dal/drydock/projects/job-orders/UpdateJobOrderDto';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
+import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
 import { Query } from '../../core/cqrs/Query';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
-import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 
 export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
     jobOrderRepository: JobOrdersRepository;
@@ -58,24 +58,28 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
         // specification.EndDate = request.SpecificationEndDate;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
-
-            let updatedSpecification = new SpecificationDetailsEntity();
+            const updatedSpecification = new SpecificationDetailsEntity();
             updatedSpecification.uid = specification.uid;
-            updatedSpecification.StartDate = new Date();// new Date(request.SpecificationStartDate); 
-            this.specificationDetailsRepository.UpdateSpecificationDetailsByEntity(updatedSpecification, queryRunner);
+            updatedSpecification.StartDate = new Date(request.SpecificationStartDate);
 
-            // if (!jobOrder) {
-            //     jobOrder = new JobOrderEntity();
-            //     jobOrder.SpecificationUid = specification.uid;
-            //     jobOrder.uid = new DataUtilService().newUid();
-            // }
+            await this.specificationDetailsRepository.UpdateSpecificationDetailsByEntity(
+                updatedSpecification,
+                queryRunner,
+            );
 
-            // jobOrder.LastUpdated = request.LastUpdated;
-            // jobOrder.Progress = request.Progress;
-            // jobOrder.Status = request.Status;
-            // jobOrder.Subject = request.Subject;
+            if (!jobOrder) {
+                jobOrder = new JobOrderEntity();
+                jobOrder.SpecificationUid = specification.uid;
+                jobOrder.uid = new DataUtilService().newUid();
+                jobOrder.ProjectUid = specification.ProjectUid;
+            }
 
-            // await this.jobOrderRepository.UpdateJobOrder(jobOrder, queryRunner);
+            jobOrder.LastUpdated = request.LastUpdated;
+            jobOrder.Progress = request.Progress;
+            jobOrder.Status = request.Status;
+            jobOrder.Subject = request.Subject;
+
+            await this.jobOrderRepository.UpdateJobOrder(jobOrder, queryRunner);
         });
     }
 }

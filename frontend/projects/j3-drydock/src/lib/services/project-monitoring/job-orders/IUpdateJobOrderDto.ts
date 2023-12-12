@@ -1,9 +1,9 @@
 export interface IUpdateJobOrderDto {
   SpecificationUid: string;
 
-  SpecificationStartDate: string;
+  SpecificationStartDate: Date;
 
-  SpecificationEndDate: string;
+  SpecificationEndDate: Date;
 
   Progress: number;
 
