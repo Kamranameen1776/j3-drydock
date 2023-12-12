@@ -12,7 +12,7 @@ export class JobOrdersGridService {
 
   public readonly dateFormat = this.userService.getUserDetails().Date_Format.toLocaleUpperCase();
 
-  public readonly dateTimeFormat = `${this.dateFormat} HH:MM`;
+  public readonly dateTimeFormat = `${this.dateFormat} HH:mm`;
 
   public readonly updateJobOrderFormId = 'jobOrderUpdate';
 

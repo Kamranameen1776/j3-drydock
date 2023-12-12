@@ -89,8 +89,6 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
       controls.SpecificationStartDate.setValue(specificationStartDate);
       controls.SpecificationEndDate.setValue(specificationEndDate);
       controls.Code.setValue(jobOrderDto.Code);
-    } else if (type === this.gridInputs.gridButton.label) {
-      // TODO: implement
     }
   }
 
