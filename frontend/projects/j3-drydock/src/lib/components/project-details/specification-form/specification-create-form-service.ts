@@ -136,7 +136,10 @@ export class SpecificationCreateFormService extends FormServiceBase {
     }
   };
 
-  constructor(private standardJobsService: StandardJobsService, private specifications: SpecificationGridService) {
+  constructor(
+    private standardJobsService: StandardJobsService,
+    private specifications: SpecificationGridService
+  ) {
     super();
   }
 }
