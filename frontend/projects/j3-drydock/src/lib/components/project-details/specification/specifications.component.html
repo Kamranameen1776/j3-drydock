@@ -21,6 +21,15 @@
     (action)="onActionClick($event)"
   ></jb-grid>
 
+  <jb-add-specification-from-standard-job-popup
+    *ngIf="addFromStandardJobPopupVisible"
+    [treeData]="treeData$ | async"
+    [isOpen]="addFromStandardJobPopupVisible"
+    [vesselType]="vesselType"
+    [projectUid]="projectId"
+    (closeDialog)="onCloseCreatePopup($event)"
+  ></jb-add-specification-from-standard-job-popup>
+
   <jb-create-specification-popup
     [isOpen]="isCreatePopupVisible"
     [projectId]="projectId"

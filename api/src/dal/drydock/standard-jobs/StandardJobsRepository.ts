@@ -20,6 +20,7 @@ import {
     StandardJobsSurveyCertificateAuthorityEntity,
     StandardJobsVesselTypeEntity,
 } from '../../../entity/drydock';
+import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
 import { FiltersDataResponse, RequestWithOData } from '../../../shared/interfaces';
 import { RepoUtils } from '../utils/RepoUtils';
 
@@ -38,6 +39,7 @@ export class StandardJobsRepository {
                 'msb',
                 `msb.uid = sj.material_supplied_by_uid AND msb.active_status = 1`,
             )
+            .leftJoin(className(StandardJobsSubItems), 'sjsi', `sjsi.standard_job_uid = sj.uid`)
             .select(
                 'distinct sj.uid as uid,' +
                     'sj.subject as subject,' +

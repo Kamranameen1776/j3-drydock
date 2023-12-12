@@ -9,6 +9,7 @@
     "prettier": "prettier --write projects/j3-drydock/src/lib/**/*.{js,ts,json,html,css,scss}",
     "test": "[ \"$TF_BUILD\" != \"True\" ] && ng test || echo \"Tests are not ready for running in CI, skipping\"",
     "lint": "eslint ./projects",
+    "lint:fix": "eslint . --fix",
     "e2e": "ng e2e"
   },
   "lint-staged": {
@@ -58,7 +59,7 @@
     "font-awesome": "^4.7.0",
     "fullcalendar": "^4.0.0-alpha.4",
     "html2pdf.js": "^0.9.2",
-    "jibe-components": "3.234.232",
+    "jibe-components": "3.234.232-2",
     "jquery": "^3.3.1",
     "js2xmlparser": "^3.0.0",
     "json-to-table": "^4.0.0",

@@ -1,4 +1,3 @@
-import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { SynchronizerService } from 'j2utils';
 

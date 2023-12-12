@@ -45,6 +45,7 @@ import { StatementOfFactsComponent } from './components/project-details/project-
 import { ReworkPopupFormComponent } from './shared/components/rework-popup/rework-popup-form/rework-popup-form.component';
 import { ReworkPopupComponent } from './shared/components/rework-popup/rework-popup.component';
 import { JobOrdersComponent } from './components/project-details/project-monitoring/job-orders/job-orders.component';
+import { AddSpecificationFromStandardJobPopupComponent } from './components/project-details/add-specification-from-standard-job-popup/add-specification-from-standard-job-popup.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -90,6 +91,7 @@ import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
     StatementOfFactsComponent,
     ReworkPopupFormComponent,
     ReworkPopupComponent,
+    AddSpecificationFromStandardJobPopupComponent,
     JobOrdersComponent,
     SpecificationRequisitionsComponent
   ],

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities } from 'jibe-components';
+import { ApiRequestService, eApiBase, eCrud, eEntities, WebApiRequest } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { GetSpecificationDetailsDto } from '../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
 import { eSpecificationDetailsGeneralInformationFields } from '../../models/enums/specification-details-general-information.enum';
 import f from 'odata-filter-builder';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -98,6 +99,20 @@ export class SpecificationDetailsService {
       }
     };
 
+    return this.apiRequestService.sendApiReq(request);
+  }
+
+  createSpecificationFromStandardJob(ProjectUid: string, StandardJobUid: string[]) {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      action: 'specification-details/create-specification-from-standard-job',
+      crud: eCrud.Post,
+      body: {
+        ProjectUid,
+        StandardJobUid
+      }
+    };
     return this.apiRequestService.sendApiReq(request);
   }
 }

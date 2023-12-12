@@ -48,6 +48,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   functionCode = eFunction.DryDock;
   projectUid: string;
 
+  vesselType: number;
   tmDetails: ProjectDetailsFull;
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
@@ -72,22 +73,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   }
 
   specificationsCreateNewItems = [
-    /*{
-      label: 'Add from PMS',
-      command: () => {
-        this.openSpecificationsPopup();
-      }
-    },
     {
-      label: 'Add from Findings',
+      label: 'Standard Jobs',
       command: () => {
-        this.openSpecificationsPopup();
-      }
-    },*/
-    {
-      label: 'Add from Standard Jobs',
-      command: () => {
-        this.openSpecificationsPopup();
+        this.openCreateFromStandardJobPopup();
       }
     },
     {
@@ -243,6 +232,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
             Key1: projectDetails.TaskManagerUid
           };
 
+          this.vesselType = data?.VesselType;
+
           this.titleService.setTitle(`${projectDetails.ProjectTypeName} ${projectDetails.ProjectCode}`);
           return this.taskManagerService.getWorkflow(projectDetails.TaskManagerUid, projectDetails.ProjectTypeCode);
         }),
@@ -306,5 +297,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   private openSpecificationsPopup() {
     this.specificationsComponent?.openPopup();
+  }
+
+  private openCreateFromStandardJobPopup() {
+    this.specificationsComponent?.addFromStandardJob();
   }
 }
