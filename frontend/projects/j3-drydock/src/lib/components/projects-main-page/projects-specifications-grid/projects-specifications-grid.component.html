@@ -73,3 +73,16 @@
     ></jb-dialog-footer>
   </ng-container>
 </jb-dialog>
+
+<ng-template
+  #statusTemplate
+  let-rowData
+>
+  <span
+    class="status-field"
+    [ngClass]="statusCSS?.statusBackground[rowData.ProjectStatusId?.toUpperCase()]"
+  >
+    <i [ngClass]="statusCSS?.statusIcon[rowData.ProjectStatusId?.toUpperCase()]"></i>
+    {{ rowData.ProjectStatusName }}
+  </span>
+</ng-template>

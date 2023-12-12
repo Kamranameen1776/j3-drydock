@@ -147,8 +147,8 @@ export class ProjectDetailsService {
           isRequired: false,
           isEditable: this.accessRights.edit && false,
           type: 'dropdown',
-          getFieldName: 'ShipYard',
-          saveFieldName: 'ShipYardTemp',
+          getFieldName: 'ShipYardId',
+          saveFieldName: 'ShipYardId',
           controlContent: {
             id: 'ShipYard',
             value: 'ShipYardId',
