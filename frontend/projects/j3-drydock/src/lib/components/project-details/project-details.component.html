@@ -7,7 +7,7 @@
   [functionCode]="functionCode"
   [hideAuditTrail]="true"
   [hideAttachments]="true"
-  [showExport]="false"
+  [showExport]="true"
   [isViewRight]="canView"
   (onWorkflowActions)="onWorkflowAction($event)"
   [templateRefObj]="{
@@ -22,7 +22,6 @@
     job_orders: job_orders
   }"
   [sectionHeaderTemplateRef]="{ technical_specification: specificationsButtonsTmpl }"
-  [ignoreAccessRights]="true"
   [slideMenus]="menu"
 >
   <ng-template
@@ -57,7 +56,6 @@
           <jb-attachments
             *ngIf="attachmentConfig"
             #attachmentsComponent
-            awidget-content
             class="attachments"
             [attachConfig]="attachmentConfig"
             [onUploadBtn]="false"
@@ -89,12 +87,15 @@
     let-section
   >
     <ng-container [ngSwitch]="section.SectionCode">
-      <div #statement_of_facts>
-        <jb-statement-of-facts [projectId]="projectUid"></jb-statement-of-facts>
+      <div *ngSwitchCase="eSideMenuId.StatementOfFacts">
+        <div #statement_of_facts>
+          <jb-statement-of-facts [projectId]="projectUid"></jb-statement-of-facts>
+        </div>
       </div>
-
-      <div #job_orders>
-        <jb-job-orders [projectId]="projectUid"></jb-job-orders>
+      <div *ngSwitchCase="eSideMenuId.JobOrders">
+        <div #job_orders>
+          <jb-job-orders [projectId]="projectUid"></jb-job-orders>
+        </div>
       </div>
     </ng-container>
   </ng-template>
