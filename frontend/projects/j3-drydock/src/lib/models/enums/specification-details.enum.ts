@@ -6,7 +6,8 @@ export enum eSpecificationDetailsPageMenuIds {
   Requisition = 'requisition',
   Source = 'source',
   SpecificationAttachments = 'specificationAttachments',
-  Attachments = 'attachments',
+  AttachmentsTab = 'attachmentsTab',
+  Attachments = 'attachmentsSection',
   AuditTrail = 'auditTrail'
 }
 
@@ -43,3 +44,14 @@ export const specificationDetailsMenuData = [
   { label: eSpecificationDetailsPageMenuLabels.Attachments, id: eSpecificationDetailsPageMenuIds.Attachments, icon: 'icons8-attach' },
   { label: eSpecificationDetailsPageMenuLabels.AuditTrail, id: eSpecificationDetailsPageMenuIds.AuditTrail, icon: 'icons8-order-history-3' }
 ];
+
+export enum eSpecificationWorkflowStatusAction {
+  Raise = 'RAISE',
+  'In Progress' = 'IN PROGRESS',
+  Complete = 'COMPLETE',
+  Verify = 'VERIFY',
+  Review = 'REVIEW',
+  Approve = 'APPROVE',
+  Close = 'CLOSE',
+  Unclose = 'UNCLOSE'
+}

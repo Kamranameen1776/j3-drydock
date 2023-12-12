@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { GetSpecificationDetailsDto } from '../../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { SpecificationDetailsHeaderInputs, SpecificationDetailsHeaderInputservice } from './specification-details-header-inputs';
 import { takeUntil } from 'rxjs/operators';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
+import { SpecificationDetails } from '../../../models/interfaces/specification-details';
 
 @Component({
   selector: 'jb-specification-details-header',
@@ -11,7 +11,7 @@ import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
   providers: [SpecificationDetailsHeaderInputservice]
 })
 export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent implements OnInit {
-  @Input() specificationDetailsInfo: GetSpecificationDetailsDto;
+  @Input() specificationDetailsInfo: SpecificationDetails;
   @Output() saveButtonClick = new EventEmitter<void>();
 
   saveButtonDisabled = true;
@@ -32,7 +32,7 @@ export class SpecificationDetailsHeaderComponent extends UnsubscribeComponent im
         data.topFieldsConfig.vesselName = this.specificationDetailsInfo.VesselName;
         data.topFieldsConfig.jobTitle = this.specificationDetailsInfo.Subject;
         data.topFieldsConfig.jobCardNo = this.specificationDetailsInfo.SpecificationCode;
-        data.topFieldsConfig.jobStatusDisplayName = this.specificationDetailsInfo.Status;
+        data.topFieldsConfig.jobStatusDisplayName = this.specificationDetailsInfo.StatusName;
         data.detailedData.assigneeUid = this.specificationDetailsInfo.ProjectManagerUid;
         this.topDetailsData = data;
       });

@@ -1,63 +1,70 @@
-<jb-details-layout-figma>
-  <jb-specification-details-header
-    alayout-header
-    *ngIf="specificationDetailsInfo"
-    [specificationDetailsInfo]="specificationDetailsInfo"
-    (saveButtonClick)="save()"
-  ></jb-specification-details-header>
-
-  <ng-container alayout-content>
-    <ng-container [ngSwitch]="currentSectionId">
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.SpecificationDetails">
-        <div #specifications>
-          <div #generalInformation>
-            <jb-specification-general-information
-              *ngIf="specificationDetailsInfo"
-              [specificationDetailsInfo]="specificationDetailsInfo"
-            ></jb-specification-general-information>
-          </div>
-          <div #subItems>
-            <jb-specification-sub-items
-              *ngIf="specificationDetailsInfo"
-              [specificationDetailsInfo]="specificationDetailsInfo"
-            ></jb-specification-sub-items>
-          </div>
-          <div #requisition>
-            <jb-specification-requisitions [specificationUid]="specificationUid"></jb-specification-requisitions>
-          </div>
+<jb-task-manager-details
+  *ngIf="sectionsConfig"
+  [topSectionConfig]="topSectionConfig"
+  [sectionsConfig]="sectionsConfig"
+  [tmDetails]="tmDetails"
+  [moduleCode]="moduleCode"
+  [functionCode]="functionCode"
+  [hideAuditTrail]="true"
+  [hideAttachments]="true"
+  [showExport]="false"
+  [isViewRight]="canView"
+  (onWorkflowActions)="onWorkflowAction($event)"
+  [templateRefObj]="{
+    specificationDetails: specificationsDetailsTab,
+    attachmentsTab: attachmentsTab,
+    generalInformation: generalInformation,
+    subItems: subItems,
+    attachments1: attachments1
+  }"
+  [ignoreAccessRights]="true"
+  [slideMenus]="menu"
+>
+  <ng-template
+    #specificationsDetailsTab
+    let-section
+  >
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div *ngSwitchCase="eSideMenuId.GeneralInformation">
+        <div #generalInformation>
+          <jb-specification-general-information
+            #SpecificationGeneralInformationComponent
+            *ngIf="specificationDetailsInfo"
+            [specificationDetailsInfo]="specificationDetailsInfo"
+            (formData)="validateDetail($event)"
+          ></jb-specification-general-information>
         </div>
-      </ng-container>
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.Attachments">
-        <jb-layout-widget
-          *ngIf="currentSectionId === eProjectDetailsSideMenuId.Attachments && attachmentConfig"
-          #attachment
-          id="attachments-section"
-          titleText="Attachments"
-          titleIconClass="icons8-resume-template"
-        >
+      </div>
+      <div *ngSwitchCase="eSideMenuId.SubItems">
+        <div #subItems>
+          <jb-specification-sub-items
+            #SpecificationSubItemsComponent
+            *ngIf="specificationDetailsInfo"
+            [specificationDetailsInfo]="specificationDetailsInfo"
+          ></jb-specification-sub-items>
+        </div>
+      </div>
+    </ng-container>
+  </ng-template>
+
+  <ng-template
+    #attachmentsTab
+    let-section
+  >
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div *ngSwitchCase="'attachments1'">
+        <div #attachments1>
           <jb-attachments
+            *ngIf="attachmentConfig"
+            #attachmentsComponent
             awidget-content
-            #attachments
+            class="attachments"
             [attachConfig]="attachmentConfig"
+            [onUploadBtn]="false"
             [defaultActions]="true"
           ></jb-attachments>
-          <div awidget-header-buttons>
-            <jb-button
-              type="NoButton"
-              (click)="attachments.dialogOnDemand()"
-              label="Attach file"
-              [disabled]="false"
-            ></jb-button>
-          </div>
-        </jb-layout-widget>
-      </ng-container>
+        </div>
+      </div>
     </ng-container>
-  </ng-container>
-  <ng-container
-    style="width: 400px"
-    alayout-aside
-  >
-    <jb-discussion-feed></jb-discussion-feed>
-  </ng-container>
-</jb-details-layout-figma>
-<jb-growl [content]="growlMessage$ | async"></jb-growl>
+  </ng-template>
+</jb-task-manager-details>

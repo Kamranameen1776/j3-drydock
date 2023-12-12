@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { GetSpecificationDetailsDto } from '../../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { SpecificationDetailsSubItemsGridService } from '../../../services/specification-details/specification-details-sub-item.service';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { eGridRefreshType, eGridRowActions, GridService } from 'jibe-components';
 import { GridAction } from 'jibe-components/lib/grid/models/grid-action.model';
 import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
+import { SpecificationDetails } from '../../../models/interfaces/specification-details';
 
 @Component({
   selector: 'jb-specification-sub-items',
@@ -12,7 +12,7 @@ import { SpecificationSubItem } from '../../../models/interfaces/specification-s
   styleUrls: ['./specification-sub-items.component.scss']
 })
 export class SpecificationSubItemsComponent implements OnInit {
-  @Input() specificationDetailsInfo: GetSpecificationDetailsDto;
+  @Input() specificationDetailsInfo: SpecificationDetails;
   gridData: GridInputsWithRequest;
 
   selectedSubItem: SpecificationSubItem;
