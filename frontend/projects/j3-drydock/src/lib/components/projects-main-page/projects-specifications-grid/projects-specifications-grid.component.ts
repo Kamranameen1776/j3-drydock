@@ -1,11 +1,10 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ProjectsSpecificationGridService } from './ProjectsSpecificationGridService';
 import { eGridRowActions, FormModel, GridAction, GridComponent, IJbDialog } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ProjectsService } from '../../../services/ProjectsService';
-import { DeleteProjectDto, ProjectCreate } from '../../../models/interfaces/projects';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { getSmallPopup } from '../../../models/constants/popup';
@@ -19,6 +18,9 @@ import moment from 'moment';
 import { IProjectStatusDto } from '../../../services/dtos/IProjectStatusDto';
 import { eProjectsAccessActions } from '../../../models/enums/access-actions.enum';
 import { eFunction } from '../../../models/enums/function.enum';
+import { statusBackground, statusIcon } from '../../../shared/statuses';
+import { nameOf } from '../../../utils/nameOf';
+import { ProjectCreate } from '../../../models/interfaces/projects';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -29,6 +31,8 @@ import { eFunction } from '../../../models/enums/function.enum';
 export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
   @ViewChild('projectsGrid')
   projectsGrid: GridComponent;
+
+  @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
 
   private readonly allProjectsProjectTypeId = 'all_projects';
 
@@ -75,6 +79,8 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   leftPanelProjectGroupStatusFilter: IProjectGroupStatusDto;
 
   leftPanelVesselsFilter: number[];
+
+  statusCSS = { statusBackground, statusIcon };
 
   constructor(
     private router: Router,
@@ -200,11 +206,8 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   public deleteProject() {
     this.deleteProjectButtonDisabled$.next(true);
-    const data: DeleteProjectDto = {
-      ProjectId: this.deleteProjectFormGroup.value.Project.ProjectId
-    };
 
-    this.projectsService.deleteProject(data).subscribe(() => {
+    this.projectsService.deleteProject(this.deleteProjectFormGroup.value.Project.ProjectId).subscribe(() => {
       this.deleteProjectButtonDisabled$.next(false);
       this.showDeleteDialog(false);
       this.projectsGrid.fetchMatrixData();
@@ -229,6 +232,10 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   private setGridInputs() {
     this.gridInputs = this.projectsGridService.getGridInputs();
     this.gridInputs.gridButton.show = this.canCreateProject;
+    const statusCol = this.gridInputs.columns.find(
+      (col) => col.FieldName === nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectStatusName)
+    );
+    statusCol.cellTemplate = this.statusTemplate;
     this.setGridActions();
   }
 

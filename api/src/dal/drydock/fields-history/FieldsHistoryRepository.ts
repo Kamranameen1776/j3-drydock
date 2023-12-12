@@ -6,6 +6,7 @@ export type CreateFieldsHistoryDto = {
     key1: string;
     key2: string;
     key3: string;
+    uid: string;
     moduleCode: string;
     functionCode: string;
     isCurrent: boolean;

@@ -62,6 +62,7 @@ export class SpecificationGridService {
     return apiRequest;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public createSpecification(formValue: any) {
     const action = 'specification-details/create-specification-details';
     const apiReq: WebApiRequest = {
@@ -71,8 +72,6 @@ export class SpecificationGridService {
       action: action,
       body: {
         ...formValue,
-        // HardCoded for future
-        ItemSourceUid: '3EEF2E1B-2533-45C7-82C7-C13D6AA79559',
         FunctionUid: formValue.FunctionUid.Child_ID || '',
         Function: formValue.FunctionUid.jb_value_label || '',
         Inspections: formValue.Inspections || []
@@ -90,6 +89,17 @@ export class SpecificationGridService {
       filters: this.filters,
       filtersLists: this.filtersLists
     };
+  }
+
+  deleteSpecification(data: { uid: string }) {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      action: 'specification-details/delete-specification-details',
+      crud: eCrud.Put,
+      body: data
+    };
+    return this.apiRequestService.sendApiReq(request);
   }
 
   public readonly gridName: string = 'specificationGrid';
@@ -119,6 +129,15 @@ export class SpecificationGridService {
       DisableSort: true,
       DisplayText: 'Subject',
       FieldName: 'subject',
+      IsActive: true,
+      IsMandatory: true,
+      IsVisible: true,
+      ReadOnly: true
+    },
+    {
+      DisableSort: true,
+      DisplayText: 'Item Source',
+      FieldName: 'item_source',
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -219,8 +238,17 @@ export class SpecificationGridService {
       Active_Status: true,
       Active_Status_Config_Filter: true,
       DisplayCode: 'displayName',
-      FieldID: 5,
+      FieldID: 4,
       default: false
+    },
+    {
+      DisplayText: 'Item Source',
+      FieldName: 'item_source',
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      DisplayCode: 'DisplayName',
+      FieldID: 5,
+      default: true
     }
   ];
 
@@ -282,6 +310,12 @@ export class SpecificationGridService {
       odadaKey: 'due_date',
       alterKey: 'due_date',
       dateMethod: 'ge'
+    },
+    item_source: {
+      type: eFieldControlType.Dropdown,
+      webApiRequest: this.getItemSources(),
+      odataKey: 'item_source_uid',
+      listValueKey: 'uid'
     }
   };
 
@@ -289,4 +323,15 @@ export class SpecificationGridService {
     { name: eGridAction.Edit, icon: 'icons8-edit' },
     { name: eGridAction.Delete, icon: 'icons8-delete' }
   ];
+
+  public getItemSources() {
+    const apiRequest: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      action: 'dictionaries/item-source',
+      crud: eCrud.Get,
+      entity: 'drydock'
+    };
+
+    return apiRequest;
+  }
 }

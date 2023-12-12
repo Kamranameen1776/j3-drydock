@@ -1,5 +1,4 @@
-import { eFunction } from '../enums/function.enum';
-import { eModule } from '../enums/module.enum';
+import { ITMDetails } from 'j3-task-manager-ng';
 import { eRfqFields } from '../enums/rfq.enum';
 
 export interface YardLink {
@@ -33,6 +32,7 @@ export interface ProjectDetails {
   ProjectState: string;
   VesselName: string;
   VesselUid: string;
+  VesselType: number;
   Subject: string;
   StartDate: string;
   EndDate: string;
@@ -41,11 +41,4 @@ export interface ProjectDetails {
   VesselId: number;
 }
 
-export interface ProjectTopHeaderDetails extends ProjectDetails {
-  taskManager: { status: { code: string } };
-  officeId: number;
-  vessel: { uid: string };
-  _id: string;
-  functionCode: eFunction;
-  moduleCode: eModule;
-}
+export interface ProjectDetailsFull extends ProjectDetails, ITMDetails {}

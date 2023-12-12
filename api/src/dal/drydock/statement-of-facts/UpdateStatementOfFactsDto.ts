@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsOptional, IsUUID, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateStatementOfFactsDto {
     @IsNotEmpty()

@@ -6,6 +6,7 @@ import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'type
 
 import { UpdateProjectDto } from '../../../application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
+import { SpecificationDetailsEntity, YardsEntity, YardsProjectsEntity } from '../../../entity/drydock';
 import { JmsDtlWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
 import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
@@ -16,6 +17,7 @@ import { GroupProjectStatusEntity } from '../../../entity/drydock/GroupProjectSt
 import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
 import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
 import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
+import { TaskManagerConstants } from '../../../shared/constants';
 import { ODataResult } from '../../../shared/interfaces/odata-result.interface';
 import { ICreateNewProjectDto } from './dtos/ICreateNewProjectDto';
 import { IGroupProjectStatusByProjectTypeDto } from './dtos/IGroupProjectStatusByProjectTypeDto';
@@ -133,8 +135,24 @@ export class ProjectsRepository {
         return result;
     }
 
+    private getSpecificationCountQuery(qb: SelectQueryBuilder<SpecificationDetailsEntity>, uid?: string) {
+        let query = qb
+            .select(['sd.uid as uid', 'stm.Status as status', 'project_uid as ProjectUid'])
+            .from(className(SpecificationDetailsEntity), 'sd')
+            .innerJoin(className(TecTaskManagerEntity), 'stm', `stm.uid = sd.tec_task_manager_uid`);
+
+        if (uid) {
+            query = query.where('sd.project_uid = :uid AND sd.active_status = 1', { uid });
+        } else {
+            query = query.where('sd.active_status = 1');
+        }
+
+        return query;
+    }
+
     private GetQueryForProjects(uid?: string): SelectQueryBuilder<ProjectEntity> {
         const projectRepository = getManager().getRepository(ProjectEntity);
+
         let query = projectRepository
             .createQueryBuilder('pr')
             .select([
@@ -160,7 +178,13 @@ export class ProjectsRepository {
                 'pr.VesselUid as VesselUid',
                 'vessel.FleetCode as FleetCode',
                 'pr.TaskManagerUid as TaskManagerUid',
+                'yd.yard_name as ShipYard',
+                'yd.uid as ShipYardUid',
+                `CONCAT(COUNT(sc.uid) - COUNT(CASE WHEN sc.status = '${TaskManagerConstants.specification.status.Completed}' THEN 1 END), '/', COUNT(sc.uid)) AS Specification`,
             ])
+            .leftJoin((qb) => this.getSpecificationCountQuery(qb, uid), 'sc', 'sc.projectUid = pr.uid')
+            .leftJoin(className(YardsProjectsEntity), 'ydp', 'ydp.project_uid = pr.uid')
+            .leftJoin(className(YardsEntity), 'yd', 'yd.uid = ydp.yard_uid')
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
             .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = pr.ProjectTypeUid')
@@ -181,6 +205,33 @@ export class ProjectsRepository {
                     `,
             )
             .where('pr.ActiveStatus = 1')
+            .groupBy(
+                [
+                    '"pr"."uid"',
+                    'pr.created_at_office',
+                    'tm.job_card_no',
+                    'tm.task_status',
+                    'wdetails.status_display_name',
+                    'vessel.vessel_name',
+                    'wt.worklist_type_display',
+                    'wt.worklist_type',
+                    'ps.project_state_name',
+                    'pr.subject',
+                    `usr.first_name + ' ' + usr.last_name`,
+                    '"usr"."uid"',
+                    'cast(pr.start_date as datetimeoffset)',
+                    'cast(pr.end_date as datetimeoffset)',
+                    'gps.group_status_id',
+                    'vessel.vessel_id',
+                    'pr.vessel_uid',
+                    'vessel.FleetCode',
+                    'vessel.Vessel_type',
+                    'pr.task_manager_uid',
+                    'yd.yard_name',
+                    '"yd"."uid"',
+                    'sc.projectUid',
+                ].join(','),
+            )
             .distinct(true)
             .distinctOn(['pr.uid']);
 

@@ -6,6 +6,7 @@ import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import { BehaviorSubject } from 'rxjs';
 import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-main.enum';
+import { SpecificationGridService } from '../../../services/project/specification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -62,8 +63,8 @@ export class SpecificationCreateFormService extends FormServiceBase {
             sectionID: this.formId,
             enabled: true,
             validatorRequired: false,
-            gridRowStart: 3,
-            gridRowEnd: 4,
+            gridRowStart: 4,
+            gridRowEnd: 5,
             gridColStart: 1,
             gridColEnd: 1,
             listRequest: {
@@ -78,14 +79,30 @@ export class SpecificationCreateFormService extends FormServiceBase {
             sectionID: this.formId,
             enabled: true,
             validatorRequired: false,
-            gridRowStart: 4,
-            gridRowEnd: 5,
+            gridRowStart: 5,
+            gridRowEnd: 6,
             gridColStart: 1,
             gridColEnd: 1,
             listRequest: {
               labelKey: 'displayName',
               valueKey: 'uid',
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.DoneBy)
+            }
+          },
+          ItemSourceUid: {
+            type: eFieldControlType.Dropdown,
+            label: 'Item Source',
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 3,
+            gridRowEnd: 4,
+            gridColStart: 1,
+            gridColEnd: 1,
+            listRequest: {
+              labelKey: 'DisplayName',
+              valueKey: 'uid',
+              webApiRequest: this.specifications.getItemSources()
             }
           },
           Description: {
@@ -96,7 +113,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
             validatorRequired: true,
             maxTextLength: 1000,
             gridRowStart: 1,
-            gridRowEnd: 5,
+            gridRowEnd: 6,
             gridColStart: 2,
             gridColEnd: 12
           }
@@ -119,7 +136,10 @@ export class SpecificationCreateFormService extends FormServiceBase {
     }
   };
 
-  constructor(private standardJobsService: StandardJobsService) {
+  constructor(
+    private standardJobsService: StandardJobsService,
+    private specifications: SpecificationGridService
+  ) {
     super();
   }
 }

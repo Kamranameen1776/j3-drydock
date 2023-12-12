@@ -8,7 +8,8 @@
     "build:watch": "ng build --project j3-drydock --watch",
     "prettier": "prettier --write projects/j3-drydock/src/lib/**/*.{js,ts,json,html,css,scss}",
     "test": "[ \"$TF_BUILD\" != \"True\" ] && ng test || echo \"Tests are not ready for running in CI, skipping\"",
-    "lint": "eslint .",
+    "lint": "eslint ./projects",
+    "lint:fix": "eslint . --fix",
     "e2e": "ng e2e"
   },
   "lint-staged": {
@@ -58,7 +59,7 @@
     "font-awesome": "^4.7.0",
     "fullcalendar": "^4.0.0-alpha.4",
     "html2pdf.js": "^0.9.2",
-    "jibe-components": "3.2308.333-4",
+    "jibe-components": "3.234.232-2",
     "jquery": "^3.3.1",
     "js2xmlparser": "^3.0.0",
     "json-to-table": "^4.0.0",
@@ -77,7 +78,8 @@
     "rxjs": "~6.5.4",
     "sortablejs": "^1.15.0",
     "tslib": "^1.10.0",
-    "zone.js": "~0.9.1"
+    "zone.js": "~0.9.1",
+    "j3-task-manager-ng": "3.234.232-2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.901.12",
@@ -89,9 +91,9 @@
     "@angular-eslint/template-parser": "14.4.0",
     "@angular/cli": "~9.1.15",
     "@angular/compiler-cli": "~9.1.13",
-    "@types/node": "^14.14.14",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
+    "@types/node": "^14.14.14",
     "@typescript-eslint/eslint-plugin": "5.43.0",
     "@typescript-eslint/parser": "5.43.0",
     "codelyzer": "^5.1.2",
@@ -101,6 +103,7 @@
     "eslint-plugin-jsdoc": "30.7.6",
     "eslint-plugin-prefer-arrow": "1.2.2",
     "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-rxjs": "^5.0.3",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~1.7.1",

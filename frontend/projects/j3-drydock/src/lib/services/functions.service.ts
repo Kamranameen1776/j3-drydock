@@ -2,12 +2,13 @@ import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities } from 'ji
 import { map } from 'rxjs/operators';
 import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../models/interfaces/functions-tree-node';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class FunctionsService {
   constructor(private apiRequestService: ApiRequestService) {}
 
-  getFunctions() {
+  getFunctions(parentNodeUid?: string): Observable<FunctionsFlatTreeNode[]> {
     const apiRequest: WebApiRequest = {
       apiBase: eApiBase.TechnicalAPI,
       entity: eEntities.PMS,
@@ -24,7 +25,7 @@ export class FunctionsService {
         if (!res.records) {
           return [];
         }
-        return res.records.map((record) => this.createFlatNode(record));
+        return res.records.map((record) => this.createFlatNode(record, parentNodeUid));
       })
     );
   }
@@ -36,10 +37,13 @@ export class FunctionsService {
     };
   }
 
-  private createFlatNode(comp: ShellFunctionTreeResponseNode): FunctionsFlatTreeNode {
+  public createFlatNode(
+    comp: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name'>,
+    parentNodeUid = '0'
+  ): FunctionsFlatTreeNode {
     return {
       Child_ID: comp.uid,
-      Parent_ID: comp.parent_function_uid || 0,
+      Parent_ID: comp.parent_function_uid || parentNodeUid,
       DisplayText: comp.name,
       selectable: false,
       tag: 'function',
