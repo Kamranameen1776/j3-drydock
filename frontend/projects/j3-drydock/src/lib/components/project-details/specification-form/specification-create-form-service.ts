@@ -100,7 +100,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
             gridColStart: 1,
             gridColEnd: 1,
             listRequest: {
-              labelKey: 'displayName',
+              labelKey: 'DisplayName',
               valueKey: 'uid',
               webApiRequest: this.specifications.getItemSources()
             }

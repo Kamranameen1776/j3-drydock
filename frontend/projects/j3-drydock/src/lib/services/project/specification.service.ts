@@ -246,7 +246,7 @@ export class SpecificationGridService {
       FieldName: 'item_source',
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      DisplayCode: 'displayName',
+      DisplayCode: 'DisplayName',
       FieldID: 5,
       default: true
     }
