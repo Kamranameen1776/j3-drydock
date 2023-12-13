@@ -3,6 +3,8 @@ import { ApiRequestService, WebApiRequest, eCrud } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { IUpdateJobOrderDto } from './IUpdateJobOrderDto';
 import { KeyValuePair } from '../../../utils/KeyValuePair';
+import { GetJobOrderBySpecificationDto } from './GetJobOrderBySpecificationDto';
+import { JobOrderDto } from './JobOrderDto';
 @Injectable({
   providedIn: 'root'
 })
@@ -22,6 +24,26 @@ export class JobOrdersService {
     };
 
     return request;
+  }
+
+  getJobOrderBySpecificationRequest(getJobOrderBySpecificationDto: GetJobOrderBySpecificationDto): WebApiRequest {
+    const request: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      // entity: eEntities.DryDock,
+      // action: eAction.GetSpecificationDetails,
+      apiBase: 'dryDockAPI',
+      action: 'projects/job-orders/get-job-order-by-specification',
+      crud: eCrud.Post,
+      entity: 'drydock',
+      body: getJobOrderBySpecificationDto
+    };
+
+    return request;
+  }
+
+  getJobOrderBySpecification(getJobOrderBySpecificationDto: GetJobOrderBySpecificationDto): Observable<JobOrderDto> {
+    return this.apiRequestService.sendApiReq(this.getJobOrderBySpecificationRequest(getJobOrderBySpecificationDto));
   }
 
   getJobOrderStatusesRequest(): WebApiRequest {

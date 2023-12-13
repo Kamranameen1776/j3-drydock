@@ -78,6 +78,7 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
             jobOrder.Progress = request.Progress;
             jobOrder.Status = request.Status;
             jobOrder.Subject = request.Subject;
+            jobOrder.Remarks = request.Remarks;
 
             await this.jobOrderRepository.UpdateJobOrder(jobOrder, queryRunner);
         });

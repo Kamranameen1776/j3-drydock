@@ -94,7 +94,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
         throw new Error('jobOrderDto is null');
       }
 
-      this.showUpdateDialog();
+      this.updateDialogReset();
 
       const controls = (this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup).controls;
 
@@ -114,21 +114,29 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
       controls.SpecificationEndDate.setValue(specificationEndDate);
       controls.Code.setValue(jobOrderDto.Code);
 
-
       this.remarksEditor.key1 = jobOrderDto.SpecificationUid;
       this.remarksEditor.vesselId = this.userService.getUserDetails().VesselId;
-      // TODO: set correct value
-      const remarks =
-        '<p>fd<img src="blob:http://localhost:4301/fa34deb6-efed-459b-97b9-367c1c09cbc8" class="e-rte-image e-imginline" alt="Untitled.png" width="auto" height="auto" style="min-width: 0px; max-width: 670px; min-height: 0px;"> </p>';
-      this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(remarks);
-      controls.Remarks.setValue(remarks);
-      debugger;
+
+      this.jobOrdersService
+        .getJobOrderBySpecification({
+          SpecificationUid: jobOrderDto.SpecificationUid
+        })
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe((jobOrder) => {
+          this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(jobOrder.Remarks);
+          controls.Remarks.setValue(jobOrder.Remarks);
+
+          this.showUpdateDialog(true);
+        });
     }
   }
 
-  public showUpdateDialog(value = true) {
+  public updateDialogReset() {
     this.updateJobOrderFormGroup.reset();
     this.remarksEditorFormGroup.reset();
+  }
+
+  public showUpdateDialog(value = true) {
     this.updateDialogVisible = value;
   }
 
