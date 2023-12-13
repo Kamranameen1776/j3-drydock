@@ -11,7 +11,7 @@ export class GridCellPopoverComponent {
   constructor(private element: ElementRef) {}
 
   getTooltipValue(aValueEl: HTMLElement) {
-    const isOverflowing = aValueEl.offsetWidth + 12 > this.element.nativeElement.offsetWidth;
+    const isOverflowing = aValueEl.offsetWidth > this.element.nativeElement.offsetWidth;
     return isOverflowing ? this.value : '';
   }
 }
