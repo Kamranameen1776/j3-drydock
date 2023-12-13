@@ -123,8 +123,10 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
         })
         .pipe(takeUntil(this.unsubscribe$))
         .subscribe((jobOrder) => {
-          this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(jobOrder.Remarks);
-          controls.Remarks.setValue(jobOrder.Remarks);
+          if (jobOrder) {
+            this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(jobOrder.Remarks);
+            controls.Remarks.setValue(jobOrder.Remarks);
+          }
 
           this.showUpdateDialog(true);
         });
