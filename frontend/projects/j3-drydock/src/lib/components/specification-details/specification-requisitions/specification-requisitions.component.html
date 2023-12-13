@@ -1,33 +1,17 @@
-<div class="specification-requisitions">
-  <jb-layout-widget
-    titleText="Requisitions"
-    [size]="eLayoutWidgetSize.Auto"
-  >
-    <div
-      class="buttons"
-      awidget-header-buttons
-    >
-      <jb-button
-        label="Link Requisitions"
-        [type]="JbButtonType.NoButton"
-      ></jb-button>
-    </div>
-    <div
-      awidget-content
-      class="grid"
-    >
-      <jb-grid
-        *ngIf="gridData"
-        [gridName]="gridData.gridName"
-        [colData]="gridData.columns"
-        [tableDataReq]="gridData.request"
-        [setActions]="gridData.actions"
-        [searchFields]="gridData.searchFields"
-        [getStyleByContainer]="true"
-        [isDisplayAdvancedSettings]="false"
-        [isDisplayAdvancedFilter]="false"
-        (action)="onGridAction($any($event))"
-      ></jb-grid>
-    </div>
-  </jb-layout-widget>
+<div
+  awidget-content
+  class="grid"
+>
+  <jb-grid
+    *ngIf="gridData"
+    [gridName]="gridData.gridName"
+    [colData]="gridData.columns"
+    [tableDataReq]="gridData.request"
+    [setActions]="gridData.actions"
+    [searchFields]="gridData.searchFields"
+    [getStyleByContainer]="true"
+    [isDisplayAdvancedSettings]="false"
+    [isDisplayAdvancedFilter]="false"
+    (action)="onGridAction($any($event))"
+  ></jb-grid>
 </div>

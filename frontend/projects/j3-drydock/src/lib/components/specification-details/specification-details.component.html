@@ -6,16 +6,15 @@
   [moduleCode]="moduleCode"
   [functionCode]="functionCode"
   [hideAuditTrail]="true"
-  [hideAttachments]="true"
+  [hideAttachments]="false"
   [showExport]="false"
   [isViewRight]="canView"
   (onWorkflowActions)="onWorkflowAction($event)"
   [templateRefObj]="{
     specificationDetails: specificationsDetailsTab,
-    attachmentsTab: attachmentsTab,
     generalInformation: generalInformation,
     subItems: subItems,
-    attachments1: attachments1
+    requisitions: requisitions
   }"
   [ignoreAccessRights]="true"
   [slideMenus]="menu"
@@ -31,7 +30,7 @@
             #SpecificationGeneralInformationComponent
             *ngIf="specificationDetailsInfo"
             [specificationDetailsInfo]="specificationDetailsInfo"
-            (formData)="validateDetail($event)"
+            (formValue)="validateDetail($event)"
           ></jb-specification-general-information>
         </div>
       </div>
@@ -44,27 +43,20 @@
           ></jb-specification-sub-items>
         </div>
       </div>
-    </ng-container>
-  </ng-template>
-
-  <ng-template
-    #attachmentsTab
-    let-section
-  >
-    <ng-container [ngSwitch]="section.SectionCode">
-      <div *ngSwitchCase="'attachments1'">
-        <div #attachments1>
-          <jb-attachments
-            *ngIf="attachmentConfig"
-            #attachmentsComponent
-            awidget-content
-            class="attachments"
-            [attachConfig]="attachmentConfig"
-            [onUploadBtn]="false"
-            [defaultActions]="true"
-          ></jb-attachments>
+      <div *ngSwitchCase="eSideMenuId.Requisitions">
+        <div #requisitions>
+          <jb-specification-requisitions
+            #SpecificationRequisitionsComponent
+            [specificationUid]="specificationUid"
+          ></jb-specification-requisitions>
         </div>
       </div>
     </ng-container>
   </ng-template>
 </jb-task-manager-details>
+
+<jb-progress-spinner
+  class="specifications-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>

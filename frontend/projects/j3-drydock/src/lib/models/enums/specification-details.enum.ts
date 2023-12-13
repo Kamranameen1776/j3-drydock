@@ -3,11 +3,10 @@ export enum eSpecificationDetailsPageMenuIds {
   GeneralInformation = 'generalInformation',
   SubItems = 'subItems',
   PMSJobs = 'pmsJobs',
-  Requisition = 'requisition',
+  Requisitions = 'requisitions',
   Source = 'source',
   SpecificationAttachments = 'specificationAttachments',
-  AttachmentsTab = 'attachmentsTab',
-  Attachments = 'attachmentsSection',
+  Attachments = 'attachments',
   AuditTrail = 'auditTrail'
 }
 
@@ -16,7 +15,7 @@ export enum eSpecificationDetailsPageMenuLabels {
   GeneralInformation = 'General Information',
   SubItems = 'Sub Items',
   PMSJobs = 'PMS Jobs',
-  Requisition = 'Requisition',
+  Requisitions = 'Requisitions',
   Source = 'Source',
   SpecificationAttachments = 'Attachments',
   Attachments = 'Attachments',
@@ -33,7 +32,7 @@ export const specificationDetailsMenuData = [
       { label: eSpecificationDetailsPageMenuLabels.GeneralInformation, id: eSpecificationDetailsPageMenuIds.GeneralInformation },
       { label: eSpecificationDetailsPageMenuLabels.SubItems, id: eSpecificationDetailsPageMenuIds.SubItems },
       { label: eSpecificationDetailsPageMenuLabels.PMSJobs, id: eSpecificationDetailsPageMenuIds.PMSJobs },
-      { label: eSpecificationDetailsPageMenuLabels.Requisition, id: eSpecificationDetailsPageMenuIds.Requisition },
+      { label: eSpecificationDetailsPageMenuLabels.Requisitions, id: eSpecificationDetailsPageMenuIds.Requisitions },
       { label: eSpecificationDetailsPageMenuLabels.Source, id: eSpecificationDetailsPageMenuIds.Source },
       {
         label: eSpecificationDetailsPageMenuLabels.SpecificationAttachments,

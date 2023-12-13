@@ -10,14 +10,14 @@ import { eSpecificationDetailsPageMenuIds, specificationDetailsMenuData } from '
 import {
   IJbAttachment,
   ITopSectionFieldSet,
-  JbAttachmentsComponent,
   JbDatePipe,
   JbDetailsTopSectionService,
   JbMenuService,
   UserService,
   eDateFormats,
   eJMSActionTypes,
-  eJMSSectionNames
+  eJMSSectionNames,
+  eMessagesSeverityValues
 } from 'jibe-components';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { concatMap, filter, map, takeUntil } from 'rxjs/operators';
@@ -37,44 +37,32 @@ import { FormGroup } from '@angular/forms';
   providers: [JbDatePipe, GrowlMessageService]
 })
 export class SpecificationDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
-  @ViewChild('attachmentsComponent') attachmentsComponent: JbAttachmentsComponent;
-
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationDetails) [eSpecificationDetailsPageMenuIds.SpecificationDetails]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.GeneralInformation) [eSpecificationDetailsPageMenuIds.GeneralInformation]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.SubItems) [eSpecificationDetailsPageMenuIds.SubItems]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.PMSJobs) [eSpecificationDetailsPageMenuIds.PMSJobs]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.Requisition) [eSpecificationDetailsPageMenuIds.Requisition]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.Requisitions) [eSpecificationDetailsPageMenuIds.Requisitions]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.Source) [eSpecificationDetailsPageMenuIds.Source]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationAttachments)
   [eSpecificationDetailsPageMenuIds.SpecificationAttachments]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.AttachmentsTab) [eSpecificationDetailsPageMenuIds.AttachmentsTab]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.Attachments) [eSpecificationDetailsPageMenuIds.Attachments]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.AuditTrail) [eSpecificationDetailsPageMenuIds.AuditTrail]: ElementRef;
-  @ViewChild('attachments1') attachments1: ElementRef;
 
-  private pageTitle = 'Specification Details';
   public specificationDetailsInfo: SpecificationDetails;
   public updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
   public specificationUid: string;
   public attachmentConfig: IJbAttachment;
+  public detailForm: FormGroup;
 
-  private readonly menuId = 'specification-details-menu';
-  currentSectionId = eSpecificationDetailsPageMenuIds.SpecificationDetails;
-  eProjectDetailsSideMenuId = eSpecificationDetailsPageMenuIds;
   growlMessage$ = this.growlMessageService.growlMessage$;
-
   moduleCode = eModule.Project;
   functionCode = eFunction.SpecificationDetails;
-
   tmDetails: SpecificationDetailsFull;
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
-
   accessRights: SpecificationDetailAccessRights;
-
-  public detailForm: FormGroup;
-  detailData: boolean;
   editingSection = '';
+  showLoader = false;
 
   readonly menu = specificationDetailsMenuData;
   readonly eSideMenuId = eSpecificationDetailsPageMenuIds;
@@ -97,7 +85,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private growlMessageService: GrowlMessageService,
-    private jbMenuService: JbMenuService,
     private jbTMDtlSrv: JbTaskManagerDetailsService,
     private jbTopSecSrv: JbDetailsTopSectionService,
     private taskManagerService: TaskManagerService
@@ -148,7 +135,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   }
 
   private getDetails(refresh = false) {
-    // let specificationDetailsInfo: SpecificationDetails;
+    this.showLoader = true;
 
     this.specificationDetailService
       .getSpecificationDetails(this.specificationUid)
@@ -157,8 +144,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
           this.specificationDetailsInfo = {
             ...data
           };
-
-          this.specificationDetailsInfo.TaskManagerUid = 'CC7FEF30-815B-4437-8353-2A2BC1E7DD13';
 
           this.attachmentConfig = {
             Module_Code: this.moduleCode,
@@ -185,6 +170,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
           this.jbTMDtlSrv.refreshTaskManager.next({ refresh: true, tmDetails: this.tmDetails, topSecConfig: this.topSectionConfig });
         }
       });
+
+    this.showLoader = false;
   }
 
   private sectionActions(res: { type?: string; secName?: string; event?: unknown; checkValidation?: boolean }) {
@@ -217,7 +204,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     // eslint-disable-next-line default-case
     switch (secName) {
       case eSpecificationDetailsPageMenuIds.Attachments: {
-        this.attachmentsComponent?.dialogOnDemand();
         break;
       }
       case eSpecificationDetailsPageMenuIds.AuditTrail: {
@@ -254,10 +240,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   validateDetail(form: FormGroup) {
     form.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      if (form.valid) {
-        this.detailData = true;
-        this.detailForm = form;
-      }
+      this.jbTMDtlSrv.isUnsavedChanges.next(true);
+      this.detailForm = form;
     });
   }
 
@@ -286,29 +270,47 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   public async save(event): Promise<void> {
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
-    // TODO add validations here if needed
+    if (this.detailForm.invalid) {
+      this.jbTMDtlSrv.showGrowlMassage.next({ severity: eJMSActionTypes.Error, detail: 'Please fill all the required fields' });
+      return;
+    }
     if (event.type === eJMSActionTypes.Error) {
       this.jbTMDtlSrv.showGrowlMassage.next({ severity: eJMSActionTypes.Error, detail: event.errorMsg });
+      return;
     }
-
+    this.showLoader = true;
+    const detailForm = this.detailForm.value.generalInformation;
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
 
     const data: UpdateSpecificationDetailsDto = {
       uid: this.specificationDetailsInfo.uid,
-      Subject: this.specificationDetailsInfo.Subject
+      Subject: event.payload.Job_Short_Description,
+      AccountCode: detailForm.accountCode,
+      Description: detailForm.description,
+      DoneByUid: detailForm.doneBy,
+      PriorityUid: detailForm.priorityUid,
+      Inspections: detailForm.inspectionId
     };
 
-    this.specificationDetailService.updateSpecification(data).subscribe(() => {
-      // TODO reset here forms, etc if needed
-      this.getDetails(true);
+    try {
+      this.specificationDetailService
+        .updateSpecification(data)
+        .toPromise()
+        .then(() => {
+          this.jbTMDtlSrv.showGrowlMassage.next({
+            severity: eMessagesSeverityValues.Success,
+            detail: 'Specification has been updated successfully'
+          });
+          this.jbTMDtlSrv.isUnsavedChanges.next(false);
+          this.getDetails(true);
+        });
+    } catch (err) {
       this.jbTMDtlSrv.isUnsavedChanges.next(false);
-    });
-
-    // try {
-    //   this.specificationDetailService.updateSpecification(data).toPromise();
-    //   this.growlMessageService.setSuccessMessage("Specification's information has been saved successfully.");
-    // } catch (err) {
-    //   this.growlMessageService.setErrorMessage(err.error);
-    // }
+      this.jbTMDtlSrv.showGrowlMassage.next({
+        severity: eMessagesSeverityValues.Error,
+        detail: err.error
+      });
+      this.showLoader = false;
+    }
   }
 }

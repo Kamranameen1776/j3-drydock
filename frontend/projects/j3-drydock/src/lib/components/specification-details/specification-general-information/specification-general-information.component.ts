@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { SpecificationGeneralInformationInputservice } from './specification-general-information-inputs';
 import { FormModel, FormValues } from 'jibe-components';
 import { SpecificationDetails } from '../../../models/interfaces/specification-details';
+import { Subject } from 'rxjs';
 @Component({
   selector: 'jb-specification-general-information',
   templateUrl: './specification-general-information.component.html',
@@ -11,10 +12,10 @@ import { SpecificationDetails } from '../../../models/interfaces/specification-d
 })
 export class SpecificationGeneralInformationComponent implements OnInit {
   @Input() specificationDetailsInfo: SpecificationDetails;
+  @Output() formValue = new Subject<FormGroup>();
 
   formStructure: FormModel;
   formValues: FormValues;
-  formGroup: FormGroup;
   verticalLabel = true;
 
   constructor(private specificationInformationInputService: SpecificationGeneralInformationInputservice) {}
@@ -26,6 +27,6 @@ export class SpecificationGeneralInformationComponent implements OnInit {
   }
 
   handleDispatchForm(event: FormGroup) {
-    this.formGroup = event;
+    this.formValue.next(event);
   }
 }

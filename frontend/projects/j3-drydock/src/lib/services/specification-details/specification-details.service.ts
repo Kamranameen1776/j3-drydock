@@ -56,11 +56,8 @@ export class SpecificationDetailsService {
     this.setAccessRights({ ...currentRights, ...rights });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setupAccessRights(tmDetails: SpecificationDetailsFull) {
-    // TODO maybe handle status if there is some logic for access rights depending on status?
     const isEditableStatus = this.isStatusBeforeComplete(tmDetails.task_status);
-    // TODO correct codes
     const canView = this.hasAccess('View');
     const canEdit = this.hasAccess('Edit');
     const canDelete = this.hasAccess('Delete');
@@ -151,28 +148,17 @@ export class SpecificationDetailsService {
             SectionCode: eSpecificationDetailsPageMenuIds.SubItems,
             SectionLabel: eSpecificationDetailsPageMenuLabels.SubItems,
             isAddNewButton: false
-          }
-        ]
-      },
-      [eSpecificationDetailsPageMenuIds.AttachmentsTab]: {
-        id: eSpecificationDetailsPageMenuIds.AttachmentsTab,
-        menuDisplayName: eSpecificationDetailsPageMenuLabels.Attachments,
-        menuIcon: '',
-        showDiscussion: true,
-        isClosedDiscussion: true,
-        activeStatus: true,
-        index: 2,
-        sections: [
+          },
           {
-            GridRowStart: 1,
-            GridRowEnd: 2,
+            GridRowStart: 3,
+            GridRowEnd: 4,
             GridColStart: 1,
             GridColEnd: 3,
             active_status: true,
-            SectionCode: 'attachments1',
-            SectionLabel: eSpecificationDetailsPageMenuLabels.Attachments,
+            SectionCode: eSpecificationDetailsPageMenuIds.Requisitions,
+            SectionLabel: eSpecificationDetailsPageMenuLabels.Requisitions,
             isAddNewButton: true,
-            buttonLabel: 'Add New',
+            buttonLabel: 'Link Requisitions',
             addNewButtonType: JbButtonType.NoButton
           }
         ]

@@ -34,7 +34,6 @@ import { LinkYardPopupComponent } from './components/project-details/yard/rfq/li
 import { SelectLinkYardGridComponent } from './components/project-details/yard/rfq/select-link-yard-grid/select-link-yard-grid.component';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
-import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
 import { SpecificationGeneralInformationComponent } from './components/specification-details/specification-general-information/specification-general-information.component';
 import { SpecificationGeneralInformationInputservice } from './components/specification-details/specification-general-information/specification-general-information-inputs';
 import { SpecificationRequisitionsComponent } from './components/specification-details/specification-requisitions/specification-requisitions.component';
@@ -89,7 +88,6 @@ import { EditSubItemPopupComponent } from './components/specification-details/ed
     CreateSpecificationPopupComponent,
     SpecificationFormComponent,
     SpecificationDetailsComponent,
-    SpecificationDetailsHeaderComponent,
     SpecificationGeneralInformationComponent,
     SpecificationRequisitionsComponent,
     SpecificationSubItemsComponent,
