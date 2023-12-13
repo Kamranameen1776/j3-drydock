@@ -13,7 +13,7 @@ export interface EditorConfig {
 
   inlineMode: object;
 
-  vesselId: number;
+  vesselId?: number;
 
   key1?: any;
 }

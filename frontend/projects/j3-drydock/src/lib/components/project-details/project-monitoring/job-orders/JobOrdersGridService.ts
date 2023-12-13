@@ -278,6 +278,18 @@ export class JobOrdersGridService {
               gridRowEnd: 6,
               gridColStart: 1,
               gridColEnd: 1
+            },
+
+            [eJobOrderUpdateFieldNames.Remarks]: {
+              label: eJobOrderUpdateDisplayNames.Remarks,
+              type: eFieldControlType.String,
+              sectionID: this.updateJobOrderFormId,
+              enabled: true,
+              show: 'hidden',
+              gridRowStart: 4,
+              gridRowEnd: 5,
+              gridColStart: 1,
+              gridColEnd: 3
             }
           }
         }
@@ -293,7 +305,6 @@ export class JobOrdersGridService {
       crtlName: 'RemarksCtrl',
       moduleCode: 'project',
       functionCode: 'remarks_jb_editor',
-      vesselId: 91,
       inlineMode: {
         enable: true,
         onSelection: true

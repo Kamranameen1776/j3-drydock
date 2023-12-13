@@ -9,7 +9,8 @@ import {
   GridComponent,
   GridService,
   IJbDialog,
-  JbEditorComponent
+  JbEditorComponent,
+  UserService
 } from 'jibe-components';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
@@ -51,7 +52,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
   updateJobOrderFormGroup: FormGroup;
 
-  editorFormGroup: FormGroup = new FormGroup({
+  remarksEditorFormGroup: FormGroup = new FormGroup({
     RemarksCtrl: new FormControl('', Validators.required)
   });
 
@@ -64,7 +65,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
     private jobOrdersService: JobOrdersService,
     private newTabService: NewTabService,
     private activatedRoute: ActivatedRoute,
-    private gridService: GridService
+    private gridService: GridService,
+    private userService: UserService
   ) {
     super();
   }
@@ -111,12 +113,22 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
       controls.SpecificationStartDate.setValue(specificationStartDate);
       controls.SpecificationEndDate.setValue(specificationEndDate);
       controls.Code.setValue(jobOrderDto.Code);
+
+
+      this.remarksEditor.key1 = jobOrderDto.SpecificationUid;
+      this.remarksEditor.vesselId = this.userService.getUserDetails().VesselId;
+      // TODO: set correct value
+      const remarks =
+        '<p>fd<img src="blob:http://localhost:4301/fa34deb6-efed-459b-97b9-367c1c09cbc8" class="e-rte-image e-imginline" alt="Untitled.png" width="auto" height="auto" style="min-width: 0px; max-width: 670px; min-height: 0px;"> </p>';
+      this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(remarks);
+      controls.Remarks.setValue(remarks);
+      debugger;
     }
   }
 
   public showUpdateDialog(value = true) {
     this.updateJobOrderFormGroup.reset();
-    this.editorFormGroup.reset();
+    this.remarksEditorFormGroup.reset();
     this.updateDialogVisible = value;
   }
 
@@ -147,7 +159,9 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
       SpecificationEndDate: endDate,
 
       Status: jobOrder.Status,
-      Subject: jobOrder.Subject
+      Subject: jobOrder.Subject,
+
+      Remarks: jobOrder.Remarks
     };
 
     this.jobOrdersService
@@ -170,8 +184,9 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
     this.jobOrdersGrid.odata.filter.eq(JobOrdersGridOdataKeys.ProjectUid, this.projectId);
   }
 
-  public remarksEditorUpdateParentCtrlValue(event) {
-    // debugger;
+  public remarksEditorUpdateParentCtrlValue(remarks: string) {
+    const controls = (this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup).controls;
+    controls.Remarks.setValue(remarks);
   }
 
   private setGridInputs() {

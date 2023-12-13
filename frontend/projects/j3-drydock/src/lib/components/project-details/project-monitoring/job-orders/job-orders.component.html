@@ -35,7 +35,7 @@
     ></jb-form>
 
     <div class="jb-editor-remarks">
-      <form [formGroup]="editorFormGroup">
+      <form [formGroup]="remarksEditorFormGroup">
         <jb-editor
           #remarksEditor
           [id]="remarksEditorConfig.id"
@@ -47,7 +47,7 @@
           [inlineMode]="remarksEditorConfig.inlineMode"
           [key1]="remarksEditorConfig.key1"
           [vesselId]="remarksEditorConfig.vesselId"
-          (updateParentCtrlValue)="remarksEditorUpdateParentCtrlValue($event)"
+          (updateParentCtrlValue)="remarksEditorUpdateParentCtrlValue($event.value)"
         ></jb-editor>
       </form>
     </div>

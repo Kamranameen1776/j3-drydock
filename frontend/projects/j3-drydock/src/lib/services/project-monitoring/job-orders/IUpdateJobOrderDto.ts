@@ -12,4 +12,6 @@ export interface IUpdateJobOrderDto {
   Subject: string;
 
   LastUpdated: Date;
+
+  Remarks: string;
 }
