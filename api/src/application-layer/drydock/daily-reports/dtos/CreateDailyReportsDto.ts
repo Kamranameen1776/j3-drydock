@@ -21,6 +21,5 @@ export class CreateDailyReportsDto {
 
     @IsOptional()
     @MinLength(1)
-    @MaxLength(5000)
     description: string;
 }
