@@ -1,6 +1,6 @@
 {
   "name": "j3-drydock-ng",
-  "version": "3.2311.324",
+  "version": "3.2311.325",
   "peerDependencies": {
     "@angular/common": "^9.1.13",
     "@angular/core": "^9.1.13"
@@ -8,5 +8,8 @@
   "dependencies": {
     "tslib": "^1.10.0",
     "j3-task-manager-ng": "3.234.232-2"
+  },
+  "publishConfig": {
+    "registry": "https://pkgs.dev.azure.com/jibe-erp/_packaging/jibe-npm/npm/registry/"
   }
 }
