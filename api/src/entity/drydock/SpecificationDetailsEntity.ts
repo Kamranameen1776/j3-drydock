@@ -98,6 +98,12 @@ export class SpecificationDetailsEntity {
     })
     StartDate: Date | null;
 
+    @Column('datetimeoffset', {
+        nullable: true,
+        name: 'end_date',
+    })
+    EndDate: Date | null;
+
     @Column('int', {
         nullable: true,
         name: 'estimated_days',
