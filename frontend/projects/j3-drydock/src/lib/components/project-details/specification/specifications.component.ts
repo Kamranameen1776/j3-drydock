@@ -9,8 +9,8 @@ import { Observable } from 'rxjs';
 import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../../models/interfaces/functions-tree-node';
 import { map, takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../../models/constants/popup';
-import { NewTabService } from '../../../services/new-tab-service';
-import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'jb-specifications',
   templateUrl: './specifications.component.html',
@@ -51,8 +51,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     private formService: SpecificationCreateFormService,
     private functionsService: FunctionsService,
     private gridService: GridService,
-    private newTabService: NewTabService,
-    private activatedRoute: ActivatedRoute
+    private router: Router,
   ) {
     super();
   }
@@ -121,13 +120,6 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     }
   }
 
-  private getData(projectId?: string) {
-    const gridData = this.specsService.getGridData(projectId || this.projectId, this.functionUIDs);
-    const statusCol = gridData.columns.find((col) => col.FieldName === 'status');
-    statusCol.cellTemplate = this.statusTemplate;
-    return gridData;
-  }
-
   async onActionClick({ type, payload }: IGridAction) {
     const { uid } = payload;
     this.specificationUid = uid;
@@ -137,7 +129,8 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
         this.showDeleteDialog(true);
         break;
       case eGridRowActions.Edit:
-        this.newTabService.navigate(['../../specification-details', payload.uid], { relativeTo: this.activatedRoute });
+        // Will to implemented later
+        this.openSpecificationPage(uid);
         break;
       default:
         return;
@@ -153,5 +146,16 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   public showDeleteDialog(value: boolean) {
     this.deleteDialogVisible = value;
+  }
+
+  private getData(projectId?: string) {
+    const gridData = this.specsService.getGridData(projectId || this.projectId, this.functionUIDs);
+    const statusCol = gridData.columns.find((col) => col.FieldName === 'status');
+    statusCol.cellTemplate = this.statusTemplate;
+    return gridData;
+  }
+
+  private openSpecificationPage(uid: string) {
+    this.router.navigate([`dry-dock/specification-details/${uid}`]);
   }
 }
