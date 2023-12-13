@@ -109,7 +109,7 @@ export class ProjectDetailsService {
         {
           id: 'ProjectManager',
           label: 'Project Manager',
-          isRequired: false,
+          isRequired: true,
           isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'dropdown',
           getFieldName: 'ProjectManagerUid',
@@ -126,7 +126,7 @@ export class ProjectDetailsService {
         {
           id: 'StartDate',
           label: 'Start Date',
-          isRequired: false,
+          isRequired: true,
           isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'StartDate',
@@ -142,7 +142,7 @@ export class ProjectDetailsService {
         {
           id: 'EndDate',
           label: 'End Date',
-          isRequired: false,
+          isRequired: true,
           isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'EndDate',
@@ -167,8 +167,8 @@ export class ProjectDetailsService {
             id: 'ShipYard',
             value: 'ShipYardId',
             label: 'ShipYardName',
-            selectedLabel: '',
-            selectedValue: details.ShipYard,
+            selectedLabel: details.ShipYard,
+            selectedValue: details.ShipYardId,
             apiRequest: this.projectsService.getProjectsShipsYardsRequest()
           }
         }
