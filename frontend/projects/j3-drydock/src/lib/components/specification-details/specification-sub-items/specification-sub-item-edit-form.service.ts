@@ -1,0 +1,142 @@
+import { Injectable } from '@angular/core';
+
+import { eFieldControlType, FormModel, FormValues } from 'jibe-components';
+import { specificationSubItemEditFormId } from '../../../models/constants/constants';
+import { FormServiceBase } from '../../../shared/classes/form-service.base';
+import {
+  eSpecificationDetailsSubItemsFields,
+  eSpecificationDetailsSubItemsLabels
+} from '../../../models/enums/specification-details-sub-items.enum';
+import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
+import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SpecificationSubItemEditFormService extends FormServiceBase {
+  readonly formId = specificationSubItemEditFormId;
+
+  protected readonly _formStructure: FormModel = {
+    id: this.formId,
+    label: '',
+    type: 'form',
+    sections: {
+      [this.formId]: {
+        type: 'grid',
+        label: '',
+        formID: this.formId,
+        gridRowStart: 1,
+        gridRowEnd: 6,
+        gridColStart: 1,
+        gridColEnd: 9,
+        fields: {
+          [`${eSpecificationDetailsSubItemsFields.Subject}`]: {
+            label: eSpecificationDetailsSubItemsLabels.Subject,
+            type: eFieldControlType.Text,
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 1,
+            gridRowEnd: 2,
+            gridColStart: 1,
+            gridColEnd: 2
+          },
+          [eSpecificationDetailsSubItemsFields.Unit]: {
+            label: eSpecificationDetailsSubItemsLabels.Unit,
+            type: eFieldControlType.Dropdown,
+            sectionID: this.formId,
+            validatorRequired: false,
+            enabled: true,
+            gridRowStart: 1,
+            gridRowEnd: 2,
+            gridColStart: 2,
+            gridColEnd: 3,
+            listRequest: {
+              webApiRequest: this.specificationDetailsService.getLibraryDataRequest('ddUnits'),
+              labelKey: 'display_name',
+              valueKey: 'uid'
+            }
+          },
+          [`${eSpecificationDetailsSubItemsFields.Quantity}`]: {
+            label: eSpecificationDetailsSubItemsLabels.Quantity,
+            type: eFieldControlType.Number,
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 2,
+            gridRowEnd: 3,
+            gridColStart: 1,
+            gridColEnd: 2
+          },
+          [`${eSpecificationDetailsSubItemsFields.UnitPrice}`]: {
+            label: eSpecificationDetailsSubItemsLabels.UnitPrice,
+            type: eFieldControlType.Number,
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 2,
+            gridRowEnd: 3,
+            gridColStart: 2,
+            gridColEnd: 3
+          },
+          [`${eSpecificationDetailsSubItemsFields.Discount}`]: {
+            label: eSpecificationDetailsSubItemsLabels.Discount,
+            type: eFieldControlType.Number,
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 3,
+            gridRowEnd: 4,
+            gridColStart: 1,
+            gridColEnd: 2
+          },
+          [`${eSpecificationDetailsSubItemsFields.Description}`]: {
+            label: eSpecificationDetailsSubItemsLabels.Description,
+            type: eFieldControlType.TextAreaType,
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 4,
+            gridRowEnd: 5,
+            gridColStart: 1,
+            gridColEnd: 3
+          }
+        }
+      }
+    }
+  };
+
+  protected readonly _formValues: FormValues = {
+    keyID: this.formId,
+    values: {
+      [this.formId]: {
+        [eSpecificationDetailsSubItemsFields.Subject]: null,
+        [eSpecificationDetailsSubItemsFields.Unit]: null,
+        [eSpecificationDetailsSubItemsFields.Quantity]: null,
+        [eSpecificationDetailsSubItemsFields.UnitPrice]: null,
+        [eSpecificationDetailsSubItemsFields.Discount]: null,
+        [eSpecificationDetailsSubItemsFields.Description]: null
+      }
+    }
+  };
+
+  constructor(private specificationDetailsService: SpecificationDetailsService) {
+    super();
+  }
+
+  getFormValues(data?: SpecificationSubItem): FormValues {
+    return {
+      ...this.formValues,
+      values: {
+        [this.formId]: {
+          [eSpecificationDetailsSubItemsFields.Subject]: data?.subject,
+          [eSpecificationDetailsSubItemsFields.Unit]: data?.unit,
+          [eSpecificationDetailsSubItemsFields.Quantity]: data?.quantity,
+          [eSpecificationDetailsSubItemsFields.UnitPrice]: data?.unitPrice,
+          [eSpecificationDetailsSubItemsFields.Discount]: data?.discount,
+          [eSpecificationDetailsSubItemsFields.Description]: data?.description
+        }
+      }
+    };
+  }
+}

@@ -1,0 +1,24 @@
+<jb-dialog
+  [dialogContent]="popupConfig"
+  [(dialogVisible)]="isOpen"
+  (closeDialog)="cancel()"
+>
+  <div jb-dialog-body>
+    <jb-form
+      [formStructure]="formModel"
+      [formValues]="formValues"
+      [isVerticalLabel]="true"
+      (jbFormGroup)="dispatchForm($event)"
+    ></jb-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="isSaving"
+      [isCancelBtnDisabled]="isSaving"
+      okBtnLabel="Save"
+      (ok)="submitForm()"
+      (cancel)="cancel()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

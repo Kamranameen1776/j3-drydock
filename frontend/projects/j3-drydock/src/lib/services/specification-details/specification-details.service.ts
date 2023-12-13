@@ -72,6 +72,21 @@ export class SpecificationDetailsService {
     return apiRequest;
   }
 
+  public getLibraryDataRequest(libraryCode: string) {
+    const apiRequest: WebApiRequest = {
+      apiBase: eApiBase.MasterAPI,
+      entity: eEntities.Library,
+      action: 'get-library-data-by-code',
+      params: `libraryCode=${libraryCode}`,
+      crud: eCrud.Post,
+      odata: {
+        count: 'false',
+        filter: f().eq('active_status', true)
+      }
+    };
+    return apiRequest;
+  }
+
   public getStandardJobsFiltersRequest(fieldName: eSpecificationDetailsGeneralInformationFields) {
     const apiRequest: WebApiRequest = {
       // TODO:update jibe lib

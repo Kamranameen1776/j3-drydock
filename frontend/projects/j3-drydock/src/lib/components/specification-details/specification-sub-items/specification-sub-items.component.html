@@ -22,3 +22,10 @@
     ></jb-grid>
   </div>
 </jb-layout-widget>
+
+<jb-edit-sub-item-popup
+  *ngIf="selectedSubItem"
+  [isOpen]="!!selectedSubItem"
+  [subItemDetails]="selectedSubItem"
+  (closeDialog)="closeDialog($event)"
+></jb-edit-sub-item-popup>

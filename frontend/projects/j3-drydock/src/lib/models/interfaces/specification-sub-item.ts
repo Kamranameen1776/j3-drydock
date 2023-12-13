@@ -7,4 +7,6 @@ export interface SpecificationSubItem {
   quantity: number;
   unitPrice: number;
   activeStatus: boolean;
+  discount: number;
+  description: string;
 }
