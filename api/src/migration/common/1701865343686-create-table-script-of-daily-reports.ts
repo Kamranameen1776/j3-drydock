@@ -16,7 +16,7 @@ public async up(queryRunner: QueryRunner): Promise<void> {
             [project_uid] [uniqueidentifier] NOT NULL,
             [report_name] [varchar](200) NOT NULL,
             [report_date] [datetimeoffset](7) NOT NULL,
-            [description] [varchar](5000) NULL,
+            [description] [varchar](max) NULL,
             [active_status] [bit] NOT NULL,
             [created_by] [uniqueidentifier] NULL,
             [created_at] [datetimeoffset](7) NOT NULL,
