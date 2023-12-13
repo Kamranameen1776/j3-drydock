@@ -1,10 +1,11 @@
-import { Column, FormModel, GridRowActions, UserService, eFieldControlType, eGridColumnsWidth } from 'jibe-components';
+import { Column, FormModel, GridRowActions, JbEditorComponent, UserService, eFieldControlType, eGridColumnsWidth } from 'jibe-components';
 import { nameOf } from '../../../../utils/nameOf';
 import { IJobOrderDto } from './dtos/IJobOrderDto';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
 import { Injectable } from '@angular/core';
 import { eJobOrderUpdateDisplayNames, eJobOrderUpdateFieldNames } from 'projects/j3-drydock/src/lib/models/enums/job-order-update.enum';
+import { EditorConfig } from 'projects/j3-drydock/src/lib/models/interfaces/EditorConfig';
 
 @Injectable()
 export class JobOrdersGridService {
@@ -280,6 +281,22 @@ export class JobOrdersGridService {
             }
           }
         }
+      }
+    };
+  }
+
+  public getRemarksEditorConfig(): EditorConfig {
+    return {
+      id: 'Remarks',
+      maxLength: 5000,
+      placeholder: 'Enter Remarks',
+      crtlName: 'RemarksCtrl',
+      moduleCode: 'project',
+      functionCode: 'remarks_jb_editor',
+      vesselId: 91,
+      inlineMode: {
+        enable: true,
+        onSelection: true
       }
     };
   }

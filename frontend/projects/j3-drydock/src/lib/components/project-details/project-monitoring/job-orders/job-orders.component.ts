@@ -1,6 +1,16 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { JobOrdersGridService } from './JobOrdersGridService';
-import { eGridEvents, eGridRowActions, FormModel, GridAction, GridCellData, GridComponent, GridService, IJbDialog } from 'jibe-components';
+import {
+  eGridEvents,
+  eGridRowActions,
+  FormModel,
+  GridAction,
+  GridCellData,
+  GridComponent,
+  GridService,
+  IJbDialog,
+  JbEditorComponent
+} from 'jibe-components';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
@@ -8,22 +18,26 @@ import { IJobOrderDto } from './dtos/IJobOrderDto';
 import { JobOrdersGridOdataKeys } from '../../../..//models/enums/JobOrdersGridOdataKeys';
 import { NewTabService } from '../../../../services/new-tab-service';
 import { ActivatedRoute } from '@angular/router';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { IUpdateJobOrderDto } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/IUpdateJobOrderDto';
 import moment from 'moment';
+import { EditorConfig } from 'projects/j3-drydock/src/lib/models/interfaces/EditorConfig';
 
 @Component({
   selector: 'jb-job-orders',
   templateUrl: './job-orders.component.html',
   styleUrls: ['./job-orders.component.scss'],
-  providers: [JobOrdersGridService]
+  providers: [JobOrdersGridService, FormGroupDirective]
 })
 export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   @Input() projectId: string;
 
   @ViewChild('jobOrdersGrid')
   jobOrdersGrid: GridComponent;
+
+  @ViewChild('remarksEditor')
+  remarksEditor: JbEditorComponent;
 
   public gridInputs: GridInputsWithRequest;
 
@@ -37,7 +51,13 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
   updateJobOrderFormGroup: FormGroup;
 
+  editorFormGroup: FormGroup = new FormGroup({
+    RemarksCtrl: new FormControl('', Validators.required)
+  });
+
   updateJobOrderButtonDisabled = false;
+
+  remarksEditorConfig: EditorConfig;
 
   constructor(
     private jobOrdersGridService: JobOrdersGridService,
@@ -53,6 +73,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
     this.setGridInputs();
 
     this.updateJobOrderForm = this.jobOrdersGridService.getUpdateJobOrderForm();
+
+    this.remarksEditorConfig = this.jobOrdersGridService.getRemarksEditorConfig();
   }
 
   public onGridAction({ type }: GridAction<string, string>, jobOrderDto: IJobOrderDto): void {
@@ -94,6 +116,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
   public showUpdateDialog(value = true) {
     this.updateJobOrderFormGroup.reset();
+    this.editorFormGroup.reset();
     this.updateDialogVisible = value;
   }
 
@@ -114,7 +137,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
     const startDate = moment(jobOrder.SpecificationStartDate, this.jobOrdersGridService.dateTimeFormat).add(-zone, 'minutes').toDate();
     const endDate = moment(jobOrder.SpecificationEndDate, this.jobOrdersGridService.dateTimeFormat).add(-zone, 'minutes').toDate();
-    
+
     const data: IUpdateJobOrderDto = {
       SpecificationUid: jobOrder.SpecificationUid,
       LastUpdated: moment().add(-zone, 'minutes').toDate(),
@@ -145,6 +168,10 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
   public onMatrixRequestChanged() {
     this.jobOrdersGrid.odata.filter.eq(JobOrdersGridOdataKeys.ProjectUid, this.projectId);
+  }
+
+  public remarksEditorUpdateParentCtrlValue(event) {
+    // debugger;
   }
 
   private setGridInputs() {
