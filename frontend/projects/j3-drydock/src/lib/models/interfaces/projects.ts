@@ -4,8 +4,8 @@ export interface ProjectCreate {
   ProjectTypeId: number;
   Subject: string;
   ProjectManagerUid: string;
-  StartDate: Date;
-  EndDate: Date;
+  StartDate: string;
+  EndDate: string;
 }
 
 export interface Project extends ProjectCreate {
@@ -19,8 +19,8 @@ export interface ProjectEdit {
   ProjectTypeId: number;
   Subject: string;
   ProjectManagerUid: string;
-  StartDate: Date;
-  EndDate: Date;
+  StartDate: string;
+  EndDate: string;
 }
 
 export interface Project extends ProjectEdit {

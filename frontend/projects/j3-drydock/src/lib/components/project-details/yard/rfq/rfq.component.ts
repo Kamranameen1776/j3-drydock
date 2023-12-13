@@ -19,6 +19,7 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
   @Input() projectId: string;
 
   @ViewChild('isSelectedTmpl', { static: true }) isSelectedTmpl: TemplateRef<unknown>;
+  @ViewChild('exportedDateTemplate', { static: true }) exportedDateTemplate: TemplateRef<HTMLElement>;
 
   gridInputs: GridInputsWithData<YardLink> = this.rfqGridService.getGridInputs();
 
@@ -156,6 +157,7 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
 
   private setCellTemplates() {
     this.setCellTemplate(this.isSelectedTmpl, eRfqFields.IsSelected);
+    this.setCellTemplate(this.exportedDateTemplate, eRfqFields.ExportedDate);
   }
 
   private setCellTemplate(template: TemplateRef<unknown>, fieldName: string) {

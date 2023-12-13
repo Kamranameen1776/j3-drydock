@@ -3,5 +3,5 @@ export class IStatementOfFactDto {
 
   Fact: string;
 
-  DateAndTime: Date;
+  DateAndTime: string;
 }

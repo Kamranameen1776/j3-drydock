@@ -56,6 +56,8 @@ export function winEnv(): unknown {
   };
 }
 import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
+import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
+import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-celll-popover.component';
 @NgModule({
   declarations: [
     SpecificationStatusPipe,
@@ -93,7 +95,9 @@ import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
     ReworkPopupComponent,
     AddSpecificationFromStandardJobPopupComponent,
     JobOrdersComponent,
-    SpecificationRequisitionsComponent
+    SpecificationRequisitionsComponent,
+    UTCAsLocalPipe,
+    GridCellPopoverComponent
   ],
   imports: [
     CommonModule,

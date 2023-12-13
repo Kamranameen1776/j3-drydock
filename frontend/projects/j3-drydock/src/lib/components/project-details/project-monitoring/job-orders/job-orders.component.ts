@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { JobOrdersGridService } from './JobOrdersGridService';
 import { eGridRowActions, GridAction, GridCellData, GridComponent } from 'jibe-components';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
@@ -16,12 +16,16 @@ import { ActivatedRoute } from '@angular/router';
   providers: [JobOrdersGridService]
 })
 export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
+  @ViewChild('lastUpdatedTemplate', { static: true }) lastUpdatedTemplate: TemplateRef<unknown>;
+
   @Input() projectId: string;
 
   @ViewChild('jobOrdersGrid')
   jobOrdersGrid: GridComponent;
 
   public gridInputs: GridInputsWithRequest;
+
+  readonly dateTimeFormat = this.jobOrdersGridService.dateTimeFormat;
 
   constructor(
     private jobOrdersGridService: JobOrdersGridService,
@@ -66,6 +70,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   private setGridInputs() {
     this.gridInputs = this.jobOrdersGridService.getGridInputs();
     this.setGridActions();
+    this.setCellTemplate(this.lastUpdatedTemplate, 'LastUpdated');
   }
 
   private setGridActions() {
@@ -75,5 +80,13 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
       name: eGridRowActions.Edit,
       label: 'Update Job'
     });
+  }
+
+  private setCellTemplate(template: TemplateRef<unknown>, fieldName: string) {
+    const col = this.gridInputs.columns.find((col) => col.FieldName === fieldName);
+    if (!col) {
+      return;
+    }
+    col.cellTemplate = template;
   }
 }

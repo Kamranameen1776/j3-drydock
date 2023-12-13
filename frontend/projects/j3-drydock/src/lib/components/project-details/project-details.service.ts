@@ -4,7 +4,7 @@ import { ITopSectionFieldSet, JbButtonType, UserRightsService } from 'jibe-compo
 import { Observable } from 'rxjs';
 import { ProjectsService } from '../../services/ProjectsService';
 import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/project-details';
-import { getISOStringFromDateString } from '../../utils/to-iso-string';
+
 import {
   eProjectDetailsSideMenuId,
   eProjectDetailsSideMenuLabel,
@@ -15,6 +15,7 @@ import { AttachmentsAccessRight, BaseAccessRight } from '../../models/interfaces
 import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { eProjectsDetailsAccessActions, eProjectsAccessActions } from '../../models/enums/access-actions.enum';
+import { getDateFromJbString, localAsUTC } from '../../utils/date';
 
 export interface ProjectDetailsAccessRights extends BaseAccessRight {
   attachments: AttachmentsAccessRight;
@@ -103,6 +104,7 @@ export class ProjectDetailsService {
       jobCardNo: details.ProjectCode,
       vesselName: details.VesselName,
       jobTitle: details.Subject,
+      // readOnlyTitle: true,
       bottomFieldsConfig: [
         {
           id: 'ProjectManager',
@@ -313,8 +315,8 @@ export class ProjectDetailsService {
     const data = {
       Subject: formData.Job_Short_Description,
       ProjectManagerUid: formData.ProjectManager,
-      EndDate: getISOStringFromDateString(formData.EndDate),
-      StartDate: getISOStringFromDateString(formData.StartDate)
+      EndDate: localAsUTC(getDateFromJbString(formData.EndDate)),
+      StartDate: localAsUTC(getDateFromJbString(formData.StartDate))
     };
 
     return this.projectsService.updateProject({
