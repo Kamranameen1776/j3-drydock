@@ -1,14 +1,11 @@
-import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Request } from 'express';
-import { AccessRights } from 'j2utils';
 
 import { DailyReportsRepository } from '../../../dal/drydock/daily-reports/DailyReportsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateDailyReportsDto } from './dtos/UpdateDailyReportsDto';
 
-export class UpdateDailyReportsCommand extends Command<Request, void> {
+export class UpdateDailyReportsCommand extends Command<UpdateDailyReportsDto, void> {
     dailyReportsRepository: DailyReportsRepository;
     uow: UnitOfWork;
 
@@ -23,27 +20,25 @@ export class UpdateDailyReportsCommand extends Command<Request, void> {
         return;
     }
 
-    protected async ValidationHandlerAsync(data: Request): Promise<void> {
-        const body: UpdateDailyReportsDto = plainToClass(UpdateDailyReportsDto, data.body);
-        const result = await validate(body);
+    protected async ValidationHandlerAsync(data: UpdateDailyReportsDto): Promise<void> {
+        if (!data) {
+            throw new Error('Request is null');
+        }
+        const result = await validate(data);
         if (result.length) {
             throw result;
         }
-        return;
     }
 
-    protected async MainHandlerAsync(data: Request): Promise<void> {
-        const { UserUID: updatedBy } = AccessRights.authorizationDecode(data);
-        const body: UpdateDailyReportsDto = data.body;
-
+    protected async MainHandlerAsync(data: UpdateDailyReportsDto): Promise<void> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.dailyReportsRepository.updateDailyReport(
                 {
-                    uid: body.uid,
-                    reportName: body.reportName,
-                    description: body.description,
-                    updatedBy: updatedBy,
-                    updatedAt: new Date(),
+                    uid: data.uid,
+                    reportName: data.reportName,
+                    description: data.description,
+                    updatedBy: data.updatedBy,
+                    updatedAt: data.updatedAt,
                 },
                 queryRunner,
             );

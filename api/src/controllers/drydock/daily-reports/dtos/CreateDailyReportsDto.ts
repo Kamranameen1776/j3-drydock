@@ -6,13 +6,6 @@ export class CreateDailyReportsDto {
     projectUid: string;
 
     @MinLength(1)
-    @MaxLength(50)
-    createdBy: string;
-
-    @IsDateString()
-    createdAt: Date;
-
-    @MinLength(1)
     @MaxLength(200)
     reportName: string;
 
@@ -23,4 +16,11 @@ export class CreateDailyReportsDto {
     @MinLength(1)
     @MaxLength(5000)
     description: string;
+
+    @MinLength(1)
+    @MaxLength(50)
+    createdBy: string;
+
+    @IsDateString()
+    createdAt: Date;
 }

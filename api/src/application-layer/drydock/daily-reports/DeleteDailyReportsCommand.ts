@@ -1,12 +1,11 @@
-import { Request } from 'express';
-import { AccessRights } from 'j2utils';
+import { validate } from 'class-validator';
 
 import { DailyReportsRepository } from '../../../dal/drydock/daily-reports/DailyReportsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { DeleteDailyReportsDto } from './dtos/DeleteDailyReportsDto';
 
-export class DeleteDailyReportsCommand extends Command<Request, void> {
+export class DeleteDailyReportsCommand extends Command<DeleteDailyReportsDto, void> {
     dailyReportsRepository: DailyReportsRepository;
     uow: UnitOfWork;
 
@@ -21,22 +20,23 @@ export class DeleteDailyReportsCommand extends Command<Request, void> {
         return;
     }
 
-    protected async ValidationHandlerAsync(data: Request): Promise<void> {
+    protected async ValidationHandlerAsync(data: DeleteDailyReportsDto): Promise<void> {
         if (!data) {
             throw new Error('Request is null');
         }
+        const result = await validate(data);
+        if (result.length) {
+            throw result;
+        }
     }
 
-    protected async MainHandlerAsync(data: Request) {
-        const { UserUID: deletedBy } = AccessRights.authorizationDecode(data);
-        const body: DeleteDailyReportsDto = data.body;
-
+    protected async MainHandlerAsync(data: DeleteDailyReportsDto) {
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.dailyReportsRepository.deleteDailyReport(
                 {
-                    deletedBy: deletedBy,
-                    uid: body.uid,
-                    deletedAt: new Date(),
+                    uid: data.uid,
+                    deletedBy: data.deletedBy,
+                    deletedAt: data.deletedAt,
                 },
                 queryRunner,
             );
