@@ -32,6 +32,10 @@ export class StandardJobsRepository {
 
         const innerQuery = getManager()
             .createQueryBuilder('standard_jobs', 'sj')
+            .leftJoin('standard_jobs_vessel_type', 'sjvt', `sjvt.standard_job_uid = sj.uid`)
+            .leftJoin('standard_jobs_survey_certificate_authority', 'sjsca', `sjsca.standard_job_uid = sj.uid`)
+            .leftJoin('LIB_Survey_CertificateAuthority', 'lsca', `lsca.ID = sjsca.survey_id and lsca.Active_Status = 1`)
+            .leftJoin('LIB_VESSELTYPES', 'vt', `vt.ID = sjvt.vessel_type_id and vt.Active_Status = 1`)
             .leftJoin('tm_dd_lib_done_by', 'db', `db.uid = sj.done_by_uid AND db.active_status = 1`)
             .leftJoin('tm_dd_lib_item_category', 'ic', `ic.uid = sj.category_uid AND ic.active_status = 1`)
             .leftJoin(
@@ -96,7 +100,10 @@ export class StandardJobsRepository {
                             alias: 'sjsca',
                             on: 'sjsca.standard_job_uid = sj.uid AND aliased.ID = sjsca.survey_id',
                         },
-                    ),
+                    ) +
+                    ',' +
+                    `IIF(COUNT("sjsi"."uid") > 0, '${QueryStrings.Yes}', '${QueryStrings.No}') as hasSubItems,` +
+                    `IIF(COUNT("sjsca"."survey_id") > 0, '${QueryStrings.Yes}', '${QueryStrings.No}') as hasInspection`,
             )
             .groupBy(
                 `sj.uid` +
