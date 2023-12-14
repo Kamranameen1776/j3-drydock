@@ -69,11 +69,10 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
     this.specificationSubItemEditService.updateSubItem(value, this.subItemDetails.uid, this.specificationUid).subscribe(
       () => {
         this.closePopup(true);
+        this.loading$.next(false);
       },
       (err) => {
         this.growlService.errorHandler(err);
-      },
-      () => {
         this.loading$.next(false);
       }
     );

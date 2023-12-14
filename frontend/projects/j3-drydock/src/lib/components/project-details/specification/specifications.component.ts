@@ -158,6 +158,6 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   }
 
   private openSpecificationPage(uid: string) {
-      this.newTabService.navigate(['../../specification-details', uid], { relativeTo: this.activatedRoute });
+    this.newTabService.navigate(['../../specification-details', uid], { relativeTo: this.activatedRoute });
   }
 }
