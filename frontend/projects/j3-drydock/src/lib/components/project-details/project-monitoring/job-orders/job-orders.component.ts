@@ -44,6 +44,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
   public gridInputs: GridInputsWithRequest;
 
+  readonly dateTimeFormat = this.jobOrdersGridService.dateTimeFormat;
+
   public updateBtnLabel = 'Update';
 
   public updateDialogVisible = false;
