@@ -4,7 +4,7 @@ import { ITopSectionFieldSet, JbButtonType, UserRightsService } from 'jibe-compo
 import { Observable } from 'rxjs';
 import { ProjectsService } from '../../services/ProjectsService';
 import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/project-details';
-import { getISOStringFromDateString } from '../../utils/to-iso-string';
+
 import {
   eProjectDetailsSideMenuId,
   eProjectDetailsSideMenuLabel,
@@ -15,6 +15,7 @@ import { AttachmentsAccessRight, BaseAccessRight } from '../../models/interfaces
 import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { eProjectsDetailsAccessActions, eProjectsAccessActions } from '../../models/enums/access-actions.enum';
+import { localAsUTCFromJbString } from '../../utils/date';
 
 export interface ProjectDetailsAccessRights extends BaseAccessRight {
   attachments: AttachmentsAccessRight;
@@ -103,11 +104,12 @@ export class ProjectDetailsService {
       jobCardNo: details.ProjectCode,
       vesselName: details.VesselName,
       jobTitle: details.Subject,
+      // readOnlyTitle: true,
       bottomFieldsConfig: [
         {
           id: 'ProjectManager',
           label: 'Project Manager',
-          isRequired: false,
+          isRequired: true,
           isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'dropdown',
           getFieldName: 'ProjectManagerUid',
@@ -124,7 +126,7 @@ export class ProjectDetailsService {
         {
           id: 'StartDate',
           label: 'Start Date',
-          isRequired: false,
+          isRequired: true,
           isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'StartDate',
@@ -140,7 +142,7 @@ export class ProjectDetailsService {
         {
           id: 'EndDate',
           label: 'End Date',
-          isRequired: false,
+          isRequired: true,
           isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'EndDate',
@@ -165,8 +167,8 @@ export class ProjectDetailsService {
             id: 'ShipYard',
             value: 'ShipYardId',
             label: 'ShipYardName',
-            selectedLabel: '',
-            selectedValue: details.ShipYard,
+            selectedLabel: details.ShipYard,
+            selectedValue: details.ShipYardId,
             apiRequest: this.projectsService.getProjectsShipsYardsRequest()
           }
         }
@@ -313,8 +315,8 @@ export class ProjectDetailsService {
     const data = {
       Subject: formData.Job_Short_Description,
       ProjectManagerUid: formData.ProjectManager,
-      EndDate: getISOStringFromDateString(formData.EndDate),
-      StartDate: getISOStringFromDateString(formData.StartDate)
+      EndDate: localAsUTCFromJbString(formData.EndDate),
+      StartDate: localAsUTCFromJbString(formData.StartDate)
     };
 
     return this.projectsService.updateProject({

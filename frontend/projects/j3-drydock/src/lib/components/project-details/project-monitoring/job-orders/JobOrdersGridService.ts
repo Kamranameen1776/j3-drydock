@@ -92,11 +92,7 @@ export class JobOrdersGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.ShortDescription,
-      pipe: {
-        value: 'date',
-        format: this.dateTimeFormat
-      }
+      width: eGridColumnsWidth.ShortDescription
     }
   ];
 

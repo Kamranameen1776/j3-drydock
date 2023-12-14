@@ -4,9 +4,7 @@ import {
   ITopSectionFieldSet,
   JbAttachmentsComponent,
   JbDetailsTopSectionService,
-  UserService,
   eAttachmentButtonTypes,
-  eDateFormats,
   eJMSActionTypes,
   eJMSSectionNames
 } from 'jibe-components';
@@ -18,7 +16,6 @@ import { eFunction } from '../../models/enums/function.enum';
 import { eModule } from '../../models/enums/module.enum';
 import { ITMDetailTabFields, JbTaskManagerDetailsService } from 'j3-task-manager-ng';
 import { Title } from '@angular/platform-browser';
-import moment from 'moment';
 import { ProjectDetailsAccessRights, ProjectDetailsService } from './project-details.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/project-details';
@@ -28,6 +25,7 @@ import { SpecificationsComponent } from './specification/specifications.componen
 import { RfqComponent } from './yard/rfq/rfq.component';
 import { ProjectsService } from '../../services/ProjectsService';
 import { DetailsService } from '../../services/details.service';
+import { UTCAsLocal } from '../../utils/date';
 
 @Component({
   selector: 'jb-project-details',
@@ -170,9 +168,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   private processWidgetNewBtn(secName: string) {
     // TODO add check by access rights for each section and hide in configuration for details page instead of here
-    if (!this.canEdit) {
-      return;
-    }
+
     // eslint-disable-next-line default-case
     switch (secName) {
       case eProjectDetailsSideMenuId.RFQ: {
@@ -197,24 +193,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       this.deleteRecord();
     } else if (wfEvent?.event?.type === 'resync') {
       this.resyncRecord();
-    } else if (wfEvent?.event?.type === 'dueDateChange') {
-      const body = {
-        vesselId: this.tmDetails.Vessel_ID,
-        uid: this.tmDetails.uid,
-        raised_location: this.tmDetails.raised_location,
-        wl_type: this.tmDetails.wl_type,
-        isJobEdit: true,
-        function_code: this.functionCode,
-        module_code: this.moduleCode,
-        vessel_uid: this.tmDetails.vessel_uid,
-        task_status: this.tmDetails.task_status,
-        expected_completion_date: moment(
-          wfEvent.event.payload?.update_due_date,
-          UserService.getUserDetails()?.Date_Format?.toLocaleUpperCase()
-        ).format(eDateFormats.DBDateTimeFormat),
-        isTmDueDateChanged: true
-      };
-      this.jbTMDtlSrv.saveUpdatedTMDueDate(body);
     }
   }
 
@@ -226,7 +204,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       .pipe(
         concatMap((data) => {
           projectDetails = {
-            ...data
+            ...data,
+            StartDate: UTCAsLocal(data.StartDate).toISOString(),
+            EndDate: UTCAsLocal(data.EndDate).toISOString()
           };
 
           this.attachmentConfig = {

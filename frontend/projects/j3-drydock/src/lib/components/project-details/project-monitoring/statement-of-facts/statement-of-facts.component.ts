@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { eGridEvents, eGridRowActions, FormModel, GridAction, GridComponent, GridService, IJbDialog } from 'jibe-components';
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { StatementOfFactsGridService } from './StatementOfFactsGridService';
@@ -11,8 +11,8 @@ import { StatementOfFactsService } from '../../../../services/project-monitoring
 import { StatementOfFactsGridOdataKeys } from '../../../../models/enums/StatementOfFactsGridOdataKeys';
 import { IDeleteStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/IDeleteStatementOfFactDto';
 import { ICreateStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/ICreateStatementOfFactDto';
-import moment from 'moment';
 import { IUpdateStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/IUpdateStatementOfFactDto';
+import { UTCAsLocal, localAsUTCFromJbString } from '../../../../utils/date';
 
 @Component({
   selector: 'jb-statement-of-facts',
@@ -23,8 +23,9 @@ import { IUpdateStatementOfFactDto } from '../../../../services/project-monitori
 export class StatementOfFactsComponent extends UnsubscribeComponent implements OnInit {
   @Input() projectId: string;
 
-  @ViewChild('statementOfFactsGrid')
-  statementOfFactsGrid: GridComponent;
+  @ViewChild('dateAndTimeTemplate', { static: true }) dateAndTimeTemplate: TemplateRef<unknown>;
+
+  @ViewChild('statementOfFactsGrid') statementOfFactsGrid: GridComponent;
 
   public gridInputs: GridInputsWithRequest;
 
@@ -64,6 +65,8 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
   updateStatementOfFactButtonDisabled = false;
 
+  readonly dateTimeFormat = this.statementOfFactsGridService.dateTimeFormat;
+
   constructor(
     private statementOfFactsGridService: StatementOfFactsGridService,
     private statementOfFactsService: StatementOfFactsService,
@@ -99,7 +102,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
       const controls = (this.updateStatementOfFactFormGroup.controls.statementOfFactUpdate as FormGroup).controls;
 
-      const dateString = moment(statementOfFact.DateAndTime).format(this.statementOfFactsGridService.dateTimeFormat);
+      const dateString = UTCAsLocal(statementOfFact.DateAndTime);
 
       controls.Fact.setValue(statementOfFact.Fact);
       controls.DateTime.setValue(dateString);
@@ -170,7 +173,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
     const dateTimeString = this.createStatementOfFactFormGroup.value.statementOfFactCreate.DateTime;
 
-    const dateTime = moment(dateTimeString, this.statementOfFactsGridService.dateTimeFormat).toDate();
+    const dateTime = localAsUTCFromJbString(dateTimeString, this.dateTimeFormat);
 
     const data: ICreateStatementOfFactDto = {
       ProjectUid: this.projectId,
@@ -193,7 +196,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
     const dateTimeString = this.updateStatementOfFactFormGroup.value.statementOfFactUpdate.DateTime;
 
-    const dateTime = moment(dateTimeString, this.statementOfFactsGridService.dateTimeFormat).toDate();
+    const dateTime = localAsUTCFromJbString(dateTimeString, this.dateTimeFormat);
 
     const data: IUpdateStatementOfFactDto = {
       StatementOfFactUid: this.updateStatementOfFactFormGroup.value.statementOfFactUpdate.StatementOfFactUid,
@@ -214,6 +217,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
   private setGridInputs() {
     this.gridInputs = this.statementOfFactsGridService.getGridInputs();
     this.setGridActions();
+    this.setCellTemplate(this.dateAndTimeTemplate, 'DateAndTime');
   }
 
   private setGridActions() {
@@ -228,5 +232,13 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
       name: eGridRowActions.Delete,
       label: 'Delete'
     });
+  }
+
+  private setCellTemplate(template: TemplateRef<unknown>, fieldName: string) {
+    const col = this.gridInputs.columns.find((col) => col.FieldName === fieldName);
+    if (!col) {
+      return;
+    }
+    col.cellTemplate = template;
   }
 }

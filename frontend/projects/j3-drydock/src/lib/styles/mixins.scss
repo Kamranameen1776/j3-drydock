@@ -61,5 +61,11 @@
       min-height: 3.2em;
     }
   }
+}
 
+@mixin grid-cell-text {
+  font-family: $jibe-font-family;
+  font-style: normal;
+  font-size: $jibe-font-small;
+  line-height: $jibe-font-line-height;
 }
