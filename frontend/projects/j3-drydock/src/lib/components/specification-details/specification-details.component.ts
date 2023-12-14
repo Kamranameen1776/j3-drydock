@@ -12,7 +12,6 @@ import {
   ITopSectionFieldSet,
   JbDatePipe,
   JbDetailsTopSectionService,
-  JbMenuService,
   UserService,
   eDateFormats,
   eJMSActionTypes,
@@ -197,10 +196,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   }
 
   private processWidgetNewBtn(secName: string) {
-    // TODO add check by access rights for each section - can it be clicked or not
-    if (!this.canEdit) {
-      return;
-    }
     // eslint-disable-next-line default-case
     switch (secName) {
       case eSpecificationDetailsPageMenuIds.Attachments: {
@@ -248,7 +243,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   deleteRecord() {
     this.specificationDetailService.deleteSpecification({ uid: this.specificationUid }).subscribe(() => {
       this.jbTMDtlSrv.closeDialog.next(true);
-      this.router.navigate(['dry-dock/projects-main-page']);
+      this.router.navigate([`dry-dock/project/${this.specificationDetailsInfo.ProjectUid}`]);
     });
   }
 

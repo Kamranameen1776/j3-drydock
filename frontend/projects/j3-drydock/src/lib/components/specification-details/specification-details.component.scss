@@ -1,13 +1,7 @@
-.specifications-spinner {
-    background-color: transparent;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    position: fixed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 50000;
-  }
-  
+@import '../../styles/mixins';
+
+:host {
+    ::ng-deep {
+        @include progress-spinner-fix;
+    }
+}
