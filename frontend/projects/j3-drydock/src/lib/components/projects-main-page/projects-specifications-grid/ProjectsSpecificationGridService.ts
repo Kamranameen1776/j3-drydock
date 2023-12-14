@@ -179,16 +179,24 @@ export class ProjectsSpecificationGridService {
       odataKey: ProjectsGridOdataKeys.ProjectStatusId,
       listValueKey: 'ProjectStatusId'
     },
-    StartDate: {
+    FromStartDate: {
+      type: eFieldControlType.Date,
       odataKey: ProjectsGridOdataKeys.StartDate,
-      alterKey: 'StartDate',
-      type: 'date',
       dateMethod: 'ge'
     },
-    EndDate: {
+    ToStartDate: {
+      type: eFieldControlType.Date,
+      odataKey: ProjectsGridOdataKeys.StartDate,
+      dateMethod: 'le'
+    },
+    FromEndDate: {
+      type: eFieldControlType.Date,
       odataKey: ProjectsGridOdataKeys.EndDate,
-      alterKey: 'EndDate',
-      type: 'date',
+      dateMethod: 'ge'
+    },
+    ToEndDate: {
+      type: eFieldControlType.Date,
+      odataKey: ProjectsGridOdataKeys.EndDate,
       dateMethod: 'le'
     },
     Fleets: {
@@ -268,34 +276,66 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      Created_By: null,
-      DataType: null,
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'FromStartDate',
       DisplayText: 'Start Date',
-      FieldName: 'StartDate',
       FieldID: 6,
-      default: true,
-      selectedValues: new Date(this.initDate.getFullYear(), this.initDate.getMonth(), 1),
-      minDate: this.minDate,
-      maxDate: this.maxDate,
+      FieldName: 'FromStartDate',
       CoupleID: 1,
-      CoupleLabel: 'Project Date',
-      gridName: this.gridName
+      CoupleLabel: 'Start Date',
+      default: false,
+      gridName: this.gridName,
+      addTimeLimit: true
     },
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      Created_By: null,
-      DataType: null,
-      DisplayText: 'End Date',
-      FieldName: 'EndDate',
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'ToStartDate',
+      DisplayText: 'Start Date',
       FieldID: 7,
-      default: true,
-      selectedValues: new Date(this.initDate.getFullYear(), this.initDate.getMonth() + 1, 0),
-      minDate: this.minDate,
-      maxDate: this.maxDate,
+      FieldName: 'ToStartDate',
       CoupleID: 1,
-      CoupleLabel: 'Project Date',
-      gridName: this.gridName
+      CoupleLabel: 'Start Date',
+      default: false,
+      gridName: this.gridName,
+      addTimeLimit: true
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'FromEndDate',
+      DisplayText: 'End Date',
+      FieldID: 8,
+      FieldName: 'FromEndDate',
+      CoupleID: 2,
+      CoupleLabel: 'End Date',
+      default: true,
+      gridName: this.gridName,
+      addTimeLimit: true
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'ToEndDate',
+      DisplayText: 'End Date',
+      FieldID: 9,
+      FieldName: 'ToEndDate',
+      CoupleID: 2,
+      CoupleLabel: 'End Date',
+      default: true,
+      gridName: this.gridName,
+      addTimeLimit: true
     }
   ];
 
