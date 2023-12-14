@@ -33,6 +33,11 @@
     class="dialog-body"
     jb-dialog-body
   >
+    <div class="specification-code-link">
+      <a (click)="NavigateToSpecificationDetails(selectedSpecification.Key)">
+        {{ selectedSpecification.Value }}
+      </a>
+    </div>
     <jb-form
       (jbFormGroup)="initUpdateJobOrderFormGroup($any($event))"
       [formStructure]="updateJobOrderForm"

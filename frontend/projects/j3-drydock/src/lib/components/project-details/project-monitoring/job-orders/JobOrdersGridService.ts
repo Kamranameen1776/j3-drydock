@@ -163,28 +163,14 @@ export class JobOrdersGridService {
               gridColEnd: 0
             },
 
-            [eJobOrderUpdateFieldNames.Code]: {
-              label: eJobOrderUpdateDisplayNames.Code,
-              type: eFieldControlType.Text,
-              sectionID: this.updateJobOrderFormId,
-              enabled: true,
-              minLength: 1,
-              maxLength: 300,
-              validatorRequired: false,
-              gridRowStart: 1,
-              gridRowEnd: 1,
-              gridColStart: 1,
-              gridColEnd: 4
-            },
-
             [eJobOrderUpdateFieldNames.Subject]: {
               label: eJobOrderUpdateDisplayNames.Subject,
               type: eFieldControlType.Text,
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               validatorRequired: true,
-              gridRowStart: 2,
-              gridRowEnd: 2,
+              gridRowStart: 1,
+              gridRowEnd: 1,
               gridColStart: 1,
               gridColEnd: 4,
               maxLength: 200,
@@ -197,8 +183,8 @@ export class JobOrdersGridService {
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               validatorRequired: true,
-              gridRowStart: 3,
-              gridRowEnd: 3,
+              gridRowStart: 2,
+              gridRowEnd: 2,
               gridColStart: 1,
               gridColEnd: 2,
               listRequest: {
@@ -214,8 +200,8 @@ export class JobOrdersGridService {
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               validatorRequired: true,
-              gridRowStart: 3,
-              gridRowEnd: 3,
+              gridRowStart: 2,
+              gridRowEnd: 2,
               gridColStart: 2,
               gridColEnd: 4,
               validatorMin: 0,
@@ -228,8 +214,8 @@ export class JobOrdersGridService {
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               validatorRequired: true,
-              gridRowStart: 4,
-              gridRowEnd: 4,
+              gridRowStart: 3,
+              gridRowEnd: 3,
               gridColStart: 1,
               gridColEnd: 2
             },
@@ -240,8 +226,8 @@ export class JobOrdersGridService {
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               validatorRequired: true,
-              gridRowStart: 4,
-              gridRowEnd: 4,
+              gridRowStart: 3,
+              gridRowEnd: 3,
               gridColStart: 2,
               gridColEnd: 4
             }

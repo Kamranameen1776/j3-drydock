@@ -24,6 +24,7 @@ import { takeUntil } from 'rxjs/operators';
 import { IUpdateJobOrderDto } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/IUpdateJobOrderDto';
 import { EditorConfig } from '../../../../models/interfaces/EditorConfig';
 import { UTCDateAsLocal, currentLocalAsUTC, localDateJbStringAsUTC } from '../../../../utils/date';
+import { KeyValuePair } from 'projects/j3-drydock/src/lib/utils/KeyValuePair';
 
 @Component({
   selector: 'jb-job-orders',
@@ -49,6 +50,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   public updateBtnLabel = 'Update';
 
   public updateDialogVisible = false;
+
+  selectedSpecification: KeyValuePair<string, string> = { Key: '', Value: '' };
 
   updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Details' };
 
@@ -95,7 +98,9 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
       controls.SpecificationUid.setValue(jobOrderDto.SpecificationUid);
       controls.Progress.setValue(jobOrderDto.Progress);
-      controls.Code.setValue(jobOrderDto.Code);
+
+      this.selectedSpecification.Key = jobOrderDto.SpecificationUid;
+      this.selectedSpecification.Value = jobOrderDto.Code;
 
       this.remarksEditor.key1 = jobOrderDto.SpecificationUid;
       this.remarksEditor.vesselId = this.userService.getUserDetails().VesselId;
@@ -177,7 +182,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   public onCellPlainTextClick(gridCellData: GridCellData): void {
     const specificationUid = gridCellData.rowData.SpecificationUid;
 
-    this.newTabService.navigate(['../../specification-details', specificationUid], { relativeTo: this.activatedRoute });
+    this.NavigateToSpecificationDetails(specificationUid);
   }
 
   public onMatrixRequestChanged() {
@@ -187,6 +192,10 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   public remarksEditorUpdateParentCtrlValue(remarks: string) {
     const controls = (this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup).controls;
     controls.Remarks.setValue(remarks);
+  }
+
+  private NavigateToSpecificationDetails(specificationUid: string) {
+    this.newTabService.navigate(['../../specification-details', specificationUid], { relativeTo: this.activatedRoute });
   }
 
   private setGridInputs() {
