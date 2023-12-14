@@ -182,7 +182,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   public onCellPlainTextClick(gridCellData: GridCellData): void {
     const specificationUid = gridCellData.rowData.SpecificationUid;
 
-    this.NavigateToSpecificationDetails(specificationUid);
+    this.navigateToSpecificationDetails(specificationUid);
   }
 
   public onMatrixRequestChanged() {
@@ -194,7 +194,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
     controls.Remarks.setValue(remarks);
   }
 
-  private NavigateToSpecificationDetails(specificationUid: string) {
+  public navigateToSpecificationDetails(specificationUid: string) {
     this.newTabService.navigate(['../../specification-details', specificationUid], { relativeTo: this.activatedRoute });
   }
 
