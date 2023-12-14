@@ -86,10 +86,6 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   public onGridAction({ type }: GridAction<string, string>, jobOrderDto: IJobOrderDto): void {
     if (type === eGridRowActions.Edit) {
       if (!jobOrderDto) {
-        throw new Error('IJobOrderDto is null');
-      }
-
-      if (!jobOrderDto) {
         throw new Error('jobOrderDto is null');
       }
 

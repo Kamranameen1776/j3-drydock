@@ -133,10 +133,10 @@ export class JobOrdersGridService {
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               show: 'hidden',
-              gridRowStart: 4,
-              gridRowEnd: 5,
-              gridColStart: 1,
-              gridColEnd: 3
+              gridRowStart: 0,
+              gridRowEnd: 0,
+              gridColStart: 0,
+              gridColEnd: 0
             },
 
             [eJobOrderUpdateFieldNames.SpecificationUid]: {
@@ -145,10 +145,22 @@ export class JobOrdersGridService {
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               show: 'hidden',
-              gridRowStart: 4,
-              gridRowEnd: 5,
-              gridColStart: 1,
-              gridColEnd: 3
+              gridRowStart: 0,
+              gridRowEnd: 0,
+              gridColStart: 0,
+              gridColEnd: 0
+            },
+
+            [eJobOrderUpdateFieldNames.Remarks]: {
+              label: eJobOrderUpdateDisplayNames.Remarks,
+              type: eFieldControlType.String,
+              sectionID: this.updateJobOrderFormId,
+              enabled: true,
+              show: 'hidden',
+              gridRowStart: 0,
+              gridRowEnd: 0,
+              gridColStart: 0,
+              gridColEnd: 0
             },
 
             [eJobOrderUpdateFieldNames.Code]: {
@@ -162,7 +174,7 @@ export class JobOrdersGridService {
               gridRowStart: 1,
               gridRowEnd: 1,
               gridColStart: 1,
-              gridColEnd: 1
+              gridColEnd: 4
             },
 
             [eJobOrderUpdateFieldNames.Subject]: {
@@ -174,7 +186,7 @@ export class JobOrdersGridService {
               gridRowStart: 2,
               gridRowEnd: 2,
               gridColStart: 1,
-              gridColEnd: 2,
+              gridColEnd: 4,
               maxLength: 200,
               minLength: 1
             },
@@ -188,7 +200,7 @@ export class JobOrdersGridService {
               gridRowStart: 3,
               gridRowEnd: 3,
               gridColStart: 1,
-              gridColEnd: 1,
+              gridColEnd: 2,
               listRequest: {
                 webApiRequest: this.jobOrdersService.getJobOrderStatusesRequest(),
                 labelKey: 'Value',
@@ -202,10 +214,10 @@ export class JobOrdersGridService {
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               validatorRequired: true,
-              gridRowStart: 4,
-              gridRowEnd: 4,
-              gridColStart: 1,
-              gridColEnd: 1,
+              gridRowStart: 3,
+              gridRowEnd: 3,
+              gridColStart: 2,
+              gridColEnd: 4,
               validatorMin: 0,
               validatorMax: 100
             },
@@ -216,10 +228,10 @@ export class JobOrdersGridService {
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               validatorRequired: true,
-              gridRowStart: 5,
-              gridRowEnd: 5,
+              gridRowStart: 4,
+              gridRowEnd: 4,
               gridColStart: 1,
-              gridColEnd: 1
+              gridColEnd: 2
             },
 
             [eJobOrderUpdateFieldNames.SpecificationEndDate]: {
@@ -228,22 +240,10 @@ export class JobOrdersGridService {
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               validatorRequired: true,
-              gridRowStart: 6,
-              gridRowEnd: 6,
-              gridColStart: 1,
-              gridColEnd: 1
-            },
-
-            [eJobOrderUpdateFieldNames.Remarks]: {
-              label: eJobOrderUpdateDisplayNames.Remarks,
-              type: eFieldControlType.String,
-              sectionID: this.updateJobOrderFormId,
-              enabled: true,
-              show: 'hidden',
-              gridRowStart: 7,
-              gridRowEnd: 7,
-              gridColStart: 1,
-              gridColEnd: 3
+              gridRowStart: 4,
+              gridRowEnd: 4,
+              gridColStart: 2,
+              gridColEnd: 4
             }
           }
         }
