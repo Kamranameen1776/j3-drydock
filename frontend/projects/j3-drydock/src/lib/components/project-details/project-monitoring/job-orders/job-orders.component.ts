@@ -102,20 +102,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
       const controls = (this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup).controls;
 
-      const specificationStartDate = jobOrderDto.SpecificationStartDate
-        ? moment(jobOrderDto.SpecificationStartDate).format(this.jobOrdersGridService.dateTimeFormat)
-        : null;
-      const specificationEndDate = jobOrderDto.SpecificationEndDate
-        ? moment(jobOrderDto.SpecificationEndDate).format(this.jobOrdersGridService.dateTimeFormat)
-        : null;
-
-      controls.JobOrderUid.setValue(jobOrderDto.JobOrderUid);
       controls.SpecificationUid.setValue(jobOrderDto.SpecificationUid);
       controls.Progress.setValue(jobOrderDto.Progress);
-      controls.Status.setValue(jobOrderDto.Status);
-      controls.Subject.setValue(jobOrderDto.Subject);
-      controls.SpecificationStartDate.setValue(specificationStartDate);
-      controls.SpecificationEndDate.setValue(specificationEndDate);
       controls.Code.setValue(jobOrderDto.Code);
 
       this.remarksEditor.key1 = jobOrderDto.SpecificationUid;
@@ -130,6 +118,19 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
           if (jobOrder) {
             this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(jobOrder.Remarks);
             controls.Remarks.setValue(jobOrder.Remarks);
+            controls.Subject.setValue(jobOrder.Subject);
+            controls.Status.setValue(jobOrder.Status);
+            controls.JobOrderUid.setValue(jobOrder.JobOrderUid);
+
+            const specificationStartDate = jobOrder.SpecificationStartDate
+              ? moment(jobOrder.SpecificationStartDate).format(this.jobOrdersGridService.dateTimeFormat)
+              : null;
+            const specificationEndDate = jobOrder.SpecificationEndDate
+              ? moment(jobOrder.SpecificationEndDate).format(this.jobOrdersGridService.dateTimeFormat)
+              : null;
+
+            controls.SpecificationStartDate.setValue(specificationStartDate);
+            controls.SpecificationEndDate.setValue(specificationEndDate);
           }
 
           this.showUpdateDialog(true);

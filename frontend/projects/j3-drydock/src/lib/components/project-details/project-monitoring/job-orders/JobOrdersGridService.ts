@@ -27,38 +27,6 @@ export class JobOrdersGridService {
       ReadOnly: true
     },
     {
-      DisplayText: 'SpecificationStartDate',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.SpecificationStartDate),
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: false,
-      ReadOnly: true
-    },
-    {
-      DisplayText: 'SpecificationEndDate',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.SpecificationEndDate),
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: false,
-      ReadOnly: true
-    },
-    {
-      DisplayText: 'Status',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.Status),
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: false,
-      ReadOnly: true
-    },
-    {
-      DisplayText: 'JobOrderUid',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.JobOrderUid),
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: false,
-      ReadOnly: true
-    },
-    {
       DisplayText: 'Code',
       FieldName: nameOf<IJobOrderDto>((prop) => prop.Code),
       IsActive: true,
@@ -66,15 +34,6 @@ export class JobOrdersGridService {
       IsVisible: true,
       ReadOnly: true,
       hyperlink: true,
-      width: eGridColumnsWidth.ShortDescription
-    },
-    {
-      DisplayText: 'Subject',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.Subject),
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: false,
-      ReadOnly: true,
       width: eGridColumnsWidth.ShortDescription
     },
     {
@@ -133,7 +92,7 @@ export class JobOrdersGridService {
     }
   ];
 
-  private searchFields: string[] = [nameOf<IJobOrderDto>((prop) => prop.Subject)];
+  private searchFields: string[] = [nameOf<IJobOrderDto>((prop) => prop.SpecificationSubject)];
   private gridActions: GridRowActions[] = [];
 
   constructor(
@@ -149,8 +108,7 @@ export class JobOrdersGridService {
       request: this.jobOrdersService.getJobOrdersRequest(),
       actions: this.gridActions,
       sortField: nameOf<IJobOrderDto>((prop) => prop.LastUpdated),
-      sortOrder: -1,
-      name: 'Job Orders'
+      sortOrder: -1
     };
   }
 

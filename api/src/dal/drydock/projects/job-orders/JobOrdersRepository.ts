@@ -21,21 +21,14 @@ export class JobOrdersRepository {
             .select([
                 'sd.uid AS SpecificationUid',
                 'sd.ProjectUid AS ProjectUid',
-                'jo.uid AS JobOrderUid',
                 'tm.Code AS Code',
-                'jo.Subject AS Subject',
                 'its.DisplayName as ItemSource',
-                'jo.Status AS Status',
-                'jo.Remarks AS Remarks',
                 'jo.Progress AS Progress',
                 // TODO: take from SpecificationDetails -> AssignedTo property, once it is implemented
                 "'-' AS Responsible",
                 'jo.LastUpdated AS LastUpdated',
                 'tm.Status AS SpecificationStatus',
-                'sd.StartDate AS SpecificationStartDate',
                 'sd.Subject AS SpecificationSubject',
-                // TODO: implement once end date is implemented in specification details page
-                //'sd.EndDate AS SpecificationEndDate',
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')

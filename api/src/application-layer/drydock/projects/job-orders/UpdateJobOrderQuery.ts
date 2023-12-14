@@ -54,13 +54,13 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
         let jobOrder = await this.jobOrderRepository.TryGetJobOrderBySpecification(specification.uid);
 
         specification.StartDate = request.SpecificationStartDate;
-        // TODO: update end date once it is implemented in specification details page
-        // specification.EndDate = request.SpecificationEndDate;
+        specification.EndDate = request.SpecificationEndDate;
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const updatedSpecification = new SpecificationDetailsEntity();
             updatedSpecification.uid = specification.uid;
-            updatedSpecification.StartDate = new Date(request.SpecificationStartDate);
+            updatedSpecification.StartDate = specification.StartDate;
+            updatedSpecification.EndDate = specification.EndDate;
 
             await this.specificationDetailsRepository.UpdateSpecificationDetailsByEntity(
                 updatedSpecification,

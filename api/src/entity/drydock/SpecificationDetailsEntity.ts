@@ -92,7 +92,7 @@ export class SpecificationDetailsEntity {
     })
     Subject: string;
 
-    @Column('datetime', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'start_date',
     })
