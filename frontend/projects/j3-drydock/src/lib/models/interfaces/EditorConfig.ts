@@ -15,5 +15,5 @@ export interface EditorConfig {
 
   vesselId?: number;
 
-  key1?: any;
+  key1?: string;
 }
