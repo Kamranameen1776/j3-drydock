@@ -21,4 +21,4 @@ export async function getDailyReportsQuery(req: Request, res: Response) {
     });
 }
 
-exports.get = getDailyReportsQuery;
+exports.post = getDailyReportsQuery;
