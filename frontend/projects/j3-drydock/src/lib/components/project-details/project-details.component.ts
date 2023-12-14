@@ -168,9 +168,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   private processWidgetNewBtn(secName: string) {
     // TODO add check by access rights for each section and hide in configuration for details page instead of here
-    if (!this.canEdit) {
-      return;
-    }
+
     // eslint-disable-next-line default-case
     switch (secName) {
       case eProjectDetailsSideMenuId.RFQ: {
