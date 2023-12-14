@@ -10,7 +10,8 @@ import {
   eFieldControlType,
   FormModel,
   SystemLevelFiltersService,
-  Datasource
+  Datasource,
+  VesselService
 } from 'jibe-components';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
@@ -204,6 +205,15 @@ export class ProjectsSpecificationGridService {
       type: 'multiselect',
       listValueKey: 'FleetCode',
       odataKey: ProjectsGridOdataKeys.FleetCode
+    },
+    VesselName: {
+      data: (arg) => this.vesselService.getVesselsByFleet(arg),
+      type: eFieldControlType.MultiSelect,
+      odataKey: 'VesselId',
+      listValueKey: 'Vessel_ID',
+      dependentFilterConfig: {
+        dependentParent: ['Fleets']
+      }
     }
   };
 
@@ -219,6 +229,17 @@ export class ProjectsSpecificationGridService {
       default: false,
       CoupleID: 0,
       CoupleLabel: 'Project',
+      gridName: this.gridName
+    },
+    {
+      Active_Status_Config_Filter: true,
+      DisplayText: 'Vessel',
+      Active_Status: true,
+      FieldName: 'VesselName',
+      DisplayCode: 'Vessel_Name',
+      ValueCode: 'Vessel_ID',
+      FieldID: 1,
+      default: false,
       gridName: this.gridName
     },
     {
@@ -352,7 +373,8 @@ export class ProjectsSpecificationGridService {
   constructor(
     private userService: UserService,
     private projectsService: ProjectsService,
-    private slfService: SystemLevelFiltersService
+    private slfService: SystemLevelFiltersService,
+    private vesselService: VesselService
   ) {}
 
   public getGridInputs(): GridInputsWithRequest {
