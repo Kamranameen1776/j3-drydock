@@ -1,6 +1,10 @@
 import { UserService, eDateFormats } from 'jibe-components';
 import moment from 'moment';
 
+export function localAsUTCFromJbString(userFormattedDate: string, format?: string): string {
+  return localAsUTC(getDateFromJbString(userFormattedDate, format));
+}
+
 export function getDateFromJbString(userFormattedDate: string, format?: string): Date {
   const dateFormat = format || UserService.getUserDetails()?.Date_Format?.toUpperCase() || eDateFormats.FormDateFormat.toUpperCase();
   return moment(userFormattedDate, dateFormat).toDate();

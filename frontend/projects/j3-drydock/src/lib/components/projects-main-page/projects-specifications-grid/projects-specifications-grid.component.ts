@@ -20,7 +20,7 @@ import { eProjectsAccessActions } from '../../../models/enums/access-actions.enu
 import { eFunction } from '../../../models/enums/function.enum';
 import { statusBackground, statusIcon } from '../../../shared/statuses';
 import { ProjectCreate } from '../../../models/interfaces/projects';
-import { getDateFromJbString, localAsUTC } from '../../../utils/date';
+import { localAsUTCFromJbString } from '../../../utils/date';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -193,9 +193,9 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
     const values: ProjectCreate = cloneDeep(this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId]);
 
-    values.EndDate = localAsUTC(getDateFromJbString(values.EndDate));
+    values.EndDate = localAsUTCFromJbString(values.EndDate);
 
-    values.StartDate = localAsUTC(getDateFromJbString(values.StartDate));
+    values.StartDate = localAsUTCFromJbString(values.StartDate);
 
     this.projectsService.createProject(values).subscribe(() => {
       this.saveNewProjectButtonDisabled$.next(false);

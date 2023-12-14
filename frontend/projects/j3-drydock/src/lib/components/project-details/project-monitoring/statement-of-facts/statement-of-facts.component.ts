@@ -12,7 +12,7 @@ import { StatementOfFactsGridOdataKeys } from '../../../../models/enums/Statemen
 import { IDeleteStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/IDeleteStatementOfFactDto';
 import { ICreateStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/ICreateStatementOfFactDto';
 import { IUpdateStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/IUpdateStatementOfFactDto';
-import { UTCAsLocal, getDateFromJbString, localAsUTC } from '../../../../utils/date';
+import { UTCAsLocal, localAsUTCFromJbString } from '../../../../utils/date';
 
 @Component({
   selector: 'jb-statement-of-facts',
@@ -173,7 +173,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
     const dateTimeString = this.createStatementOfFactFormGroup.value.statementOfFactCreate.DateTime;
 
-    const dateTime = localAsUTC(getDateFromJbString(dateTimeString, this.dateTimeFormat));
+    const dateTime = localAsUTCFromJbString(dateTimeString, this.dateTimeFormat);
 
     const data: ICreateStatementOfFactDto = {
       ProjectUid: this.projectId,
@@ -196,7 +196,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
     const dateTimeString = this.updateStatementOfFactFormGroup.value.statementOfFactUpdate.DateTime;
 
-    const dateTime = localAsUTC(getDateFromJbString(dateTimeString, this.dateTimeFormat));
+    const dateTime = localAsUTCFromJbString(dateTimeString, this.dateTimeFormat);
 
     const data: IUpdateStatementOfFactDto = {
       StatementOfFactUid: this.updateStatementOfFactFormGroup.value.statementOfFactUpdate.StatementOfFactUid,

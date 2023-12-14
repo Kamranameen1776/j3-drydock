@@ -15,7 +15,7 @@ import { AttachmentsAccessRight, BaseAccessRight } from '../../models/interfaces
 import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { eProjectsDetailsAccessActions, eProjectsAccessActions } from '../../models/enums/access-actions.enum';
-import { getDateFromJbString, localAsUTC } from '../../utils/date';
+import { localAsUTCFromJbString } from '../../utils/date';
 
 export interface ProjectDetailsAccessRights extends BaseAccessRight {
   attachments: AttachmentsAccessRight;
@@ -315,8 +315,8 @@ export class ProjectDetailsService {
     const data = {
       Subject: formData.Job_Short_Description,
       ProjectManagerUid: formData.ProjectManager,
-      EndDate: localAsUTC(getDateFromJbString(formData.EndDate)),
-      StartDate: localAsUTC(getDateFromJbString(formData.StartDate))
+      EndDate: localAsUTCFromJbString(formData.EndDate),
+      StartDate: localAsUTCFromJbString(formData.StartDate)
     };
 
     return this.projectsService.updateProject({
