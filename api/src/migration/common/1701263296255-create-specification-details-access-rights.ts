@@ -8,6 +8,18 @@ const enum Location {
 }
 
 /** @private */
+const enum UserTypeUid {
+    OfficeUser = '3C084885-783B-46B8-9635-B2F70CC49218',
+    SeaStaff = '0F3613B9-9FB5-40E6-8763-FC4941136598',
+}
+
+/** @private */
+const userTypeUidByLocation = {
+    [Location.Office]: UserTypeUid.OfficeUser,
+    [Location.Vessel]: UserTypeUid.SeaStaff,
+} satisfies Record<Location, UserTypeUid>;
+
+/** @private */
 interface AccessRightGroup {
     readonly code: string;
     readonly name: string;
@@ -47,12 +59,12 @@ const accessRightGroups: Record<string, AccessRightGroup> = {
         validOn: Location.Vessel,
     },
     taskManagerResync: {
-        code: 'task_manager_resync',
+        code: '22658ABD-CE04-420E-8582-25C52CD9615E',
         name: 'Task Manager Re-Sync',
         validOn: Location.Office,
     },
     taskManagerResyncOnboard: {
-        code: 'task_manager_resync_onboard',
+        code: 'C2DBEC6D-1D60-4F3C-AC23-DF76FD073FDE',
         name: 'Task Manager Re-Sync Onboard',
         validOn: Location.Vessel,
     },
@@ -496,12 +508,6 @@ export class CreateSpecificationDetailsAccessRights1701263296255 implements Migr
     }
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        /** A mapping of `[Valid_On]` locations to corresponding names of SQL variables for user type UID */
-        const userTypeVariableNameByLocation = {
-            [Location.Office]: '@user_type_uid_office_user',
-            [Location.Vessel]: '@user_type_uid_sea_staff',
-        } satisfies Record<Location, string>;
-
         try {
             await queryRunner.query(`
                 insert into INF_Lib_Right (
@@ -540,17 +546,6 @@ export class CreateSpecificationDetailsAccessRights1701263296255 implements Migr
             `, [this.moduleCode, this.functionCode]);
 
             await queryRunner.query(`
-                declare ${userTypeVariableNameByLocation[Location.Office]} varchar(50);
-                declare ${userTypeVariableNameByLocation[Location.Vessel]} varchar(50);
-
-                set ${userTypeVariableNameByLocation[Location.Office]} = (
-                    select uid from lib_user_type where USER_TYPE = 'OFFICE USER'
-                );
-
-                set ${userTypeVariableNameByLocation[Location.Vessel]} = (
-                    select uid from lib_user_type where USER_TYPE = 'SEA STAFF'
-                );
-
                 insert into INF_lnk_right_user_type (
                     [uid],
                     [right_code],
@@ -565,7 +560,7 @@ export class CreateSpecificationDetailsAccessRights1701263296255 implements Migr
                     ${accessRights.map((accessRight) => `(
                         '${accessRight.rightUserTypeUid}',
                         '${accessRight.code}',
-                        ${userTypeVariableNameByLocation[accessRight.group.validOn] ?? 'NULL'},
+                        '${userTypeUidByLocation[accessRight.group.validOn] ?? 'NULL'}',
                         1,
                         1,
                         getdate(),

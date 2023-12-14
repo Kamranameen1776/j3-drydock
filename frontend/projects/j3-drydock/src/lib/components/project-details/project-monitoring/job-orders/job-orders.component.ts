@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { JobOrdersGridService } from './JobOrdersGridService';
 import {
   eGridEvents,
@@ -32,6 +32,8 @@ import { EditorConfig } from 'projects/j3-drydock/src/lib/models/interfaces/Edit
   providers: [JobOrdersGridService, FormGroupDirective]
 })
 export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
+  @ViewChild('lastUpdatedTemplate', { static: true }) lastUpdatedTemplate: TemplateRef<unknown>;
+
   @Input() projectId: string;
 
   @ViewChild('jobOrdersGrid')
@@ -202,6 +204,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   private setGridInputs() {
     this.gridInputs = this.jobOrdersGridService.getGridInputs();
     this.setGridActions();
+    this.setCellTemplate(this.lastUpdatedTemplate, 'LastUpdated');
   }
 
   private setGridActions() {
@@ -211,5 +214,13 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
       name: eGridRowActions.Edit,
       label: 'Update Job'
     });
+  }
+
+  private setCellTemplate(template: TemplateRef<unknown>, fieldName: string) {
+    const col = this.gridInputs.columns.find((col) => col.FieldName === fieldName);
+    if (!col) {
+      return;
+    }
+    col.cellTemplate = template;
   }
 }

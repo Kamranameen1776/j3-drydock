@@ -19,6 +19,13 @@
   ></jb-checkbox>
 </ng-template>
 
+<ng-template
+  #exportedDateTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.lastExportedDate | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
+</ng-template>
+
 <jb-drydock-link-yard-popup
   [linked]="linked"
   [projectId]="projectId"

@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { cloneDeep } from 'lodash';
+import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ProjectsSpecificationGridService } from './ProjectsSpecificationGridService';
 import { eGridRowActions, FormModel, GridAction, GridComponent, IJbDialog } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
@@ -14,11 +15,12 @@ import { IProjectGroupStatusDto } from '../services/IProjectGroupStatusDto';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { NewTabService } from '../../../services/new-tab-service';
-import moment from 'moment';
 import { IProjectStatusDto } from '../../../services/dtos/IProjectStatusDto';
 import { eProjectsAccessActions } from '../../../models/enums/access-actions.enum';
 import { eFunction } from '../../../models/enums/function.enum';
+import { statusBackground, statusIcon } from '../../../shared/statuses';
 import { ProjectCreate } from '../../../models/interfaces/projects';
+import { localAsUTCFromJbString } from '../../../utils/date';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -29,6 +31,10 @@ import { ProjectCreate } from '../../../models/interfaces/projects';
 export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
   @ViewChild('projectsGrid')
   projectsGrid: GridComponent;
+
+  @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
+  @ViewChild('startDateTemplate', { static: true }) startDateTemplate: TemplateRef<unknown>;
+  @ViewChild('endDateTemplate', { static: true }) endDateTemplate: TemplateRef<unknown>;
 
   private readonly allProjectsProjectTypeId = 'all_projects';
 
@@ -75,6 +81,8 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   leftPanelProjectGroupStatusFilter: IProjectGroupStatusDto;
 
   leftPanelVesselsFilter: number[];
+
+  statusCSS = { statusBackground, statusIcon };
 
   constructor(
     private router: Router,
@@ -183,13 +191,11 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
       return;
     }
 
-    const values: ProjectCreate = this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId];
+    const values: ProjectCreate = cloneDeep(this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId]);
 
-    const endDate = moment(values.EndDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
-    values.EndDate = endDate;
+    values.EndDate = localAsUTCFromJbString(values.EndDate);
 
-    const startDate = moment(values.StartDate.toString(), this.projectsGridService.dateFormat.toUpperCase()).toDate();
-    values.StartDate = startDate;
+    values.StartDate = localAsUTCFromJbString(values.StartDate);
 
     this.projectsService.createProject(values).subscribe(() => {
       this.saveNewProjectButtonDisabled$.next(false);
@@ -226,6 +232,9 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   private setGridInputs() {
     this.gridInputs = this.projectsGridService.getGridInputs();
     this.gridInputs.gridButton.show = this.canCreateProject;
+    this.setCellTemplate(this.statusTemplate, 'ProjectStatusName');
+    this.setCellTemplate(this.startDateTemplate, 'StartDate');
+    this.setCellTemplate(this.endDateTemplate, 'EndDate');
     this.setGridActions();
   }
 
@@ -249,5 +258,13 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   private hasAccess(action: eProjectsAccessActions, func = eFunction.Project): boolean {
     return this.projectsService.hasAccess(action, func);
+  }
+
+  private setCellTemplate(template: TemplateRef<unknown>, fieldName: string) {
+    const col = this.gridInputs.columns.find((col) => col.FieldName === fieldName);
+    if (!col) {
+      return;
+    }
+    col.cellTemplate = template;
   }
 }

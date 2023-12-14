@@ -16,6 +16,13 @@
   ></jb-grid>
 </section>
 
+<ng-template
+  #dateAndTimeTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.DateAndTime | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
+</ng-template>
+
 <jb-dialog
   (closeDialog)="showDeleteDialog(false)"
   [(dialogVisible)]="deleteDialogVisible"

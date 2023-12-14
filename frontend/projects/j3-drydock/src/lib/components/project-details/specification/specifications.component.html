@@ -19,6 +19,7 @@
     [filterListsSet]="gridData.filtersLists"
     [getStyleByContainer]="true"
     (action)="onActionClick($event)"
+    (cellPlainTextClick)="cellPlainTextClick($event)"
   ></jb-grid>
 
   <jb-add-specification-from-standard-job-popup

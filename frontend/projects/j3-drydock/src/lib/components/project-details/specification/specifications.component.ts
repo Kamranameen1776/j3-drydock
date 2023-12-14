@@ -9,6 +9,8 @@ import { Observable } from 'rxjs';
 import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../../models/interfaces/functions-tree-node';
 import { map, takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../../models/constants/popup';
+import { NewTabService } from '../../../services/new-tab-service';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'jb-specifications',
   templateUrl: './specifications.component.html',
@@ -48,7 +50,9 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     private specsService: SpecificationGridService,
     private formService: SpecificationCreateFormService,
     private functionsService: FunctionsService,
-    private gridService: GridService
+    private gridService: GridService,
+    private newTabService: NewTabService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
@@ -99,6 +103,12 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     this.gridData = this.getData();
   }
 
+  cellPlainTextClick({ cellType, rowData, columnDetail }) {
+    if (cellType === 'hyperlink' && columnDetail.FieldName === 'code') {
+      this.newTabService.navigate(['../../specification-details', rowData.uid], { relativeTo: this.activatedRoute });
+    }
+  }
+
   setNodeData(event) {
     if (event?.type === eJbTreeEvents.NodeSelect) {
       this.functionUIDs = [...this.functionUIDs, event.payload.Child_ID];
@@ -127,7 +137,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
         this.showDeleteDialog(true);
         break;
       case eGridRowActions.Edit:
-        // Will to implemented later
+        this.newTabService.navigate(['../../specification-details', payload.uid], { relativeTo: this.activatedRoute });
         break;
       default:
         return;

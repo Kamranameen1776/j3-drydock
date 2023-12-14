@@ -10,15 +10,20 @@ export class ProjectMapper {
             ProjectTypeCode: record.ProjectTypeCode,
             ProjectManager: record.ProjectManager,
             ProjectManagerUid: record.ProjectManagerUid,
-            ShipYard: 'Country ave.Name 123',
-            Specification: '330/500',
+
+            ShipYard: record.ShipYard,
+            ShipYardId: record.ShipYardUid,
+            Specification: record.Specification,
             ProjectStatusName: record.ProjectStatusName,
             ProjectStatusId: record.ProjectStatusId,
+
             ProjectState: record.ProjectStateName,
+
             VesselName: record.VesselName,
             VesselUid: record.VesselUid,
             VesselId: record.VesselId,
             VesselType: record.VesselType,
+
             Subject: record.Subject,
             StartDate: record.StartDate,
             EndDate: record.EndDate,

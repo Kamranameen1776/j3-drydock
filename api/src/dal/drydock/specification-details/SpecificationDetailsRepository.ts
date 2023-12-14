@@ -162,6 +162,7 @@ export class SpecificationDetailsRepository {
                 .leftJoin(className(TmDdLibItemCategory), 'ic', 'sd.item_category_uid = ic.uid')
                 .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.done_by_uid = db.uid')
                 .leftJoin(className(TmDdLibMaterialSuppliedBy), 'msb', 'sd.material_supplied_by_uid = msb.uid')
+                .leftJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid')
                 .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
                 .select([
                     'sd.uid as uid',
@@ -176,6 +177,8 @@ export class SpecificationDetailsRepository {
                     'tm.Status as status',
                     'tm.title as subject',
                     'sd.project_uid',
+                    'sd.ItemSourceUid as item_source_uid',
+                    'its.DisplayName as item_source',
                     RepoUtils.getStringAggJoin(
                         LibSurveyCertificateAuthority,
                         'ID',
@@ -213,6 +216,8 @@ export class SpecificationDetailsRepository {
                         'tm.Status',
                         'tm.title',
                         'sd.project_uid',
+                        'sd.item_source_uid',
+                        'its.display_name',
                     ].join(', '),
                 )
                 .where('sd.active_status = 1')

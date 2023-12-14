@@ -17,6 +17,13 @@
   ></jb-grid>
 </section>
 
+<ng-template
+  #lastUpdatedTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.LastUpdated | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
+</ng-template>
+
 <jb-dialog
   (closeDialog)="showUpdateDialog(false)"
   [(dialogVisible)]="updateDialogVisible"

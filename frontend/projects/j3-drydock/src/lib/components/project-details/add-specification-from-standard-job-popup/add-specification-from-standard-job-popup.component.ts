@@ -88,6 +88,6 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   }
 
   private getData() {
-    return this.standardJobsService.getStandardJobPopupGridData(3 /*this.vesselType*/, this.functionUIDs);
+    return this.standardJobsService.getStandardJobPopupGridData(this.vesselType, this.functionUIDs);
   }
 }
