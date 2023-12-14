@@ -6,7 +6,7 @@ import { BaseDatesEntity } from '../baseDatesEntity';
 @Entity('daily_reports', { schema: 'dry_dock' })
 export class DailyReportsEntity extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
-    Uid: string;
+    uid: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
