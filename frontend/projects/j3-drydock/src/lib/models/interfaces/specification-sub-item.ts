@@ -3,7 +3,8 @@ export interface SpecificationSubItem {
   specificationDetailsUid: string;
   number: number;
   subject: string;
-  unit: string;
+  unitType: string;
+  unitTypeUid: string;
   quantity: number;
   unitPrice: number;
   activeStatus: boolean;

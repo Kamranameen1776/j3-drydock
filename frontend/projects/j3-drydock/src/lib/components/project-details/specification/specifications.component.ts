@@ -9,7 +9,8 @@ import { Observable } from 'rxjs';
 import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../../models/interfaces/functions-tree-node';
 import { map, takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../../models/constants/popup';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NewTabService } from '../../../services/new-tab-service';
 
 @Component({
   selector: 'jb-specifications',
@@ -52,6 +53,8 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     private functionsService: FunctionsService,
     private gridService: GridService,
     private router: Router,
+    private newTabService: NewTabService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
@@ -129,7 +132,6 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
         this.showDeleteDialog(true);
         break;
       case eGridRowActions.Edit:
-        // Will to implemented later
         this.openSpecificationPage(uid);
         break;
       default:
@@ -156,6 +158,6 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   }
 
   private openSpecificationPage(uid: string) {
-    this.router.navigate([`dry-dock/specification-details/${uid}`]);
+      this.newTabService.navigate(['../../specification-details', uid], { relativeTo: this.activatedRoute });
   }
 }

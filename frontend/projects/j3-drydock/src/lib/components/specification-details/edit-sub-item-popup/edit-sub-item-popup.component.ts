@@ -4,7 +4,9 @@ import { FormModel, FormValues, IJbDialog } from 'jibe-components';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { FormGroup } from '@angular/forms';
 import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
-import { SpecificationSubItemEditFormService } from '../specification-sub-items/specification-sub-item-edit-form.service';
+import { SpecificationSubItemEditService } from '../specification-sub-items/specification-sub-item-edit.service';
+import { GrowlMessageService } from '../../../services/growl-message.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'jb-edit-sub-item-popup',
@@ -16,6 +18,7 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
   @Input() projectId: string;
   @Input() vesselUid: string;
   @Input() subItemDetails: SpecificationSubItem;
+  @Input() specificationUid: string;
 
   @Output() closeDialog = new EventEmitter<boolean>();
 
@@ -31,9 +34,12 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
   formModel: FormModel;
   formValues: FormValues;
 
-  isSaving: boolean;
+  loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private specificationSubItemEditFormService: SpecificationSubItemEditFormService) {
+  constructor(
+    private specificationSubItemEditService: SpecificationSubItemEditService,
+    private growlService: GrowlMessageService
+  ) {
     super();
   }
 
@@ -58,11 +64,23 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
   }
 
   private save() {
-    this.closePopup(true);
+    this.loading$.next(true);
+    const value = this.formGroup.value[this.specificationSubItemEditService.formId];
+    this.specificationSubItemEditService.updateSubItem(value, this.subItemDetails.uid, this.specificationUid).subscribe(
+      () => {
+        this.closePopup(true);
+      },
+      (err) => {
+        this.growlService.errorHandler(err);
+      },
+      () => {
+        this.loading$.next(false);
+      }
+    );
   }
 
   private initForm(): void {
-    this.formModel = this.specificationSubItemEditFormService.formStructure;
-    this.formValues = this.specificationSubItemEditFormService.getFormValues(this.subItemDetails);
+    this.formModel = this.specificationSubItemEditService.formStructure;
+    this.formValues = this.specificationSubItemEditService.getFormValues(this.subItemDetails);
   }
 }

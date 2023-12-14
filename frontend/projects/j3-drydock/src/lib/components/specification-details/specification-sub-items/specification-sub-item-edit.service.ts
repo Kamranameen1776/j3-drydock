@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { eFieldControlType, FormModel, FormValues } from 'jibe-components';
+import { ApiRequestService, eCrud, eFieldControlType, FormModel, FormValues, WebApiRequest } from 'jibe-components';
 import { specificationSubItemEditFormId } from '../../../models/constants/constants';
 import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import {
@@ -9,11 +9,12 @@ import {
 } from '../../../models/enums/specification-details-sub-items.enum';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SpecificationSubItemEditFormService extends FormServiceBase {
+export class SpecificationSubItemEditService extends FormServiceBase {
   readonly formId = specificationSubItemEditFormId;
 
   protected readonly _formStructure: FormModel = {
@@ -41,7 +42,7 @@ export class SpecificationSubItemEditFormService extends FormServiceBase {
             gridColStart: 1,
             gridColEnd: 2
           },
-          [eSpecificationDetailsSubItemsFields.Unit]: {
+          [eSpecificationDetailsSubItemsFields.UnitUid]: {
             label: eSpecificationDetailsSubItemsLabels.Unit,
             type: eFieldControlType.Dropdown,
             sectionID: this.formId,
@@ -52,8 +53,8 @@ export class SpecificationSubItemEditFormService extends FormServiceBase {
             gridColStart: 2,
             gridColEnd: 3,
             listRequest: {
-              webApiRequest: this.specificationDetailsService.getLibraryDataRequest('ddUnits'),
-              labelKey: 'display_name',
+              webApiRequest: this.specificationDetailsService.getLibraryDataRequest('unitType'),
+              labelKey: 'types',
               valueKey: 'uid'
             }
           },
@@ -88,7 +89,9 @@ export class SpecificationSubItemEditFormService extends FormServiceBase {
             gridRowStart: 3,
             gridRowEnd: 4,
             gridColStart: 1,
-            gridColEnd: 2
+            gridColEnd: 2,
+            validatorMax: 1,
+            validatorMin: 0
           },
           [`${eSpecificationDetailsSubItemsFields.Description}`]: {
             label: eSpecificationDetailsSubItemsLabels.Description,
@@ -120,7 +123,10 @@ export class SpecificationSubItemEditFormService extends FormServiceBase {
     }
   };
 
-  constructor(private specificationDetailsService: SpecificationDetailsService) {
+  constructor(
+    private specificationDetailsService: SpecificationDetailsService,
+    private apiRequestService: ApiRequestService
+  ) {
     super();
   }
 
@@ -130,7 +136,7 @@ export class SpecificationSubItemEditFormService extends FormServiceBase {
       values: {
         [this.formId]: {
           [eSpecificationDetailsSubItemsFields.Subject]: data?.subject,
-          [eSpecificationDetailsSubItemsFields.Unit]: data?.unit,
+          [eSpecificationDetailsSubItemsFields.UnitUid]: data?.unitTypeUid,
           [eSpecificationDetailsSubItemsFields.Quantity]: data?.quantity,
           [eSpecificationDetailsSubItemsFields.UnitPrice]: data?.unitPrice,
           [eSpecificationDetailsSubItemsFields.Discount]: data?.discount,
@@ -138,5 +144,28 @@ export class SpecificationSubItemEditFormService extends FormServiceBase {
         }
       }
     };
+  }
+
+  public updateSubItem(data: SpecificationSubItem, uid: string, specificationUid: string): Observable<SpecificationSubItem> {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      action: 'specification-details/sub-items/update-sub-item',
+      crud: eCrud.Put,
+      body: {
+        uid,
+        specificationDetailsUid: specificationUid,
+        props: {
+          subject: data[eSpecificationDetailsSubItemsFields.Subject],
+          unitUid: data[eSpecificationDetailsSubItemsFields.UnitUid],
+          quantity: data[eSpecificationDetailsSubItemsFields.Quantity],
+          unitPrice: data[eSpecificationDetailsSubItemsFields.UnitPrice],
+          discount: data[eSpecificationDetailsSubItemsFields.Discount],
+          description: data[eSpecificationDetailsSubItemsFields.Description]
+        }
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(request);
   }
 }

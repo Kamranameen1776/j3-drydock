@@ -27,5 +27,6 @@
   *ngIf="selectedSubItem"
   [isOpen]="!!selectedSubItem"
   [subItemDetails]="selectedSubItem"
+  [specificationUid]="specificationDetailsInfo.uid"
   (closeDialog)="closeDialog($event)"
 ></jb-edit-sub-item-popup>

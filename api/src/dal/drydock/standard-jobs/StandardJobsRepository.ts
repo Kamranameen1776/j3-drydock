@@ -20,9 +20,9 @@ import {
     StandardJobsSurveyCertificateAuthorityEntity,
     StandardJobsVesselTypeEntity,
 } from '../../../entity/drydock';
-import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
 import { FiltersDataResponse, RequestWithOData } from '../../../shared/interfaces';
 import { RepoUtils } from '../utils/RepoUtils';
+import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
 
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();

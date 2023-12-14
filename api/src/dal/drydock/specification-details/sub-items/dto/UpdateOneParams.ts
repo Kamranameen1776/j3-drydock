@@ -7,7 +7,7 @@ import { SubItemEditableProps } from './SubItemEditableProps';
 /** @private */
 class SubItemEditablePropsPartial implements Partial<SubItemEditableProps> {
     @IsOptional()
-    readonly subject?: string;
+    readonly subject: string;
 
     @IsOptional()
     readonly unitUid?: string;
@@ -20,6 +20,9 @@ class SubItemEditablePropsPartial implements Partial<SubItemEditableProps> {
 
     @IsOptional()
     readonly discount?: number;
+
+    @IsOptional()
+    readonly description?: string;
 }
 
 export class UpdateOneParams extends GetOneParams {

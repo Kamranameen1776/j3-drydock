@@ -33,7 +33,10 @@ export class SpecificationDetailsSubItemsRepository {
                 'subItem.cost as cost',
                 'subItem.specification_details_uid as specificationDetailsUid',
                 'subItem.unit_type_uid as unitTypeUid',
+                'subItem.description as description',
+                'unitType.types as unitType',
             ])
+            .innerJoin('lib_unit_type', 'unitType', 'unitType.uid = subItem.unit_type_uid')
             .where('specification_details_uid = :specificationDetailsUid', {
                 specificationDetailsUid: params.specificationDetailsUid,
             })
@@ -47,7 +50,9 @@ export class SpecificationDetailsSubItemsRepository {
     public async getOneByUid(params: GetOneParams, queryRunner: QueryRunner): Promise<SubItem | null> {
         const subItem = await queryRunner.manager.findOne(SubItem, {
             where: {
-                specificationDetailsUid: params.specificationDetailsUid,
+                specificationDetails: {
+                    uid: params.specificationDetailsUid,
+                },
                 uid: params.uid,
                 active_status: true,
             },
@@ -112,7 +117,16 @@ export class SpecificationDetailsSubItemsRepository {
             await this.assertAllUnitTypesExistByUids([params.props.unitUid], queryRunner);
         }
 
-        Object.assign(subItem, params.props);
+        if (params.props.unitUid) {
+            subItem.unitType = {
+                uid: params.props.unitUid,
+            } as UnitTypeEntity;
+        }
+        subItem.quantity = params.props.quantity;
+        subItem.unitPrice = params.props.unitPrice;
+        subItem.discount = params.props.discount;
+        subItem.subject = params.props.subject;
+        subItem.description = params.props.description;
 
         // assigned separately for type safety
         subItem.updated_by = params.updatedBy;

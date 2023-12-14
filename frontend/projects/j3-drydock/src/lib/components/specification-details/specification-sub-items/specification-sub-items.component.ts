@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { GetSpecificationDetailsDto } from '../../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { SpecificationDetailsSubItemsGridService } from '../../../services/specification-details/specification-details-sub-item.service';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
-import { eGridRowActions } from 'jibe-components';
+import { eGridRefreshType, eGridRowActions, GridService } from 'jibe-components';
 import { GridAction } from 'jibe-components/lib/grid/models/grid-action.model';
 import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
 
@@ -17,7 +17,10 @@ export class SpecificationSubItemsComponent implements OnInit {
 
   selectedSubItem: SpecificationSubItem;
 
-  constructor(private subItemsGridService: SpecificationDetailsSubItemsGridService) {}
+  constructor(
+    private subItemsGridService: SpecificationDetailsSubItemsGridService,
+    private gridService: GridService
+  ) {}
 
   ngOnInit(): void {
     this.gridData = this.getData();
@@ -33,14 +36,16 @@ export class SpecificationSubItemsComponent implements OnInit {
     }
   }
 
-  private getData() {
-    return this.subItemsGridService.getGridData(this.specificationDetailsInfo?.uid);
-  }
-
   closeDialog(isSaved: boolean) {
     if (isSaved) {
       this.gridData = this.getData();
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
     }
+
     this.selectedSubItem = null;
+  }
+
+  private getData() {
+    return this.subItemsGridService.getGridData(this.specificationDetailsInfo?.uid);
   }
 }
