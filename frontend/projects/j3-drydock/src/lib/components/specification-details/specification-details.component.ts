@@ -12,8 +12,6 @@ import {
   ITopSectionFieldSet,
   JbDatePipe,
   JbDetailsTopSectionService,
-  UserService,
-  eDateFormats,
   eJMSActionTypes,
   eJMSSectionNames,
   eMessagesSeverityValues
@@ -27,7 +25,6 @@ import { eFunction } from '../../models/enums/function.enum';
 import { SpecificationDetailsFull, SpecificationDetails } from '../../models/interfaces/specification-details';
 import { ITMDetailTabFields, JbTaskManagerDetailsService } from 'j3-task-manager-ng';
 import { TaskManagerService } from '../../services/task-manager.service';
-import moment from 'moment';
 import { FormGroup } from '@angular/forms';
 @Component({
   selector: 'jb-specification-details',
@@ -212,24 +209,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       this.deleteRecord();
     } else if (wfEvent?.event?.type === 'resync') {
       this.resyncRecord();
-    } else if (wfEvent?.event?.type === 'dueDateChange') {
-      const body = {
-        vesselId: this.tmDetails.Vessel_ID,
-        uid: this.tmDetails.uid,
-        raised_location: this.tmDetails.raised_location,
-        wl_type: this.tmDetails.wl_type,
-        isJobEdit: true,
-        function_code: this.functionCode,
-        module_code: this.moduleCode,
-        vessel_uid: this.tmDetails.vessel_uid,
-        task_status: this.tmDetails.task_status,
-        expected_completion_date: moment(
-          wfEvent.event.payload?.update_due_date,
-          UserService.getUserDetails()?.Date_Format?.toLocaleUpperCase()
-        ).format(eDateFormats.DBDateTimeFormat),
-        isTmDueDateChanged: true
-      };
-      this.jbTMDtlSrv.saveUpdatedTMDueDate(body);
     }
   }
 
