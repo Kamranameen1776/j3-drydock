@@ -1,10 +1,10 @@
 import { cloneDeep } from 'lodash';
-import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ProjectsSpecificationGridService } from './ProjectsSpecificationGridService';
 import { eGridRowActions, FormModel, GridAction, GridComponent, IJbDialog } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
@@ -20,7 +20,8 @@ import { eProjectsAccessActions } from '../../../models/enums/access-actions.enu
 import { eFunction } from '../../../models/enums/function.enum';
 import { statusBackground, statusIcon } from '../../../shared/statuses';
 import { ProjectCreate } from '../../../models/interfaces/projects';
-import { localAsUTCFromJbString } from '../../../utils/date';
+import { getDateFromJbString, localAsUTCFromJbString } from '../../../utils/date';
+import { eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -28,7 +29,7 @@ import { localAsUTCFromJbString } from '../../../utils/date';
   styleUrls: ['./projects-specifications-grid.component.scss'],
   providers: [ProjectsSpecificationGridService]
 })
-export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
+export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('projectsGrid')
   projectsGrid: GridComponent;
 
@@ -39,6 +40,8 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   private readonly allProjectsProjectTypeId = 'all_projects';
 
   private readonly closeProjectStatusId = 'CLOSE';
+
+  private subscription: Subscription = new Subscription();
 
   private accessActions = eProjectsAccessActions;
 
@@ -103,6 +106,10 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     this.deleteProjectForm = this.projectsGridService.getDeleteProjectForm();
 
     this.projectsService.getProjectStatuses().pipe(takeUntil(this.unsubscribe$)).subscribe(this.selectGridDefaultStatuses.bind(this));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -170,6 +177,17 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
         this.saveNewProjectButtonDisabled$.next(true);
       }
     });
+    this.listenToDateChanges();
+  }
+
+  public listenToDateChanges() {
+    const startDateControl = this.createProjectFormGroup.get(this.projectsGridService.createProjectFormId).get(eProjectsCreateFieldNames.StartDate);
+    this.subscription.add(    
+      startDateControl.valueChanges.subscribe((value) => {
+        const endDateFieldModel = this.projectsGridService.getCreateFormControl(this.createProjectForm, eProjectsCreateFieldNames.EndDate);
+        endDateFieldModel.calendarMin = value ? this.getDateFromString(value) : undefined;
+      }),
+    );
   }
 
   public initDeleteProjectFormGroup(action: FormGroup): void {
@@ -212,6 +230,10 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
       this.showDeleteDialog(false);
       this.projectsGrid.fetchMatrixData();
     });
+  }
+
+  private getDateFromString(date: string): Date {
+    return getDateFromJbString(date, this.projectsGridService.dateFormat.toUpperCase());
   }
 
   private selectGridDefaultStatuses(statuses: IProjectStatusDto[]) {

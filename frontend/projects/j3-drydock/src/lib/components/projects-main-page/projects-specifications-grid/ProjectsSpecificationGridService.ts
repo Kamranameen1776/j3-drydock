@@ -479,4 +479,8 @@ export class ProjectsSpecificationGridService {
       }
     };
   }
+
+  getCreateFormControl(form: FormModel, fieldName: eProjectsCreateFieldNames) {
+    return form.sections[this.createProjectFormId].fields[fieldName];
+  }
 }
