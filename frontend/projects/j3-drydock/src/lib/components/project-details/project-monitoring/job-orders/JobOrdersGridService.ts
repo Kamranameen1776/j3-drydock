@@ -286,8 +286,8 @@ export class JobOrdersGridService {
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               show: 'hidden',
-              gridRowStart: 4,
-              gridRowEnd: 5,
+              gridRowStart: 7,
+              gridRowEnd: 7,
               gridColStart: 1,
               gridColEnd: 3
             }
