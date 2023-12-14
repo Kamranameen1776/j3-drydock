@@ -10,8 +10,7 @@ export class UpdateDailyReportsDto {
     ReportName: string;
 
     @MinLength(1)
-    @MaxLength(5000)
-    Description: string;
+    Remarks: string;
 
     @IsUUID()
     @IsNotEmpty()

@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsOptional, IsUUID, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class CreateDailyReportsDto {
     @MinLength(1)
@@ -12,9 +12,8 @@ export class CreateDailyReportsDto {
     @IsDateString()
     ReportDate: Date;
 
-    @IsOptional()
     @MinLength(1)
-    Description: string;
+    Remarks: string;
 
     @IsUUID()
     @IsNotEmpty()

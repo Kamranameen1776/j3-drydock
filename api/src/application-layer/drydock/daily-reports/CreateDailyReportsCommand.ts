@@ -37,7 +37,7 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
                     ProjectUid: data.ProjectUid,
                     ReportName: data.ReportName,
                     ReportDate: data.ReportDate,
-                    Description: data.Description,
+                    Remarks: data.Remarks,
                     UserUid: data.UserUid,
                     CreatedAt: data.CreatedAt,
                 },

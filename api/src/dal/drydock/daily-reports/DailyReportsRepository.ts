@@ -15,12 +15,7 @@ export class DailyReportsRepository {
 
         const query: string = dailyReportsRepository
             .createQueryBuilder('dr')
-            .select([
-                'dr.Uid AS uid',
-                'dr.ProjectUid AS projectUid',
-                'dr.ReportName AS reportName',
-                'dr.ReportDate AS reportDate',
-            ])
+            .select(['dr.DailyReportUid AS uid', 'dr.ReportName AS reportName', 'dr.ReportDate AS reportDate'])
             .where('dr.active_status = 1')
             .getQuery();
         const oDataService = new ODataService(data, getConnection);
@@ -38,7 +33,7 @@ export class DailyReportsRepository {
                 ProjectUid: data.ProjectUid,
                 ReportName: data.ReportName,
                 ReportDate: data.ReportDate,
-                Description: data.Description,
+                Remarks: data.Remarks,
                 created_by: data.UserUid,
                 created_at: data.CreatedAt,
                 active_status: true,
@@ -54,7 +49,7 @@ export class DailyReportsRepository {
             .update(DailyReportsEntity)
             .set({
                 ReportName: data.ReportName,
-                Description: data.Description,
+                Remarks: data.Remarks,
                 updated_by: data.UserUid,
                 updated_at: data.UpdatedAt,
             })

@@ -36,7 +36,7 @@ export class UpdateDailyReportsCommand extends Command<UpdateDailyReportsDto, vo
                 {
                     DailyReportUid: data.DailyReportUid,
                     ReportName: data.ReportName,
-                    Description: data.Description,
+                    Remarks: data.Remarks,
                     UserUid: data.UserUid,
                     UpdatedAt: data.UpdatedAt,
                 },
