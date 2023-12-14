@@ -21,12 +21,13 @@ import { eFunction } from '../../../models/enums/function.enum';
 import { statusBackground, statusIcon } from '../../../shared/statuses';
 import { ProjectCreate } from '../../../models/interfaces/projects';
 import { localAsUTCFromJbString } from '../../../utils/date';
+import { GrowlMessageService } from '../../../services/growl-message.service';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
   templateUrl: './projects-specifications-grid.component.html',
   styleUrls: ['./projects-specifications-grid.component.scss'],
-  providers: [ProjectsSpecificationGridService]
+  providers: [ProjectsSpecificationGridService, GrowlMessageService]
 })
 export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
   @ViewChild('projectsGrid')
@@ -83,6 +84,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   leftPanelVesselsFilter: number[];
 
   statusCSS = { statusBackground, statusIcon };
+  growlMessage$ = this.growlMessageService.growlMessage$;
 
   constructor(
     private router: Router,
@@ -90,7 +92,8 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     private projectsService: ProjectsService,
     private leftPanelFilterService: LeftPanelFilterService,
     private newTabService: NewTabService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private growlMessageService: GrowlMessageService
   ) {
     super();
   }
@@ -101,19 +104,17 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
     this.createProjectForm = this.projectsGridService.getCreateProjectForm();
     this.deleteProjectForm = this.projectsGridService.getDeleteProjectForm();
-
-    this.projectsService.getProjectStatuses().pipe(takeUntil(this.unsubscribe$)).subscribe(this.selectGridDefaultStatuses.bind(this));
   }
 
   ngAfterViewInit(): void {
     this.leftPanelFilterService.vesselsChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((filter: number[]) => {
       this.leftPanelVesselsFilter = filter;
-      this.projectsGrid.fetchMatrixData();
+      this.projectsGrid?.fetchMatrixData();
     });
 
     this.leftPanelFilterService.groupStatusChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((filter: IProjectGroupStatusDto) => {
       this.leftPanelProjectGroupStatusFilter = filter;
-      this.projectsGrid.fetchMatrixData();
+      this.projectsGrid?.fetchMatrixData();
     });
   }
 
@@ -197,6 +198,11 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
     values.StartDate = localAsUTCFromJbString(values.StartDate);
 
+    if (values.EndDate < values.StartDate) {
+      this.growlMessageService.setErrorMessage('Start date cannot be greater than End date');
+      return;
+    }
+
     this.projectsService.createProject(values).subscribe(() => {
       this.saveNewProjectButtonDisabled$.next(false);
       this.showCreateNewDialog(false);
@@ -215,8 +221,11 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   }
 
   private selectGridDefaultStatuses(statuses: IProjectStatusDto[]) {
-    this.gridInputs.filters.find((filter) => filter.FieldName === this.projectsGridService.ProjectStatusesFilterName).selectedValues =
-      statuses.filter((status) => status.ProjectStatusId !== this.closeProjectStatusId).map((status) => status.ProjectStatusId);
+    this.projectsGridService.filters.find(
+      (filter) => filter.FieldName === this.projectsGridService.ProjectStatusesFilterName
+    ).selectedValues = statuses
+      .filter((status) => status.ProjectStatusId !== this.closeProjectStatusId)
+      .map((status) => status.ProjectStatusId);
   }
 
   private setAccessRights() {
@@ -230,12 +239,18 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   }
 
   private setGridInputs() {
-    this.gridInputs = this.projectsGridService.getGridInputs();
-    this.gridInputs.gridButton.show = this.canCreateProject;
-    this.setCellTemplate(this.statusTemplate, 'ProjectStatusName');
-    this.setCellTemplate(this.startDateTemplate, 'StartDate');
-    this.setCellTemplate(this.endDateTemplate, 'EndDate');
-    this.setGridActions();
+    this.projectsService
+      .getProjectStatuses()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((statuses) => {
+        this.selectGridDefaultStatuses(statuses as unknown as IProjectStatusDto[]);
+        this.gridInputs = this.projectsGridService.getGridInputs();
+        this.gridInputs.gridButton.show = this.canCreateProject;
+        this.setCellTemplate(this.statusTemplate, 'ProjectStatusName');
+        this.setCellTemplate(this.startDateTemplate, 'StartDate');
+        this.setCellTemplate(this.endDateTemplate, 'EndDate');
+        this.setGridActions();
+      });
   }
 
   private setGridActions() {
