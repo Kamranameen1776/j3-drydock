@@ -239,12 +239,18 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   }
 
   private setGridInputs() {
-    this.gridInputs = this.projectsGridService.getGridInputs();
-    this.gridInputs.gridButton.show = this.canCreateProject;
-    this.setCellTemplate(this.statusTemplate, 'ProjectStatusName');
-    this.setCellTemplate(this.startDateTemplate, 'StartDate');
-    this.setCellTemplate(this.endDateTemplate, 'EndDate');
-    this.setGridActions();
+    this.projectsService
+      .getProjectStatuses()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((statuses) => {
+        this.selectGridDefaultStatuses(statuses as unknown as IProjectStatusDto[]);
+        this.gridInputs = this.projectsGridService.getGridInputs();
+        this.gridInputs.gridButton.show = this.canCreateProject;
+        this.setCellTemplate(this.statusTemplate, 'ProjectStatusName');
+        this.setCellTemplate(this.startDateTemplate, 'StartDate');
+        this.setCellTemplate(this.endDateTemplate, 'EndDate');
+        this.setGridActions();
+      });
   }
 
   private setGridActions() {
