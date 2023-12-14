@@ -1,9 +1,8 @@
 export interface IDailyReportsResultDto {
-    uid: string;
-    reportName: string;
-    reportDate: Date;
-    description: string;
-    activeStatus: boolean;
-    createdBy: string;
-    createdAt: Date;
+    Uid: string;
+    ReportName: string;
+    ReportDate: Date;
+    ActiveStatus: boolean;
+    UserUid: string;
+    CreatedAt: Date;
 }

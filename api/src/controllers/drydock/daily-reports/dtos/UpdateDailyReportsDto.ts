@@ -3,20 +3,20 @@ import { IsDateString, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-va
 export class UpdateDailyReportsDto {
     @IsNotEmpty()
     @IsUUID()
-    uid: string;
+    DailyReportUid: string;
 
     @MinLength(1)
     @MaxLength(200)
-    reportName: string;
+    ReportName: string;
 
     @MinLength(1)
     @MaxLength(5000)
-    description: string;
+    Description: string;
 
-    @MinLength(1)
-    @MaxLength(50)
-    updatedBy: string;
+    @IsUUID()
+    @IsNotEmpty()
+    UserUid: string;
 
     @IsDateString()
-    updatedAt: Date;
+    UpdatedAt: Date;
 }

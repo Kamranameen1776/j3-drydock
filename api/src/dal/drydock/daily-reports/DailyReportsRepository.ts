@@ -16,11 +16,10 @@ export class DailyReportsRepository {
         const query: string = dailyReportsRepository
             .createQueryBuilder('dr')
             .select([
-                'dr.uid AS uid',
-                'dr.project_uid AS projectUid',
-                'dr.report_name AS reportName',
-                'dr.description AS description',
-                'dr.report_date AS reportDate',
+                'dr.Uid AS uid',
+                'dr.ProjectUid AS projectUid',
+                'dr.ReportName AS reportName',
+                'dr.ReportDate AS reportDate',
             ])
             .where('dr.active_status = 1')
             .getQuery();
@@ -35,44 +34,44 @@ export class DailyReportsRepository {
             .insert()
             .into(DailyReportsEntity)
             .values({
-                uid: new DataUtilService().newUid(),
-                project_uid: data.projectUid,
-                report_name: data.reportName,
-                report_date: data.reportDate,
-                description: data.description,
-                created_by: data.createdBy,
-                created_at: data.createdAt,
+                Uid: new DataUtilService().newUid(),
+                ProjectUid: data.ProjectUid,
+                ReportName: data.ReportName,
+                ReportDate: data.ReportDate,
+                Description: data.Description,
+                created_by: data.UserUid,
+                created_at: data.CreatedAt,
                 active_status: true,
             })
             .execute();
     }
 
     public async updateDailyReport(data: IUpdateDailyReportsDto, queryRunner: QueryRunner) {
-        const uid = data.uid;
+        const uid = data.DailyReportUid;
         const dailyReportsRepository = queryRunner.manager.getRepository(DailyReportsEntity);
         return dailyReportsRepository
             .createQueryBuilder('yp')
             .update(DailyReportsEntity)
             .set({
-                report_name: data.reportName,
-                description: data.description,
-                updated_by: data.updatedBy,
-                updated_at: data.updatedAt,
+                ReportName: data.ReportName,
+                Description: data.Description,
+                updated_by: data.UserUid,
+                updated_at: data.UpdatedAt,
             })
             .where('uid = :uid', { uid })
             .execute();
     }
 
     public async deleteDailyReport(data: IDeleteDailyReportsDto, queryRunner: QueryRunner) {
-        const uid = data.uid;
+        const uid = data.DailyReportUid;
         const dailyReportsRepository = queryRunner.manager.getRepository(DailyReportsEntity);
         return dailyReportsRepository
             .createQueryBuilder('yp')
             .update(DailyReportsEntity)
             .set({
                 active_status: false,
-                deleted_at: data.deletedAt,
-                deleted_by: data.deletedBy,
+                deleted_by: data.UserUid,
+                deleted_at: data.DeletedAt,
             })
             .where('uid = :uid', { uid })
             .execute();

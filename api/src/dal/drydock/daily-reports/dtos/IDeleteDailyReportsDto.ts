@@ -1,5 +1,5 @@
 export interface IDeleteDailyReportsDto {
-    uid: string;
-    deletedBy: string;
-    deletedAt: Date;
+    DailyReportUid: string;
+    UserUid: string;
+    DeletedAt: Date;
 }

@@ -15,7 +15,7 @@ async function deleteDailyReports(req: Request, res: Response) {
         const command = new DeleteDailyReportsCommand();
 
         const deleteDailyReportsDto: DeleteDailyReportsDto = plainToClass(DeleteDailyReportsDto, request.body);
-        deleteDailyReportsDto.deletedBy = deletedBy;
+        deleteDailyReportsDto.UserUid = deletedBy;
 
         return command.ExecuteAsync(deleteDailyReportsDto);
     });

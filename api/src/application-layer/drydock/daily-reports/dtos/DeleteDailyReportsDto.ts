@@ -1,13 +1,13 @@
-import { IsDateString, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class DeleteDailyReportsDto {
     @IsNotEmpty()
-    uid: string;
+    DailyReportUid: string;
 
-    @MinLength(1)
-    @MaxLength(50)
-    deletedBy: string;
+    @IsUUID()
+    @IsNotEmpty()
+    UserUid: string;
 
     @IsDateString()
-    deletedAt: Date;
+    DeletedAt: Date;
 }

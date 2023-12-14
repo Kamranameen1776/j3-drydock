@@ -1,25 +1,25 @@
-import { IsDateString, IsOptional, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class CreateDailyReportsDto {
     @MinLength(1)
     @MaxLength(50)
-    projectUid: string;
+    ProjectUid: string;
 
-    @MinLength(1)
-    @MaxLength(50)
-    createdBy: string;
+    @IsUUID()
+    @IsNotEmpty()
+    UserUid: string;
 
     @IsDateString()
-    createdAt: Date;
+    CreatedAt: Date;
 
     @MinLength(1)
     @MaxLength(200)
-    reportName: string;
+    ReportName: string;
 
     @IsDateString()
-    reportDate: Date;
+    ReportDate: Date;
 
     @IsOptional()
     @MinLength(1)
-    description: string;
+    Description: string;
 }

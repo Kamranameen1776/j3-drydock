@@ -1,8 +1,8 @@
 export interface ICreateDailyReportsDto {
-    projectUid: string;
-    reportName: string;
-    reportDate: Date;
-    description: string;
-    createdBy: string;
-    createdAt: Date;
+    ProjectUid: string;
+    ReportName: string;
+    ReportDate: Date;
+    Description: string;
+    UserUid: string;
+    CreatedAt: Date;
 }

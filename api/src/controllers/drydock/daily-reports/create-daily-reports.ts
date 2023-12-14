@@ -15,7 +15,7 @@ async function createDailyReports(req: Request, res: Response) {
         const command = new CreateDailyReportsCommand();
 
         const createDailyReportsDto: CreateDailyReportsDto = plainToClass(CreateDailyReportsDto, request.body);
-        createDailyReportsDto.createdBy = createdBy;
+        createDailyReportsDto.UserUid = createdBy;
 
         return command.ExecuteAsync(createDailyReportsDto);
     });

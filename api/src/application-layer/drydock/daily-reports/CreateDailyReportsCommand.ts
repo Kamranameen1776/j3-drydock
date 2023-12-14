@@ -34,12 +34,12 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.dailyReportsRepository.createDailyReport(
                 {
-                    projectUid: data.projectUid,
-                    reportName: data.reportName,
-                    reportDate: data.reportDate,
-                    description: data.description,
-                    createdBy: data.createdBy,
-                    createdAt: data.createdAt,
+                    ProjectUid: data.ProjectUid,
+                    ReportName: data.ReportName,
+                    ReportDate: data.ReportDate,
+                    Description: data.Description,
+                    UserUid: data.UserUid,
+                    CreatedAt: data.CreatedAt,
                 },
                 queryRunner,
             );

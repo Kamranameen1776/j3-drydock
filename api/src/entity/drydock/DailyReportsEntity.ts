@@ -6,31 +6,31 @@ import { BaseDatesEntity } from '../baseDatesEntity';
 @Entity('daily_reports', { schema: 'dry_dock' })
 export class DailyReportsEntity extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
-    uid: string;
+    Uid: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
         name: 'project_uid',
     })
-    project_uid: string;
+    ProjectUid: string;
 
     @Column('varchar', {
         nullable: false,
         name: 'report_name',
         length: 200,
     })
-    report_name: string;
+    ReportName: string;
 
     @Column('datetimeoffset', {
         nullable: false,
         name: 'report_date',
     })
-    report_date: Date;
+    ReportDate: Date;
 
     @Column('varchar', {
         nullable: true,
         name: 'description',
         length: 5000,
     })
-    description: string;
+    Description: string;
 }

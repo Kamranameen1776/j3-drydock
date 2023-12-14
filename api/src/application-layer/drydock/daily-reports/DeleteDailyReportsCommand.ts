@@ -34,9 +34,9 @@ export class DeleteDailyReportsCommand extends Command<DeleteDailyReportsDto, vo
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.dailyReportsRepository.deleteDailyReport(
                 {
-                    uid: data.uid,
-                    deletedBy: data.deletedBy,
-                    deletedAt: data.deletedAt,
+                    DailyReportUid: data.DailyReportUid,
+                    UserUid: data.UserUid,
+                    DeletedAt: data.DeletedAt,
                 },
                 queryRunner,
             );

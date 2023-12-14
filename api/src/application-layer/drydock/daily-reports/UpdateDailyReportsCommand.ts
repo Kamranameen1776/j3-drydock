@@ -34,11 +34,11 @@ export class UpdateDailyReportsCommand extends Command<UpdateDailyReportsDto, vo
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.dailyReportsRepository.updateDailyReport(
                 {
-                    uid: data.uid,
-                    reportName: data.reportName,
-                    description: data.description,
-                    updatedBy: data.updatedBy,
-                    updatedAt: data.updatedAt,
+                    DailyReportUid: data.DailyReportUid,
+                    ReportName: data.ReportName,
+                    Description: data.Description,
+                    UserUid: data.UserUid,
+                    UpdatedAt: data.UpdatedAt,
                 },
                 queryRunner,
             );

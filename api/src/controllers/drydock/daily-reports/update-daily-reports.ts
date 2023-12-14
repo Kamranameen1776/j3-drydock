@@ -15,7 +15,7 @@ async function updateDailyReports(req: Request, res: Response) {
         const command = new UpdateDailyReportsCommand();
 
         const updateDailyReportsDto: UpdateDailyReportsDto = plainToClass(UpdateDailyReportsDto, request.body);
-        updateDailyReportsDto.updatedBy = updatedBy;
+        updateDailyReportsDto.UserUid = updatedBy;
 
         return command.ExecuteAsync(updateDailyReportsDto);
     });
