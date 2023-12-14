@@ -1,5 +1,3 @@
-import { JobOrderStatus } from '../../../components/project-details/project-monitoring/job-orders/dtos/JobOrderStatus';
-
 export interface JobOrderDto {
   JobOrderUid: string;
 
@@ -13,5 +11,5 @@ export interface JobOrderDto {
 
   SpecificationEndDate: Date;
 
-  Status: JobOrderStatus;
+  Status: string;
 }
