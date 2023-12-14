@@ -24,7 +24,7 @@ export class JobOrdersRepository {
                 'tm.Code AS Code',
                 'its.DisplayName as ItemSource',
                 'jo.Progress AS Progress',
-                // TODO: take from SpecificationDetails -> AssignedTo property, once it is implemented
+                // TODO: take from SpecificationDetails -> AssignedTo property, see WI 700332
                 "'-' AS Responsible",
                 'jo.LastUpdated AS LastUpdated',
                 'tm.Status AS SpecificationStatus',
@@ -33,8 +33,6 @@ export class JobOrdersRepository {
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
             .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1')
-
-            // TODO: change to inner join once item source is implemented, see WI 677735
             .leftJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
 
             .getQuery();
