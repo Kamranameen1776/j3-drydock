@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsNotEmpty, IsUUID, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsUUID, Max, MaxLength, Min, MinLength } from 'class-validator';
 
 import { JobOrderStatus } from './JobOrderStatus';
 
@@ -20,7 +20,6 @@ export class UpdateJobOrderDto {
     @IsNotEmpty()
     Progress: number;
 
-    @IsEnum(JobOrderStatus)
     @IsNotEmpty()
     Status: JobOrderStatus;
 
