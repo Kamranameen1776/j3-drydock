@@ -1,5 +1,3 @@
-import { JobOrderStatus } from './JobOrderStatus';
-
 export interface IJobOrderDto {
   SpecificationUid: string;
 
@@ -13,7 +11,7 @@ export interface IJobOrderDto {
 
   LastUpdated: Date;
 
-  SpecificationStatus: JobOrderStatus;
+  SpecificationStatus: string;
 
   SpecificationSubject: string;
 }
