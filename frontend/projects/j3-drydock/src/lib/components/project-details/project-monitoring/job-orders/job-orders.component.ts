@@ -22,8 +22,8 @@ import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { IUpdateJobOrderDto } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/IUpdateJobOrderDto';
-import moment from 'moment';
-import { EditorConfig } from 'projects/j3-drydock/src/lib/models/interfaces/EditorConfig';
+import { EditorConfig } from '../../../../models/interfaces/EditorConfig';
+import { UTCDateAsLocal, currentLocalAsUTC, localDateJbStringAsUTC } from '../../../../utils/date';
 
 @Component({
   selector: 'jb-job-orders',
@@ -122,12 +122,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
             controls.Status.setValue(jobOrder.Status);
             controls.JobOrderUid.setValue(jobOrder.JobOrderUid);
 
-            const specificationStartDate = jobOrder.SpecificationStartDate
-              ? moment(jobOrder.SpecificationStartDate).format(this.jobOrdersGridService.dateTimeFormat)
-              : null;
-            const specificationEndDate = jobOrder.SpecificationEndDate
-              ? moment(jobOrder.SpecificationEndDate).format(this.jobOrdersGridService.dateTimeFormat)
-              : null;
+            const specificationStartDate = UTCDateAsLocal(jobOrder.SpecificationStartDate);
+            const specificationEndDate = UTCDateAsLocal(jobOrder.SpecificationEndDate);
 
             controls.SpecificationStartDate.setValue(specificationStartDate);
             controls.SpecificationEndDate.setValue(specificationEndDate);
@@ -160,14 +156,12 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
     const jobOrder = this.updateJobOrderFormGroup.value.jobOrderUpdate;
 
-    const zone = new Date().getTimezoneOffset();
-
-    const startDate = moment(jobOrder.SpecificationStartDate, this.jobOrdersGridService.dateTimeFormat).add(-zone, 'minutes').toDate();
-    const endDate = moment(jobOrder.SpecificationEndDate, this.jobOrdersGridService.dateTimeFormat).add(-zone, 'minutes').toDate();
+    const startDate: Date = localDateJbStringAsUTC(jobOrder.SpecificationStartDate, this.jobOrdersGridService.dateTimeFormat);
+    const endDate: Date = localDateJbStringAsUTC(jobOrder.SpecificationEndDate, this.jobOrdersGridService.dateTimeFormat);
 
     const data: IUpdateJobOrderDto = {
       SpecificationUid: jobOrder.SpecificationUid,
-      LastUpdated: moment().add(-zone, 'minutes').toDate(),
+      LastUpdated: currentLocalAsUTC(),
       Progress: jobOrder.Progress,
 
       SpecificationStartDate: startDate,
