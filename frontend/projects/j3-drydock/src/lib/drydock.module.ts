@@ -58,6 +58,7 @@ export function winEnv(): unknown {
 import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
 import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
 import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-celll-popover.component';
+import { DailyReportsComponent } from './components/project-details/reports/reports.component';
 @NgModule({
   declarations: [
     SpecificationStatusPipe,
@@ -97,7 +98,8 @@ import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/
     JobOrdersComponent,
     SpecificationRequisitionsComponent,
     UTCAsLocalPipe,
-    GridCellPopoverComponent
+    GridCellPopoverComponent,
+    DailyReportsComponent
   ],
   imports: [
     CommonModule,

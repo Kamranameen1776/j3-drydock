@@ -307,6 +307,28 @@ export class ProjectDetailsService {
             isAddNewButton: false
           }
         ]
+      },
+      [eProjectDetailsSideMenuId.Reporting]: {
+        id: eProjectDetailsSideMenuId.Reporting,
+        menuDisplayName: eProjectDetailsSideMenuLabel.Reporting,
+        menuIcon: '',
+        showDiscussion: true,
+        isClosedDiscussion: false,
+        activeStatus: true,
+        index: 5,
+        sections: [
+          {
+            GridRowStart: 1,
+            GridRowEnd: 2,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
+            SectionCode: eProjectDetailsSideMenuId.DailyReports,
+            SectionLabel: eProjectDetailsSideMenuLabel.DailyReports,
+            IconClass: 'icons8-more-details-2',
+            isAddNewButton: false
+          }
+        ]
       }
     };
   }

@@ -19,7 +19,8 @@
     attachmentss: attachmentss,
     rfq: rfq,
     statement_of_facts: statement_of_facts,
-    job_orders: job_orders
+    job_orders: job_orders,
+    reporting: reportingTab
   }"
   [sectionHeaderTemplateRef]="{ technical_specification: specificationsButtonsTmpl }"
   [slideMenus]="menu"
@@ -100,6 +101,22 @@
     </ng-container>
   </ng-template>
 </jb-task-manager-details>
+
+<ng-template
+  #reportingTab
+  let-section
+>
+  <ng-container [ngSwitch]="section.SectionCode">
+    <div *ngSwitchCase="eSideMenuId.DailyReports">
+      <div #daily_reports>
+        <jb-daily-reports
+          #dailyReportsComponent
+          [projectId]="projectUid"
+        ></jb-daily-reports>
+      </div>
+    </div>
+  </ng-container>
+</ng-template>
 
 <ng-template #specificationsButtonsTmpl>
   <jb-button

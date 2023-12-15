@@ -43,6 +43,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild(eProjectDetailsSideMenuId.RFQ) [eProjectDetailsSideMenuId.RFQ]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.StatementOfFacts) [eProjectDetailsSideMenuId.StatementOfFacts]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.JobOrders) [eProjectDetailsSideMenuId.JobOrders]: ElementRef;
+  @ViewChild(eProjectDetailsSideMenuId.DailyReports) [eProjectDetailsSideMenuId.DailyReports]: ElementRef;
 
   moduleCode = eModule.Project;
   functionCode = eFunction.DryDock;
