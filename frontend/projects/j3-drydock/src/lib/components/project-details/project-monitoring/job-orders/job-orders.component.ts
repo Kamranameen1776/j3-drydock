@@ -25,6 +25,7 @@ import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-
 import { EditorConfig } from '../../../../models/interfaces/EditorConfig';
 import { UTCDateAsLocal, currentLocalAsUTC, localDateJbStringAsUTC } from '../../../../utils/date';
 import { KeyValuePair } from '../../../../utils/KeyValuePair';
+import { GrowlMessageService } from '../../../../services/growl-message.service';
 
 @Component({
   selector: 'jb-job-orders',
@@ -46,6 +47,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   public gridInputs: GridInputsWithRequest;
 
   readonly dateTimeFormat = this.jobOrdersGridService.dateTimeFormat;
+
+  growlMessage$ = this.growlMessageService.growlMessage$;
 
   public updateBtnLabel = 'Update';
 
@@ -73,7 +76,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
     private newTabService: NewTabService,
     private activatedRoute: ActivatedRoute,
     private gridService: GridService,
-    private userService: UserService
+    private userService: UserService,
+    private growlMessageService: GrowlMessageService
   ) {
     super();
   }
@@ -154,6 +158,11 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
     const startDate: Date = localDateJbStringAsUTC(jobOrder.SpecificationStartDate, this.jobOrdersGridService.dateTimeFormat);
     const endDate: Date = localDateJbStringAsUTC(jobOrder.SpecificationEndDate, this.jobOrdersGridService.dateTimeFormat);
+
+    if (startDate.getTime() >= endDate.getTime()) {
+      this.growlMessageService.setErrorMessage('Start date cannot be greater or equal End date');
+      return;
+    }
 
     const data: IUpdateJobOrderDto = {
       SpecificationUid: jobOrder.SpecificationUid,
