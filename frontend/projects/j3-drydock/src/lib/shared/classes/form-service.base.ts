@@ -36,7 +36,7 @@ export abstract class FormServiceBase {
     return formStructure.sections[this.formId].fields[fieldName];
   }
 
-  public setEnabled<T extends string>(formGroup: FormGroup, fieldName: T, isEnable: boolean, isDisableWithReset = true) {
+  public setEnabled<T extends string>(formGroup: FormGroup, fieldName: T, isEnable: boolean, isDisableWithReset = false) {
     const control = this.getFormControl(formGroup, fieldName);
     this.enableOrDisableControl(control, isEnable, isDisableWithReset);
   }

@@ -1,0 +1,18 @@
+<section class="job-orders-grid">
+  <jb-grid
+    #jobOrdersGrid
+    [gridName]="gridInputs.gridName"
+    [colData]="gridInputs.columns"
+    [tableDataReq]="gridInputs.request"
+    [searchFields]="gridInputs.searchFields"
+    [button]="gridInputs.gridButton"
+    [setActions]="gridInputs.actions"
+    [sortField]="gridInputs.sortField"
+    [sortOrder]="gridInputs.sortOrder"
+    [getStyleByContainer]="true"
+    [name]="gridInputs.name"
+    (action)="onGridAction($any($event), $event?.payload)"
+    (cellPlainTextClick)="onCellPlainTextClick($event)"
+    (matrixRequestChanged)="onMatrixRequestChanged()"
+  ></jb-grid>
+</section>

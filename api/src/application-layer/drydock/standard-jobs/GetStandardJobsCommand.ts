@@ -2,7 +2,7 @@ import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard
 import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
 import { RequestWithOData } from '../../../shared/interfaces';
 import { Command } from '../core/cqrs/Command';
-import { GetStandardJobsResultDto } from './GetStandardJobsResultDto';
+import { GetStandardJobsResultDto } from './dto';
 
 export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandardJobsResultDto> {
     standardJobsRepository = new StandardJobsRepository();
@@ -12,18 +12,20 @@ export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandar
         super();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-    protected async AuthorizationHandlerAsync(request: RequestWithOData): Promise<void> {}
-
-    protected async ValidationHandlerAsync(request: RequestWithOData): Promise<void> {
-        if (!request) {
-            throw new Error('Request is null');
-        }
-    }
-
     protected async MainHandlerAsync(request: RequestWithOData): Promise<GetStandardJobsResultDto> {
         const data = await this.standardJobsRepository.getStandardJobs(request);
 
-        return this.standardJobsService.mapStandardJobsDataToDto(data);
+        const uids = data.records.map((item) => item.uid);
+
+        if (!uids.length) {
+            return {
+                records: [],
+                count: 0,
+            };
+        }
+
+        const subItems = await this.standardJobsRepository.getStandardJobSubItems(uids);
+
+        return this.standardJobsService.mapStandardJobsDataToDto(data, subItems);
     }
 }

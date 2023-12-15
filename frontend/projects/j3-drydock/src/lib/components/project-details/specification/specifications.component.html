@@ -1,0 +1,71 @@
+<div class="specs-content">
+  <jb-tree
+    [staticNodes]="treeData$ | async"
+    [showSetting]="{ showSearch: true, showButtons: false }"
+    filterPlaceholder="Search Function"
+    (nodeData)="setNodeData($event)"
+    [eventsList]="eventsList"
+    [virtualScroll]="true"
+    scrollHeight="544px"
+  ></jb-tree>
+
+  <jb-grid
+    *ngIf="gridData"
+    [gridName]="gridData.gridName"
+    [colData]="gridData.columns"
+    [tableDataReq]="gridData.request"
+    [setActions]="gridData.actions"
+    [filterData]="gridData.filters"
+    [filterListsSet]="gridData.filtersLists"
+    [getStyleByContainer]="true"
+    (action)="onActionClick($event)"
+  ></jb-grid>
+
+  <jb-add-specification-from-standard-job-popup
+    *ngIf="addFromStandardJobPopupVisible"
+    [treeData]="treeData$ | async"
+    [isOpen]="addFromStandardJobPopupVisible"
+    [vesselType]="vesselType"
+    [projectUid]="projectId"
+    (closeDialog)="onCloseCreatePopup($event)"
+  ></jb-add-specification-from-standard-job-popup>
+
+  <jb-create-specification-popup
+    [isOpen]="isCreatePopupVisible"
+    [projectId]="projectId"
+    [vesselUid]="vesselUid"
+    (closeDialog)="onCloseCreatePopup($event)"
+  ></jb-create-specification-popup>
+</div>
+
+<ng-template
+  #statusTemplate
+  let-rowData
+>
+  <jb-current-status
+    [status]="rowData.status"
+    [statusColor]="rowData.status | specificationStatus | statusCodeColor"
+  ></jb-current-status>
+</ng-template>
+
+<jb-dialog
+  (closeDialog)="showDeleteDialog(false)"
+  [(dialogVisible)]="deleteDialogVisible"
+  [dialogContent]="deleteSpecificationDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <div class="p-col-12 left">{{ deleteDialogMessage }}</div>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [okBtnLabel]="deleteBtnLabel"
+      (ok)="deleteSpecificationHandler()"
+      (cancel)="showDeleteDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

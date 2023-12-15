@@ -13,7 +13,8 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'plugin:@angular-eslint/recommended',
         'plugin:@angular-eslint/template/process-inline-templates',
-        'plugin:prettier/recommended'
+        'plugin:prettier/recommended',
+        'plugin:rxjs/recommended'
       ],
       rules: {
         'consistent-return': 'warn',
@@ -26,7 +27,6 @@ module.exports = {
         eqeqeq: ['error', 'always', { null: 'ignore' }],
         'grouped-accessor-pairs': 'error',
         'max-depth': 'error',
-        'max-lines': 'error',
         'no-alert': 'error',
         'no-array-constructor': 'error',
         'no-bitwise': 'error',
@@ -34,7 +34,7 @@ module.exports = {
         'no-confusing-arrow': 'error',
         'no-console': 'error',
         'no-else-return': 'error',
-        'no-empty-function': ['error', { allow: ['constructors'] }],
+        '@typescript-eslint/no-empty-function': ['error', { allow: ['constructors'] }],
         'no-var': 'error',
         'max-lines': ['error', 1000],
 

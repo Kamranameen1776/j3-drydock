@@ -1,0 +1,43 @@
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
+import { Request } from 'express';
+
+import { ProjectMapper } from '../../../bll/drydock/projects/ProjectMapper';
+import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
+import { Query } from '../core/cqrs/Query';
+import { GetProjectByUidDto } from './dtos/GetProjectByUidDto';
+import { IProjectsFromMainPageRecordDto } from './projects-for-main-page/dtos/IProjectsFromMainPageRecordDto';
+
+export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordDto> {
+    projectsRepository: ProjectsRepository;
+
+    constructor() {
+        super();
+
+        this.projectsRepository = new ProjectsRepository();
+    }
+
+    protected async AuthorizationHandlerAsync(): Promise<void> {
+        return;
+    }
+
+    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+        const query: GetProjectByUidDto = plainToClass(GetProjectByUidDto, request.query);
+        const result = await validate(query);
+        if (result.length) {
+            throw result;
+        }
+
+        return;
+    }
+
+    /**
+     * Get projects from main page
+     * @param request Http request
+     * @returns Projects from main page
+     */
+    protected async MainHandlerAsync(request: Request): Promise<IProjectsFromMainPageRecordDto> {
+        const [record] = await this.projectsRepository.GetProject(request.query.uid as string);
+        return new ProjectMapper().map(record);
+    }
+}
