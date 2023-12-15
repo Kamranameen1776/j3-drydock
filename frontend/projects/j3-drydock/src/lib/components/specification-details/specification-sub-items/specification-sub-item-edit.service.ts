@@ -171,4 +171,19 @@ export class SpecificationSubItemEditService extends FormServiceBase {
 
     return this.apiRequestService.sendApiReq(request);
   }
+
+  public deleteSubItem(uid: string, specificationUid: string): Observable<SpecificationSubItem> {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      action: 'specification-details/sub-items/delete-sub-item',
+      crud: eCrud.Put,
+      body: {
+        uid,
+        specificationDetailsUid: specificationUid
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(request);
+  }
 }

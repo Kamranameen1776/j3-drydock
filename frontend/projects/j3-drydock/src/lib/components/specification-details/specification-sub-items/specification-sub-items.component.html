@@ -13,11 +13,11 @@
       [tableDataReq]="gridData.request"
       [setActions]="gridData.actions"
       [filterData]="gridData.filters"
+      [searchFields]="gridData.searchFields"
       [filterListsSet]="gridData.filtersLists"
       [getStyleByContainer]="true"
       [isDisplayAdvancedSettings]="false"
       [isDisplayAdvancedFilter]="false"
-      [isDisplaySearchField]="false"
       (action)="actionHandler($any($event))"
     ></jb-grid>
   </div>
@@ -28,5 +28,26 @@
   [isOpen]="!!selectedSubItem"
   [subItemDetails]="selectedSubItem"
   [specificationUid]="specificationDetailsInfo.uid"
-  (closeDialog)="closeDialog($event)"
+  (closeDialog)="closeEditDialog($event)"
 ></jb-edit-sub-item-popup>
+
+<jb-dialog
+  [dialogContent]="deleteSubItemPopupConfig"
+  [(dialogVisible)]="!!selectedDeleteSubItem"
+  *ngIf="selectedDeleteSubItem"
+>
+  <div
+    jb-dialog-body
+    class="dialog-body"
+  >
+    <span class="popup-text">Are you sure want to delete this sub item?</span>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      okBtnLabel="Confirm"
+      (ok)="confirmDelete()"
+      (cancel)="cancelDelete()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
