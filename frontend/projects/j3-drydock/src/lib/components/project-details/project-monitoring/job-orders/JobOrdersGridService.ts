@@ -246,7 +246,7 @@ export class JobOrdersGridService {
       moduleCode: 'project',
       functionCode: 'remarks_jb_editor',
       inlineMode: {
-        enable: true,
+        enable: false,
         onSelection: true
       }
     };

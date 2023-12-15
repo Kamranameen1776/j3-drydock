@@ -26,6 +26,7 @@ import { EditorConfig } from '../../../../models/interfaces/EditorConfig';
 import { UTCAsLocal, currentLocalAsUTC, localDateJbStringAsUTC } from '../../../../utils/date';
 import { KeyValuePair } from '../../../../utils/KeyValuePair';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
+import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 
 @Component({
   selector: 'jb-job-orders',
@@ -45,6 +46,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   remarksEditor: JbEditorComponent;
 
   public gridInputs: GridInputsWithRequest;
+
+  tools: ToolbarModule = {};
 
   readonly dateTimeFormat = this.jobOrdersGridService.dateTimeFormat;
 
