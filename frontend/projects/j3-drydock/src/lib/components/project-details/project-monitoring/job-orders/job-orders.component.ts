@@ -16,15 +16,15 @@ import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.bas
 import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { IJobOrderDto } from './dtos/IJobOrderDto';
-import { JobOrdersGridOdataKeys } from '../../../..//models/enums/JobOrdersGridOdataKeys';
+import { JobOrdersGridOdataKeys } from '../../../../models/enums/JobOrdersGridOdataKeys';
 import { NewTabService } from '../../../../services/new-tab-service';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
-import { IUpdateJobOrderDto } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/IUpdateJobOrderDto';
+import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
 import { EditorConfig } from '../../../../models/interfaces/EditorConfig';
 import { UTCDateAsLocal, currentLocalAsUTC, localDateJbStringAsUTC } from '../../../../utils/date';
-import { KeyValuePair } from 'projects/j3-drydock/src/lib/utils/KeyValuePair';
+import { KeyValuePair } from '../../../../utils/KeyValuePair';
 
 @Component({
   selector: 'jb-job-orders',
