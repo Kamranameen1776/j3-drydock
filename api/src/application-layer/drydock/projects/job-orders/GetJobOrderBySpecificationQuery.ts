@@ -19,10 +19,6 @@ export class GetJobOrderBySpecificationQuery extends Query<GetJobOrderBySpecific
         return;
     }
 
-    protected async ValidationHandlerAsync(): Promise<void> {
-        return;
-    }
-
     /**
      * @returns Job Order data by specification
      */
