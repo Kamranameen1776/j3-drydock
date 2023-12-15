@@ -183,7 +183,7 @@ export class SpecificationGridService {
       type: 'multiselect',
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      gridName: this.gridName,
+      gridName: this.gridName
     },
     {
       DisplayText: 'Status',
@@ -198,7 +198,7 @@ export class SpecificationGridService {
       ValueCode: 'label',
       FieldID: 2,
       default: true,
-      gridName: this.gridName,
+      gridName: this.gridName
     },
     {
       DisplayText: 'Due Date',
@@ -214,7 +214,7 @@ export class SpecificationGridService {
       default: true,
       CoupleID: 1,
       CoupleLabel: 'Due Date Range',
-      gridName: this.gridName,
+      gridName: this.gridName
     },
     {
       DisplayText: 'Due Date',
@@ -230,7 +230,7 @@ export class SpecificationGridService {
       default: true,
       CoupleID: 1,
       CoupleLabel: 'Due Date Range',
-      gridName: this.gridName,
+      gridName: this.gridName
     },
     {
       DisplayText: 'Done By',
@@ -240,7 +240,7 @@ export class SpecificationGridService {
       DisplayCode: 'displayName',
       FieldID: 5,
       default: false,
-      gridName: this.gridName,
+      gridName: this.gridName
     },
     {
       DisplayText: 'Item Source',
@@ -250,7 +250,7 @@ export class SpecificationGridService {
       DisplayCode: 'DisplayName',
       FieldID: 6,
       default: true,
-      gridName: this.gridName,
+      gridName: this.gridName
     }
   ];
 
