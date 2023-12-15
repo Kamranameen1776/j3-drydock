@@ -23,7 +23,7 @@ import { FormControl, FormGroup, FormGroupDirective, Validators } from '@angular
 import { takeUntil } from 'rxjs/operators';
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
 import { EditorConfig } from '../../../../models/interfaces/EditorConfig';
-import { UTCDateAsLocal, currentLocalAsUTC, localDateJbStringAsUTC } from '../../../../utils/date';
+import { UTCAsLocal, currentLocalAsUTC, localDateJbStringAsUTC } from '../../../../utils/date';
 import { KeyValuePair } from '../../../../utils/KeyValuePair';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
 
@@ -122,8 +122,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
             controls.Status.setValue(jobOrder.Status);
             controls.JobOrderUid.setValue(jobOrder.JobOrderUid);
 
-            const specificationStartDate = UTCDateAsLocal(jobOrder.SpecificationStartDate);
-            const specificationEndDate = UTCDateAsLocal(jobOrder.SpecificationEndDate);
+            const specificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate);
+            const specificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate);
 
             controls.SpecificationStartDate.setValue(specificationStartDate);
             controls.SpecificationEndDate.setValue(specificationEndDate);

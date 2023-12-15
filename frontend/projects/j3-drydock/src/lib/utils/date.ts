@@ -13,15 +13,6 @@ export function localDateJbStringAsUTC(userFormattedDate: string, format?: strin
 }
 
 /**
- * @example
- * UTC: 2000-01-01 13:00:00 GMT+0,
- * UTC as Local GMT+2: 2000-01-01 13:00:00 GMT+2
- */
-export function UTCDateAsLocal(date?: Date): Date | null {
-  return date ? new Date(date.toString().replace('Z', '')) : null;
-}
-
-/**
  * @returns Current local date as UTC
  * @example
  *  Local: 2000-01-01 15:00:00 GMT+2,
@@ -32,10 +23,18 @@ export function currentLocalAsUTC(): Date {
   return localToUTC(new Date());
 }
 
+/**
+ * @deprecated Use localDateJbStringAsUTC instead
+ */
 export function localAsUTCFromJbString(userFormattedDate: string, format?: string): string {
   return localAsUTC(getDateFromJbString(userFormattedDate, format));
 }
 
+/**
+ * @example
+ * UTC: 2000-01-01 13:00:00 GMT+0,
+ * UTC as Local GMT+2: 2000-01-01 13:00:00 GMT+2
+ */
 export function UTCAsLocal(date: string): Date {
   return date && new Date(date?.replace('Z', ''));
 }

@@ -7,9 +7,9 @@ export interface JobOrderDto {
 
   Subject: string;
 
-  SpecificationStartDate: Date;
+  SpecificationStartDate: string;
 
-  SpecificationEndDate: Date;
+  SpecificationEndDate: string;
 
   Status: string;
 }
