@@ -129,6 +129,7 @@ export class SpecificationDetailsRepository {
                 'ves.VesselName AS VesselName',
                 'ves.uid AS VesselUid',
                 'ves.VesselId AS VesselId',
+                'spec.ProjectUid AS ProjectUid',
                 `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
                 'usr.uid AS ProjectManagerUid',
                 //TODO: strange constants, but Specifications doesnt have type. probably should stay that way
