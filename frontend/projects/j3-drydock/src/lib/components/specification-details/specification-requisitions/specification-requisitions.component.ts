@@ -15,10 +15,14 @@ import {
   ShowSettings,
   WebApiRequest
 } from 'jibe-components';
-import { SpecificationRequisitionsDisplayTexts, SpecificationRequisitionsFieldNames } from '../enum/specification-requisitions.enum';
+
 import { GridAction } from 'jibe-components/lib/grid/models/grid-action.model';
 import { SpecificationRequisition } from '../../../models/interfaces/specification-requisition';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
+import {
+  SpecificationRequisitionsDisplayTexts,
+  SpecificationRequisitionsFieldNames
+} from '../../../models/enums/specification-requisitions.enum';
 
 @Component({
   selector: 'jb-specification-requisitions',
