@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { GetSpecificationDetailsDto } from '../../../models/dto/specification-details/GetSpecificationDetailsDto';
 import { SpecificationDetailsSubItemsGridService } from '../../../services/specification-details/specification-details-sub-item.service';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { eGridRefreshType, eGridRowActions, GridService } from 'jibe-components';
 import { GridAction } from 'jibe-components/lib/grid/models/grid-action.model';
 import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
+import { SpecificationDetails } from '../../../models/interfaces/specification-details';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { SpecificationSubItemEditService } from './specification-sub-item-edit.service';
 import { GrowlMessageService } from '../../../services/growl-message.service';
@@ -16,7 +16,7 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./specification-sub-items.component.scss']
 })
 export class SpecificationSubItemsComponent implements OnInit {
-  @Input() specificationDetailsInfo: GetSpecificationDetailsDto;
+  @Input() specificationDetailsInfo: SpecificationDetails;
   gridData: GridInputsWithRequest;
 
   selectedSubItem: SpecificationSubItem;
@@ -81,6 +81,15 @@ export class SpecificationSubItemsComponent implements OnInit {
         this.deleteLoading$.next(false);
       }
     );
+  }
+
+  closeDialog(isSaved: boolean) {
+    if (isSaved) {
+      this.gridData = this.getData();
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+    }
+
+    this.selectedSubItem = null;
   }
 
   private getData() {

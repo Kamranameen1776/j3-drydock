@@ -49,7 +49,7 @@ export class StandardJobsGridService {
       DisplayText: eStandardJobsMainLabels.MaterialSuppliedBy,
       FieldName: eStandardJobsMainFields.MaterialSuppliedBy,
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true
     },
     {

@@ -39,7 +39,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   private readonly allProjectsProjectTypeId = 'all_projects';
 
-  private readonly closeProjectStatusId = 'CLOSE';
+  private readonly plannedProjectStatusId = 'RAISE';
 
   private accessActions = eProjectsAccessActions;
 
@@ -224,7 +224,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     this.projectsGridService.filters.find(
       (filter) => filter.FieldName === this.projectsGridService.ProjectStatusesFilterName
     ).selectedValues = statuses
-      .filter((status) => status.ProjectStatusId !== this.closeProjectStatusId)
+      .filter((status) => status.ProjectStatusId === this.plannedProjectStatusId)
       .map((status) => status.ProjectStatusId);
   }
 
