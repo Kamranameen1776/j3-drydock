@@ -20,6 +20,7 @@ import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
 import { eProjectsDeleteDisplayNames, eProjectsDeleteFieldNames } from '../../../models/enums/projects-delete.enum';
 import { ProjectsGridOdataKeys } from '../../../models/enums/ProjectsGridOdataKeys';
+import { eSortOrder } from '../../../models/enums/sorting.enum';
 
 @Injectable()
 export class ProjectsSpecificationGridService {
@@ -387,7 +388,9 @@ export class ProjectsSpecificationGridService {
       searchFields: this.searchFields,
       request: this.projectsService.getProjectsForMainPageGridRequest(),
       gridButton: this.gridButton,
-      actions: this.gridActions
+      actions: this.gridActions,
+      sortField: nameOf<IProjectsForMainPageGridDto>((prop) => prop.StartDate),
+      sortOrder: eSortOrder.Descending
     };
   }
 

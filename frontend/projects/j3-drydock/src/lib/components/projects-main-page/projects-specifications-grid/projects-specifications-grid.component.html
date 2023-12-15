@@ -16,6 +16,8 @@
     [getStyleByContainer]="true"
     (action)="onGridAction($any($event), $event?.payload)"
     (matrixRequestChanged)="onMatrixRequestChanged()"
+    [sortField]="gridInputs.sortField"
+    [sortOrder]="gridInputs.sortOrder"
   ></jb-grid>
 </section>
 
