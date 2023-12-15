@@ -387,7 +387,9 @@ export class ProjectsSpecificationGridService {
       searchFields: this.searchFields,
       request: this.projectsService.getProjectsForMainPageGridRequest(),
       gridButton: this.gridButton,
-      actions: this.gridActions
+      actions: this.gridActions,
+      sortField: nameOf<IProjectsForMainPageGridDto>((prop) => prop.StartDate),
+      sortOrder: -1
     };
   }
 
