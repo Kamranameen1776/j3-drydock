@@ -12,9 +12,6 @@ export class CreateDailyReportsDto {
     @IsDateString()
     ReportDate: Date;
 
-    @MinLength(1)
-    Remarks: string;
-
     @IsUUID()
     @IsNotEmpty()
     UserUid: string;

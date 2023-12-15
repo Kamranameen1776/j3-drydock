@@ -2,14 +2,33 @@ import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
+import { className } from '../../../common/drydock/ts-helpers/className';
 import { DailyReportsEntity } from '../../../entity/drydock/DailyReportsEntity';
+import { DailyReportUpdateEntity } from '../../../entity/drydock/DailyReportUpdateEntity';
 import { ODataResult } from '../../../shared/interfaces';
 import { ICreateDailyReportsDto } from './dtos/ICreateDailyReportsDto';
 import { IDailyReportsResultDto } from './dtos/IDailyReportsResultDto';
 import { IDeleteDailyReportsDto } from './dtos/IDeleteDailyReportsDto';
+import { IOneDailyReportsResultDto } from './dtos/IOneDailyReportsResultDto';
 import { IUpdateDailyReportsDto } from './dtos/IUpdateDailyReportsDto';
 
 export class DailyReportsRepository {
+    public async findOneByDailyReportUid(uid: string): Promise<IOneDailyReportsResultDto> {
+        const dailyReportsRepository = getManager().getRepository(DailyReportsEntity);
+        return dailyReportsRepository
+            .createQueryBuilder('dr')
+            .leftJoin(className(DailyReportUpdateEntity), 'dru', 'dru.report_uid = dr.uid')
+            .select([
+                'dr.uid AS uid',
+                'dr.ReportName AS reportName',
+                'dr.ReportDate AS reportDate',
+                'dru.report_update_name as reportUpdateName',
+                'dru.remark as remark',
+            ])
+            .where(`dr.uid = '${uid}' and dr.active_status = 1 and dru.active_status = 1`)
+            .getRawOne();
+    }
+
     public async getDailyReports(data: Request): Promise<ODataResult<IDailyReportsResultDto>> {
         const dailyReportsRepository = getManager().getRepository(DailyReportsEntity);
 
@@ -38,7 +57,6 @@ export class DailyReportsRepository {
                 ProjectUid: data.ProjectUid,
                 ReportName: data.ReportName,
                 ReportDate: data.ReportDate,
-                Remarks: data.Remarks,
                 created_by: data.UserUid,
                 created_at: data.CreatedAt,
                 active_status: true,
@@ -54,7 +72,6 @@ export class DailyReportsRepository {
             .update(DailyReportsEntity)
             .set({
                 ReportName: data.ReportName,
-                Remarks: data.Remarks,
                 updated_by: data.UserUid,
                 updated_at: data.UpdatedAt,
             })
