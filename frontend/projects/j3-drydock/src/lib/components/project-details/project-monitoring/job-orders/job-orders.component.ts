@@ -175,7 +175,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
       Status: jobOrder.Status,
       Subject: jobOrder.Subject,
 
-      Remarks: jobOrder.Remarks
+      Remarks: jobOrder.Remarks ?? ''
     };
 
     this.jobOrdersService
