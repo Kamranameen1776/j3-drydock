@@ -124,7 +124,8 @@ export class SpecificationDetailsSubItemsRepository {
         }
         subItem.quantity = params.props.quantity;
         subItem.unitPrice = params.props.unitPrice;
-        subItem.discount = params.props.discount;
+        const discount = (params.props.discount || 0) / 100;
+        subItem.discount = Number(discount.toFixed(2));
         subItem.subject = params.props.subject;
         subItem.description = params.props.description;
 

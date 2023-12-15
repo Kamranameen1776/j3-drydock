@@ -10,6 +10,7 @@ import {
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
 import { Observable } from 'rxjs';
+import { SectionModel } from 'jibe-components/lib/interfaces/section.model';
 
 @Injectable({
   providedIn: 'root'
@@ -90,8 +91,9 @@ export class SpecificationSubItemEditService extends FormServiceBase {
             gridRowEnd: 4,
             gridColStart: 1,
             gridColEnd: 2,
-            validatorMax: 1,
-            validatorMin: 0
+            validatorMax: 100,
+            validatorMin: 0,
+            format: { afterDecimal: 2 }
           },
           [`${eSpecificationDetailsSubItemsFields.Description}`]: {
             label: eSpecificationDetailsSubItemsLabels.Description,
@@ -102,10 +104,11 @@ export class SpecificationSubItemEditService extends FormServiceBase {
             gridRowStart: 4,
             gridRowEnd: 5,
             gridColStart: 1,
-            gridColEnd: 3
+            gridColEnd: 3,
+            maxTextLength: 1000
           }
         }
-      }
+      } as SectionModel
     }
   };
 
