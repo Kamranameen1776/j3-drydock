@@ -47,7 +47,34 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
   public gridInputs: GridInputsWithRequest;
 
-  tools: ToolbarModule = {};
+  tools: ToolbarModule = {
+    items: [
+      'Bold',
+      'Italic',
+      'Underline',
+      'StrikeThrough',
+      'FontName',
+      'FontSize',
+      'FontColor',
+      // 'BackgroundColor',
+      // 'LowerCase',
+      // 'UpperCase',
+      'Formats',
+      'Alignments',
+      // 'OrderedList',
+      // 'UnorderedList',
+      // 'Outdent',
+      // 'Indent',
+      // 'CreateLink',
+      'Image',
+      'ClearFormat',
+      // 'Print',
+      // 'SourceCode',
+      'FullScreen'
+      // 'Undo',
+      // 'Redo'
+    ]
+  };
 
   readonly dateTimeFormat = this.jobOrdersGridService.dateTimeFormat;
 
