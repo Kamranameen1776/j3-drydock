@@ -111,7 +111,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         scale: 4,
         nullable: true,
     })
-    protected cost: number;
+    cost: number;
 
     // Methods and Hooks
 

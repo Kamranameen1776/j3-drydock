@@ -23,4 +23,4 @@ async function deleteSubItem(req: Req<ReqBody>, res: Res): Promise<void> {
     });
 }
 
-exports.delete = deleteSubItem;
+exports.put = deleteSubItem;
