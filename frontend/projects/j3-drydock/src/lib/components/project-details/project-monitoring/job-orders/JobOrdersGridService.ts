@@ -4,8 +4,8 @@ import { IJobOrderDto } from './dtos/IJobOrderDto';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
 import { Injectable } from '@angular/core';
-import { eJobOrderUpdateDisplayNames, eJobOrderUpdateFieldNames } from 'projects/j3-drydock/src/lib/models/enums/job-order-update.enum';
-import { EditorConfig } from 'projects/j3-drydock/src/lib/models/interfaces/EditorConfig';
+import { eJobOrderUpdateDisplayNames, eJobOrderUpdateFieldNames } from '../../../../models/enums/job-order-update.enum';
+import { EditorConfig } from '../../../../models/interfaces/EditorConfig';
 
 @Injectable()
 export class JobOrdersGridService {
