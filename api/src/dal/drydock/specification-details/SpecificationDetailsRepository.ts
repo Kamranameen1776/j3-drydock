@@ -339,6 +339,13 @@ export class SpecificationDetailsRepository {
         return queryRunner.manager.update(SpecificationDetailsEntity, data.uid, data);
     }
 
+    public async UpdateSpecificationDetailsByEntity(
+        specificationDetails: SpecificationDetailsEntity,
+        queryRunner: QueryRunner,
+    ) {
+        return queryRunner.manager.update(SpecificationDetailsEntity, specificationDetails.uid, specificationDetails);
+    }
+
     public async DeleteSpecificationDetails(uid: string, queryRunner: QueryRunner) {
         const spec = new SpecificationDetailsEntity();
         spec.ActiveStatus = false;
@@ -426,5 +433,17 @@ export class SpecificationDetailsRepository {
             .where(`specification_uid = '${specificationUid}'`)
             .andWhere(`requisition_uid = '${requisitionUid}'`)
             .execute();
+    }
+
+    public async TryGetSpecification(specificationUid: string): Promise<SpecificationDetailsEntity | undefined> {
+        const jobOrdersRepository = getManager().getRepository(SpecificationDetailsEntity);
+
+        const jobOrder = await jobOrdersRepository.findOne({
+            where: {
+                uid: specificationUid,
+            },
+        });
+
+        return jobOrder;
     }
 }

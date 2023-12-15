@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-import * as JobOrderStatus from '../../dal/drydock/projects/job-orders/JobOrderStatus';
+import { JobOrderStatus } from '../../dal/drydock/projects/job-orders/JobOrderStatus';
 
 @Entity('job_orders', { schema: 'dry_dock' })
 export class JobOrderEntity {
@@ -29,7 +29,7 @@ export class JobOrderEntity {
     @Column('varchar', {
         nullable: true,
         name: 'remarks',
-        length: 2000,
+        length: 5000,
     })
     Remarks: string;
 
@@ -38,7 +38,7 @@ export class JobOrderEntity {
         name: 'status',
         length: 50,
     })
-    Status: JobOrderStatus.JobOrderStatus;
+    Status: JobOrderStatus;
 
     @Column('int', {
         nullable: false,
