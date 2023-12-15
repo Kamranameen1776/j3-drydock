@@ -37,7 +37,6 @@ export class StandardJobsRepository {
             .leftJoin('LIB_Survey_CertificateAuthority', 'lsca', `lsca.ID = sjsca.survey_id and lsca.Active_Status = 1`)
             .leftJoin('LIB_VESSELTYPES', 'vt', `vt.ID = sjvt.vessel_type_id and vt.Active_Status = 1`)
             .leftJoin('tm_dd_lib_done_by', 'db', `db.uid = sj.done_by_uid AND db.active_status = 1`)
-            .leftJoin('tm_dd_lib_item_category', 'ic', `ic.uid = sj.category_uid AND ic.active_status = 1`)
             .leftJoin(
                 'tm_dd_lib_material_supplied_by',
                 'msb',
@@ -52,7 +51,6 @@ export class StandardJobsRepository {
                     'sj."function_uid" as "functionUid",' +
                     'CONCAT(sj.code, sj.number) as code,' +
                     'sj.category_uid as categoryUid,' +
-                    'ic.display_name as category,' +
                     'sj.done_by_uid as doneByUid,' +
                     'db.displayName as doneBy,' +
                     'sj.vessel_type_specific as vesselTypeSpecific,' +
@@ -114,7 +112,6 @@ export class StandardJobsRepository {
                     `,sj.code` +
                     `,sj.number` +
                     `,sj.category_uid` +
-                    `,ic.display_name` +
                     `,sj.done_by_uid` +
                     `,db.displayName` +
                     `,sj.vessel_type_specific` +

@@ -27,7 +27,6 @@ import {
     StandardJobs,
     TecTaskManagerEntity,
     TmDdLibDoneBy,
-    TmDdLibItemCategory,
     TmDdLibMaterialSuppliedBy,
 } from '../../../entity/drydock';
 import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
@@ -160,7 +159,6 @@ export class SpecificationDetailsRepository {
 
             const query = getManager()
                 .createQueryBuilder('specification_details', 'sd')
-                .leftJoin(className(TmDdLibItemCategory), 'ic', 'sd.item_category_uid = ic.uid')
                 .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.done_by_uid = db.uid')
                 .leftJoin(className(TmDdLibMaterialSuppliedBy), 'msb', 'sd.material_supplied_by_uid = msb.uid')
                 .leftJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid')
@@ -171,7 +169,6 @@ export class SpecificationDetailsRepository {
                     'sd.component_uid',
                     'sd.item_number',
                     'db.done_by',
-                    'ic.item_category',
                     'sd.active_status',
                     'msb.materialSuppliedBy',
                     'tm.Code as code',
@@ -210,7 +207,6 @@ export class SpecificationDetailsRepository {
                         'sd.component_uid',
                         'sd.item_number',
                         'db.done_by',
-                        'ic.item_category',
                         'sd.active_status',
                         'msb.materialSuppliedBy',
                         'tm.Code',

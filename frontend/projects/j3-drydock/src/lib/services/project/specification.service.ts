@@ -277,12 +277,6 @@ export class SpecificationGridService {
       type: eFieldControlType.MultiSelect,
       odataKey: 'status'
     },
-    ic_item_category: {
-      webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory),
-      type: eFieldControlType.MultiSelect,
-      odataKey: 'item_category_uid',
-      listValueKey: 'uid'
-    },
     inspection: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection),
       type: eFieldControlType.MultiSelect,
