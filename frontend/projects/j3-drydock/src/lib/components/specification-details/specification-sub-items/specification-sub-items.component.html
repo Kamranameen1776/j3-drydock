@@ -18,6 +18,15 @@
       [isDisplayAdvancedSettings]="false"
       [isDisplayAdvancedFilter]="false"
       [isDisplaySearchField]="false"
+      (action)="actionHandler($any($event))"
     ></jb-grid>
   </div>
 </jb-layout-widget>
+
+<jb-edit-sub-item-popup
+  *ngIf="selectedSubItem"
+  [isOpen]="!!selectedSubItem"
+  [subItemDetails]="selectedSubItem"
+  [specificationUid]="specificationDetailsInfo.uid"
+  (closeDialog)="closeDialog($event)"
+></jb-edit-sub-item-popup>

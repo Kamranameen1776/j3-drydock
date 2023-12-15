@@ -37,6 +37,7 @@ module.exports = {
         '@typescript-eslint/no-empty-function': ['error', { allow: ['constructors'] }],
         'no-var': 'error',
         'max-lines': ['error', 1000],
+        'rxjs/no-implicit-any-catch': 'off',
 
         /* @angular-eslint/eslint-plugin */
         '@angular-eslint/component-selector': [

@@ -48,11 +48,19 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     subject: string;
 
     @Column({
+        name: 'description',
+        type: 'varchar',
+        length: 5000,
+        nullable: true,
+    })
+    description?: string;
+
+    @Column({
         name: 'quantity',
         type: 'int',
         nullable: true,
     })
-    quantity: number;
+    quantity?: number;
 
     @Column({
         name: 'unit_price',
@@ -61,7 +69,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         scale: 2,
         nullable: true,
     })
-    unitPrice: number;
+    unitPrice?: number;
 
     @Column({
         name: 'discount',
@@ -73,8 +81,25 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     })
     @Min(DISCOUNT_MIN)
     @Max(DISCOUNT_MAX)
-    discount: number;
+    discount?: number;
+    @ManyToOne(() => SpecificationDetailsEntity, (specificationDetails) => specificationDetails.SubItems)
+    @JoinColumn({
+        name: 'specification_details_uid',
+        referencedColumnName: 'uid',
+    })
+    specificationDetails: SpecificationDetailsEntity;
 
+    // Relations
+    @RelationId<SpecificationDetailsSubItemEntity>((subItem) => subItem.specificationDetails)
+    specificationDetailsUid: string;
+    @OneToOne(() => UnitTypeEntity, (unitType) => unitType.specificationDetailsSubItem)
+    @JoinColumn({
+        name: 'unit_type_uid',
+        referencedColumnName: 'uid',
+    })
+    unitType: UnitTypeEntity;
+    @RelationId<SpecificationDetailsSubItemEntity>((subItem) => subItem.unitType)
+    readonly unitTypeUid: string;
     /**
      * `cost` is supposed to be set only by an internal hook, never externally.
      * To read the value externally, use {@link getCost} or {@link calculateCost}.
@@ -88,28 +113,6 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     })
     protected cost: number;
 
-    // Relations
-
-    @ManyToOne(() => SpecificationDetailsEntity, (specificationDetails) => specificationDetails.SubItems)
-    @JoinColumn({
-        name: 'specification_details_uid',
-        referencedColumnName: 'uid',
-    })
-    specificationDetails: SpecificationDetailsEntity;
-
-    @RelationId<SpecificationDetailsSubItemEntity>((subItem) => subItem.specificationDetails)
-    specificationDetailsUid: string;
-
-    @OneToOne(() => UnitTypeEntity, (unitType) => unitType.specificationDetailsSubItem)
-    @JoinColumn({
-        name: 'unit_type_uid',
-        referencedColumnName: 'uid',
-    })
-    readonly unitType: UnitTypeEntity;
-
-    @RelationId<SpecificationDetailsSubItemEntity>((subItem) => subItem.unitType)
-    readonly unitTypeUid: string;
-
     // Methods and Hooks
 
     public getCost(): number {
@@ -117,7 +120,11 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     }
 
     public calculateCost(): number {
-        return this.quantity * this.unitPrice * (1 - this.discount);
+        const quantity = this.quantity || 0;
+        const unitPrice = this.unitPrice || 0;
+        const discount = this.discount || 0;
+
+        return quantity * unitPrice * (1 - discount);
     }
 
     @BeforeInsert()

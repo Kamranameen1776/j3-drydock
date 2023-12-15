@@ -55,10 +55,13 @@ export function winEnv(): unknown {
     origin: window.location.origin + '/'
   };
 }
+
 import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
 import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
 import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-celll-popover.component';
 import { DailyReportsComponent } from './components/project-details/reports/reports.component';
+import { EditSubItemPopupComponent } from './components/specification-details/edit-sub-item-popup/edit-sub-item-popup.component';
+
 @NgModule({
   declarations: [
     SpecificationStatusPipe,
@@ -97,6 +100,7 @@ import { DailyReportsComponent } from './components/project-details/reports/repo
     AddSpecificationFromStandardJobPopupComponent,
     JobOrdersComponent,
     SpecificationRequisitionsComponent,
+    EditSubItemPopupComponent,
     UTCAsLocalPipe,
     GridCellPopoverComponent,
     DailyReportsComponent
