@@ -38,15 +38,6 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
 
   ngOnInit(): void {
     this.gridData = this.getData();
-    (window as any).createDailyReport = (reportName: string) => {
-        this.reportsService.createDailyReport({
-            ProjectUid: this.projectId,
-            ReportName: reportName,
-            Remarks: 'Remarks',
-            ReportDate: new Date(),
-            CreatedAt: new Date()
-        }).subscribe(() => console.log('finish'))
-    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -78,10 +69,13 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
   }
 
   public deleteReportHandler() {
-    this.reportsService.deleteDailyReport({ uid: this.reportUid }).pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      this.showDeleteDialog(false);
-      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
-    });
+    this.reportsService
+      .deleteDailyReport({ uid: this.reportUid })
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.showDeleteDialog(false);
+        this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+      });
   }
 
   public showDeleteDialog(value: boolean) {
