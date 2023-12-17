@@ -1,6 +1,6 @@
 {
   "name": "@j3-drydock/frontend",
-  "version": "3.2311.325",
+  "version": "3.234.321",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
