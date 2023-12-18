@@ -95,7 +95,7 @@ export class ProjectsSpecificationGridService {
       DisplayText: 'Specifications',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.Specification),
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true,
       width: eGridColumnsWidth.ShortDescription
@@ -105,7 +105,7 @@ export class ProjectsSpecificationGridService {
       DisplayText: 'Ship Yard',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ShipYard),
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true,
       width: eGridColumnsWidth.ShortDescription
@@ -125,7 +125,7 @@ export class ProjectsSpecificationGridService {
       DisplayText: 'State',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectState),
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true,
       width: eGridColumnsWidth.ShortDescription
