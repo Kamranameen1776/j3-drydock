@@ -174,7 +174,7 @@ export class StandardJobsService {
     const filter = ODataFilterBuilder('and');
 
     if (vesselType) {
-      filter.contains('vesselTypeId', vesselType.toString());
+      filter.contains('vesselTypeId', vesselType.toString()).or(ODataFilterBuilder().eq('vesselTypeId', null));
     }
 
     if (functionUIDs?.length > 0) {
