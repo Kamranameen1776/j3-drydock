@@ -3,6 +3,7 @@ export interface ICreateDailyReportsDto {
     ProjectUid: string;
     ReportName: string;
     ReportDate: Date;
+    JobOrdersUpdate: [];
     UserUid: string;
     CreatedAt: Date;
     ActiveStatus: boolean;

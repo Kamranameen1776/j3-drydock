@@ -6,7 +6,7 @@ import { JobOrdersUpdatesDto } from '../../../application-layer/drydock/daily-re
 import { DailyReportsEntity } from '../../../entity/drydock/DailyReportsEntity';
 import { DailyReportUpdateEntity } from '../../../entity/drydock/DailyReportUpdateEntity';
 import { ODataResult } from '../../../shared/interfaces';
-import { ICreateDailyReportRemarkDto } from './dtos/ICreateDailyReportRemarkDto';
+import { ICreateDailyReportUpdateDto } from './dtos/ICreateDailyReportRemarkDto';
 import { ICreateDailyReportsDto } from './dtos/ICreateDailyReportsDto';
 import { IDailyReportsResultDto } from './dtos/IDailyReportsResultDto';
 import { IDeleteDailyReportsDto } from './dtos/IDeleteDailyReportsDto';
@@ -18,23 +18,18 @@ export class DailyReportsRepository {
         const dailyReportsRepository = getManager().getRepository(DailyReportsEntity);
         return dailyReportsRepository
             .createQueryBuilder('dr')
-            .select([
-                'dr.uid as uid',
-                'dr.ReportName as reportName',
-                'dr.ReportDate as reportDate',
-                'dr.JobOrdersUpdate as jobOrdersUpdate',
-            ])
+            .select(['dr.uid as uid', 'dr.ReportName as reportName', 'dr.ReportDate as reportDate'])
             .where(`dr.uid = '${uid}' and dr.active_status = 1`)
             .getRawOne();
     }
 
-    public async findReportRemarks(uid: string): Promise<Array<JobOrdersUpdatesDto>> {
-        const remarksRepository = getManager().getRepository(DailyReportUpdateEntity);
+    public async findDailyReportUpdate(uid: string): Promise<Array<JobOrdersUpdatesDto>> {
+        const dailyReportUpdateRepository = getManager().getRepository(DailyReportUpdateEntity);
 
-        return remarksRepository
-            .createQueryBuilder('rem')
-            .select(['rem.uid as uid', 'rem.ReportUpdateName as reportUpdateName', 'rem.Remark as remark'])
-            .where(`rem.report_uid = '${uid}' and rem.active_status = 1`)
+        return dailyReportUpdateRepository
+            .createQueryBuilder('dru')
+            .select(['dru.uid as updateUid', 'dru.ReportUpdateName as reportUpdateName', 'dru.Remark as remark'])
+            .where(`dru.report_uid = '${uid}' and dru.active_status = 1`)
             .getRawMany();
     }
 
@@ -58,14 +53,12 @@ export class DailyReportsRepository {
     public async createDailyReport(data: ICreateDailyReportsDto, queryRunner: QueryRunner) {
         data.CreatedAt = new Date();
         data.ActiveStatus = true;
-
-        //TODO: think how to return uid from insert request, why it return undefined?
         data.uid = new DataUtilService().newUid();
         await queryRunner.manager.insert(DailyReportsEntity, data);
         return data.uid;
     }
 
-    public async CreateReportRemark(data: Array<ICreateDailyReportRemarkDto>, queryRunner: QueryRunner) {
+    public async createDailyReportUpdate(data: Array<ICreateDailyReportUpdateDto>, queryRunner: QueryRunner) {
         return queryRunner.manager.insert(DailyReportUpdateEntity, data);
     }
 

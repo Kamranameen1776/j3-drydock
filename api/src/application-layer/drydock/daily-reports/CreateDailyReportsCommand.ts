@@ -40,12 +40,12 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
                     return {
                         uid: DataUtilService.newUid(),
                         ReportUid: reportdata,
-                        JobOrdersUpdate: item.Remark,
-                        ReportUpdateName: item.ReportUpdateName,
-                        ActiveStatus: true,
+                        ReportUpdateName: item.name,
+                        Remark: item.remark,
+                        active_status: true,
                     };
                 });
-                await this.dailyReportsRepository.CreateReportRemark(data, queryRunner);
+                await this.dailyReportsRepository.createDailyReportUpdate(data, queryRunner);
             }
         });
     }

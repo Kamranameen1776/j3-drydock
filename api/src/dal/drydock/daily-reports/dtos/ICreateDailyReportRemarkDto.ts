@@ -1,7 +1,7 @@
-export interface ICreateDailyReportRemarkDto {
+export interface ICreateDailyReportUpdateDto {
     uid: string;
     ReportUid: string;
-    JobOrdersUpdate: [];
+    Remark: string;
     ReportUpdateName: string;
-    ActiveStatus: boolean;
+    active_status: boolean;
 }

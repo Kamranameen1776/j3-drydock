@@ -31,5 +31,5 @@ export class DailyReportsEntity extends BaseDatesEntity {
         nullable: true,
         name: 'job_orders_update',
     })
-    JobOrdersUpdate: string | null;
+    JobOrdersUpdate: [];
 }
