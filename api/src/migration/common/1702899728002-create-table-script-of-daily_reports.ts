@@ -16,7 +16,6 @@ export class createTableScriptOfDailyReports1702899728002 implements MigrationIn
                 [project_uid] [uniqueidentifier] NOT NULL,
                 [report_name] [varchar](200) NOT NULL,
                 [report_date] [datetimeoffset](7) NOT NULL,
-                [job_orders_update] [varchar](max) NOT NULL,
                 [active_status] [bit] NOT NULL,
                 [created_by] [uniqueidentifier] NULL,
                 [created_at] [datetimeoffset](7) NOT NULL,

@@ -1,4 +1,4 @@
-export class JobOrdersUpdatesDto {
+export class JobOrdersUpdateDto {
     Name: string;
     Remark: string;
 }

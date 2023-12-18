@@ -5,6 +5,7 @@ import { DailyReportsRepository } from '../../../dal/drydock/daily-reports/Daily
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateDailyReportsDto } from './dtos/CreateDailyReportsDto';
+import { JobOrdersUpdateDto } from './dtos/JobOrdersUpdateDto';
 
 export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, void> {
     dailyReportsRepository: DailyReportsRepository;
@@ -36,12 +37,12 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
             const reportdata = await this.dailyReportsRepository.createDailyReport(request, queryRunner);
             const { JobOrdersUpdate } = request;
             if (JobOrdersUpdate.length) {
-                const data = JobOrdersUpdate.map((item: any) => {
+                const data = JobOrdersUpdate.map((item: JobOrdersUpdateDto) => {
                     return {
                         uid: DataUtilService.newUid(),
                         ReportUid: reportdata,
-                        ReportUpdateName: item.name,
-                        Remark: item.remark,
+                        ReportUpdateName: item.Name,
+                        Remark: item.Remark,
                         active_status: true,
                     };
                 });

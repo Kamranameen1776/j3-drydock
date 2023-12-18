@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
-import { JobOrdersUpdatesDto } from '../../../application-layer/drydock/daily-reports/dtos/JobOrdersUpdatesDto';
+import { JobOrdersUpdateDto } from '../../../application-layer/drydock/daily-reports/dtos/JobOrdersUpdateDto';
 import { DailyReportsEntity } from '../../../entity/drydock/DailyReportsEntity';
 import { DailyReportUpdateEntity } from '../../../entity/drydock/DailyReportUpdateEntity';
 import { ODataResult } from '../../../shared/interfaces';
@@ -23,7 +23,7 @@ export class DailyReportsRepository {
             .getRawOne();
     }
 
-    public async findDailyReportUpdate(uid: string): Promise<Array<JobOrdersUpdatesDto>> {
+    public async findDailyReportUpdate(uid: string): Promise<Array<JobOrdersUpdateDto>> {
         const dailyReportUpdateRepository = getManager().getRepository(DailyReportUpdateEntity);
 
         return dailyReportUpdateRepository
