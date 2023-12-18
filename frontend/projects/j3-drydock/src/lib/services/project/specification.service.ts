@@ -173,16 +173,6 @@ export class SpecificationGridService {
   ];
 
   private readonly filters: Filter[] = [
-    /*{
-      DisplayText: 'Material Supplied By',
-      FieldName: 'msb_material_supplied_by',
-      placeholder: 'Select',
-      Active_Status: false,
-      Active_Status_Config_Filter: false,
-      DisplayCode: 'displayName',
-      FieldID: 4,
-      default: false
-    },*/
     {
       DisplayText: 'Inspection / Survey',
       FieldName: 'inspection',
@@ -192,7 +182,8 @@ export class SpecificationGridService {
       DisplayCode: 'displayName',
       type: 'multiselect',
       Active_Status: true,
-      Active_Status_Config_Filter: true
+      Active_Status_Config_Filter: true,
+      gridName: this.gridName
     },
     {
       DisplayText: 'Status',
@@ -206,7 +197,8 @@ export class SpecificationGridService {
       DisplayCode: 'label',
       ValueCode: 'label',
       FieldID: 2,
-      default: true
+      default: true,
+      gridName: this.gridName
     },
     {
       DisplayText: 'Due Date',
@@ -215,10 +207,14 @@ export class SpecificationGridService {
       Active_Status_Config_Filter: true,
       type: 'date',
       placeholder: 'Select',
+      FieldType: 'date',
+      Details: 'due_date_from',
+      addTimeLimit: true,
       FieldID: 3,
       default: true,
       CoupleID: 1,
-      CoupleLabel: 'Due Date Range'
+      CoupleLabel: 'Due Date Range',
+      gridName: this.gridName
     },
     {
       DisplayText: 'Due Date',
@@ -227,10 +223,14 @@ export class SpecificationGridService {
       Active_Status_Config_Filter: true,
       type: 'date',
       placeholder: 'Select',
-      FieldID: 3,
+      FieldType: 'date',
+      Details: 'due_date_to',
+      addTimeLimit: true,
+      FieldID: 4,
       default: true,
       CoupleID: 1,
-      CoupleLabel: 'Due Date Range'
+      CoupleLabel: 'Due Date Range',
+      gridName: this.gridName
     },
     {
       DisplayText: 'Done By',
@@ -238,8 +238,9 @@ export class SpecificationGridService {
       Active_Status: true,
       Active_Status_Config_Filter: true,
       DisplayCode: 'displayName',
-      FieldID: 4,
-      default: false
+      FieldID: 5,
+      default: false,
+      gridName: this.gridName
     },
     {
       DisplayText: 'Item Source',
@@ -247,8 +248,9 @@ export class SpecificationGridService {
       Active_Status: true,
       Active_Status_Config_Filter: true,
       DisplayCode: 'DisplayName',
-      FieldID: 5,
-      default: true
+      FieldID: 6,
+      default: true,
+      gridName: this.gridName
     }
   ];
 
@@ -274,12 +276,6 @@ export class SpecificationGridService {
       ],
       type: eFieldControlType.MultiSelect,
       odataKey: 'status'
-    },
-    ic_item_category: {
-      webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory),
-      type: eFieldControlType.MultiSelect,
-      odataKey: 'item_category_uid',
-      listValueKey: 'uid'
     },
     inspection: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection),

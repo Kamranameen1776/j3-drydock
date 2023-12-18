@@ -34,7 +34,6 @@ import { LinkYardPopupComponent } from './components/project-details/yard/rfq/li
 import { SelectLinkYardGridComponent } from './components/project-details/yard/rfq/select-link-yard-grid/select-link-yard-grid.component';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
-import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
 import { SpecificationGeneralInformationComponent } from './components/specification-details/specification-general-information/specification-general-information.component';
 import { SpecificationGeneralInformationInputservice } from './components/specification-details/specification-general-information/specification-general-information-inputs';
 import { SpecificationRequisitionsComponent } from './components/specification-details/specification-requisitions/specification-requisitions.component';
@@ -55,7 +54,13 @@ export function winEnv(): unknown {
     origin: window.location.origin + '/'
   };
 }
+
 import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
+import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
+import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-celll-popover.component';
+import { DailyReportsComponent } from './components/project-details/reports/reports.component';
+import { EditSubItemPopupComponent } from './components/specification-details/edit-sub-item-popup/edit-sub-item-popup.component';
+
 @NgModule({
   declarations: [
     SpecificationStatusPipe,
@@ -83,7 +88,6 @@ import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
     CreateSpecificationPopupComponent,
     SpecificationFormComponent,
     SpecificationDetailsComponent,
-    SpecificationDetailsHeaderComponent,
     SpecificationGeneralInformationComponent,
     SpecificationRequisitionsComponent,
     SpecificationSubItemsComponent,
@@ -93,7 +97,11 @@ import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
     ReworkPopupComponent,
     AddSpecificationFromStandardJobPopupComponent,
     JobOrdersComponent,
-    SpecificationRequisitionsComponent
+    SpecificationRequisitionsComponent,
+    EditSubItemPopupComponent,
+    UTCAsLocalPipe,
+    GridCellPopoverComponent,
+    DailyReportsComponent
   ],
   imports: [
     CommonModule,

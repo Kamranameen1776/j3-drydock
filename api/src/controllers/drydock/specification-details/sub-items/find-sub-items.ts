@@ -2,7 +2,7 @@ import { FindSubItemsQuery } from '../../../../application-layer/drydock/specifi
 import { type Req, type Res } from '../../../../common/drydock/ts-helpers/req-res';
 import { type FindManyParams } from '../../../../dal/drydock/specification-details/sub-items/dto/FindManyParams';
 import { type SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
-import { type ODataResult } from '../../../../shared/interfaces/odata-result.interface';
+import { type ODataResult } from '../../../../shared/interfaces';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
 async function findSubItems(

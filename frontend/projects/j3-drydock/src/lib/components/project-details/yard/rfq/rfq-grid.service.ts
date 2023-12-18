@@ -33,11 +33,7 @@ export class RfqGridService {
           FieldName: eRfqFields.ExportedDate,
           IsActive: true,
           IsMandatory: true,
-          IsVisible: true,
-          pipe: {
-            value: 'date',
-            format: UserService.getUserDetails()?.Date_Format?.toLocaleUpperCase() || 'DD-MM-YYYY'
-          }
+          IsVisible: true
         },
         {
           DisplayText: eRfqLabels.IsSelected,

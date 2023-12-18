@@ -24,16 +24,19 @@ export class SpecificationDetailsSubItemsRepository {
         const [script, substitutions] = getManager()
             .createQueryBuilder(SubItem, 'subItem')
             .select([
-                'subItem.uid',
-                'subItem.number',
-                'subItem.subject',
-                'subItem.quantity',
-                'subItem.unitPrice',
-                'subItem.discount',
-                'subItem.cost',
+                'subItem.uid as uid',
+                'subItem.number as number',
+                'subItem.subject as subject',
+                'subItem.quantity as quantity',
+                'subItem.unitPrice as unitPrice',
+                'subItem.discount as discount',
+                'subItem.cost as cost',
                 'subItem.specification_details_uid as specificationDetailsUid',
                 'subItem.unit_type_uid as unitTypeUid',
+                'subItem.description as description',
+                'unitType.types as unitType',
             ])
+            .innerJoin('lib_unit_type', 'unitType', 'unitType.uid = subItem.unit_type_uid')
             .where('specification_details_uid = :specificationDetailsUid', {
                 specificationDetailsUid: params.specificationDetailsUid,
             })
@@ -41,15 +44,15 @@ export class SpecificationDetailsSubItemsRepository {
             .getQueryAndParameters();
 
         const odataService = new ODataService({ query: params.odata }, getConnection);
-        const subItemsFound = await odataService.getJoinResult(script, substitutions);
-
-        return subItemsFound;
+        return odataService.getJoinResult(script, substitutions);
     }
 
     public async getOneByUid(params: GetOneParams, queryRunner: QueryRunner): Promise<SubItem | null> {
         const subItem = await queryRunner.manager.findOne(SubItem, {
             where: {
-                specificationDetailsUid: params.specificationDetailsUid,
+                specificationDetails: {
+                    uid: params.specificationDetailsUid,
+                },
                 uid: params.uid,
                 active_status: true,
             },
@@ -114,7 +117,17 @@ export class SpecificationDetailsSubItemsRepository {
             await this.assertAllUnitTypesExistByUids([params.props.unitUid], queryRunner);
         }
 
-        Object.assign(subItem, params.props);
+        if (params.props.unitUid) {
+            subItem.unitType = {
+                uid: params.props.unitUid,
+            } as UnitTypeEntity;
+        }
+        subItem.quantity = params.props.quantity;
+        subItem.unitPrice = params.props.unitPrice;
+        const discount = (params.props.discount || 0) / 100;
+        subItem.discount = Number(discount.toFixed(2));
+        subItem.subject = params.props.subject;
+        subItem.description = params.props.description;
 
         // assigned separately for type safety
         subItem.updated_by = params.updatedBy;

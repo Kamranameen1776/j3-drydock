@@ -10,7 +10,8 @@ import {
   eFieldControlType,
   FormModel,
   SystemLevelFiltersService,
-  Datasource
+  Datasource,
+  VesselService
 } from 'jibe-components';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
@@ -19,6 +20,7 @@ import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
 import { eProjectsDeleteDisplayNames, eProjectsDeleteFieldNames } from '../../../models/enums/projects-delete.enum';
 import { ProjectsGridOdataKeys } from '../../../models/enums/ProjectsGridOdataKeys';
+import { eSortOrder } from '../../../models/enums/sorting.enum';
 
 @Injectable()
 export class ProjectsSpecificationGridService {
@@ -136,11 +138,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.Date,
-      pipe: {
-        value: 'date',
-        format: this.userService.getUserDetails().Date_Format.toLocaleUpperCase()
-      }
+      width: eGridColumnsWidth.Date
     },
     {
       DisplayText: 'End date',
@@ -149,11 +147,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.Date,
-      pipe: {
-        value: 'date',
-        format: this.userService.getUserDetails().Date_Format.toLocaleUpperCase()
-      }
+      width: eGridColumnsWidth.Date
     }
   ];
 
@@ -187,16 +181,24 @@ export class ProjectsSpecificationGridService {
       odataKey: ProjectsGridOdataKeys.ProjectStatusId,
       listValueKey: 'ProjectStatusId'
     },
-    StartDate: {
+    FromStartDate: {
+      type: eFieldControlType.Date,
       odataKey: ProjectsGridOdataKeys.StartDate,
-      alterKey: 'StartDate',
-      type: 'date',
       dateMethod: 'ge'
     },
-    EndDate: {
+    ToStartDate: {
+      type: eFieldControlType.Date,
+      odataKey: ProjectsGridOdataKeys.StartDate,
+      dateMethod: 'le'
+    },
+    FromEndDate: {
+      type: eFieldControlType.Date,
       odataKey: ProjectsGridOdataKeys.EndDate,
-      alterKey: 'EndDate',
-      type: 'date',
+      dateMethod: 'ge'
+    },
+    ToEndDate: {
+      type: eFieldControlType.Date,
+      odataKey: ProjectsGridOdataKeys.EndDate,
       dateMethod: 'le'
     },
     Fleets: {
@@ -204,6 +206,15 @@ export class ProjectsSpecificationGridService {
       type: 'multiselect',
       listValueKey: 'FleetCode',
       odataKey: ProjectsGridOdataKeys.FleetCode
+    },
+    VesselName: {
+      data: (arg) => this.vesselService.getVesselsByFleet(arg),
+      type: eFieldControlType.MultiSelect,
+      odataKey: 'VesselId',
+      listValueKey: 'Vessel_ID',
+      dependentFilterConfig: {
+        dependentParent: ['Fleets']
+      }
     }
   };
 
@@ -216,9 +227,20 @@ export class ProjectsSpecificationGridService {
       DisplayCode: 'FleetName',
       ValueCode: 'FleetCode',
       FieldID: 0,
-      default: true,
+      default: false,
       CoupleID: 0,
       CoupleLabel: 'Project',
+      gridName: this.gridName
+    },
+    {
+      Active_Status_Config_Filter: true,
+      DisplayText: 'Vessel',
+      Active_Status: true,
+      FieldName: 'VesselName',
+      DisplayCode: 'Vessel_Name',
+      ValueCode: 'Vessel_ID',
+      FieldID: 1,
+      default: false,
       gridName: this.gridName
     },
     {
@@ -228,7 +250,7 @@ export class ProjectsSpecificationGridService {
       FieldName: 'ProjectTypes',
       DisplayCode: 'ProjectTypeName',
       ValueCode: 'ProjectTypeCode',
-      FieldID: 0,
+      FieldID: 2,
       default: true,
       CoupleID: 0,
       CoupleLabel: 'Project',
@@ -241,7 +263,7 @@ export class ProjectsSpecificationGridService {
       FieldName: 'ProjectsManages',
       DisplayCode: 'FullName',
       ValueCode: 'ManagerId',
-      FieldID: 1,
+      FieldID: 3,
       default: true,
       CoupleID: 0,
       CoupleLabel: 'Project',
@@ -254,7 +276,7 @@ export class ProjectsSpecificationGridService {
       FieldName: this.ProjectStatusesFilterName,
       DisplayCode: 'ProjectStatusName',
       ValueCode: 'ProjectStatusId',
-      FieldID: 2,
+      FieldID: 4,
       default: true,
       CoupleID: 0,
       CoupleLabel: 'Project',
@@ -267,7 +289,7 @@ export class ProjectsSpecificationGridService {
       FieldName: 'ShipsYards',
       DisplayCode: 'ShipYardName',
       ValueCode: 'ShipYardId',
-      FieldID: 3,
+      FieldID: 5,
       default: true,
       CoupleID: 0,
       CoupleLabel: 'Project',
@@ -276,40 +298,73 @@ export class ProjectsSpecificationGridService {
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      Created_By: null,
-      DataType: null,
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'FromStartDate',
       DisplayText: 'Start Date',
-      FieldName: 'StartDate',
-      FieldID: 4,
-      default: true,
-      selectedValues: new Date(this.initDate.getFullYear(), this.initDate.getMonth(), 1),
-      minDate: this.minDate,
-      maxDate: this.maxDate,
+      FieldID: 6,
+      FieldName: 'FromStartDate',
       CoupleID: 1,
-      CoupleLabel: 'Project Date',
-      gridName: this.gridName
+      CoupleLabel: 'Start Date',
+      default: false,
+      gridName: this.gridName,
+      addTimeLimit: true
     },
     {
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      Created_By: null,
-      DataType: null,
-      DisplayText: 'End Date',
-      FieldName: 'EndDate',
-      FieldID: 5,
-      default: true,
-      selectedValues: new Date(this.initDate.getFullYear(), this.initDate.getMonth() + 1, 0),
-      minDate: this.minDate,
-      maxDate: this.maxDate,
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'ToStartDate',
+      DisplayText: 'Start Date',
+      FieldID: 7,
+      FieldName: 'ToStartDate',
       CoupleID: 1,
-      CoupleLabel: 'Project Date',
-      gridName: this.gridName
+      CoupleLabel: 'Start Date',
+      default: false,
+      gridName: this.gridName,
+      addTimeLimit: true
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'FromEndDate',
+      DisplayText: 'End Date',
+      FieldID: 8,
+      FieldName: 'FromEndDate',
+      CoupleID: 2,
+      CoupleLabel: 'End Date',
+      default: true,
+      gridName: this.gridName,
+      addTimeLimit: true
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'ToEndDate',
+      DisplayText: 'End Date',
+      FieldID: 9,
+      FieldName: 'ToEndDate',
+      CoupleID: 2,
+      CoupleLabel: 'End Date',
+      default: true,
+      gridName: this.gridName,
+      addTimeLimit: true
     }
   ];
 
   private searchFields: string[] = [
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.Subject),
-    nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectCode)
+    nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectCode),
+    nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectManager)
   ];
   private gridActions: GridRowActions[] = [];
 
@@ -320,7 +375,8 @@ export class ProjectsSpecificationGridService {
   constructor(
     private userService: UserService,
     private projectsService: ProjectsService,
-    private slfService: SystemLevelFiltersService
+    private slfService: SystemLevelFiltersService,
+    private vesselService: VesselService
   ) {}
 
   public getGridInputs(): GridInputsWithRequest {
@@ -332,7 +388,9 @@ export class ProjectsSpecificationGridService {
       searchFields: this.searchFields,
       request: this.projectsService.getProjectsForMainPageGridRequest(),
       gridButton: this.gridButton,
-      actions: this.gridActions
+      actions: this.gridActions,
+      sortField: nameOf<IProjectsForMainPageGridDto>((prop) => prop.StartDate),
+      sortOrder: eSortOrder.Descending
     };
   }
 

@@ -1,12 +1,14 @@
+import { SpecificationSubItemService } from '../../../../bll/drydock/specification-details/specification-sub-item.service';
 import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 import { FindManyParams } from '../../../../dal/drydock/specification-details/sub-items/dto/FindManyParams';
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
-import { type SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
-import { type ODataResult } from '../../../../shared/interfaces/odata-result.interface';
+import { SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { ODataResult } from '../../../../shared/interfaces';
 import { Query } from '../../core/cqrs/Query';
 
 export class FindSubItemsQuery extends Query<FindManyParams, ODataResult<SpecificationDetailsSubItemEntity>> {
     protected readonly subItemRepo = new SpecificationDetailsSubItemsRepository();
+    private readonly specificationSubItemService = new SpecificationSubItemService();
 
     private params: FindManyParams;
 
@@ -15,6 +17,13 @@ export class FindSubItemsQuery extends Query<FindManyParams, ODataResult<Specifi
     }
 
     protected async MainHandlerAsync(): Promise<ODataResult<SpecificationDetailsSubItemEntity>> {
-        return this.subItemRepo.findMany(this.params);
+        const result = await this.subItemRepo.findMany(this.params);
+
+        const records = this.specificationSubItemService.mapQueryResult(result.records);
+
+        return {
+            ...result,
+            records,
+        };
     }
 }

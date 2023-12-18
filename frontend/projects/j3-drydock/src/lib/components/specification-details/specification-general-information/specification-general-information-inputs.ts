@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormModel, FormValues, eFieldControlType } from 'jibe-components';
 import { FieldSetModel } from 'jibe-components/lib/interfaces/field.model';
-import { GetSpecificationDetailsDto } from '../../../models/dto/specification-details/GetSpecificationDetailsDto';
 import {
   eSpecificationDetailsGeneralInformationFields,
   eSpecificationDetailsGeneralInformationLabels
@@ -10,21 +9,22 @@ import { BehaviorSubject } from 'rxjs';
 import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
+import { SpecificationDetails } from '../../../models/interfaces/specification-details';
 
 @Injectable()
 export class SpecificationGeneralInformationInputservice extends FormServiceBase {
-  public genralInformatonFormId = 'generalInformation';
+  public generalInformationFormId = 'generalInformation';
   public sectionId = 'generalInformation';
   functionsFlatTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
-  readonly formId = this.genralInformatonFormId;
+  readonly formId = this.generalInformationFormId;
   protected readonly _formStructure: FormModel = this.getFormModel();
   protected readonly _formValues: FormValues = this.getInitialFormValues(null);
 
-  constructor(private specificatioDetailService: SpecificationDetailsService) {
+  constructor(private specificationDetailService: SpecificationDetailsService) {
     super();
   }
 
-  public getFormModelAndInitialValues(specificationDetailsInfo: GetSpecificationDetailsDto) {
+  public getFormModelAndInitialValues(specificationDetailsInfo: SpecificationDetails) {
     const formModel: FormModel = this.getFormModel();
     const formValues: FormValues = this.getInitialFormValues(specificationDetailsInfo);
 
@@ -71,7 +71,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         listRequest: {
           labelKey: 'display_name',
           valueKey: 'uid',
-          webApiRequest: this.specificatioDetailService.getItemSourceRequest()
+          webApiRequest: this.specificationDetailService.getItemSourceRequest()
         }
       },
       [eSpecificationDetailsGeneralInformationFields.ItemNumber]: {
@@ -99,7 +99,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         listRequest: {
           labelKey: 'displayName',
           valueKey: 'uid',
-          webApiRequest: this.specificatioDetailService.getStandardJobsFiltersRequest(eSpecificationDetailsGeneralInformationFields.DoneBy)
+          webApiRequest: this.specificationDetailService.getStandardJobsFiltersRequest(eSpecificationDetailsGeneralInformationFields.DoneBy)
         }
       },
       [eSpecificationDetailsGeneralInformationFields.InspectionID]: {
@@ -116,7 +116,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         listRequest: {
           labelKey: 'displayName',
           valueKey: 'uid',
-          webApiRequest: this.specificatioDetailService.getStandardJobsFiltersRequest(
+          webApiRequest: this.specificationDetailService.getStandardJobsFiltersRequest(
             eSpecificationDetailsGeneralInformationFields.Inspection
           )
         }
@@ -134,10 +134,10 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         placeHolder: 'Equipment Description',
         maxLength: 200
       },
-      [eSpecificationDetailsGeneralInformationFields.Periority]: {
+      [eSpecificationDetailsGeneralInformationFields.Priority]: {
         type: eFieldControlType.Dropdown,
         sectionID: this.sectionId,
-        label: eSpecificationDetailsGeneralInformationLabels.Periority,
+        label: eSpecificationDetailsGeneralInformationLabels.Priority,
         enabled: true,
         validatorRequired: false,
         gridRowStart: 4,
@@ -148,7 +148,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         listRequest: {
           labelKey: 'display_name',
           valueKey: 'uid',
-          webApiRequest: this.specificatioDetailService.getPriorityRequest()
+          webApiRequest: this.specificationDetailService.getPriorityRequest()
         }
       },
       [eSpecificationDetailsGeneralInformationFields.Description]: {
@@ -169,25 +169,25 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
     return formFields;
   }
 
-  getInitialFormValues(specificationDetailsInfo: GetSpecificationDetailsDto): FormValues {
+  getInitialFormValues(specificationDetailsInfo: SpecificationDetails): FormValues {
     if (specificationDetailsInfo == null) {
       return null;
     }
 
     const formValues: FormValues = {
-      keyID: this.genralInformatonFormId,
+      keyID: this.generalInformationFormId,
       values: {
-        [this.genralInformatonFormId]: {
+        [this.generalInformationFormId]: {
           [eSpecificationDetailsGeneralInformationFields.Function]: specificationDetailsInfo.Function,
           [eSpecificationDetailsGeneralInformationFields.AccountCode]: specificationDetailsInfo.AccountCode,
           [eSpecificationDetailsGeneralInformationFields.ItemSource]: specificationDetailsInfo.ItemSourceUid,
           [eSpecificationDetailsGeneralInformationFields.ItemNumber]: specificationDetailsInfo.ItemNumber,
           [eSpecificationDetailsGeneralInformationFields.DoneBy]: specificationDetailsInfo.DoneByUid,
           [eSpecificationDetailsGeneralInformationFields.InspectionID]: specificationDetailsInfo.Inspections.map(
-            (insection) => insection.InspectionId
+            (inspection) => inspection.InspectionId
           ),
           [eSpecificationDetailsGeneralInformationFields.EquipmentDescription]: specificationDetailsInfo.EquipmentDescription,
-          [eSpecificationDetailsGeneralInformationFields.Periority]: specificationDetailsInfo.PriorityUid,
+          [eSpecificationDetailsGeneralInformationFields.Priority]: specificationDetailsInfo.PriorityUid,
           [eSpecificationDetailsGeneralInformationFields.Description]: specificationDetailsInfo.Description
         }
       }
@@ -198,14 +198,14 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
 
   private getFormModel(): FormModel {
     const baseModel: FormModel = {
-      id: this.genralInformatonFormId,
+      id: this.generalInformationFormId,
       label: 'General Information',
       type: 'form',
       sections: {
         [this.sectionId]: {
           type: 'grid',
           label: '',
-          formID: this.genralInformatonFormId,
+          formID: this.generalInformationFormId,
           gridRowStart: 1,
           gridRowEnd: 1,
           gridColStart: 1,

@@ -1,0 +1,43 @@
+<jb-grid
+  *ngIf="gridData"
+  [gridName]="gridData.gridName"
+  [colData]="gridData.columns"
+  [tableDataReq]="gridData.request"
+  [setActions]="gridData.actions"
+  [filterData]="gridData.filters"
+  [searchFields]="gridData.searchFields"
+  [filterListsSet]="gridData.filtersLists"
+  [isDisplayAdvancedSettings]="false"
+  [isDisplayAdvancedFilter]="false"
+  [getStyleByContainer]="true"
+  (action)="onActionClick($event)"
+></jb-grid>
+
+<jb-dialog
+  (closeDialog)="showDeleteDialog(false)"
+  [(dialogVisible)]="deleteDialogVisible"
+  [dialogContent]="deleteReportDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <div class="p-col-12 left">{{ deleteDialogMessage }}</div>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [okBtnLabel]="deleteBtnLabel"
+      (ok)="deleteReportHandler()"
+      (cancel)="showDeleteDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<ng-template
+  #reportDateTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.reportDate | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
+</ng-template>

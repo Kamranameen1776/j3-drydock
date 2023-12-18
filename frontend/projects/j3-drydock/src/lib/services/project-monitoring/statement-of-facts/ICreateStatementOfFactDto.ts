@@ -3,5 +3,5 @@ export class ICreateStatementOfFactDto {
 
   Fact: string;
 
-  DateTime: Date;
+  DateTime: string;
 }

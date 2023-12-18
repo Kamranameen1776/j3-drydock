@@ -1,6 +1,6 @@
 <section
   class="proects-specifications-grid"
-  *ngIf="canView"
+  *ngIf="canView && gridInputs"
 >
   <jb-grid
     #projectsGrid
@@ -9,12 +9,15 @@
     [tableDataReq]="gridInputs.request"
     [filterData]="gridInputs.filters"
     [searchFields]="gridInputs.searchFields"
+    [includeSearch]="true"
     [filterListsSet]="gridInputs.filtersLists"
     [button]="gridInputs.gridButton"
     [setActions]="gridInputs.actions"
     [getStyleByContainer]="true"
     (action)="onGridAction($any($event), $event?.payload)"
     (matrixRequestChanged)="onMatrixRequestChanged()"
+    [sortField]="gridInputs.sortField"
+    [sortOrder]="gridInputs.sortOrder"
   ></jb-grid>
 </section>
 
@@ -86,3 +89,18 @@
     {{ rowData.ProjectStatusName }}
   </span>
 </ng-template>
+
+<ng-template
+  #startDateTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.StartDate | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
+</ng-template>
+
+<ng-template
+  #endDateTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.EndDate | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
+</ng-template>
+<jb-growl [content]="growlMessage$ | async"></jb-growl>

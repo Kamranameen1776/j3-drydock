@@ -1,0 +1,16 @@
+@import '../../../styles/mixins';
+
+:host {
+    display: block;
+    position: relative;
+
+    .a-wrapper {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .a-value {
+        @include grid-cell-text;
+        white-space: nowrap;
+    }
+}
