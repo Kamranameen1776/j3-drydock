@@ -1,9 +1,10 @@
 import { validate } from 'class-validator';
+import { DataUtilService } from 'j2utils';
 
-import { CreateDailyReportsDto } from '../../../controllers/drydock/daily-reports/dtos/CreateDailyReportsDto';
 import { DailyReportsRepository } from '../../../dal/drydock/daily-reports/DailyReportsRepository';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
+import { CreateDailyReportsDto } from './dtos/CreateDailyReportsDto';
 
 export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, void> {
     dailyReportsRepository: DailyReportsRepository;
@@ -30,20 +31,22 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
         }
     }
 
-    protected async MainHandlerAsync(data: CreateDailyReportsDto): Promise<void> {
-        await this.uow.ExecuteAsync(async (queryRunner) => {
-            await this.dailyReportsRepository.createDailyReport(
-                {
-                    ProjectUid: data.ProjectUid,
-                    ReportName: data.ReportName,
-                    ReportDate: data.ReportDate,
-                    UserUid: data.UserUid,
-                    CreatedAt: data.CreatedAt,
-                },
-                queryRunner,
-            );
+    protected async MainHandlerAsync(request: CreateDailyReportsDto): Promise<void> {
+        return this.uow.ExecuteAsync(async (queryRunner) => {
+            const reportdata = await this.dailyReportsRepository.createDailyReport(request, queryRunner);
+            const { JobOrdersUpdate } = request;
+            if (JobOrdersUpdate.length) {
+                const data = JobOrdersUpdate.map((item: any) => {
+                    return {
+                        uid: DataUtilService.newUid(),
+                        ReportUid: reportdata,
+                        JobOrdersUpdate: item.Remark,
+                        ReportUpdateName: item.ReportUpdateName,
+                        ActiveStatus: true,
+                    };
+                });
+                await this.dailyReportsRepository.CreateReportRemark(data, queryRunner);
+            }
         });
-
-        return;
     }
 }

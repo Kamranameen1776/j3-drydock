@@ -1,8 +1,9 @@
-import { IsDateString, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
-
+import { IsDateString, IsDefined, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
 export class CreateDailyReportsDto {
-    @MinLength(1)
-    @MaxLength(50)
+    uid: string;
+
+    @IsDefined()
+    @IsUUID(4)
     ProjectUid: string;
 
     @IsUUID()
@@ -19,6 +20,6 @@ export class CreateDailyReportsDto {
     @IsDateString()
     ReportDate: Date;
 
-    @MinLength(1)
-    Remarks: string;
+    JobOrdersUpdate: [];
+    ActiveStatus: boolean;
 }

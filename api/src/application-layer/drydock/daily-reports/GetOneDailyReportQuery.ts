@@ -15,8 +15,11 @@ export class GetOneDailyReportQuery extends Query<Request, GetOneDailyReportDto>
         return;
     }
 
-    protected async MainHandlerAsync(data: Request): Promise<GetOneDailyReportDto> {
-        const dailyReportUid = data.query.uid as string;
-        return this.dailyReportsRepository.findOneByDailyReportUid(dailyReportUid);
+    protected async MainHandlerAsync(request: Request): Promise<GetOneDailyReportDto> {
+        const reportDetails = await this.dailyReportsRepository.findOneByDailyReportUid(request.query.uid as string);
+        reportDetails.JobOrdersUpdate = await this.dailyReportsRepository.findReportRemarks(
+            request.query.uid as string,
+        );
+        return reportDetails;
     }
 }

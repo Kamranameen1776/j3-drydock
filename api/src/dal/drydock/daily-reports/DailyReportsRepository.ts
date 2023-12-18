@@ -2,10 +2,11 @@ import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
-import { className } from '../../../common/drydock/ts-helpers/className';
+import { JobOrdersUpdatesDto } from '../../../application-layer/drydock/daily-reports/dtos/JobOrdersUpdatesDto';
 import { DailyReportsEntity } from '../../../entity/drydock/DailyReportsEntity';
 import { DailyReportUpdateEntity } from '../../../entity/drydock/DailyReportUpdateEntity';
 import { ODataResult } from '../../../shared/interfaces';
+import { ICreateDailyReportRemarkDto } from './dtos/ICreateDailyReportRemarkDto';
 import { ICreateDailyReportsDto } from './dtos/ICreateDailyReportsDto';
 import { IDailyReportsResultDto } from './dtos/IDailyReportsResultDto';
 import { IDeleteDailyReportsDto } from './dtos/IDeleteDailyReportsDto';
@@ -17,16 +18,24 @@ export class DailyReportsRepository {
         const dailyReportsRepository = getManager().getRepository(DailyReportsEntity);
         return dailyReportsRepository
             .createQueryBuilder('dr')
-            .leftJoin(className(DailyReportUpdateEntity), 'dru', 'dru.report_uid = dr.uid')
             .select([
-                'dr.uid AS uid',
-                'dr.ReportName AS reportName',
-                'dr.ReportDate AS reportDate',
-                'dru.report_update_name as reportUpdateName',
-                'dru.remark as remark',
+                'dr.uid as uid',
+                'dr.ReportName as reportName',
+                'dr.ReportDate as reportDate',
+                'dr.JobOrdersUpdate as jobOrdersUpdate',
             ])
-            .where(`dr.uid = '${uid}' and dr.active_status = 1 and dru.active_status = 1`)
+            .where(`dr.uid = '${uid}' and dr.active_status = 1`)
             .getRawOne();
+    }
+
+    public async findReportRemarks(uid: string): Promise<Array<JobOrdersUpdatesDto>> {
+        const remarksRepository = getManager().getRepository(DailyReportUpdateEntity);
+
+        return remarksRepository
+            .createQueryBuilder('rem')
+            .select(['rem.uid as uid', 'rem.ReportUpdateName as reportUpdateName', 'rem.Remark as remark'])
+            .where(`rem.report_uid = '${uid}' and rem.active_status = 1`)
+            .getRawMany();
     }
 
     public async getDailyReports(data: Request): Promise<ODataResult<IDailyReportsResultDto>> {
@@ -35,9 +44,9 @@ export class DailyReportsRepository {
         const query: string = dailyReportsRepository
             .createQueryBuilder('dr')
             .select([
-                'dr.uid AS uid',
-                'dr.ReportName AS reportName',
-                'dr.ReportDate AS reportDate',
+                'dr.uid as uid',
+                'dr.ReportName as reportName',
+                'dr.ReportDate as reportDate',
                 'dr.ProjectUid as projectUid',
             ])
             .where('dr.active_status = 1')
@@ -47,21 +56,17 @@ export class DailyReportsRepository {
     }
 
     public async createDailyReport(data: ICreateDailyReportsDto, queryRunner: QueryRunner) {
-        const dailyReportsRepository = queryRunner.manager.getRepository(DailyReportsEntity);
-        await dailyReportsRepository
-            .createQueryBuilder('dr')
-            .insert()
-            .into(DailyReportsEntity)
-            .values({
-                uid: new DataUtilService().newUid(),
-                ProjectUid: data.ProjectUid,
-                ReportName: data.ReportName,
-                ReportDate: data.ReportDate,
-                created_by: data.UserUid,
-                created_at: data.CreatedAt,
-                active_status: true,
-            })
-            .execute();
+        data.CreatedAt = new Date();
+        data.ActiveStatus = true;
+
+        //TODO: think how to return uid from insert request, why it return undefined?
+        data.uid = new DataUtilService().newUid();
+        await queryRunner.manager.insert(DailyReportsEntity, data);
+        return data.uid;
+    }
+
+    public async CreateReportRemark(data: Array<ICreateDailyReportRemarkDto>, queryRunner: QueryRunner) {
+        return queryRunner.manager.insert(DailyReportUpdateEntity, data);
     }
 
     public async updateDailyReport(data: IUpdateDailyReportsDto, queryRunner: QueryRunner) {

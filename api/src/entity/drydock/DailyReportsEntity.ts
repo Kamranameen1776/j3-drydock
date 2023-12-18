@@ -26,4 +26,10 @@ export class DailyReportsEntity extends BaseDatesEntity {
         name: 'report_date',
     })
     ReportDate: Date;
+
+    @Column('varchar', {
+        nullable: true,
+        name: 'job_orders_update',
+    })
+    JobOrdersUpdate: string | null;
 }
