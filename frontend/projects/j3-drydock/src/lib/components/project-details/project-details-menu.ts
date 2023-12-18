@@ -14,8 +14,7 @@ export const projectDetailsMenuData = [
     items: [
       { label: eProjectDetailsSideMenuLabel.TechnicalSpecification, icon: '', id: 'technical_specification' },
       { label: eProjectDetailsSideMenuLabel.Requisition, id: eProjectDetailsSideMenuId.Requisition },
-      { label: eProjectDetailsSideMenuLabel.Contacts, id: eProjectDetailsSideMenuId.Contacts },
-      { label: eProjectDetailsSideMenuLabel.Attachments, id: eProjectDetailsSideMenuId.Attachments }
+      { label: eProjectDetailsSideMenuLabel.Contacts, id: eProjectDetailsSideMenuId.Contacts }
     ]
   },
   {
