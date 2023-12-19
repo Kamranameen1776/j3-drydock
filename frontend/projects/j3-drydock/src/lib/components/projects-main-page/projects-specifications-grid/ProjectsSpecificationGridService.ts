@@ -161,7 +161,8 @@ export class ProjectsSpecificationGridService {
       odataKey: ProjectsGridOdataKeys.ProjectManagerUid
     },
     ShipsYards: {
-      webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
+      // keep filter options empty for now
+      // webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
       type: 'multiselect',
       listValueKey: 'ShipYardId',
       odataKey: ProjectsGridOdataKeys.ShipYardId
