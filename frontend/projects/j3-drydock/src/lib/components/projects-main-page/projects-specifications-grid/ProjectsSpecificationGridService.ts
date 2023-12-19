@@ -18,7 +18,6 @@ import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
-import { eProjectsDeleteDisplayNames, eProjectsDeleteFieldNames } from '../../../models/enums/projects-delete.enum';
 import { ProjectsGridOdataKeys } from '../../../models/enums/ProjectsGridOdataKeys';
 import { eSortOrder } from '../../../models/enums/sorting.enum';
 
@@ -501,36 +500,6 @@ export class ProjectsSpecificationGridService {
               gridColStart: 1,
               gridColEnd: 3,
               calendarMax: this.maxDate
-            }
-          }
-        }
-      }
-    };
-  }
-
-  public getDeleteProjectForm(): FormModel {
-    return {
-      id: 'deleteProject',
-      label: '',
-      type: 'form',
-      sections: {
-        [this.deleteProjectFormId]: {
-          type: 'grid',
-          label: '',
-          formID: this.deleteProjectFormId,
-          gridRowStart: 1,
-          gridRowEnd: 1,
-          gridColStart: 1,
-          gridColEnd: 1,
-          fields: {
-            [eProjectsDeleteFieldNames.AreYouSureYouWantToDeleteThisProject]: {
-              label: eProjectsDeleteDisplayNames.AreYouSureYouWantToDeleteThisProject,
-              type: eFieldControlType.String,
-              sectionID: this.deleteProjectFormId,
-              gridRowStart: 1,
-              gridRowEnd: 1,
-              gridColStart: 1,
-              gridColEnd: 1
             }
           }
         }

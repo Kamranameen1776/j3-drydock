@@ -58,3 +58,9 @@ export enum eProjectWorklowStatusAction {
   Close = 'CLOSE',
   Unclose = 'UNCLOSE'
 }
+
+export enum eProjectDelete {
+  DeleteBtnLabel = 'Delete',
+  DeleteDialogueHeader = 'Delete Project',
+  ProjectDeleteText = 'Are you sure you want to delete this project?'
+}
