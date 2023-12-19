@@ -170,8 +170,6 @@ export class AddSpecificationDetailsRoles1702646766377 implements MigrationInter
                     )
                 on
                     target.RGR_UID = source.uid
-                    and
-                    target.RGR_Group_Code = source.group_code
                 when matched then
                     update
                         set
