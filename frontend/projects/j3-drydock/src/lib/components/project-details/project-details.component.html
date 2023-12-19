@@ -15,12 +15,13 @@
     specifications: specificationsTab,
     yard_selection: yardSelectionTab,
     project_monitoring: projectMonitoringTab,
+    reporting: reportingTab,
+    tasks: tasks,
     technical_specification: technical_specification,
     attachmentss: attachmentss,
     rfq: rfq,
     statement_of_facts: statement_of_facts,
-    job_orders: job_orders,
-    reporting: reportingTab
+    job_orders: job_orders
   }"
   [sectionHeaderTemplateRef]="{ technical_specification: specificationsButtonsTmpl }"
   [slideMenus]="menu"
@@ -31,7 +32,17 @@
   >
     <ng-container [ngSwitch]="section.SectionCode">
       <div *ngSwitchCase="'tasks'">
-        <!-- TODO add tasks component here -->
+        <div #tasks>
+          <!-- <jb-tm-linked-records
+            [hiddenSegments]="['parent', 'child']"
+            [hideHeader]="true"
+            [validTaskManagerJobTypes]="['dry_dock']"
+          ></jb-tm-linked-records> -->
+          <jb-tm-linked-records
+            [taskManagerDetails]="tmDetails"
+            *ngIf="tmDetails?.uid"
+          ></jb-tm-linked-records>
+        </div>
       </div>
     </ng-container>
   </ng-template>
