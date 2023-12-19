@@ -31,7 +31,7 @@ export class AddJobOrdersTable1702646766378 implements MigrationInterface {
                  CONSTRAINT [PK_job_orders] PRIMARY KEY CLUSTERED 
                 (
                     [uid] ASC
-                )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+                )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
                 ) ON [PRIMARY];
                 
                 ALTER TABLE [dry_dock].[job_orders] ADD  CONSTRAINT [DF_job_orders_active_status]  DEFAULT ((1)) FOR [active_status];
