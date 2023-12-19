@@ -214,12 +214,14 @@ export class StandardJobsRepository {
                 odata: { $filter: 'active_status=1' },
             });
 
-            return libraryData.data?.records?.map((item: Record<string, string>) => {
-                return {
-                    displayName: item.display_name || item.displayName,
-                    uid: item.uid,
-                } as FiltersDataResponse;
-            });
+            return libraryData.data?.records
+                ?.map((item: Record<string, string>) => {
+                    return {
+                        displayName: item.display_name || item.displayName,
+                        uid: item.uid,
+                    } as FiltersDataResponse;
+                })
+                .filter((item: FiltersDataResponse) => item.displayName);
         }
 
         const tableName = StandardJobsFilterTablesMap[filterKey];
