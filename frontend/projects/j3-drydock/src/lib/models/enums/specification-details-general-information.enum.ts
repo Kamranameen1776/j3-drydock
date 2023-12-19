@@ -7,7 +7,7 @@ export enum eSpecificationDetailsGeneralInformationLabels {
   DoneBy = 'Done By',
   Inspection = 'Inspection / Survey',
   EquipmentDescription = 'Equipment Description',
-  Periority = 'Periority',
+  Priority = 'Priority',
   Description = 'Description'
 }
 
@@ -21,6 +21,6 @@ export enum eSpecificationDetailsGeneralInformationFields {
   Inspection = 'inspection',
   InspectionID = 'inspectionId',
   EquipmentDescription = 'equipmentDescription',
-  Periority = 'priorityUid',
+  Priority = 'priorityUid',
   Description = 'description'
 }

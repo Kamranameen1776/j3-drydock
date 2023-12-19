@@ -1,6 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { J3PrcRequisition, LibSurveyCertificateAuthority } from './';
+import { LibSurveyCertificateAuthority } from './dbo/LibSurveyCertificateAuthorityEntity';
+import { J3PrcRequisition } from './prc/J3PrcRequisitionEntity';
 import { SpecificationDetailsSubItemEntity } from './SpecificationDetailsSubItemEntity';
 
 @Entity('specification_details', { schema: 'dry_dock' })
@@ -92,7 +93,7 @@ export class SpecificationDetailsEntity {
     })
     Subject: string;
 
-    @Column('datetime', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'start_date',
     })

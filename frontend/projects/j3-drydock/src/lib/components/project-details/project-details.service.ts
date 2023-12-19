@@ -230,7 +230,7 @@ export class ProjectDetailsService {
             GridRowEnd: 3,
             GridColStart: 1,
             GridColEnd: 3,
-            active_status: true,
+            active_status: this.accessRights.attachments.view,
             SectionCode: eProjectDetailsSideMenuId.Attachments,
             SectionLabel: eProjectDetailsSideMenuLabel.Attachments,
             isAddNewButton: this.accessRights.attachments.add,

@@ -16,6 +16,8 @@
     [getStyleByContainer]="true"
     (action)="onGridAction($any($event), $event?.payload)"
     (matrixRequestChanged)="onMatrixRequestChanged()"
+    [sortField]="gridInputs.sortField"
+    [sortOrder]="gridInputs.sortOrder"
   ></jb-grid>
 </section>
 
@@ -57,12 +59,9 @@
     class="dialog-body"
     jb-dialog-body
   >
-    <jb-form
-      (jbFormGroup)="initDeleteProjectFormGroup($any($event))"
-      [formStructure]="deleteProjectForm"
-      [isVerticalLabel]="true"
-      class="form-generator-log"
-    ></jb-form>
+    <div class="p-col left">
+      <p>{{ deleteProjectText }}</p>
+    </div>
   </div>
 
   <ng-container jb-dialog-footer>
@@ -102,3 +101,8 @@
   <jb-drydock-grid-cell-popover [value]="rowData.EndDate | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
 </ng-template>
 <jb-growl [content]="growlMessage$ | async"></jb-growl>
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>

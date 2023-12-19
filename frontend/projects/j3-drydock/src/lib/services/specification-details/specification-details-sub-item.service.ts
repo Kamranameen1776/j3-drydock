@@ -8,35 +8,7 @@ import {
 
 @Injectable()
 export class SpecificationDetailsSubItemsGridService {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor() {}
-
-  public getApiRequest(specificationUid): WebApiRequest {
-    return {
-      // apiBase: eApiBase.DryDockApi,
-      apiBase: 'dryDockAPI',
-      action: 'specification-details/sub-items/find-sub-items',
-      crud: eCrud.Post,
-      entity: 'drydock',
-      body: {
-        specificationDetailsUid: specificationUid
-      }
-    };
-  }
-
-  getGridData(specificationUid): GridInputsWithRequest {
-    return {
-      columns: this.columns,
-      gridName: this.gridName,
-      actions: this.gridRowActions,
-      filters: this.filters,
-      filtersLists: this.filtersLists,
-      request: this.getApiRequest(specificationUid)
-    };
-  }
-
   public readonly gridName: string = 'specificationSubItemGrid';
-
   private readonly columns: Column[] = [
     {
       DisableSort: true,
@@ -109,17 +81,58 @@ export class SpecificationDetailsSubItemsGridService {
       width: '182px'
     }
   ];
-
   private gridRowActions: GridRowActions[] = [
     {
       name: eGridRowActions.Edit,
       label: eGridRowActions.Edit,
       color: eColor.JbBlack,
-      icon: eIconNames.Edit
+      icon: eIconNames.Edit,
+      fieldName: 'hideActions',
+      condition: true,
+      actionTrueValue: false,
+      actionFalseValue: true
+    },
+    {
+      name: eGridRowActions.Delete,
+      label: eGridRowActions.Delete,
+      color: eColor.JbBlack,
+      icon: eIconNames.Delete,
+      fieldName: 'hideActions',
+      condition: true,
+      actionTrueValue: false,
+      actionFalseValue: true
     }
   ];
-
   private readonly filters: Filter[] = [];
-
   private filtersLists: FilterListSet = {};
+
+  public getApiRequest(specificationUid): WebApiRequest {
+    return {
+      // apiBase: eApiBase.DryDockApi,
+      apiBase: 'dryDockAPI',
+      action: 'specification-details/sub-items/find-sub-items',
+      crud: eCrud.Post,
+      entity: 'drydock',
+      body: {
+        specificationDetailsUid: specificationUid
+      }
+    };
+  }
+
+  getGridData(specificationUid): GridInputsWithRequest {
+    return {
+      columns: this.columns,
+      gridName: this.gridName,
+      actions: this.gridRowActions,
+      filters: this.filters,
+      filtersLists: this.filtersLists,
+      request: this.getApiRequest(specificationUid),
+      searchFields: [
+        {
+          field: eSpecificationDetailsSubItemsFields.Subject,
+          pattern: 'contains'
+        }
+      ]
+    };
+  }
 }

@@ -3,7 +3,7 @@ export enum eSpecificationDetailsPageMenuIds {
   GeneralInformation = 'generalInformation',
   SubItems = 'subItems',
   PMSJobs = 'pmsJobs',
-  Requisition = 'requisition',
+  Requisitions = 'requisitions',
   Source = 'source',
   SpecificationAttachments = 'specificationAttachments',
   Attachments = 'attachments',
@@ -15,7 +15,7 @@ export enum eSpecificationDetailsPageMenuLabels {
   GeneralInformation = 'General Information',
   SubItems = 'Sub Items',
   PMSJobs = 'PMS Jobs',
-  Requisition = 'Requisition',
+  Requisitions = 'Requisitions',
   Source = 'Source',
   SpecificationAttachments = 'Attachments',
   Attachments = 'Attachments',
@@ -32,7 +32,7 @@ export const specificationDetailsMenuData = [
       { label: eSpecificationDetailsPageMenuLabels.GeneralInformation, id: eSpecificationDetailsPageMenuIds.GeneralInformation },
       { label: eSpecificationDetailsPageMenuLabels.SubItems, id: eSpecificationDetailsPageMenuIds.SubItems },
       { label: eSpecificationDetailsPageMenuLabels.PMSJobs, id: eSpecificationDetailsPageMenuIds.PMSJobs },
-      { label: eSpecificationDetailsPageMenuLabels.Requisition, id: eSpecificationDetailsPageMenuIds.Requisition },
+      { label: eSpecificationDetailsPageMenuLabels.Requisitions, id: eSpecificationDetailsPageMenuIds.Requisitions },
       { label: eSpecificationDetailsPageMenuLabels.Source, id: eSpecificationDetailsPageMenuIds.Source },
       {
         label: eSpecificationDetailsPageMenuLabels.SpecificationAttachments,
@@ -43,3 +43,14 @@ export const specificationDetailsMenuData = [
   { label: eSpecificationDetailsPageMenuLabels.Attachments, id: eSpecificationDetailsPageMenuIds.Attachments, icon: 'icons8-attach' },
   { label: eSpecificationDetailsPageMenuLabels.AuditTrail, id: eSpecificationDetailsPageMenuIds.AuditTrail, icon: 'icons8-order-history-3' }
 ];
+
+export enum eSpecificationWorkflowStatusAction {
+  Raise = 'RAISE',
+  'In Progress' = 'IN PROGRESS',
+  Complete = 'COMPLETE',
+  Verify = 'VERIFY',
+  Review = 'REVIEW',
+  Approve = 'APPROVE',
+  Close = 'CLOSE',
+  Unclose = 'UNCLOSE'
+}

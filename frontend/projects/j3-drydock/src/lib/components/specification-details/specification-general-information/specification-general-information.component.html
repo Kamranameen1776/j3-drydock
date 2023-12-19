@@ -1,17 +1,12 @@
-<jb-layout-widget
-  titleIconClass="icons8-more-details-2"
-  titleText="General Information"
+<div
+  class="specs-content"
+  awidget-content
 >
-  <div
-    class="specs-content"
-    awidget-content
-  >
-    <jb-form
-      (jbFormGroup)="handleDispatchForm($event)"
-      [formStructure]="formStructure"
-      [formValues]="formValues"
-      [isSinglePage]="true"
-      [isVerticalLabel]="verticalLabel"
-    ></jb-form>
-  </div>
-</jb-layout-widget>
+  <jb-form
+    (jbFormGroup)="handleDispatchForm($event)"
+    [formStructure]="formStructure"
+    [formValues]="formValues"
+    [isSinglePage]="true"
+    [isVerticalLabel]="verticalLabel"
+  ></jb-form>
+</div>

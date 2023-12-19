@@ -20,12 +20,13 @@ import { ProjectDetailsAccessRights, ProjectDetailsService } from './project-det
 import { TaskManagerService } from '../../services/task-manager.service';
 import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/project-details';
 import { projectDetailsMenuData } from './project-details-menu';
-import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.enum';
+import { eProjectDetailsSideMenuId, eProjectDetailsSideMenuLabel } from '../../models/enums/project-details.enum';
 import { SpecificationsComponent } from './specification/specifications.component';
 import { RfqComponent } from './yard/rfq/rfq.component';
 import { ProjectsService } from '../../services/ProjectsService';
 import { DetailsService } from '../../services/details.service';
 import { UTCAsLocal } from '../../utils/date';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'jb-project-details',
@@ -88,7 +89,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     }
   ];
 
-  readonly menu = projectDetailsMenuData;
+  menu = cloneDeep(projectDetailsMenuData);
   readonly eSideMenuId = eProjectDetailsSideMenuId;
 
   get vesselUid() {
@@ -206,8 +207,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         concatMap((data) => {
           projectDetails = {
             ...data,
-            StartDate: UTCAsLocal(data.StartDate).toISOString(),
-            EndDate: UTCAsLocal(data.EndDate).toISOString()
+            StartDate: UTCAsLocal(data.StartDate)?.toISOString(),
+            EndDate: UTCAsLocal(data.EndDate)?.toISOString()
           };
 
           this.attachmentConfig = {
@@ -230,6 +231,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         this.topSectionConfig = this.projectDetailsService.getTopSecConfig(this.tmDetails);
         this.sectionsConfig = this.projectDetailsService.getSectionsConfig(this.tmDetails.task_status);
 
+        this.setMenuByAccessRights();
         this.setAttachmentsActions();
         // TODO add here more to init view if needed
         if (refresh) {
@@ -291,5 +293,13 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   private setAttachmentsActions() {
     this.attachmentConfig.actions = this.detailsService.getAttachmnentActions(this.accessRights.attachments);
+  }
+
+  private setMenuByAccessRights() {
+    this.menu = cloneDeep(projectDetailsMenuData);
+
+    if (this.accessRights.attachments.view) {
+      this.menu[1].items[3] = { label: eProjectDetailsSideMenuLabel.Attachments, id: eProjectDetailsSideMenuId.Attachments };
+    }
   }
 }

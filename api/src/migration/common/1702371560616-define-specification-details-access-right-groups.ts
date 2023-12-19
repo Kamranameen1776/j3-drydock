@@ -7,10 +7,7 @@ const enum Location {
     Vessel = 'v',
 }
 
-/**
- * @private
- * This table is static, its content persist across environments
- */
+/** @private @deprecated Values are environment-specific, avoid using exact values */
 const enum UserTypeUid {
     OfficeUser = '3C084885-783B-46B8-9635-B2F70CC49218',
     SeaStaff = '0F3613B9-9FB5-40E6-8763-FC4941136598',
@@ -22,10 +19,7 @@ const userTypeUidByLocation = {
     [Location.Vessel]: UserTypeUid.SeaStaff,
 } satisfies Record<Location, UserTypeUid>;
 
-/**
- * @private
- * This table is static, its content persist across environments
- */
+/** @private @deprecated Values are environment-specific, avoid using exact values */
 const enum RoleId {
     Master = 10181,
     CE = 10183,

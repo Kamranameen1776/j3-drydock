@@ -10,7 +10,6 @@
     [sortField]="gridInputs.sortField"
     [sortOrder]="gridInputs.sortOrder"
     [getStyleByContainer]="true"
-    [name]="gridInputs.name"
     (action)="onGridAction($any($event), $event?.payload)"
     (cellPlainTextClick)="onCellPlainTextClick($event)"
     (matrixRequestChanged)="onMatrixRequestChanged()"
@@ -23,3 +22,57 @@
 >
   <jb-drydock-grid-cell-popover [value]="rowData.LastUpdated | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
 </ng-template>
+
+<jb-dialog
+  (closeDialog)="showUpdateDialog(false)"
+  [(dialogVisible)]="updateDialogVisible"
+  [dialogContent]="updateJobOrderDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <div class="specification-code-link">
+      <a (click)="navigateToSpecificationDetails(selectedSpecification.Key)">
+        {{ selectedSpecification.Value }}
+      </a>
+    </div>
+    <jb-form
+      (jbFormGroup)="initUpdateJobOrderFormGroup($any($event))"
+      [formStructure]="updateJobOrderForm"
+      [isVerticalLabel]="true"
+      class="form-generator-log"
+    ></jb-form>
+
+    <div class="jb-editor-remarks">
+      <form [formGroup]="remarksEditorFormGroup">
+        <jb-editor
+          #remarksEditor
+          [id]="remarksEditorConfig.id"
+          [maxLength]="remarksEditorConfig.maxLength"
+          [placeholder]="remarksEditorConfig.placeholder"
+          [crtlName]="remarksEditorConfig.crtlName"
+          [moduleCode]="remarksEditorConfig.moduleCode"
+          [functionCode]="remarksEditorConfig.functionCode"
+          [inlineMode]="remarksEditorConfig.inlineMode"
+          [key1]="remarksEditorConfig.key1"
+          [vesselId]="remarksEditorConfig.vesselId"
+          [tools]="tools"
+          (updateParentCtrlValue)="remarksEditorUpdateParentCtrlValue($event.value)"
+        ></jb-editor>
+      </form>
+    </div>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="updateJobOrderButtonDisabled"
+      [okBtnLabel]="updateBtnLabel"
+      (ok)="updateJobOrder()"
+      (cancel)="showUpdateDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<jb-growl [content]="growlMessage$ | async"></jb-growl>

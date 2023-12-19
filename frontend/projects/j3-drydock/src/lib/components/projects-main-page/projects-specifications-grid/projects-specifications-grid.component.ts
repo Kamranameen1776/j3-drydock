@@ -22,6 +22,7 @@ import { statusBackground, statusIcon } from '../../../shared/statuses';
 import { ProjectCreate } from '../../../models/interfaces/projects';
 import { localAsUTCFromJbString } from '../../../utils/date';
 import { GrowlMessageService } from '../../../services/growl-message.service';
+import { eProjectDelete } from '../../../models/enums/project-details.enum';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -39,7 +40,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   private readonly allProjectsProjectTypeId = 'all_projects';
 
-  private readonly closeProjectStatusId = 'CLOSE';
+  private readonly plannedProjectStatusId = 'RAISE';
 
   private accessActions = eProjectsAccessActions;
 
@@ -51,7 +52,9 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   public canView = false;
 
-  public DeleteBtnLabel = 'Delete';
+  public DeleteBtnLabel = eProjectDelete.DeleteBtnLabel;
+
+  public deleteProjectText = eProjectDelete.ProjectDeleteText;
 
   public CreateBtnLabel = 'Create';
 
@@ -63,15 +66,13 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   createProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Create Project' };
 
-  deleteProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Delete Project' };
+  deleteProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: eProjectDelete.DeleteDialogueHeader };
 
   createProjectForm: FormModel;
 
-  deleteProjectForm: FormModel;
+  selectedProjectID: string;
 
   createProjectFormGroup: FormGroup;
-
-  deleteProjectFormGroup: FormGroup;
 
   saveNewProjectButtonDisabled$ = new BehaviorSubject(false);
 
@@ -85,6 +86,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   statusCSS = { statusBackground, statusIcon };
   growlMessage$ = this.growlMessageService.growlMessage$;
+  showLoader = false;
 
   constructor(
     private router: Router,
@@ -103,7 +105,6 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     this.setGridInputs();
 
     this.createProjectForm = this.projectsGridService.getCreateProjectForm();
-    this.deleteProjectForm = this.projectsGridService.getDeleteProjectForm();
   }
 
   ngAfterViewInit(): void {
@@ -140,7 +141,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   public onGridAction({ type }: GridAction<string, string>, project: IProjectsForMainPageGridDto): void {
     if (type === eGridRowActions.Delete) {
-      this.deleteProjectFormGroup.value.Project = project;
+      this.selectedProjectID = project.ProjectId;
       this.showDeleteDialog();
     } else if (type === eGridRowActions.Edit) {
       if (!project) {
@@ -173,17 +174,6 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     });
   }
 
-  public initDeleteProjectFormGroup(action: FormGroup): void {
-    this.deleteProjectFormGroup = action;
-    this.deleteProjectFormGroup.valueChanges.subscribe(() => {
-      if (this.deleteProjectFormGroup.valid) {
-        this.deleteProjectButtonDisabled$.next(false);
-      } else {
-        this.deleteProjectButtonDisabled$.next(true);
-      }
-    });
-  }
-
   public saveNewProject() {
     this.saveNewProjectButtonDisabled$.next(true);
 
@@ -211,12 +201,15 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   }
 
   public deleteProject() {
+    this.showLoader = true;
     this.deleteProjectButtonDisabled$.next(true);
 
-    this.projectsService.deleteProject(this.deleteProjectFormGroup.value.Project.ProjectId).subscribe(() => {
+    this.projectsService.deleteProject(this.selectedProjectID).subscribe(() => {
       this.deleteProjectButtonDisabled$.next(false);
       this.showDeleteDialog(false);
+      this.growlMessageService.setSuccessMessage('Project deleted successfully.');
       this.projectsGrid.fetchMatrixData();
+      this.showLoader = false;
     });
   }
 
@@ -224,7 +217,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     this.projectsGridService.filters.find(
       (filter) => filter.FieldName === this.projectsGridService.ProjectStatusesFilterName
     ).selectedValues = statuses
-      .filter((status) => status.ProjectStatusId !== this.closeProjectStatusId)
+      .filter((status) => status.ProjectStatusId === this.plannedProjectStatusId)
       .map((status) => status.ProjectStatusId);
   }
 

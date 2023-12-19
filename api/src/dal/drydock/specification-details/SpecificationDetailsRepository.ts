@@ -27,7 +27,6 @@ import {
     StandardJobs,
     TecTaskManagerEntity,
     TmDdLibDoneBy,
-    TmDdLibItemCategory,
     TmDdLibMaterialSuppliedBy,
 } from '../../../entity/drydock';
 import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
@@ -129,6 +128,7 @@ export class SpecificationDetailsRepository {
                 'ves.VesselName AS VesselName',
                 'ves.uid AS VesselUid',
                 'ves.VesselId AS VesselId',
+                'spec.ProjectUid AS ProjectUid',
                 `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
                 'usr.uid AS ProjectManagerUid',
                 //TODO: strange constants, but Specifications doesnt have type. probably should stay that way
@@ -159,7 +159,6 @@ export class SpecificationDetailsRepository {
 
             const query = getManager()
                 .createQueryBuilder('specification_details', 'sd')
-                .leftJoin(className(TmDdLibItemCategory), 'ic', 'sd.item_category_uid = ic.uid')
                 .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.done_by_uid = db.uid')
                 .leftJoin(className(TmDdLibMaterialSuppliedBy), 'msb', 'sd.material_supplied_by_uid = msb.uid')
                 .leftJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid')
@@ -170,7 +169,6 @@ export class SpecificationDetailsRepository {
                     'sd.component_uid',
                     'sd.item_number',
                     'db.done_by',
-                    'ic.item_category',
                     'sd.active_status',
                     'msb.materialSuppliedBy',
                     'tm.Code as code',
@@ -209,7 +207,6 @@ export class SpecificationDetailsRepository {
                         'sd.component_uid',
                         'sd.item_number',
                         'db.done_by',
-                        'ic.item_category',
                         'sd.active_status',
                         'msb.materialSuppliedBy',
                         'tm.Code',
@@ -342,6 +339,13 @@ export class SpecificationDetailsRepository {
         return queryRunner.manager.update(SpecificationDetailsEntity, data.uid, data);
     }
 
+    public async UpdateSpecificationDetailsByEntity(
+        specificationDetails: SpecificationDetailsEntity,
+        queryRunner: QueryRunner,
+    ) {
+        return queryRunner.manager.update(SpecificationDetailsEntity, specificationDetails.uid, specificationDetails);
+    }
+
     public async DeleteSpecificationDetails(uid: string, queryRunner: QueryRunner) {
         const spec = new SpecificationDetailsEntity();
         spec.ActiveStatus = false;
@@ -429,5 +433,17 @@ export class SpecificationDetailsRepository {
             .where(`specification_uid = '${specificationUid}'`)
             .andWhere(`requisition_uid = '${requisitionUid}'`)
             .execute();
+    }
+
+    public async TryGetSpecification(specificationUid: string): Promise<SpecificationDetailsEntity | undefined> {
+        const jobOrdersRepository = getManager().getRepository(SpecificationDetailsEntity);
+
+        const jobOrder = await jobOrdersRepository.findOne({
+            where: {
+                uid: specificationUid,
+            },
+        });
+
+        return jobOrder;
     }
 }
