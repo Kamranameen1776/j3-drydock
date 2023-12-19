@@ -9,9 +9,6 @@ export class UpdateDailyReportsDto {
     @MaxLength(200)
     ReportName: string;
 
-    @MinLength(1)
-    Remarks: string;
-
     @IsUUID()
     @IsNotEmpty()
     UserUid: string;
