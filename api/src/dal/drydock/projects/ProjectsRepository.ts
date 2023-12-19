@@ -6,19 +6,23 @@ import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'type
 
 import { UpdateProjectDto } from '../../../application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
-import { SpecificationDetailsEntity, YardsEntity, YardsProjectsEntity } from '../../../entity/drydock';
-import { JmsDtlWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
+import {
+    GroupProjectStatusEntity,
+    JmsDtlWorkflowConfigDetailsEntity,
+    LibUserEntity,
+    LibVesselsEntity,
+    ProjectEntity,
+    ProjectStateEntity,
+    ProjectTypeEntity,
+    SpecificationDetailsEntity,
+    TecLibWorklistTypeEntity,
+    TecTaskManagerEntity,
+    YardsEntity,
+    YardsProjectsEntity,
+} from '../../../entity/drydock';
 import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
-import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
-import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
-import { TecLibWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
-import { TecTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
-import { GroupProjectStatusEntity } from '../../../entity/drydock/GroupProjectStatusEntity';
-import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
-import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
-import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
 import { TaskManagerConstants } from '../../../shared/constants';
-import { ODataResult } from '../../../shared/interfaces/odata-result.interface';
+import { ODataResult } from '../../../shared/interfaces';
 import { ICreateNewProjectDto } from './dtos/ICreateNewProjectDto';
 import { IGroupProjectStatusByProjectTypeDto } from './dtos/IGroupProjectStatusByProjectTypeDto';
 import { IGroupProjectStatusDto } from './dtos/IGroupProjectStatusDto';
@@ -37,7 +41,7 @@ export class ProjectsRepository {
     public async GetProjectStatuses(): Promise<IProjectStatusResultDto[]> {
         const projectTypeRepository = getManager().getRepository(ProjectTypeEntity);
 
-        const result = await projectTypeRepository
+        return projectTypeRepository
             .createQueryBuilder('pt')
             .select([
                 'wdetails.WorkflowTypeID as ProjectStatusId',
@@ -54,8 +58,6 @@ export class ProjectsRepository {
             .distinctOn(['wdetails.WorkflowTypeID'])
             .orderBy('wdetails.WorkflowOrderID')
             .execute();
-
-        return result;
     }
 
     /**
@@ -78,9 +80,7 @@ export class ProjectsRepository {
             .groupBy('gps.GroupProjectStatusId')
             .where('gps.ActiveStatus = :activeStatus', { activeStatus: 1 });
 
-        const result = await query.execute();
-
-        return result;
+        return query.execute();
     }
 
     /**
@@ -107,9 +107,7 @@ export class ProjectsRepository {
             .groupBy('gps.ProjectTypeId, gps.GroupProjectStatusId')
             .where('gps.ActiveStatus = :activeStatus', { activeStatus: 1 });
 
-        const result = await query.execute();
-
-        return result;
+        return query.execute();
     }
 
     /**
@@ -120,7 +118,7 @@ export class ProjectsRepository {
     public async GetProjectTypes(): Promise<IProjectTypeResultDto[]> {
         const projectTypeRepository = getManager().getRepository(ProjectTypeEntity);
 
-        const result = await projectTypeRepository
+        return projectTypeRepository
             .createQueryBuilder('pt')
             .select([
                 'pt.uid as ProjectTypeUId',
@@ -131,8 +129,6 @@ export class ProjectsRepository {
             .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .execute();
-
-        return result;
     }
 
     private getSpecificationCountQuery(qb: SelectQueryBuilder<SpecificationDetailsEntity>, uid?: string) {
@@ -195,7 +191,7 @@ export class ProjectsRepository {
             .innerJoin(
                 className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
-                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status AND wdetails.ActiveStatus = 1',
             )
             .innerJoin(
                 className(GroupProjectStatusEntity),
@@ -231,9 +227,7 @@ export class ProjectsRepository {
                     '"yd"."uid"',
                     'sc.projectUid',
                 ].join(','),
-            )
-            .distinct(true)
-            .distinctOn(['pr.uid']);
+            );
 
         if (uid) {
             query = query.where('pr.uid = :uid', { uid });
@@ -258,9 +252,7 @@ export class ProjectsRepository {
 
         const oDataService = new ODataService(data, getConnection);
 
-        const result = await oDataService.getJoinResult(query.getQuery());
-
-        return result;
+        return oDataService.getJoinResult(query.getQuery());
     }
 
     /**
@@ -270,7 +262,7 @@ export class ProjectsRepository {
     public async GetProjectsManagers(): Promise<IProjectsManagersResultDto[]> {
         const projectRepository = getManager().getRepository(ProjectEntity);
 
-        const result = await projectRepository
+        return projectRepository
             .createQueryBuilder('pr')
             .select(['usr.uid as ManagerId', `usr.FirstName + ' ' + usr.LastName as FullName`])
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
@@ -278,8 +270,6 @@ export class ProjectsRepository {
             .distinct(true)
             .distinctOn(['usr.uid'])
             .execute();
-
-        return result;
     }
 
     /**
@@ -289,14 +279,12 @@ export class ProjectsRepository {
     public async GetProjectsVessels(): Promise<IProjectVesselsResultDto[]> {
         const projectRepository = getManager().getRepository(ProjectEntity);
 
-        const result = await projectRepository
+        return projectRepository
             .createQueryBuilder('pr')
             .select(['vessel.uid as VesselUid', 'vessel.VesselName as Name'])
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .where('pr.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .execute();
-
-        return result;
     }
 
     public async CreateProject(data: ICreateNewProjectDto, queryRunner: QueryRunner): Promise<string> {
