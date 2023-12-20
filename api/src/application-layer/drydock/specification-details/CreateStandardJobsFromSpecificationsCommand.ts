@@ -121,26 +121,31 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<Request,
                 specificationAuditData.push(auditData);
             });
 
-            await this.specificationRepository.CreateSpecificationInspection(specificationInspections, queryRunner);
-            await this.subItemsRepository.createRawSubItems(specificationSubItems, queryRunner);
+            if (specificationInspections.length > 0) {
+                await this.specificationRepository.CreateSpecificationInspection(specificationInspections, queryRunner);
 
-            // SYNC inspection
-            const conditionInspections = `uid IN ('${specificationInspections.map((i) => i.uid).join(`','`)}')`;
-            await SynchronizerService.dataSynchronizeByConditionManager(
-                queryRunner.manager,
-                this.tableNameInspections,
-                vessel.VesselId,
-                conditionInspections,
-            );
+                // SYNC inspection
+                const conditionInspections = `uid IN ('${specificationInspections.map((i) => i.uid).join(`','`)}')`;
+                await SynchronizerService.dataSynchronizeByConditionManager(
+                    queryRunner.manager,
+                    this.tableNameInspections,
+                    vessel.VesselId,
+                    conditionInspections,
+                );
+            }
 
-            // SYNC sub items
-            const conditionSubItems = `uid IN ('${specificationSubItems.map((i) => i.uid).join(`','`)}')`;
-            await SynchronizerService.dataSynchronizeByConditionManager(
-                queryRunner.manager,
-                this.tableNameSubItems,
-                vessel.VesselId,
-                conditionSubItems,
-            );
+            if (specificationSubItems.length > 0) {
+                await this.subItemsRepository.createRawSubItems(specificationSubItems, queryRunner);
+
+                // SYNC sub items
+                const conditionSubItems = `uid IN ('${specificationSubItems.map((i) => i.uid).join(`','`)}')`;
+                await SynchronizerService.dataSynchronizeByConditionManager(
+                    queryRunner.manager,
+                    this.tableNameSubItems,
+                    vessel.VesselId,
+                    conditionSubItems,
+                );
+            }
 
             // AUDIT
             const auditUids = await this.specificationDetailsAudit.auditManyCreatedSpecificationDetails(
