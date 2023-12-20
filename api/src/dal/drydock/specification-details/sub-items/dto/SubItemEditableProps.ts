@@ -39,4 +39,7 @@ export class SubItemEditableProps {
     @Min(DISCOUNT_MIN)
     @Max(DISCOUNT_MAX)
     readonly discount: number;
+
+    @IsString()
+    readonly description: string;
 }

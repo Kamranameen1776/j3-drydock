@@ -1,4 +1,4 @@
-import { ODataService } from 'j2utils';
+import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, In, QueryRunner } from 'typeorm';
 
 import { BusinessException } from '../../../../bll/drydock/core/exceptions';
@@ -6,18 +6,26 @@ import {
     calculateEntityExistenceMap,
     EntityExistenceMap,
 } from '../../../../common/drydock/ts-helpers/calculate-entity-existence-map';
+import { className } from '../../../../common/drydock/ts-helpers/className';
 import { entriesOf } from '../../../../common/drydock/ts-helpers/entries-of';
-import { SpecificationDetailsSubItemEntity as SubItem } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { SpecificationDetailsEntity } from '../../../../entity/drydock';
+import {
+    SpecificationDetailsSubItemEntity,
+    SpecificationDetailsSubItemEntity as SubItem,
+} from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { SpecificationSubItemPmsEntity } from '../../../../entity/drydock/SpecificationSubItemPmsJobEntity';
 import { UnitTypeEntity } from '../../../../entity/drydock/UnitTypeEntity';
 import { ODataResult } from '../../../../shared/interfaces';
 import { CreateManyParams } from './dto/CreateManyParams';
-import { CreateOneParams } from './dto/CreateOneParams';
+import { CreateSubItemParams } from './dto/CreateSubItemParams';
 import { DeleteManyParams } from './dto/DeleteManyParams';
-import { DeleteOneParams } from './dto/DeleteOneParams';
+import { DeleteSubItemParams } from './dto/DeleteSubItemParams';
 import { FindManyParams } from './dto/FindManyParams';
 import { GetManyParams } from './dto/GetManyParams';
-import { GetOneParams } from './dto/GetOneParams';
-import { UpdateOneParams } from './dto/UpdateOneParams';
+import { GetSubItemParams } from './dto/GetSubItemParams';
+import { SubItemEditableProps } from './dto/SubItemEditableProps';
+import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
+import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
 
 export class SpecificationDetailsSubItemsRepository {
     public async findMany(params: FindManyParams): Promise<ODataResult<SubItem>> {
@@ -36,7 +44,7 @@ export class SpecificationDetailsSubItemsRepository {
                 'subItem.description as description',
                 'unitType.types as unitType',
             ])
-            .innerJoin('lib_unit_type', 'unitType', 'unitType.uid = subItem.unit_type_uid')
+            .leftJoin('lib_unit_type', 'unitType', 'unitType.uid = subItem.unit_type_uid')
             .where('specification_details_uid = :specificationDetailsUid', {
                 specificationDetailsUid: params.specificationDetailsUid,
             })
@@ -47,7 +55,7 @@ export class SpecificationDetailsSubItemsRepository {
         return odataService.getJoinResult(script, substitutions);
     }
 
-    public async getOneByUid(params: GetOneParams, queryRunner: QueryRunner): Promise<SubItem | null> {
+    public async getOneByUid(params: GetSubItemParams, queryRunner: QueryRunner): Promise<SubItem | null> {
         const subItem = await queryRunner.manager.findOne(SubItem, {
             where: {
                 specificationDetails: {
@@ -61,7 +69,7 @@ export class SpecificationDetailsSubItemsRepository {
         return subItem ?? null;
     }
 
-    public async getOneExistingByUid(params: GetOneParams, queryRunner: QueryRunner): Promise<SubItem> {
+    public async getOneExistingByUid(params: GetSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
         const subItem = await this.getOneByUid(params, queryRunner);
 
         if (subItem == null) {
@@ -71,18 +79,19 @@ export class SpecificationDetailsSubItemsRepository {
         return subItem;
     }
 
-    public async createOne(params: CreateOneParams, queryRunner: QueryRunner): Promise<SubItem> {
+    public async createOne(params: CreateSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
         await this.assertAllUnitTypesExistByUids([params.unitUid], queryRunner);
 
         const { createdBy: created_by, ...props } = params;
 
-        const subItem = queryRunner.manager.create(SubItem, {
-            ...props,
-            created_by,
-            created_at: new Date(),
+        const subItem = this.mapSubItemDtoToEntity(props, {
+            uid: DataUtilService.newUid(),
         });
 
-        await queryRunner.manager.save(subItem);
+        subItem.created_by = created_by;
+        subItem.created_at = new Date();
+
+        await queryRunner.manager.save(SubItem, subItem);
 
         return subItem;
     }
@@ -110,35 +119,25 @@ export class SpecificationDetailsSubItemsRepository {
         return queryRunner.manager.save(SubItem, subItems);
     }
 
-    public async updateOneExistingByUid(params: UpdateOneParams, queryRunner: QueryRunner): Promise<SubItem> {
+    public async updateOneExistingByUid(params: UpdateSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
         const subItem = await this.getOneExistingByUid(params, queryRunner);
 
         if (params.props.unitUid != null) {
             await this.assertAllUnitTypesExistByUids([params.props.unitUid], queryRunner);
         }
 
-        if (params.props.unitUid) {
-            subItem.unitType = {
-                uid: params.props.unitUid,
-            } as UnitTypeEntity;
-        }
-        subItem.quantity = params.props.quantity;
-        subItem.unitPrice = params.props.unitPrice;
-        const discount = (params.props.discount || 0) / 100;
-        subItem.discount = Number(discount.toFixed(2));
-        subItem.subject = params.props.subject;
-        subItem.description = params.props.description;
+        const subItemData = this.mapSubItemDtoToEntity(params.props, subItem);
 
         // assigned separately for type safety
-        subItem.updated_by = params.updatedBy;
-        subItem.updated_at = new Date();
+        subItemData.updated_by = params.updatedBy;
+        subItemData.updated_at = new Date();
 
-        await queryRunner.manager.save(subItem);
+        await queryRunner.manager.save(SubItem, subItemData);
 
-        return subItem;
+        return subItemData;
     }
 
-    public async deleteOneExistingByUid(params: DeleteOneParams, queryRunner: QueryRunner): Promise<void> {
+    public async deleteOneExistingByUid(params: DeleteSubItemParams, queryRunner: QueryRunner): Promise<void> {
         const subItem = await this.getOneExistingByUid(params, queryRunner);
 
         this.markAsDeleted(subItem, params.deletedBy);
@@ -161,6 +160,52 @@ export class SpecificationDetailsSubItemsRepository {
         const deleted = calculateEntityExistenceMap(subItemsToDelete, params.uids);
 
         return deleted;
+    }
+
+    public addSubItemPmsJobs(subItemUid: string, pmsJobUids: string[], queryRunner: QueryRunner) {
+        const subItemPmsJob: SpecificationSubItemPmsEntity[] = pmsJobUids.map((uid) => {
+            return queryRunner.manager.create(SpecificationSubItemPmsEntity, {
+                uid: DataUtilService.newUid(),
+                SubItemUid: subItemUid,
+                PmsJobUid: uid,
+            });
+        });
+
+        return queryRunner.manager.save(SpecificationSubItemPmsEntity, subItemPmsJob);
+    }
+
+    public deleteAllSubItemPmsJobs(uid: string, queryRunner: QueryRunner) {
+        return queryRunner.manager.update(SpecificationSubItemPmsEntity, { SubItemUid: uid }, { ActiveStatus: false });
+    }
+
+    public deleteSubItemPmsJobs(subItemUid: string, pmsJobUid: string[], queryRunner: QueryRunner) {
+        return queryRunner.manager.update(
+            SpecificationSubItemPmsEntity,
+            { SubItemUid: subItemUid, pmsJobUid: In(pmsJobUid) },
+            { ActiveStatus: false },
+        );
+    }
+
+    public async validatePmsJobDelete({ specificationUid, pmsJobUid }: ValidatePmsJobDeleteDto) {
+        const pmsJobs = await getManager()
+            .createQueryBuilder(className(SpecificationSubItemPmsEntity), 'sub_item_pms')
+            .innerJoin(
+                className(SpecificationDetailsSubItemEntity),
+                'sub_item',
+                'sub_item.uid = sub_item_pms.specification_sub_item_uid and sub_item.active_status = 1',
+            )
+            .innerJoin(
+                className(SpecificationDetailsEntity),
+                'spec',
+                'spec.uid = sub_item.specification_details_uid and spec.active_status = 1',
+            )
+            .select('count(sub_item_pms.uid) as count')
+            .where(`sub_item_pms.j3_pms_agg_job_uid = '${pmsJobUid}'`)
+            .andWhere(`spec.uid = '${specificationUid}'`)
+            .andWhere('sub_item_pms.active_status = 1')
+            .execute();
+
+        return pmsJobs.count > 0;
     }
 
     protected async getManyByUids(params: GetManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
@@ -196,6 +241,27 @@ export class SpecificationDetailsSubItemsRepository {
         subItem.active_status = false;
         subItem.deleted_by = deletedBy;
         subItem.deleted_at = new Date();
+    }
+
+    private mapSubItemDtoToEntity(subItemData: Partial<SubItemEditableProps>, subItem: Partial<SubItem>): SubItem {
+        const discount = (subItemData.discount || 0) / 100;
+
+        const newSubItem: Partial<SubItem> = {
+            ...subItem,
+            quantity: subItemData.quantity,
+            unitPrice: subItemData.unitPrice,
+            discount: Number(discount.toFixed(2)),
+            subject: subItemData.subject,
+            description: subItemData.description,
+        };
+
+        if (subItemData.unitUid) {
+            const unitType = new UnitTypeEntity();
+            unitType.uid = subItemData.unitUid;
+            newSubItem.unitType = unitType;
+        }
+
+        return newSubItem as SubItem;
     }
 }
 
