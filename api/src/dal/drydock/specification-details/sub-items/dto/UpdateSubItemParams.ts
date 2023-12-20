@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
 
-import { GetOneParams } from './GetOneParams';
+import { GetSubItemParams } from './GetSubItemParams';
 import { SubItemEditableProps } from './SubItemEditableProps';
 
 /** @private */
@@ -25,7 +25,15 @@ class SubItemEditablePropsPartial implements Partial<SubItemEditableProps> {
     readonly description?: string;
 }
 
-export class UpdateOneParams extends GetOneParams {
+export class UpdatePmsJobsParams {
+    @IsUUID('4', { each: true })
+    linkedUids: string[];
+
+    @IsUUID('4', { each: true })
+    unlinkedUids: string[];
+}
+
+export class UpdateSubItemParams extends GetSubItemParams {
     @IsString()
     @IsNotEmpty()
     readonly updatedBy: string;
@@ -33,4 +41,8 @@ export class UpdateOneParams extends GetOneParams {
     @Type(() => SubItemEditablePropsPartial)
     @ValidateNested()
     readonly props: SubItemEditablePropsPartial;
+
+    @Type(() => UpdatePmsJobsParams)
+    @ValidateNested()
+    pmsJobs: UpdatePmsJobsParams;
 }
