@@ -41,32 +41,5 @@ export class createStandardJobVesselTypeTable1698221383318 implements MigrationI
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF EXISTS (Select * from INFORMATION_SCHEMA.TABLES
-                where TABLE_NAME = '${this.tableName}' AND TABLE_SCHEMA = '${this.schemaName}')
-            BEGIN
-            DROP TABLE [${this.schemaName}].[${this.tableName}]
-            END
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                'createStandardJobVesselTypeTable1698221383318',
-                '',
-                'S',
-                'dry_dock',
-                'Create standard jobs vessel type table (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                'createStandardJobVesselTypeTable1698221383318',
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                'Create standard jobs vessel type table (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

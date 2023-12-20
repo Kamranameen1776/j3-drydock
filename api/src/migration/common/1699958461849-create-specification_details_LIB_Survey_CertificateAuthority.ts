@@ -58,31 +58,5 @@ export class createSpecification_details_LIB_Survey_CertificateAuthority16999584
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF Exists(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dry_dock].[specification_details_LIB_Survey_CertificateAuthority]') AND type in (N'U'))
-            BEGIN
-                DROP TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority];
-            END
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                '',
-                'S',
-                this.moduleName,
-                'Create table specification_details_LIB_Survey_CertificateAuthority (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                error as string,
-                'E',
-                this.moduleName,
-                'Create table specification_details_LIB_Survey_CertificateAuthority (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

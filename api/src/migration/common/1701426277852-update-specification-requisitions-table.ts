@@ -32,5 +32,5 @@ export class updateSpecificationRequisitionsTable1701426277852 implements Migrat
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {}
+    public async down(): Promise<void> {}
 }

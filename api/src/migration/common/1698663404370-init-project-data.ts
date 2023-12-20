@@ -77,24 +77,5 @@ export class initProjectData1698663404370 implements MigrationInterface {
         }
     }
 
-    public async down(): Promise<void> {
-        try {
-            await MigrationUtilsService.migrationLog(
-                'initProjectData1698663404370',
-                '',
-                'S',
-                'dry_dock',
-                'Init Project Data (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                'initProjectData1698663404370',
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                'Init Project Data (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

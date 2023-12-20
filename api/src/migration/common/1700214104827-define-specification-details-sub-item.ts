@@ -80,44 +80,5 @@ export class DefineSpecificationDetailsSubItem1700214104827 implements Migration
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-                if exists (
-                    select top 1
-                        *
-                    from
-                        sys.indexes
-                    where
-                        name = 'idx_specification_details_sub_item_subject'
-                )
-                begin
-                    drop index [idx_specification_details_sub_item_subject]
-                    on [dry_dock].[specification_details_sub_item];
-                end;
-            `);
-
-            await queryRunner.query(`
-                if exists (
-                    select top 1
-                        *
-                    from
-                        information_schema.tables
-                    where
-                        table_schema = 'dry_dock'
-                        and
-                        table_name = 'specification_details_sub_item'
-                )
-                begin
-                    drop table [dry_dock].[specification_details_sub_item];
-                end;
-            `);
-
-            await MigrationUtilsService.migrationLog(this.name, '', 'S', 'dry_dock', this.description);
-        } catch (caught) {
-            const error = JSON.stringify(caught);
-
-            await MigrationUtilsService.migrationLog(this.name, error, 'E', 'dry_dock', this.description, true);
-        }
-    }
+    public async down(): Promise<void> {}
 }

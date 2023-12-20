@@ -31,5 +31,5 @@ export class updateSpecificationDetailsStartDate1702459991347 implements Migrati
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> { }
+    public async down(): Promise<void> {}
 }

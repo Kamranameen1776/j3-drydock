@@ -40,5 +40,5 @@ export class ProjectInfLibFunctionFix1699958461867 implements MigrationInterface
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {}
+    public async down(): Promise<void> {}
 }

@@ -57,5 +57,5 @@ export class AddJobOrders1701262696258 implements MigrationInterface {
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> { }
+    public async down(): Promise<void> {}
 }

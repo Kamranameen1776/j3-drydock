@@ -54,32 +54,6 @@ public async up(queryRunner: QueryRunner): Promise<void> {
     }
 }
 
-public async down(queryRunner: QueryRunner): Promise<void> {
-    try {
-        await queryRunner.query(`
-        IF Exists(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[${this.schemaName}].[${this.tableName}]') AND type in (N'U'))
-        BEGIN
-            DROP TABLE [${this.schemaName}].[${this.tableName}];
-        END
-        `);
-
-        await MigrationUtilsService.migrationLog(
-            this.className,
-            '',
-            'S',
-            this.moduleName,
-            'Create table daily_reports (Down migration)',
-        );
-    } catch (error) {
-        await MigrationUtilsService.migrationLog(
-            this.className,
-            error as string,
-            'E',
-            this.moduleName,
-            'Create table daily_reports (Down migration)',
-            true,
-        );
-    }
-}
+public async down(): Promise<void> {}
 }
 

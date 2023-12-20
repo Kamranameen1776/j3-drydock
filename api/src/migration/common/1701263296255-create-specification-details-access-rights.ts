@@ -597,44 +597,5 @@ export class CreateSpecificationDetailsAccessRights1701263296255 implements Migr
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-                delete from
-                    inf_lib_grouprights
-                where
-                    [GR_UID] in (${accessRights.map(({ groupRightUid }) => (
-                        `'${groupRightUid}'`
-                    ))});
-            `);
-
-            await queryRunner.query(`
-                delete from
-                    INF_lnk_right_user_type
-                where
-                    [uid] in (${accessRights.map(({ rightUserTypeUid }) => (
-                        `'${rightUserTypeUid}'`
-                    ))});
-            `);
-
-            await queryRunner.query(`
-                delete from
-                    INF_Lib_Right
-                where
-                    [Module_Code] = @0
-                    and
-                    [Function_Code] = @1
-                    and
-                    [Right_Code] in (${accessRights.map(({ code }) => (
-                        `'${code}'`
-                    ))});
-            `, [this.moduleCode, this.functionCode]);
-
-            await this.updateModuleAndFunctionModificationDate(queryRunner);
-
-            await this.log(Status.Success, 'Deleted access rights for Specification Details');
-        } catch (error) {
-            await this.log(Status.Error, JSON.stringify(error));
-        }
-    }
+    public async down(): Promise<void> {}
 }

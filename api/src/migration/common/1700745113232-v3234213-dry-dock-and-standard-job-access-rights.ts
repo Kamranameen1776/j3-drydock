@@ -136,24 +136,5 @@ export class v3234213DryDockAndStandardJobAccessRights1700745113232 implements M
         }
     }
 
-    public async down(): Promise<void> {
-        try {
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                '',
-                'S',
-                'dry_dock',
-                'dry dock and standard job access rights',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                'dry dock and standard job access rights',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

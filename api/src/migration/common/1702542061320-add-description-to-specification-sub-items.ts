@@ -37,33 +37,5 @@ export class addDescriptionToSpecificationSubItems1702542061320 implements Migra
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF EXISTS (Select *
-               from INFORMATION_SCHEMA.TABLES
-               where TABLE_NAME = '${this.tableName}'
-                 AND TABLE_SCHEMA = '${this.schemaName}')
-    BEGIN
-         ALTER TABLE [${this.schemaName}].[${this.tableName}] DROP COLUMN ${this.columnName};
-    END`);
-
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                '',
-                'S',
-                'dry_dock',
-                this.description + ' (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                this.description + ' (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

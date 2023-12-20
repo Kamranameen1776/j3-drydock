@@ -60,37 +60,5 @@ export class AddJobOrdersTable1702646766378 implements MigrationInterface {
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> { 
-
-
-        try {
-            await queryRunner.query(
-                `
-                IF EXISTS (SELECT * FROM sys.tables WHERE name = 'job_orders' AND schema_id = SCHEMA_ID('dry_dock'))
-                BEGIN
-                    DROP TABLE [dry_dock].[job_orders];
-                END;
-            `,
-            );
-
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                '',
-                'S',
-                this.moduleName,
-                'Add Job Orders table',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                error as string,
-                'E',
-                this.moduleName,
-                'Add Job Orders table',
-                true,
-            );
-        }
-
-
-    }
+    public async down(): Promise<void> {}
 }

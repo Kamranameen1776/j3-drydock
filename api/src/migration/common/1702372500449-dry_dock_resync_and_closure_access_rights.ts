@@ -93,5 +93,5 @@ export class dryDockResyncAndClosureAccessRights1702372500449 implements Migrati
             );
         }
     }
-    public async down(queryRunner: QueryRunner): Promise<void> {}
+    public async down(): Promise<void> {}
 }

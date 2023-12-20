@@ -80,31 +80,5 @@ export class v32311422CreateTableScriptOfSpecificationDetails1697522126447 imple
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF Exists(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dry_dock].[specification_details]') AND type in (N'U'))
-            BEGIN
-                DROP TABLE [dry_dock].[specification_details];
-            END
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                '',
-                'S',
-                this.moduleName,
-                'Create table specification_details (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                error as string,
-                'E',
-                this.moduleName,
-                'Create table specification_details (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

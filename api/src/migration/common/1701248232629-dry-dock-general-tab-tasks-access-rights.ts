@@ -104,5 +104,5 @@ export class dryDockGeneralTabTasksAccessRights1701248232629 implements Migratio
             );
         }
     }
-    public async down(queryRunner: QueryRunner): Promise<void> {}
+    public async down(): Promise<void> {}
 }

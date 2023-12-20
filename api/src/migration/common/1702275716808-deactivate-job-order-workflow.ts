@@ -33,6 +33,6 @@ export class deactivateJobOrderWorkflow1702275716808 implements MigrationInterfa
             );
         }
     }
-    public async down(queryRunner: QueryRunner): Promise<void> {}
+    public async down(): Promise<void> {}
 }
 
