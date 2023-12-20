@@ -2,7 +2,6 @@ import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
-import { JobOrdersUpdateDto } from '../../../application-layer/drydock/daily-reports/dtos/JobOrdersUpdateDto';
 import { DailyReportsEntity } from '../../../entity/drydock/DailyReportsEntity';
 import { DailyReportUpdatesEntity } from '../../../entity/drydock/DailyReportUpdatesEntity';
 import { ODataResult } from '../../../shared/interfaces';
@@ -12,6 +11,7 @@ import { IDailyReportsResultDto } from './dtos/IDailyReportsResultDto';
 import { IDeleteDailyReportsDto } from './dtos/IDeleteDailyReportsDto';
 import { IOneDailyReportsResultDto } from './dtos/IOneDailyReportsResultDto';
 import { IUpdateDailyReportsDto } from './dtos/IUpdateDailyReportsDto';
+import { JobOrdersUpdatesDto } from './dtos/JobOrdersUpdatesDto';
 
 export class DailyReportsRepository {
     public async findOneByDailyReportUid(uid: string): Promise<IOneDailyReportsResultDto> {
@@ -23,7 +23,7 @@ export class DailyReportsRepository {
             .getRawOne();
     }
 
-    public async findDailyReportUpdate(uid: string): Promise<Array<JobOrdersUpdateDto>> {
+    public async findDailyReportUpdate(uid: string): Promise<Array<JobOrdersUpdatesDto>> {
         const dailyReportUpdateRepository = getManager().getRepository(DailyReportUpdatesEntity);
 
         return dailyReportUpdateRepository
@@ -55,11 +55,12 @@ export class DailyReportsRepository {
         data.ActiveStatus = true;
         data.uid = new DataUtilService().newUid();
         await queryRunner.manager.insert(DailyReportsEntity, data);
-        return data.uid;
+        return data;
     }
 
     public async createDailyReportUpdate(data: Array<ICreateDailyReportUpdateDto>, queryRunner: QueryRunner) {
-        return queryRunner.manager.insert(DailyReportUpdatesEntity, data);
+        const result = await queryRunner.manager.insert(DailyReportUpdatesEntity, data);
+        return result;
     }
 
     public async updateDailyReport(data: IUpdateDailyReportsDto, queryRunner: QueryRunner) {

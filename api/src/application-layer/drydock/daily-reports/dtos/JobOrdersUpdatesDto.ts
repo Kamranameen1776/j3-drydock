@@ -1,6 +1,6 @@
 import { MaxLength, MinLength } from 'class-validator';
 
-export class JobOrdersUpdateDto {
+export class JobOrdersUpdatesDto {
     @MinLength(1)
     @MaxLength(200)
     Name: string;

@@ -1,4 +1,7 @@
 import { ArrayMinSize, IsDateString, IsDefined, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
+
+import { JobOrdersUpdatesDto } from './JobOrdersUpdatesDto';
+
 export class CreateDailyReportsDto {
     uid: string;
 
@@ -21,7 +24,7 @@ export class CreateDailyReportsDto {
     ReportDate: Date;
 
     @ArrayMinSize(0)
-    JobOrdersUpdate: [];
+    JobOrdersUpdate: Array<JobOrdersUpdatesDto>;
 
     ActiveStatus: boolean;
 }
