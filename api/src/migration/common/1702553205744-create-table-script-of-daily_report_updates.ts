@@ -1,7 +1,7 @@
 import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class createTableScriptOfDailyReportUpdate1702553205744 implements MigrationInterface {
+export class createTableScriptOfDailyReportUpdates1702553205744 implements MigrationInterface {
     tableName = 'daily_report_updates';
     schemaName = 'dry_dock';
     className = this.constructor.name;
