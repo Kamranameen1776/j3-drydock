@@ -310,7 +310,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   private getFleetList() {
     this.fleetService
-      .getFleets(true)
+      .getFleets(false)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((res) => {
         this.getCreateFormField(eProjectsCreateFieldNames.Fleet).list = this.jmsSvc.createSingleSelectDrpDown(
@@ -323,7 +323,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   private getVesselList(fleetCodes?: string[] | number[]) {
     this.vesselService
-      .getVesselsByFleet(fleetCodes, true)
+      .getVesselsByFleet(fleetCodes, false)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (res) => {
