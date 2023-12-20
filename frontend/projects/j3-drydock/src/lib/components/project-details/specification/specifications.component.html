@@ -1,5 +1,6 @@
 <div class="specs-content">
   <jb-tree
+    [treeMode]="'single'"
     [staticNodes]="treeData$ | async"
     [showSetting]="{ showSearch: true, showButtons: false }"
     filterPlaceholder="Search Function"
@@ -18,6 +19,7 @@
     [filterData]="gridData.filters"
     [filterListsSet]="gridData.filtersLists"
     [getStyleByContainer]="true"
+    [isDisplayAdvancedFilter]="false"
     (action)="onActionClick($event)"
     (cellPlainTextClick)="cellPlainTextClick($event)"
   ></jb-grid>

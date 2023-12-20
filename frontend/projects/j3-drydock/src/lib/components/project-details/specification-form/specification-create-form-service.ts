@@ -59,7 +59,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
           },
           Inspections: {
             type: eFieldControlType.MultiSelect,
-            label: 'Inspections',
+            label: 'Inspections/ Survey',
             sectionID: this.formId,
             enabled: true,
             validatorRequired: false,
