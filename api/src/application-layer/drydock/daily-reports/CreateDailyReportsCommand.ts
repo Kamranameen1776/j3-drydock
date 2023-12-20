@@ -36,18 +36,17 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
         return this.uow.ExecuteAsync(async (queryRunner) => {
             const reportdata = await this.dailyReportsRepository.createDailyReport(request, queryRunner);
             const { JobOrdersUpdate } = request;
-            if (JobOrdersUpdate.length) {
-                const data = JobOrdersUpdate.map((item: JobOrdersUpdateDto) => {
-                    return {
-                        uid: DataUtilService.newUid(),
-                        ReportUid: reportdata,
-                        ReportUpdateName: item.Name,
-                        Remark: item.Remark,
-                        active_status: true,
-                    };
-                });
-                await this.dailyReportsRepository.createDailyReportUpdate(data, queryRunner);
-            }
+            const data = JobOrdersUpdate.map((item: JobOrdersUpdateDto) => {
+                return {
+                    uid: DataUtilService.newUid(),
+                    ReportUid: reportdata,
+                    ReportUpdateName: item.Name,
+                    Remark: item.Remark,
+                    active_status: true,
+                    created_at: request.CreatedAt,
+                };
+            });
+            await this.dailyReportsRepository.createDailyReportUpdate(data, queryRunner);
         });
     }
 }

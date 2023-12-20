@@ -3,8 +3,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 import { BaseDatesEntity } from '../baseDatesEntity';
 
-@Entity('daily_report_update', { schema: 'dry_dock' })
-export class DailyReportUpdateEntity extends BaseDatesEntity {
+@Entity('daily_report_updates', { schema: 'dry_dock' })
+export class DailyReportUpdatesEntity extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 

@@ -2,7 +2,7 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 
 export class createTableScriptOfDailyReportUpdate1702553205744 implements MigrationInterface {
-    tableName = 'daily_report_update';
+    tableName = 'daily_report_updates';
     schemaName = 'dry_dock';
     className = this.constructor.name;
     moduleName = 'dry_dock';
@@ -14,7 +14,7 @@ export class createTableScriptOfDailyReportUpdate1702553205744 implements Migrat
             CREATE TABLE [${this.schemaName}].[${this.tableName}](
                 [uid] [uniqueidentifier] NOT NULL,
                 [report_uid] [uniqueidentifier] NOT NULL,
-                [report_update_name] [varchar](5000) NULL,
+                [report_update_name] [varchar](200) NULL,
                 [remark] [varchar](5000) NULL,
                 [active_status] [bit] NOT NULL,
                 [created_by] [uniqueidentifier] NULL,

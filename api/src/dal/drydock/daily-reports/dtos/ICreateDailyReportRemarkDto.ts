@@ -3,5 +3,4 @@ export interface ICreateDailyReportUpdateDto {
     ReportUid: string;
     Remark: string;
     ReportUpdateName: string;
-    active_status: boolean;
 }

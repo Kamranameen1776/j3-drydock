@@ -4,7 +4,7 @@ import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { JobOrdersUpdateDto } from '../../../application-layer/drydock/daily-reports/dtos/JobOrdersUpdateDto';
 import { DailyReportsEntity } from '../../../entity/drydock/DailyReportsEntity';
-import { DailyReportUpdateEntity } from '../../../entity/drydock/DailyReportUpdateEntity';
+import { DailyReportUpdatesEntity } from '../../../entity/drydock/DailyReportUpdatesEntity';
 import { ODataResult } from '../../../shared/interfaces';
 import { ICreateDailyReportUpdateDto } from './dtos/ICreateDailyReportRemarkDto';
 import { ICreateDailyReportsDto } from './dtos/ICreateDailyReportsDto';
@@ -19,17 +19,17 @@ export class DailyReportsRepository {
         return dailyReportsRepository
             .createQueryBuilder('dr')
             .select(['dr.uid as uid', 'dr.ReportName as reportName', 'dr.ReportDate as reportDate'])
-            .where(`dr.uid = '${uid}' and dr.active_status = 1`)
+            .where('dr.active_status = 1 and dr.uid = :uid', { uid })
             .getRawOne();
     }
 
     public async findDailyReportUpdate(uid: string): Promise<Array<JobOrdersUpdateDto>> {
-        const dailyReportUpdateRepository = getManager().getRepository(DailyReportUpdateEntity);
+        const dailyReportUpdateRepository = getManager().getRepository(DailyReportUpdatesEntity);
 
         return dailyReportUpdateRepository
             .createQueryBuilder('dru')
             .select(['dru.uid as updateUid', 'dru.ReportUpdateName as reportUpdateName', 'dru.Remark as remark'])
-            .where(`dru.report_uid = '${uid}' and dru.active_status = 1`)
+            .where(`dru.active_status = 1 and dru.DailyReportUid = :uid`, { uid })
             .getRawMany();
     }
 
@@ -59,7 +59,7 @@ export class DailyReportsRepository {
     }
 
     public async createDailyReportUpdate(data: Array<ICreateDailyReportUpdateDto>, queryRunner: QueryRunner) {
-        return queryRunner.manager.insert(DailyReportUpdateEntity, data);
+        return queryRunner.manager.insert(DailyReportUpdatesEntity, data);
     }
 
     public async updateDailyReport(data: IUpdateDailyReportsDto, queryRunner: QueryRunner) {

@@ -14,7 +14,8 @@ export async function getOneDailyReport(req: Request, res: Response) {
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
         const query = new GetOneDailyReportQuery();
 
-        const oneDailyReport = await query.ExecuteAsync(request);
+        const uid = request.query.uid as string;
+        const oneDailyReport = await query.ExecuteAsync(uid);
 
         return oneDailyReport;
     });
