@@ -24,9 +24,9 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
   treeData$: Observable<FunctionsFlatTreeNode[]>;
   gridData: GridInputsWithRequest;
-  eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.Select, eJbTreeEvents.UnSelect];
+  eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.UnSelect];
   activeIndex = 0;
-  functionUIDs: string[] = [];
+  private functionUIDs: string[] = [];
   types = [SpecificationType.ALL, SpecificationType.PMS, SpecificationType.FINDINGS, SpecificationType.STANDARD, SpecificationType.ADHOC];
   isCreatePopupVisible = false;
   addFromStandardJobPopupVisible = false;
@@ -113,11 +113,11 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   setNodeData(event) {
     if (event?.type === eJbTreeEvents.NodeSelect) {
-      this.functionUIDs = [...this.functionUIDs, event.payload.Child_ID];
+      this.functionUIDs = [event.payload.Child_ID];
       this.gridData = this.getData();
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
     } else if (event?.type === eJbTreeEvents.UnSelect) {
-      this.functionUIDs = this.functionUIDs.filter((uid) => uid !== event.payload.Child_ID);
+      this.functionUIDs = [];
       this.gridData = this.getData();
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
     }
