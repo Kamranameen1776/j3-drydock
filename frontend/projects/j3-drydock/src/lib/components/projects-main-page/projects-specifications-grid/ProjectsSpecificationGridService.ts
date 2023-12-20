@@ -411,11 +411,7 @@ export class ProjectsSpecificationGridService {
               gridRowEnd: 2,
               gridColStart: 1,
               gridColEnd: 3,
-              listRequest: {
-                webApiRequest: this.slfService.getSLFDetails(Datasource.Fleets),
-                labelKey: 'FleetName',
-                valueKey: 'FleetCode'
-              }
+              list: []
             },
             [eProjectsCreateFieldNames.Vessel]: {
               label: eProjectsCreateDisplayNames.Vessel,
@@ -427,11 +423,7 @@ export class ProjectsSpecificationGridService {
               gridRowEnd: 3,
               gridColStart: 1,
               gridColEnd: 3,
-              listRequest: {
-                webApiRequest: this.slfService.getSLFDetails(Datasource.Vessels),
-                labelKey: 'Vessel_Name',
-                valueKey: 'Vessel_ID'
-              }
+              list: []
             },
             [eProjectsCreateFieldNames.ProjectType]: {
               label: eProjectsCreateDisplayNames.ProjectType,
