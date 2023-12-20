@@ -1,3 +1,5 @@
+export * from './DailyReportsEntity';
+export * from './DailyReportUpdatesEntity';
 export * from './dbo';
 export * from './GroupProjectStatusEntity';
 export * from './prc';

@@ -1,8 +1,10 @@
 import { validate } from 'class-validator';
 import { DataUtilService, SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { DailyReportsRepository } from '../../../dal/drydock/daily-reports/DailyReportsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { DailyReportsEntity, DailyReportUpdatesEntity } from '../../../entity/drydock';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateDailyReportsDto } from './dtos/CreateDailyReportsDto';
@@ -12,13 +14,14 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
     dailyReportsRepository: DailyReportsRepository;
     uow: UnitOfWork;
     vesselRepository: VesselsRepository;
-    dailyReportsTable = 'dry_dock.daily_reports';
-    dailyReportUpdatesTable = 'dry_dock.daily_report_updates';
+    dailyReportsTable = getTableName(DailyReportsEntity);
+    dailyReportUpdatesTable = getTableName(DailyReportUpdatesEntity);
 
     constructor() {
         super();
 
         this.dailyReportsRepository = new DailyReportsRepository();
+        this.vesselRepository = new VesselsRepository();
         this.uow = new UnitOfWork();
     }
 
@@ -38,9 +41,10 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
 
     protected async MainHandlerAsync(request: CreateDailyReportsDto): Promise<void> {
         const vessel = await this.vesselRepository.GetVesselByProjectUid(request.ProjectUid);
+        const { JobOrdersUpdate } = request;
+
         return this.uow.ExecuteAsync(async (queryRunner) => {
             const dailyReportsdata = await this.dailyReportsRepository.createDailyReport(request, queryRunner);
-            const { JobOrdersUpdate } = request;
             const data = JobOrdersUpdate.map((item: JobOrdersUpdatesDto) => {
                 return {
                     uid: DataUtilService.newUid(),
@@ -51,21 +55,23 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
                     created_at: request.CreatedAt,
                 };
             });
-            const dailyReportUpdatesData = await this.dailyReportsRepository.createDailyReportUpdate(data, queryRunner);
-            await SynchronizerService.dataSynchronizeByConditionManager(
+            await this.dailyReportsRepository.createDailyReportUpdate(data, queryRunner);
+
+            await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.dailyReportsTable,
-                vessel.VesselId,
+                'uid',
                 dailyReportsdata.uid,
+                vessel.VesselId,
             );
-            dailyReportUpdatesData.identifiers.map((item) => {
-                SynchronizerService.dataSynchronizeByConditionManager(
-                    queryRunner.manager,
-                    this.dailyReportUpdatesTable,
-                    vessel.VesselId,
-                    item.uid,
-                );
-            });
+
+            const condition = `uid IN ('${data.map((i: { uid: string }) => i.uid).join(`','`)}')`;
+            await SynchronizerService.dataSynchronizeByConditionManager(
+                queryRunner.manager,
+                this.dailyReportUpdatesTable,
+                vessel.VesselId,
+                condition,
+            );
         });
     }
 }
