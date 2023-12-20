@@ -3,27 +3,28 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 import { BaseDatesEntity } from '../baseDatesEntity';
 
-@Entity('daily_reports', { schema: 'dry_dock' })
-export class DailyReportsEntity extends BaseDatesEntity {
+@Entity('daily_report_updates', { schema: 'dry_dock' })
+export class DailyReportUpdatesEntity extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
-        name: 'project_uid',
+        name: 'report_uid',
     })
-    ProjectUid: string;
+    ReportUid: string;
 
     @Column('varchar', {
         nullable: false,
-        name: 'report_name',
+        name: 'report_update_name',
         length: 200,
     })
-    ReportName: string;
+    ReportUpdateName: string;
 
-    @Column('datetimeoffset', {
-        nullable: false,
-        name: 'report_date',
+    @Column('varchar', {
+        nullable: true,
+        name: 'remark',
+        length: 5000,
     })
-    ReportDate: Date;
+    Remark: string;
 }

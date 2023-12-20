@@ -1,13 +1,6 @@
-import { IsDateString, IsNotEmpty, IsUUID } from 'class-validator';
-
 export class DeleteDailyReportsDto {
-    @IsNotEmpty()
     DailyReportUid: string;
-
-    @IsUUID()
-    @IsNotEmpty()
+    ProjectUid: string;
     UserUid: string;
-
-    @IsDateString()
     DeletedAt: Date;
 }
