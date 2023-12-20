@@ -87,6 +87,7 @@ export class SpecificationGridService {
       request: this.getSpecificationDetailsAPIRequest(projectId, functionUIDs),
       actions: this.gridActions,
       filters: this.filters,
+      searchFields: this.searchFields,
       filtersLists: this.filtersLists
     };
   }
@@ -148,7 +149,7 @@ export class SpecificationGridService {
       DisplayText: 'Done by',
       FieldName: 'db_done_by',
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true
     },
@@ -157,7 +158,7 @@ export class SpecificationGridService {
       DisplayText: 'Inspection / Survey',
       FieldName: 'inspection',
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true
     },
@@ -281,7 +282,8 @@ export class SpecificationGridService {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection),
       type: eFieldControlType.MultiSelect,
       odataKey: 'inspectionId',
-      listValueKey: 'uid'
+      listValueKey: 'uid',
+      includeFilter: true
     },
     msb_material_supplied_by: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.MaterialSuppliedBy),
@@ -315,6 +317,7 @@ export class SpecificationGridService {
     }
   };
 
+  private searchFields: string[] = ['item_number', 'code', 'subject'];
   private gridActions: GridRowActions[] = [
     { name: eGridAction.Edit, icon: 'icons8-edit' },
     { name: eGridAction.Delete, icon: 'icons8-delete' }
