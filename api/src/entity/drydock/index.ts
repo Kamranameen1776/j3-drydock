@@ -13,5 +13,4 @@ export * from './StandardJobsSubItemsEntity';
 export * from './StandardJobsSurveyCertificateAuthorityEntity';
 export * from './StandardJobsVesselTypeEntity';
 export * from './StatementOfFactsEntity';
-export * from './YardsEntity';
 export * from './YardsProjectsEntity';

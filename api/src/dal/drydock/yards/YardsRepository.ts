@@ -1,21 +1,21 @@
 import { getManager } from 'typeorm';
 
-import { YardsEntity } from '../../../entity/drydock/YardsEntity';
+import { J3PrcCompanyRegistryEntity } from '../../../entity/drydock';
 import { IYardsResultDto } from './dtos/IYardsResultDto';
 
 export class YardsRepository {
     public async getYards(): Promise<IYardsResultDto[]> {
-        const yardsRepository = getManager().getRepository(YardsEntity);
+        const yardsRepository = getManager().getRepository(J3PrcCompanyRegistryEntity);
 
         return yardsRepository
             .createQueryBuilder('yd')
             .select(
-                `yd.Uid as uid,
-                yd.yard_name as yardName,
-                yd.yard_location as yardLocation
+                `yd.uid as uid,
+                yd.registeredName as yardName,
+                yd.country + ', ' + yd.city as yardLocation
                 `,
             )
-            .where(`yd.active_status = 1`)
+            .where(`yd.active_status = 1 AND yd.type = 'Yard'`)
             .execute();
     }
 }

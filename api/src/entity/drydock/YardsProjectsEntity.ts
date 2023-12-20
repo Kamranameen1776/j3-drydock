@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 import { BaseDatesEntity } from '../baseDatesEntity';
-import { YardsEntity } from './YardsEntity';
 
 @Entity('yards_projects', { schema: 'dry_dock' })
 export class YardsProjectsEntity extends BaseDatesEntity {
@@ -15,12 +14,9 @@ export class YardsProjectsEntity extends BaseDatesEntity {
     })
     project_uid: string;
 
-    @OneToOne(() => YardsEntity, (yard) => yard.YardProjects)
-    @JoinColumn({
+    @Column('uniqueidentifier', {
         name: 'yard_uid',
     })
-    yard: Partial<YardsEntity>;
-    @RelationId((entity: YardsProjectsEntity) => entity.yard)
     yard_uid: string;
 
     @Column('datetime', {
