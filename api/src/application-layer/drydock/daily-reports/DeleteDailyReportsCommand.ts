@@ -1,8 +1,10 @@
 import { validate } from 'class-validator';
 import { SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { DailyReportsRepository } from '../../../dal/drydock/daily-reports/DailyReportsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
+import { DailyReportsEntity } from '../../../entity/drydock';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { DeleteDailyReportsDto } from './dtos/DeleteDailyReportsDto';
@@ -11,12 +13,13 @@ export class DeleteDailyReportsCommand extends Command<DeleteDailyReportsDto, vo
     dailyReportsRepository: DailyReportsRepository;
     uow: UnitOfWork;
     vesselRepository: VesselsRepository;
-    tableName = 'dry_dock.daily_reports';
+    dailyReportsTable = getTableName(DailyReportsEntity);
 
     constructor() {
         super();
 
         this.dailyReportsRepository = new DailyReportsRepository();
+        this.vesselRepository = new VesselsRepository();
         this.uow = new UnitOfWork();
     }
 
@@ -48,7 +51,7 @@ export class DeleteDailyReportsCommand extends Command<DeleteDailyReportsDto, vo
             );
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
-                this.tableName,
+                this.dailyReportsTable,
                 'uid',
                 data.DailyReportUid,
                 vessel.VesselId,
