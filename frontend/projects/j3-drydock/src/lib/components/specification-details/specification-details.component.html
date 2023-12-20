@@ -14,6 +14,8 @@
     specificationDetails: specificationsDetailsTab,
     generalInformation: generalInformation,
     subItems: subItems,
+    pmsJobs: pmsJobs,
+    findings: findings,
     requisitions: requisitions
   }"
   [ignoreAccessRights]="true"
@@ -41,6 +43,24 @@
             *ngIf="specificationDetailsInfo && accessRights.subItems.view"
             [specificationDetailsInfo]="specificationDetailsInfo"
           ></jb-specification-sub-items>
+        </div>
+      </div>
+      <div *ngSwitchCase="eSideMenuId.PMSJobs">
+        <div #pmsJobs>
+          <jb-pms-jobs
+            #PmsJobsComponent
+            *ngIf="specificationDetailsInfo"
+            [specificationDetailsInfo]="specificationDetailsInfo"
+          ></jb-pms-jobs>
+        </div>
+      </div>
+      <div *ngSwitchCase="eSideMenuId.Findings">
+        <div #findings>
+          <jb-findings
+            #FindingsComponent
+            *ngIf="specificationDetailsInfo"
+            [specificationDetailsInfo]="specificationDetailsInfo"
+          ></jb-findings>
         </div>
       </div>
       <div *ngSwitchCase="eSideMenuId.Requisitions">

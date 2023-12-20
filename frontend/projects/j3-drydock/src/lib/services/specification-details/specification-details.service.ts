@@ -190,6 +190,26 @@ export class SpecificationDetailsService {
             GridColStart: 1,
             GridColEnd: 3,
             active_status: true,
+            SectionCode: eSpecificationDetailsPageMenuIds.PMSJobs,
+            SectionLabel: eSpecificationDetailsPageMenuLabels.PMSJobs,
+            isAddNewButton: false
+          },
+          {
+            GridRowStart: 4,
+            GridRowEnd: 5,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
+            SectionCode: eSpecificationDetailsPageMenuIds.Findings,
+            SectionLabel: eSpecificationDetailsPageMenuLabels.Findings,
+            isAddNewButton: false
+          },
+          {
+            GridRowStart: 5,
+            GridRowEnd: 6,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
             SectionCode: eSpecificationDetailsPageMenuIds.Requisitions,
             SectionLabel: eSpecificationDetailsPageMenuLabels.Requisitions,
             isAddNewButton: this.accessRights.requisitions.edit,

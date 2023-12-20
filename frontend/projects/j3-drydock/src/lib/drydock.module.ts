@@ -1,11 +1,11 @@
 import { StandardJobsMainComponent } from './components/standard-jobs-main/standard-jobs-main.component';
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { DryDockRoutingModule } from './drydock.routing';
 import { DropdownModule, MenuModule, SidebarModule, TieredMenuModule } from 'primeng';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule as PrimeNgModule } from 'primeng';
-import { JiBeTheme, JibeComponentsModule } from 'jibe-components';
+import { JiBeTheme, JibeComponentsModule, ThemeService } from 'jibe-components';
 import { ProjectDetailsComponent } from './components/project-details/project-details.component';
 import { SpecificationGridService } from './services/project/specification.service';
 import { SpecificationStatusPipe } from './components/project-details/specification/specification-status.pipe';
@@ -69,6 +69,8 @@ import { SelectJobOrderGridComponent } from './components/project-details/report
 
 import { GanttModule } from '@syncfusion/ej2-angular-gantt';
 import { GanttChartComponent } from './components/project-details/project-monitoring/gantt-chart/gantt-chart.component';
+import { PmsJobsComponent } from './components/specification-details/pms-jobs/pms-jobs.component';
+import { FindingsComponent } from './components/specification-details/findings/findings.component';
 
 @NgModule({
   declarations: [
@@ -118,7 +120,9 @@ import { GanttChartComponent } from './components/project-details/project-monito
     ItemCardComponent,
     LeftSideListComponent,
     SelectJobOrderPopupComponent,
-    SelectJobOrderGridComponent
+    SelectJobOrderGridComponent,
+    PmsJobsComponent,
+    FindingsComponent
   ],
   imports: [
     CommonModule,
