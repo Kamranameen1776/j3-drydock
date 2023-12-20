@@ -44,12 +44,11 @@ export class ProjectsRepository {
                 'wdetails.StatusDisplayName as ProjectStatusName',
                 'wdetails.WorkflowOrderID',
             ])
-            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
-            .innerJoin(className(JmsDtlWorkflowConfigDetailsEntity), 'wdetails', 'wdetails.ConfigId = wt.ID')
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', 'wc.job_type = pt.WorklistType')
+            .innerJoin(className(JmsDtlWorkflowConfigDetailsEntity), 'wdetails', 'wdetails.ConfigId = wc.ID')
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('wdetails.ActiveStatus = :activeStatus', { activeStatus: 1 })
-            .andWhere('wt.ActiveStatus = :activeStatus', { activeStatus: 1 })
-            .andWhere('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .andWhere('wc.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .distinct(true)
             .distinctOn(['wdetails.WorkflowTypeID'])
             .orderBy('wdetails.WorkflowOrderID')
