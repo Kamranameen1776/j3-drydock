@@ -25,4 +25,6 @@ export class CreateDailyReportsDto {
 
     @ArrayMinSize(0)
     JobOrdersUpdate: Array<JobOrdersUpdatesDto>;
+
+    ActiveStatus: boolean;
 }
