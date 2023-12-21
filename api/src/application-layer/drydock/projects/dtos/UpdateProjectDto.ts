@@ -1,16 +1,17 @@
-// TODO: check that all fields can be updated
-export class UpdateProjectDto {
-    public uid: string;
+export interface UpdateProjectDto {
+    uid: string;
 
-    public VesselUid: string;
+    VesselUid: string;
 
-    public ProjectTypeUid: string;
+    ProjectTypeUid: string;
 
-    public Subject: string;
+    Subject: string;
 
-    public ProjectManagerUid: string;
+    ProjectManagerUid: string;
 
-    public StartDate: Date;
+    StartDate: Date;
 
-    public EndDate: Date;
+    EndDate: Date;
+
+    ShipYardId: string;
 }

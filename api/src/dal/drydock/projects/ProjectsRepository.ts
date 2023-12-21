@@ -315,9 +315,8 @@ export class ProjectsRepository {
         return project.uid;
     }
 
-    // TODO: check if this method is used
-    public async UpdateProject(data: UpdateProjectDto, queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.manager.update(ProjectEntity, data.uid, data);
+    public async SaveProject(project: ProjectEntity, queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.manager.save(project);
     }
 
     public async DeleteProject(projectId: string, queryRunner: QueryRunner): Promise<void> {
@@ -326,5 +325,18 @@ export class ProjectsRepository {
         project.ActiveStatus = false;
 
         await queryRunner.manager.update(ProjectEntity, project.uid, project);
+    }
+
+    public async TryGetProjectByUid(uid: string): Promise<ProjectEntity | undefined> {
+        const projectRepository = getManager().getRepository(ProjectEntity);
+
+        const project = await projectRepository.findOne({
+            where: {
+                uid,
+                ActiveStatus: true,
+            },
+        });
+
+        return project;
     }
 }

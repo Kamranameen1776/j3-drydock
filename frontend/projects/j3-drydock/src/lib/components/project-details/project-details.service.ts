@@ -336,9 +336,10 @@ export class ProjectDetailsService {
   save(projectId: string, formData) {
     const data = {
       Subject: formData.Job_Short_Description,
-      ProjectManagerUid: formData.ProjectManager,
+      ProjectManagerUid: formData.ProjectManagerUid,
       EndDate: localAsUTCFromJbString(formData.EndDate),
-      StartDate: localAsUTCFromJbString(formData.StartDate)
+      StartDate: localAsUTCFromJbString(formData.StartDate),
+      ShipYardId: formData.ShipYardId
     };
 
     return this.projectsService.updateProject({

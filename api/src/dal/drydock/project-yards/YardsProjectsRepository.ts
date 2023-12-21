@@ -100,4 +100,29 @@ export class YardsProjectsRepository {
             .where('uid = :uid', { uid })
             .execute();
     }
+
+    public async ListSelectedProjectYardsByProjectUid(projectUid: string): Promise<YardsProjectsEntity[]> {
+        const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
+        return yardProjectsRepository.find({
+            where: {
+                project_uid: projectUid,
+                is_selected: true,
+                active_status: true,
+            },
+        });
+    }
+
+    public async TryGetProjectYardByYardUid(yardUid: string): Promise<YardsProjectsEntity | undefined> {
+        const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
+        return yardProjectsRepository.findOne({
+            where: {
+                yard_uid: yardUid,
+                active_status: true,
+            },
+        });
+    }
+
+    public async SaveProjectYard(yardsProjectsEntity: YardsProjectsEntity, queryRunner: QueryRunner) {
+        await queryRunner.manager.save(yardsProjectsEntity);
+    }
 }
