@@ -297,13 +297,13 @@ export class SpecificationGridService {
     },
     due_date_to: {
       type: eFieldControlType.Date,
-      odadaKey: 'due_date',
+      odataKey: 'due_date',
       alterKey: 'due_date',
       dateMethod: 'le'
     },
     due_date_from: {
       type: eFieldControlType.Date,
-      odadaKey: 'due_date',
+      odataKey: 'due_date',
       alterKey: 'due_date',
       dateMethod: 'ge'
     },
