@@ -35,7 +35,7 @@ export class StatementOfFactsGridService {
     {
       DisplayText: 'StatementOfFactsUid',
       FieldName: nameOf<IStatementOfFactDto>((prop) => prop.StatementOfFactsUid),
-      IsActive: true,
+      IsActive: false,
       IsMandatory: true,
       IsVisible: false,
       ReadOnly: true
