@@ -34,8 +34,8 @@ export interface ProjectDetails {
   VesselUid: string;
   VesselType: number;
   Subject: string;
-  StartDate: string;
-  EndDate: string;
+  StartDate: string | Date;
+  EndDate: string | Date;
   TaskManagerUid: string;
   ProjectTypeCode: string;
   VesselId: number;

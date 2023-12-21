@@ -207,8 +207,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         concatMap((data) => {
           projectDetails = {
             ...data,
-            StartDate: UTCAsLocal(data.StartDate)?.toISOString(),
-            EndDate: UTCAsLocal(data.EndDate)?.toISOString()
+            StartDate: UTCAsLocal(data.StartDate as string),
+            EndDate: UTCAsLocal(data.EndDate as string)
           };
 
           this.attachmentConfig = {
