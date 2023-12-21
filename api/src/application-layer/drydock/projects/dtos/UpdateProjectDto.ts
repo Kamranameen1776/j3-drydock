@@ -4,7 +4,7 @@ export class UpdateProjectDto {
     @IsUUID()
     public ProjectUid: string;
 
-    @MaxLength(200)
+    @MaxLength(250)
     public Subject: string;
 
     public ProjectManagerUid: string;
