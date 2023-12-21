@@ -9,8 +9,10 @@ export class UpdateProjectDto {
 
     public ProjectManagerUid: string;
 
+    @IsDateString()
     public StartDate: Date;
 
+    @IsDateString()
     public EndDate: Date;
 
     public ShipYardId: string;
