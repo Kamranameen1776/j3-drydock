@@ -8,6 +8,7 @@ import { getSmallPopup } from '../../../models/constants/popup';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { cloneDeep } from 'lodash';
 import { filter, map } from 'rxjs/operators';
+import { GrowlMessageService } from '../../../services/growl-message.service';
 
 @Component({
   selector: 'jb-drydock-sub-items',
@@ -48,7 +49,8 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
 
   constructor(
     private subItemsGridService: SubItemsGridService,
-    private gridService: GridService
+    private gridService: GridService,
+    private growlMessageService: GrowlMessageService
   ) {
     super();
   }
@@ -125,6 +127,7 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
       this.subItems.splice(idx, 1);
     }
 
+    this.growlMessageService.setSuccessMessage('Subitem deleted successfully.');
     this.changed.emit(this.subItems);
   }
 
