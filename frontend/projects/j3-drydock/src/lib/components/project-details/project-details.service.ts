@@ -15,7 +15,8 @@ import { AttachmentsAccessRight, BaseAccessRight } from '../../models/interfaces
 import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { eProjectsDetailsAccessActions, eProjectsAccessActions } from '../../models/enums/access-actions.enum';
-import { localAsUTCFromJbString } from '../../utils/date';
+import { currentLocalAsUTC, localDateJbStringAsUTC } from '../../utils/date';
+import { ProjectEdit } from '../../models/interfaces/projects';
 
 export interface ProjectDetailsAccessRights extends BaseAccessRight {
   attachments: AttachmentsAccessRight;
@@ -52,8 +53,8 @@ export class ProjectDetailsService {
     const isEditableStatus = this.isStatusBeforeComplete(tmDetails.task_status);
 
     const canView = this.hasAccess(eProjectsAccessActions.viewDetail) || this.hasAccess(eProjectsAccessActions.viewDetailVessel);
-    const canEdit =
-      this.hasAccess(eProjectsDetailsAccessActions.editHeader) || this.hasAccess(eProjectsDetailsAccessActions.editHeaderVessel);
+    const canEdit = true;
+    // this.hasAccess(eProjectsDetailsAccessActions.editHeader) || this.hasAccess(eProjectsDetailsAccessActions.editHeaderVessel);
     const canDelete = this.hasAccess(eProjectsAccessActions.deleteProject);
     const canViewAttachments =
       isEditableStatus &&
@@ -92,7 +93,7 @@ export class ProjectDetailsService {
 
   getTopSecConfig(details: ProjectDetailsFull): ITopSectionFieldSet {
     return {
-      canEdit: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
+      canEdit: true, // || this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
       showStatus: true,
       showVessel: true,
       showJobCard: true,
@@ -110,7 +111,7 @@ export class ProjectDetailsService {
           id: 'ProjectManager',
           label: 'Project Manager',
           isRequired: true,
-          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
+          isEditable: true, // this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'dropdown',
           getFieldName: 'ProjectManagerUid',
           saveFieldName: 'ProjectManagerUid',
@@ -127,7 +128,7 @@ export class ProjectDetailsService {
           id: 'StartDate',
           label: 'Start Date',
           isRequired: true,
-          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
+          isEditable: true, //this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'StartDate',
           saveFieldName: 'StartDate',
@@ -143,7 +144,7 @@ export class ProjectDetailsService {
           id: 'EndDate',
           label: 'End Date',
           isRequired: true,
-          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
+          isEditable: true, // this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'EndDate',
           saveFieldName: 'EndDate',
@@ -159,7 +160,7 @@ export class ProjectDetailsService {
           id: 'ShipYard',
           label: 'Yard Name',
           isRequired: false,
-          isEditable: this.accessRights.edit && false,
+          isEditable: true, //this.accessRights.edit && false,
           type: 'dropdown',
           getFieldName: 'ShipYardId',
           saveFieldName: 'ShipYardId',
@@ -334,19 +335,17 @@ export class ProjectDetailsService {
   }
 
   save(projectId: string, formData) {
-    const data = {
+    const data: ProjectEdit = {
+      ProjectUid: projectId,
       Subject: formData.Job_Short_Description,
       ProjectManagerUid: formData.ProjectManagerUid,
-      EndDate: localAsUTCFromJbString(formData.EndDate),
-      StartDate: localAsUTCFromJbString(formData.StartDate),
-      ShipYardId: formData.ShipYardId
+      EndDate: localDateJbStringAsUTC(formData.EndDate),
+      StartDate: localDateJbStringAsUTC(formData.StartDate),
+      ShipYardId: formData.ShipYardId,
+      LastUpdated: currentLocalAsUTC()
     };
 
-    return this.projectsService.updateProject({
-      ...data,
-      uid: projectId
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
+    return this.projectsService.updateProject(data);
   }
 
   isStatusBeforeComplete(status: string) {

@@ -1,17 +1,22 @@
-export interface UpdateProjectDto {
-    uid: string;
+import { IsDateString, IsUUID, MaxLength } from 'class-validator';
 
-    VesselUid: string;
+export class UpdateProjectDto {
+    @IsUUID()
+    public ProjectUid: string;
 
-    ProjectTypeUid: string;
+    @MaxLength(200)
+    public Subject: string;
 
-    Subject: string;
+    public ProjectManagerUid: string;
 
-    ProjectManagerUid: string;
+    public StartDate: Date;
 
-    StartDate: Date;
+    public EndDate: Date;
 
-    EndDate: Date;
+    public ShipYardId: string;
 
-    ShipYardId: string;
+    @IsDateString()
+    public LastUpdated: Date;
+
+    public UpdatedBy: string;
 }
