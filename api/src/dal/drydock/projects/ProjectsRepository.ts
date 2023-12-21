@@ -2,7 +2,7 @@
 // UpdateProjectDto should be a part of the Infrastructure layer(DAL)
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
+import { getConnection, getManager, In, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
 import { UpdateProjectDto } from '../../../application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
@@ -149,7 +149,7 @@ export class ProjectsRepository {
         return query;
     }
 
-    private GetQueryForProjects(uid?: string): SelectQueryBuilder<ProjectEntity> {
+    private GetQueryForProjects(uid?: string, assignedVessels?: number[]): SelectQueryBuilder<ProjectEntity> {
         const projectRepository = getManager().getRepository(ProjectEntity);
 
         let query = projectRepository
@@ -158,10 +158,8 @@ export class ProjectsRepository {
                 'pr.uid AS ProjectId',
                 'pr.CreatedAtOffice AS CreatedAtOffice',
                 'tm.Code AS ProjectCode',
-
                 'tm.Status as ProjectStatusId',
                 'wdetails.StatusDisplayName as ProjectStatusName',
-
                 'vessel.VesselName AS VesselName',
                 'wt.WorklistTypeDisplay as ProjectTypeName',
                 'wt.WorklistType as ProjectTypeCode',
@@ -237,6 +235,9 @@ export class ProjectsRepository {
         if (uid) {
             query = query.where('pr.uid = :uid', { uid });
         }
+        if (assignedVessels) {
+            query = query.where('vessel.vessel_id IN (:...ids)', { ids: assignedVessels });
+        }
         return query;
     }
 
@@ -252,12 +253,14 @@ export class ProjectsRepository {
      * @param data Http request object with Odata query
      * @returns Projects for the main page
      */
-    public async GetProjectsForMainPage(data: Request): Promise<ODataResult<IProjectsForMainPageRecordDto>> {
-        const query = this.GetQueryForProjects();
-
+    public async GetProjectsForMainPage(
+        data: Request,
+        assignedVessels: number[],
+    ): Promise<ODataResult<IProjectsForMainPageRecordDto>> {
         const oDataService = new ODataService(data, getConnection);
 
-        const result = await oDataService.getJoinResult(query.getQuery());
+        const [query, params] = this.GetQueryForProjects(undefined, assignedVessels).getQueryAndParameters();
+        const result = await oDataService.getJoinResult(query, params);
 
         return result;
     }
