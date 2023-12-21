@@ -64,3 +64,8 @@ export enum eProjectDelete {
   DeleteDialogueHeader = 'Delete Project',
   ProjectDeleteText = 'Are you sure you want to delete this project?'
 }
+
+export enum eProjectCreate {
+  BtnLabel = 'Create',
+  DialogueHeader = 'Create New Project'
+}

@@ -1,16 +1,17 @@
-import { IsDateString, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsDefined, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateDailyReportsDto {
     @IsNotEmpty()
     @IsUUID()
     DailyReportUid: string;
 
+    @IsDefined()
+    @IsUUID(4)
+    ProjectUid: string;
+
     @MinLength(1)
     @MaxLength(200)
     ReportName: string;
-
-    @MinLength(1)
-    Remarks: string;
 
     @IsUUID()
     @IsNotEmpty()

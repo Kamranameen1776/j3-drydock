@@ -111,6 +111,10 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   }
 
   private save() {
+    if (!this.isValidationsPassed()) {
+      return;
+    }
+
     const value = this.jobFormValue;
 
     this.isSaving = true;
@@ -143,5 +147,13 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   private initChangedSubIems() {
     const subItems = this.item?.subItems ?? [];
     this.changedSubItems = cloneDeep(subItems);
+  }
+
+  private isValidationsPassed(): boolean {
+    if (!this.isPopupValid) {
+      this.growlMessageService.setErrorMessage('Please fill the required fields');
+      return false;
+    }
+    return true;
   }
 }

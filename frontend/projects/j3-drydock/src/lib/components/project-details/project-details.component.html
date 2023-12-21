@@ -1,3 +1,5 @@
+<jb-growl [content]="growlMessage$ | async"></jb-growl>
+
 <jb-task-manager-details
   *ngIf="sectionsConfig"
   [topSectionConfig]="topSectionConfig"
@@ -90,7 +92,10 @@
     <ng-container [ngSwitch]="section.SectionCode">
       <div *ngSwitchCase="eSideMenuId.StatementOfFacts">
         <div #statement_of_facts>
-          <jb-statement-of-facts [projectId]="projectUid"></jb-statement-of-facts>
+          <jb-statement-of-facts
+            #statementOfFactsComponent
+            [projectId]="projectUid"
+          ></jb-statement-of-facts>
         </div>
       </div>
       <div *ngSwitchCase="eSideMenuId.JobOrders">

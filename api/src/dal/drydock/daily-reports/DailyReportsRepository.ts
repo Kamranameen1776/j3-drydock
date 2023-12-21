@@ -3,22 +3,45 @@ import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { DailyReportsEntity } from '../../../entity/drydock/DailyReportsEntity';
+import { DailyReportUpdatesEntity } from '../../../entity/drydock/DailyReportUpdatesEntity';
 import { ODataResult } from '../../../shared/interfaces';
+import { ICreateDailyReportUpdateDto } from './dtos/ICreateDailyReportRemarkDto';
 import { ICreateDailyReportsDto } from './dtos/ICreateDailyReportsDto';
 import { IDailyReportsResultDto } from './dtos/IDailyReportsResultDto';
 import { IDeleteDailyReportsDto } from './dtos/IDeleteDailyReportsDto';
+import { IOneDailyReportsResultDto } from './dtos/IOneDailyReportsResultDto';
 import { IUpdateDailyReportsDto } from './dtos/IUpdateDailyReportsDto';
+import { JobOrdersUpdatesDto } from './dtos/JobOrdersUpdatesDto';
 
 export class DailyReportsRepository {
+    public async findOneByDailyReportUid(uid: string): Promise<IOneDailyReportsResultDto> {
+        const dailyReportsRepository = getManager().getRepository(DailyReportsEntity);
+        return dailyReportsRepository
+            .createQueryBuilder('dr')
+            .select(['dr.uid as uid', 'dr.ReportName as reportName', 'dr.ReportDate as reportDate'])
+            .where('dr.active_status = 1 and dr.uid = :uid', { uid })
+            .getRawOne();
+    }
+
+    public async findDailyReportUpdate(uid: string): Promise<Array<JobOrdersUpdatesDto>> {
+        const dailyReportUpdateRepository = getManager().getRepository(DailyReportUpdatesEntity);
+
+        return dailyReportUpdateRepository
+            .createQueryBuilder('dru')
+            .select(['dru.uid as updateUid', 'dru.ReportUpdateName as reportUpdateName', 'dru.Remark as remark'])
+            .where(`dru.active_status = 1 and dru.DailyReportUid = :uid`, { uid })
+            .getRawMany();
+    }
+
     public async getDailyReports(data: Request): Promise<ODataResult<IDailyReportsResultDto>> {
         const dailyReportsRepository = getManager().getRepository(DailyReportsEntity);
 
         const query: string = dailyReportsRepository
             .createQueryBuilder('dr')
             .select([
-                'dr.uid AS uid',
-                'dr.ReportName AS reportName',
-                'dr.ReportDate AS reportDate',
+                'dr.uid as uid',
+                'dr.ReportName as reportName',
+                'dr.ReportDate as reportDate',
                 'dr.ProjectUid as projectUid',
             ])
             .where('dr.active_status = 1')
@@ -28,22 +51,16 @@ export class DailyReportsRepository {
     }
 
     public async createDailyReport(data: ICreateDailyReportsDto, queryRunner: QueryRunner) {
-        const dailyReportsRepository = queryRunner.manager.getRepository(DailyReportsEntity);
-        await dailyReportsRepository
-            .createQueryBuilder('dr')
-            .insert()
-            .into(DailyReportsEntity)
-            .values({
-                uid: new DataUtilService().newUid(),
-                ProjectUid: data.ProjectUid,
-                ReportName: data.ReportName,
-                ReportDate: data.ReportDate,
-                Remarks: data.Remarks,
-                created_by: data.UserUid,
-                created_at: data.CreatedAt,
-                active_status: true,
-            })
-            .execute();
+        data.CreatedAt = new Date();
+        data.ActiveStatus = true;
+        data.uid = new DataUtilService().newUid();
+        await queryRunner.manager.insert(DailyReportsEntity, data);
+        return data;
+    }
+
+    public async createDailyReportUpdate(data: Array<ICreateDailyReportUpdateDto>, queryRunner: QueryRunner) {
+        const result = await queryRunner.manager.insert(DailyReportUpdatesEntity, data);
+        return result;
     }
 
     public async updateDailyReport(data: IUpdateDailyReportsDto, queryRunner: QueryRunner) {
@@ -54,7 +71,6 @@ export class DailyReportsRepository {
             .update(DailyReportsEntity)
             .set({
                 ReportName: data.ReportName,
-                Remarks: data.Remarks,
                 updated_by: data.UserUid,
                 updated_at: data.UpdatedAt,
             })

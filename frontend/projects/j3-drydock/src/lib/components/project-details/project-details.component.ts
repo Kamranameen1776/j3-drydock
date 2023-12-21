@@ -27,6 +27,7 @@ import { ProjectsService } from '../../services/ProjectsService';
 import { DetailsService } from '../../services/details.service';
 import { UTCAsLocal } from '../../utils/date';
 import { cloneDeep } from 'lodash';
+import { StatementOfFactsComponent } from './project-monitoring/statement-of-facts/statement-of-facts.component';
 
 @Component({
   selector: 'jb-project-details',
@@ -38,6 +39,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild('attachmentsComponent') attachmentsComponent: JbAttachmentsComponent;
   @ViewChild('specificationsComponent') specificationsComponent: SpecificationsComponent;
   @ViewChild('rfqComponent') rfqComponent: RfqComponent;
+  @ViewChild('statementOfFactsComponent') statementOfFactsComponent: StatementOfFactsComponent;
 
   @ViewChild(eProjectDetailsSideMenuId.TechnicalSpecification) [eProjectDetailsSideMenuId.TechnicalSpecification]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.Attachments) [eProjectDetailsSideMenuId.Attachments]: ElementRef;
@@ -90,11 +92,14 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   ];
 
   menu = cloneDeep(projectDetailsMenuData);
+
   readonly eSideMenuId = eProjectDetailsSideMenuId;
 
   get vesselUid() {
     return this.tmDetails?.VesselUid;
   }
+
+  growlMessage$ = this.growlMessageService.growlMessage$;
 
   constructor(
     private jbTMDtlSrv: JbTaskManagerDetailsService,
@@ -105,7 +110,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     private projectDetailsService: ProjectDetailsService,
     private taskManagerService: TaskManagerService,
     private projectsService: ProjectsService,
-    private detailsService: DetailsService
+    private detailsService: DetailsService,
+    private growlMessageService: GrowlMessageService
   ) {
     super();
   }
@@ -181,6 +187,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         this.attachmentsComponent?.dialogOnDemand();
         break;
       }
+      case eProjectDetailsSideMenuId.StatementOfFacts: {
+        this.statementOfFactsComponent?.showCreateDialog();
+        break;
+      }
     }
   }
 
@@ -207,8 +217,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         concatMap((data) => {
           projectDetails = {
             ...data,
-            StartDate: UTCAsLocal(data.StartDate)?.toISOString(),
-            EndDate: UTCAsLocal(data.EndDate)?.toISOString()
+            StartDate: UTCAsLocal(data.StartDate as string),
+            EndDate: UTCAsLocal(data.EndDate as string)
           };
 
           this.attachmentConfig = {
@@ -244,7 +254,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
     // TODO add validations here if needed
     if (event.type === eJMSActionTypes.Error) {
-      this.jbTMDtlSrv.showGrowlMassage.next({ severity: eJMSActionTypes.Error, detail: event.errorMsg });
+      this.growlMessageService.setErrorMessage(event.errorMsg);
     }
 
     this.jbTMDtlSrv.isAllSectionsValid.next(true);

@@ -12,7 +12,7 @@
 
   <ng-container jb-dialog-footer>
     <jb-dialog-footer
-      [isOkBtnDisabled]="!isPopupValid || isSaving"
+      [isOkBtnDisabled]="isSaving"
       [isCancelBtnDisabled]="isSaving"
       okBtnLabel="Save"
       (ok)="onOkPopup()"
