@@ -111,7 +111,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   }
 
   private save() {
-    if (!this.validationsChecked()) {
+    if (!this.isValidationsPassed()) {
       return;
     }
 
@@ -149,7 +149,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     this.changedSubItems = cloneDeep(subItems);
   }
 
-  private validationsChecked(): boolean {
+  private isValidationsPassed(): boolean {
     if (!this.isPopupValid) {
       this.growlMessageService.setErrorMessage('Please fill the required fields');
       return false;

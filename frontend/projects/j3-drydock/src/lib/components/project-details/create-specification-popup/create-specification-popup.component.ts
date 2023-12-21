@@ -61,7 +61,7 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
   }
 
   private save() {
-    if (!this.validationsChecked()) {
+    if (!this.isValidationsPassed()) {
       return;
     }
 
@@ -92,7 +92,7 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
       );
   }
 
-  private validationsChecked(): boolean {
+  private isValidationsPassed(): boolean {
     if (!this.isPopupValid) {
       this.growlMessageService.setErrorMessage('Please fill the required fields');
       return false;
