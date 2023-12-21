@@ -76,7 +76,7 @@ export class createProjectDetailSpecAccessRights1703093823610 implements Migrati
         // link rights to user types
         await queryRunner.query(`
                 MERGE INTO inf_lnk_right_user_type AS TARGET
-                USING (VALUES ('21d6b4e4-4c04-439c-bc54-29958fb97709, '${this.viewTechSpec.rightCode}','3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), 1, NULL),
+                USING (VALUES ('21d6b4e4-4c04-439c-bc54-29958fb97709', '${this.viewTechSpec.rightCode}','3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), 1, NULL),
                                 ('176fb4f9-4295-4789-a7c9-5e55ae5d5c05', '${this.viewTechSpec.rightCode}','0F3613B9-9FB5-40E6-8763-FC4941136598', 1, 1, getdate(), 1, NULL),
                                 ('399cdbd8-9f68-11ee-8eab-325096b39f47, '${this.addTechSpecFromStandardJob.rightCode}',3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), 1, NULL),
                                 ('fe528845-1e83-4373-843e-06e8f92b905d', '${this.addTechSpecFromStandardJob.rightCode}','0F3613B9-9FB5-40E6-8763-FC4941136598', 1, 1, getdate(), 1, NULL),('21d6b4e4-4c04-439c-bc54-29958fb97709, '${this.viewTechSpec.rightCode}',3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), 1, NULL),
@@ -192,3 +192,13 @@ export class createProjectDetailSpecAccessRights1703093823610 implements Migrati
     public async down(): Promise<void> {}
 
 }
+
+
+const app = new createProjectDetailSpecAccessRights1703093823610();
+
+app.up({
+    query: async (query: string) => {
+        console.log(query);
+        console.log('-------------------');
+    }
+} as any);
