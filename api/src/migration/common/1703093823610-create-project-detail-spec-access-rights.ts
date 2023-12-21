@@ -192,13 +192,3 @@ export class createProjectDetailSpecAccessRights1703093823610 implements Migrati
     public async down(): Promise<void> {}
 
 }
-
-
-const app = new createProjectDetailSpecAccessRights1703093823610();
-
-app.up({
-    query: async (query: string) => {
-        console.log(query);
-        console.log('-------------------');
-    }
-} as any);
