@@ -148,7 +148,7 @@ export class SpecificationGridService {
       DisplayText: 'Done by',
       FieldName: 'db_done_by',
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true
     },
@@ -157,7 +157,7 @@ export class SpecificationGridService {
       DisplayText: 'Inspection / Survey',
       FieldName: 'inspection',
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true
     },

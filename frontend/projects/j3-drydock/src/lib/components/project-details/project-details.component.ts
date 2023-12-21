@@ -92,11 +92,14 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   ];
 
   menu = cloneDeep(projectDetailsMenuData);
+
   readonly eSideMenuId = eProjectDetailsSideMenuId;
 
   get vesselUid() {
     return this.tmDetails?.VesselUid;
   }
+
+  growlMessage$ = this.growlMessageService.growlMessage$;
 
   constructor(
     private jbTMDtlSrv: JbTaskManagerDetailsService,
@@ -107,7 +110,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     private projectDetailsService: ProjectDetailsService,
     private taskManagerService: TaskManagerService,
     private projectsService: ProjectsService,
-    private detailsService: DetailsService
+    private detailsService: DetailsService,
+    private growlMessageService: GrowlMessageService
   ) {
     super();
   }
@@ -250,7 +254,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
     // TODO add validations here if needed
     if (event.type === eJMSActionTypes.Error) {
-      this.jbTMDtlSrv.showGrowlMassage.next({ severity: eJMSActionTypes.Error, detail: event.errorMsg });
+      this.growlMessageService.setErrorMessage(event.errorMsg);
     }
 
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
