@@ -33,7 +33,7 @@ export class DeleteSubItemCommand extends Command<DeleteSubItemParams, void> {
                 vessel.VesselId,
             );
 
-            await this.subItemsRepo.deleteAllSubItemPmsJobs(this.params.uid, queryRunner);
+            await this.subItemsRepo.deleteAllSubItemRelations(this.params.uid, queryRunner);
             await SynchronizerService.dataSynchronizeByConditionManager(
                 queryRunner.manager,
                 getTableName(SpecificationDetailsSubItemEntity),

@@ -25,7 +25,7 @@ class SubItemEditablePropsPartial implements Partial<SubItemEditableProps> {
     readonly description?: string;
 }
 
-export class UpdatePmsJobsParams {
+export class UpdateRelationsParams {
     @IsUUID('4', { each: true })
     linkedUids: string[];
 
@@ -42,7 +42,13 @@ export class UpdateSubItemParams extends GetSubItemParams {
     @ValidateNested()
     readonly props: SubItemEditablePropsPartial;
 
-    @Type(() => UpdatePmsJobsParams)
+    @IsOptional()
+    @Type(() => UpdateRelationsParams)
     @ValidateNested()
-    pmsJobs: UpdatePmsJobsParams;
+    pmsJobs: UpdateRelationsParams;
+
+    @IsOptional()
+    @Type(() => UpdateRelationsParams)
+    @ValidateNested()
+    findings: UpdateRelationsParams;
 }

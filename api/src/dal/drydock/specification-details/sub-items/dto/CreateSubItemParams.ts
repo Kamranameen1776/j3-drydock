@@ -16,4 +16,8 @@ export class CreateSubItemParams extends SubItemEditableProps implements SubItem
     @IsUUID('4', { each: true })
     @IsOptional()
     pmsJobUid: string[];
+
+    @IsUUID('4', { each: true })
+    @IsOptional()
+    findingUid: string[];
 }
