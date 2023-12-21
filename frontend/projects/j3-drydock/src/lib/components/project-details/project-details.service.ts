@@ -53,8 +53,8 @@ export class ProjectDetailsService {
     const isEditableStatus = this.isStatusBeforeComplete(tmDetails.task_status);
 
     const canView = this.hasAccess(eProjectsAccessActions.viewDetail) || this.hasAccess(eProjectsAccessActions.viewDetailVessel);
-    const canEdit = true;
-    // this.hasAccess(eProjectsDetailsAccessActions.editHeader) || this.hasAccess(eProjectsDetailsAccessActions.editHeaderVessel);
+    const canEdit =
+      this.hasAccess(eProjectsDetailsAccessActions.editHeader) || this.hasAccess(eProjectsDetailsAccessActions.editHeaderVessel);
     const canDelete = this.hasAccess(eProjectsAccessActions.deleteProject);
     const canViewAttachments =
       isEditableStatus &&
@@ -93,7 +93,7 @@ export class ProjectDetailsService {
 
   getTopSecConfig(details: ProjectDetailsFull): ITopSectionFieldSet {
     return {
-      canEdit: true, // || this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
+      canEdit: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
       showStatus: true,
       showVessel: true,
       showJobCard: true,
@@ -111,7 +111,7 @@ export class ProjectDetailsService {
           id: 'ProjectManager',
           label: 'Project Manager',
           isRequired: true,
-          isEditable: true, // this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
+          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'dropdown',
           getFieldName: 'ProjectManagerUid',
           saveFieldName: 'ProjectManagerUid',
@@ -128,7 +128,7 @@ export class ProjectDetailsService {
           id: 'StartDate',
           label: 'Start Date',
           isRequired: true,
-          isEditable: true, //this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
+          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'StartDate',
           saveFieldName: 'StartDate',
@@ -144,7 +144,7 @@ export class ProjectDetailsService {
           id: 'EndDate',
           label: 'End Date',
           isRequired: true,
-          isEditable: true, // this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
+          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'EndDate',
           saveFieldName: 'EndDate',
@@ -160,7 +160,7 @@ export class ProjectDetailsService {
           id: 'ShipYard',
           label: 'Yard Name',
           isRequired: false,
-          isEditable: true, //this.accessRights.edit && false,
+          isEditable: this.accessRights.edit && false,
           type: 'dropdown',
           getFieldName: 'ShipYardId',
           saveFieldName: 'ShipYardId',
