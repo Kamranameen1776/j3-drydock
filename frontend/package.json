@@ -1,6 +1,6 @@
 {
   "name": "@j3-drydock/frontend",
-  "version": "3.234.321",
+  "version": "3.234.322",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -59,8 +59,8 @@
     "font-awesome": "4.7.0",
     "fullcalendar": "4.0.0-alpha.4",
     "html2pdf.js": "0.9.3",
-    "j3-task-manager-ng": "3.234.232-2",
-    "jibe-components": "3.2308.333-4",
+    "j3-task-manager-ng": "3.234.312-2",
+    "jibe-components": "3.234.321",
     "jquery": "3.7.1",
     "js2xmlparser": "3.0.0",
     "json-to-table": "4.2.1",

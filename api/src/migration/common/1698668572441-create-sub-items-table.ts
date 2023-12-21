@@ -52,32 +52,5 @@ export class createSubItemsTable1698668572441 implements MigrationInterface {
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF EXISTS (Select * from INFORMATION_SCHEMA.TABLES
-                where TABLE_NAME = '${this.tableName}' AND TABLE_SCHEMA = '${this.schemaName}')
-            BEGIN
-            DROP TABLE [${this.schemaName}].[${this.tableName}]
-            END
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                'createSubItemsTable1698668572441',
-                '',
-                'S',
-                'dry_dock',
-                'Drop standard jobs sub items table (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                'createSubItemsTable1698668572441',
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                'Drop standard jobs sub items table (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

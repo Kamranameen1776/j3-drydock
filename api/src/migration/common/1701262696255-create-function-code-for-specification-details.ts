@@ -84,32 +84,5 @@ export class CreateFunctionCodeForSpecificationDetails1701262696255 implements M
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-                update
-                    INF_Lib_Module
-                set
-                    [Modified_By] = 1,
-                    [Date_Of_Modification] = getdate()
-                where
-                    [Module_Code] = @0;
-            `, [this.moduleCode]);
-
-            await queryRunner.query(`
-                delete from
-                    inf_lib_function
-                where
-                    [Module_Code] = @0
-                    and
-                    [Function_Code] = @1
-                    and
-                    [Function_UID] = @2;
-            `, [this.moduleCode, this.functionCode, this.functionUid]);
-
-            await this.log(Status.Success, `Deleted function code '${this.functionCode}' from module '${this.moduleCode}'`);
-        } catch (error) {
-            await this.log(Status.Error, JSON.stringify(error));
-        }
-    }
+    public async down(): Promise<void> {}
 }

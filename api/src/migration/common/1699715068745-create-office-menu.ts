@@ -80,40 +80,5 @@ export class createOfficeMenu1699715068745 implements MigrationInterface {
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            DELETE FROM Lib_Menu WHERE 
-            Menu_Short_Discription = 'Projects' 
-            AND [Menu_Discription] = 'Projects' 
-            AND [Menu_Link] is null 
-            AND Active_Status = 1;
-
-            DELETE FROM Lib_Menu WHERE 
-            [Menu_Link] = 'dry-dock/projects-main-page'
-            AND Active_Status = 1;
-
-            DELETE FROM Lib_Menu WHERE 
-            [Menu_Link] = 'dry-dock/standard-jobs-main'
-            AND Active_Status = 1;
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                'createOfficeMenu1699715068745',
-                '',
-                'S',
-                'dry_dock',
-                'Create office menu (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                'createOfficeMenu1699715068745',
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                'Create office menu (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

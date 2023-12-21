@@ -84,24 +84,5 @@ export class InitSpecificationDetailsData1698988296365 implements MigrationInter
         }
     }
 
-    public async down(): Promise<void> {
-        try {
-            await MigrationUtilsService.migrationLog(
-                'initSpecificationDetailsData16989882964366',
-                '',
-                'S',
-                'dry_dock',
-                'Init Specification Details Data (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                'initSpecificationDetailsData16989882964366',
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                'Init Specification Details Data (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

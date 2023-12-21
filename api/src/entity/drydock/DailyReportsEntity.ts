@@ -26,11 +26,4 @@ export class DailyReportsEntity extends BaseDatesEntity {
         name: 'report_date',
     })
     ReportDate: Date;
-
-    @Column('varchar', {
-        nullable: true,
-        name: 'remarks',
-        length: 5000,
-    })
-    Remarks: string;
 }

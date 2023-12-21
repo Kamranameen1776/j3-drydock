@@ -47,5 +47,5 @@ export class changeStatementOfFacts1701262696257 implements MigrationInterface {
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> { }
+    public async down(): Promise<void> {}
 }

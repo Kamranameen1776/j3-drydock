@@ -227,31 +227,5 @@ export class DefineSpecificationDetailsAccessRightGroups1702371560616 implements
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-                delete from
-                    INF_Lib_RoleGroupsRights
-                where
-                    [RGR_UID] in (${accessRightGroups.flatMap((group) => group.roleRefs.map(({ uid }) => (
-                        `'${uid}'`
-                    )))};
-            `);
-
-            await queryRunner.query(`
-                delete from
-                    INF_Lib_Group
-                where
-                    [Group_Code] in (${accessRightGroups.map(({ code }) => (
-                        `'${code}'`
-                    ))});
-            `);
-
-            await this.updateModuleAndFunctionModificationDate(queryRunner);
-
-            await this.log(Status.Success, 'Deleted access right groups for Specification Details');
-        } catch (error) {
-            await this.log(Status.Error, JSON.stringify(error));
-        }
-    }
+    public async down(): Promise<void> {}
 }

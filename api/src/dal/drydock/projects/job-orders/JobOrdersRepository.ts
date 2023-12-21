@@ -5,6 +5,7 @@ import { getConnection, getManager, QueryRunner } from 'typeorm';
 import { className } from '../../../../common/drydock/ts-helpers/className';
 import {
     LibItemSourceEntity,
+    LibUserEntity,
     ProjectEntity,
     SpecificationDetailsEntity,
     TecTaskManagerEntity,
@@ -24,8 +25,7 @@ export class JobOrdersRepository {
                 'tm.Code AS Code',
                 'its.DisplayName as ItemSource',
                 'jo.Progress AS Progress',
-                // TODO: take from SpecificationDetails -> AssignedTo property, see WI 700332
-                "'-' AS Responsible",
+                "usr.FirstName + ' ' + usr.LastName AS Responsible",
                 'jo.LastUpdated AS LastUpdated',
                 'tm.Status AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
@@ -34,6 +34,7 @@ export class JobOrdersRepository {
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1')
+            .leftJoin(className(LibUserEntity), 'usr', 'sd.DoneByUid = usr.uid and usr.ActiveStatus = 1')
 
             .getQuery();
 

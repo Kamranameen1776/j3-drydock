@@ -18,7 +18,6 @@ import { nameOf } from '../../../utils/nameOf';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { eProjectsCreateDisplayNames, eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
-import { eProjectsDeleteDisplayNames, eProjectsDeleteFieldNames } from '../../../models/enums/projects-delete.enum';
 import { ProjectsGridOdataKeys } from '../../../models/enums/ProjectsGridOdataKeys';
 import { eSortOrder } from '../../../models/enums/sorting.enum';
 
@@ -37,14 +36,6 @@ export class ProjectsSpecificationGridService {
   initDate: Date = new Date();
 
   private readonly columns: Column[] = [
-    {
-      DisplayText: 'ProjectId',
-      FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectId),
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: false,
-      ReadOnly: true
-    },
     {
       DisplayText: 'Code',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectCode),
@@ -95,7 +86,7 @@ export class ProjectsSpecificationGridService {
       DisplayText: 'Specifications',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.Specification),
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true,
       width: eGridColumnsWidth.ShortDescription
@@ -105,7 +96,7 @@ export class ProjectsSpecificationGridService {
       DisplayText: 'Ship Yard',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ShipYard),
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true,
       width: eGridColumnsWidth.ShortDescription
@@ -125,7 +116,7 @@ export class ProjectsSpecificationGridService {
       DisplayText: 'State',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectState),
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true,
       width: eGridColumnsWidth.ShortDescription
@@ -170,7 +161,8 @@ export class ProjectsSpecificationGridService {
       odataKey: ProjectsGridOdataKeys.ProjectManagerUid
     },
     ShipsYards: {
-      webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
+      // keep filter options empty for now
+      // webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
       type: 'multiselect',
       listValueKey: 'ShipYardId',
       odataKey: ProjectsGridOdataKeys.ShipYardId
@@ -419,11 +411,7 @@ export class ProjectsSpecificationGridService {
               gridRowEnd: 2,
               gridColStart: 1,
               gridColEnd: 3,
-              listRequest: {
-                webApiRequest: this.slfService.getSLFDetails(Datasource.Fleets),
-                labelKey: 'FleetName',
-                valueKey: 'FleetCode'
-              }
+              list: []
             },
             [eProjectsCreateFieldNames.Vessel]: {
               label: eProjectsCreateDisplayNames.Vessel,
@@ -435,11 +423,7 @@ export class ProjectsSpecificationGridService {
               gridRowEnd: 3,
               gridColStart: 1,
               gridColEnd: 3,
-              listRequest: {
-                webApiRequest: this.slfService.getSLFDetails(Datasource.Vessels),
-                labelKey: 'Vessel_Name',
-                valueKey: 'Vessel_ID'
-              }
+              list: []
             },
             [eProjectsCreateFieldNames.ProjectType]: {
               label: eProjectsCreateDisplayNames.ProjectType,
@@ -509,36 +493,6 @@ export class ProjectsSpecificationGridService {
               gridColStart: 1,
               gridColEnd: 3,
               calendarMax: this.maxDate
-            }
-          }
-        }
-      }
-    };
-  }
-
-  public getDeleteProjectForm(): FormModel {
-    return {
-      id: 'deleteProject',
-      label: '',
-      type: 'form',
-      sections: {
-        [this.deleteProjectFormId]: {
-          type: 'grid',
-          label: '',
-          formID: this.deleteProjectFormId,
-          gridRowStart: 1,
-          gridRowEnd: 1,
-          gridColStart: 1,
-          gridColEnd: 1,
-          fields: {
-            [eProjectsDeleteFieldNames.AreYouSureYouWantToDeleteThisProject]: {
-              label: eProjectsDeleteDisplayNames.AreYouSureYouWantToDeleteThisProject,
-              type: eFieldControlType.String,
-              sectionID: this.deleteProjectFormId,
-              gridRowStart: 1,
-              gridRowEnd: 1,
-              gridColStart: 1,
-              gridColEnd: 1
             }
           }
         }

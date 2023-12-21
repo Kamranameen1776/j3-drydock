@@ -57,31 +57,5 @@ export class createProjectsState1698663404359 implements MigrationInterface {
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF EXISTS (Select * from INFORMATION_SCHEMA.TABLES
-                where TABLE_NAME = '${this.tableName}' AND TABLE_SCHEMA = '${this.schemaName}')
-            BEGIN
-            DROP TABLE [${this.schemaName}].[${this.tableName}]
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                'createProjectsState1698663404359',
-                '',
-                'S',
-                'dry_dock',
-                'Drop project state table (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                'createProjectsState1698663404359',
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                'Drop project state table (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

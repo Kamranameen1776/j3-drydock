@@ -1,9 +1,19 @@
 import { cloneDeep } from 'lodash';
 import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ProjectsSpecificationGridService } from './ProjectsSpecificationGridService';
-import { eGridRowActions, FormModel, GridAction, GridComponent, IJbDialog } from 'jibe-components';
+import {
+  eDropdownLabels,
+  eDropdownValues,
+  eGridRowActions,
+  FormModel,
+  GridAction,
+  GridComponent,
+  IJbDialog,
+  JmsService,
+  VesselService
+} from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,6 +32,9 @@ import { statusBackground, statusIcon } from '../../../shared/statuses';
 import { ProjectCreate } from '../../../models/interfaces/projects';
 import { localAsUTCFromJbString } from '../../../utils/date';
 import { GrowlMessageService } from '../../../services/growl-message.service';
+import { eProjectDelete } from '../../../models/enums/project-details.enum';
+import { FleetService } from '../../../services/fleet.setvice';
+import { eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -49,9 +62,15 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   private canDeleteProject = false;
 
+  private currentVessels = [];
+
+  private allVessels = [];
+
   public canView = false;
 
-  public DeleteBtnLabel = 'Delete';
+  public DeleteBtnLabel = eProjectDelete.DeleteBtnLabel;
+
+  public deleteProjectText = eProjectDelete.ProjectDeleteText;
 
   public CreateBtnLabel = 'Create';
 
@@ -63,15 +82,13 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   createProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Create Project' };
 
-  deleteProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Delete Project' };
+  deleteProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: eProjectDelete.DeleteDialogueHeader };
 
   createProjectForm: FormModel;
 
-  deleteProjectForm: FormModel;
+  selectedProjectID: string;
 
   createProjectFormGroup: FormGroup;
-
-  deleteProjectFormGroup: FormGroup;
 
   saveNewProjectButtonDisabled$ = new BehaviorSubject(false);
 
@@ -84,7 +101,10 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   leftPanelVesselsFilter: number[];
 
   statusCSS = { statusBackground, statusIcon };
+
   growlMessage$ = this.growlMessageService.growlMessage$;
+
+  showLoader = false;
 
   constructor(
     private router: Router,
@@ -93,7 +113,10 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     private leftPanelFilterService: LeftPanelFilterService,
     private newTabService: NewTabService,
     private activatedRoute: ActivatedRoute,
-    private growlMessageService: GrowlMessageService
+    private growlMessageService: GrowlMessageService,
+    private fleetService: FleetService,
+    private vesselService: VesselService,
+    private jmsSvc: JmsService
   ) {
     super();
   }
@@ -103,7 +126,9 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     this.setGridInputs();
 
     this.createProjectForm = this.projectsGridService.getCreateProjectForm();
-    this.deleteProjectForm = this.projectsGridService.getDeleteProjectForm();
+
+    this.getFleetList();
+    this.getVesselList();
   }
 
   ngAfterViewInit(): void {
@@ -140,7 +165,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   public onGridAction({ type }: GridAction<string, string>, project: IProjectsForMainPageGridDto): void {
     if (type === eGridRowActions.Delete) {
-      this.deleteProjectFormGroup.value.Project = project;
+      this.selectedProjectID = project.ProjectId;
       this.showDeleteDialog();
     } else if (type === eGridRowActions.Edit) {
       if (!project) {
@@ -153,9 +178,14 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     }
   }
 
-  public showCreateNewDialog(value = true) {
-    this.createProjectFormGroup.reset();
-    this.createNewDialogVisible = value;
+  public showCreateNewDialog(isShow = true) {
+    if (!isShow) {
+      if (this.getCreateFormControlValue(eProjectsCreateFieldNames.Fleet) != null) {
+        this.setCurrentVesselsAndList(this.allVessels);
+      }
+      this.createProjectFormGroup.reset();
+    }
+    this.createNewDialogVisible = isShow;
   }
 
   public showDeleteDialog(value = true) {
@@ -171,17 +201,9 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
         this.saveNewProjectButtonDisabled$.next(true);
       }
     });
-  }
 
-  public initDeleteProjectFormGroup(action: FormGroup): void {
-    this.deleteProjectFormGroup = action;
-    this.deleteProjectFormGroup.valueChanges.subscribe(() => {
-      if (this.deleteProjectFormGroup.valid) {
-        this.deleteProjectButtonDisabled$.next(false);
-      } else {
-        this.deleteProjectButtonDisabled$.next(true);
-      }
-    });
+    this.listenFleetChanges();
+    this.listenVesselChanges();
   }
 
   public saveNewProject() {
@@ -211,12 +233,15 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   }
 
   public deleteProject() {
+    this.showLoader = true;
     this.deleteProjectButtonDisabled$.next(true);
 
-    this.projectsService.deleteProject(this.deleteProjectFormGroup.value.Project.ProjectId).subscribe(() => {
+    this.projectsService.deleteProject(this.selectedProjectID).subscribe(() => {
       this.deleteProjectButtonDisabled$.next(false);
       this.showDeleteDialog(false);
+      this.growlMessageService.setSuccessMessage('Project deleted successfully.');
       this.projectsGrid.fetchMatrixData();
+      this.showLoader = false;
     });
   }
 
@@ -281,5 +306,95 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
       return;
     }
     col.cellTemplate = template;
+  }
+
+  private getFleetList() {
+    this.fleetService
+      .getFleets(false)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((res) => {
+        this.getCreateFormField(eProjectsCreateFieldNames.Fleet).list = this.jmsSvc.createSingleSelectDrpDown(
+          res,
+          eDropdownLabels.FleetLabel,
+          eDropdownValues.FleetValue
+        );
+      });
+  }
+
+  private getVesselList(fleetCodes?: string[] | number[]) {
+    this.vesselService
+      .getVesselsByFleet(fleetCodes, false)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (res) => {
+          this.setCurrentVesselsAndList(res);
+          if (!fleetCodes) {
+            this.allVessels = res;
+          }
+        },
+        () => {
+          this.getCreateFormField(eProjectsCreateFieldNames.Vessel).list = [];
+          this.getCreateFormControl(eProjectsCreateFieldNames.Vessel)?.reset();
+        }
+      );
+  }
+
+  private listenVesselChanges() {
+    this.getCreateFormControl(eProjectsCreateFieldNames.Vessel)
+      .valueChanges.pipe(takeUntil(this.unsubscribe$))
+      .subscribe((res) => {
+        const fleetId = this.getCreateFormControlValue(eProjectsCreateFieldNames.Fleet);
+        if (fleetId == null && res != null) {
+          this.setCreateFormControlValue(eProjectsCreateFieldNames.Fleet, this.getVesselById(res as number)?.FleetCode);
+        }
+      });
+  }
+
+  private listenFleetChanges() {
+    this.getCreateFormControl(eProjectsCreateFieldNames.Fleet)
+      .valueChanges.pipe(takeUntil(this.unsubscribe$))
+      .subscribe((res) => {
+        const vesselId = this.getCreateFormControlValue(eProjectsCreateFieldNames.Vessel);
+        if (vesselId != null) {
+          const vesselFleetId = this.getVesselById(vesselId)?.FleetCode;
+          if (vesselFleetId != null && vesselFleetId === res) {
+            return;
+          }
+        }
+        this.getCreateFormControl(eProjectsCreateFieldNames.Vessel)?.reset();
+        if (res != null) {
+          this.getVesselList([res]);
+        }
+      });
+  }
+
+  private getCreateFormField(fieldName: eProjectsCreateFieldNames) {
+    return this.createProjectForm.sections[this.projectsGridService.createProjectFormId].fields[fieldName];
+  }
+
+  private getCreateFormControl(fieldName: eProjectsCreateFieldNames) {
+    return this.createProjectFormGroup?.controls[this.projectsGridService.createProjectFormId]?.get(fieldName) as FormControl;
+  }
+
+  private getCreateFormControlValue(fieldName: eProjectsCreateFieldNames) {
+    return this.createProjectFormGroup?.getRawValue()[this.projectsGridService.createProjectFormId][fieldName];
+  }
+
+  private setCreateFormControlValue(fieldName: eProjectsCreateFieldNames, value: unknown) {
+    this.getCreateFormControl(fieldName)?.setValue(value);
+  }
+
+  private getVesselById(vesselId: number) {
+    return this.currentVessels.find((vessel) => vessel.Vessel_ID === vesselId);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private setCurrentVesselsAndList(vessels: any[]) {
+    this.currentVessels = vessels;
+    this.getCreateFormField(eProjectsCreateFieldNames.Vessel).list = this.jmsSvc.createSingleSelectDrpDown(
+      vessels,
+      eDropdownLabels.VesselLabel,
+      eDropdownValues.VesselValue
+    );
   }
 }

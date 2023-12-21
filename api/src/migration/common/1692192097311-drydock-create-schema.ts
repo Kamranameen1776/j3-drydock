@@ -32,31 +32,5 @@ export class dryDockCreateSchema1692192097311  implements MigrationInterface {
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF EXISTS (SELECT 1 FROM sys.schemas where name = '${this.schemaName}')
-            BEGIN
-                EXEC ('DROP SCHEMA ${this.schemaName};');
-            END;
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                'dryDockCreateSchema1692192097311',
-                '',
-                'S',
-                'dry_dock',
-                'Drop Create schema (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                'dryDockCreateSchema1692192097311',
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                'Drop Create schema (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

@@ -6,7 +6,7 @@ import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'type
 
 import { UpdateProjectDto } from '../../../application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
-import { SpecificationDetailsEntity, YardsEntity, YardsProjectsEntity } from '../../../entity/drydock';
+import { J3PrcCompanyRegistryEntity, SpecificationDetailsEntity, YardsProjectsEntity } from '../../../entity/drydock';
 import { JmsDtlWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
 import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
@@ -44,12 +44,11 @@ export class ProjectsRepository {
                 'wdetails.StatusDisplayName as ProjectStatusName',
                 'wdetails.WorkflowOrderID',
             ])
-            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
-            .innerJoin(className(JmsDtlWorkflowConfigDetailsEntity), 'wdetails', 'wdetails.ConfigId = wt.ID')
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', 'wc.job_type = pt.WorklistType')
+            .innerJoin(className(JmsDtlWorkflowConfigDetailsEntity), 'wdetails', 'wdetails.ConfigId = wc.ID')
             .where('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .andWhere('wdetails.ActiveStatus = :activeStatus', { activeStatus: 1 })
-            .andWhere('wt.ActiveStatus = :activeStatus', { activeStatus: 1 })
-            .andWhere('pt.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .andWhere('wc.ActiveStatus = :activeStatus', { activeStatus: 1 })
             .distinct(true)
             .distinctOn(['wdetails.WorkflowTypeID'])
             .orderBy('wdetails.WorkflowOrderID')
@@ -178,13 +177,13 @@ export class ProjectsRepository {
                 'pr.VesselUid as VesselUid',
                 'vessel.FleetCode as FleetCode',
                 'pr.TaskManagerUid as TaskManagerUid',
-                'yd.yard_name as ShipYard',
+                'yd.registeredName as ShipYard',
                 'yd.uid as ShipYardUid',
                 `CONCAT(COUNT(sc.uid) - COUNT(CASE WHEN sc.status = '${TaskManagerConstants.specification.status.Completed}' THEN 1 END), '/', COUNT(sc.uid)) AS Specification`,
             ])
             .leftJoin((qb) => this.getSpecificationCountQuery(qb, uid), 'sc', 'sc.projectUid = pr.uid')
             .leftJoin(className(YardsProjectsEntity), 'ydp', 'ydp.project_uid = pr.uid')
-            .leftJoin(className(YardsEntity), 'yd', 'yd.uid = ydp.yard_uid')
+            .leftJoin(className(J3PrcCompanyRegistryEntity), 'yd', 'yd.uid = ydp.yard_uid')
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
             .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = pr.ProjectTypeUid')
@@ -195,7 +194,7 @@ export class ProjectsRepository {
             .innerJoin(
                 className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
-                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status AND wdetails.ActiveStatus = 1',
             )
             .innerJoin(
                 className(GroupProjectStatusEntity),
@@ -227,7 +226,7 @@ export class ProjectsRepository {
                     'vessel.FleetCode',
                     'vessel.Vessel_type',
                     'pr.task_manager_uid',
-                    'yd.yard_name',
+                    'yd.registered_name',
                     '"yd"."uid"',
                     'sc.projectUid',
                 ].join(','),

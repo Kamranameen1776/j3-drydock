@@ -407,5 +407,5 @@ export class dryDockDetailsWorkflowConfiguration1701778022298 implements Migrati
             );
         }
     }
-    public async down(queryRunner: QueryRunner): Promise<void> {}
+    public async down(): Promise<void> {}
 }

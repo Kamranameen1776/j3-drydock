@@ -1,3 +1,5 @@
+export * from './DailyReportsEntity';
+export * from './DailyReportUpdatesEntity';
 export * from './dbo';
 export * from './GroupProjectStatusEntity';
 export * from './prc';
@@ -13,5 +15,4 @@ export * from './StandardJobsSubItemsEntity';
 export * from './StandardJobsSurveyCertificateAuthorityEntity';
 export * from './StandardJobsVesselTypeEntity';
 export * from './StatementOfFactsEntity';
-export * from './YardsEntity';
 export * from './YardsProjectsEntity';

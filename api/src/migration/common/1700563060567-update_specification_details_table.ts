@@ -41,30 +41,5 @@ export class UpdateSpecificationDetailsTable1700563060567 implements MigrationIn
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-        
-            ALTER TABLE [dry_dock].[specification_details]
-            DROP COLUMN [function];
-        `);
-
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                '',
-                'S',
-                this.moduleName,
-                'Add Column to specification_details (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                error as string,
-                'E',
-                this.moduleName,
-                'Add Column to specification_details (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }
