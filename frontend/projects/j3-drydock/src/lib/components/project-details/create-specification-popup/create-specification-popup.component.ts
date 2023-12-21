@@ -61,6 +61,10 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
   }
 
   private save() {
+    if (!this.validationsChecked()) {
+      return;
+    }
+
     const value = this.jobFormValue;
 
     this.isSaving = true;
@@ -74,16 +78,25 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
       )
       .subscribe(
         () => {
+          this.growlMessageService.setSuccessMessage('Specification has been successfully created');
           this.closePopup(true);
         },
         // eslint-disable-next-line rxjs/no-implicit-any-catch
         (err) => {
           if (err?.status === 422) {
-            this.growlMessageService.setErrorMessage(err.error);
+            this.growlMessageService.setErrorMessage(err?.error?.message);
           } else {
             this.growlMessageService.setErrorMessage('Server error occured');
           }
         }
       );
+  }
+
+  private validationsChecked(): boolean {
+    if (!this.isPopupValid) {
+      this.growlMessageService.setErrorMessage('Please fill the required fields');
+      return false;
+    }
+    return true;
   }
 }
