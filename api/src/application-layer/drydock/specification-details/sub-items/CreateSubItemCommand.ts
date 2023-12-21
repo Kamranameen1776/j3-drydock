@@ -6,6 +6,7 @@ import { CreateSubItemParams } from '../../../../dal/drydock/specification-detai
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { SpecificationSubItemFindingEntity } from '../../../../entity/drydock/SpecificationSubItemFindingEntity';
 import { SpecificationSubItemPmsEntity } from '../../../../entity/drydock/SpecificationSubItemPmsJobEntity';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
@@ -53,6 +54,22 @@ export class CreateSubItemCommand extends Command<CreateSubItemParams, Specifica
                 await SynchronizerService.dataSynchronizeByConditionManager(
                     queryRunner.manager,
                     getTableName(SpecificationSubItemPmsEntity),
+                    vessel.VesselId,
+                    condition,
+                );
+            }
+
+            if (this.params.findingUid?.length) {
+                const subItemPmsJobs = await this.subItemRepo.addSubItemFindings(
+                    res.uid,
+                    this.params.findingUid,
+                    queryRunner,
+                );
+
+                const condition = `uid IN (${subItemPmsJobs.map((x) => `'${x.uid}'`).join(',')})`;
+                await SynchronizerService.dataSynchronizeByConditionManager(
+                    queryRunner.manager,
+                    getTableName(SpecificationSubItemFindingEntity),
                     vessel.VesselId,
                     condition,
                 );

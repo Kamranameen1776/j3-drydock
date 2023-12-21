@@ -13,6 +13,7 @@ import {
     SpecificationDetailsSubItemEntity,
     SpecificationDetailsSubItemEntity as SubItem,
 } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { SpecificationSubItemFindingEntity } from '../../../../entity/drydock/SpecificationSubItemFindingEntity';
 import { SpecificationSubItemPmsEntity } from '../../../../entity/drydock/SpecificationSubItemPmsJobEntity';
 import { UnitTypeEntity } from '../../../../entity/drydock/UnitTypeEntity';
 import { ODataResult } from '../../../../shared/interfaces';
@@ -157,9 +158,7 @@ export class SpecificationDetailsSubItemsRepository {
 
         await queryRunner.manager.save(subItemsToDelete);
 
-        const deleted = calculateEntityExistenceMap(subItemsToDelete, params.uids);
-
-        return deleted;
+        return calculateEntityExistenceMap(subItemsToDelete, params.uids);
     }
 
     public addSubItemPmsJobs(subItemUid: string, pmsJobUids: string[], queryRunner: QueryRunner) {
@@ -174,14 +173,39 @@ export class SpecificationDetailsSubItemsRepository {
         return queryRunner.manager.save(SpecificationSubItemPmsEntity, subItemPmsJob);
     }
 
-    public deleteAllSubItemPmsJobs(uid: string, queryRunner: QueryRunner) {
-        return queryRunner.manager.update(SpecificationSubItemPmsEntity, { SubItemUid: uid }, { ActiveStatus: false });
+    public addSubItemFindings(subItemUid: string, findingUids: string[], queryRunner: QueryRunner) {
+        const subItemPmsJob: SpecificationSubItemFindingEntity[] = findingUids.map((uid) => {
+            return queryRunner.manager.create(SpecificationSubItemFindingEntity, {
+                uid: DataUtilService.newUid(),
+                SubItemUid: subItemUid,
+                FindingUid: uid,
+            });
+        });
+
+        return queryRunner.manager.save(SpecificationSubItemFindingEntity, subItemPmsJob);
+    }
+
+    public async deleteAllSubItemRelations(uid: string, queryRunner: QueryRunner) {
+        await queryRunner.manager.update(SpecificationSubItemPmsEntity, { SubItemUid: uid }, { ActiveStatus: false });
+        await queryRunner.manager.update(
+            SpecificationSubItemFindingEntity,
+            { SubItemUid: uid },
+            { ActiveStatus: false },
+        );
     }
 
     public deleteSubItemPmsJobs(subItemUid: string, pmsJobUid: string[], queryRunner: QueryRunner) {
         return queryRunner.manager.update(
             SpecificationSubItemPmsEntity,
-            { SubItemUid: subItemUid, pmsJobUid: In(pmsJobUid) },
+            { SubItemUid: subItemUid, PmsJobUid: In(pmsJobUid) },
+            { ActiveStatus: false },
+        );
+    }
+
+    public deleteSubItemFindings(subItemUid: string, findingUid: string[], queryRunner: QueryRunner) {
+        return queryRunner.manager.update(
+            SpecificationSubItemFindingEntity,
+            { SubItemUid: subItemUid, FindingUid: In(findingUid) },
             { ActiveStatus: false },
         );
     }
@@ -209,15 +233,13 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     protected async getManyByUids(params: GetManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
-        const subItems = await queryRunner.manager.find(SubItem, {
+        return queryRunner.manager.find(SubItem, {
             where: {
                 specificationDetailsUid: params.specificationDetailsUid,
                 uid: In(params.uids),
                 active_status: true,
             },
         });
-
-        return subItems;
     }
 
     protected async assertAllUnitTypesExistByUids(unitTypeUids: string[], queryRunner: QueryRunner): Promise<void> {
