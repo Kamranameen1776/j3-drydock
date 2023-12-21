@@ -27,6 +27,7 @@ import { ProjectsService } from '../../services/ProjectsService';
 import { DetailsService } from '../../services/details.service';
 import { UTCAsLocal } from '../../utils/date';
 import { cloneDeep } from 'lodash';
+import { StatementOfFactsComponent } from './project-monitoring/statement-of-facts/statement-of-facts.component';
 
 @Component({
   selector: 'jb-project-details',
@@ -38,6 +39,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild('attachmentsComponent') attachmentsComponent: JbAttachmentsComponent;
   @ViewChild('specificationsComponent') specificationsComponent: SpecificationsComponent;
   @ViewChild('rfqComponent') rfqComponent: RfqComponent;
+  @ViewChild('statementOfFactsComponent') statementOfFactsComponent: StatementOfFactsComponent;
 
   @ViewChild(eProjectDetailsSideMenuId.TechnicalSpecification) [eProjectDetailsSideMenuId.TechnicalSpecification]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.Attachments) [eProjectDetailsSideMenuId.Attachments]: ElementRef;
@@ -179,6 +181,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       }
       case eProjectDetailsSideMenuId.Attachments: {
         this.attachmentsComponent?.dialogOnDemand();
+        break;
+      }
+      case eProjectDetailsSideMenuId.StatementOfFacts: {
+        this.statementOfFactsComponent?.showCreateDialog();
         break;
       }
     }

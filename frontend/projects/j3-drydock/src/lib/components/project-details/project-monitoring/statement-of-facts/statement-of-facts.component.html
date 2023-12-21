@@ -5,12 +5,10 @@
     [colData]="gridInputs.columns"
     [tableDataReq]="gridInputs.request"
     [searchFields]="gridInputs.searchFields"
-    [button]="gridInputs.gridButton"
     [setActions]="gridInputs.actions"
     [sortField]="gridInputs.sortField"
     [sortOrder]="gridInputs.sortOrder"
     [getStyleByContainer]="true"
-    [name]="gridInputs.name"
     (action)="onGridAction($any($event), $event?.payload)"
     (matrixRequestChanged)="onMatrixRequestChanged()"
   ></jb-grid>

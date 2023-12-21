@@ -27,19 +27,21 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
   @ViewChild('statementOfFactsGrid') statementOfFactsGrid: GridComponent;
 
-  public gridInputs: GridInputsWithRequest;
+  gridInputs: GridInputsWithRequest;
 
-  public deleteBtnLabel = 'Delete';
+  readonly deleteBtnLabel = 'Delete';
 
-  public createBtnLabel = 'Create';
+  readonly createBtnLabel = 'Create';
 
-  public updateBtnLabel = 'Update';
+  readonly updateBtnLabel = 'Update';
 
-  public deleteDialogVisible = false;
+  readonly dateTimeFormat = this.statementOfFactsGridService.dateTimeFormat;
 
-  public createDialogVisible = false;
+  deleteDialogVisible = false;
 
-  public updateDialogVisible = false;
+  createDialogVisible = false;
+
+  updateDialogVisible = false;
 
   deleteStatementOfFactDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Delete Statement of Fact' };
 
@@ -65,8 +67,6 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
   updateStatementOfFactButtonDisabled = false;
 
-  readonly dateTimeFormat = this.statementOfFactsGridService.dateTimeFormat;
-
   constructor(
     private statementOfFactsGridService: StatementOfFactsGridService,
     private statementOfFactsService: StatementOfFactsService,
@@ -85,7 +85,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
     this.updateStatementOfFactForm = this.statementOfFactsGridService.getUpdateStatementOfFactForm();
   }
 
-  public onGridAction({ type }: GridAction<string, string>, statementOfFact: IStatementOfFactDto): void {
+  onGridAction({ type }: GridAction<string, string>, statementOfFact: IStatementOfFactDto): void {
     if (type === eGridRowActions.Delete) {
       if (!statementOfFact) {
         throw new Error('StatementOfFact is null');
@@ -107,35 +107,33 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
       controls.Fact.setValue(statementOfFact.Fact);
       controls.DateTime.setValue(dateString);
       controls.StatementOfFactUid.setValue(statementOfFact.StatementOfFactsUid);
-    } else if (type === this.gridInputs.gridButton.label) {
-      this.showCreateDialog();
     }
   }
-
+  // public showas that it is used from parent of this component
   public showCreateDialog(value = true) {
     this.createStatementOfFactFormGroup.reset();
     this.createDialogVisible = value;
   }
 
-  public showUpdateDialog(value = true) {
+  showUpdateDialog(value = true) {
     this.updateStatementOfFactFormGroup.reset();
     this.updateDialogVisible = value;
   }
 
-  public showDeleteDialog(value = true) {
+  showDeleteDialog(value = true) {
     this.deleteStatementOfFactFormGroup.reset();
     this.deleteDialogVisible = value;
   }
 
-  public onMatrixRequestChanged() {
+  onMatrixRequestChanged() {
     this.statementOfFactsGrid.odata.filter.eq(StatementOfFactsGridOdataKeys.ProjectUid, this.projectId);
   }
 
-  public initDeleteStatementOfFactFormGroup(action: FormGroup): void {
+  initDeleteStatementOfFactFormGroup(action: FormGroup): void {
     this.deleteStatementOfFactFormGroup = action;
   }
 
-  public initCreateStatementOfFactFormGroup(action: FormGroup): void {
+  initCreateStatementOfFactFormGroup(action: FormGroup): void {
     this.createStatementOfFactFormGroup = action;
 
     this.createStatementOfFactFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
@@ -143,7 +141,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
     });
   }
 
-  public initUpdateStatementOfFactFormGroup(action: FormGroup): void {
+  initUpdateStatementOfFactFormGroup(action: FormGroup): void {
     this.updateStatementOfFactFormGroup = action;
 
     this.updateStatementOfFactFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
@@ -151,7 +149,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
     });
   }
 
-  public deleteStatementOfFact() {
+  deleteStatementOfFact() {
     this.deleteStatementOfFactButtonDisabled = true;
 
     const data: IDeleteStatementOfFactDto = {
@@ -168,7 +166,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
       });
   }
 
-  public createStatementOfFact() {
+  createStatementOfFact() {
     this.createStatementOfFactButtonDisabled = true;
 
     const dateTimeString = this.createStatementOfFactFormGroup.value.statementOfFactCreate.DateTime;
@@ -191,7 +189,7 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
       });
   }
 
-  public updateStatementOfFact() {
+  updateStatementOfFact() {
     this.updateStatementOfFactButtonDisabled = true;
 
     const dateTimeString = this.updateStatementOfFactFormGroup.value.statementOfFactUpdate.DateTime;

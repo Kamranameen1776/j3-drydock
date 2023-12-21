@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Column, GridButton, GridRowActions, UserService, eGridColumnsWidth, FormModel, eFieldControlType } from 'jibe-components';
+import { Column, GridRowActions, UserService, eGridColumnsWidth, FormModel, eFieldControlType } from 'jibe-components';
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { nameOf } from '../../../../utils/nameOf';
 import { StatementOfFactsService } from '../../../../services/project-monitoring/statement-of-facts/StatementOfFactsService';
@@ -60,11 +60,6 @@ export class StatementOfFactsGridService {
     }
   ];
 
-  private readonly gridButton: GridButton = {
-    label: 'Add Fact',
-    show: true
-  };
-
   private searchFields: string[] = [nameOf<IStatementOfFactDto>((prop) => prop.Fact)];
   private gridActions: GridRowActions[] = [];
 
@@ -79,7 +74,6 @@ export class StatementOfFactsGridService {
       gridName: this.gridName,
       searchFields: this.searchFields,
       request: this.statementOfFactsService.getStatementOfFactsRequest(),
-      gridButton: this.gridButton,
       actions: this.gridActions,
       sortField: nameOf<IStatementOfFactDto>((prop) => prop.DateAndTime),
       sortOrder: -1,
