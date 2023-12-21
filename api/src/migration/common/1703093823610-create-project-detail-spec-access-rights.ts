@@ -99,6 +99,35 @@ export class createProjectDetailSpecAccessRights1703093823610 implements Migrati
                     VALUES (SOURCE.[uid], SOURCE.[right_code], SOURCE.[user_type_uid], SOURCE.[active_status],
                             SOURCE.[created_by], SOURCE.[date_of_creation], SOURCE.[modified_by], SOURCE.[date_of_modification]);
         `);
+
+        await queryRunner.query(`
+            MERGE INTO INF_Lib_GroupRights AS TARGET
+            USING (VALUES (N'929be1bb-7151-49f0-a94e-1cb287866df3', N'view_dry_dock_project_detail', N'${this.viewTechSpec.rightCode}', 1, N'1', getdate(), NULL, NULL),
+                        (N'b431559d-2a8f-466f-ab09-e5cb88dbde8d', N'edit_dry_dock_porject_detail', N'${this.addTechSpecFromStandardJob.rightCode}', 1, N'1', getdate(), NULL, NULL),
+                        (N'32d8a13e-49c3-4895-ab16-746f614d734d', N'edit_dry_dock_porject_detail', 
+                        N'${this.addTechSpecFromAdHoc.rightCode}', 1, N'1', getdate(), NULL, NULL),
+
+                        (N'5297edc2-adb5-49f4-bac7-dc4294313878', N'view_dry_dock_project_detail_onboard', N'${this.viewTechSpec.rightCode}', 1, N'1', getdate(), NULL, NULL),
+                        (N'e58e9c7d-a7d1-4e9e-98a6-f3164c65034d', N'edit_dry_dock_porject_detail_onboard', N'${this.addTechSpecFromStandardJob.rightCode}', 1, N'1', getdate(), NULL, NULL),
+                        (N'cbf0989c-1b49-4b24-8361-7bfd9774dc2b', N'edit_dry_dock_porject_detail_onboard', N'${this.addTechSpecFromAdHoc.rightCode}', 1, N'1', getdate(), NULL, NULL),
+                )
+                AS SOURCE ([GR_UID], [GR_Group_Code], [GR_Right_Code], [Active_Status], [created_by],
+                        [date_of_creation], [modified_by], [date_of_modification])
+            ON TARGET.GR_UID = SOURCE.GR_UID
+            WHEN MATCHED THEN
+                UPDATE
+                SET TARGET.[GR_UID]              = SOURCE.[GR_UID],
+                    TARGET.[GR_Group_Code]= SOURCE.[GR_Group_Code],
+                    TARGET.[Active_Status]       = SOURCE.[Active_Status],
+                    TARGET.[modified_by]         = 1,
+                    TARGET.[date_of_modification]= getdate()
+            WHEN NOT MATCHED BY TARGET THEN
+                INSERT ([GR_UID], [GR_Group_Code], [GR_Right_Code], [Active_Status], [created_by],
+                        [date_of_creation], [modified_by], [date_of_modification])
+                VALUES (SOURCE.[GR_UID], SOURCE.[GR_Group_Code], SOURCE.[GR_Right_Code],
+                        SOURCE.[active_status], SOURCE.[created_by], SOURCE.[date_of_creation],
+                        SOURCE.[modified_by], SOURCE.[date_of_modification]);
+        `);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
