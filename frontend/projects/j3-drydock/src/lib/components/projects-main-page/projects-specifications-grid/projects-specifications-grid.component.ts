@@ -80,7 +80,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   public deleteDialogVisible = false;
 
-  createProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Create Project' };
+  createProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Create New Project' };
 
   deleteProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: eProjectDelete.DeleteDialogueHeader };
 
