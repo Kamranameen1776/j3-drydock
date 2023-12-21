@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { eGridEvents, eGridRowActions, FormModel, GridAction, GridComponent, GridService, IJbDialog } from 'jibe-components';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { eGridEvents, eGridRowActions, FormModel, FormValues, GridAction, GridComponent, GridService, IJbDialog } from 'jibe-components';
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { StatementOfFactsGridService } from './StatementOfFactsGridService';
 import { FormGroup } from '@angular/forms';
@@ -13,6 +13,7 @@ import { IDeleteStatementOfFactDto } from '../../../../services/project-monitori
 import { ICreateStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/ICreateStatementOfFactDto';
 import { IUpdateStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/IUpdateStatementOfFactDto';
 import { UTCAsLocal, localAsUTCFromJbString } from '../../../../utils/date';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'jb-statement-of-facts',
@@ -20,7 +21,7 @@ import { UTCAsLocal, localAsUTCFromJbString } from '../../../../utils/date';
   styleUrls: ['./statement-of-facts.component.scss'],
   providers: [StatementOfFactsGridService]
 })
-export class StatementOfFactsComponent extends UnsubscribeComponent implements OnInit {
+export class StatementOfFactsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @Input() projectId: string;
 
   @ViewChild('dateAndTimeTemplate', { static: true }) dateAndTimeTemplate: TemplateRef<unknown>;
@@ -55,6 +56,8 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
   updateStatementOfFactForm: FormModel;
 
+  updateStatementOfFactFormValues: FormValues;
+
   deleteStatementOfFactFormGroup: FormGroup;
 
   createStatementOfFactFormGroup: FormGroup;
@@ -66,6 +69,9 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
   createStatementOfFactButtonDisabled = false;
 
   updateStatementOfFactButtonDisabled = false;
+
+  private createFormChangesSub: Subscription;
+  private updateFormChangesSub: Subscription;
 
   constructor(
     private statementOfFactsGridService: StatementOfFactsGridService,
@@ -85,6 +91,12 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
     this.updateStatementOfFactForm = this.statementOfFactsGridService.getUpdateStatementOfFactForm();
   }
 
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.createFormChangesSub?.unsubscribe();
+    this.updateFormChangesSub?.unsubscribe();
+  }
+
   onGridAction({ type }: GridAction<string, string>, statementOfFact: IStatementOfFactDto): void {
     if (type === eGridRowActions.Delete) {
       if (!statementOfFact) {
@@ -98,25 +110,26 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
         throw new Error('StatementOfFact is null');
       }
 
+      this.updateStatementOfFactFormValues = {
+        keyID: this.statementOfFactsGridService.updateStatementOfFactFormId,
+        values: {
+          [this.statementOfFactsGridService.updateStatementOfFactFormId]: {
+            Fact: statementOfFact.Fact,
+            DateTime: UTCAsLocal(statementOfFact.DateAndTime),
+            StatementOfFactUid: statementOfFact.StatementOfFactsUid
+          }
+        }
+      };
+
       this.showUpdateDialog();
-
-      const controls = (this.updateStatementOfFactFormGroup.controls.statementOfFactUpdate as FormGroup).controls;
-
-      const dateString = UTCAsLocal(statementOfFact.DateAndTime);
-
-      controls.Fact.setValue(statementOfFact.Fact);
-      controls.DateTime.setValue(dateString);
-      controls.StatementOfFactUid.setValue(statementOfFact.StatementOfFactsUid);
     }
   }
-  // public showas that it is used from parent of this component
+  // public shows that it is used from parent of this component
   public showCreateDialog(value = true) {
-    this.createStatementOfFactFormGroup.reset();
     this.createDialogVisible = value;
   }
 
   showUpdateDialog(value = true) {
-    this.updateStatementOfFactFormGroup.reset();
     this.updateDialogVisible = value;
   }
 
@@ -136,7 +149,9 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
   initCreateStatementOfFactFormGroup(action: FormGroup): void {
     this.createStatementOfFactFormGroup = action;
 
-    this.createStatementOfFactFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+    this.createFormChangesSub?.unsubscribe();
+
+    this.createFormChangesSub = this.createStatementOfFactFormGroup.valueChanges.subscribe(() => {
       this.createStatementOfFactButtonDisabled = !this.createStatementOfFactFormGroup.valid;
     });
   }
@@ -144,7 +159,9 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
   initUpdateStatementOfFactFormGroup(action: FormGroup): void {
     this.updateStatementOfFactFormGroup = action;
 
-    this.updateStatementOfFactFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+    this.updateFormChangesSub?.unsubscribe();
+
+    this.updateFormChangesSub = this.updateStatementOfFactFormGroup.valueChanges.subscribe(() => {
       this.updateStatementOfFactButtonDisabled = !this.updateStatementOfFactFormGroup.valid;
     });
   }

@@ -83,7 +83,7 @@ export class StatementOfFactsGridService {
 
   public getCreateStatementOfFactForm(): FormModel {
     return {
-      id: 'CreateStatementOfFact',
+      id: this.createStatementOfFactFormId,
       label: '',
       type: 'form',
       sections: {
@@ -129,7 +129,7 @@ export class StatementOfFactsGridService {
 
   public getUpdateStatementOfFactForm(): FormModel {
     return {
-      id: 'UpdateStatementOfFact',
+      id: this.updateStatementOfFactFormId,
       label: '',
       type: 'form',
       sections: {

@@ -60,6 +60,7 @@
     jb-dialog-body
   >
     <jb-form
+      *ngIf="createDialogVisible"
       (jbFormGroup)="initCreateStatementOfFactFormGroup($any($event))"
       [formStructure]="createStatementOfFactForm"
       [isVerticalLabel]="true"
@@ -88,8 +89,10 @@
     jb-dialog-body
   >
     <jb-form
+      *ngIf="updateDialogVisible"
       (jbFormGroup)="initUpdateStatementOfFactFormGroup($any($event))"
       [formStructure]="updateStatementOfFactForm"
+      [formValues]="updateStatementOfFactFormValues"
       [isVerticalLabel]="true"
       class="form-generator-log"
     ></jb-form>
