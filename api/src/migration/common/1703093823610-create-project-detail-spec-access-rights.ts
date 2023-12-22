@@ -1,4 +1,3 @@
-import { MigrationUtilsService, eApplicationLocation } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 
 export class createProjectDetailSpecAccessRights1703093823610 implements MigrationInterface {
@@ -44,10 +43,6 @@ export class createProjectDetailSpecAccessRights1703093823610 implements Migrati
                             AS SOURCE ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],
                             [Function_Code], [Action], [Created_By], [Date_Of_Creation], [Modified_By], [Date_Of_Modification],
                             [Active_Status], [right_name], [api_url])
-
-                AS SOURCE ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],
-                            [Function_Code], [Action], [Created_By], [Date_Of_Creation], [Modified_By], [Date_Of_Modification],
-                            [Active_Status], [right_name], [api_url])
             ON TARGET.[Right_Code] = SOURCE.[Right_Code]
             WHEN MATCHED THEN
                 UPDATE
@@ -78,10 +73,10 @@ export class createProjectDetailSpecAccessRights1703093823610 implements Migrati
                 MERGE INTO inf_lnk_right_user_type AS TARGET
                 USING (VALUES ('21d6b4e4-4c04-439c-bc54-29958fb97709', '${this.viewTechSpec.rightCode}','3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), 1, NULL),
                                 ('176fb4f9-4295-4789-a7c9-5e55ae5d5c05', '${this.viewTechSpec.rightCode}','0F3613B9-9FB5-40E6-8763-FC4941136598', 1, 1, getdate(), 1, NULL),
-                                ('399cdbd8-9f68-11ee-8eab-325096b39f47, '${this.addTechSpecFromStandardJob.rightCode}',3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), 1, NULL),
-                                ('fe528845-1e83-4373-843e-06e8f92b905d', '${this.addTechSpecFromStandardJob.rightCode}','0F3613B9-9FB5-40E6-8763-FC4941136598', 1, 1, getdate(), 1, NULL),('21d6b4e4-4c04-439c-bc54-29958fb97709, '${this.viewTechSpec.rightCode}',3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), 1, NULL),
+                                ('399cdbd8-9f68-11ee-8eab-325096b39f47', '${this.addTechSpecFromStandardJob.rightCode}','3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), 1, NULL),
+                                ('fe528845-1e83-4373-843e-06e8f92b905d', '${this.addTechSpecFromStandardJob.rightCode}','0F3613B9-9FB5-40E6-8763-FC4941136598', 1, 1, getdate(), 1, NULL),
                                 ('9bbfd37d-d7fa-4a6a-aec7-d7c163c8f44b', '${this.addTechSpecFromAdHoc.rightCode}','3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), 1, NULL),
-                                ('fa495b0e-5a19-42cd-ac72-30f54dcd7bd2', '${this.addTechSpecFromAdHoc.rightCode}','0F3613B9-9FB5-40E6-8763-FC4941136598', 1, 1, getdate(), 1, NULL),
+                                ('fa495b0e-5a19-42cd-ac72-30f54dcd7bd2', '${this.addTechSpecFromAdHoc.rightCode}','0F3613B9-9FB5-40E6-8763-FC4941136598', 1, 1, getdate(), 1, NULL)
                                 )
                     AS SOURCE ([uid], [right_code], [user_type_uid], [active_status], [created_by],
                                [date_of_creation], [modified_by], [date_of_modification])
@@ -109,7 +104,7 @@ export class createProjectDetailSpecAccessRights1703093823610 implements Migrati
 
                         (N'5297edc2-adb5-49f4-bac7-dc4294313878', N'view_dry_dock_project_detail_onboard', N'${this.viewTechSpec.rightCode}', 1, N'1', getdate(), NULL, NULL),
                         (N'e58e9c7d-a7d1-4e9e-98a6-f3164c65034d', N'edit_dry_dock_porject_detail_onboard', N'${this.addTechSpecFromStandardJob.rightCode}', 1, N'1', getdate(), NULL, NULL),
-                        (N'cbf0989c-1b49-4b24-8361-7bfd9774dc2b', N'edit_dry_dock_porject_detail_onboard', N'${this.addTechSpecFromAdHoc.rightCode}', 1, N'1', getdate(), NULL, NULL),
+                        (N'cbf0989c-1b49-4b24-8361-7bfd9774dc2b', N'edit_dry_dock_porject_detail_onboard', N'${this.addTechSpecFromAdHoc.rightCode}', 1, N'1', getdate(), NULL, NULL)
                 )
                 AS SOURCE ([GR_UID], [GR_Group_Code], [GR_Right_Code], [Active_Status], [created_by],
                         [date_of_creation], [modified_by], [date_of_modification])
