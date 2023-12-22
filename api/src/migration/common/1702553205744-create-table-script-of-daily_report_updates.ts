@@ -9,7 +9,7 @@ export class createTableScriptOfDailyReportUpdates1702553205744 implements Migra
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
             await queryRunner.query(`
-            IF NOT EXISTS (Select * from INFORMATION_SCHEMA.TABLES where TABLE_NAME '${this.tableName}' AND TABLE_SCHEMA = '${this.schemaName}')
+            IF NOT EXISTS (Select * from INFORMATION_SCHEMA.TABLES where TABLE_NAME = '${this.tableName}' AND TABLE_SCHEMA = '${this.schemaName}')
             BEGIN
             CREATE TABLE [${this.schemaName}].[${this.tableName}](
                 [uid] [uniqueidentifier] NOT NULL,
