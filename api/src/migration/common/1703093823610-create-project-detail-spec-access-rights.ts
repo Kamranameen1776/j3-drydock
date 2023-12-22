@@ -37,9 +37,9 @@ export class createProjectDetailSpecAccessRights1703093823610 implements Migrati
         // Rights
         await queryRunner.query(`
             MERGE INTO INF_LIB_Right AS TARGET
-            USING (VALUES ('${this.viewTechSpec.rightUid}', '${this.viewTechSpec.rightCode}', '${this.viewTechSpec.rightDescription}', 1, '${this.moduleCode}', '${this.functionCode}', '${this.viewTechSpec.actionCode}', 1, getdate(), 1, getdate(), 1, '${this.viewTechSpec.rightName}', null),
-                            ('${this.addTechSpecFromStandardJob.rightUid}', '${this.addTechSpecFromStandardJob.rightCode}', '${this.addTechSpecFromStandardJob.rightDescription}', 1, '${this.moduleCode}', '${this.functionCode}', '${this.addTechSpecFromStandardJob.actionCode}', 1, getdate(), 1, getdate(), 1, '${this.addTechSpecFromStandardJob.rightName}', null),
-                            ('${this.addTechSpecFromAdHoc.rightUid}', '${this.addTechSpecFromAdHoc.rightCode}', '${this.addTechSpecFromAdHoc.rightDescription}', 1, '${this.moduleCode}', '${this.functionCode}', '${this.addTechSpecFromAdHoc.actionCode}', 1, getdate(), 1, getdate(), 1, '${this.addTechSpecFromAdHoc.rightName}', null))
+            USING (VALUES ('${this.viewTechSpec.rightUid}', '${this.viewTechSpec.rightCode}', '${this.viewTechSpec.rightDescription}', 'b', '${this.moduleCode}', '${this.functionCode}', '${this.viewTechSpec.actionCode}', 1, getdate(), 1, getdate(), 1, '${this.viewTechSpec.rightName}', null),
+                            ('${this.addTechSpecFromStandardJob.rightUid}', '${this.addTechSpecFromStandardJob.rightCode}', '${this.addTechSpecFromStandardJob.rightDescription}', 'b', '${this.moduleCode}', '${this.functionCode}', '${this.addTechSpecFromStandardJob.actionCode}', 1, getdate(), 1, getdate(), 1, '${this.addTechSpecFromStandardJob.rightName}', null),
+                            ('${this.addTechSpecFromAdHoc.rightUid}', '${this.addTechSpecFromAdHoc.rightCode}', '${this.addTechSpecFromAdHoc.rightDescription}', 'b', '${this.moduleCode}', '${this.functionCode}', '${this.addTechSpecFromAdHoc.actionCode}', 1, getdate(), 1, getdate(), 1, '${this.addTechSpecFromAdHoc.rightName}', null))
                             AS SOURCE ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],
                             [Function_Code], [Action], [Created_By], [Date_Of_Creation], [Modified_By], [Date_Of_Modification],
                             [Active_Status], [right_name], [api_url])
