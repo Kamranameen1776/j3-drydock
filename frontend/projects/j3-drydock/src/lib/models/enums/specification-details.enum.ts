@@ -3,6 +3,7 @@ export enum eSpecificationDetailsPageMenuIds {
   GeneralInformation = 'generalInformation',
   SubItems = 'subItems',
   PMSJobs = 'pmsJobs',
+  Findings = 'findings',
   Requisitions = 'requisitions',
   Source = 'source',
   SpecificationAttachments = 'specificationAttachments',
@@ -15,6 +16,7 @@ export enum eSpecificationDetailsPageMenuLabels {
   GeneralInformation = 'General Information',
   SubItems = 'Sub Items',
   PMSJobs = 'PMS Jobs',
+  Findings = 'Findings',
   Requisitions = 'Requisitions',
   Source = 'Source',
   SpecificationAttachments = 'Attachments',
@@ -32,6 +34,7 @@ export const specificationDetailsMenuData = [
       { label: eSpecificationDetailsPageMenuLabels.GeneralInformation, id: eSpecificationDetailsPageMenuIds.GeneralInformation },
       { label: eSpecificationDetailsPageMenuLabels.SubItems, id: eSpecificationDetailsPageMenuIds.SubItems },
       { label: eSpecificationDetailsPageMenuLabels.PMSJobs, id: eSpecificationDetailsPageMenuIds.PMSJobs },
+      { label: eSpecificationDetailsPageMenuLabels.Findings, id: eSpecificationDetailsPageMenuIds.Findings },
       { label: eSpecificationDetailsPageMenuLabels.Requisitions, id: eSpecificationDetailsPageMenuIds.Requisitions },
       { label: eSpecificationDetailsPageMenuLabels.Source, id: eSpecificationDetailsPageMenuIds.Source },
       {

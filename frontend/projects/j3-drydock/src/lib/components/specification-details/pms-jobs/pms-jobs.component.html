@@ -1,0 +1,19 @@
+<jb-tm-linked-records-temp
+  [taskManagerDetails]="details"
+  [hiddenSegments]="hiddenSegments"
+  [additionalEntityMenuOptions]="additionalEntityMenuOptions"
+  [entitySelectionEnabledSegments]="entitySelectionEnabledSegments"
+  [hideHeader]="true"
+  (entitySelectionChanged)="entitySelectionChanged($event)"
+  (childRecordEvents)="childRecordEvents($event)"
+  (entityMenuOptionSelected)="entityMenuOptionSelected($event)"
+></jb-tm-linked-records-temp>
+
+<!-- <jb-tm-linked-records
+  [taskManagerDetails]="details"
+  [hiddenSegments]="hiddenSegments"
+  [entitySelectionEnabledSegments]="entitySelectionEnabledSegments"
+  [additionalEntityMenuOptions]="additionalEntityMenuOptions"
+  [validTaskManagerJobTypes]="validTaskManagerJobTypes"
+  (childRecordEvents)="childRecordEvents($event)"
+></jb-tm-linked-records> -->
