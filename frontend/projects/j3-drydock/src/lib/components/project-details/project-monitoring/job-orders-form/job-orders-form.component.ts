@@ -13,7 +13,6 @@ import { IJobOrderFormResultDto } from './dtos/IJobOrderFormResultDto';
 import { UTCAsLocal, localDateJbStringAsUTC } from 'projects/j3-drydock/src/lib/utils/date';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
-import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'jb-job-orders-form',
