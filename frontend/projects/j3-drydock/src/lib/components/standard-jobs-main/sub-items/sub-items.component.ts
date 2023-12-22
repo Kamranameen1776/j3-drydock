@@ -9,6 +9,7 @@ import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { cloneDeep } from 'lodash';
 import { filter, map } from 'rxjs/operators';
 import { GrowlMessageService } from '../../../services/growl-message.service';
+import { StandardJobsService } from '../../../services/standard-jobs.service';
 
 @Component({
   selector: 'jb-drydock-sub-items',
@@ -45,12 +46,15 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
 
   isConfirmDeleteVisible = false;
 
+  showLoader = false;
+
   private editingSubItemIdx: number;
 
   constructor(
     private subItemsGridService: SubItemsGridService,
     private gridService: GridService,
-    private growlMessageService: GrowlMessageService
+    private growlMessageService: GrowlMessageService,
+    private standardJobsService: StandardJobsService
   ) {
     super();
   }
@@ -120,12 +124,28 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
     this.isConfirmDeleteVisible = true;
   }
 
-  private delete(record: SubItem) {
+  private delete(record) {
+    this.showLoader = true;
+
     const idx = this.subItems.findIndex((item) => item === record);
     if (idx > -1) {
       this.subItems = [...this.subItems];
       this.subItems.splice(idx, 1);
     }
+
+    this.standardJobsService.updateJobSubItems(record.standardJobUid, this.subItems).subscribe(
+      () => {
+        this.growlMessageService.setSuccessMessage('Sub item removed successfully.');
+        this.showLoader = false;
+      },
+      (err) => {
+        if (err?.status === 422) {
+          this.growlMessageService.setErrorMessage(err.error);
+        } else {
+          this.growlMessageService.setErrorMessage('Server error occurred');
+        }
+      }
+    );
 
     this.changed.emit(this.subItems);
   }
