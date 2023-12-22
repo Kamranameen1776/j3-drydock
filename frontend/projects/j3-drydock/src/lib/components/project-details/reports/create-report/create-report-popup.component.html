@@ -1,0 +1,22 @@
+<jb-dialog
+  [dialogContent]="popupConfig"
+  [(dialogVisible)]="isOpen"
+  (closeDialog)="onClosePopup()"
+>
+  <div jb-dialog-body>
+      <div class="header">
+          <label></label>
+          <input [(ngModel)]='reportName' id='reportName' pInputText type='text'>
+      </div>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="isSaving"
+      [isCancelBtnDisabled]="isSaving"
+      [okBtnLabel]="saveLabel"
+      (ok)="submit()"
+      (cancel)="onClosePopup()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

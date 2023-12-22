@@ -1,10 +1,11 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
-import { GridService, IGridAction, IJbDialog, eGridRefreshType, eGridRowActions } from 'jibe-components';
+import { GridService, IGridAction, IJbDialog, eGridRefreshType, eGridRowActions, GridAction } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { DailyReportsGridService } from './reports.service';
+import { IProjectsForMainPageGridDto } from '../../projects-main-page/projects-specifications-grid/dtos/IProjectsForMainPageGridDto';
 
 @Component({
   selector: 'jb-daily-reports',
@@ -26,6 +27,7 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
   };
 
   deleteDialogVisible = false;
+  createPopupVisible = false;
   deleteBtnLabel = 'Delete';
   deleteDialogMessage = 'Are you sure you want to delete this report?';
 
@@ -46,16 +48,11 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
     }
   }
 
-  private getData(projectId?: string) {
-    const gridData = this.reportsService.getGridData(projectId || this.projectId);
-    const dateCol = gridData.columns.find((col) => col.FieldName === 'reportDate');
-    dateCol.cellTemplate = this.reportDateTemplate;
-    return gridData;
-  }
-
   async onActionClick({ type, payload }: IGridAction) {
-    const { uid } = payload;
-    this.reportUid = uid;
+    const uid = payload?.uid;
+    if (uid) {
+      this.reportUid = uid;
+    }
 
     switch (type) {
       case eGridRowActions.Delete:
@@ -63,9 +60,16 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
         break;
       case eGridRowActions.Edit:
         break;
+      case this.gridData.gridButton.label:
+        this.showCreateReport();
+        break;
       default:
         return;
     }
+  }
+
+  showCreateReport(uid?: string) {
+    this.createPopupVisible = true;
   }
 
   public deleteReportHandler() {
@@ -80,5 +84,20 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
 
   public showDeleteDialog(value: boolean) {
     this.deleteDialogVisible = value;
+  }
+
+  onCloseCreatePopup(hasSaved?: boolean) {
+    this.createPopupVisible = false;
+
+    if (hasSaved) {
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+    }
+  }
+
+  private getData(projectId?: string) {
+    const gridData = this.reportsService.getGridData(projectId || this.projectId);
+    const dateCol = gridData.columns.find((col) => col.FieldName === 'reportDate');
+    dateCol.cellTemplate = this.reportDateTemplate;
+    return gridData;
   }
 }
