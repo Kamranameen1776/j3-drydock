@@ -1,11 +1,41 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, Column, GridRowActions, WebApiRequest, eCrud, eGridAction } from 'jibe-components';
+import { ApiRequestService, Column, GridRowActions, WebApiRequest, eCrud, eGridAction, GridButton } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
 import { localAsUTC } from '../../../utils/date';
 
 @Injectable()
 export class DailyReportsGridService {
+  public readonly gridName: string = 'reportsGrid';
+  private readonly gridButton: GridButton = {
+    label: 'Add report',
+    show: true
+  };
+  private readonly columns: Column[] = [
+    {
+      DisableSort: false,
+      DisplayText: 'Report Name',
+      FieldName: 'reportName',
+      IsActive: true,
+      IsMandatory: true,
+      IsVisible: true,
+      ReadOnly: true
+    },
+    {
+      DisableSort: false,
+      DisplayText: 'Report Date',
+      FieldName: 'reportDate',
+      IsActive: true,
+      IsMandatory: true,
+      IsVisible: true,
+      ReadOnly: true
+    }
+  ];
+  private gridActions: GridRowActions[] = [
+    { name: eGridAction.Edit, icon: 'icons8-edit' },
+    { name: eGridAction.Delete, icon: 'icons8-delete' }
+  ];
+
   constructor(private apiRequestService: ApiRequestService) {}
 
   public getDailyReportsAPIRequest(projectId: string | null): WebApiRequest {
@@ -36,6 +66,7 @@ export class DailyReportsGridService {
       gridName: this.gridName,
       request: this.getDailyReportsAPIRequest(projectId),
       actions: this.gridActions,
+      gridButton: this.gridButton,
       searchFields: ['reportName'],
       filters: [],
       filtersLists: {}
@@ -72,32 +103,4 @@ export class DailyReportsGridService {
 
     return this.apiRequestService.sendApiReq(request);
   }
-
-  public readonly gridName: string = 'reportsGrid';
-
-  private readonly columns: Column[] = [
-    {
-      DisableSort: false,
-      DisplayText: 'Report Name',
-      FieldName: 'reportName',
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: true,
-      ReadOnly: true
-    },
-    {
-      DisableSort: false,
-      DisplayText: 'Report Date',
-      FieldName: 'reportDate',
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: true,
-      ReadOnly: true
-    }
-  ];
-
-  private gridActions: GridRowActions[] = [
-    { name: eGridAction.Edit, icon: 'icons8-edit' },
-    { name: eGridAction.Delete, icon: 'icons8-delete' }
-  ];
 }

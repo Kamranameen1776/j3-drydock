@@ -1,0 +1,14 @@
+<div class="summary-details">
+    <div class="list-avatar-wrapper">
+        <jb-avatar [content]="data?.avatar" *ngIf="!!data?.avatar"></jb-avatar>
+
+        <span class="show-selection">
+            <span class="summary-name" [ngClass]="selected ? 'selected' : ''">{{data.title}}</span>
+            <span class="summary-desc" [ngClass]="selected ? 'selected' : ''">{{ data.description }}</span>
+        </span>
+    </div>
+    <div>
+        <span class="date-area" [ngClass]="selected ? 'selected' : ''">
+        <span class="icons8-calendar-3"></span>{{ data.date | jbDate }}</span>
+    </div>
+</div>

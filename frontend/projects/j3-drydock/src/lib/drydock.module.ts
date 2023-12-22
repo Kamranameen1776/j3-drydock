@@ -30,7 +30,6 @@ import { ProjectStatusFilterComponent } from './components/projects-main-page/pr
 import { LeftPanelFilterService } from './components/projects-main-page/services/LeftPanelFilterService';
 import { RfqComponent } from './components/project-details/yard/rfq/rfq.component';
 import { ComparisonComponent } from './components/project-details/yard/comparison/comparison.component';
-import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
 import { SelectLinkYardGridComponent } from './components/project-details/yard/rfq/select-link-yard-grid/select-link-yard-grid.component';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
@@ -60,6 +59,9 @@ import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
 import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-celll-popover.component';
 import { DailyReportsComponent } from './components/project-details/reports/reports.component';
 import { EditSubItemPopupComponent } from './components/specification-details/edit-sub-item-popup/edit-sub-item-popup.component';
+import { CreateReportPopupComponent } from './components/project-details/reports/create-report/create-report-popup.component';
+import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
+import { ItemCardComponent } from './shared/components/item-card/item-card.component';
 
 @NgModule({
   declarations: [
@@ -101,7 +103,9 @@ import { EditSubItemPopupComponent } from './components/specification-details/ed
     EditSubItemPopupComponent,
     UTCAsLocalPipe,
     GridCellPopoverComponent,
-    DailyReportsComponent
+    DailyReportsComponent,
+    CreateReportPopupComponent,
+    ItemCardComponent
   ],
   imports: [
     CommonModule,
