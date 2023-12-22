@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
 
-export class updatingModuleAndFunctionCodeOfDryDockAndSpecification1703064597417 implements MigrationInterface {
+export class updatingModuleAndFunctionCodeOfDryDockAndSpecification1703064597418 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -23,8 +23,8 @@ export class updatingModuleAndFunctionCodeOfDryDockAndSpecification1703064597417
                 (N'896E4FCC-1415-4043-AB64-94AE91E49656', N'tm_dry_dock_approve_office', N'Approve dry dock from office', N'o', 'project', 'dry_dock', N'approve', 1, GETDATE(), NULL, NULL, 1, N'Approve Dry Dock from Office', NULL, 1),
                 (N'72DE1339-48BC-4516-B7FA-1677AE0AF999', N'tm_dry_dock_approve_vessel', N'Approve dry dock from vessel', N'v', 'project', 'dry_dock', N'approve', 1, GETDATE(), NULL, NULL, 1, N'Approve Dry Dock from Vessel', NULL, 1),
                 (N'E0E44628-5C17-4D1E-8F34-200A3C02A3F6', N'tm_dry_dock_close_office', N'Close dry dock from office', N'o', 'project', 'dry_dock', N'close', 1, GETDATE(), NULL, NULL, 1, N'Close Dry Dock from Office', NULL, 1),
-                (N'21E9FFC2-481D-4D5F-B1FC-371ECE894D35', N'tm_dry_dock_close_vessel', N'Close dry dock from vessel', N'v', 'project', 'dry_dock', N'close', 1, GETDATE(), NULL, NULL, 1, N'Close Dry Dock from Vessel', NULL, 1),   
-                (N'2D7D5387-D911-4VD07-9DF4-58C95F984506', N'tm_dry_dock_unclose_office', N'Unclose dry dock from office', N'o','project', 'dry_dock', N'unclose', 1, GETDATE(), NULL, NULL, 1, N'Unclose Dry Dock from Office', NULL, 1),
+                (N'21E9FFC2-481D-4D5F-B1FC-371ECE894D35', N'tm_dry_dock_close_vessel', N'Close dry dock from vessel', N'v', 'project', 'dry_dock', N'close', 1, GETDATE(), NULL, NULL, 1, N'Close Dry Dock from Vessel', NULL, 1),
+                (N'2D7D5387-D911-4D07-9DF4-58C95F984506', N'tm_dry_dock_unclose_office', N'Unclose dry dock from office', N'o','project', 'dry_dock', N'unclose', 1, GETDATE(), NULL, NULL, 1, N'Unclose Dry Dock from Office', NULL, 1),
                 (N'F994F5CE-0862-4B9B-B7E0-14904AA3D9ED', N'tm_dry_dock_unclose_vessel', N'Unclose dry dock from vessel', N'v', 'project', 'dry_dock', N'unclose', 1, GETDATE(), NULL, NULL, 1, N'Unclose Dry Dock from Vessel', NULL, 1)
                 )
             
@@ -45,12 +45,12 @@ export class updatingModuleAndFunctionCodeOfDryDockAndSpecification1703064597417
                 SOURCE.Right_UID, SOURCE.Right_Code, SOURCE.Right_Description, SOURCE.Valid_On, SOURCE.Module_Code, SOURCE.Function_Code, SOURCE.Action,
                 SOURCE.Created_By, SOURCE.Date_Of_Creation, SOURCE.Modified_By, SOURCE.Date_Of_Modification, SOURCE.Active_Status, SOURCE.right_name,
                 SOURCE.api_url, SOURCE.is_work_flow
-                );
+                );          
             `);
 
             await queryRunner.query(`          
             MERGE INTO INF_Lib_Right AS TARGET USING (
-                VALUES
+            VALUES
                 (N'637FAA24-A4B3-4574-AF8D-988947BFB89E', N'tm_specification_raise_office', N'Raise specification from office', N'o', 'project', 'specification_details', N'raise', 1, GETDATE(), NULL, NULL, 1, N'Raise Specification from Office', NULL, 1),
                 (N'4BD3577E-E6B4-41C5-A2AE-826C1F544547', N'tm_specification_raise_vessel', N'Raise specification from vessel', N'v', 'project', 'specification_details', N'raise', 1, GETDATE(), NULL, NULL, 1, N'Raise Specification from Vessel', NULL, 1),
                 (N'2A37A736-412F-485B-B2D6-721875E03725', N'tm_specification_in_progress_office', N'In Progress specification from office', N'o', 'project', 'specification_details', N'in progress', 1, GETDATE(), NULL, NULL, 1, N'In Progress Specification from Office', NULL, 1),
