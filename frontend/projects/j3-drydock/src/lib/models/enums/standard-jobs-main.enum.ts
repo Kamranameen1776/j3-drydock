@@ -1,5 +1,5 @@
 export enum eStandardJobsMainLabels {
-  CreateNewJob = 'Create New Job',
+  CreateNewJob = 'Create New',
   CreateNewStandardJob = 'Create New Standard Job',
   AddSubItem = 'Add Sub Item',
   Status = 'Status',
