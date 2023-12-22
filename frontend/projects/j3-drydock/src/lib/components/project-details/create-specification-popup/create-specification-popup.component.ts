@@ -86,7 +86,7 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
           if (err?.status === 422) {
             this.growlMessageService.setErrorMessage(err?.error?.message);
           } else {
-            this.growlMessageService.setErrorMessage('Server error occured');
+            this.growlMessageService.setErrorMessage('Server error occurred');
           }
         }
       );
