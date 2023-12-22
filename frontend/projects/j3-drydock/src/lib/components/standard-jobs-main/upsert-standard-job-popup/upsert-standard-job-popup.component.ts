@@ -67,7 +67,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
       this.setPopupHeader();
       this.setPopupFooter();
       this.setAttachmentConfig();
-      this.initChangedSubIems();
+      this.initChangedSubItems();
     }
   }
 
@@ -138,13 +138,13 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
           if (err?.status === 422) {
             this.growlMessageService.setErrorMessage(err.error);
           } else {
-            this.growlMessageService.setErrorMessage('Server error occured');
+            this.growlMessageService.setErrorMessage('Server error occurred');
           }
         }
       );
   }
 
-  private initChangedSubIems() {
+  private initChangedSubItems() {
     const subItems = this.item?.subItems ?? [];
     this.changedSubItems = cloneDeep(subItems);
   }
