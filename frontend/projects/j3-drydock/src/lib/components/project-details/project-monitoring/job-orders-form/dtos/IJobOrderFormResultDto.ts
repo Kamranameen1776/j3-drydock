@@ -1,6 +1,6 @@
 export interface IJobOrderFormResultDto {
   SpecificationUid: string;
-  
+
   Progress: number;
 
   Remarks: string;
