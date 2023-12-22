@@ -127,7 +127,6 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
       this.subItems.splice(idx, 1);
     }
 
-    this.growlMessageService.setSuccessMessage('Subitem deleted successfully.');
     this.changed.emit(this.subItems);
   }
 
