@@ -18,9 +18,10 @@ export class vesselAttachmentRuleSync1703162641000 implements MigrationInterface
                     SELECT @rule_id=ISNULL(max(Rule_ID),0) FROM SYNC_DTL_Vessel_Import_Attachments_Rule
                     BEGIN
                         MERGE INTO SYNC_DTL_Vessel_Import_Attachments_Rule AS TARGET USING (
-                        VALUES      
+                        VALUES     
                         (@rule_id+1,'projdrydock_','C:\\JiBEApps\\uploads\\project\\dry_dock', 1, GETDATE(),NULL,NULL, NULL, NULL, 1),
-                        (@rule_id+2,'projspec_','C:\\JiBEApps\\uploads\\project\s\pecification_details', 1, GETDATE(),NULL,NULL, NULL, NULL, 1)
+                        (@rule_id+2,'projspec_','C:\\JiBEApps\\uploads\\project\\specification_details', 1, GETDATE(),NULL,NULL, NULL, NULL, 1),
+						(@rule_id+3,'projstandard_','C:\\JiBEApps\\uploads\\project\\standard_job', 1, GETDATE(),NULL,NULL, NULL, NULL, 1)
                         )
                         AS SOURCE (Rule_ID, Attach_Prefix, Attach_Path, Created_By, Date_Of_Creation, Modified_By, Date_Of_Modification, Deleted_By, Date_Of_Deletion, Active_Status)
                 
