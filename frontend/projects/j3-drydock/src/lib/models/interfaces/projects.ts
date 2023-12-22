@@ -8,11 +8,7 @@ export interface ProjectCreate {
   EndDate: string;
 }
 
-export interface Project extends ProjectCreate {
-  uid: string;
-}
-
-export interface ProjectEdit {
+export interface Project {
   uid: string;
   FleetId: number;
   VesselId: number;
@@ -23,6 +19,12 @@ export interface ProjectEdit {
   EndDate: string;
 }
 
-export interface Project extends ProjectEdit {
-  uid: string;
+export interface ProjectEdit {
+  ProjectUid: string;
+  Subject: string;
+  ProjectManagerUid: string;
+  StartDate: Date;
+  EndDate: Date;
+  LastUpdated: Date;
+  ShipYardId: string;
 }

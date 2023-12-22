@@ -1,16 +1,24 @@
-// TODO: check that all fields can be updated
+import { IsDateString, IsUUID, MaxLength } from 'class-validator';
+
 export class UpdateProjectDto {
-    public uid: string;
+    @IsUUID()
+    public ProjectUid: string;
 
-    public VesselUid: string;
-
-    public ProjectTypeUid: string;
-
+    @MaxLength(250)
     public Subject: string;
 
     public ProjectManagerUid: string;
 
+    @IsDateString()
     public StartDate: Date;
 
+    @IsDateString()
     public EndDate: Date;
+
+    public ShipYardId: string;
+
+    @IsDateString()
+    public LastUpdated: Date;
+
+    public UpdatedBy: string;
 }

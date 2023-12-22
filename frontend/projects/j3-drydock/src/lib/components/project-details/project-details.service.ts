@@ -15,7 +15,8 @@ import { AttachmentsAccessRight, BaseAccessRight } from '../../models/interfaces
 import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { eProjectsDetailsAccessActions, eProjectsAccessActions } from '../../models/enums/access-actions.enum';
-import { localAsUTCFromJbString } from '../../utils/date';
+import { currentLocalAsUTC, localDateJbStringAsUTC } from '../../utils/date';
+import { ProjectEdit } from '../../models/interfaces/projects';
 
 export interface ProjectDetailsAccessRights extends BaseAccessRight {
   attachments: AttachmentsAccessRight;
@@ -334,18 +335,17 @@ export class ProjectDetailsService {
   }
 
   save(projectId: string, formData) {
-    const data = {
+    const data: ProjectEdit = {
+      ProjectUid: projectId,
       Subject: formData.Job_Short_Description,
-      ProjectManagerUid: formData.ProjectManager,
-      EndDate: localAsUTCFromJbString(formData.EndDate),
-      StartDate: localAsUTCFromJbString(formData.StartDate)
+      ProjectManagerUid: formData.ProjectManagerUid,
+      EndDate: localDateJbStringAsUTC(formData.EndDate),
+      StartDate: localDateJbStringAsUTC(formData.StartDate),
+      ShipYardId: formData.ShipYardId,
+      LastUpdated: currentLocalAsUTC()
     };
 
-    return this.projectsService.updateProject({
-      ...data,
-      uid: projectId
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
+    return this.projectsService.updateProject(data);
   }
 
   isStatusBeforeComplete(status: string) {
