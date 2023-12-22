@@ -53,13 +53,13 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
         const project = await this.projectsRepository.TryGetProjectByUid(request.ProjectUid);
 
         if (!project) {
-            throw new ApplicationException('Project not found');
+            throw new ApplicationException(`Project ${request.ProjectUid} not found`);
         }
 
         const vessel = await this.vesselRepository.GetVesselByProjectUid(project.uid);
 
         if (!vessel) {
-            throw new ApplicationException('Vessel not found');
+            throw new ApplicationException(`Vessel ${project.VesselUid} not found`);
         }
 
         const projectYards = await this.yardProjectsRepository.ListSelectedProjectYardsByProjectUid(project.uid);
