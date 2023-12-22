@@ -313,7 +313,7 @@ export class ProjectDetailsService {
         menuDisplayName: eProjectDetailsSideMenuLabel.Reporting,
         menuIcon: '',
         showDiscussion: true,
-        isClosedDiscussion: false,
+        isClosedDiscussion: true,
         activeStatus: true,
         index: 5,
         sections: [
