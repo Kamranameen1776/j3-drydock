@@ -60,6 +60,7 @@ import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
 import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-celll-popover.component';
 import { DailyReportsComponent } from './components/project-details/reports/reports.component';
 import { EditSubItemPopupComponent } from './components/specification-details/edit-sub-item-popup/edit-sub-item-popup.component';
+import { JobOrdersFormComponent } from './components/project-details/project-monitoring/job-orders-form/job-orders-form.component';
 
 @NgModule({
   declarations: [
@@ -101,7 +102,8 @@ import { EditSubItemPopupComponent } from './components/specification-details/ed
     EditSubItemPopupComponent,
     UTCAsLocalPipe,
     GridCellPopoverComponent,
-    DailyReportsComponent
+    DailyReportsComponent,
+    JobOrdersFormComponent
   ],
   imports: [
     CommonModule,
