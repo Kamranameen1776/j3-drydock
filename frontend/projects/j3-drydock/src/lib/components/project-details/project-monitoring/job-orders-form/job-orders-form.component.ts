@@ -10,7 +10,7 @@ import { NewTabService } from '../../../../services/new-tab-service';
 import { ActivatedRoute } from '@angular/router';
 import { IJobOrdersFormComponent } from './IJobOrdersFormComponent';
 import { IJobOrderFormResultDto } from './dtos/IJobOrderFormResultDto';
-import { UTCAsLocal, localDateJbStringAsUTC } from 'projects/j3-drydock/src/lib/utils/date';
+import { UTCAsLocal, localDateJbStringAsUTC } from '../../../../utils/date';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 
