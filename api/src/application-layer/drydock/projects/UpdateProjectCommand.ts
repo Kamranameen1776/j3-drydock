@@ -62,39 +62,33 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
             throw new ApplicationException(`Vessel ${project.VesselUid} not found`);
         }
 
-        const projectYards = await this.yardProjectsRepository.ListSelectedProjectYardsByProjectUid(project.uid);
-
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            projectYards.forEach(async (projectYard) => {
-                projectYard.is_selected = false;
+            let projectYard = await this.yardProjectsRepository.FindProjectYardByProjectUid(request.ProjectUid);
+
+            if (request.ShipYardId) {
+                if (projectYard) {
+                    projectYard.is_selected = true;
+                    projectYard.yard_uid = request.ShipYardId;
+                } else {
+                    projectYard = new YardsProjectsEntity();
+                    projectYard.uid = new DataUtilService().newUid();
+                    projectYard.yard_uid = request.ShipYardId;
+                    projectYard.project_uid = project.uid;
+                    projectYard.active_status = true;
+                    projectYard.is_selected = true;
+                    projectYard.created_at = request.LastUpdated;
+                    projectYard.created_by = request.UpdatedBy;
+                }
                 projectYard.updated_at = request.LastUpdated;
                 projectYard.updated_by = request.UpdatedBy;
 
                 await this.yardProjectsRepository.SaveProjectYard(projectYard, queryRunner);
-            });
+            } else if (projectYard) {
+                projectYard.active_status = false;
+                projectYard.deleted_at = request.LastUpdated;
+                projectYard.deleted_by = request.UpdatedBy;
 
-            if (request.ShipYardId) {
-                let selectedProjectYard = await this.yardProjectsRepository.TryGetProjectYardByYardUid(
-                    request.ShipYardId,
-                );
-
-                if (selectedProjectYard) {
-                    selectedProjectYard.is_selected = true;
-                } else {
-                    selectedProjectYard = new YardsProjectsEntity();
-                    selectedProjectYard.uid = new DataUtilService().newUid();
-                    selectedProjectYard.yard_uid = request.ShipYardId;
-                    selectedProjectYard.project_uid = project.uid;
-                    selectedProjectYard.active_status = true;
-                    selectedProjectYard.is_selected = true;
-                    selectedProjectYard.created_at = request.LastUpdated;
-                    selectedProjectYard.created_by = request.UpdatedBy;
-                }
-
-                selectedProjectYard.updated_at = request.LastUpdated;
-                selectedProjectYard.updated_by = request.UpdatedBy;
-
-                await this.yardProjectsRepository.SaveProjectYard(selectedProjectYard, queryRunner);
+                await this.yardProjectsRepository.SaveProjectYard(projectYard, queryRunner);
             }
 
             project.Subject = request.Subject;

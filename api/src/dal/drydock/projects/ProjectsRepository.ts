@@ -180,7 +180,11 @@ export class ProjectsRepository {
                 `CONCAT(COUNT(CASE WHEN sc.status = '${TaskManagerConstants.specification.status.Completed}' THEN 1 END), '/', COUNT(sc.uid)) AS Specification`,
             ])
             .leftJoin((qb) => this.getSpecificationCountQuery(qb, uid), 'sc', 'sc.projectUid = pr.uid')
-            .leftJoin(className(YardsProjectsEntity), 'ydp', 'ydp.project_uid = pr.uid and ydp.is_selected = 1')
+            .leftJoin(
+                className(YardsProjectsEntity),
+                'ydp',
+                'ydp.project_uid = pr.uid and ydp.is_selected = 1 and ydp.active_status = 1',
+            )
             .leftJoin(className(J3PrcCompanyRegistryEntity), 'yd', 'yd.uid = ydp.yard_uid')
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
