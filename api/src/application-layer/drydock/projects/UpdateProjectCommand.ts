@@ -1,5 +1,6 @@
 import { validate } from 'class-validator';
 import { DataUtilService, SynchronizerService } from 'j2utils';
+import { QueryRunner } from 'typeorm';
 
 import { ApplicationException } from '../../../bll/drydock/core/exceptions';
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
@@ -48,47 +49,27 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
      * @param request Project data for creation of the new project
      * @returns New created project result
      */
-
     protected async MainHandlerAsync(request: UpdateProjectDto): Promise<void> {
         const project = await this.projectsRepository.TryGetProjectByUid(request.ProjectUid);
-
         if (!project) {
             throw new ApplicationException(`Project ${request.ProjectUid} not found`);
         }
 
         const vessel = await this.vesselRepository.GetVesselByProjectUid(project.uid);
-
         if (!vessel) {
             throw new ApplicationException(`Vessel ${project.VesselUid} not found`);
         }
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             let projectYard = await this.yardProjectsRepository.FindProjectYardByProjectUid(request.ProjectUid);
-
             if (request.ShipYardId) {
                 if (projectYard) {
-                    projectYard.is_selected = true;
-                    projectYard.yard_uid = request.ShipYardId;
+                    await this.SelectProjectYard(projectYard, request, queryRunner);
                 } else {
-                    projectYard = new YardsProjectsEntity();
-                    projectYard.uid = new DataUtilService().newUid();
-                    projectYard.yard_uid = request.ShipYardId;
-                    projectYard.project_uid = project.uid;
-                    projectYard.active_status = true;
-                    projectYard.is_selected = true;
-                    projectYard.created_at = request.LastUpdated;
-                    projectYard.created_by = request.UpdatedBy;
+                    projectYard = await this.CreateProjectYard(request, queryRunner);
                 }
-                projectYard.updated_at = request.LastUpdated;
-                projectYard.updated_by = request.UpdatedBy;
-
-                await this.yardProjectsRepository.SaveProjectYard(projectYard, queryRunner);
             } else if (projectYard) {
-                projectYard.active_status = false;
-                projectYard.deleted_at = request.LastUpdated;
-                projectYard.deleted_by = request.UpdatedBy;
-
-                await this.yardProjectsRepository.SaveProjectYard(projectYard, queryRunner);
+                await this.DeleteProjectYard(projectYard, request, queryRunner);
             }
 
             project.Subject = request.Subject;
@@ -106,13 +87,46 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
                 vessel.VesselId,
             );
 
-            await SynchronizerService.dataSynchronizeManager(
-                queryRunner.manager,
-                this.projectYardTableName,
-                'project_uid',
-                project.uid,
-                vessel.VesselId,
-            );
+            if (projectYard && projectYard.uid) {
+                await SynchronizerService.dataSynchronizeManager(
+                    queryRunner.manager,
+                    this.projectYardTableName,
+                    'uid',
+                    projectYard.uid,
+                    vessel.VesselId,
+                );
+            }
         });
+    }
+
+    private async SelectProjectYard(entity: YardsProjectsEntity, request: UpdateProjectDto, queryRunner: QueryRunner) {
+        entity.is_selected = true;
+        entity.yard_uid = request.ShipYardId;
+        entity.updated_at = request.LastUpdated;
+        entity.updated_by = request.UpdatedBy;
+
+        await this.yardProjectsRepository.SaveProjectYard(entity, queryRunner);
+    }
+
+    private async CreateProjectYard(request: UpdateProjectDto, queryRunner: QueryRunner): Promise<YardsProjectsEntity> {
+        const entity = new YardsProjectsEntity();
+        entity.uid = new DataUtilService().newUid();
+        entity.yard_uid = request.ShipYardId;
+        entity.project_uid = request.ProjectUid;
+        entity.active_status = true;
+        entity.is_selected = true;
+        entity.created_at = request.LastUpdated;
+        entity.created_by = request.UpdatedBy;
+
+        await this.yardProjectsRepository.SaveProjectYard(entity, queryRunner);
+        return entity;
+    }
+
+    private async DeleteProjectYard(entity: YardsProjectsEntity, request: UpdateProjectDto, queryRunner: QueryRunner) {
+        entity.active_status = false;
+        entity.deleted_at = request.LastUpdated;
+        entity.deleted_by = request.UpdatedBy;
+
+        await this.yardProjectsRepository.SaveProjectYard(entity, queryRunner);
     }
 }
