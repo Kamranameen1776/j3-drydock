@@ -60,7 +60,7 @@ import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
 import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-celll-popover.component';
 import { DailyReportsComponent } from './components/project-details/reports/reports.component';
 import { EditSubItemPopupComponent } from './components/specification-details/edit-sub-item-popup/edit-sub-item-popup.component';
-import { PmsJobsComponent } from './components/specification-details/pms-jobs/pms-jobs.component';
+import { LinkedPmsJobsAndFindingsComponent } from './components/specification-details/pms-jobs/linked-pms-jobs-and-findings.component';
 // import { JbTaskManagerLinkedRecordsComponent } from './components/jb-components-temp/jb-tm-linked-records/jb-task-manager-linked-records.component';
 import { FindingsComponent } from './components/specification-details/findings/findings.component';
 
@@ -105,7 +105,7 @@ import { FindingsComponent } from './components/specification-details/findings/f
     UTCAsLocalPipe,
     GridCellPopoverComponent,
     DailyReportsComponent,
-    PmsJobsComponent,
+    LinkedPmsJobsAndFindingsComponent,
     // JbTaskManagerLinkedRecordsComponent,
     FindingsComponent
   ],

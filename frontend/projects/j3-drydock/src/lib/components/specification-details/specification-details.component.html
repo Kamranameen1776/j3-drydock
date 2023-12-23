@@ -47,20 +47,22 @@
       </div>
       <div *ngSwitchCase="eSideMenuId.PMSJobs">
         <div #pmsJobs>
-          <jb-pms-jobs
+          <jb-linked-pms-jobs-findings
             #PmsJobsComponent
             *ngIf="specificationDetailsInfo"
             [specificationDetailsInfo]="specificationDetailsInfo"
-          ></jb-pms-jobs>
+            (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.PMSJobs)"
+          ></jb-linked-pms-jobs-findings>
         </div>
       </div>
       <div *ngSwitchCase="eSideMenuId.Findings">
         <div #findings>
-          <jb-findings
+          <jb-linked-pms-jobs-findings
             #FindingsComponent
             *ngIf="specificationDetailsInfo"
             [specificationDetailsInfo]="specificationDetailsInfo"
-          ></jb-findings>
+            (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.Findings)"
+          ></jb-linked-pms-jobs-findings>
         </div>
       </div>
       <div *ngSwitchCase="eSideMenuId.Requisitions">
@@ -80,3 +82,11 @@
   *ngIf="showLoader"
   [theme]="'figma'"
 ></jb-progress-spinner>
+
+<jb-edit-sub-item-popup
+    *ngIf="showEditSubItem"
+    [isOpen]="!!showEditSubItem"
+    [subItemDetails]="subItemDetails"
+    [specificationUid]="specificationDetailsInfo.uid"
+    (closeDialog)="closeDialog($event)"
+></jb-edit-sub-item-popup>

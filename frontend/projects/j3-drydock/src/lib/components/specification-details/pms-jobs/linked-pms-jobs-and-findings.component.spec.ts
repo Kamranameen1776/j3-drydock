@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PmsJobsComponent } from './pms-jobs.component';
+import { LinkedPmsJobsAndFindingsComponent } from './linked-pms-jobs-and-findings.component';
 
 describe('PmsJobsComponent', () => {
-  let component: PmsJobsComponent;
-  let fixture: ComponentFixture<PmsJobsComponent>;
+  let component: LinkedPmsJobsAndFindingsComponent;
+  let fixture: ComponentFixture<LinkedPmsJobsAndFindingsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PmsJobsComponent ]
+      declarations: [ LinkedPmsJobsAndFindingsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PmsJobsComponent);
+    fixture = TestBed.createComponent(LinkedPmsJobsAndFindingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
