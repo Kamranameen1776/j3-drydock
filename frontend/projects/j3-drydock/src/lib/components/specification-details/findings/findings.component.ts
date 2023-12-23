@@ -12,7 +12,7 @@ export class FindingsComponent implements OnInit {
   @Input() specificationDetailsInfo: SpecificationDetails;
 
   public details: any = {};
-  public hiddenSegments: string[] = [TmLinkedRecordsRelationType.Parent, TmLinkedRecordsRelationType.Child];
+  public hiddenSegments: TmLinkedRecordsRelationType[] = [TmLinkedRecordsRelationType.Parent, TmLinkedRecordsRelationType.Child];
   public entitySelectionEnabledSegments = [TmLinkedRecordsRelationType.Related];
   public additionalEntityMenuOptions = [{ name: 'unlink', label: 'Unlink' }];
 
