@@ -101,22 +101,11 @@ export class YardsProjectsRepository {
             .execute();
     }
 
-    public async ListSelectedProjectYardsByProjectUid(projectUid: string): Promise<YardsProjectsEntity[]> {
-        const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
-        return yardProjectsRepository.find({
-            where: {
-                project_uid: projectUid,
-                is_selected: true,
-                active_status: true,
-            },
-        });
-    }
-
-    public async TryGetProjectYardByYardUid(yardUid: string): Promise<YardsProjectsEntity | undefined> {
+    public async FindProjectYardByProjectUid(projectUid: string): Promise<YardsProjectsEntity | undefined> {
         const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
         return yardProjectsRepository.findOne({
             where: {
-                yard_uid: yardUid,
+                project_uid: projectUid,
                 active_status: true,
             },
         });

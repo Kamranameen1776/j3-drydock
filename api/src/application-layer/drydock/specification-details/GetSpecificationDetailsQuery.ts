@@ -26,7 +26,7 @@ export class GetSpecificationDetailsQuery extends Query<Request, GetSpecificatio
         const assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(token);
 
         if (!assignedVessels.includes(vessel.VesselId)) {
-            throw new AuthorizationException(`You have no assingment on vessel: ${vessel.VesselName} `);
+            throw new AuthorizationException(`You have no assignment on vessel: ${vessel.VesselName} `);
         }
 
         return;

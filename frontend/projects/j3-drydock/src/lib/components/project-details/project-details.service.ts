@@ -160,7 +160,7 @@ export class ProjectDetailsService {
           id: 'ShipYard',
           label: 'Yard Name',
           isRequired: false,
-          isEditable: this.accessRights.edit && false,
+          isEditable: this.accessRights.edit,
           type: 'dropdown',
           getFieldName: 'ShipYardId',
           saveFieldName: 'ShipYardId',
