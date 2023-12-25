@@ -3,9 +3,9 @@ export interface IJobOrderDto {
 
   Code: string;
 
-  ItemSource: string;
-
   Progress: number;
+
+  ItemSource: string;
 
   Responsible: string;
 

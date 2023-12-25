@@ -32,7 +32,7 @@ import { statusBackground, statusIcon } from '../../../shared/statuses';
 import { ProjectCreate } from '../../../models/interfaces/projects';
 import { localAsUTCFromJbString } from '../../../utils/date';
 import { GrowlMessageService } from '../../../services/growl-message.service';
-import { eProjectDelete } from '../../../models/enums/project-details.enum';
+import { eProjectCreate, eProjectDelete } from '../../../models/enums/project-details.enum';
 import { FleetService } from '../../../services/fleet.setvice';
 import { eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
 
@@ -72,7 +72,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   public deleteProjectText = eProjectDelete.ProjectDeleteText;
 
-  public CreateBtnLabel = 'Create';
+  public CreateBtnLabel = eProjectCreate.BtnLabel;
 
   public gridInputs: GridInputsWithRequest;
 
@@ -80,7 +80,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   public deleteDialogVisible = false;
 
-  createProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Create Project' };
+  createProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: eProjectCreate.DialogueHeader };
 
   deleteProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: eProjectDelete.DeleteDialogueHeader };
 

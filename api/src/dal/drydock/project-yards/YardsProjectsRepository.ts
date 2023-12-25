@@ -100,4 +100,18 @@ export class YardsProjectsRepository {
             .where('uid = :uid', { uid })
             .execute();
     }
+
+    public async FindProjectYardByProjectUid(projectUid: string): Promise<YardsProjectsEntity | undefined> {
+        const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
+        return yardProjectsRepository.findOne({
+            where: {
+                project_uid: projectUid,
+                active_status: true,
+            },
+        });
+    }
+
+    public async SaveProjectYard(yardsProjectsEntity: YardsProjectsEntity, queryRunner: QueryRunner) {
+        await queryRunner.manager.save(yardsProjectsEntity);
+    }
 }

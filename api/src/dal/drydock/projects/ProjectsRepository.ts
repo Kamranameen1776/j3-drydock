@@ -2,7 +2,7 @@
 // UpdateProjectDto should be a part of the Infrastructure layer(DAL)
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
+import { getConnection, getManager, In, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
 import { UpdateProjectDto } from '../../../application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
@@ -149,7 +149,7 @@ export class ProjectsRepository {
         return query;
     }
 
-    private GetQueryForProjects(uid?: string): SelectQueryBuilder<ProjectEntity> {
+    private GetQueryForProjects(uid?: string, assignedVessels?: number[]): SelectQueryBuilder<ProjectEntity> {
         const projectRepository = getManager().getRepository(ProjectEntity);
 
         let query = projectRepository
@@ -158,10 +158,8 @@ export class ProjectsRepository {
                 'pr.uid AS ProjectId',
                 'pr.CreatedAtOffice AS CreatedAtOffice',
                 'tm.Code AS ProjectCode',
-
                 'tm.Status as ProjectStatusId',
                 'wdetails.StatusDisplayName as ProjectStatusName',
-
                 'vessel.VesselName AS VesselName',
                 'wt.WorklistTypeDisplay as ProjectTypeName',
                 'wt.WorklistType as ProjectTypeCode',
@@ -179,10 +177,14 @@ export class ProjectsRepository {
                 'pr.TaskManagerUid as TaskManagerUid',
                 'yd.registeredName as ShipYard',
                 'yd.uid as ShipYardUid',
-                `CONCAT(COUNT(sc.uid) - COUNT(CASE WHEN sc.status = '${TaskManagerConstants.specification.status.Completed}' THEN 1 END), '/', COUNT(sc.uid)) AS Specification`,
+                `CONCAT(COUNT(CASE WHEN sc.status = '${TaskManagerConstants.specification.status.Completed}' THEN 1 END), '/', COUNT(sc.uid)) AS Specification`,
             ])
             .leftJoin((qb) => this.getSpecificationCountQuery(qb, uid), 'sc', 'sc.projectUid = pr.uid')
-            .leftJoin(className(YardsProjectsEntity), 'ydp', 'ydp.project_uid = pr.uid')
+            .leftJoin(
+                className(YardsProjectsEntity),
+                'ydp',
+                'ydp.project_uid = pr.uid and ydp.is_selected = 1 and ydp.active_status = 1',
+            )
             .leftJoin(className(J3PrcCompanyRegistryEntity), 'yd', 'yd.uid = ydp.yard_uid')
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
@@ -237,6 +239,9 @@ export class ProjectsRepository {
         if (uid) {
             query = query.where('pr.uid = :uid', { uid });
         }
+        if (assignedVessels) {
+            query = query.where('vessel.vessel_id IN (:...ids)', { ids: assignedVessels });
+        }
         return query;
     }
 
@@ -252,12 +257,14 @@ export class ProjectsRepository {
      * @param data Http request object with Odata query
      * @returns Projects for the main page
      */
-    public async GetProjectsForMainPage(data: Request): Promise<ODataResult<IProjectsForMainPageRecordDto>> {
-        const query = this.GetQueryForProjects();
-
+    public async GetProjectsForMainPage(
+        data: Request,
+        assignedVessels: number[],
+    ): Promise<ODataResult<IProjectsForMainPageRecordDto>> {
         const oDataService = new ODataService(data, getConnection);
 
-        const result = await oDataService.getJoinResult(query.getQuery());
+        const [query, params] = this.GetQueryForProjects(undefined, assignedVessels).getQueryAndParameters();
+        const result = await oDataService.getJoinResult(query, params);
 
         return result;
     }
@@ -315,9 +322,8 @@ export class ProjectsRepository {
         return project.uid;
     }
 
-    // TODO: check if this method is used
-    public async UpdateProject(data: UpdateProjectDto, queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.manager.update(ProjectEntity, data.uid, data);
+    public async SaveProject(project: ProjectEntity, queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.manager.save(project);
     }
 
     public async DeleteProject(projectId: string, queryRunner: QueryRunner): Promise<void> {
@@ -326,5 +332,18 @@ export class ProjectsRepository {
         project.ActiveStatus = false;
 
         await queryRunner.manager.update(ProjectEntity, project.uid, project);
+    }
+
+    public async TryGetProjectByUid(uid: string): Promise<ProjectEntity | undefined> {
+        const projectRepository = getManager().getRepository(ProjectEntity);
+
+        const project = await projectRepository.findOne({
+            where: {
+                uid,
+                ActiveStatus: true,
+            },
+        });
+
+        return project;
     }
 }

@@ -89,22 +89,6 @@ export class SpecificationCreateFormService extends FormServiceBase {
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.DoneBy)
             }
           },
-          ItemSourceUid: {
-            type: eFieldControlType.Dropdown,
-            label: 'Item Source',
-            sectionID: this.formId,
-            enabled: true,
-            validatorRequired: false,
-            gridRowStart: 3,
-            gridRowEnd: 4,
-            gridColStart: 1,
-            gridColEnd: 1,
-            listRequest: {
-              labelKey: 'DisplayName',
-              valueKey: 'uid',
-              webApiRequest: this.specifications.getItemSources()
-            }
-          },
           Description: {
             type: eFieldControlType.TextAreaType,
             label: 'Description',

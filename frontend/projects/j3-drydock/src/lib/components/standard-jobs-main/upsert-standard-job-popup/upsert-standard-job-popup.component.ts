@@ -51,6 +51,8 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   formStructure: FormModel = this.popupFormService.formStructure;
 
+  showLoader = false;
+
   private changedSubItems: SubItem[] = [];
 
   constructor(
@@ -67,7 +69,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
       this.setPopupHeader();
       this.setPopupFooter();
       this.setAttachmentConfig();
-      this.initChangedSubIems();
+      this.initChangedSubItems();
     }
   }
 
@@ -111,6 +113,11 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   }
 
   private save() {
+    if (!this.isValidationsPassed()) {
+      return;
+    }
+
+    this.showLoader = true;
     const value = this.jobFormValue;
 
     this.isSaving = true;
@@ -127,6 +134,8 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
       )
       .subscribe(
         () => {
+          this.growlMessageService.setSuccessMessage('Standard Job saved successfully.');
+          this.showLoader = false;
           this.closePopup(true);
         },
         // eslint-disable-next-line rxjs/no-implicit-any-catch
@@ -134,14 +143,22 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
           if (err?.status === 422) {
             this.growlMessageService.setErrorMessage(err.error);
           } else {
-            this.growlMessageService.setErrorMessage('Server error occured');
+            this.growlMessageService.setErrorMessage('Server error occurred');
           }
         }
       );
   }
 
-  private initChangedSubIems() {
+  private initChangedSubItems() {
     const subItems = this.item?.subItems ?? [];
     this.changedSubItems = cloneDeep(subItems);
+  }
+
+  private isValidationsPassed(): boolean {
+    if (!this.isPopupValid) {
+      this.growlMessageService.setErrorMessage('Please fill the required fields');
+      return false;
+    }
+    return true;
   }
 }

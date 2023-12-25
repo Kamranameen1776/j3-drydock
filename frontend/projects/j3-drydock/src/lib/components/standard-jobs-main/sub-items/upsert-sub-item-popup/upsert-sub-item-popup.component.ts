@@ -1,3 +1,4 @@
+import { GrowlMessageService } from './../../../../services/growl-message.service';
 import { subItemUpsertFormId } from '../../../../models/constants/constants';
 import { SubItem } from '../../../../models/interfaces/sub-items';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
@@ -36,7 +37,7 @@ export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements
     return this.popupForm?.formGroup.getRawValue()[subItemUpsertFormId];
   }
 
-  constructor() {
+  constructor(private growlMessageService: GrowlMessageService) {
     super();
   }
 
@@ -73,6 +74,10 @@ export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements
   }
 
   private save() {
+    if (!this.isValidationsPassed()) {
+      return;
+    }
+
     const value = this.formValue;
 
     if (this.isEditing) {
@@ -80,5 +85,13 @@ export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements
     } else {
       this.closePopup({ ...value });
     }
+  }
+
+  private isValidationsPassed(): boolean {
+    if (!this.isPopupValid) {
+      this.growlMessageService.setErrorMessage('Please fill the required fields');
+      return false;
+    }
+    return true;
   }
 }
