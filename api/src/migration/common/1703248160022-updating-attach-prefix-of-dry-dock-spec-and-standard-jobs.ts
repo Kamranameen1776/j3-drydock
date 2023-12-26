@@ -11,7 +11,7 @@ export class updatingAttachPrefixOfDryDockSpecAndStandardJobs1703248160022 imple
             MERGE INTO INF_Lib_Function AS TARGET USING (
             VALUES
             (N'F808DA39-BA82-482B-90D8-912ECB41BC04', 'projdrydock'),
-            (N'660941D8-B00B-4C58-AD32-1F0A144B1C88', 'projspec_'),
+            (N'660941D8-B00B-4C58-AD32-1F0A144B1C88', 'projspec'),
             (N'9C79EF57-A1C6-40B4-A343-968976325150', 'projstandard')
             )
             AS SOURCE ([Function_UID], [attach_prefix])
