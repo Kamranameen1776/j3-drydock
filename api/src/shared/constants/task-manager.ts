@@ -11,9 +11,9 @@ export const TaskManagerConstants = {
         },
     },
     specification: {
-        wlType: 'dry_dock_spec',
-        module_code: 'tm_drydock_spec',
-        function_code: 'tm_drydock_spec',
+        wlType: 'specification',
+        module_code: 'project',
+        function_code: 'specification_details',
         status: {
             Raised: 'Raise',
             Approved: 'Approved',
