@@ -1,17 +1,6 @@
-import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { JobOrdersGridService } from './JobOrdersGridService';
-import {
-  eGridEvents,
-  eGridRowActions,
-  FormModel,
-  GridAction,
-  GridCellData,
-  GridComponent,
-  GridService,
-  IJbDialog,
-  JbEditorComponent,
-  UserService
-} from 'jibe-components';
+import { eGridEvents, eGridRowActions, GridAction, GridCellData, GridComponent, GridService, IJbDialog } from 'jibe-components';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
@@ -19,14 +8,14 @@ import { IJobOrderDto } from './dtos/IJobOrderDto';
 import { JobOrdersGridOdataKeys } from '../../../../models/enums/JobOrdersGridOdataKeys';
 import { NewTabService } from '../../../../services/new-tab-service';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
+import { FormGroupDirective } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
-import { EditorConfig } from '../../../../models/interfaces/EditorConfig';
-import { UTCAsLocal, currentLocalAsUTC, localDateJbStringAsUTC } from '../../../../utils/date';
-import { KeyValuePair } from '../../../../utils/KeyValuePair';
+import { currentLocalAsUTC } from '../../../../utils/date';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
-import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
+import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
+import { IJobOrdersFormComponent } from '../job-orders-form/IJobOrdersFormComponent';
+import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormResultDto';
 
 @Component({
   selector: 'jb-job-orders',
@@ -34,7 +23,7 @@ import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
   styleUrls: ['./job-orders.component.scss'],
   providers: [JobOrdersGridService, FormGroupDirective]
 })
-export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
+export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
   @ViewChild('lastUpdatedTemplate', { static: true }) lastUpdatedTemplate: TemplateRef<unknown>;
 
   @Input() projectId: string;
@@ -42,39 +31,10 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
   @ViewChild('jobOrdersGrid')
   jobOrdersGrid: GridComponent;
 
-  @ViewChild('remarksEditor')
-  remarksEditor: JbEditorComponent;
+  @ViewChild('jobOrderForm')
+  jobOrderForm: IJobOrdersFormComponent;
 
   public gridInputs: GridInputsWithRequest;
-
-  tools: ToolbarModule = {
-    items: [
-      'Bold',
-      'Italic',
-      'Underline',
-      'StrikeThrough',
-      'FontName',
-      'FontSize',
-      'FontColor',
-      // 'BackgroundColor',
-      // 'LowerCase',
-      // 'UpperCase',
-      'Formats',
-      'Alignments',
-      // 'OrderedList',
-      // 'UnorderedList',
-      // 'Outdent',
-      // 'Indent',
-      // 'CreateLink',
-      'Image',
-      'ClearFormat',
-      // 'Print',
-      // 'SourceCode',
-      'FullScreen'
-      // 'Undo',
-      // 'Redo'
-    ]
-  };
 
   readonly dateTimeFormat = this.jobOrdersGridService.dateTimeFormat;
 
@@ -84,21 +44,9 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
   public updateDialogVisible = false;
 
-  selectedSpecification: KeyValuePair<string, string> = { Key: '', Value: '' };
-
   updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Details' };
 
-  updateJobOrderForm: FormModel;
-
-  updateJobOrderFormGroup: FormGroup;
-
-  remarksEditorFormGroup: FormGroup = new FormGroup({
-    RemarksCtrl: new FormControl('', Validators.required)
-  });
-
   updateJobOrderButtonDisabled = false;
-
-  remarksEditorConfig: EditorConfig;
 
   constructor(
     private jobOrdersGridService: JobOrdersGridService,
@@ -106,18 +54,19 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
     private newTabService: NewTabService,
     private activatedRoute: ActivatedRoute,
     private gridService: GridService,
-    private userService: UserService,
     private growlMessageService: GrowlMessageService
   ) {
     super();
   }
 
+  ngAfterViewInit(): void {
+    this.jobOrderForm.onValueChangesIsFormValid.pipe(takeUntil(this.unsubscribe$)).subscribe((isValid) => {
+      this.updateJobOrderButtonDisabled = !isValid;
+    });
+  }
+
   ngOnInit(): void {
     this.setGridInputs();
-
-    this.updateJobOrderForm = this.jobOrdersGridService.getUpdateJobOrderForm();
-
-    this.remarksEditorConfig = this.jobOrdersGridService.getRemarksEditorConfig();
   }
 
   public onGridAction({ type }: GridAction<string, string>, jobOrderDto: IJobOrderDto): void {
@@ -126,86 +75,61 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
         throw new Error('jobOrderDto is null');
       }
 
-      this.updateDialogReset();
-
-      const controls = (this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup).controls;
-
-      controls.SpecificationUid.setValue(jobOrderDto.SpecificationUid);
-      controls.Progress.setValue(jobOrderDto.Progress);
-
-      this.selectedSpecification.Key = jobOrderDto.SpecificationUid;
-      this.selectedSpecification.Value = jobOrderDto.Code;
-
-      this.remarksEditor.key1 = jobOrderDto.SpecificationUid;
-      this.remarksEditor.vesselId = this.userService.getUserDetails().VesselId;
-
       this.jobOrdersService
         .getJobOrderBySpecification({
           SpecificationUid: jobOrderDto.SpecificationUid
         })
         .pipe(takeUntil(this.unsubscribe$))
         .subscribe((jobOrder) => {
+          const jobOrderForm: IJobOrderFormDto = {
+            SpecificationUid: jobOrderDto.SpecificationUid,
+            Progress: jobOrderDto.Progress,
+            Code: jobOrderDto.Code
+          };
+
           if (jobOrder) {
-            this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(jobOrder.Remarks);
-            controls.Remarks.setValue(jobOrder.Remarks);
-            controls.Subject.setValue(jobOrder.Subject);
-            controls.Status.setValue(jobOrder.Status);
-            controls.JobOrderUid.setValue(jobOrder.JobOrderUid);
-
-            const specificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate);
-            const specificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate);
-
-            controls.SpecificationStartDate.setValue(specificationStartDate);
-            controls.SpecificationEndDate.setValue(specificationEndDate);
+            jobOrderForm.Remarks = jobOrder.Remarks;
+            jobOrderForm.Subject = jobOrder.Subject;
+            jobOrderForm.Status = jobOrder.Status;
+            jobOrderForm.SpecificationStartDate = jobOrder.SpecificationStartDate;
+            jobOrderForm.SpecificationEndDate = jobOrder.SpecificationEndDate;
           }
+
+          this.jobOrderForm.init(jobOrderForm);
 
           this.showUpdateDialog(true);
         });
     }
   }
 
-  public updateDialogReset() {
-    this.updateJobOrderFormGroup.reset();
-    this.remarksEditorFormGroup.reset();
-  }
-
   public showUpdateDialog(value = true) {
     this.updateDialogVisible = value;
-  }
-
-  public initUpdateJobOrderFormGroup(action: FormGroup): void {
-    this.updateJobOrderFormGroup = action;
-
-    this.updateJobOrderFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      this.updateJobOrderButtonDisabled = !this.updateJobOrderFormGroup.valid;
-    });
   }
 
   public updateJobOrder() {
     this.updateJobOrderButtonDisabled = true;
 
-    const jobOrder = this.updateJobOrderFormGroup.value.jobOrderUpdate;
+    const result = this.jobOrderForm.save();
 
-    const startDate: Date = localDateJbStringAsUTC(jobOrder.SpecificationStartDate, this.jobOrdersGridService.dateTimeFormat);
-    const endDate: Date = localDateJbStringAsUTC(jobOrder.SpecificationEndDate, this.jobOrdersGridService.dateTimeFormat);
-
-    if (startDate.getTime() >= endDate.getTime()) {
-      this.growlMessageService.setErrorMessage('Start date cannot be greater or equal End date');
+    if (result instanceof Error) {
+      this.growlMessageService.setErrorMessage(result.message);
       return;
     }
+
+    const jobOrder = result as IJobOrderFormResultDto;
 
     const data: IUpdateJobOrderDto = {
       SpecificationUid: jobOrder.SpecificationUid,
       LastUpdated: currentLocalAsUTC(),
       Progress: jobOrder.Progress,
 
-      SpecificationStartDate: startDate,
-      SpecificationEndDate: endDate,
+      SpecificationStartDate: jobOrder.SpecificationStartDate,
+      SpecificationEndDate: jobOrder.SpecificationEndDate,
 
       Status: jobOrder.Status,
       Subject: jobOrder.Subject,
 
-      Remarks: jobOrder.Remarks ?? ''
+      Remarks: jobOrder.Remarks
     };
 
     this.jobOrdersService
@@ -226,11 +150,6 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit {
 
   public onMatrixRequestChanged() {
     this.jobOrdersGrid.odata.filter.eq(JobOrdersGridOdataKeys.ProjectUid, this.projectId);
-  }
-
-  public remarksEditorUpdateParentCtrlValue(remarks: string) {
-    const controls = (this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup).controls;
-    controls.Remarks.setValue(remarks);
   }
 
   public navigateToSpecificationDetails(specificationUid: string) {
