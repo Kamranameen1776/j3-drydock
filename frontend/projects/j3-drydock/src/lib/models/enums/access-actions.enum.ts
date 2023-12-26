@@ -12,7 +12,10 @@ export enum eProjectsAccessActions {
   deleteProject = 'delete',
   viewDetail = 'view_details_dry_dock_project',
   viewGridVessel = 'view_projects_list_onboard',
-  viewDetailVessel = 'view_dd_project_details_onb'
+  viewDetailVessel = 'view_dd_project_details_onb',
+  viewTechSpec = 'view_tech_spec',
+  addSpecFromStandardJobs = 'add_spec_from_standard_jobs',
+  addSpecFromAdHoc = 'add_spec_from_ad_hoc'
 }
 
 export enum eProjectsDetailsAccessActions {

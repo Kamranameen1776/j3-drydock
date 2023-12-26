@@ -28,6 +28,7 @@ import { DetailsService } from '../../services/details.service';
 import { UTCAsLocal } from '../../utils/date';
 import { cloneDeep } from 'lodash';
 import { StatementOfFactsComponent } from './project-monitoring/statement-of-facts/statement-of-facts.component';
+import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
 
 @Component({
   selector: 'jb-project-details',
@@ -76,20 +77,27 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     return this.accessRights?.edit;
   }
 
-  specificationsCreateNewItems = [
-    {
-      label: 'Standard Jobs',
-      command: () => {
-        this.openCreateFromStandardJobPopup();
-      }
-    },
-    {
-      label: 'Create Ad hoc',
-      command: () => {
-        this.openSpecificationsPopup();
-      }
+  get specificationsCreateNewItems() {
+    const res = [];
+
+    if (this.projectsService.hasAccess(eProjectsAccessActions.addSpecFromStandardJobs)) {
+      res.push({
+        label: 'From Standard Jobs',
+        command: () => {
+          this.openCreateFromStandardJobPopup();
+        }
+      });
     }
-  ];
+    if (this.projectsService.hasAccess(eProjectsAccessActions.addSpecFromAdHoc)) {
+      res.push({
+        label: 'Create Ad hoc',
+        command: () => {
+          this.openSpecificationsPopup();
+        }
+      });
+    }
+    return res;
+  }
 
   menu = cloneDeep(projectDetailsMenuData);
 
