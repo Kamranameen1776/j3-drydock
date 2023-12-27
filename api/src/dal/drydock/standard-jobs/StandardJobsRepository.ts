@@ -49,7 +49,7 @@ export class StandardJobsRepository {
                     'sj.scope as scope,' +
                     'sj."function" as "function",' +
                     'sj."function_uid" as "functionUid",' +
-                    'CONCAT(sj.code, sj.number) as code,' +
+                    'sj.code as code,' +
                     'sj.category_uid as categoryUid,' +
                     'sj.done_by_uid as doneByUid,' +
                     'db.displayName as doneBy,' +
@@ -124,6 +124,16 @@ export class StandardJobsRepository {
             .getSql();
 
         return oDataService.getJoinResult(innerQuery);
+    }
+
+    public async getStandardJobRunningNumber(functionUid: string): Promise<number | undefined> {
+        const result = await getManager()
+            .createQueryBuilder(StandardJobs, 'sj')
+            .select('MAX(sj.number)', 'maxNumber')
+            .where('sj.active_status = :activeStatus', { activeStatus: 1 })
+            .andWhere('sj.function_uid = :function', { function: functionUid })
+            .getRawOne();
+        return result.maxNumber;
     }
 
     public async createStandardJob(
