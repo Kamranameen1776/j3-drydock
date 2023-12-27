@@ -55,7 +55,6 @@ export class StandardJobs extends BaseDatesEntity {
     @Column('int', {
         nullable: false,
         name: 'number',
-        generated: 'increment',
     })
     number: number;
 
