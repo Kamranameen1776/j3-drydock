@@ -127,13 +127,13 @@ export class StandardJobsRepository {
     }
 
     public async getStandardJobRunningNumber(functionUid: string): Promise<number | undefined> {
-        const maxNumber = await getManager()
+        const result = await getManager()
             .createQueryBuilder(StandardJobs, 'sj')
             .select('MAX(sj.number)', 'maxNumber')
             .where('sj.active_status = :activeStatus', { activeStatus: 1 })
             .andWhere('sj.function_uid = :function', { function: functionUid })
             .getRawOne();
-        return maxNumber.maxNumber;
+        return result.maxNumber;
     }
 
     public async createStandardJob(
