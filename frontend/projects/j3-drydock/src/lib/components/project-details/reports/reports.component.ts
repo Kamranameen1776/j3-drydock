@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { DailyReportsGridService } from './reports.service';
 import { IProjectsForMainPageGridDto } from '../../projects-main-page/projects-specifications-grid/dtos/IProjectsForMainPageGridDto';
+import { IDailyReportsResultDto } from './dto/IDailyReportsResultDto';
 
 @Component({
   selector: 'jb-daily-reports',
@@ -20,7 +21,8 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
   @ViewChild('reportDateTemplate', { static: true }) reportDateTemplate: TemplateRef<unknown>;
 
   reportUid: string;
-
+  reportInfo: IDailyReportsResultDto;
+  isNew: boolean;
   deleteReportDialog: IJbDialog = {
     ...getSmallPopup(),
     dialogHeader: 'Delete Daily Report'
@@ -49,32 +51,32 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
   }
 
   async onActionClick({ type, payload }: IGridAction) {
-    const uid = payload?.uid;
-    if (uid) {
-      this.reportUid = uid;
-    }
+    this.reportInfo = payload;
+    // type === eGridRowActions.Edit ? (this.reportUid = this.reportInfo.uid) : '';
 
     switch (type) {
       case eGridRowActions.Delete:
         this.showDeleteDialog(true);
         break;
       case eGridRowActions.Edit:
+        this.showCreateReport(false);
         break;
       case this.gridData.gridButton.label:
-        this.showCreateReport();
+        this.showCreateReport(true);
         break;
       default:
         return;
     }
   }
 
-  showCreateReport(uid?: string) {
+  showCreateReport(isNew: boolean) {
+    this.isNew = isNew;
     this.createPopupVisible = true;
   }
 
   public deleteReportHandler() {
     this.reportsService
-      .deleteDailyReport({ uid: this.reportUid })
+      .deleteDailyReport({ uid: this.reportInfo.uid })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         this.showDeleteDialog(false);

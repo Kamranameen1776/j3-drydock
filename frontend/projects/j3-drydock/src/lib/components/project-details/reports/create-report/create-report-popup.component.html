@@ -4,10 +4,28 @@
   (closeDialog)="onClosePopup()"
 >
   <div jb-dialog-body>
-      <div class="header">
-          <label></label>
-          <input [(ngModel)]='reportName' id='reportName' pInputText type='text'>
+    <div class="header">
+      <label></label>
+      <input
+        [(ngModel)]="reportName"
+        id="reportName"
+        pInputText
+        type="text"
+      />
+    </div>
+
+    <div class="content">
+      <div class="content-left">
+        <jb-left-side-list
+          [jobOrdersToLink]="jobOrdersToLink"
+          (openJobOrderDialog)="openJobOrderDialog($event)"
+          (selectedSpecificationUid)="onSelectedUpdate($event)"
+        ></jb-left-side-list>
       </div>
+      <div class="content-right">
+        <jb-job-orders-form #selectJobOrderForm></jb-job-orders-form>
+      </div>
+    </div>
   </div>
 
   <ng-container jb-dialog-footer>
@@ -20,3 +38,11 @@
     ></jb-dialog-footer>
   </ng-container>
 </jb-dialog>
+
+<jb-select-job-order-popup
+  #jobOrderPopup
+  [isOpen]="jobOrderPopupVisible"
+  (closeDialog)="onCloseJobOrderPopup($event)"
+  [projectId]="projectId"
+  (selectedJobOrders)="onSelectedUpdates($event)"
+></jb-select-job-order-popup>

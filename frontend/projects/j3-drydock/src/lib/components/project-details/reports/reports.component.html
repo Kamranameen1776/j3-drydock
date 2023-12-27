@@ -43,6 +43,11 @@
   <jb-drydock-grid-cell-popover [value]="rowData.reportDate | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
 </ng-template>
 
-<jb-drydock-create-report-popup *ngIf="createPopupVisible" [isOpen]="createPopupVisible" (closeDialog)="onCloseCreatePopup()">
-
-</jb-drydock-create-report-popup>
+<jb-drydock-create-report-popup
+  *ngIf="createPopupVisible"
+  [isNew]="isNew"
+  [isOpen]="createPopupVisible"
+  (closeDialog)="onCloseCreatePopup()"
+  [reportUid]="isNew === true ? '' : reportInfo.uid"
+  [projectId]="projectId"
+></jb-drydock-create-report-popup>

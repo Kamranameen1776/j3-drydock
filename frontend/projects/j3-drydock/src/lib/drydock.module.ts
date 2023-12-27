@@ -63,6 +63,9 @@ import { JobOrdersFormComponent } from './components/project-details/project-mon
 import { CreateReportPopupComponent } from './components/project-details/reports/create-report/create-report-popup.component';
 import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
 import { ItemCardComponent } from './shared/components/item-card/item-card.component';
+import { LeftSideListComponent } from './components/project-details/reports/create-report/left-side-list/left-side-list.component';
+import { SelectJobOrderPopupComponent } from './components/project-details/reports/create-report/select-job-order-popup/select-job-order-popup.component';
+import { SelectJobOrderGridComponent } from './components/project-details/reports/create-report/select-job-order-grid/select-job-order-grid.component';
 
 import { GanttModule } from '@syncfusion/ej2-angular-gantt';
 import { GanttChartComponent } from './components/project-details/project-monitoring/gantt-chart/gantt-chart.component';
@@ -112,7 +115,10 @@ import { GanttChartComponent } from './components/project-details/project-monito
     JobOrdersFormComponent,
     JobOrdersFormComponent,
     CreateReportPopupComponent,
-    ItemCardComponent
+    ItemCardComponent,
+    LeftSideListComponent,
+    SelectJobOrderPopupComponent,
+    SelectJobOrderGridComponent
   ],
   imports: [
     CommonModule,

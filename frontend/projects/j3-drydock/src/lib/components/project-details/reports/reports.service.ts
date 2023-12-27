@@ -3,6 +3,8 @@ import { ApiRequestService, Column, GridRowActions, WebApiRequest, eCrud, eGridA
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
 import { localAsUTC } from '../../../utils/date';
+import { CreateDailyReportsDto } from './dto/CreateDailyReportsDto';
+import { UpdateDailyReportsDto } from './dto/UpdateDailyReportsDto';
 
 @Injectable()
 export class DailyReportsGridService {
@@ -88,7 +90,7 @@ export class DailyReportsGridService {
     return this.apiRequestService.sendApiReq(request);
   }
 
-  createDailyReport(data: { ProjectUid: string; ReportName: string; ReportDate: Date; Remarks: string; CreatedAt: Date }) {
+  createDailyReport(data: CreateDailyReportsDto) {
     const request: WebApiRequest = {
       apiBase: 'dryDockAPI',
       entity: 'drydock',
@@ -96,9 +98,45 @@ export class DailyReportsGridService {
       crud: eCrud.Post,
       body: {
         ...data,
-        ReportDate: localAsUTC(data.ReportDate),
-        CreatedAt: localAsUTC(data.CreatedAt)
+        ReportDate: localAsUTC(data.ReportDate)
       }
+    };
+
+    return this.apiRequestService.sendApiReq(request);
+  }
+
+  updateDailyReport(data: UpdateDailyReportsDto) {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      action: 'daily-reports/update-daily-reports',
+      crud: eCrud.Put,
+      body: {
+        ...data
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(request);
+  }
+
+  getJobOrders() {
+    const request = {
+      apiBase: 'dryDockAPI',
+      action: 'projects/job-orders/get-job-orders',
+      crud: eCrud.Post,
+      entity: 'drydock'
+    };
+
+    return this.apiRequestService.sendApiReq(request);
+  }
+
+  getOneDailyReport(reportUid: string) {
+    const request = {
+      apiBase: 'dryDockAPI',
+      action: 'daily-reports/get-one-daily-report',
+      crud: eCrud.Get,
+      entity: 'drydock',
+      params: `uid=${reportUid}`
     };
 
     return this.apiRequestService.sendApiReq(request);
