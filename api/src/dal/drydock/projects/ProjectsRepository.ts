@@ -4,7 +4,6 @@ import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, In, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
-import { UpdateProjectDto } from '../../../application-layer/drydock/projects/dtos/UpdateProjectDto';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { J3PrcCompanyRegistryEntity, SpecificationDetailsEntity, YardsProjectsEntity } from '../../../entity/drydock';
 import { JmsDtlWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';

@@ -4,7 +4,10 @@ import { SpecificationDetailsRepository } from '../../../dal/drydock/specificati
 import { SpecificationDetailsEntity } from '../../../entity/drydock/SpecificationDetailsEntity';
 import { GridFilter } from '../../../shared/interfaces/GridFilter';
 import { Query } from '../core/cqrs/Query';
-import { SpecificationDetailsGridFiltersKeys, specificationDetailsGridFiltersKeys } from './SpecificationDetailsConstants';
+import {
+    SpecificationDetailsGridFiltersKeys,
+    specificationDetailsGridFiltersKeys,
+} from './SpecificationDetailsConstants';
 
 export class GetManySpecificationDetailsQuery extends Query<
     Request,

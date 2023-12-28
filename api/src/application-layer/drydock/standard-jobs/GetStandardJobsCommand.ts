@@ -2,8 +2,8 @@ import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard
 import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
 import { RequestWithOData } from '../../../shared/interfaces';
 import { Command } from '../core/cqrs/Command';
-import { StandardJobsGridFiltersKeys, standardJobsGridFiltersKeys } from './StandardJobsConstants';
 import { GetStandardJobsResultDto } from './dto';
+import { StandardJobsGridFiltersKeys, standardJobsGridFiltersKeys } from './StandardJobsConstants';
 
 export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandardJobsResultDto> {
     standardJobsRepository = new StandardJobsRepository();

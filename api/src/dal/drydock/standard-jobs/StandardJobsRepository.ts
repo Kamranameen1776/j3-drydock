@@ -1,7 +1,6 @@
 import { ApiRequestService, DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, In, QueryRunner, UpdateResult } from 'typeorm';
 
-import { StandardJobsGridFiltersKeys } from '../../../application-layer/drydock/standard-jobs/StandardJobsConstants';
 import {
     CreateStandardJobsRequestDto,
     GetStandardJobsQueryResult,
@@ -11,6 +10,7 @@ import {
     UpdateStandardJobsRequestDto,
     UpdateStandardJobSubItemsRequestDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
+import { StandardJobsGridFiltersKeys } from '../../../application-layer/drydock/standard-jobs/StandardJobsConstants';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import {
