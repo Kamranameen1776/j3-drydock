@@ -1,7 +1,7 @@
 import { ApiRequestService, DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, In, QueryRunner, UpdateResult } from 'typeorm';
 
-import { StandardJobsGridFiltersKeys } from '../../../application-layer/drydock/standard-jobs/Constants';
+import { StandardJobsGridFiltersKeys } from '../../../application-layer/drydock/standard-jobs/StandardJobsConstants';
 import {
     CreateStandardJobsRequestDto,
     GetStandardJobsQueryResult,
