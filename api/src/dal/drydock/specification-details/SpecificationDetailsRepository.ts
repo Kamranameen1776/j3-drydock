@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, In, QueryRunner } from 'typeorm';
 
-import { SpecificationDetailsGridFiltersKeys } from '../../../application-layer/drydock/specification-details/Constants1';
+import { SpecificationDetailsGridFiltersKeys } from '../../../application-layer/drydock/specification-details/Constants';
 import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
 import { GetRequisitionsResponseDto } from '../../../application-layer/drydock/specification-details/dtos/GetRequisitionsResponseDto';
 import { GetSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto';
