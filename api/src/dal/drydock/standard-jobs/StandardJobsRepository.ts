@@ -232,6 +232,7 @@ export class StandardJobsRepository {
                         .createQueryBuilder(tableName, 'lsca')
                         .select(`DISTINCT lsca.ID as uid, lsca.Authority as displayName`)
                         .where('lsca.active_status = 1')
+                        .orderBy('lsca.Authority', 'ASC')
                         .getRawMany();
             }
         }
