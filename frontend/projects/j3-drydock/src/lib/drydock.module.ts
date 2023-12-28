@@ -63,6 +63,7 @@ import { EditSubItemPopupComponent } from './components/specification-details/ed
 import { PmsJobsComponent } from './components/specification-details/pms-jobs/pms-jobs.component';
 // import { JbTaskManagerLinkedRecordsComponent } from './components/jb-components-temp/jb-tm-linked-records/jb-task-manager-linked-records.component';
 import { FindingsComponent } from './components/specification-details/findings/findings.component';
+import { DynamicComponentsExampleModule } from './components/specification-details/findings/dynamic-components/dynamic-components-example.module';
 
 @NgModule({
   declarations: [
@@ -123,7 +124,8 @@ import { FindingsComponent } from './components/specification-details/findings/f
     SidebarModule,
     FormsModule,
     PrimeNgModule,
-    MenuModule
+    MenuModule,
+    DynamicComponentsExampleModule
   ],
   providers: [
     DatePipe,

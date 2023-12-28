@@ -28,16 +28,16 @@ export class PmsJobsComponent implements OnInit {
       // Vessel_Name: 'Akashiano', //parent vessel name
       // Vessel_ID: 904, //parent vessel ID
       // vessel_uid: 'F9EAF49F-8428-42F7-B2C5-71AA66E10D91', //parrent vessel uid
-      WL_TYPE: 'master_review', //parent worklist type
-      module_code: 'tm_master_review', //parent module code
-      function_code: 'tm_master_review_detail', // parent fnction code
+      // WL_TYPE: 'master_review', //parent worklist type
+      // module_code: 'tm_master_review', //parent module code
+      // function_code: 'tm_master_review_detail', // parent fnction code
       uid: this.specificationDetailsInfo.TaskManagerUid,
-      // function_code: eFunction.SpecificationDetails,
+      function_code: eFunction.SpecificationDetails,
       Vessel_Name: this.specificationDetailsInfo.VesselName, //parent vessel name
       Vessel_ID: this.specificationDetailsInfo.VesselId, //parent vessel ID
       vessel_uid: this.specificationDetailsInfo.VesselUid, //parent vessel uid
-      // WL_TYPE: this.specificationDetailsInfo.SpecificationTypeCode, //parent worklist type
-      // module_code: eModule.Project //parent module code
+      WL_TYPE: this.specificationDetailsInfo.SpecificationTypeCode, //parent worklist type
+      module_code: eModule.Project //parent module code
     };
   }
 
