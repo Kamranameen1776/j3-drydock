@@ -10,6 +10,7 @@ import {
     UpdateStandardJobsRequestDto,
     UpdateStandardJobSubItemsRequestDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
+import { StandardJobsGridFiltersKeys } from '../../../application-layer/drydock/standard-jobs/StandardJobsConstants';
 import { StandardJobsService } from '../../../bll/drydock/standard_jobs/standard-jobs.service';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import {
@@ -27,11 +28,13 @@ import { RepoUtils } from '../utils/RepoUtils';
 export class StandardJobsRepository {
     private standardJobsService = new StandardJobsService();
 
-    public async getStandardJobs(data: RequestWithOData): Promise<GetStandardJobsQueryResult> {
+    public async getStandardJobs(
+        data: RequestWithOData,
+        filters: Record<StandardJobsGridFiltersKeys, string[]>,
+    ): Promise<GetStandardJobsQueryResult> {
         const oDataService = new ODataService(data, getConnection);
-
         const innerQuery = getManager()
-            .createQueryBuilder('standard_jobs', 'sj')
+            .createQueryBuilder(StandardJobs, 'sj')
             .leftJoin('standard_jobs_vessel_type', 'sjvt', `sjvt.standard_job_uid = sj.uid`)
             .leftJoin('standard_jobs_survey_certificate_authority', 'sjsca', `sjsca.standard_job_uid = sj.uid`)
             .leftJoin('LIB_Survey_CertificateAuthority', 'lsca', `lsca.ID = sjsca.survey_id and lsca.Active_Status = 1`)
@@ -120,10 +123,20 @@ export class StandardJobsRepository {
                     `,sj.material_supplied_by_uid` +
                     `,msb.display_name`,
             )
-            .where('sj.active_status = 1')
-            .getSql();
+            .where('sj.active_status = 1');
 
-        return oDataService.getJoinResult(innerQuery);
+        if (filters.inspectionId?.length) {
+            innerQuery.andWhere(`lsca.ID IN (:...inspectionId)`, { inspectionId: filters.inspectionId });
+        }
+
+        if (filters.vesselTypeId?.length) {
+            innerQuery.andWhere(`vt.ID IN (:...vesselTypeId)`, { vesselTypeId: filters.vesselTypeId });
+        }
+
+        innerQuery.getSql();
+
+        const [sql, params] = innerQuery.getQueryAndParameters();
+        return oDataService.getJoinResult(sql, params);
     }
 
     public async getStandardJobRunningNumber(functionUid: string): Promise<number | undefined> {
