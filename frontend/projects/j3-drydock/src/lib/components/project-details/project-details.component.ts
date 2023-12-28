@@ -82,7 +82,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
     if (this.projectsService.hasAccess(eProjectsAccessActions.addSpecFromStandardJobs)) {
       res.push({
-        label: 'From Standard Jobs',
+        label: 'Standard Jobs',
         command: () => {
           this.openCreateFromStandardJobPopup();
         }
