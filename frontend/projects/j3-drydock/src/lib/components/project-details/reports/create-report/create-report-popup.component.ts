@@ -171,11 +171,12 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
     this.isSaving = true;
     this.showLoader = true;
     this.reportName = this.createReportForm.controls.reportName.value;
-    let cratePayload: CreateDailyReportsDto;
+
+    let createPayload: CreateDailyReportsDto;
     let updatePayload: UpdateDailyReportsDto;
 
     this.isNew
-      ? (cratePayload = {
+      ? (createPayload = {
           ProjectUid: this.projectId,
           ReportName: this.reportName,
           ReportDate: new Date(),
@@ -190,7 +191,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
 
     this.isNew
       ? this.reportsService
-          .createDailyReport(cratePayload)
+          .createDailyReport(createPayload)
           .pipe(
             finalize(() => {
               this.isSaving = false;

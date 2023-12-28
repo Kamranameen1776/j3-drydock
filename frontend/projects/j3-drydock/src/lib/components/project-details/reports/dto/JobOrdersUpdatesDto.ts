@@ -3,9 +3,9 @@ export interface JobOrdersUpdatesDto {
   remark: string;
   specificationUid: string;
   specificationCode: string;
-  status: string;
-  progress: number;
   lastUpdated: Date;
   specificationSubject: string;
   updatedBy?: string;
+  status: string;
+  progress: string;
 }
