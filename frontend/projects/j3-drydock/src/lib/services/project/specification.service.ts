@@ -184,7 +184,8 @@ export class SpecificationGridService {
       type: 'multiselect',
       Active_Status: true,
       Active_Status_Config_Filter: true,
-      gridName: this.gridName
+      gridName: this.gridName,
+      sendFilterAs: 'gridFilters'
     },
     {
       DisplayText: 'Status',
