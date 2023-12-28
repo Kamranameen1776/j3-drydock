@@ -2,9 +2,9 @@ import { Request } from 'express';
 
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { SpecificationDetailsEntity } from '../../../entity/drydock/SpecificationDetailsEntity';
+import { GridFilter } from '../../../shared/interfaces/GridFilter';
 import { Query } from '../core/cqrs/Query';
-import { SpecificationDetailsGridFiltersKeys, specificationDetailsGridFiltersKeys } from './constants';
-import { GridFilter } from '../../../shared/odata/gridFilter';
+import { SpecificationDetailsGridFiltersKeys, specificationDetailsGridFiltersKeys } from './Constants';
 
 export class GetManySpecificationDetailsQuery extends Query<
     Request,
