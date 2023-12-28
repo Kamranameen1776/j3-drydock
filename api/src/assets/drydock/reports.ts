@@ -520,11 +520,10 @@ const start = async (data: any) => {
     const reportGenerator = new ReportGenerator();
     await reportGenerator.generateReport(data);
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.readFile('temp.xlsx');
+    await workbook.xlsx.readFile('1.xlsx');
     const worksheet = workbook.getWorksheet(1) as ExcelJS.Worksheet;
-    console.dir(worksheet.getCell('B97').style, { depth: null });
-    console.dir(worksheet.getRow(58).height, { depth: null });
-    console.dir(worksheet.getRow(97).height, { depth: null });
+    console.dir(worksheet.getCell('B25').style, { depth: null });
+    console.dir(worksheet.getCell('C25').style, { depth: null });
 
     console.log('done');
 };

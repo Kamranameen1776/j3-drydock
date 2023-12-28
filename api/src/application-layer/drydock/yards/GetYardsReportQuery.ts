@@ -56,6 +56,50 @@ The quotation currency MUST be the same for all quoted costs, and has to be chos
                         },
                     ],
                 },
+                {
+                    name: 'asdf->asdf',
+                    jobs: [
+                        {
+                            specificationCode: 'qwqwqw',
+                            specificationDescription: 'qwerty',
+                            subItems: [
+                                {
+                                    code: 'dsa',
+                                    description: 'dsa',
+                                    qty: 2,
+                                    uom: 'UOM',
+                                    price: 500,
+                                    discount: '50%',
+                                    comment: 'comment',
+                                },
+                                {
+                                    code: 'dsa',
+                                    description: 'dsa',
+                                    qty: 89,
+                                    uom: 'UOM',
+                                    price: 543,
+                                    discount: '10%',
+                                    comment: 'comment',
+                                },
+                            ],
+                        },
+                        {
+                            specificationCode: 'dsadsa',
+                            specificationDescription: 'vcxvcxv',
+                            subItems: [
+                                {
+                                    code: 'dsa',
+                                    description: 'dsa',
+                                    qty: 2,
+                                    uom: 'UOM',
+                                    price: 500,
+                                    discount: '50%',
+                                    comment: 'comment',
+                                },
+                            ],
+                        },
+                    ],
+                },
             ],
             footer: 'END OF SPECIFICATIONS',
         };

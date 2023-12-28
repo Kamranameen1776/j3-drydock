@@ -47,18 +47,34 @@ export class ReportGeneratorService {
     private finishReport(worksheet: ExcelJS.Worksheet, data: any) {
         worksheet.getCell('B2').value = data.title;
         worksheet.getCell('C3').value = data.notes;
+        worksheet.getCell('C3').protection = {
+            locked: false,
+        };
         worksheet.getCell('D8').value = data.yardRemark;
-
+        worksheet.getCell('D8').protection = {
+            locked: false,
+        };
         worksheet.getCell('C7').value = data.vessel;
         worksheet.getCell('C8').value = data.requestedBy;
         worksheet.getCell('C9').value = data.yard;
         worksheet.getCell('C10').value = data.project;
         worksheet.getCell('C11').value = data.period;
         worksheet.getCell('C12').value = data.currency;
+        worksheet.getCell('C12').protection = {
+            locked: false,
+        };
         worksheet.getCell('C13').value = data.discount;
+        worksheet.getCell('C13').protection = {
+            locked: false,
+        };
         worksheet.getCell('C14').value = data.berthDays;
+        worksheet.getCell('C14').protection = {
+            locked: false,
+        };
         worksheet.getCell('C15').value = data.dockDays;
-
+        worksheet.getCell('C15').protection = {
+            locked: false,
+        };
         worksheet.getCell('H12').value = {
             formula: `SUM(${this.sumArray.join(',')})`,
         };
@@ -66,12 +82,13 @@ export class ReportGeneratorService {
         worksheet.getRow(this.cRow).height = 30;
         worksheet.mergeCells(`B${this.cRow}:I${this.cRow}`);
         worksheet.getCell(`B${this.cRow}`).value = data.footer;
-        worksheet.getCell(`B${this.cRow}`).style = {
+        const ftStyle = {
             font: { bold: true, size: 10, color: { theme: 0 }, name: 'Arial' },
             border: {
                 left: { style: 'medium', color: { argb: 'FF000000' } },
                 top: { style: 'dotted', color: { argb: 'FF000000' } },
                 bottom: { style: 'medium', color: { argb: 'FF000000' } },
+                right: { style: 'medium', color: { argb: 'FF000000' } },
             },
             fill: {
                 type: 'pattern',
@@ -80,19 +97,27 @@ export class ReportGeneratorService {
                 bgColor: { argb: 'FF0E2841' },
             },
             alignment: { horizontal: 'center', vertical: 'middle' },
-        };
+        } as ExcelJS.Style;
+        worksheet.getCell(`B${this.cRow}`).style = ftStyle;
+        worksheet.getCell(`C${this.cRow}`).style = ftStyle;
+        worksheet.getCell(`D${this.cRow}`).style = ftStyle;
+        worksheet.getCell(`E${this.cRow}`).style = ftStyle;
+        worksheet.getCell(`F${this.cRow}`).style = ftStyle;
+        worksheet.getCell(`G${this.cRow}`).style = ftStyle;
+        worksheet.getCell(`H${this.cRow}`).style = ftStyle;
+        worksheet.getCell(`I${this.cRow}`).style = ftStyle;
     }
 
     private addFunctionHeader(worksheet: ExcelJS.Worksheet, name: string) {
         worksheet.getRow(this.cRow).height = 30;
         worksheet.mergeCells(`B${this.cRow}:I${this.cRow}`);
-        const cell = worksheet.getCell(`B${this.cRow}`);
-        cell.value = name;
-        cell.style = {
+        worksheet.getCell(`B${this.cRow}`).value = name;
+        const hStyle = {
             font: { bold: true, size: 10, color: { theme: 0 }, name: 'Arial' },
             border: {
                 left: { style: 'medium', color: { argb: 'FF000000' } },
                 top: { style: 'dotted', color: { argb: 'FF000000' } },
+                right: { style: 'medium', color: { argb: 'FF000000' } },
             },
             fill: {
                 type: 'pattern',
@@ -101,7 +126,15 @@ export class ReportGeneratorService {
                 bgColor: { argb: 'FF0E2841' },
             },
             alignment: { horizontal: 'left', vertical: 'middle' },
-        };
+        } as ExcelJS.Style;
+        worksheet.getCell(`B${this.cRow}`).style = hStyle;
+        worksheet.getCell(`C${this.cRow}`).style = hStyle;
+        worksheet.getCell(`D${this.cRow}`).style = hStyle;
+        worksheet.getCell(`E${this.cRow}`).style = hStyle;
+        worksheet.getCell(`F${this.cRow}`).style = hStyle;
+        worksheet.getCell(`G${this.cRow}`).style = hStyle;
+        worksheet.getCell(`H${this.cRow}`).style = hStyle;
+        worksheet.getCell(`I${this.cRow}`).style = hStyle;
         this.cRow++;
     }
     private addSpecificationHeader(
@@ -129,9 +162,12 @@ export class ReportGeneratorService {
 
         worksheet.mergeCells(`C${this.cRow}:I${this.cRow}`);
         worksheet.getCell(`C${this.cRow}`).value = specificationDescription;
-        worksheet.getCell(`C${this.cRow}`).style = {
+        const hStyle = {
             font: { bold: true, size: 10, color: { theme: 1 }, name: 'Arial' },
-            border: { top: { style: 'thin', color: { argb: 'FF000000' } } },
+            border: {
+                top: { style: 'thin', color: { argb: 'FF000000' } },
+                right: { style: 'medium', color: { argb: 'FF000000' } },
+            },
             fill: {
                 type: 'pattern',
                 pattern: 'solid',
@@ -139,8 +175,14 @@ export class ReportGeneratorService {
                 bgColor: { argb: 'FFD8D8D8' },
             },
             alignment: { horizontal: 'left' },
-        };
-
+        } as ExcelJS.Style;
+        worksheet.getCell(`C${this.cRow}`).style = hStyle;
+        worksheet.getCell(`D${this.cRow}`).style = hStyle;
+        worksheet.getCell(`E${this.cRow}`).style = hStyle;
+        worksheet.getCell(`F${this.cRow}`).style = hStyle;
+        worksheet.getCell(`G${this.cRow}`).style = hStyle;
+        worksheet.getCell(`H${this.cRow}`).style = hStyle;
+        worksheet.getCell(`I${this.cRow}`).style = hStyle;
         this.cRow++;
     }
     private addSubItem(worksheet: ExcelJS.Worksheet, item: any) {
@@ -199,6 +241,9 @@ export class ReportGeneratorService {
             },
             alignment: { horizontal: 'right', vertical: 'top' },
         };
+        worksheet.getCell(`D${this.cRow}`).protection = {
+            locked: false,
+        };
 
         worksheet.getCell(`E${this.cRow}`).value = uom;
         worksheet.getCell(`E${this.cRow}`).style = {
@@ -216,6 +261,9 @@ export class ReportGeneratorService {
                 bgColor: { argb: 'FFDBE9F9' },
             },
             alignment: { horizontal: 'left' },
+        };
+        worksheet.getCell(`E${this.cRow}`).protection = {
+            locked: false,
         };
 
         worksheet.getCell(`F${this.cRow}`).value = price;
@@ -236,6 +284,9 @@ export class ReportGeneratorService {
             },
             alignment: { vertical: 'top', wrapText: true, shrinkToFit: false },
         };
+        worksheet.getCell(`F${this.cRow}`).protection = {
+            locked: false,
+        };
 
         worksheet.getCell(`G${this.cRow}`).value = discount;
         worksheet.getCell(`G${this.cRow}`).style = {
@@ -254,6 +305,9 @@ export class ReportGeneratorService {
                 bgColor: { argb: 'FFDBE9F9' },
             },
             alignment: { horizontal: 'right', vertical: 'top' },
+        };
+        worksheet.getCell(`G${this.cRow}`).protection = {
+            locked: false,
         };
 
         worksheet.getCell(`H${this.cRow}`).value = {
@@ -298,6 +352,9 @@ export class ReportGeneratorService {
                 wrapText: true,
                 shrinkToFit: false,
             },
+        };
+        worksheet.getCell(`I${this.cRow}`).protection = {
+            locked: false,
         };
 
         this.cRow++;
@@ -509,12 +566,13 @@ export class ReportGeneratorService {
         this.cRow = 17;
         this.sumArray = [];
         const workbook = new ExcelJS.Workbook();
-        await workbook.xlsx.readFile('Yard Quotation Template.xlsx');
+        await workbook.xlsx.readFile(`${__dirname}/../../../assets/drydock/Yard Quotation Template.xlsx`);
         const worksheet = workbook.getWorksheet(1) as ExcelJS.Worksheet;
 
         this.addFunctions(worksheet, data.functions);
         this.finishReport(worksheet, data);
-
+        const password = process.env.YARD_REPORT_PASSWORD || 'password';
+        await worksheet.protect(password, {});
         return workbook;
     }
 }

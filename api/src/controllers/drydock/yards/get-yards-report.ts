@@ -9,16 +9,14 @@ import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
  * @param {Response} res Express response
  */
 export async function getYardReport(req: Request, res: Response) {
-    const middlewareHandler = new MiddlewareHandler();
+    const query = new GetYardsReportQuery();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        const query = new GetYardsReportQuery();
-
-        const uid = request.query.uid as string;
-        const yardToProjectList = await query.ExecuteAsync(uid);
-
-        return yardToProjectList;
-    });
+    const uid = req.query.uid as string;
+    const workbook = await query.ExecuteAsync(uid);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+    await workbook.xlsx.write(res);
+    res.end();
 }
 
 exports.get = getYardReport;
