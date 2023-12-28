@@ -215,17 +215,21 @@ export class ProjectDetailsService {
         activeStatus: true,
         index: 2,
         sections: [
-          {
-            GridRowStart: 1,
-            GridRowEnd: 2,
-            GridColStart: 1,
-            GridColEnd: 3,
-            active_status: true,
-            SectionCode: eProjectDetailsSideMenuId.TechnicalSpecification,
-            SectionLabel: eProjectDetailsSideMenuLabel.TechnicalSpecification,
-            IconClass: 'icons8-more-details-2',
-            isAddNewButton: false
-          },
+          ...(this.hasAccess(eProjectsAccessActions.viewTechSpec)
+            ? [
+                {
+                  GridRowStart: 1,
+                  GridRowEnd: 2,
+                  GridColStart: 1,
+                  GridColEnd: 3,
+                  active_status: true,
+                  SectionCode: eProjectDetailsSideMenuId.TechnicalSpecification,
+                  SectionLabel: eProjectDetailsSideMenuLabel.TechnicalSpecification,
+                  IconClass: 'icons8-more-details-2',
+                  isAddNewButton: false
+                }
+              ]
+            : []),
           {
             GridRowStart: 2,
             GridRowEnd: 3,
