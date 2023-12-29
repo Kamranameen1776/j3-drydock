@@ -29,7 +29,11 @@ export class FindingsComponent implements OnInit {
   public entitySelectionEnabledSegments = [TmLinkedRecordsRelationType.Related];
   public additionalEntityMenuOptions = [{ name: 'unlink', label: 'Unlink' }];
 
-  validTaskManagerJobTypes: string[] = ['findings'];
+  public validJobTypes = {
+    [TmLinkedRecordsRelationType.Related]: [{ taskType: 'findings' }]
+  };
+
+  // validTaskManagerJobTypes: string[] = ['findings'];
 
   selectedEntity: TmLinkedRecords[] = [];
   unSelectedEntity: TmLinkedRecords[] = [];
@@ -40,24 +44,24 @@ export class FindingsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.dynamicComponentRegistryService.register('jb-dynamic-components-example', 'dynamic-example', () =>
-      import('./dynamic-components/dynamic-components-example.module').then((m) => m.DynamicComponentsExampleModule)
-    );
-    this.dynamicComponentRegistryService.register('jb-app-dynamic-example-grid', 'jb-dynamic-example-grid', () =>
-      import('./dynamic-components/dynamic-components-example.module').then((m) => m.DynamicComponentsExampleModule)
-    );
+    // this.dynamicComponentRegistryService.register('jb-dynamic-components-example', 'dynamic-example', () =>
+    //   import('./dynamic-components/dynamic-components-example.module').then((m) => m.DynamicComponentsExampleModule)
+    // );
+    // this.dynamicComponentRegistryService.register('jb-app-dynamic-example-grid', 'jb-dynamic-example-grid', () =>
+    //   import('./dynamic-components/dynamic-components-example.module').then((m) => m.DynamicComponentsExampleModule)
+    // );
 
-    this.taskManagerRegistryService.registerJobTypeSidebarInformationDynamicComponent('NON-PM-NCR', 'jb-dynamic-components-example');
-    this.taskManagerRegistryService.registerJobTypeSelectionDyamicComponent('Office task', 'jb-app-dynamic-example-grid');
-    this.taskManagerRegistryService.registerJobTypeSidebarInformationDynamicComponent(
-      'INTERNAL INSPECTION',
-      'jb-dynamic-components-example'
-    );
+    // this.taskManagerRegistryService.registerJobTypeSidebarInformationDynamicComponent('NON-PM-NCR', 'jb-dynamic-components-example');
+    // this.taskManagerRegistryService.registerJobTypeSelectionDyamicComponent('Office task', 'jb-app-dynamic-example-grid');
+    // this.taskManagerRegistryService.registerJobTypeSidebarInformationDynamicComponent(
+    //   'INTERNAL INSPECTION',
+    //   'jb-dynamic-components-example'
+    // );
 
-    this.taskManagerRegistryService.registerJobTypeDetailsPageUrlGenerator(
-      'NON-PM-NCR',
-      (entityId: string) => `https://j3-dev/details/${entityId}`
-    );
+    // this.taskManagerRegistryService.registerJobTypeDetailsPageUrlGenerator(
+    //   'NON-PM-NCR',
+    //   (entityId: string) => `https://j3-dev/details/${entityId}`
+    // );
 
     this.details = {
       uid: 'B94DCAC7-87B6-4570-AA84-4307106A1994', //parent uid
