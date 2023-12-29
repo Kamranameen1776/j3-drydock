@@ -140,11 +140,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
         },
         // eslint-disable-next-line rxjs/no-implicit-any-catch
         (err) => {
-          if (err?.status === 422) {
-            this.growlMessageService.setErrorMessage(err.error);
-          } else {
-            this.growlMessageService.setErrorMessage('Server error occurred');
-          }
+          this.growlMessageService.errorHandler(err);
         }
       );
   }

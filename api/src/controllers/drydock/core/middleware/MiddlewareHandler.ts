@@ -66,7 +66,7 @@ export class MiddlewareHandler {
                 // Business exceptions it is expected behavior
                 log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
 
-                res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.params);
+                res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.getJibeError());
 
                 return;
             } else if (exception instanceof AuthorizationException) {
@@ -79,29 +79,14 @@ export class MiddlewareHandler {
 
                 log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
 
-                res.status(httpStatus.FORBIDDEN).json(details.params);
-
-                return;
-            } else if (exception instanceof ApplicationException) {
-                const details = new ProblemDetails({
-                    title: 'Server Error',
-                    type: ProblemDetailsType.ApplicationException,
-                });
-
-                logData.Details = details;
-
-                log.error(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
-
-                res.status(httpStatus.INTERNAL_SERVER_ERROR).json(details.params);
+                res.status(httpStatus.FORBIDDEN).json(details.getJibeError());
 
                 return;
             } else if (exception instanceof Array && exception.length && exception[0] instanceof ValidationError) {
                 //TODO: think how to refactor it;
                 const error = exception[0];
                 let message = 'Validation request has failed';
-                let property = 'Something';
                 if (error.constraints && error.property) {
-                    property = error.property;
                     const keys = Object.keys(error.constraints);
                     if (keys.length) {
                         message = error.constraints[keys[0]];
@@ -111,23 +96,24 @@ export class MiddlewareHandler {
                 //log to DB
                 const details = new ProblemDetails({
                     title: 'Request validation error',
+                    detail: message,
                     type: ProblemDetailsType.ValidationException,
                 });
                 logData.Details = details;
                 log.warn(message, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
 
-                res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
-                    title: 'Request validation error',
-                    property,
-                    message,
-                });
+                res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.getJibeError());
 
                 return;
             }
 
+            const details = new ProblemDetails({
+                title: 'Server Error',
+                type: ProblemDetailsType.ApplicationException,
+            });
+            logData.Details = details;
             log.error(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
-
-            res.status(httpStatus.BAD_REQUEST).send();
+            res.status(httpStatus.INTERNAL_SERVER_ERROR).json(details.getJibeError());
         }
     }
 }

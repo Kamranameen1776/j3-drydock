@@ -139,11 +139,7 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
         this.showLoader = false;
       },
       (err) => {
-        if (err?.status === 422) {
-          this.growlMessageService.setErrorMessage(err.error);
-        } else {
-          this.growlMessageService.setErrorMessage('Server error occurred');
-        }
+        this.growlMessageService.errorHandler(err);
       }
     );
 
