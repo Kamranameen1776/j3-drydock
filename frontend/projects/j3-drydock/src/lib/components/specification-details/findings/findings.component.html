@@ -1,19 +1,12 @@
-<!--<jb-tm-linked-records-temp-->
-<!--  [taskManagerDetails]="details"-->
-<!--  [hiddenSegments]="hiddenSegments"-->
-<!--  [additionalEntityMenuOptions]="additionalEntityMenuOptions"-->
-<!--  [entitySelectionEnabledSegments]="entitySelectionEnabledSegments"-->
-<!--  [hideHeader]="true"-->
-<!--  (entitySelectionChanged)="entitySelectionChanged($event)"-->
-<!--  (childRecordEvents)="childRecordEvents($event)"-->
-<!--  (entityMenuOptionSelected)="entityMenuOptionSelected($event)"-->
-<!--&gt;</jb-tm-linked-records-temp>-->
-
 <jb-tm-linked-records
-    [hideHeader]="true"
-    [taskManagerDetails]="details"
-    [hiddenSegments]="hiddenSegments"
-    [entitySelectionEnabledSegments]="entitySelectionEnabledSegments"
-    [additionalEntityMenuOptions]="additionalEntityMenuOptions"
-    (childRecordEvents)="childRecordEvents($event)"
+  [taskManagerDetails]="details"
+  [hiddenSegments]="hiddenSegments"
+  [additionalEntityMenuOptions]="additionalEntityMenuOptions"
+  [entitySelectionEnabledSegments]="entitySelectionEnabledSegments"
+  [hideHeader]="true"
+  (entitySelectionChanged)="entitySelectionChanged($event)"
+  (childRecordEvents)="childRecordEvents($event)"
+  (entityMenuOptionSelected)="entityMenuOptionSelected($event)"
+  [selectionValidator]="selectionValidator"
+  [validTaskManagerJobTypes]="validJobTypes"
 ></jb-tm-linked-records>

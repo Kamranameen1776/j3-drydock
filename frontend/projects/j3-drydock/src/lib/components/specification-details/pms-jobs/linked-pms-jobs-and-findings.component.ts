@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { SpecificationDetails, SpecificationDetailsFull } from '../../../models/interfaces/specification-details';
 import { eFunction } from '../../../models/enums/function.enum';
-import { TmLinkedRecordsRelationType } from 'jibe-components';
+import { ITaskManagerLinkingComponentSelectionEvent, TmLinkedRecordsRelationType } from 'jibe-components';
 import { TmLinkedRecords } from 'jibe-components/lib/interfaces/tm-linked-records.interface';
 import { BehaviorSubject } from 'rxjs';
 
@@ -12,36 +12,59 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class LinkedPmsJobsAndFindingsComponent implements OnInit {
   @Input() specificationDetailsInfo: SpecificationDetails;
+  @Input() validTaskType: string;
   @Output() updateSelectedAmount = new BehaviorSubject<number>(0);
 
-  public tmDetails: any = {};
-  public hiddenSegments: TmLinkedRecordsRelationType[] = [TmLinkedRecordsRelationType.Parent, TmLinkedRecordsRelationType.Child];
+  public details = {};
+  public hiddenSegments: string[] = [TmLinkedRecordsRelationType.Parent, TmLinkedRecordsRelationType.Child];
   public entitySelectionEnabledSegments = [TmLinkedRecordsRelationType.Related];
   public additionalEntityMenuOptions = [{ name: 'unlink', label: 'Unlink' }];
 
-  validTaskManagerJobTypes: string[] = ['pms_job'];
+  public validJobTypes = {
+    [TmLinkedRecordsRelationType.Related]: [{ taskType: 'PMS JOB' }]
+  };
+
+  selectedEntity: TmLinkedRecords[] = [];
+  unSelectedEntity: TmLinkedRecords[] = [];
 
   constructor() {}
 
   ngOnInit(): void {
-    this.tmDetails = {
+    if (this.validTaskType !== '') {
+      this.validJobTypes = {
+        [TmLinkedRecordsRelationType.Related]: [{ taskType: this.validTaskType }]
+      };
+    }
+
+    this.details = {
+      WL_TYPE: 'master_review',
+      module_code: 'tm_master_review',
+      function_code: 'tm_master_review_detail',
       uid: this.specificationDetailsInfo.TaskManagerUid,
-      function_code: eFunction.SpecificationDetails
+      Vessel_Name: this.specificationDetailsInfo.VesselName,
+      Vessel_ID: this.specificationDetailsInfo.VesselId,
+      vessel_uid: this.specificationDetailsInfo.VesselUid
     };
   }
 
+  selectionValidator = (changedEntities: ITaskManagerLinkingComponentSelectionEvent): Promise<boolean> => {
+    console.log('*******Linking validator', changedEntities);
+
+    return Promise.resolve(true);
+  };
+
   childRecordEvents(event: string): void {
-    console.clear();
     console.log('*******Linking events', event);
   }
 
-  entitySelectionChanged(event: { Parent?: TmLinkedRecords[]; Child?: TmLinkedRecords[]; Related?: TmLinkedRecords[] }): void {
-    const count = event?.Related?.length || 0;
-    this.updateSelectedAmount.next(count);
+  entitySelectionChanged(event: { [key in TmLinkedRecordsRelationType]?: TmLinkedRecords[] }): void {
+    this.selectedEntity = event.Related;
+
     console.log('*******Entity selection changed', event);
+    console.log('*******Entity selected', this.selectedEntity);
   }
 
-  entityMenuOptionSelected(event: { type?: string; payload?: any }): void {
+  entityMenuOptionSelected(event: string): void {
     console.log('*******Entity menu option selected', event);
   }
 }

@@ -66,13 +66,14 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
   private save() {
     this.loading$.next(true);
     const value = this.formGroup.value[this.specificationSubItemEditService.formId];
+    console.log('***value', value);
     let action$: Observable<SpecificationSubItem>;
     if (this.subItemDetails.uid) {
-        action$ = this.specificationSubItemEditService.updateSubItem(value, this.subItemDetails.uid, this.specificationUid)
+      action$ = this.specificationSubItemEditService.updateSubItem(value, this.subItemDetails.uid, this.specificationUid);
     } else {
-        action$ = this.specificationSubItemEditService.createSubItem(value, this.specificationUid)
+      action$ = this.specificationSubItemEditService.createSubItem(value, this.specificationUid);
     }
-      action$.subscribe(
+    action$.subscribe(
       () => {
         this.closePopup(true);
         this.loading$.next(false);
