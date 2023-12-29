@@ -1,11 +1,10 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
-import { GridService, IGridAction, IJbDialog, eGridRefreshType, eGridRowActions, GridAction } from 'jibe-components';
+import { GridService, IGridAction, IJbDialog, eGridRefreshType, eGridRowActions } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { DailyReportsGridService } from './reports.service';
-import { IProjectsForMainPageGridDto } from '../../projects-main-page/projects-specifications-grid/dtos/IProjectsForMainPageGridDto';
 import { IDailyReportsResultDto } from './dto/IDailyReportsResultDto';
 
 @Component({
@@ -23,6 +22,7 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
   reportUid: string;
   reportInfo: IDailyReportsResultDto;
   isNew: boolean;
+  showLoader = false;
   deleteReportDialog: IJbDialog = {
     ...getSmallPopup(),
     dialogHeader: 'Delete Daily Report'
@@ -52,7 +52,6 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
 
   async onActionClick({ type, payload }: IGridAction) {
     this.reportInfo = payload;
-    // type === eGridRowActions.Edit ? (this.reportUid = this.reportInfo.uid) : '';
 
     switch (type) {
       case eGridRowActions.Delete:
@@ -75,10 +74,12 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
   }
 
   public deleteReportHandler() {
+    this.showLoader = true;
     this.reportsService
-      .deleteDailyReport({ uid: this.reportInfo.uid })
+      .deleteDailyReport({ uid: this.reportInfo.uid, projectUid: this.projectId })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
+        this.showLoader = false;
         this.showDeleteDialog(false);
         this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
       });

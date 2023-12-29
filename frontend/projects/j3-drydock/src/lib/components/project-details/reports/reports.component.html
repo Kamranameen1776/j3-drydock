@@ -47,7 +47,13 @@
   *ngIf="createPopupVisible"
   [isNew]="isNew"
   [isOpen]="createPopupVisible"
-  (closeDialog)="onCloseCreatePopup()"
+  (closeDialog)="onCloseCreatePopup($event)"
   [reportUid]="isNew === true ? '' : reportInfo.uid"
   [projectId]="projectId"
 ></jb-drydock-create-report-popup>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>

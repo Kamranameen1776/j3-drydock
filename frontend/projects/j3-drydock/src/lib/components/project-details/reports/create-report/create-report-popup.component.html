@@ -4,25 +4,23 @@
   (closeDialog)="onClosePopup()"
 >
   <div jb-dialog-body>
-    <div class="header">
-      <label></label>
-      <input
-        [(ngModel)]="reportName"
-        id="reportName"
-        pInputText
-        type="text"
-      />
-    </div>
-
+    <form [formGroup]="createReportForm">
+      <div class="header">
+        <label class="jb-fields-label">Report Name</label>
+        <div class="jb-fields-crtl">
+          <jb-textbox [content]="reportNameText"></jb-textbox>
+        </div>
+      </div>
+    </form>
     <div class="content">
       <div class="content-left">
         <jb-left-side-list
-          [jobOrdersToLink]="jobOrdersToLink"
+          [jobOrdersToLink]="jobOrderUpdatesToLink"
           (openJobOrderDialog)="openJobOrderDialog($event)"
-          (selectedSpecificationUid)="onSelectedUpdate($event)"
+          (selectedSpecificationUid)="onUpdateSelection($event)"
         ></jb-left-side-list>
       </div>
-      <div class="content-right">
+      <div class="content-right disabled">
         <jb-job-orders-form #selectJobOrderForm></jb-job-orders-form>
       </div>
     </div>
@@ -46,3 +44,9 @@
   [projectId]="projectId"
   (selectedJobOrders)="onSelectedUpdates($event)"
 ></jb-select-job-order-popup>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>

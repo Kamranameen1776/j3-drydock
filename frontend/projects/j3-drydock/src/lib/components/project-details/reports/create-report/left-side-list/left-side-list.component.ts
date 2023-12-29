@@ -1,10 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
-import { GridService } from 'jibe-components';
-import { DailyReportsGridService } from '../../reports.service';
-import { takeUntil } from 'rxjs/operators';
 import { UnsubscribeComponent } from '../../../../../shared/classes/unsubscribe.base';
 import { JobOrdersUpdatesDto } from '../../dto/JobOrdersUpdatesDto';
-import { IJobOrderDto } from '../../../project-monitoring/job-orders/dtos/IJobOrderDto';
 
 @Component({
   selector: 'jb-left-side-list',
@@ -12,7 +8,7 @@ import { IJobOrderDto } from '../../../project-monitoring/job-orders/dtos/IJobOr
   styleUrls: ['./left-side-list.component.scss']
 })
 export class LeftSideListComponent extends UnsubscribeComponent implements OnInit, OnChanges {
-  @Input() jobOrdersToLink: IJobOrderDto[];
+  @Input() jobOrdersToLink: JobOrdersUpdatesDto[];
   @Output() openJobOrderDialog = new EventEmitter<boolean>();
   @Output() selectedSpecificationUid = new EventEmitter<string>();
 

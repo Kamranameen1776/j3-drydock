@@ -14,4 +14,6 @@ export interface JobOrderDto {
   SpecificationEndDate: string;
 
   SpecificationStatus: string;
+
+  Progress: number;
 }

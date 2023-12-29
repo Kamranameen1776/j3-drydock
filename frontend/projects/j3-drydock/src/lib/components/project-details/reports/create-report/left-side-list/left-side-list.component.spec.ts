@@ -8,9 +8,8 @@ describe('LeftSideListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LeftSideListComponent ]
-    })
-    .compileComponents();
+      declarations: [LeftSideListComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

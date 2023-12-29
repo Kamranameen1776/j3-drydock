@@ -3,8 +3,8 @@ import { IJobOrderDto } from '../../../project-monitoring/job-orders/dtos/IJobOr
 import { GridInputsWithRequest } from '../../../../../models/interfaces/grid-inputs';
 import { SelectJobOrdersGridService } from './select-job-order-grid.service';
 import { JobOrdersGridOdataKeys } from '../../../../../models/enums/JobOrdersGridOdataKeys';
-import { IDailyReportsResultDto } from '../../dto/IDailyReportsResultDto';
 import { GridComponent } from 'jibe-components';
+import { JobOrdersUpdatesDto } from '../../dto/JobOrdersUpdatesDto';
 
 @Component({
   selector: 'jb-select-job-order-grid',
@@ -17,11 +17,11 @@ export class SelectJobOrderGridComponent implements OnInit {
   @ViewChild('selectJobOrdersGrid') selectJobOrdersGrid: GridComponent;
 
   @Input() projectId: string;
-  @Output() selectedChanged = new EventEmitter<IJobOrderDto[]>();
+  @Output() selectedChanged = new EventEmitter<JobOrdersUpdatesDto[]>();
   readonly dateTimeFormat = this.selectJobOrdersGridService.dateTimeFormat;
 
   public gridInputs: GridInputsWithRequest;
-  selected: IJobOrderDto[] = [];
+  selected: JobOrdersUpdatesDto[] = [];
 
   constructor(private selectJobOrdersGridService: SelectJobOrdersGridService) {}
 
@@ -31,7 +31,19 @@ export class SelectJobOrderGridComponent implements OnInit {
   }
 
   onSelect(rows: IJobOrderDto[]) {
-    this.selected = rows;
+    this.selected = rows.map((row) => {
+      return {
+        name: row.Code,
+        remark: '',
+        specificationUid: row.SpecificationUid,
+        specificationCode: row.Code,
+        status: row.SpecificationStatus,
+        progress: row.Progress,
+        lastUpdated: row.LastUpdated,
+        specificationSubject: row.SpecificationSubject,
+        updatedBy: row.SpecificationSubject
+      };
+    });
     this.selectedChanged.emit(this.selected);
   }
 

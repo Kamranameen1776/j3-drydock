@@ -1,7 +1,16 @@
+@import '../../../../styles/mixins';
+
+:host {
+    ::ng-deep {
+        @include progress-spinner-fix;
+    }
+}
+
 .content {
     display: flex;
     gap: 12px;
     max-height: 616px;
+    margin-top: 10px;
   }
   
   .content-left {
@@ -11,3 +20,28 @@
   .content-right{
     width: 70%;
   }
+
+  .disabled {
+    pointer-events: none;
+}
+
+::ng-deep label.jb-fields-label {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--jbGreyBlue400);
+  text-align: left;
+  text-transform: capitalize;
+}
+
+::ng-deep div.jb-fields-crtl {
+  margin-top: 5px;
+
+  input,
+  ::ng-deep .ui-inputtext {
+      font-size: 14px !important;
+  }
+
+}

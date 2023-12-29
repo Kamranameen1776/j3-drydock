@@ -1,5 +1,5 @@
 <div>
-  <div class="p-col-12 right">
+  <div class="p-col-12 right add-button">
     <button
       type="button"
       class="btn btn-default"
@@ -12,19 +12,19 @@
     *ngFor="let update of updates"
     type="button"
     class="btn btn-default group-status-button"
-    (click)="onUpdateClicked(update.SpecificationUid)"
+    (click)="onUpdateClicked(update.specificationUid)"
   >
     <div class="row container">
       <div class="col-md-10 left">
-        <label class="name">{{ update.SpecificationSubject }}</label>
+        <label class="name">{{ update.updatedBy }}</label>
       </div>
       <div class="col-md-2">
-        <label class="status right">{{ update.LastUpdated }}</label>
+        <label class="status right">{{ update.lastUpdated | UTCAsLocal | jbDate }}</label>
       </div>
     </div>
     <div class="row container left">
-      <label class="status">{{ update.SpecificationStatus }}</label>
+      <label class="status">{{ update.status }}</label>
     </div>
   </button>
-  <hr class="delimiter" />
+  <!-- <hr class="delimiter" /> -->
 </div>

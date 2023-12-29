@@ -1,16 +1,25 @@
 .group-status-button,
 .group-status-button:focus {
-  border: 0px;
   outline: 0px;
   box-shadow: none;
   width: 100%;
   padding-left: 0px;
   padding-right: 0px;
+  border-bottom-color: #7886a2;
+  border-bottom-width: 1px;
+  border-left: 0px;
+  border-right: 0px;
+  border-radius: 0;
+  border-top: 0px;
 
   &:hover,
   &.active {
     background-color: var(--jbGreyBlue100);
   }
+}
+
+.add-button{
+  padding-right: unset;
 }
 
 .delimiter {
@@ -26,6 +35,7 @@
 .status{
   font-size: 12px;
   color: #7886a2;
+  padding-right: 22px;
 }
 
 .container {

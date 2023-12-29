@@ -33,6 +33,15 @@ export class SelectJobOrdersGridService {
       width: eGridColumnsWidth.ShortDescription
     },
     {
+      DisplayText: 'Responsible',
+      FieldName: nameOf<IJobOrderDto>((prop) => prop.Responsible),
+      IsActive: true,
+      IsMandatory: true,
+      IsVisible: true,
+      ReadOnly: true,
+      width: eGridColumnsWidth.ShortDescription
+    },
+    {
       DisplayText: 'Status',
       FieldName: nameOf<IJobOrderDto>((prop) => prop.SpecificationStatus),
       IsActive: true,

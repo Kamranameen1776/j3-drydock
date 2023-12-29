@@ -75,7 +75,7 @@ export class DailyReportsGridService {
     };
   }
 
-  deleteDailyReport(data: { uid: string }) {
+  deleteDailyReport(data: { uid: string; projectUid: string }) {
     const request: WebApiRequest = {
       apiBase: 'dryDockAPI',
       entity: 'drydock',
@@ -83,7 +83,7 @@ export class DailyReportsGridService {
       crud: eCrud.Put,
       body: {
         DailyReportUid: data.uid,
-        DeletedAt: localAsUTC(new Date())
+        ProjectUid: data.projectUid
       }
     };
 
