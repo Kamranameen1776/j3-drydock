@@ -81,7 +81,7 @@ export class DynamicExampleGridComponent {
       segment: TmLinkedRecordsRelationType.Related,
       type: taskType
     };
-console.log("**** cell value", event)
+
     if (event.cellvalue) {
       linkedEntities.push(entity);
     } else {
