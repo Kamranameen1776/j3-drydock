@@ -528,5 +528,4 @@ const start = async (data: any) => {
     console.log('done');
 };
 
-
 start(obj);

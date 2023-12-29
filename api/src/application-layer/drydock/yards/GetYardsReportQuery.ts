@@ -1,8 +1,8 @@
+import { Workbook } from 'exceljs';
+
+import { ReportGeneratorService } from '../../../bll/drydock/yards/reports';
 import { YardsRepository } from '../../../dal/drydock/yards/YardsRepository';
 import { Query } from '../core/cqrs/Query';
-import { GetYardsDto } from './dtos/GetYardsDto';
-import { ReportGeneratorService } from '../../../bll/drydock/yards/reports';
-import { Workbook } from 'exceljs';
 
 export class GetYardsReportQuery extends Query<string, Workbook> {
     yardsRepository = new YardsRepository();
