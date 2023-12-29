@@ -55,8 +55,9 @@ export class JobOrderEntity {
     @Column('datetimeoffset', {
         nullable: false,
         name: 'created_at',
+        default: () => 'getutcdate()()',
     })
-    CreatedAt: Date;
+    CreatedAt: Date | null;
 
     @Column('bit', {
         nullable: false,
