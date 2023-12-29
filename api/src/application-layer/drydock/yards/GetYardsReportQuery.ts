@@ -20,21 +20,16 @@ export class GetYardsReportQuery extends Query<string, Workbook> {
      */
     protected async MainHandlerAsync(): Promise<Workbook> {
         const dummyData = {
-            title: 'SHIPYARD QUOTATION TEMPLATE',
             notes: `Please refer to the accompanying Drydock Specification for detailed description of repairs
 Please observe that the format and layout of this document is maintained while edited. The document is subject to automated processing when returned.
 Additional quoting rows can be created under each job, but the composition of columns are not to be altered.
 The quotation currency MUST be the same for all quoted costs, and has to be chosen from the allowed list of currencies.`,
-            yardRemark: `Quotation is provided basis our standard terms and conditions found here - www.keppel.com/terms.`,
             vessel: 'qwerty',
             requestedBy: 'ewq',
             yard: 'ds',
             project: 'SS1 - IMPERIA - 2024',
             period: '01 MARCH 1999 - 10 MARCH 2024',
             currency: 'EUR',
-            discount: '20,00%',
-            berthDays: 19,
-            dockDays: 17,
             functions: [
                 {
                     name: 'qwerty->qwerty',

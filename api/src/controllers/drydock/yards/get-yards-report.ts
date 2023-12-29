@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 
 import { GetYardsReportQuery } from '../../../application-layer/drydock/yards/GetYardsReportQuery';
-import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 /**
  * @exports

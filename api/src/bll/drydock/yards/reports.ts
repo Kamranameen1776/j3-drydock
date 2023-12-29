@@ -1,56 +1,14 @@
 import * as ExcelJS from 'exceljs';
 
-const obj = {
-    title: 'SHIPYARD QUOTATION TEMPLATE',
-    notes: `Please refer to the accompanying Drydock Specification for detailed description of repairs
-Please observe that the format and layout of this document is maintained while edited. The document is subject to automated processing when returned.
-Additional quoting rows can be created under each job, but the composition of columns are not to be altered.
-The quotation currency MUST be the same for all quoted costs, and has to be chosen from the allowed list of currencies.`,
-    yardRemark: `Quotation is provided basis our standard terms and conditions found here - www.keppel.com/terms.`,
-    vessel: 'qwerty',
-    requestedBy: 'ewq',
-    yard: 'ds',
-    project: 'SS1 - IMPERIA - 2024',
-    period: '01 MARCH 1999 - 10 MARCH 2024',
-    currency: 'EUR',
-    discount: '20,00%',
-    berthDays: 19,
-    dockDays: 17,
-    functions: [
-        {
-            name: 'qwerty->qwerty',
-            jobs: [
-                {
-                    specificationCode: 'qwqwqw',
-                    specificationDescription: 'qwerty',
-                    subItems: [
-                        {
-                            code: 'dsa',
-                            description: 'dsa',
-                            qty: 2,
-                            uom: 'UOM',
-                            price: 500,
-                            discount: '50%',
-                            comment: 'comment',
-                        },
-                    ],
-                },
-            ],
-        },
-    ],
-    footer: 'END OF SPECIFICATIONS',
-};
-
 export class ReportGeneratorService {
     cRow = 17;
     sumArray: Array<string> = [];
     private finishReport(worksheet: ExcelJS.Worksheet, data: any) {
-        worksheet.getCell('B2').value = data.title;
         worksheet.getCell('C3').value = data.notes;
         worksheet.getCell('C3').protection = {
             locked: false,
         };
-        worksheet.getCell('D8').value = data.yardRemark;
+        worksheet.getCell('D8').value = '';
         worksheet.getCell('D8').protection = {
             locked: false,
         };
@@ -63,15 +21,15 @@ export class ReportGeneratorService {
         worksheet.getCell('C12').protection = {
             locked: false,
         };
-        worksheet.getCell('C13').value = data.discount;
+        worksheet.getCell('C13').value = 0;
         worksheet.getCell('C13').protection = {
             locked: false,
         };
-        worksheet.getCell('C14').value = data.berthDays;
+        worksheet.getCell('C14').value = '';
         worksheet.getCell('C14').protection = {
             locked: false,
         };
-        worksheet.getCell('C15').value = data.dockDays;
+        worksheet.getCell('C15').value = '';
         worksheet.getCell('C15').protection = {
             locked: false,
         };
