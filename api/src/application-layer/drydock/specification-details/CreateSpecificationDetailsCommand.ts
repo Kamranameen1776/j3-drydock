@@ -1,17 +1,16 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { DataUtilService, SynchronizerService } from 'j2utils';
-import { getManager, Repository } from 'typeorm';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
 import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
+import { DictionariesRepository } from '../../../dal/drydock/dictionaries/DictionariesRepository';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import {
     ItemName,
-    LibItemSourceEntity,
     LibVesselsEntity,
     SpecificationDetailsEntity,
     SpecificationInspectionEntity,
@@ -27,7 +26,7 @@ export class CreateSpecificationDetailsCommand extends Command<CommandRequest, s
     vesselsRepository: VesselsRepository;
     specificationDetailsService: SpecificationService;
     projectRepository: ProjectsRepository;
-    libItemSourceRepository: Repository<LibItemSourceEntity>;
+    dictionariesRepository: DictionariesRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
     tableName = getTableName(SpecificationDetailsEntity);
@@ -38,7 +37,7 @@ export class CreateSpecificationDetailsCommand extends Command<CommandRequest, s
 
         this.specificationDetailsRepository = new SpecificationDetailsRepository();
         this.vesselsRepository = new VesselsRepository();
-        this.libItemSourceRepository = getManager().getRepository(LibItemSourceEntity);
+        this.dictionariesRepository = new DictionariesRepository();
         this.specificationDetailsService = new SpecificationService();
         this.uow = new UnitOfWork();
         this.projectRepository = new ProjectsRepository();
@@ -63,12 +62,7 @@ export class CreateSpecificationDetailsCommand extends Command<CommandRequest, s
         const token: string = request.headers.authorization as string;
         const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
         const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(project.VesselUid);
-        const itemSource = await this.libItemSourceRepository.findOne({
-            where: {
-                ItemName: ItemName.AdHoc,
-                ActiveStatus: true,
-            },
-        });
+        const itemSource = await this.dictionariesRepository.getItemSourceByName(ItemName.AdHoc);
 
         // Create Specification
         const taskManagerData = await this.specificationDetailsService.TaskManagerIntegration(
@@ -81,7 +75,7 @@ export class CreateSpecificationDetailsCommand extends Command<CommandRequest, s
             const specData = await this.specificationDetailsRepository.CreateSpecificationDetails(
                 {
                     ...request.body,
-                    ItemSourceUid: itemSource!.uid,
+                    ItemSourceUid: itemSource.uid,
                 },
                 queryRunner,
             );
