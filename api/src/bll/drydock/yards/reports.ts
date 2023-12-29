@@ -533,4 +533,67 @@ export class ReportGeneratorService {
         await worksheet.protect(password, {});
         return workbook;
     }
+    public prepareData(data: Array<any>) {
+        const obj: any = {};
+        //set header
+        obj.notes = '';
+        obj.vessel = data[0].VesselName;
+        obj.requestedBy = data[0].ManagementCompany;
+        obj.yard = data[0].YardName;
+        obj.project = data[0].Subject;
+        obj.currency = 'EUR';
+        obj.period = `${this.formatDateString(data[0].StartDate)} - ${this.formatDateString(data[0].EndDate)}`;
+        obj.functions = [];
+        for (let i = 0; i < data.length; i++) {
+            const row = data[i];
+            let functionIndex = obj.functions.findIndex((item: any) => row.Function === item.name);
+            if (functionIndex === -1) {
+                functionIndex = obj.functions.length;
+                obj.functions.push({
+                    name: row.Function,
+                    jobs: [],
+                });
+            }
+            let jobIndex = obj.functions[functionIndex].jobs.findIndex(
+                (item: any) => item.specificationCode === row.SpecificationCode,
+            );
+            if (jobIndex === -1) {
+                jobIndex = obj.functions[functionIndex].jobs.length;
+                obj.functions[functionIndex].jobs.push({
+                    specificationCode: row.SpecificationCode,
+                    specificationDescription: row.SpecificationSubject,
+                    subItems: [],
+                });
+            }
+            if (row.ItemNumber) {
+                obj.functions[functionIndex].jobs[jobIndex].subItems.push({
+                    code: `${row.SpecificationNumber}.${row.ItemNumber}`,
+                    description: row.ItemSubject,
+                    qty: row.ItemQTY,
+                    uom: row.ItemUOM,
+                    price: row.ItemUnitPrice,
+                    discount: row.ItemDiscount,
+                    comment: '',
+                });
+            }
+        }
+        obj.filename = `${obj.vessel}-${obj.yard}-${new Date(
+            data[0].StartDate,
+        ).getFullYear()}-${this.getFileNameDate()}`;
+
+        return obj;
+    }
+    private getFileNameDate() {
+        const currentDate = new Date();
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = currentDate.getFullYear().toString();
+        return day + month + year;
+    }
+    private formatDateString(inputDateString: string) {
+        const date = new Date(inputDateString);
+        const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'long', year: 'numeric' };
+        const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(date);
+        return formattedDate.toUpperCase();
+    }
 }

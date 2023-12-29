@@ -9,13 +9,16 @@ import { GetYardsReportQuery } from '../../../application-layer/drydock/yards/Ge
  */
 export async function getYardReport(req: Request, res: Response) {
     const query = new GetYardsReportQuery();
-
-    const uid = req.query.uid as string;
-    const workbook = await query.ExecuteAsync(uid);
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
-    await workbook.xlsx.write(res);
-    res.end();
+    try {
+        const { workbook, filename } = await query.ExecuteAsync(req.query);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename=${filename}.xlsx`);
+        await workbook.xlsx.write(res);
+        // res.json(workbook);
+        res.end();
+    } catch (e) {
+        res.end();
+    }
 }
 
 exports.get = getYardReport;

@@ -4,7 +4,7 @@ import { ReportGeneratorService } from '../../../bll/drydock/yards/reports';
 import { YardsRepository } from '../../../dal/drydock/yards/YardsRepository';
 import { Query } from '../core/cqrs/Query';
 
-export class GetYardsReportQuery extends Query<string, Workbook> {
+export class GetYardsReportQuery extends Query<any, any> {
     yardsRepository = new YardsRepository();
     yardReportService = new ReportGeneratorService();
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -18,86 +18,13 @@ export class GetYardsReportQuery extends Query<string, Workbook> {
     /**
      * @returns All yard details
      */
-    protected async MainHandlerAsync(): Promise<Workbook> {
-        const dummyData = {
-            notes: `Please refer to the accompanying Drydock Specification for detailed description of repairs
-Please observe that the format and layout of this document is maintained while edited. The document is subject to automated processing when returned.
-Additional quoting rows can be created under each job, but the composition of columns are not to be altered.
-The quotation currency MUST be the same for all quoted costs, and has to be chosen from the allowed list of currencies.`,
-            vessel: 'qwerty',
-            requestedBy: 'ewq',
-            yard: 'ds',
-            project: 'SS1 - IMPERIA - 2024',
-            period: '01 MARCH 1999 - 10 MARCH 2024',
-            currency: 'EUR',
-            functions: [
-                {
-                    name: 'qwerty->qwerty',
-                    jobs: [
-                        {
-                            specificationCode: 'qwqwqw',
-                            specificationDescription: 'qwerty',
-                            subItems: [
-                                {
-                                    code: 'dsa',
-                                    description: 'dsa',
-                                    qty: 2,
-                                    uom: 'UOM',
-                                    price: 500,
-                                    discount: '50%',
-                                    comment: 'comment',
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    name: 'asdf->asdf',
-                    jobs: [
-                        {
-                            specificationCode: 'qwqwqw',
-                            specificationDescription: 'qwerty',
-                            subItems: [
-                                {
-                                    code: 'dsa',
-                                    description: 'dsa',
-                                    qty: 2,
-                                    uom: 'UOM',
-                                    price: 500,
-                                    discount: '50%',
-                                    comment: 'comment',
-                                },
-                                {
-                                    code: 'dsa',
-                                    description: 'dsa',
-                                    qty: 89,
-                                    uom: 'UOM',
-                                    price: 543,
-                                    discount: '10%',
-                                    comment: 'comment',
-                                },
-                            ],
-                        },
-                        {
-                            specificationCode: 'dsadsa',
-                            specificationDescription: 'vcxvcxv',
-                            subItems: [
-                                {
-                                    code: 'dsa',
-                                    description: 'dsa',
-                                    qty: 2,
-                                    uom: 'UOM',
-                                    price: 500,
-                                    discount: '50%',
-                                    comment: 'comment',
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-            footer: 'END OF SPECIFICATIONS',
+    protected async MainHandlerAsync(query: any): Promise<any> {
+        const { ProjectUid, YardUid } = query;
+        const rawData = await this.yardsRepository.getReportData(ProjectUid, YardUid);
+        const preparedData = this.yardReportService.prepareData(rawData);
+        return {
+            workbook: await this.yardReportService.generateReport(preparedData),
+            filename: preparedData.filename,
         };
-        return this.yardReportService.generateReport(dummyData);
     }
 }

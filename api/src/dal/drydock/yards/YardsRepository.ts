@@ -1,6 +1,16 @@
 import { getManager } from 'typeorm';
 
-import { J3PrcCompanyRegistryEntity } from '../../../entity/drydock';
+import { className } from '../../../common/drydock/ts-helpers/className';
+import {
+    J3PrcCompanyRegistryEntity,
+    LibVesselsEntity,
+    ProjectEntity,
+    SpecificationDetailsEntity,
+    TecTaskManagerEntity,
+    YardsProjectsEntity,
+} from '../../../entity/drydock';
+import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { UnitTypeEntity } from '../../../entity/drydock/UnitTypeEntity';
 import { IYardsResultDto } from './dtos/IYardsResultDto';
 
 export class YardsRepository {
@@ -16,6 +26,52 @@ export class YardsRepository {
                 `,
             )
             .where(`yd.active_status = 1 AND yd.type = 'Yard'`)
+            .execute();
+    }
+
+    public async getReportData(projectUid: string, yardUid: string): Promise<any> {
+        const repository = getManager().getRepository(ProjectEntity);
+        return repository
+            .createQueryBuilder('pr')
+            .select([
+                'spec.uid',
+                'pr.StartDate as StartDate',
+                'pr.EndDate as EndDate',
+                'pr.Subject as Subject',
+                'vessel.VesselName as VesselName',
+                'vessel.ManagementCompany as ManagementCompany',
+                'yard.registeredName as YardName',
+                `spec.[function] as 'Function'`,
+                'tm.Code as SpecificationCode',
+                'spec.Subject as SpecificationSubject',
+                'spec.ItemNumber as SpecificationNumber',
+                'item.number as ItemNumber',
+                `ut.types as ItemUOM`,
+                'item.subject as ItemSubject',
+                'item.quantity as ItemQTY',
+                'item.unit_price as ItemUnitPrice',
+                'item.discount as ItemDiscount',
+            ])
+            .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
+            .innerJoin(className(YardsProjectsEntity), 'yp', `yp.project_uid = pr.uid`)
+            .innerJoin(
+                className(J3PrcCompanyRegistryEntity),
+                'yard',
+                `yp.yard_uid = yard.uid and yard.uid='${yardUid}'`,
+            )
+            .leftJoin(
+                className(SpecificationDetailsEntity),
+                'spec',
+                'spec.ProjectUid = pr.uid and spec.ActiveStatus = 1',
+            )
+            .leftJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
+            .leftJoin(
+                className(SpecificationDetailsSubItemEntity),
+                'item',
+                'item.specification_details_uid = spec.uid and item.active_status=1',
+            )
+            .leftJoin(className(UnitTypeEntity), 'ut', 'ut.uid = item.unit_type_uid')
+            .where(`pr.active_status = 1 AND pr.uid = '${projectUid}'`)
             .execute();
     }
 }
