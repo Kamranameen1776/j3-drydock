@@ -1,5 +1,5 @@
 <jb-task-manager-details
-  *ngIf="sectionsConfig"
+  *ngIf="sectionsConfig && canView"
   [topSectionConfig]="topSectionConfig"
   [sectionsConfig]="sectionsConfig"
   [tmDetails]="tmDetails"
@@ -38,7 +38,7 @@
         <div #subItems>
           <jb-specification-sub-items
             #SpecificationSubItemsComponent
-            *ngIf="specificationDetailsInfo"
+            *ngIf="specificationDetailsInfo && accessRights.subItems.view"
             [specificationDetailsInfo]="specificationDetailsInfo"
           ></jb-specification-sub-items>
         </div>
@@ -46,6 +46,7 @@
       <div *ngSwitchCase="eSideMenuId.Requisitions">
         <div #requisitions>
           <jb-specification-requisitions
+            *ngIf="accessRights.requisitions.view"
             #SpecificationRequisitionsComponent
             [specificationUid]="specificationUid"
           ></jb-specification-requisitions>

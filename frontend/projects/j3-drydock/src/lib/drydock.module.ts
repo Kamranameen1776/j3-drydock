@@ -62,6 +62,9 @@ import { DailyReportsComponent } from './components/project-details/reports/repo
 import { EditSubItemPopupComponent } from './components/specification-details/edit-sub-item-popup/edit-sub-item-popup.component';
 import { JobOrdersFormComponent } from './components/project-details/project-monitoring/job-orders-form/job-orders-form.component';
 
+import { GanttModule } from '@syncfusion/ej2-angular-gantt';
+import { GanttChartComponent } from './components/project-details/project-monitoring/gantt-chart/gantt-chart.component';
+
 @NgModule({
   declarations: [
     SpecificationStatusPipe,
@@ -103,6 +106,7 @@ import { JobOrdersFormComponent } from './components/project-details/project-mon
     UTCAsLocalPipe,
     GridCellPopoverComponent,
     DailyReportsComponent,
+    GanttChartComponent,
     JobOrdersFormComponent
   ],
   imports: [
@@ -119,7 +123,8 @@ import { JobOrdersFormComponent } from './components/project-details/project-mon
     SidebarModule,
     FormsModule,
     PrimeNgModule,
-    MenuModule
+    MenuModule,
+    GanttModule
   ],
   providers: [
     DatePipe,

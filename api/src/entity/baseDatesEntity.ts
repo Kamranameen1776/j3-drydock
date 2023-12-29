@@ -14,9 +14,10 @@ export abstract class BaseDatesEntity {
     })
     created_by: string;
 
-    @Column('datetime', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'created_at',
+        default: () => 'getutcdate()()',
     })
     created_at: Date;
 
@@ -26,7 +27,7 @@ export abstract class BaseDatesEntity {
     })
     updated_by: string;
 
-    @Column('datetime', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'updated_at',
     })
@@ -38,7 +39,7 @@ export abstract class BaseDatesEntity {
     })
     deleted_by: string;
 
-    @Column('datetime', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'deleted_at',
     })

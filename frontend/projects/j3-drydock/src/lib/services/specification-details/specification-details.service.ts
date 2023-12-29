@@ -24,8 +24,13 @@ import {
 import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { ITMDetailTabFields } from 'j3-task-manager-ng';
+import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
 export interface SpecificationDetailAccessRights extends BaseAccessRight {
   attachments: BaseAccessRight & { add: boolean };
+  subItems: BaseAccessRight;
+  requisitions: { view: boolean; edit: boolean };
+  pmsJobs: { view: boolean };
+  findings: { view: boolean };
 }
 
 export const DEFAULT_PROJECT_DETAILS_ACCESS_RIGHTS: SpecificationDetailAccessRights = {
@@ -37,6 +42,21 @@ export const DEFAULT_PROJECT_DETAILS_ACCESS_RIGHTS: SpecificationDetailAccessRig
     edit: false,
     delete: false,
     add: false
+  },
+  requisitions: {
+    view: false,
+    edit: false
+  },
+  subItems: {
+    view: false,
+    edit: false,
+    delete: false
+  },
+  pmsJobs: {
+    view: false
+  },
+  findings: {
+    view: false
   }
 };
 
@@ -58,13 +78,13 @@ export class SpecificationDetailsService {
 
   setupAccessRights(tmDetails: SpecificationDetailsFull) {
     const isEditableStatus = this.isStatusBeforeComplete(tmDetails.task_status);
-    const canView = this.hasAccess('View');
-    const canEdit = this.hasAccess('Edit');
-    const canDelete = this.hasAccess('Delete');
-    const canViewAttachments = isEditableStatus && this.hasAccess('view_attachment');
-    const canEditAttachments = isEditableStatus && this.hasAccess('edit_attachment');
-    const canDeleteAttachments = isEditableStatus && this.hasAccess('delete_attachment');
-    const canAddAttachments = isEditableStatus && this.hasAccess('add_attachment');
+    const canView = this.hasAccess(eSpecificationAccessActions.viewSpecificationDetail);
+    const canEdit = this.hasAccess(eSpecificationAccessActions.editGeneralInformation);
+    const canDelete = this.hasAccess(eSpecificationAccessActions.deleteSpecificationDetail);
+    const canViewAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.viewAttachmentsSection);
+    const canEditAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.editAttachments);
+    const canDeleteAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.deleteAttachments);
+    const canAddAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.addAttachments);
 
     this.setAccessRights({
       view: canView,
@@ -75,6 +95,21 @@ export class SpecificationDetailsService {
         edit: canEditAttachments,
         delete: canDeleteAttachments,
         add: canAddAttachments
+      },
+      requisitions: {
+        view: this.hasAccess(eSpecificationAccessActions.viewRequisitionSection),
+        edit: this.hasAccess(eSpecificationAccessActions.editRequisition)
+      },
+      subItems: {
+        view: this.hasAccess(eSpecificationAccessActions.viewSubItemsSection),
+        edit: this.hasAccess(eSpecificationAccessActions.editSubItems),
+        delete: this.hasAccess(eSpecificationAccessActions.deleteSubItems)
+      },
+      pmsJobs: {
+        view: this.hasAccess(eSpecificationAccessActions.viewPmsJobsTab)
+      },
+      findings: {
+        view: this.hasAccess(eSpecificationAccessActions.viewFindingsSection)
       }
     });
 
@@ -157,7 +192,7 @@ export class SpecificationDetailsService {
             active_status: true,
             SectionCode: eSpecificationDetailsPageMenuIds.Requisitions,
             SectionLabel: eSpecificationDetailsPageMenuLabels.Requisitions,
-            isAddNewButton: true,
+            isAddNewButton: this.accessRights.requisitions.edit,
             buttonLabel: 'Link Requisitions',
             addNewButtonType: JbButtonType.NoButton
           }
@@ -320,7 +355,7 @@ export class SpecificationDetailsService {
   }
 
   hasAccess(action: string, module = eModule.Project, func = eFunction.SpecificationDetails) {
-    return true || !!this.userRights.getUserRights(module, func, action);
+    return !!this.userRights.getUserRights(module, func, action);
   }
 
   private setAccessRights(rights: SpecificationDetailAccessRights) {

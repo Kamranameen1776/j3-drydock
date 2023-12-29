@@ -10,6 +10,8 @@ import { CreateStandardJobsRequestDto } from './dto';
 export class CreateStandardJobsCommand extends Command<Request, StandardJobs> {
     standardJobsRepository: StandardJobsRepository;
     uow: UnitOfWork;
+    private readonly startNumber = 1000;
+    private readonly codePrefix = 'SJ';
 
     constructor() {
         super();
@@ -23,7 +25,22 @@ export class CreateStandardJobsCommand extends Command<Request, StandardJobs> {
         const body: CreateStandardJobsRequestDto = request.body;
 
         return this.uow.ExecuteAsync(async (queryRunner) => {
+            const runningNumber = await this.getRunningNumber(body.functionUid);
+            body.number = runningNumber;
+            body.code = `${this.codePrefix} - ${runningNumber}`;
+
             return this.standardJobsRepository.createStandardJob(body, createdBy, queryRunner);
         });
+    }
+
+    private async getRunningNumber(functionUid: string): Promise<number> {
+        let runningNumber = await this.standardJobsRepository.getStandardJobRunningNumber(functionUid);
+
+        if (runningNumber) {
+            runningNumber++;
+        } else {
+            runningNumber = this.startNumber;
+        }
+        return runningNumber;
     }
 }

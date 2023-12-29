@@ -8,6 +8,7 @@ export interface GetStandardJobsQueryData {
     function: string;
     functionUid: string;
     code: string;
+    number: number;
     scope: string;
     category?: string;
     categoryUid: string;

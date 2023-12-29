@@ -19,11 +19,12 @@ export class ProjectTypeEntity {
     })
     ShortCode: string;
 
-    @Column('datetime2', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'created_at',
+        default: () => 'getutcdate()()',
     })
-    CreatedAt: Date;
+    CreatedAt: Date | null;
 
     @Column('bit', {
         nullable: true,

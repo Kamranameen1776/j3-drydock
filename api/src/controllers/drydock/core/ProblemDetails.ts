@@ -7,7 +7,7 @@ export enum ProblemDetailsType {
 
     AuthorizationException = 'AuthorizationException',
 
-    ValidationException = 'ValdidationException',
+    ValidationException = 'ValidationException',
 }
 
 export class ProblemDetails {
@@ -29,5 +29,13 @@ export class ProblemDetails {
         errors?: string[];
     }) {
         this.params = params;
+    }
+
+    // returns an error object suitable for generic approach to error handling at JiBe on frontend
+    public getJibeError() {
+        return {
+            name: this.params.title,
+            message: this.params.detail,
+        };
     }
 }
