@@ -2,18 +2,18 @@ import { Component, ElementRef, Input } from '@angular/core';
 import { IAvatar } from 'jibe-components/lib/interfaces/avatar.interface';
 
 export enum ICardStatus {
-    InProgress = 'In Progress',
-    Cancelled = 'Cancelled',
-    Completed = 'Completed',
+  InProgress = 'In Progress',
+  Cancelled = 'Cancelled',
+  Completed = 'Completed'
 }
 
 export interface ICard {
-    title: string;
-    description: string;
-    date: Date;
-    avatar?: IAvatar;
-    status?: ICardStatus;
-    selected?: boolean;
+  title: string;
+  description: string;
+  date: Date;
+  avatar?: IAvatar;
+  status?: ICardStatus;
+  selected?: boolean;
 }
 
 @Component({
@@ -26,7 +26,7 @@ export class ItemCardComponent {
   @Input() selectable = false;
 
   get selected() {
-      return this.selectable && this.data.selected;
+    return this.selectable && this.data.selected;
   }
 
   constructor(private element: ElementRef) {}

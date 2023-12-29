@@ -1,28 +1,28 @@
 @import '../../../../styles/mixins';
 
 :host {
-    ::ng-deep {
-        @include progress-spinner-fix;
-    }
+  ::ng-deep {
+    @include progress-spinner-fix;
+  }
 }
 
 .content {
-    display: flex;
-    gap: 12px;
-    max-height: 616px;
-    margin-top: 10px;
-  }
-  
-  .content-left {
-    width: 30%;
-  }
-  
-  .content-right{
-    width: 70%;
-  }
+  display: flex;
+  gap: 12px;
+  max-height: 616px;
+  margin-top: 10px;
+}
 
-  .disabled {
-    pointer-events: none;
+.content-left {
+  width: 30%;
+}
+
+.content-right {
+  width: 70%;
+}
+
+.disabled {
+  pointer-events: none;
 }
 
 ::ng-deep label.jb-fields-label {
@@ -41,7 +41,6 @@
 
   input,
   ::ng-deep .ui-inputtext {
-      font-size: 14px !important;
+    font-size: 14px !important;
   }
-
 }

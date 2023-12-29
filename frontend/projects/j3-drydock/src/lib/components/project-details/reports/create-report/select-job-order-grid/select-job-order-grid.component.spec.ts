@@ -8,9 +8,8 @@ describe('SelectJobOrderGridComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SelectJobOrderGridComponent ]
-    })
-    .compileComponents();
+      declarations: [SelectJobOrderGridComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

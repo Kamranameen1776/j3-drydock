@@ -1,35 +1,35 @@
 @import '../../../styles/mixins';
 
 :host {
+  .date-area {
+    float: right;
+  }
 
-    .date-area {
-        float: right;
-    }
+  .summary-wrapper {
+    border-bottom: 1px solid var(--jbGreyBlue200);
+    padding: 0 16px 12px 16px !important;
+  }
 
-    .summary-wrapper {
-        border-bottom: 1px solid var(--jbGreyBlue200);
-        padding: 0 16px 12px 16px !important;
-    }
+  .summary-name {
+    color: var(--jbGreyBlue700);
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16px;
+  }
 
-    .summary-name {
-        color: var(--jbGreyBlue700);
-        font-weight: 700;
-        font-size: 14px;
-        line-height: 16px;
-    }
+  .date-area,
+  .summary-desc {
+    color: var(--jbGreyBlue400);
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+  }
 
-    .date-area, .summary-desc {
-        color: var(--jbGreyBlue400);
-        font-weight: 500;
-        font-size: 12px;
-        line-height: 14px;
-    }
+  .summary-desc {
+    display: block;
+  }
 
-    .summary-desc {
-        display: block;
-    }
-
-    .selected-summary {
-        background-color: #0063A6;
-    }
+  .selected-summary {
+    background-color: #0063a6;
+  }
 }
