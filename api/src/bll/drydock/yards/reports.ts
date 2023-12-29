@@ -529,7 +529,7 @@ export class ReportGeneratorService {
 
         this.addFunctions(worksheet, data.functions);
         this.finishReport(worksheet, data);
-        const password = process.env.YARD_REPORT_PASSWORD || 'password';
+        const password = process.env.YARD_REPORT_PASSWORD as string;
         await worksheet.protect(password, {});
         return workbook;
     }
