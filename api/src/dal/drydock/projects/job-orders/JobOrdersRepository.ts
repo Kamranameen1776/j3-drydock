@@ -29,6 +29,8 @@ export class JobOrdersRepository {
                 'jo.LastUpdated AS LastUpdated',
                 'tm.Status AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
+                'sd.StartDate as SpecificationStartDate',
+                'sd.EndDate as SpecificationEndDate',
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')

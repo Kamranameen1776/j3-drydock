@@ -293,6 +293,17 @@ export class ProjectDetailsService {
             GridColStart: 1,
             GridColEnd: 3,
             active_status: true,
+            SectionCode: eProjectDetailsSideMenuId.GanttChart,
+            SectionLabel: eProjectDetailsSideMenuLabel.GanttChart,
+            IconClass: 'icons8-more-details-2',
+            isAddNewButton: false
+          },
+          {
+            GridRowStart: 2,
+            GridRowEnd: 3,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
             SectionCode: eProjectDetailsSideMenuId.StatementOfFacts,
             SectionLabel: eProjectDetailsSideMenuLabel.StatementOfFacts,
             IconClass: 'icons8-more-details-2',
@@ -301,8 +312,8 @@ export class ProjectDetailsService {
             addNewButtonType: JbButtonType.NoButton
           },
           {
-            GridRowStart: 2,
-            GridRowEnd: 3,
+            GridRowStart: 3,
+            GridRowEnd: 4,
             GridColStart: 1,
             GridColEnd: 3,
             active_status: true,
