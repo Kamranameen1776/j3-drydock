@@ -317,7 +317,7 @@ export class ReportGeneratorService {
 
         this.cRow++;
     }
-    private addSpecificatioFooter(worksheet: ExcelJS.Worksheet, startRow: number) {
+    private addSpecificationFooter(worksheet: ExcelJS.Worksheet, startRow: number) {
         for (let i = 0; i < 3; i++) {
             worksheet.getCell(`B${this.cRow}`).style = {
                 font: { size: 10, color: { theme: 1 }, name: 'Aptos narrow' },
@@ -516,7 +516,7 @@ export class ReportGeneratorService {
                 subItems.forEach((item: any) => {
                     this.addSubItem(worksheet, item);
                 });
-                this.addSpecificatioFooter(worksheet, startRow);
+                this.addSpecificationFooter(worksheet, startRow);
             });
         });
     }
