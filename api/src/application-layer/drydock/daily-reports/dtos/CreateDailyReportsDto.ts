@@ -1,20 +1,13 @@
-import { ArrayMinSize, IsDateString, IsDefined, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
+import { ArrayMinSize, IsDateString, IsDefined, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 import { JobOrdersUpdatesDto } from './JobOrdersUpdatesDto';
 
 export class CreateDailyReportsDto {
-    uid: string;
-
     @IsDefined()
     @IsUUID(4)
     ProjectUid: string;
 
-    @IsUUID()
-    @IsNotEmpty()
-    UserUid: string;
-
-    @IsDateString()
-    CreatedAt: Date;
+    CreatedBy: string;
 
     @MinLength(1)
     @MaxLength(200)
@@ -25,6 +18,4 @@ export class CreateDailyReportsDto {
 
     @ArrayMinSize(0)
     JobOrdersUpdate: Array<JobOrdersUpdatesDto>;
-
-    ActiveStatus: boolean;
 }
