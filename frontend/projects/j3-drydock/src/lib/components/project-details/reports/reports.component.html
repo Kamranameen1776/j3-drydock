@@ -5,6 +5,7 @@
   [tableDataReq]="gridData.request"
   [setActions]="gridData.actions"
   [filterData]="gridData.filters"
+  [button]="gridData.gridButton"
   [searchFields]="gridData.searchFields"
   [filterListsSet]="gridData.filtersLists"
   [isDisplayAdvancedSettings]="false"
@@ -41,3 +42,18 @@
 >
   <jb-drydock-grid-cell-popover [value]="rowData.reportDate | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
 </ng-template>
+
+<jb-drydock-create-report-popup
+  *ngIf="createPopupVisible"
+  [isNew]="isNew"
+  [isOpen]="createPopupVisible"
+  (closeDialog)="onCloseCreatePopup($event)"
+  [reportUid]="isNew === true ? '' : reportInfo.uid"
+  [projectId]="projectId"
+></jb-drydock-create-report-popup>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>
