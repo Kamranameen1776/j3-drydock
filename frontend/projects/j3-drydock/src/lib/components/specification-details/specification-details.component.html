@@ -87,9 +87,9 @@
 ></jb-progress-spinner>
 
 <jb-edit-sub-item-popup
-    *ngIf="showEditSubItem"
-    [isOpen]="!!showEditSubItem"
-    [subItemDetails]="subItemDetails"
-    [specificationUid]="specificationDetailsInfo.uid"
-    (closeDialog)="closeDialog($event)"
+  *ngIf="showEditSubItem"
+  [isOpen]="!!showEditSubItem"
+  [subItemDetails]="subItemDetails"
+  [specificationUid]="specificationDetailsInfo.uid"
+  (closeDialog)="closeDialog($event)"
 ></jb-edit-sub-item-popup>

@@ -60,7 +60,7 @@
     "fullcalendar": "4.0.0-alpha.4",
     "html2pdf.js": "0.9.3",
     "j3-task-manager-ng": "3.234.312-2",
-    "jibe-components": "file:../../jb_components/dist/jibe-components/jibe-components-3.234.322-2.tgz",
+    "jibe-components": "3.234.322-2",
     "jquery": "3.7.1",
     "js2xmlparser": "3.0.0",
     "json-to-table": "4.2.1",

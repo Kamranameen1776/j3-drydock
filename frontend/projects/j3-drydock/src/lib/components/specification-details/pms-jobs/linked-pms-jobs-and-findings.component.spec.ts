@@ -8,9 +8,8 @@ describe('PmsJobsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LinkedPmsJobsAndFindingsComponent ]
-    })
-    .compileComponents();
+      declarations: [LinkedPmsJobsAndFindingsComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
