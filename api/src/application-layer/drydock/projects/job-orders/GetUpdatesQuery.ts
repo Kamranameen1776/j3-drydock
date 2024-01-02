@@ -34,9 +34,6 @@ export class GetUpdatesQuery extends Query<Request, ODataResult<IJobOrderDto>> {
         }
     }
 
-    /**
-     * @returns All Job Orders(specifications) by project
-     */
     protected async MainHandlerAsync(request: Request): Promise<ODataResult<IJobOrderDto>> {
         const data = await this.repository.GetUpdates(request);
 
