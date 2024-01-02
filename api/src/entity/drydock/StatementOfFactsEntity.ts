@@ -14,9 +14,10 @@ export class StatementOfFactsEntity {
     })
     Fact: string;
 
-    @Column('varchar', {
+    @Column('datetimeoffset', {
         nullable: false,
         name: 'date',
+        default: () => 'getutcdate()()',
     })
     DateAndTime: Date;
 
