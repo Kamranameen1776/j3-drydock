@@ -8,6 +8,7 @@ import {
   eJMSActionTypes,
   eJMSSectionNames
 } from 'jibe-components';
+import { saveAs } from 'file-saver';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { concatMap, filter, map, takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
@@ -53,6 +54,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   moduleCode = eModule.Project;
   functionCode = eFunction.DryDock;
   projectUid: string;
+  projectDetails: ProjectDetails;
 
   vesselType: number;
   tmDetails: ProjectDetailsFull;
@@ -229,6 +231,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
             StartDate: UTCAsLocal(data.StartDate as string),
             EndDate: UTCAsLocal(data.EndDate as string)
           };
+          this.projectDetails = projectDetails;
 
           this.attachmentConfig = {
             Module_Code: this.moduleCode,
@@ -320,5 +323,30 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     if (this.accessRights.attachments.view) {
       this.menu[1].items[3] = { label: eProjectDetailsSideMenuLabel.Attachments, id: eProjectDetailsSideMenuId.Attachments };
     }
+  }
+
+  exportExcel() {
+    if (!this.projectDetails.ShipYardId) {
+      this.growlMessageService.setErrorMessage('Yard is not selected');
+      return;
+    }
+    const res = this.projectDetailsService.exportExcel(this.projectUid, this.projectDetails.ShipYardId);
+    res.subscribe((data) => {
+      saveAs(data, this.getExcelFilename());
+    });
+  }
+
+  private getExcelFilename() {
+    return `${this.projectDetails.VesselName}-${this.projectDetails.ShipYard}-${new Date(
+      this.projectDetails.StartDate
+    ).getFullYear()}-${this.getFileNameDate()}.xlsx`;
+  }
+
+  private getFileNameDate() {
+    const currentDate = new Date();
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = currentDate.getFullYear().toString();
+    return day + month + year;
   }
 }
