@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
-import { SpecificationDetails, SpecificationDetailsFull } from '../../../models/interfaces/specification-details';
-import { eFunction } from '../../../models/enums/function.enum';
+import { SpecificationDetails } from '../../../models/interfaces/specification-details';
 import { ITaskManagerLinkingComponentSelectionEvent, TmLinkedRecordsRelationType } from 'jibe-components';
 import { TmLinkedRecords } from 'jibe-components/lib/interfaces/tm-linked-records.interface';
 import { BehaviorSubject } from 'rxjs';
@@ -12,17 +11,19 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class LinkedPmsJobsAndFindingsComponent implements OnInit {
   @Input() specificationDetailsInfo: SpecificationDetails;
-  @Input() validTaskType: string;
+  @Input() validTaskType = '';
   @Output() updateSelectedAmount = new BehaviorSubject<number>(0);
 
   public details = {};
   public hiddenSegments: string[] = [TmLinkedRecordsRelationType.Parent, TmLinkedRecordsRelationType.Child];
   public entitySelectionEnabledSegments = [TmLinkedRecordsRelationType.Related];
-  public additionalEntityMenuOptions = [{ name: 'unlink', label: 'Unlink' }];
-
-  public validJobTypes = {
-    [TmLinkedRecordsRelationType.Related]: [{ taskType: 'PMS JOB' }]
+  public additionalEntityMenuOptions = {
+    [TmLinkedRecordsRelationType.Parent]: [],
+    [TmLinkedRecordsRelationType.Child]: [],
+    [TmLinkedRecordsRelationType.Related]: []
   };
+
+  public validJobTypes = {};
 
   selectedEntity: TmLinkedRecords[] = [];
   unSelectedEntity: TmLinkedRecords[] = [];
@@ -30,11 +31,9 @@ export class LinkedPmsJobsAndFindingsComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    if (this.validTaskType !== '') {
-      this.validJobTypes = {
-        [TmLinkedRecordsRelationType.Related]: [{ taskType: this.validTaskType }]
-      };
-    }
+    this.validJobTypes = {
+      [TmLinkedRecordsRelationType.Related]: [{ taskType: this.validTaskType }]
+    };
 
     this.details = {
       WL_TYPE: 'master_review',

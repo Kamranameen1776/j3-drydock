@@ -6,7 +6,7 @@ import {
   SpecificationDetailsService
 } from '../../services/specification-details/specification-details.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { eSpecificationDetailsPageMenuIds, specificationDetailsMenuData } from '../../models/enums/specification-details.enum';
+import { ePmsWlType, eSpecificationDetailsPageMenuIds, specificationDetailsMenuData } from '../../models/enums/specification-details.enum';
 import {
   IJbAttachment,
   ITopSectionFieldSet,
@@ -70,6 +70,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   subItemDetails = {
     quantity: 0
   } as SpecificationSubItem;
+
+  pmsWlType = ePmsWlType;
 
   readonly menu = specificationDetailsMenuData;
   readonly eSideMenuId = eSpecificationDetailsPageMenuIds;

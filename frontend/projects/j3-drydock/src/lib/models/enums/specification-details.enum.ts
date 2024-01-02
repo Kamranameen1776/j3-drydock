@@ -57,3 +57,8 @@ export enum eSpecificationWorkflowStatusAction {
   Close = 'CLOSE',
   Unclose = 'UNCLOSE'
 }
+
+export enum ePmsWlType {
+  PmsJob = 'PMS JOB',
+  Findings = 'FINDINGS'
+}

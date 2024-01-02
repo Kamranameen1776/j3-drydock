@@ -50,7 +50,7 @@
           <jb-linked-pms-jobs-findings
             #PmsJobsComponent
             *ngIf="specificationDetailsInfo"
-            [validTaskType]="'PMS JOB'"
+            [validTaskType]="pmsWlType.PmsJob"
             [specificationDetailsInfo]="specificationDetailsInfo"
             (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.PMSJobs)"
           ></jb-linked-pms-jobs-findings>
@@ -61,7 +61,7 @@
           <jb-linked-pms-jobs-findings
             #FindingsComponent
             *ngIf="specificationDetailsInfo"
-            [validTaskType]="'FINDINGS'"
+            [validTaskType]="pmsWlType.Findings"
             [specificationDetailsInfo]="specificationDetailsInfo"
             (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.Findings)"
           ></jb-linked-pms-jobs-findings>
