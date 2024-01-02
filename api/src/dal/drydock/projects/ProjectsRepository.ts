@@ -60,10 +60,10 @@ export class ProjectsRepository {
      * Get count of projects with each group status
      * @returns Count of projects with each group status
      */
-    public async GetGroupProjectStatuses(): Promise<IGroupProjectStatusDto[]> {
+    public async GetGroupProjectStatuses(assignedVessels?: number[]): Promise<IGroupProjectStatusDto[]> {
         const groupProjectStatusRepository = getManager().getRepository(GroupProjectStatusEntity);
 
-        const query = groupProjectStatusRepository
+        let query = groupProjectStatusRepository
             .createQueryBuilder('gps')
             .select(['gps.GroupProjectStatusId as GroupProjectStatusId', 'count(tm.Status) as ProjectWithStatusCount'])
             .innerJoin(className(ProjectTypeEntity), 'pt', 'gps.ProjectTypeId = pt.WorklistType')
@@ -73,8 +73,13 @@ export class ProjectsRepository {
                 'tm',
                 'tm.uid = pr.TaskManagerUid and tm.Status = gps.ProjectStatusId',
             )
+            .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .groupBy('gps.GroupProjectStatusId')
             .where('gps.ActiveStatus = :activeStatus', { activeStatus: 1 });
+
+        if (assignedVessels) {
+            query = query.where('vessel.vessel_id IN (:...ids)', { ids: assignedVessels });
+        }
 
         const result = await query.execute();
 
@@ -85,10 +90,12 @@ export class ProjectsRepository {
      * Get count of projects with each group status, grouped by project type
      * @returns Count of projects with each group status, grouped by project type
      */
-    public async GetGroupProjectStatusesByProjectType(): Promise<IGroupProjectStatusByProjectTypeDto[]> {
+    public async GetGroupProjectStatusesByProjectType(
+        assignedVessels?: number[],
+    ): Promise<IGroupProjectStatusByProjectTypeDto[]> {
         const groupProjectStatusRepository = getManager().getRepository(GroupProjectStatusEntity);
 
-        const query = groupProjectStatusRepository
+        let query = groupProjectStatusRepository
             .createQueryBuilder('gps')
             .select([
                 'gps.GroupProjectStatusId as GroupProjectStatusId',
@@ -102,8 +109,13 @@ export class ProjectsRepository {
                 'tm',
                 'tm.uid = pr.TaskManagerUid and tm.Status = gps.ProjectStatusId',
             )
+            .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .groupBy('gps.ProjectTypeId, gps.GroupProjectStatusId')
             .where('gps.ActiveStatus = :activeStatus', { activeStatus: 1 });
+
+        if (assignedVessels) {
+            query = query.where('vessel.vessel_id IN (:...ids)', { ids: assignedVessels });
+        }
 
         const result = await query.execute();
 
