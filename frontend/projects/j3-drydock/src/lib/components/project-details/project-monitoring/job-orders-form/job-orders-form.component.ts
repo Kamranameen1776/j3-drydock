@@ -132,6 +132,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   }
 
   public onValueChangesIsFormValid: EventEmitter<boolean> = new EventEmitter<boolean>();
+  public onValueChangesIsForm: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
 
   public remarksEditorUpdateParentCtrlValue(remarks: string) {
     const controls = (this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup).controls;
@@ -143,6 +144,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
 
     this.updateJobOrderFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       this.onValueChangesIsFormValid.next(this.updateJobOrderFormGroup.valid);
+      this.onValueChangesIsForm.next(action);
       return this.updateJobOrderFormGroup.valid;
     });
   }
