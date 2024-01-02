@@ -275,8 +275,11 @@ export class SpecificationDetailsSubItemsRepository {
             discount: Number(discount.toFixed(2)),
             subject: subItemData.subject,
             description: subItemData.description,
-            specificationDetailsUid: subItemData.specificationDetailsUid,
         };
+
+        const specificationDetails = new SpecificationDetailsEntity();
+        specificationDetails.uid = subItemData.specificationDetailsUid!;
+        newSubItem.specificationDetails = specificationDetails;
 
         if (subItemData.unitUid) {
             const unitType = new UnitTypeEntity();
