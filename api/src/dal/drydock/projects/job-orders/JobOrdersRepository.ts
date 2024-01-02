@@ -45,6 +45,40 @@ export class JobOrdersRepository {
         return oDataService.getJoinResult(query);
     }
 
+    public async GetUpdates(request: Request): Promise<ODataResult<IJobOrderDto>> {
+        const SpecificationDetailsRepository = getManager().getRepository(JobOrderEntity);
+
+        const query: string = SpecificationDetailsRepository.createQueryBuilder('jo')
+            .select([
+                'sd.uid AS SpecificationUid',
+                'sd.ProjectUid AS ProjectUid',
+                'tm.Code AS Code',
+                'its.DisplayName as ItemSource',
+                'jo.Progress AS Progress',
+                "usr.FirstName + ' ' + usr.LastName AS Responsible",
+                'jo.LastUpdated AS LastUpdated',
+                'tm.Status AS SpecificationStatus',
+                'sd.Subject AS SpecificationSubject',
+                'sd.StartDate as SpecificationStartDate',
+                'sd.EndDate as SpecificationEndDate',
+            ])
+            .innerJoin(
+                className(SpecificationDetailsEntity),
+                'sd',
+                'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1',
+            )
+            .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
+            .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
+            .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
+            .leftJoin(className(LibUserEntity), 'usr', 'sd.DoneByUid = usr.uid and usr.ActiveStatus = 1')
+
+            .getQuery();
+
+        const oDataService = new ODataService(request, getConnection);
+
+        return oDataService.getJoinResult(query);
+    }
+
     public async TryGetJobOrderBySpecification(specificationUid: string): Promise<JobOrderEntity | undefined> {
         const jobOrdersRepository = getManager().getRepository(JobOrderEntity);
 
