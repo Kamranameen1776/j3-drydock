@@ -41,18 +41,26 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
 
     protected async MainHandlerAsync(request: CreateDailyReportsDto): Promise<void> {
         const vessel = await this.vesselRepository.GetVesselByProjectUid(request.ProjectUid);
-        const { JobOrdersUpdate } = request;
+        const { JobOrdersUpdate: JobOrdersUpdate } = request;
 
         return this.uow.ExecuteAsync(async (queryRunner) => {
-            const dailyReportsdata = await this.dailyReportsRepository.createDailyReport(request, queryRunner);
+            const dailyReportsData = await this.dailyReportsRepository.createDailyReport(request, queryRunner);
             const data = JobOrdersUpdate.map((item: JobOrdersUpdatesDto) => {
                 return {
                     uid: DataUtilService.newUid(),
-                    ReportUid: dailyReportsdata.uid,
-                    ReportUpdateName: item.Name,
-                    Remark: item.Remark,
+                    ReportUid: dailyReportsData.uid,
+                    ReportUpdateName: item.name,
+                    SpecificationUid: item.specificationUid,
+                    Status: item.status,
+                    Progress: item.progress,
+                    Remark: item.remark,
                     active_status: true,
-                    created_at: request.CreatedAt,
+                    created_by: request.CreatedBy,
+                    created_at: new Date(),
+                    // the frontend works in the way that potentially, the user can update the daily report update
+                    // entity right during creation of the daily report, so we set this field too
+                    updated_by: request.CreatedBy,
+                    updated_at: new Date(),
                 };
             });
             await this.dailyReportsRepository.createDailyReportUpdate(data, queryRunner);
@@ -61,7 +69,7 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
                 queryRunner.manager,
                 this.dailyReportsTable,
                 'uid',
-                dailyReportsdata.uid,
+                dailyReportsData.uid,
                 vessel.VesselId,
             );
 

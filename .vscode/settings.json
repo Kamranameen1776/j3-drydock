@@ -8,6 +8,7 @@
         "drydock",
         "dtos",
         "endregion",
+        "exceljs",
         "hemant",
         "Inputservice",
         "isslfapplied",
@@ -15,11 +16,17 @@
         "itemsource",
         "JMSDTL",
         "odata",
+        "officedocument",
+        "openxmlformats",
         "primeng",
         "TECLIB",
         "typeorm",
         "uniqueidentifier",
         "wdetails",
         "Worklist"
+    ],
+    "files.trimTrailingWhitespace": true,
+    "editor.rulers": [
+        120
     ]
 }

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { CreateSpecificationFromStandardJobsCommand } from '../../../application-layer/drydock/specification-details/CreateStandardJobsFromSpecificationsCommand';
+import { CreateSpecificationFromStandardJobsCommand } from '../../../application-layer/drydock/specification-details/CreateSpecificationFromStandardJobCommand';
 import { CreateSpecificationFromStandardJobDto } from '../../../dal/drydock/specification-details/dtos/ICreateSpecificationFromStandardJobDto';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 

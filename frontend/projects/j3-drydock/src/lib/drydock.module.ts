@@ -30,7 +30,6 @@ import { ProjectStatusFilterComponent } from './components/projects-main-page/pr
 import { LeftPanelFilterService } from './components/projects-main-page/services/LeftPanelFilterService';
 import { RfqComponent } from './components/project-details/yard/rfq/rfq.component';
 import { ComparisonComponent } from './components/project-details/yard/comparison/comparison.component';
-import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
 import { SelectLinkYardGridComponent } from './components/project-details/yard/rfq/select-link-yard-grid/select-link-yard-grid.component';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
@@ -61,6 +60,15 @@ import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/
 import { DailyReportsComponent } from './components/project-details/reports/reports.component';
 import { EditSubItemPopupComponent } from './components/specification-details/edit-sub-item-popup/edit-sub-item-popup.component';
 import { JobOrdersFormComponent } from './components/project-details/project-monitoring/job-orders-form/job-orders-form.component';
+import { CreateReportPopupComponent } from './components/project-details/reports/create-report/create-report-popup.component';
+import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
+import { ItemCardComponent } from './shared/components/item-card/item-card.component';
+import { LeftSideListComponent } from './components/project-details/reports/create-report/left-side-list/left-side-list.component';
+import { SelectJobOrderPopupComponent } from './components/project-details/reports/create-report/select-job-order-popup/select-job-order-popup.component';
+import { SelectJobOrderGridComponent } from './components/project-details/reports/create-report/select-job-order-grid/select-job-order-grid.component';
+
+import { GanttModule } from '@syncfusion/ej2-angular-gantt';
+import { GanttChartComponent } from './components/project-details/project-monitoring/gantt-chart/gantt-chart.component';
 
 @NgModule({
   declarations: [
@@ -103,7 +111,14 @@ import { JobOrdersFormComponent } from './components/project-details/project-mon
     UTCAsLocalPipe,
     GridCellPopoverComponent,
     DailyReportsComponent,
-    JobOrdersFormComponent
+    GanttChartComponent,
+    JobOrdersFormComponent,
+    JobOrdersFormComponent,
+    CreateReportPopupComponent,
+    ItemCardComponent,
+    LeftSideListComponent,
+    SelectJobOrderPopupComponent,
+    SelectJobOrderGridComponent
   ],
   imports: [
     CommonModule,
@@ -119,7 +134,8 @@ import { JobOrdersFormComponent } from './components/project-details/project-mon
     SidebarModule,
     FormsModule,
     PrimeNgModule,
-    MenuModule
+    MenuModule,
+    GanttModule
   ],
   providers: [
     DatePipe,

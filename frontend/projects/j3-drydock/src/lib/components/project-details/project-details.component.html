@@ -20,6 +20,7 @@
     technical_specification: technical_specification,
     attachmentss: attachmentss,
     rfq: rfq,
+    gantt_chart: gantt_chart,
     statement_of_facts: statement_of_facts,
     job_orders: job_orders,
     reporting: reportingTab
@@ -90,6 +91,14 @@
     let-section
   >
     <ng-container [ngSwitch]="section.SectionCode">
+      <div *ngSwitchCase="eSideMenuId.GanttChart">
+        <div #gantt_chart>
+          <jb-gantt-chart
+            #ganttChartComponent
+            [projectId]="projectUid"
+          ></jb-gantt-chart>
+        </div>
+      </div>
       <div *ngSwitchCase="eSideMenuId.StatementOfFacts">
         <div #statement_of_facts>
           <jb-statement-of-facts

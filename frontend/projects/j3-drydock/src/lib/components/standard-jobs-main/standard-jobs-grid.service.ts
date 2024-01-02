@@ -77,7 +77,8 @@ export class StandardJobsGridService {
       ValueCode: 'VesselTypes',
       FieldID: 1,
       gridName: this.gridName,
-      default: false
+      default: false,
+      sendFilterAs: 'gridFilters'
     },
     {
       DisplayText: eStandardJobsMainLabels.Inspection,
@@ -87,7 +88,8 @@ export class StandardJobsGridService {
       DisplayCode: 'displayName',
       FieldID: 3,
       gridName: this.gridName,
-      default: true
+      default: true,
+      sendFilterAs: 'gridFilters'
     },
     {
       DisplayText: eStandardJobsMainLabels.DoneBy,
@@ -125,8 +127,8 @@ export class StandardJobsGridService {
     [eStandardJobsMainFields.VesselType]: {
       webApiRequest: this.standardJobsService.getVesselTypesRequest(),
       type: eFieldControlType.MultiSelect,
-      odataKey: eStandardJobsMainFields.VesselType,
-      listValueKey: 'VesselTypes'
+      odataKey: eStandardJobsMainFields.VesselTypeID,
+      listValueKey: 'ID'
     },
     [eStandardJobsMainFields.Inspection]: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection),

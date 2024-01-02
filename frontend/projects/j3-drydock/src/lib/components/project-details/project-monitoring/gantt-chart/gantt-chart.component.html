@@ -1,0 +1,62 @@
+<ejs-gantt
+  [dataSource]="tasks$ | async"
+  [taskFields]="taskConfig"
+  [splitterSettings]="splitterSettings"
+  [eventMarkers]="eventMarkers"
+  (queryTaskbarInfo)="queryTaskbarInfo($event)"
+>
+  <e-columns>
+    <e-column
+      field="SpecificationSubject"
+      headerText="Task Name"
+      width="150"
+    ></e-column>
+    <e-column
+      field="SpecificationStartDate"
+      headerText="Start Date"
+      width="80"
+      minWidth="80"
+      maxWidth="80"
+    ></e-column>
+    <e-column
+      field="SpecificationEndDate"
+      headerText="End Date"
+      width="80"
+      minWidth="80"
+      maxWidth="80"
+    ></e-column>
+    <e-column
+      field="SpecificationStatus"
+      headerText="Status"
+      width="100"
+      minWidth="100"
+    >
+      <ng-template
+        #template
+        let-data
+      >
+        <div
+          class="status-field"
+          [ngClass]="statusCSS?.statusBackground[data.SpecificationStatus.toUpperCase()] || statusCSS.statusBackground.RAISE"
+        >
+          <i [ngClass]="statusCSS?.statusIcon[data.SpecificationStatus.toUpperCase()] || statusCSS.statusIcon.RAISE"></i>
+          {{ data.SpecificationStatus }}
+        </div>
+      </ng-template>
+    </e-column>
+    <e-column
+      field="Progress"
+      headerText=" "
+      width="60"
+      minWidth="60"
+      maxWidth="60"
+    >
+      <ng-template
+        #template
+        let-data
+      >
+        <div>{{ data.Progress }}%</div>
+      </ng-template>
+    </e-column>
+  </e-columns>
+</ejs-gantt>

@@ -43,9 +43,8 @@ export class DeleteDailyReportsCommand extends Command<DeleteDailyReportsDto, vo
             await this.dailyReportsRepository.deleteDailyReport(
                 {
                     DailyReportUid: data.DailyReportUid,
-                    ProjectUid: data.ProjectUid,
                     UserUid: data.UserUid,
-                    DeletedAt: data.DeletedAt,
+                    DeletedAt: new Date(),
                 },
                 queryRunner,
             );

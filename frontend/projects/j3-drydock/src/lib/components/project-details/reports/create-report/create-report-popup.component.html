@@ -1,0 +1,52 @@
+<jb-dialog
+  [dialogContent]="popupConfig"
+  [(dialogVisible)]="isOpen"
+  (closeDialog)="onClosePopup()"
+>
+  <div jb-dialog-body>
+    <form [formGroup]="createReportForm">
+      <div class="header">
+        <label class="jb-fields-label">Report Name</label>
+        <div class="jb-fields-crtl">
+          <jb-textbox [content]="reportNameText"></jb-textbox>
+        </div>
+      </div>
+    </form>
+    <div class="content">
+      <div class="content-left">
+        <jb-left-side-list
+          [jobOrdersToLink]="jobOrderUpdatesToLink"
+          (openJobOrderDialog)="openJobOrderDialog($event)"
+          (selectedSpecificationUid)="onUpdateSelection($event)"
+        ></jb-left-side-list>
+      </div>
+      <div class="content-right disabled">
+        <jb-job-orders-form #selectJobOrderForm></jb-job-orders-form>
+      </div>
+    </div>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="isSaving"
+      [isCancelBtnDisabled]="isSaving"
+      [okBtnLabel]="saveLabel"
+      (ok)="submit()"
+      (cancel)="onClosePopup()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<jb-select-job-order-popup
+  #jobOrderPopup
+  [isOpen]="jobOrderPopupVisible"
+  (closeDialog)="onCloseJobOrderPopup($event)"
+  [projectId]="projectId"
+  (selectedJobOrders)="onSelectedUpdates($event)"
+></jb-select-job-order-popup>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>

@@ -6,8 +6,8 @@ import { startWith } from 'rxjs/operators';
 interface IGrowlError {
   status: number;
   error: {
-    title: string;
-    type: string;
+    name?: string;
+    message?: string;
   };
 }
 
@@ -23,11 +23,12 @@ export class GrowlMessageService {
     baseZIndex: 50000
   };
 
-  setErrorMessage(errorMsg: string) {
+  setErrorMessage(errorMsg?: string, detail?: string) {
     this._growlMessage$.next({
       ...this.defaultMsg,
       severity: eMessagesSeverityValues.Error,
-      summary: errorMsg
+      summary: errorMsg,
+      detail
     });
   }
 
@@ -48,10 +49,6 @@ export class GrowlMessageService {
   }
 
   errorHandler(err: IGrowlError) {
-    if (err?.status === 422) {
-      this.setErrorMessage(err.error.title);
-    } else {
-      this.setErrorMessage('Server error occurred');
-    }
+    this.setErrorMessage(err.error.name, err.error.message);
   }
 }

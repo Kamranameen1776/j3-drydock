@@ -25,6 +25,12 @@ export class LibVesselsEntity {
     VesselName: string;
 
     @Column('int', {
+        nullable: true,
+        name: 'Managed_By_Comp',
+    })
+    ManagementCompany: number;
+
+    @Column('int', {
         nullable: false,
         name: 'FleetCode',
     })

@@ -22,6 +22,7 @@ export class StandardJobsService {
                 function: standardJob.function,
                 functionUid: standardJob.functionUid,
                 code: standardJob.code,
+                number: standardJob.number,
                 scope: standardJob.scope,
                 category: standardJob.category || this.notSelectedValueLabel,
                 categoryUid: standardJob.categoryUid,
@@ -110,6 +111,8 @@ export class StandardJobsService {
         standardJob.functionUid = data.functionUid;
         standardJob.vesselTypeSpecific = data.vesselTypeSpecific;
         standardJob.description = data.description;
+        standardJob.number = data.number;
+        standardJob.code = data.code;
         if (data.doneByUid) {
             standardJob.doneBy = {
                 uid: data.doneByUid,

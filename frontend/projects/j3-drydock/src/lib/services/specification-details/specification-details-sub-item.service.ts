@@ -5,9 +5,13 @@ import {
   eSpecificationDetailsSubItemsFields,
   eSpecificationDetailsSubItemsLabels
 } from '../../models/enums/specification-details-sub-items.enum';
+import { SpecificationDetailsService } from './specification-details.service';
+import { eProjectsDetailsAccessActions, eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
 
 @Injectable()
 export class SpecificationDetailsSubItemsGridService {
+  constructor(private specificationDetailService: SpecificationDetailsService) {}
+
   public readonly gridName: string = 'specificationSubItemGrid';
   private readonly columns: Column[] = [
     {
@@ -81,28 +85,38 @@ export class SpecificationDetailsSubItemsGridService {
       width: '182px'
     }
   ];
-  private gridRowActions: GridRowActions[] = [
-    {
-      name: eGridRowActions.Edit,
-      label: eGridRowActions.Edit,
-      color: eColor.JbBlack,
-      icon: eIconNames.Edit,
-      fieldName: 'hideActions',
-      condition: true,
-      actionTrueValue: false,
-      actionFalseValue: true
-    },
-    {
-      name: eGridRowActions.Delete,
-      label: eGridRowActions.Delete,
-      color: eColor.JbBlack,
-      icon: eIconNames.Delete,
-      fieldName: 'hideActions',
-      condition: true,
-      actionTrueValue: false,
-      actionFalseValue: true
+
+  private getGridRowActions(): GridRowActions[] {
+    const res = [];
+
+    if (this.specificationDetailService.hasAccess(eSpecificationAccessActions.editSubItems)) {
+      res.push({
+        name: eGridRowActions.Edit,
+        label: eGridRowActions.Edit,
+        color: eColor.JbBlack,
+        icon: eIconNames.Edit,
+        fieldName: 'hideActions',
+        condition: true,
+        actionTrueValue: false,
+        actionFalseValue: true
+      });
     }
-  ];
+    if (this.specificationDetailService.hasAccess(eSpecificationAccessActions.deleteSubItems)) {
+      res.push({
+        name: eGridRowActions.Delete,
+        label: eGridRowActions.Delete,
+        color: eColor.JbBlack,
+        icon: eIconNames.Delete,
+        fieldName: 'hideActions',
+        condition: true,
+        actionTrueValue: false,
+        actionFalseValue: true
+      });
+    }
+
+    return res;
+  }
+
   private readonly filters: Filter[] = [];
   private filtersLists: FilterListSet = {};
 
@@ -123,7 +137,7 @@ export class SpecificationDetailsSubItemsGridService {
     return {
       columns: this.columns,
       gridName: this.gridName,
-      actions: this.gridRowActions,
+      actions: this.getGridRowActions(),
       filters: this.filters,
       filtersLists: this.filtersLists,
       request: this.getApiRequest(specificationUid),

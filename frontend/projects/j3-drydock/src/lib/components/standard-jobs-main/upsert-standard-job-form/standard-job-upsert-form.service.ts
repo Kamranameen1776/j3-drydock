@@ -50,7 +50,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             label: eStandardJobsMainLabels.ItemNumber,
             sectionID: this.formId,
             enabled: false,
-            validatorRequired: false,
+            validatorRequired: true,
             maxLength: 20,
             gridRowStart: 1,
             gridRowEnd: 2,

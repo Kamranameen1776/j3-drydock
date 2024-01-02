@@ -83,11 +83,7 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
         },
         // eslint-disable-next-line rxjs/no-implicit-any-catch
         (err) => {
-          if (err?.status === 422) {
-            this.growlMessageService.setErrorMessage(err?.error?.message);
-          } else {
-            this.growlMessageService.setErrorMessage('Server error occurred');
-          }
+          this.growlMessageService.errorHandler(err);
         }
       );
   }

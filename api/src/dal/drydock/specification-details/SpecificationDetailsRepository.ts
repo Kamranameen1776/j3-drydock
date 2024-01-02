@@ -7,8 +7,10 @@ import { GetRequisitionsResponseDto } from '../../../application-layer/drydock/s
 import { GetSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto';
 import { LinkSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/LinkSpecificationRequisitionsRequestDto';
 import { UpdateSpecificationPmsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationPMSRequestDto';
+import { SpecificationDetailsGridFiltersKeys } from '../../../application-layer/drydock/specification-details/SpecificationDetailsConstants';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import {
+    ItemName,
     J3PrcCompanyRegistryEntity,
     J3PrcPo,
     J3PrcRequisition,
@@ -33,6 +35,7 @@ import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWo
 import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
 import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { ODataResult } from '../../../shared/interfaces';
+import { DictionariesRepository } from '../dictionaries/DictionariesRepository';
 import { RepoUtils } from '../utils/RepoUtils';
 import {
     CreateInspectionsDto,
@@ -153,15 +156,19 @@ export class SpecificationDetailsRepository {
             .getRawOne();
     }
 
-    public async GetManySpecificationDetails(data: Request): Promise<ODataResult<SpecificationDetailsEntity>> {
+    public async GetManySpecificationDetails(
+        data: Request,
+        filters: Record<SpecificationDetailsGridFiltersKeys, string[]>,
+    ): Promise<ODataResult<SpecificationDetailsEntity>> {
         try {
             const oDataService = new ODataService(data, getConnection);
 
             const query = getManager()
-                .createQueryBuilder('specification_details', 'sd')
+                .createQueryBuilder(SpecificationDetailsEntity, 'sd')
                 .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.done_by_uid = db.uid')
                 .leftJoin(className(TmDdLibMaterialSuppliedBy), 'msb', 'sd.material_supplied_by_uid = msb.uid')
                 .leftJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid')
+                .leftJoin(className(SpecificationInspectionEntity), 'sie', `sie.specification_details_uid = sd.uid`)
                 .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
                 .select([
                     'sd.uid as uid',
@@ -177,17 +184,6 @@ export class SpecificationDetailsRepository {
                     'sd.project_uid',
                     'sd.ItemSourceUid as item_source_uid',
                     'its.DisplayName as item_source',
-                    RepoUtils.getStringAggJoin(
-                        LibSurveyCertificateAuthority,
-                        'ID',
-                        'aliased.active_status = 1',
-                        'inspectionId',
-                        {
-                            entity: className(SpecificationInspectionEntity),
-                            alias: 'si',
-                            on: 'aliased.ID = si.LIB_Survey_CertificateAuthority_ID AND si.specification_details_uid = sd.uid',
-                        },
-                    ),
                     RepoUtils.getStringAggJoin(
                         LibSurveyCertificateAuthority,
                         'Authority',
@@ -217,10 +213,18 @@ export class SpecificationDetailsRepository {
                         'its.display_name',
                     ].join(', '),
                 )
-                .where('sd.active_status = 1')
-                .getSql();
+                .where('sd.active_status = 1');
 
-            return oDataService.getJoinResult(query);
+            if (filters.inspectionId?.length) {
+                query.andWhere(`sie.LIB_Survey_CertificateAuthority_ID IN (:...inspectionId)`, {
+                    inspectionId: filters.inspectionId,
+                });
+            }
+
+            query.getSql();
+
+            const [sql, params] = query.getQueryAndParameters();
+            return oDataService.getJoinResult(sql, params);
         } catch (error) {
             throw new Error(
                 `Method: GetSpecificationDetails / Class: SpecificationDetailsRepository / Error: ${error}`,
@@ -244,6 +248,7 @@ export class SpecificationDetailsRepository {
         queryRunner: QueryRunner,
     ) {
         const standardJobRepository = getManager().getRepository(StandardJobs);
+        const dictionariesRepository = new DictionariesRepository();
 
         const standardJobs = await standardJobRepository.find({
             where: {
@@ -252,6 +257,7 @@ export class SpecificationDetailsRepository {
             select: ['functionUid', 'description', 'subject'],
             relations: ['subItems', 'inspection', 'doneBy', 'category', 'materialSuppliedBy'],
         });
+        const standardJobsItemSource = await dictionariesRepository.getItemSourceByName(ItemName.StandardJob);
 
         const specifications = standardJobs.map((standardJob) => {
             const specification = new SpecificationDetailsEntity();
@@ -265,6 +271,7 @@ export class SpecificationDetailsRepository {
             specification.MaterialSuppliedByUid = standardJob.materialSuppliedBy?.uid!;
             specification.DoneByUid = standardJob.doneBy?.uid!;
             specification.ItemCategoryUid = standardJob.category?.uid!;
+            specification.ItemSourceUid = standardJobsItemSource.uid;
             specification.ProjectUid = data.ProjectUid;
             specification.inspections = standardJob.inspection.map((inspection) => {
                 const item = new LibSurveyCertificateAuthority();

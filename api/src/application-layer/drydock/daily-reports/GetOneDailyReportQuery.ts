@@ -15,7 +15,7 @@ export class GetOneDailyReportQuery extends Query<string, GetOneDailyReportDto> 
 
     protected async MainHandlerAsync(uid: string): Promise<GetOneDailyReportDto> {
         const reportDetails = await this.dailyReportsRepository.findOneByDailyReportUid(uid);
-        reportDetails.JobOrdersUpdate = await this.dailyReportsRepository.findDailyReportUpdate(uid);
+        reportDetails.jobOrdersUpdate = await this.dailyReportsRepository.findDailyReportUpdates(uid);
         return reportDetails;
     }
 }

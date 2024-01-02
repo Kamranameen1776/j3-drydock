@@ -19,11 +19,11 @@ export class YardsProjectsEntity extends BaseDatesEntity {
     })
     yard_uid: string;
 
-    @Column('datetime', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'last_exported_date',
     })
-    last_exported_date: Date;
+    last_exported_date: Date | null;
 
     @Column('bit', {
         nullable: true,

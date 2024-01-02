@@ -14,10 +14,10 @@ async function createDailyReports(req: Request, res: Response) {
 
         const command = new CreateDailyReportsCommand();
 
-        const createDailyReportsDto: CreateDailyReportsDto = plainToClass(CreateDailyReportsDto, request.body);
-        createDailyReportsDto.UserUid = createdBy;
+        const data: CreateDailyReportsDto = plainToClass(CreateDailyReportsDto, request.body);
+        data.CreatedBy = createdBy;
 
-        return command.ExecuteAsync(createDailyReportsDto);
+        return command.ExecuteAsync(data);
     });
 }
 

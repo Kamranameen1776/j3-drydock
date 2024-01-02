@@ -23,6 +23,7 @@ import {
   SpecificationRequisitionsDisplayTexts,
   SpecificationRequisitionsFieldNames
 } from '../../../models/enums/specification-requisitions.enum';
+import { eSpecificationAccessActions } from '../../../models/enums/access-actions.enum';
 
 @Component({
   selector: 'jb-specification-requisitions',
@@ -175,10 +176,12 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
   private getGridRowActions() {
     const actions: GridRowActions[] = [];
 
-    actions.push({
-      name: eGridRowActions.Delete,
-      gridName: this.gridData.gridName
-    });
+    if (this.specificationDetailsService.hasAccess(eSpecificationAccessActions.editRequisition)) {
+      actions.push({
+        name: eGridRowActions.Delete,
+        gridName: this.gridData.gridName
+      });
+    }
 
     return actions;
   }

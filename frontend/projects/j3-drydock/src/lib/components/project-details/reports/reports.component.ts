@@ -5,6 +5,7 @@ import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { DailyReportsGridService } from './reports.service';
+import { IDailyReportsResultDto } from './dto/IDailyReportsResultDto';
 
 @Component({
   selector: 'jb-daily-reports',
@@ -19,13 +20,16 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
   @ViewChild('reportDateTemplate', { static: true }) reportDateTemplate: TemplateRef<unknown>;
 
   reportUid: string;
-
+  reportInfo: IDailyReportsResultDto;
+  isNew: boolean;
+  showLoader = false;
   deleteReportDialog: IJbDialog = {
     ...getSmallPopup(),
     dialogHeader: 'Delete Daily Report'
   };
 
   deleteDialogVisible = false;
+  createPopupVisible = false;
   deleteBtnLabel = 'Delete';
   deleteDialogMessage = 'Are you sure you want to delete this report?';
 
@@ -46,33 +50,36 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
     }
   }
 
-  private getData(projectId?: string) {
-    const gridData = this.reportsService.getGridData(projectId || this.projectId);
-    const dateCol = gridData.columns.find((col) => col.FieldName === 'reportDate');
-    dateCol.cellTemplate = this.reportDateTemplate;
-    return gridData;
-  }
-
   async onActionClick({ type, payload }: IGridAction) {
-    const { uid } = payload;
-    this.reportUid = uid;
+    this.reportInfo = payload;
 
     switch (type) {
       case eGridRowActions.Delete:
         this.showDeleteDialog(true);
         break;
       case eGridRowActions.Edit:
+        this.showCreateReport(false);
+        break;
+      case this.gridData.gridButton.label:
+        this.showCreateReport(true);
         break;
       default:
         return;
     }
   }
 
+  showCreateReport(isNew: boolean) {
+    this.isNew = isNew;
+    this.createPopupVisible = true;
+  }
+
   public deleteReportHandler() {
+    this.showLoader = true;
     this.reportsService
-      .deleteDailyReport({ uid: this.reportUid })
+      .deleteDailyReport({ uid: this.reportInfo.uid, projectUid: this.projectId })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
+        this.showLoader = false;
         this.showDeleteDialog(false);
         this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
       });
@@ -80,5 +87,20 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
 
   public showDeleteDialog(value: boolean) {
     this.deleteDialogVisible = value;
+  }
+
+  onCloseCreatePopup(hasSaved?: boolean) {
+    this.createPopupVisible = false;
+
+    if (hasSaved) {
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+    }
+  }
+
+  private getData(projectId?: string) {
+    const gridData = this.reportsService.getGridData(projectId || this.projectId);
+    const dateCol = gridData.columns.find((col) => col.FieldName === 'reportDate');
+    dateCol.cellTemplate = this.reportDateTemplate;
+    return gridData;
   }
 }

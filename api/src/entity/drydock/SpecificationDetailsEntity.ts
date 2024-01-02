@@ -176,11 +176,12 @@ export class SpecificationDetailsEntity {
     })
     CreatedByUid: string;
 
-    @Column('datetime', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'created_at',
+        default: () => 'getutcdate()()',
     })
-    CreatedAt: Date;
+    CreatedAt: Date | null;
 
     @ManyToMany(() => J3PrcRequisition)
     @JoinTable({

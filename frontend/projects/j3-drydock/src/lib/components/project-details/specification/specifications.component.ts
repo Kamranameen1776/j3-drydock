@@ -38,7 +38,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   deleteDialogVisible = false;
   deleteBtnLabel = 'Delete';
-  deleteDialogMessage = 'Are you sure you want to delete this specification?';
+  deleteDialogMessage = 'Are you sure want to delete the record?';
   specificationUid: string;
 
   vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name'> = {
