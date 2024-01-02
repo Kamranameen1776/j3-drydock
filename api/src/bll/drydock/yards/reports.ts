@@ -539,11 +539,6 @@ export class ReportGeneratorService {
             });
         });
     }
-    private addCurrencies(worksheet: ExcelJS.Worksheet, currencies: Array<string>) {
-        currencies.forEach((value, index) => {
-            worksheet.getCell(`A${index + 1}`).value = value;
-        });
-    }
     public async generateReport(data: any) {
         this.cRow = 17;
         this.sumArray = [];
