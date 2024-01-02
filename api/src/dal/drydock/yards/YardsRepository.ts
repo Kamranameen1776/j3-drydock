@@ -41,6 +41,7 @@ export class YardsRepository {
                 'vessel.VesselName as VesselName',
                 'vessel.ManagementCompany as ManagementCompany',
                 'yard.registeredName as YardName',
+                'yard.currencies as YardCurrencies',
                 `spec.[function] as 'Function'`,
                 'tm.Code as SpecificationCode',
                 'spec.Subject as SpecificationSubject',
