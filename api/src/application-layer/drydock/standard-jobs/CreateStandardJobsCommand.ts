@@ -25,7 +25,7 @@ export class CreateStandardJobsCommand extends Command<Request, StandardJobs> {
         const body: CreateStandardJobsRequestDto = request.body;
 
         return this.uow.ExecuteAsync(async (queryRunner) => {
-            const runningNumber = await this.getRunningNumber(body.functionUid);
+            const runningNumber = await this.getRunningNumber();
             body.number = runningNumber;
             body.code = `${this.codePrefix} - ${runningNumber}`;
 
@@ -33,8 +33,8 @@ export class CreateStandardJobsCommand extends Command<Request, StandardJobs> {
         });
     }
 
-    private async getRunningNumber(functionUid: string): Promise<number> {
-        let runningNumber = await this.standardJobsRepository.getStandardJobRunningNumber(functionUid);
+    private async getRunningNumber(): Promise<number> {
+        let runningNumber = await this.standardJobsRepository.getStandardJobRunningNumber();
 
         if (runningNumber) {
             runningNumber++;

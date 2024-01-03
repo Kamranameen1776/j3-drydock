@@ -92,14 +92,17 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     // Relations
     @RelationId<SpecificationDetailsSubItemEntity>((subItem) => subItem.specificationDetails)
     specificationDetailsUid: string;
+
     @OneToOne(() => UnitTypeEntity, (unitType) => unitType.specificationDetailsSubItem)
     @JoinColumn({
         name: 'unit_type_uid',
         referencedColumnName: 'uid',
     })
     unitType: UnitTypeEntity;
+
     @RelationId<SpecificationDetailsSubItemEntity>((subItem) => subItem.unitType)
     readonly unitTypeUid: string;
+
     /**
      * `cost` is supposed to be set only by an internal hook, never externally.
      * To read the value externally, use {@link getCost} or {@link calculateCost}.

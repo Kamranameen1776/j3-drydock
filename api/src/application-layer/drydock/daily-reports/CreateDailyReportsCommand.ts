@@ -49,7 +49,7 @@ export class CreateDailyReportsCommand extends Command<CreateDailyReportsDto, vo
                 return {
                     uid: DataUtilService.newUid(),
                     ReportUid: dailyReportsData.uid,
-                    ReportUpdateName: item.name,
+                    ReportUpdateName: item.subject,
                     SpecificationUid: item.specificationUid,
                     Status: item.status,
                     Progress: item.progress,

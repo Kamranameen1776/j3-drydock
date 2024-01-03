@@ -26,6 +26,21 @@ export class JobOrdersService {
     return request;
   }
 
+  getJobOrdersUpdatesRequest(): WebApiRequest {
+    const request: WebApiRequest = {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      // entity: eEntities.DryDock,
+      // action: eAction.GetSpecificationDetails,
+      apiBase: 'dryDockAPI',
+      action: 'projects/job-orders/get-updates',
+      crud: eCrud.Post,
+      entity: 'drydock'
+    };
+
+    return request;
+  }
+
   getJobOrderBySpecificationRequest(getJobOrderBySpecificationDto: GetJobOrderBySpecificationDto): WebApiRequest {
     const request: WebApiRequest = {
       // TODO:update jibe lib

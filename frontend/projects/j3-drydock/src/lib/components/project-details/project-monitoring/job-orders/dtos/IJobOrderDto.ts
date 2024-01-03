@@ -7,7 +7,7 @@ export interface IJobOrderDto {
 
   ItemSource: string;
 
-  Responsible: string;
+  DoneBy: string;
 
   LastUpdated: Date;
 

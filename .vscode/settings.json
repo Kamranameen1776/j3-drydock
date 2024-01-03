@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "columnproperty",
         "cqrs",
         "crtl",
         "Datasource",
@@ -15,6 +16,7 @@
         "isslfsession",
         "itemsource",
         "JMSDTL",
+        "nvarchar",
         "odata",
         "officedocument",
         "openxmlformats",

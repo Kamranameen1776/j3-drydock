@@ -17,10 +17,10 @@
         <jb-left-side-list
           [jobOrdersToLink]="jobOrderUpdatesToLink"
           (openJobOrderDialog)="openJobOrderDialog($event)"
-          (selectedSpecificationUid)="onUpdateSelection($event)"
+          (selectedUpdate)="onUpdateSelection($event)"
         ></jb-left-side-list>
       </div>
-      <div class="content-right disabled">
+      <div class="content-right">
         <jb-job-orders-form #selectJobOrderForm></jb-job-orders-form>
       </div>
     </div>

@@ -11,7 +11,7 @@ export interface IJobOrderDto {
 
     Progress: number;
 
-    Responsible: string;
+    DoneBy: string;
 
     LastUpdated: Date;
 

@@ -1,5 +1,13 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, DiscussionFeedService, UserService, eAppLocation, eIconNames, eJMSActionTypes } from 'jibe-components';
+import {
+  ApiRequestService,
+  DiscussionFeedService,
+  IJbMenuItem,
+  UserService,
+  eAppLocation,
+  eIconNames,
+  eJMSActionTypes
+} from 'jibe-components';
 import { TaskManagerService } from './task-manager.service';
 
 import { UnsubscribeComponent } from '../shared/classes/unsubscribe.base';
@@ -31,7 +39,7 @@ export class DetailsService extends UnsubscribeComponent {
     };
   }
 
-  getAttachmnentActions(attachAccessRights?: AttachmentsAccessRight) {
+  getAttachmentActions(attachAccessRights?: AttachmentsAccessRight) {
     const actions = [];
 
     if (!attachAccessRights || attachAccessRights.edit) {
@@ -44,5 +52,13 @@ export class DetailsService extends UnsubscribeComponent {
     actions.push({ name: 'download', label: 'Download', icon: eIconNames.Download });
 
     return actions;
+  }
+
+  getMenuById<T extends string>(menus: IJbMenuItem[], id: T) {
+    return menus.find((item) => item.id === id);
+  }
+
+  hideSubMenuItem<T extends string>(parentMenu: IJbMenuItem, id: T) {
+    parentMenu.items = (parentMenu.items as IJbMenuItem[]).filter((item) => item.id !== id);
   }
 }
