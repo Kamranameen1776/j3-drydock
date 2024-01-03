@@ -248,10 +248,10 @@ export class ProjectsRepository {
             .distinctOn(['pr.uid']);
 
         if (uid) {
-            query = query.where('pr.uid = :uid', { uid });
+            query = query.andWhere('pr.uid = :uid', { uid });
         }
         if (assignedVessels) {
-            query = query.where('vessel.vessel_id IN (:...ids)', { ids: assignedVessels });
+            query = query.andWhere('vessel.vessel_id IN (:...ids)', { ids: assignedVessels });
         }
         return query;
     }
