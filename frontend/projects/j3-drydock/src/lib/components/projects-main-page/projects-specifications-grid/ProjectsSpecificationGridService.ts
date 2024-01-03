@@ -43,7 +43,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.ShortDescription
+      width: '123px'
     },
     {
       DisplayText: 'Vessel',

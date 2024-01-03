@@ -33,8 +33,9 @@ import { ProjectCreate } from '../../../models/interfaces/projects';
 import { localAsUTCFromJbString } from '../../../utils/date';
 import { GrowlMessageService } from '../../../services/growl-message.service';
 import { eProjectCreate, eProjectDelete } from '../../../models/enums/project-details.enum';
-import { FleetService } from '../../../services/fleet.setvice';
+import { FleetService } from '../../../services/fleet.service';
 import { eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
+import { nameOf } from '../../../utils/nameOf';
 
 @Component({
   selector: 'jb-projects-specifications-grid',
@@ -49,6 +50,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
   @ViewChild('startDateTemplate', { static: true }) startDateTemplate: TemplateRef<unknown>;
   @ViewChild('endDateTemplate', { static: true }) endDateTemplate: TemplateRef<unknown>;
+  @ViewChild('codeTemplate', { static: true }) codeTemplate: TemplateRef<unknown>;
 
   private readonly allProjectsProjectTypeId = 'all_projects';
 
@@ -172,10 +174,14 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
         throw new Error('Project is null');
       }
 
-      this.newTabService.navigate(['../project', project.ProjectId], { relativeTo: this.activatedRoute });
+      this.navigateToDetails(project.ProjectId);
     } else if (type === this.gridInputs.gridButton.label) {
       this.showCreateNewDialog();
     }
+  }
+
+  public onCodeClick(project: IProjectsForMainPageGridDto) {
+    this.navigateToDetails(project.ProjectId);
   }
 
   public showCreateNewDialog(isShow = true) {
@@ -271,9 +277,22 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
         this.selectGridDefaultStatuses(statuses as unknown as IProjectStatusDto[]);
         this.gridInputs = this.projectsGridService.getGridInputs();
         this.gridInputs.gridButton.show = this.canCreateProject;
-        this.setCellTemplate(this.statusTemplate, 'ProjectStatusName');
-        this.setCellTemplate(this.startDateTemplate, 'StartDate');
-        this.setCellTemplate(this.endDateTemplate, 'EndDate');
+        this.setCellTemplate(
+          this.statusTemplate,
+          nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectStatusName)
+        );
+        this.setCellTemplate(
+          this.startDateTemplate,
+          nameOf<IProjectsForMainPageGridDto>((prop) => prop.StartDate)
+        );
+        this.setCellTemplate(
+          this.endDateTemplate,
+          nameOf<IProjectsForMainPageGridDto>((prop) => prop.EndDate)
+        );
+        this.setCellTemplate(
+          this.codeTemplate,
+          nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectCode)
+        );
         this.setGridActions();
       });
   }
@@ -396,5 +415,9 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
       eDropdownLabels.VesselLabel,
       eDropdownValues.VesselValue
     );
+  }
+
+  private navigateToDetails(projectId: string) {
+    this.newTabService.navigate(['../project', projectId], { relativeTo: this.activatedRoute });
   }
 }
