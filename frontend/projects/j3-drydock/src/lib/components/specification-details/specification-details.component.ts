@@ -8,10 +8,12 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ePmsWlType, eSpecificationDetailsPageMenuIds, specificationDetailsMenuData } from '../../models/enums/specification-details.enum';
 import {
+  GridService,
   IJbAttachment,
   ITopSectionFieldSet,
   JbDatePipe,
   JbDetailsTopSectionService,
+  eGridRefreshType,
   eJMSActionTypes,
   eJMSSectionNames,
   eMessagesSeverityValues
@@ -27,6 +29,7 @@ import { ITMDetailTabFields, JbTaskManagerDetailsService } from 'j3-task-manager
 import { TaskManagerService } from '../../services/task-manager.service';
 import { FormGroup } from '@angular/forms';
 import { SpecificationSubItem } from '../../models/interfaces/specification-sub-item';
+import { SpecificationDetailsSubItemsGridService } from '../../services/specification-details/specification-details-sub-item.service';
 
 @Component({
   selector: 'jb-specification-details',
@@ -86,7 +89,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     private growlMessageService: GrowlMessageService,
     private jbTMDtlSrv: JbTaskManagerDetailsService,
     private jbTopSecSrv: JbDetailsTopSectionService,
-    private taskManagerService: TaskManagerService
+    private taskManagerService: TaskManagerService,
+    private gridService: GridService,
+    private subItemsGridService: SpecificationDetailsSubItemsGridService
   ) {
     super();
   }
@@ -245,6 +250,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   closeDialog(isSaved: boolean) {
     this.showEditSubItem = false;
+    this.gridService.refreshGrid(eGridRefreshType.Table, this.subItemsGridService.gridName);
   }
 
   private getDetails(refresh = false) {
@@ -316,6 +322,14 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         break;
       }
       case eSpecificationDetailsPageMenuIds.PMSJobs:
+        if (this.selectedAmount[eSpecificationDetailsPageMenuIds.PMSJobs] === 0) {
+          this.jbTMDtlSrv.showGrowlMassage.next({
+            severity: eMessagesSeverityValues.Error,
+            detail: 'No record selected to convert.'
+          });
+
+          break;
+        }
         this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.PMSJobs];
         this.showEditSubItem = true;
         break;
