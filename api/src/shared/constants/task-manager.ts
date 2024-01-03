@@ -16,9 +16,10 @@ export const TaskManagerConstants = {
         function_code: 'specification_details',
         status: {
             Raised: 'RAISE',
-            Approved: ' APPROVED',
-            Rejected: 'REJECTED',
-            Completed: 'COMPLETED',
+            InProgress: 'IN PROGRESS',
+            Planned: 'COMPLETE',
+            Closed: 'CLOSE',
+            Canceled: 'CANCEL',
         },
     },
 };
