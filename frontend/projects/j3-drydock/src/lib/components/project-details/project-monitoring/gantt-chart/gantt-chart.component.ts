@@ -6,9 +6,9 @@ import { map, takeUntil } from 'rxjs/operators';
 import { DayMarkersService } from '@syncfusion/ej2-angular-gantt';
 import { statusBackground, statusIcon, statusProgressBarBackground, statusProgressBarBackgroundShaded } from './status-css.json';
 
-type TransformedJobOrder = (Omit<JobOrderDto, 'SpecificationStatus'> & {
+type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
-});
+};
 @Component({
   selector: 'jb-gantt-chart',
   templateUrl: './gantt-chart.component.html',
