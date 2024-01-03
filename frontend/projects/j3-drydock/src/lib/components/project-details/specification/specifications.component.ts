@@ -161,10 +161,4 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   private openSpecificationPage(uid: string) {
     this.newTabService.navigate(['../../specification-details', uid], { relativeTo: this.activatedRoute });
   }
-
-  public customSettingsAction(action: string) {
-    if (action === 'ExportExcel') {
-      this.exportExcel.emit();
-    }
-  }
 }

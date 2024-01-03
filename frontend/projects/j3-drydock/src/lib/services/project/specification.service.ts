@@ -94,13 +94,9 @@ export class SpecificationGridService {
       filtersLists: this.filtersLists,
       showSettings: {
         showDefaultLables: false,
-        [eGridEvents.ClearFilters]: true,
-        ExportExcel: true
+        [eGridEvents.ClearFilters]: true
       },
-      advancedSettings: [
-        { label: eGridEvents.ClearFilters, icon: eGridIcons.ClearFilters3, color: eGridColors.JbBlack, show: true },
-        { label: 'ExportExcel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
-      ]
+      advancedSettings: [{ label: eGridEvents.ClearFilters, icon: eGridIcons.ClearFilters3, color: eGridColors.JbBlack, show: true }]
     };
   }
 

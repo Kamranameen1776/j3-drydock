@@ -3,6 +3,8 @@
 <jb-task-manager-details
   *ngIf="sectionsConfig"
   [topSectionConfig]="topSectionConfig"
+  [customedThreeDotActions]="customedThreeDotActions"
+  [threeDotsActionsShow]="threeDotsActionsShow"
   [sectionsConfig]="sectionsConfig"
   [tmDetails]="tmDetails"
   [moduleCode]="moduleCode"
@@ -51,7 +53,6 @@
             [projectId]="projectUid"
             [vesselUid]="vesselUid"
             [vesselType]="vesselType"
-            (exportExcel)="exportExcel()"
           ></jb-specifications>
         </div>
       </div>

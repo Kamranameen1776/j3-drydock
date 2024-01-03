@@ -1,10 +1,13 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
+  AdvancedSettings,
   IJbAttachment,
   ITopSectionFieldSet,
   JbAttachmentsComponent,
   JbDetailsTopSectionService,
   eAttachmentButtonTypes,
+  eGridColors,
+  eGridIcons,
   eJMSActionTypes,
   eJMSSectionNames
 } from 'jibe-components';
@@ -61,6 +64,12 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   tmDetails: ProjectDetailsFull;
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
+  customedThreeDotActions: AdvancedSettings[] = [
+    { label: 'ExportExcel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
+  ];
+  threeDotsActionsShow = {
+    ExportExcel: true
+  };
 
   editingSection = '';
 
@@ -217,6 +226,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       this.deleteRecord();
     } else if (wfEvent?.event?.type === 'resync') {
       this.resyncRecord();
+    } else if (wfEvent?.event?.type === 'Export') {
+      this.exportExcel();
     }
   }
 
