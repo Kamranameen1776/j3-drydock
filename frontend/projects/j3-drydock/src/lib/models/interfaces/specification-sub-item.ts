@@ -10,4 +10,5 @@ export interface SpecificationSubItem {
   activeStatus: boolean;
   discount: number;
   description: string;
+  dialogHeader: string;
 }

@@ -183,7 +183,8 @@ export class SpecificationDetailsService {
             active_status: true,
             SectionCode: eSpecificationDetailsPageMenuIds.SubItems,
             SectionLabel: eSpecificationDetailsPageMenuLabels.SubItems,
-            isAddNewButton: false
+            isAddNewButton: true,
+            buttonLabel: 'Add New Sub Item'
           },
           {
             GridRowStart: 3,

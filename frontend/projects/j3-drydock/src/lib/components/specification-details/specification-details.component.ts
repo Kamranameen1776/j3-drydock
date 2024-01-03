@@ -330,11 +330,17 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
           break;
         }
+        this.subItemDetails.dialogHeader = null;
         this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.PMSJobs];
         this.showEditSubItem = true;
         break;
       case eSpecificationDetailsPageMenuIds.Findings:
+        this.subItemDetails.dialogHeader = null;
         this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.Findings];
+        this.showEditSubItem = true;
+        break;
+      case eSpecificationDetailsPageMenuIds.SubItems:
+        this.subItemDetails.dialogHeader = 'Add New Sub Item';
         this.showEditSubItem = true;
         break;
       default:

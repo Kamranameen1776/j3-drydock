@@ -91,5 +91,6 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
   private initForm(): void {
     this.formModel = this.specificationSubItemEditService.formStructure;
     this.formValues = this.specificationSubItemEditService.getFormValues(this.subItemDetails);
+    this.popupConfig.dialogHeader = this.subItemDetails.dialogHeader ?? this.popupConfig.dialogHeader;
   }
 }
