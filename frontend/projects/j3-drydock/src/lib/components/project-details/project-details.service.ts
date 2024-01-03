@@ -188,27 +188,27 @@ export class ProjectDetailsService {
 
   getSectionsConfig(): ITMDetailTabFields {
     return {
-      [eProjectDetailsSideMenuId.General]: {
-        id: eProjectDetailsSideMenuId.General,
-        menuDisplayName: eProjectDetailsSideMenuLabel.General,
-        menuIcon: '',
-        showDiscussion: true,
-        isClosedDiscussion: true,
-        activeStatus: true,
-        index: 1,
-        sections: [
-          {
-            GridRowStart: 1,
-            GridRowEnd: 2,
-            GridColStart: 1,
-            GridColEnd: 3,
-            active_status: true,
-            SectionCode: 'tasks',
-            SectionLabel: 'Tasks',
-            isAddNewButton: false
-          }
-        ]
-      },
+      // [eProjectDetailsSideMenuId.General]: {
+      //   id: eProjectDetailsSideMenuId.General,
+      //   menuDisplayName: eProjectDetailsSideMenuLabel.General,
+      //   menuIcon: '',
+      //   showDiscussion: true,
+      //   isClosedDiscussion: true,
+      //   activeStatus: true,
+      //   index: 1,
+      //   sections: [
+      //     {
+      //       GridRowStart: 1,
+      //       GridRowEnd: 2,
+      //       GridColStart: 1,
+      //       GridColEnd: 3,
+      //       active_status: true,
+      //       SectionCode: 'tasks',
+      //       SectionLabel: 'Tasks',
+      //       isAddNewButton: false
+      //     }
+      //   ]
+      // },
       [eProjectDetailsSideMenuId.Specifications]: {
         id: eProjectDetailsSideMenuId.Specifications,
         menuDisplayName: eProjectDetailsSideMenuLabel.Specifications,
@@ -218,17 +218,21 @@ export class ProjectDetailsService {
         activeStatus: true,
         index: 2,
         sections: [
-          {
-            GridRowStart: 1,
-            GridRowEnd: 2,
-            GridColStart: 1,
-            GridColEnd: 3,
-            active_status: true,
-            SectionCode: eProjectDetailsSideMenuId.TechnicalSpecification,
-            SectionLabel: eProjectDetailsSideMenuLabel.TechnicalSpecification,
-            IconClass: 'icons8-more-details-2',
-            isAddNewButton: false
-          },
+          ...(this.accessRights.specificationDetails.view
+            ? [
+                {
+                  GridRowStart: 1,
+                  GridRowEnd: 2,
+                  GridColStart: 1,
+                  GridColEnd: 3,
+                  active_status: true,
+                  SectionCode: eProjectDetailsSideMenuId.TechnicalSpecification,
+                  SectionLabel: eProjectDetailsSideMenuLabel.TechnicalSpecification,
+                  IconClass: 'icons8-more-details-2',
+                  isAddNewButton: false
+                }
+              ]
+            : []),
           {
             GridRowStart: 2,
             GridRowEnd: 3,
