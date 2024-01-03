@@ -116,15 +116,14 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
         this.createReportForm.controls.reportName.setValue(this.reportInfo.reportName);
         this.jobOrderUpdatesToLink = this.reportInfo.jobOrdersUpdate.map((jobOrder) => {
           return {
-            name: jobOrder.name,
+            subject: jobOrder.subject,
             remark: jobOrder.remark,
             specificationUid: jobOrder.specificationUid,
             specificationCode: jobOrder.specificationCode,
             status: jobOrder.status,
             progress: jobOrder.progress,
             lastUpdated: jobOrder.lastUpdated,
-            specificationSubject: jobOrder.specificationSubject,
-            updatedBy: jobOrder.updatedBy
+            specificationSubject: jobOrder.specificationSubject
           };
         });
 

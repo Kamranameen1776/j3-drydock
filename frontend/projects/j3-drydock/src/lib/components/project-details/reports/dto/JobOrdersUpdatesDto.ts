@@ -1,5 +1,5 @@
 export interface JobOrdersUpdatesDto {
-  name: string;
+  subject: string;
   remark: string;
   specificationUid: string;
   specificationCode: string;
@@ -7,5 +7,4 @@ export interface JobOrdersUpdatesDto {
   progress: number;
   lastUpdated: Date;
   specificationSubject: string;
-  updatedBy?: string;
 }
