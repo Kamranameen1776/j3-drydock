@@ -61,7 +61,8 @@ export class LinkedPmsJobsAndFindingsComponent implements OnInit {
   entitySelectionChanged(event: { [key in TmLinkedRecordsRelationType]?: TmLinkedRecords[] }): void {
     this.selectedEntity = event.Related;
 
-    //TODO: Add validation logic here
+    const count = event?.Related?.length || 0;
+    this.updateSelectedAmount.next(count);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

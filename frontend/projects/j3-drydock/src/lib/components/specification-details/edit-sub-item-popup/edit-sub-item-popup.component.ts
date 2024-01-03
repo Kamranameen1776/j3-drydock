@@ -66,6 +66,10 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
   private save() {
     this.loading$.next(true);
     const value = this.formGroup.value[this.specificationSubItemEditService.formId];
+    //Because quantity is disabled in form, we need to get it from controls
+    const controls = this.formGroup.controls[this.specificationSubItemEditService.formId];
+    value.quantity = controls.get('quantity').value;
+
     let action$: Observable<SpecificationSubItem>;
     if (this.subItemDetails.uid) {
       action$ = this.specificationSubItemEditService.updateSubItem(value, this.subItemDetails.uid, this.specificationUid);
