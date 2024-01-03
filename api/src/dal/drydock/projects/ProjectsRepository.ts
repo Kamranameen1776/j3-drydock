@@ -198,7 +198,7 @@ export class ProjectsRepository {
             )
             .leftJoin(className(J3PrcCompanyRegistryEntity), 'yd', 'yd.uid = ydp.yard_uid')
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
-            .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
+            .leftJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
             .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = pr.ProjectTypeUid')
             .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
