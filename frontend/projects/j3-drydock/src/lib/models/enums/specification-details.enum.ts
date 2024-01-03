@@ -35,8 +35,8 @@ export const specificationDetailsMenuData = [
       { label: eSpecificationDetailsPageMenuLabels.SubItems, id: eSpecificationDetailsPageMenuIds.SubItems },
       { label: eSpecificationDetailsPageMenuLabels.PMSJobs, id: eSpecificationDetailsPageMenuIds.PMSJobs },
       { label: eSpecificationDetailsPageMenuLabels.Findings, id: eSpecificationDetailsPageMenuIds.Findings },
-      // { label: eSpecificationDetailsPageMenuLabels.Requisitions, id: eSpecificationDetailsPageMenuIds.Requisitions },
-      // { label: eSpecificationDetailsPageMenuLabels.Source, id: eSpecificationDetailsPageMenuIds.Source },
+      { label: eSpecificationDetailsPageMenuLabels.Requisitions, id: eSpecificationDetailsPageMenuIds.Requisitions },
+      { label: eSpecificationDetailsPageMenuLabels.Source, id: eSpecificationDetailsPageMenuIds.Source },
       {
         label: eSpecificationDetailsPageMenuLabels.SpecificationAttachments,
         id: eSpecificationDetailsPageMenuIds.SpecificationAttachments
@@ -56,4 +56,9 @@ export enum eSpecificationWorkflowStatusAction {
   Approve = 'APPROVE',
   Close = 'CLOSE',
   Unclose = 'UNCLOSE'
+}
+
+export enum ePmsWlType {
+  PmsJob = 'PMS JOB',
+  Findings = 'FINDINGS'
 }

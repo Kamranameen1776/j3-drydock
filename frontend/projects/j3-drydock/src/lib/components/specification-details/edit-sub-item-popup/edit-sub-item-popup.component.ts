@@ -6,7 +6,7 @@ import { FormGroup } from '@angular/forms';
 import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
 import { SpecificationSubItemEditService } from '../specification-sub-items/specification-sub-item-edit.service';
 import { GrowlMessageService } from '../../../services/growl-message.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'jb-edit-sub-item-popup',
@@ -66,7 +66,17 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
   private save() {
     this.loading$.next(true);
     const value = this.formGroup.value[this.specificationSubItemEditService.formId];
-    this.specificationSubItemEditService.updateSubItem(value, this.subItemDetails.uid, this.specificationUid).subscribe(
+    //Because quantity is disabled in form, we need to get it from controls
+    const controls = this.formGroup.controls[this.specificationSubItemEditService.formId];
+    value.quantity = controls.get('quantity').value;
+
+    let action$: Observable<SpecificationSubItem>;
+    if (this.subItemDetails.uid) {
+      action$ = this.specificationSubItemEditService.updateSubItem(value, this.subItemDetails.uid, this.specificationUid);
+    } else {
+      action$ = this.specificationSubItemEditService.createSubItem(value, this.specificationUid);
+    }
+    action$.subscribe(
       () => {
         this.closePopup(true);
         this.loading$.next(false);
