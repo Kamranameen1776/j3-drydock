@@ -9,7 +9,7 @@
   [functionCode]="functionCode"
   [hideAuditTrail]="true"
   [hideAttachments]="true"
-  [showExport]="true"
+  [showExport]="false"
   [isViewRight]="canView"
   (onWorkflowActions)="onWorkflowAction($event)"
   [templateRefObj]="{
@@ -51,6 +51,7 @@
             [projectId]="projectUid"
             [vesselUid]="vesselUid"
             [vesselType]="vesselType"
+            (exportExcel)="exportExcel()"
           ></jb-specifications>
         </div>
       </div>
@@ -133,12 +134,12 @@
 </ng-template>
 
 <ng-template #specificationsButtonsTmpl>
-  <jb-button
+  <!-- Return after export to PDF is done -->
+  <!-- <jb-button
     type="NoButton"
     icon="icons8-anchor"
     label="Export"
-    (click)="exportExcel()"
-  ></jb-button>
+  ></jb-button> -->
   <jb-split-button
     type="NoButton"
     label="Create new"

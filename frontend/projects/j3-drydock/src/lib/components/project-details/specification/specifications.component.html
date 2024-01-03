@@ -21,9 +21,12 @@
     [searchFields]="gridData.searchFields"
     [includeSearch]="true"
     [getStyleByContainer]="true"
+    [showSettings]="gridData.showSettings"
+    [advancedSettings]="gridData.advancedSettings"
     [isDisplayAdvancedFilter]="false"
     (action)="onActionClick($event)"
     (cellPlainTextClick)="cellPlainTextClick($event)"
+    (customSettingsAction)="customSettingsAction($event)"
   ></jb-grid>
 
   <jb-add-specification-from-standard-job-popup

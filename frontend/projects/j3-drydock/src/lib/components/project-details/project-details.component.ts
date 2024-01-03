@@ -30,6 +30,7 @@ import { UTCAsLocal } from '../../utils/date';
 import { cloneDeep } from 'lodash';
 import { StatementOfFactsComponent } from './project-monitoring/statement-of-facts/statement-of-facts.component';
 import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
+import { getFileNameDate } from '../../shared/functions/file-name';
 
 @Component({
   selector: 'jb-project-details',
@@ -339,14 +340,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   private getExcelFilename() {
     return `${this.projectDetails.VesselName}-${this.projectDetails.ShipYard}-${new Date(
       this.projectDetails.StartDate
-    ).getFullYear()}-${this.getFileNameDate()}.xlsx`;
-  }
-
-  private getFileNameDate() {
-    const currentDate = new Date();
-    const day = currentDate.getDate().toString().padStart(2, '0');
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const year = currentDate.getFullYear().toString();
-    return day + month + year;
+    ).getFullYear()}-${getFileNameDate()}.xlsx`;
   }
 }
