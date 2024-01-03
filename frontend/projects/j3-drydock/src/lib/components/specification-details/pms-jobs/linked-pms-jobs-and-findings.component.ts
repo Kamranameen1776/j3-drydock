@@ -46,24 +46,26 @@ export class LinkedPmsJobsAndFindingsComponent implements OnInit {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   selectionValidator = (changedEntities: ITaskManagerLinkingComponentSelectionEvent): Promise<boolean> => {
-    console.log('*******Linking validator', changedEntities);
+    //TODO: Add validation logic here
 
     return Promise.resolve(true);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   childRecordEvents(event: string): void {
-    console.log('*******Linking events', event);
+    //TODO: Add validation logic here
   }
 
   entitySelectionChanged(event: { [key in TmLinkedRecordsRelationType]?: TmLinkedRecords[] }): void {
     this.selectedEntity = event.Related;
 
-    console.log('*******Entity selection changed', event);
-    console.log('*******Entity selected', this.selectedEntity);
+    //TODO: Add validation logic here
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   entityMenuOptionSelected(event: string): void {
-    console.log('*******Entity menu option selected', event);
+    //TODO: Add validation logic here
   }
 }

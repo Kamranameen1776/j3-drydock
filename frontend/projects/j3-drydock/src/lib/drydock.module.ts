@@ -1,11 +1,11 @@
 import { StandardJobsMainComponent } from './components/standard-jobs-main/standard-jobs-main.component';
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { DryDockRoutingModule } from './drydock.routing';
 import { DropdownModule, MenuModule, SidebarModule, TieredMenuModule } from 'primeng';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule as PrimeNgModule } from 'primeng';
-import { JiBeTheme, JibeComponentsModule, ThemeService } from 'jibe-components';
+import { JiBeTheme, JibeComponentsModule } from 'jibe-components';
 import { ProjectDetailsComponent } from './components/project-details/project-details.component';
 import { SpecificationGridService } from './services/project/specification.service';
 import { SpecificationStatusPipe } from './components/project-details/specification/specification-status.pipe';

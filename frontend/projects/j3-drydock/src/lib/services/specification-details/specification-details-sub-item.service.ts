@@ -6,7 +6,7 @@ import {
   eSpecificationDetailsSubItemsLabels
 } from '../../models/enums/specification-details-sub-items.enum';
 import { SpecificationDetailsService } from './specification-details.service';
-import { eProjectsDetailsAccessActions, eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
+import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
 
 @Injectable()
 export class SpecificationDetailsSubItemsGridService {

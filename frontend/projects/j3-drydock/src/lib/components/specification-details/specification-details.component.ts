@@ -242,6 +242,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     this.selectedAmount[type] = amount;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   closeDialog(isSaved: boolean) {
     this.showEditSubItem = false;
   }
