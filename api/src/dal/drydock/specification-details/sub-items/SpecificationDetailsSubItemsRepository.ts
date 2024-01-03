@@ -265,7 +265,7 @@ export class SpecificationDetailsSubItemsRepository {
         subItem.deleted_at = new Date();
     }
 
-    private mapSubItemDtoToEntity(subItemData: Partial<SubItemEditableProps>, subItem: Partial<SubItem>): SubItem {
+    private mapSubItemDtoToEntity(subItemData: Partial<CreateSubItemParams>, subItem: Partial<SubItem>): SubItem {
         const discount = (subItemData.discount || 0) / 100;
 
         const newSubItem: Partial<SubItem> = {
@@ -275,6 +275,7 @@ export class SpecificationDetailsSubItemsRepository {
             discount: Number(discount.toFixed(2)),
             subject: subItemData.subject,
             description: subItemData.description,
+            specificationDetailsUid: subItemData.specificationDetailsUid,
         };
 
         if (subItemData.unitUid) {
