@@ -222,11 +222,15 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
     const values: ProjectCreate = cloneDeep(this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId]);
 
-    values.EndDate = localAsUTCFromJbString(values.EndDate);
+    if (values.EndDate) {
+      values.EndDate = localAsUTCFromJbString(values.EndDate);
+    }
 
-    values.StartDate = localAsUTCFromJbString(values.StartDate);
+    if (values.StartDate) {
+      values.StartDate = localAsUTCFromJbString(values.StartDate);
+    }
 
-    if (values.EndDate < values.StartDate) {
+    if (values.EndDate && values.StartDate && values.EndDate < values.StartDate) {
       this.growlMessageService.setErrorMessage('Start date cannot be greater than End date');
       return;
     }
