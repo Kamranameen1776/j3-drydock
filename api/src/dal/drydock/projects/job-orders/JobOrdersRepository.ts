@@ -10,6 +10,7 @@ import {
     ProjectEntity,
     SpecificationDetailsEntity,
     TecTaskManagerEntity,
+    TmDdLibDoneBy,
 } from '../../../../entity/drydock';
 import { JmsDtlWorkflowConfigEntity } from '../../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
@@ -32,12 +33,12 @@ export class JobOrdersRepository {
                 'tm.Code AS Code',
                 'its.DisplayName as ItemSource',
                 'jo.Progress AS Progress',
-                "usr.FirstName + ' ' + usr.LastName AS Responsible",
                 'jo.LastUpdated AS LastUpdated',
                 'wdetails.StatusDisplayName AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
                 'sd.StartDate as SpecificationStartDate',
                 'sd.EndDate as SpecificationEndDate',
+                'db.displayName as DoneBy',
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1 ')
@@ -50,7 +51,7 @@ export class JobOrdersRepository {
             )
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1')
-            .leftJoin(className(LibUserEntity), 'usr', 'sd.DoneByUid = usr.uid and usr.ActiveStatus = 1')
+            .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid')
 
             .getQuery();
 
