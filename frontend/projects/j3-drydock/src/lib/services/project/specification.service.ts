@@ -8,7 +8,10 @@ import {
   WebApiRequest,
   eCrud,
   eFieldControlType,
-  eGridAction
+  eGridAction,
+  eGridColors,
+  eGridEvents,
+  eGridIcons
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
@@ -88,7 +91,12 @@ export class SpecificationGridService {
       actions: this.gridActions,
       filters: this.filters,
       searchFields: this.searchFields,
-      filtersLists: this.filtersLists
+      filtersLists: this.filtersLists,
+      showSettings: {
+        showDefaultLables: false,
+        [eGridEvents.ClearFilters]: true
+      },
+      advancedSettings: [{ label: eGridEvents.ClearFilters, icon: eGridIcons.ClearFilters3, color: eGridColors.JbBlack, show: true }]
     };
   }
 

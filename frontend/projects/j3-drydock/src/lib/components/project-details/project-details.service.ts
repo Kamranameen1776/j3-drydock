@@ -381,6 +381,10 @@ export class ProjectDetailsService {
     return !!this.userRights.getUserRights(module, func, action);
   }
 
+  exportExcel(projectId: string, yardId: string) {
+    return this.projectsService.exportExcel(projectId, yardId);
+  }
+
   private setAccessRights(rights: ProjectDetailsAccessRights) {
     this.accessRights = rights;
   }
