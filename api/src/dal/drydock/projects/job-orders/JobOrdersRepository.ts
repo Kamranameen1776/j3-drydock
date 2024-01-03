@@ -18,12 +18,13 @@ import { ODataResult } from '../../../../shared/interfaces';
 import { IJobOrderDto } from './IJobOrderDto';
 
 export class JobOrdersRepository {
+    private statuses: Array<string> = [
+        TaskManagerConstants.specification.status.Planned,
+        TaskManagerConstants.specification.status.Closed,
+    ];
     public async GetJobOrders(request: Request): Promise<ODataResult<IJobOrderDto>> {
         const SpecificationDetailsRepository = getManager().getRepository(SpecificationDetailsEntity);
-        const statuses = [
-            TaskManagerConstants.specification.status.Planned,
-            TaskManagerConstants.specification.status.Closed,
-        ];
+
         const query: string = SpecificationDetailsRepository.createQueryBuilder('sd')
             .select([
                 'sd.uid AS SpecificationUid',
@@ -45,7 +46,7 @@ export class JobOrdersRepository {
                 className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
                 `wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status
-                AND tm.Status IN ('${statuses.join(`','`)}')`,
+                AND tm.Status IN ('${this.statuses.join(`','`)}')`,
             )
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1')
@@ -70,7 +71,7 @@ export class JobOrdersRepository {
                 'jo.Progress AS Progress',
                 "usr.FirstName + ' ' + usr.LastName AS Responsible",
                 'jo.LastUpdated AS LastUpdated',
-                'tm.Status AS SpecificationStatus',
+                'wdetails.StatusDisplayName AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
                 'sd.StartDate as SpecificationStartDate',
                 'sd.EndDate as SpecificationEndDate',
@@ -82,6 +83,13 @@ export class JobOrdersRepository {
             )
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
+            .innerJoin(
+                className(JmsDtlWorkflowConfigDetailsEntity),
+                'wdetails',
+                `wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status
+                AND tm.Status IN ('${this.statuses.join(`','`)}')`,
+            )
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(LibUserEntity), 'usr', 'sd.DoneByUid = usr.uid and usr.ActiveStatus = 1')
 
