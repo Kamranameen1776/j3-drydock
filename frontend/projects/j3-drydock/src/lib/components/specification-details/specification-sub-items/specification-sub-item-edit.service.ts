@@ -63,7 +63,7 @@ export class SpecificationSubItemEditService extends FormServiceBase {
             label: eSpecificationDetailsSubItemsLabels.Quantity,
             type: eFieldControlType.Number,
             sectionID: this.formId,
-            enabled: false,
+            enabled: true,
             validatorRequired: false,
             gridRowStart: 2,
             gridRowEnd: 3,
