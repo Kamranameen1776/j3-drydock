@@ -235,10 +235,11 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
       return;
     }
 
-    this.projectsService.createProject(values).subscribe(() => {
+    this.projectsService.createProject(values).subscribe((uid: string) => {
       this.saveNewProjectButtonDisabled$.next(false);
       this.showCreateNewDialog(false);
       this.projectsGrid.fetchMatrixData();
+      this.navigateToDetails(uid);
     });
   }
 
