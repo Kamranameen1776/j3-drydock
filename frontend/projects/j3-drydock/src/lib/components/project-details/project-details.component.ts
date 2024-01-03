@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   IJbAttachment,
+  IJbMenuItem,
   ITopSectionFieldSet,
   JbAttachmentsComponent,
   JbDetailsTopSectionService,
@@ -20,7 +21,7 @@ import { ProjectDetailsAccessRights, ProjectDetailsService } from './project-det
 import { TaskManagerService } from '../../services/task-manager.service';
 import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/project-details';
 import { projectDetailsMenuData } from './project-details-menu';
-import { eProjectDetailsSideMenuId, eProjectDetailsSideMenuLabel } from '../../models/enums/project-details.enum';
+import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.enum';
 import { SpecificationsComponent } from './specification/specifications.component';
 import { RfqComponent } from './yard/rfq/rfq.component';
 import { ProjectsService } from '../../services/ProjectsService';
@@ -252,7 +253,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
         this.accessRights = this.projectDetailsService.setupAccessRights(this.tmDetails);
         this.topSectionConfig = this.projectDetailsService.getTopSecConfig(this.tmDetails);
-        this.sectionsConfig = this.projectDetailsService.getSectionsConfig(this.tmDetails.task_status);
+        this.sectionsConfig = this.projectDetailsService.getSectionsConfig();
 
         this.setMenuByAccessRights();
         this.setAttachmentsActions();
@@ -315,14 +316,33 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   }
 
   private setAttachmentsActions() {
-    this.attachmentConfig.actions = this.detailsService.getAttachmnentActions(this.accessRights.attachments);
+    this.attachmentConfig.actions = this.detailsService.getAttachmentActions(this.accessRights.attachments);
   }
 
   private setMenuByAccessRights() {
     this.menu = cloneDeep(projectDetailsMenuData);
 
-    if (this.accessRights.attachments.view) {
-      this.menu[1].items[3] = { label: eProjectDetailsSideMenuLabel.Attachments, id: eProjectDetailsSideMenuId.Attachments };
+    const specificationSection = this.getMenuById(this.menu, eProjectDetailsSideMenuId.Specifications);
+    this.processSpecificationsMenuAccessRights(specificationSection);
+  }
+
+  private processSpecificationsMenuAccessRights(specificationSection: IJbMenuItem) {
+    if (!specificationSection) {
+      return;
     }
+    if (!this.accessRights.attachments.view) {
+      this.hideSubMenuItem(specificationSection, eProjectDetailsSideMenuId.Attachments);
+    }
+    if (!this.accessRights.specificationDetails.view) {
+      this.hideSubMenuItem(specificationSection, eProjectDetailsSideMenuId.TechnicalSpecification);
+    }
+  }
+
+  private getMenuById(menus: IJbMenuItem[], id: eProjectDetailsSideMenuId) {
+    return this.detailsService.getMenuById(menus, id);
+  }
+
+  private hideSubMenuItem(parentMenu: IJbMenuItem, id: eProjectDetailsSideMenuId) {
+    this.detailsService.hideSubMenuItem(parentMenu, id);
   }
 }
