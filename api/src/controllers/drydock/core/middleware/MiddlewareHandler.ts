@@ -4,11 +4,7 @@ import * as httpStatus from 'http-status-codes';
 import { AccessRights } from 'j2utils';
 
 import { UserFromToken } from '../../../../application-layer/drydock/core/cqrs/UserDto';
-import {
-    ApplicationException,
-    AuthorizationException,
-    BusinessException,
-} from '../../../../bll/drydock/core/exceptions';
+import { AuthorizationException, BusinessException } from '../../../../bll/drydock/core/exceptions';
 import { log } from '../../../../logger';
 import { ProblemDetails, ProblemDetailsType } from '../ProblemDetails';
 import { ExceptionLogDataDto } from './ExceptionLogDataDto';

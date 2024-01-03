@@ -1,5 +1,6 @@
 export * from './J2InfAdminLibraryEntity';
 export * from './JMSDTLWorkflowConfigDetailsEntity';
+export * from './JMSDTLWorkflowConfigEntity';
 export * from './LibItemSourceEntity';
 export * from './LibSurveyCertificateAuthorityEntity';
 export * from './LibUserEntity';

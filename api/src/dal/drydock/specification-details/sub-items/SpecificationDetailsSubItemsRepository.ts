@@ -24,7 +24,6 @@ import { DeleteSubItemParams } from './dto/DeleteSubItemParams';
 import { FindManyParams } from './dto/FindManyParams';
 import { GetManyParams } from './dto/GetManyParams';
 import { GetSubItemParams } from './dto/GetSubItemParams';
-import { SubItemEditableProps } from './dto/SubItemEditableProps';
 import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
 import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
 

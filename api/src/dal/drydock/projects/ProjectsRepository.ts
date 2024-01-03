@@ -2,30 +2,36 @@
 // UpdateProjectDto should be a part of the Infrastructure layer(DAL)
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, In, QueryRunner, SelectQueryBuilder } from 'typeorm';
+import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
-import { J3PrcCompanyRegistryEntity, SpecificationDetailsEntity, YardsProjectsEntity } from '../../../entity/drydock';
-import { JmsDtlWorkflowConfigDetailsEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigDetailsEntity';
-import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
-import { LibUserEntity } from '../../../entity/drydock/dbo/LibUserEntity';
-import { LibVesselsEntity } from '../../../entity/drydock/dbo/LibVesselsEntity';
-import { TecLibWorklistTypeEntity } from '../../../entity/drydock/dbo/TECLIBWorklistTypeEntity';
-import { TecTaskManagerEntity } from '../../../entity/drydock/dbo/TECTaskManagerEntity';
-import { GroupProjectStatusEntity } from '../../../entity/drydock/GroupProjectStatusEntity';
-import { ProjectEntity } from '../../../entity/drydock/ProjectEntity';
-import { ProjectStateEntity } from '../../../entity/drydock/ProjectStateEntity';
-import { ProjectTypeEntity } from '../../../entity/drydock/ProjectTypeEntity';
+import {
+    GroupProjectStatusEntity,
+    J3PrcCompanyRegistryEntity,
+    JmsDtlWorkflowConfigDetailsEntity,
+    JmsDtlWorkflowConfigEntity,
+    LibUserEntity,
+    LibVesselsEntity,
+    ProjectEntity,
+    ProjectStateEntity,
+    ProjectTypeEntity,
+    SpecificationDetailsEntity,
+    TecLibWorklistTypeEntity,
+    TecTaskManagerEntity,
+    YardsProjectsEntity,
+} from '../../../entity/drydock';
 import { TaskManagerConstants } from '../../../shared/constants';
-import { ODataResult } from '../../../shared/interfaces/odata-result.interface';
-import { ICreateNewProjectDto } from './dtos/ICreateNewProjectDto';
-import { IGroupProjectStatusByProjectTypeDto } from './dtos/IGroupProjectStatusByProjectTypeDto';
-import { IGroupProjectStatusDto } from './dtos/IGroupProjectStatusDto';
-import { IProjectsForMainPageRecordDto } from './dtos/IProjectsForMainPageRecordDto';
-import { IProjectsManagersResultDto } from './dtos/IProjectsManagersResultDto';
-import { IProjectStatusResultDto } from './dtos/IProjectStatusResultDto';
-import { IProjectTypeResultDto } from './dtos/IProjectTypeResultDto';
-import { IProjectVesselsResultDto } from './dtos/IProjectVesselsResultDto';
+import { ODataResult } from '../../../shared/interfaces';
+import {
+    ICreateNewProjectDto,
+    IGroupProjectStatusByProjectTypeDto,
+    IGroupProjectStatusDto,
+    IProjectsForMainPageRecordDto,
+    IProjectsManagersResultDto,
+    IProjectStatusResultDto,
+    IProjectTypeResultDto,
+    IProjectVesselsResultDto,
+} from './dtos';
 
 export class ProjectsRepository {
     /**

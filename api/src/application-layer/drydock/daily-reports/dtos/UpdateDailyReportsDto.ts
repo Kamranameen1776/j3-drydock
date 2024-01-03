@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsDateString, IsDefined, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
+import { ArrayMinSize, IsDefined, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 import { JobOrdersUpdatesDto } from './JobOrdersUpdatesDto';
 
