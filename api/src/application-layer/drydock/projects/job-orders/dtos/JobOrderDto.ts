@@ -7,6 +7,8 @@ export interface JobOrderDto {
 
     Remarks: string;
 
+    Progress: number;
+
     Subject: string;
 
     SpecificationStartDate: Date | null;

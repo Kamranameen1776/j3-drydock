@@ -43,7 +43,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.ShortDescription
+      width: '123px'
     },
     {
       DisplayText: 'Vessel',
@@ -459,7 +459,6 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Dropdown,
               sectionID: this.createProjectFormId,
               enabled: true,
-              validatorRequired: true,
               gridRowStart: 5,
               gridRowEnd: 6,
               gridColStart: 1,
@@ -475,7 +474,6 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Date,
               sectionID: this.createProjectFormId,
               enabled: true,
-              validatorRequired: true,
               gridRowStart: 6,
               gridRowEnd: 7,
               gridColStart: 1,
@@ -487,7 +485,6 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Date,
               sectionID: this.createProjectFormId,
               enabled: true,
-              validatorRequired: true,
               gridRowStart: 7,
               gridRowEnd: 8,
               gridColStart: 1,

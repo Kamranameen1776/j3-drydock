@@ -57,6 +57,7 @@ export const statusProgressBarBackgroundShaded: Record<keyof typeof statusProgre
 ).reduce((acc, key) => {
   acc[key] = shadeColor(statusProgressBarBackground[key], 10);
   return acc;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }, {}) as any;
 
 export const statusIcon = {

@@ -139,12 +139,11 @@ export class StandardJobsRepository {
         return oDataService.getJoinResult(sql, params);
     }
 
-    public async getStandardJobRunningNumber(functionUid: string): Promise<number | undefined> {
+    public async getStandardJobRunningNumber(): Promise<number | undefined> {
         const result = await getManager()
             .createQueryBuilder(StandardJobs, 'sj')
             .select('MAX(sj.number)', 'maxNumber')
             .where('sj.active_status = :activeStatus', { activeStatus: 1 })
-            .andWhere('sj.function_uid = :function', { function: functionUid })
             .getRawOne();
         return result.maxNumber;
     }

@@ -14,10 +14,20 @@ export class updateSpecificationRequisitionsTable1701426277852 implements Migrat
                from INFORMATION_SCHEMA.TABLES
                where TABLE_NAME = '${this.tableName}'
                  AND TABLE_SCHEMA = '${this.schemaName}')
-    BEGIN
-         ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (newid()) FOR [uid]
-         ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT ((1)) FOR [active_status]
-    END`);
+            BEGIN
+                 drop table dry_dock.specification_requisitions;
+            END;
+
+            create table dry_dock.specification_requisitions
+            (
+                uid               uniqueidentifier default newid() not null
+                    primary key,
+                specification_uid uniqueidentifier                 not null,
+                requisition_uid   uniqueidentifier                 not null,
+                active_status     bit              default 1       not null,
+            );
+
+`);
 
             await MigrationUtilsService.migrationLog(this.className, '', 'S', 'dry_dock', this.description);
         } catch (error) {

@@ -10,7 +10,7 @@ import { JobOrdersUpdatesDto } from '../../dto/JobOrdersUpdatesDto';
 export class LeftSideListComponent extends UnsubscribeComponent implements OnInit, OnChanges {
   @Input() jobOrdersToLink: JobOrdersUpdatesDto[];
   @Output() openJobOrderDialog = new EventEmitter<boolean>();
-  @Output() selectedSpecificationUid = new EventEmitter<string>();
+  @Output() selectedUpdate = new EventEmitter<JobOrdersUpdatesDto>();
 
   updates = [];
   constructor(private cdr: ChangeDetectorRef) {
@@ -31,7 +31,7 @@ export class LeftSideListComponent extends UnsubscribeComponent implements OnIni
   onAddClicked() {
     this.openJobOrderDialog.emit(true);
   }
-  onUpdateClicked(SpecificationUid: string) {
-    this.selectedSpecificationUid.emit(SpecificationUid);
+  onUpdateClicked(selectedUpdate: JobOrdersUpdatesDto) {
+    this.selectedUpdate.emit(selectedUpdate);
   }
 }

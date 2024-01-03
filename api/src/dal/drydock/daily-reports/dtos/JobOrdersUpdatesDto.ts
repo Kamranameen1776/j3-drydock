@@ -1,6 +1,6 @@
 export class JobOrdersUpdatesDto {
     uid?: string;
-    name: string;
+    subject: string;
     remark: string;
     specificationUid: string;
     specificationCode: string;

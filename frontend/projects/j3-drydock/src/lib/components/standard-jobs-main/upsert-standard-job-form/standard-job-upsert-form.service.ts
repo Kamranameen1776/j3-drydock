@@ -111,7 +111,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridRowEnd: 5,
             gridColStart: 1,
             gridColEnd: 2,
-            list: this.standardJobsService.getVesselSpevificList()
+            list: this.standardJobsService.getVesselSpecificList()
           },
           [eStandardJobsMainFields.DoneByID]: {
             type: eFieldControlType.Dropdown,

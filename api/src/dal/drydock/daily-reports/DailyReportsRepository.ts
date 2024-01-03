@@ -40,7 +40,7 @@ export class DailyReportsRepository {
             .createQueryBuilder('dru')
             .select([
                 'dru.uid as uid',
-                'dru.ReportUpdateName as name',
+                'dru.ReportUpdateName as subject',
                 'dru.Remark as remark',
                 'dru.SpecificationUid as specificationUid',
                 'tm.Code AS specificationCode',

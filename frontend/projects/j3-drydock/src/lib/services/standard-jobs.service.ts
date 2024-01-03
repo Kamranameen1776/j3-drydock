@@ -270,7 +270,7 @@ export class StandardJobsService {
     return this.functionsService.getFunctions();
   }
 
-  getVesselSpevificList() {
+  getVesselSpecificList() {
     return [
       {
         label: 'Yes',

@@ -60,10 +60,10 @@ export class ProjectsRepository {
      * Get count of projects with each group status
      * @returns Count of projects with each group status
      */
-    public async GetGroupProjectStatuses(): Promise<IGroupProjectStatusDto[]> {
+    public async GetGroupProjectStatuses(assignedVessels?: number[]): Promise<IGroupProjectStatusDto[]> {
         const groupProjectStatusRepository = getManager().getRepository(GroupProjectStatusEntity);
 
-        const query = groupProjectStatusRepository
+        let query = groupProjectStatusRepository
             .createQueryBuilder('gps')
             .select(['gps.GroupProjectStatusId as GroupProjectStatusId', 'count(tm.Status) as ProjectWithStatusCount'])
             .innerJoin(className(ProjectTypeEntity), 'pt', 'gps.ProjectTypeId = pt.WorklistType')
@@ -73,8 +73,13 @@ export class ProjectsRepository {
                 'tm',
                 'tm.uid = pr.TaskManagerUid and tm.Status = gps.ProjectStatusId',
             )
+            .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .groupBy('gps.GroupProjectStatusId')
             .where('gps.ActiveStatus = :activeStatus', { activeStatus: 1 });
+
+        if (assignedVessels) {
+            query = query.where('vessel.vessel_id IN (:...ids)', { ids: assignedVessels });
+        }
 
         const result = await query.execute();
 
@@ -85,10 +90,12 @@ export class ProjectsRepository {
      * Get count of projects with each group status, grouped by project type
      * @returns Count of projects with each group status, grouped by project type
      */
-    public async GetGroupProjectStatusesByProjectType(): Promise<IGroupProjectStatusByProjectTypeDto[]> {
+    public async GetGroupProjectStatusesByProjectType(
+        assignedVessels?: number[],
+    ): Promise<IGroupProjectStatusByProjectTypeDto[]> {
         const groupProjectStatusRepository = getManager().getRepository(GroupProjectStatusEntity);
 
-        const query = groupProjectStatusRepository
+        let query = groupProjectStatusRepository
             .createQueryBuilder('gps')
             .select([
                 'gps.GroupProjectStatusId as GroupProjectStatusId',
@@ -102,8 +109,13 @@ export class ProjectsRepository {
                 'tm',
                 'tm.uid = pr.TaskManagerUid and tm.Status = gps.ProjectStatusId',
             )
+            .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .groupBy('gps.ProjectTypeId, gps.GroupProjectStatusId')
             .where('gps.ActiveStatus = :activeStatus', { activeStatus: 1 });
+
+        if (assignedVessels) {
+            query = query.where('vessel.vessel_id IN (:...ids)', { ids: assignedVessels });
+        }
 
         const result = await query.execute();
 
@@ -176,7 +188,7 @@ export class ProjectsRepository {
                 'pr.TaskManagerUid as TaskManagerUid',
                 'yd.registeredName as ShipYard',
                 'yd.uid as ShipYardUid',
-                `CONCAT(COUNT(CASE WHEN sc.status = '${TaskManagerConstants.specification.status.Completed}' THEN 1 END), '/', COUNT(sc.uid)) AS Specification`,
+                `CONCAT(COUNT(CASE WHEN sc.status = '${TaskManagerConstants.specification.status.Closed}' THEN 1 END), '/', COUNT(sc.uid)) AS Specification`,
             ])
             .leftJoin((qb) => this.getSpecificationCountQuery(qb, uid), 'sc', 'sc.projectUid = pr.uid')
             .leftJoin(
@@ -186,7 +198,7 @@ export class ProjectsRepository {
             )
             .leftJoin(className(J3PrcCompanyRegistryEntity), 'yd', 'yd.uid = ydp.yard_uid')
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
-            .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
+            .leftJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
             .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = pr.ProjectTypeUid')
             .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
@@ -236,10 +248,10 @@ export class ProjectsRepository {
             .distinctOn(['pr.uid']);
 
         if (uid) {
-            query = query.where('pr.uid = :uid', { uid });
+            query = query.andWhere('pr.uid = :uid', { uid });
         }
         if (assignedVessels) {
-            query = query.where('vessel.vessel_id IN (:...ids)', { ids: assignedVessels });
+            query = query.andWhere('vessel.vessel_id IN (:...ids)', { ids: assignedVessels });
         }
         return query;
     }

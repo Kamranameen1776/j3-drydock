@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { GridService, IJbDialog, IJbTextBox } from 'jibe-components';
 import { getSmallPopup } from '../../../../models/constants/popup';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
@@ -19,7 +19,7 @@ import { FormControl, FormGroup } from '@angular/forms';
   templateUrl: './create-report-popup.component.html',
   styleUrls: ['./create-report-popup.component.scss']
 })
-export class CreateReportPopupComponent extends UnsubscribeComponent implements OnInit {
+export class CreateReportPopupComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
   @ViewChild('selectJobOrderForm')
   selectJobOrderForm: IJobOrdersFormComponent;
 
@@ -56,6 +56,9 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
     required: true
   };
 
+  singleSelectedUpdate: JobOrdersUpdatesDto;
+  jobOrderForm: IJobOrderFormDto;
+
   constructor(
     private growlMessageService: GrowlMessageService,
     private reportsService: DailyReportsGridService,
@@ -73,6 +76,19 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
     }
   }
 
+  ngAfterViewInit(): void {
+    this.selectJobOrderForm.onValueChangesIsForm.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
+      const jobOrder = res.value.jobOrderUpdate;
+      this.singleSelectedUpdate.progress = jobOrder.Progress;
+      this.singleSelectedUpdate.status = jobOrder.Status;
+      this.singleSelectedUpdate.specificationSubject = jobOrder.Subject;
+    });
+
+    this.selectJobOrderForm.onRemarkValueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
+      this.singleSelectedUpdate.remark = res;
+    });
+  }
+
   onClosePopup() {
     this.closePopup();
   }
@@ -86,9 +102,9 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
   }
 
   onSelectedUpdates(event: JobOrdersUpdatesDto[]) {
-    const selectedUpdated = [...event];
-    this.jobOrderUpdatesToLink.push(...selectedUpdated);
-    this.onUpdateSelection(selectedUpdated[0]?.specificationUid);
+    const selectedUpdates = [...event];
+    this.jobOrderUpdatesToLink.push(...selectedUpdates);
+    this.onUpdateSelection(selectedUpdates[0]);
   }
 
   getDailyReport(initialize = false) {
@@ -100,19 +116,18 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
         this.createReportForm.controls.reportName.setValue(this.reportInfo.reportName);
         this.jobOrderUpdatesToLink = this.reportInfo.jobOrdersUpdate.map((jobOrder) => {
           return {
-            name: jobOrder.name,
+            subject: jobOrder.subject,
             remark: jobOrder.remark,
             specificationUid: jobOrder.specificationUid,
             specificationCode: jobOrder.specificationCode,
             status: jobOrder.status,
             progress: jobOrder.progress,
             lastUpdated: jobOrder.lastUpdated,
-            specificationSubject: jobOrder.specificationSubject,
-            updatedBy: jobOrder.updatedBy
+            specificationSubject: jobOrder.specificationSubject
           };
         });
 
-        initialize ? this.onUpdateSelection(this.jobOrderUpdatesToLink[0]?.specificationUid) : null;
+        initialize ? this.onUpdateSelection(this.jobOrderUpdatesToLink[0]) : null;
       }),
       // eslint-disable-next-line rxjs/no-implicit-any-catch
       (err) => {
@@ -124,28 +139,30 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
       };
   }
 
-  onUpdateSelection(event: string) {
-    const specificationUid = event;
+  onUpdateSelection(event: JobOrdersUpdatesDto) {
+    this.singleSelectedUpdate = event;
+
+    const specificationUid = event.specificationUid;
     this.jobOrdersService
       .getJobOrderBySpecification({
         SpecificationUid: specificationUid
       })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((jobOrder) => {
-        const jobOrderForm: IJobOrderFormDto = {
+        this.jobOrderForm = {
           SpecificationUid: specificationUid
         };
 
         if (jobOrder) {
-          jobOrderForm.Remarks = jobOrder.Remarks;
-          jobOrderForm.Subject = jobOrder.Subject;
-          jobOrderForm.Status = jobOrder.Status;
-          jobOrderForm.SpecificationStartDate = jobOrder.SpecificationStartDate;
-          jobOrderForm.SpecificationEndDate = jobOrder.SpecificationEndDate;
-          jobOrderForm.Progress = jobOrder.Progress;
+          this.jobOrderForm.Remarks = jobOrder.Remarks;
+          this.jobOrderForm.Subject = jobOrder.Subject;
+          this.jobOrderForm.Status = jobOrder.Status;
+          this.jobOrderForm.SpecificationStartDate = jobOrder.SpecificationStartDate;
+          this.jobOrderForm.SpecificationEndDate = jobOrder.SpecificationEndDate;
+          this.jobOrderForm.Progress = jobOrder.Progress;
         }
 
-        this.selectJobOrderForm.init(jobOrderForm);
+        this.selectJobOrderForm.init(this.jobOrderForm);
       }),
       // eslint-disable-next-line rxjs/no-implicit-any-catch
       (err) => {
