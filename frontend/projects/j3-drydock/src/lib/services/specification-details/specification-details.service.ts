@@ -25,6 +25,7 @@ import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { ITMDetailTabFields } from 'j3-task-manager-ng';
 import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
+
 export interface SpecificationDetailAccessRights extends BaseAccessRight {
   attachments: BaseAccessRight & { add: boolean };
   subItems: BaseAccessRight;
@@ -182,11 +183,34 @@ export class SpecificationDetailsService {
             active_status: true,
             SectionCode: eSpecificationDetailsPageMenuIds.SubItems,
             SectionLabel: eSpecificationDetailsPageMenuLabels.SubItems,
-            isAddNewButton: false
+            isAddNewButton: true,
+            buttonLabel: 'Add New Sub Item'
           },
           {
             GridRowStart: 3,
             GridRowEnd: 4,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
+            SectionCode: eSpecificationDetailsPageMenuIds.PMSJobs,
+            SectionLabel: eSpecificationDetailsPageMenuLabels.PMSJobs,
+            isAddNewButton: true,
+            buttonLabel: 'Convert to sub item'
+          },
+          {
+            GridRowStart: 4,
+            GridRowEnd: 5,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
+            SectionCode: eSpecificationDetailsPageMenuIds.Findings,
+            SectionLabel: eSpecificationDetailsPageMenuLabels.Findings,
+            isAddNewButton: true,
+            buttonLabel: 'Convert to sub item'
+          },
+          {
+            GridRowStart: 5,
+            GridRowEnd: 6,
             GridColStart: 1,
             GridColEnd: 3,
             active_status: true,

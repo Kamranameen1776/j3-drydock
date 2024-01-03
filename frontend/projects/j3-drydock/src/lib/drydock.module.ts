@@ -69,6 +69,7 @@ import { SelectJobOrderGridComponent } from './components/project-details/report
 
 import { GanttModule } from '@syncfusion/ej2-angular-gantt';
 import { GanttChartComponent } from './components/project-details/project-monitoring/gantt-chart/gantt-chart.component';
+import { LinkedPmsJobsAndFindingsComponent } from './components/specification-details/pms-jobs/linked-pms-jobs-and-findings.component';
 
 @NgModule({
   declarations: [
@@ -118,7 +119,8 @@ import { GanttChartComponent } from './components/project-details/project-monito
     ItemCardComponent,
     LeftSideListComponent,
     SelectJobOrderPopupComponent,
-    SelectJobOrderGridComponent
+    SelectJobOrderGridComponent,
+    LinkedPmsJobsAndFindingsComponent
   ],
   imports: [
     CommonModule,

@@ -6,12 +6,14 @@ import {
   SpecificationDetailsService
 } from '../../services/specification-details/specification-details.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { eSpecificationDetailsPageMenuIds, specificationDetailsMenuData } from '../../models/enums/specification-details.enum';
+import { ePmsWlType, eSpecificationDetailsPageMenuIds, specificationDetailsMenuData } from '../../models/enums/specification-details.enum';
 import {
+  GridService,
   IJbAttachment,
   ITopSectionFieldSet,
   JbDatePipe,
   JbDetailsTopSectionService,
+  eGridRefreshType,
   eJMSActionTypes,
   eJMSSectionNames,
   eMessagesSeverityValues
@@ -26,6 +28,9 @@ import { SpecificationDetailsFull, SpecificationDetails } from '../../models/int
 import { ITMDetailTabFields, JbTaskManagerDetailsService } from 'j3-task-manager-ng';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { FormGroup } from '@angular/forms';
+import { SpecificationSubItem } from '../../models/interfaces/specification-sub-item';
+import { SpecificationDetailsSubItemsGridService } from '../../services/specification-details/specification-details-sub-item.service';
+
 @Component({
   selector: 'jb-specification-details',
   templateUrl: './specification-details.component.html',
@@ -37,6 +42,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   @ViewChild(eSpecificationDetailsPageMenuIds.GeneralInformation) [eSpecificationDetailsPageMenuIds.GeneralInformation]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.SubItems) [eSpecificationDetailsPageMenuIds.SubItems]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.PMSJobs) [eSpecificationDetailsPageMenuIds.PMSJobs]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.Findings) [eSpecificationDetailsPageMenuIds.Findings]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.Requisitions) [eSpecificationDetailsPageMenuIds.Requisitions]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.Source) [eSpecificationDetailsPageMenuIds.Source]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationAttachments)
@@ -59,9 +65,36 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   accessRights: SpecificationDetailAccessRights;
   editingSection = '';
   showLoader = false;
+  selectedAmount = {
+    [eSpecificationDetailsPageMenuIds.PMSJobs]: 0,
+    [eSpecificationDetailsPageMenuIds.Findings]: 0
+  };
+  showEditSubItem = false;
+  subItemDetails = {
+    quantity: 0
+  } as SpecificationSubItem;
+
+  pmsWlType = ePmsWlType;
 
   readonly menu = specificationDetailsMenuData;
   readonly eSideMenuId = eSpecificationDetailsPageMenuIds;
+
+  public eSpecificationDetailsPageMenuIds = eSpecificationDetailsPageMenuIds;
+
+  constructor(
+    private title: Title,
+    private specificationDetailService: SpecificationDetailsService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private growlMessageService: GrowlMessageService,
+    private jbTMDtlSrv: JbTaskManagerDetailsService,
+    private jbTopSecSrv: JbDetailsTopSectionService,
+    private taskManagerService: TaskManagerService,
+    private gridService: GridService,
+    private subItemsGridService: SpecificationDetailsSubItemsGridService
+  ) {
+    super();
+  }
 
   get vesselUid() {
     return this.tmDetails?.VesselUid;
@@ -73,19 +106,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   get canEdit() {
     return this.accessRights?.edit;
-  }
-
-  constructor(
-    private title: Title,
-    private specificationDetailService: SpecificationDetailsService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private growlMessageService: GrowlMessageService,
-    private jbTMDtlSrv: JbTaskManagerDetailsService,
-    private jbTopSecSrv: JbDetailsTopSectionService,
-    private taskManagerService: TaskManagerService
-  ) {
-    super();
   }
 
   async ngOnInit(): Promise<void> {
@@ -130,77 +150,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       });
   }
 
-  private getDetails(refresh = false) {
-    this.showLoader = true;
-
-    this.specificationDetailService
-      .getSpecificationDetails(this.specificationUid)
-      .pipe(
-        concatMap((data) => {
-          this.specificationDetailsInfo = {
-            ...data
-          };
-
-          this.attachmentConfig = {
-            Module_Code: this.moduleCode,
-            Function_Code: this.functionCode,
-            Key1: this.specificationDetailsInfo.TaskManagerUid
-          };
-
-          this.title.setTitle(`Specification ${this.specificationDetailsInfo?.SpecificationCode}`);
-          return this.taskManagerService.getWorkflow(
-            this.specificationDetailsInfo.TaskManagerUid,
-            this.specificationDetailsInfo.SpecificationTypeCode
-          );
-        }),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe((workflow) => {
-        this.tmDetails = { ...this.specificationDetailsInfo, ...workflow, isTaskManagerJob: true };
-
-        this.accessRights = this.specificationDetailService.setupAccessRights(this.tmDetails);
-        this.topSectionConfig = this.specificationDetailService.getTopSecConfig(this.tmDetails);
-        this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig();
-        // TODO add here more to init view if needed
-        if (refresh) {
-          this.jbTMDtlSrv.refreshTaskManager.next({ refresh: true, tmDetails: this.tmDetails, topSecConfig: this.topSectionConfig });
-        }
-      });
-
-    this.showLoader = false;
-  }
-
-  private sectionActions(res: { type?: string; secName?: string; event?: unknown; checkValidation?: boolean }) {
-    // eslint-disable-next-line default-case
-    switch (res.type) {
-      case eJMSActionTypes.Edit: {
-        // TODO add check by access rights for each section - can it be edited or not
-        this.editingSection = res.secName;
-        break;
-      }
-      case eJMSActionTypes.Add: {
-        const event = res.event as { secName: string; mode: string };
-        this.processWidgetNewBtn(event.secName);
-        break;
-      }
-    }
-  }
-
   onValueChange(event) {
     if (event?.dirty) {
       this.jbTMDtlSrv.isUnsavedChanges.next(true);
-    }
-  }
-
-  private processWidgetNewBtn(secName: string) {
-    // eslint-disable-next-line default-case
-    switch (secName) {
-      case eSpecificationDetailsPageMenuIds.Attachments: {
-        break;
-      }
-      case eSpecificationDetailsPageMenuIds.AuditTrail: {
-        break;
-      }
     }
   }
 
@@ -245,7 +197,10 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   public async save(event): Promise<void> {
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
     if (this.detailForm.invalid) {
-      this.jbTMDtlSrv.showGrowlMassage.next({ severity: eJMSActionTypes.Error, detail: 'Please fill all the required fields' });
+      this.jbTMDtlSrv.showGrowlMassage.next({
+        severity: eJMSActionTypes.Error,
+        detail: 'Please fill all the required fields'
+      });
       return;
     }
     if (event.type === eJMSActionTypes.Error) {
@@ -285,6 +240,111 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         detail: err.error
       });
       this.showLoader = false;
+    }
+  }
+
+  updateSelectedAmount(amount: number, type: eSpecificationDetailsPageMenuIds) {
+    this.selectedAmount[type] = amount;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  closeDialog(isSaved: boolean) {
+    this.showEditSubItem = false;
+    this.gridService.refreshGrid(eGridRefreshType.Table, this.subItemsGridService.gridName);
+  }
+
+  private getDetails(refresh = false) {
+    this.showLoader = true;
+
+    this.specificationDetailService
+      .getSpecificationDetails(this.specificationUid)
+      .pipe(
+        concatMap((data) => {
+          this.specificationDetailsInfo = {
+            ...data
+          };
+
+          this.attachmentConfig = {
+            Module_Code: this.moduleCode,
+            Function_Code: this.functionCode,
+            Key1: this.specificationDetailsInfo.TaskManagerUid
+          };
+
+          this.title.setTitle(`Specification ${this.specificationDetailsInfo?.SpecificationCode}`);
+          return this.taskManagerService.getWorkflow(
+            this.specificationDetailsInfo.TaskManagerUid,
+            this.specificationDetailsInfo.SpecificationTypeCode
+          );
+        }),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe((workflow) => {
+        this.tmDetails = { ...this.specificationDetailsInfo, ...workflow, isTaskManagerJob: true };
+
+        this.accessRights = this.specificationDetailService.setupAccessRights(this.tmDetails);
+        this.topSectionConfig = this.specificationDetailService.getTopSecConfig(this.tmDetails);
+        this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig();
+        // TODO add here more to init view if needed
+        if (refresh) {
+          this.jbTMDtlSrv.refreshTaskManager.next({
+            refresh: true,
+            tmDetails: this.tmDetails,
+            topSecConfig: this.topSectionConfig
+          });
+        }
+      });
+
+    this.showLoader = false;
+  }
+
+  private sectionActions(res: { type?: string; secName?: string; event?: unknown; checkValidation?: boolean }) {
+    // eslint-disable-next-line default-case
+    switch (res.type) {
+      case eJMSActionTypes.Edit: {
+        // TODO add check by access rights for each section - can it be edited or not
+        this.editingSection = res.secName;
+        break;
+      }
+      case eJMSActionTypes.Add: {
+        const event = res.event as { secName: string; mode: string };
+        this.processWidgetNewBtn(event.secName);
+        break;
+      }
+    }
+  }
+
+  private processWidgetNewBtn(secName: string) {
+    switch (secName) {
+      case eSpecificationDetailsPageMenuIds.Attachments: {
+        break;
+      }
+      case eSpecificationDetailsPageMenuIds.AuditTrail: {
+        break;
+      }
+      case eSpecificationDetailsPageMenuIds.PMSJobs:
+        if (this.selectedAmount[eSpecificationDetailsPageMenuIds.PMSJobs] === 0) {
+          this.jbTMDtlSrv.showGrowlMassage.next({
+            severity: eMessagesSeverityValues.Error,
+            detail: 'No record selected to convert.'
+          });
+
+          break;
+        }
+        this.subItemDetails.dialogHeader = null;
+        this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.PMSJobs];
+        this.showEditSubItem = true;
+        break;
+      case eSpecificationDetailsPageMenuIds.Findings:
+        this.subItemDetails.dialogHeader = null;
+        this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.Findings];
+        this.showEditSubItem = true;
+        break;
+      case eSpecificationDetailsPageMenuIds.SubItems:
+        this.subItemDetails.dialogHeader = 'Add New Sub Item';
+        this.showEditSubItem = true;
+        break;
+      default:
+        break;
     }
   }
 }

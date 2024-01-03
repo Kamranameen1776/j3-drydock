@@ -84,3 +84,12 @@
     z-index: 50000;
   }
 }
+
+@mixin grid-cell-link {
+  cursor: pointer;
+
+  &:focus,
+  &:hover {
+      text-decoration: underline;
+  }
+}

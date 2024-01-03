@@ -2,20 +2,20 @@ import { SynchronizerService } from 'j2utils';
 
 import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
-import { DeleteOneParams } from '../../../../dal/drydock/specification-details/sub-items/dto/DeleteOneParams';
+import { DeleteSubItemParams } from '../../../../dal/drydock/specification-details/sub-items/dto/DeleteSubItemParams';
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 
-export class DeleteSubItemCommand extends Command<DeleteOneParams, void> {
+export class DeleteSubItemCommand extends Command<DeleteSubItemParams, void> {
     protected readonly subItemsRepo = new SpecificationDetailsSubItemsRepository();
     protected readonly uow = new UnitOfWork();
     protected readonly tableName = getTableName(SpecificationDetailsSubItemEntity);
     protected readonly vesselsRepository = new VesselsRepository();
 
-    private params: DeleteOneParams;
+    private params: DeleteSubItemParams;
 
     public async MainHandlerAsync(): Promise<void> {
         await this.uow.ExecuteAsync(async (queryRunner) => {
@@ -32,10 +32,18 @@ export class DeleteSubItemCommand extends Command<DeleteOneParams, void> {
                 this.params.uid,
                 vessel.VesselId,
             );
+
+            await this.subItemsRepo.deleteAllSubItemRelations(this.params.uid, queryRunner);
+            await SynchronizerService.dataSynchronizeByConditionManager(
+                queryRunner.manager,
+                getTableName(SpecificationDetailsSubItemEntity),
+                vessel.VesselId,
+                `SubItemUID = '${this.params.uid}'`,
+            );
         });
     }
 
-    protected async ValidationHandlerAsync(request: DeleteOneParams): Promise<void> {
-        this.params = await validateAgainstModel(DeleteOneParams, request);
+    protected async ValidationHandlerAsync(request: DeleteSubItemParams): Promise<void> {
+        this.params = await validateAgainstModel(DeleteSubItemParams, request);
     }
 }

@@ -14,6 +14,8 @@
     specificationDetails: specificationsDetailsTab,
     generalInformation: generalInformation,
     subItems: subItems,
+    pmsJobs: pmsJobs,
+    findings: findings,
     requisitions: requisitions
   }"
   [ignoreAccessRights]="true"
@@ -43,6 +45,28 @@
           ></jb-specification-sub-items>
         </div>
       </div>
+      <div *ngSwitchCase="eSideMenuId.PMSJobs">
+        <div #pmsJobs>
+          <jb-linked-pms-jobs-findings
+            #PmsJobsComponent
+            *ngIf="specificationDetailsInfo"
+            [validTaskType]="pmsWlType.PmsJob"
+            [specificationDetailsInfo]="specificationDetailsInfo"
+            (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.PMSJobs)"
+          ></jb-linked-pms-jobs-findings>
+        </div>
+      </div>
+      <div *ngSwitchCase="eSideMenuId.Findings">
+        <div #findings>
+          <jb-linked-pms-jobs-findings
+            #FindingsComponent
+            *ngIf="specificationDetailsInfo"
+            [validTaskType]="pmsWlType.Findings"
+            [specificationDetailsInfo]="specificationDetailsInfo"
+            (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.Findings)"
+          ></jb-linked-pms-jobs-findings>
+        </div>
+      </div>
       <div *ngSwitchCase="eSideMenuId.Requisitions">
         <div #requisitions>
           <jb-specification-requisitions
@@ -61,3 +85,11 @@
   *ngIf="showLoader"
   [theme]="'figma'"
 ></jb-progress-spinner>
+
+<jb-edit-sub-item-popup
+  *ngIf="showEditSubItem"
+  [isOpen]="!!showEditSubItem"
+  [subItemDetails]="subItemDetails"
+  [specificationUid]="specificationDetailsInfo.uid"
+  (closeDialog)="closeDialog($event)"
+></jb-edit-sub-item-popup>

@@ -103,7 +103,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   }
 
   private setPopupFooter() {
-    this.okLabel = 'Save';
+    this.okLabel = 'Save & Close';
   }
 
   private closePopup(isSaved = false) {

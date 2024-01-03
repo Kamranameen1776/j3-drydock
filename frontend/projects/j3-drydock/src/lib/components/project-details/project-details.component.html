@@ -3,13 +3,15 @@
 <jb-task-manager-details
   *ngIf="sectionsConfig"
   [topSectionConfig]="topSectionConfig"
+  [customedThreeDotActions]="customedThreeDotActions"
+  [threeDotsActionsShow]="threeDotsActionsShow"
   [sectionsConfig]="sectionsConfig"
   [tmDetails]="tmDetails"
   [moduleCode]="moduleCode"
   [functionCode]="functionCode"
   [hideAuditTrail]="true"
   [hideAttachments]="true"
-  [showExport]="true"
+  [showExport]="false"
   [isViewRight]="canView"
   (onWorkflowActions)="onWorkflowAction($event)"
   [templateRefObj]="{
@@ -133,11 +135,12 @@
 </ng-template>
 
 <ng-template #specificationsButtonsTmpl>
-  <jb-button
+  <!-- Return after export to PDF is done -->
+  <!-- <jb-button
     type="NoButton"
     icon="icons8-anchor"
     label="Export"
-  ></jb-button>
+  ></jb-button> -->
   <jb-split-button
     type="NoButton"
     label="Create new"

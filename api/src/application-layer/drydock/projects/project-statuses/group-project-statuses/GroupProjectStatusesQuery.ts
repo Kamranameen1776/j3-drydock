@@ -1,20 +1,25 @@
+import { Request } from 'express';
+
 import { GroupProjectStatusId } from '../../../../../bll/drydock/projects/Project/GroupProjectStatusId';
 import { ProjectsRepository } from '../../../../../dal/drydock/projects/ProjectsRepository';
+import { SlfAccessor } from '../../../../../external-services/drydock/SlfAccessor';
 import { Query } from '../../../core/cqrs/Query';
 import { IGroupProjectStatusDto } from './dtos/IGroupProjectStatusDto';
 import { IGroupProjectStatusesDto } from './dtos/IGroupProjectStatusesDto';
 
-export class GroupProjectStatusesQuery extends Query<void, IGroupProjectStatusesDto[]> {
+export class GroupProjectStatusesQuery extends Query<Request, IGroupProjectStatusesDto[]> {
     readonly allProjectsProjectTypeId = 'all_projects';
 
     readonly allProjectsName = 'All Projects';
 
     readonly projectsRepository: ProjectsRepository;
+    readonly slfAccessor: SlfAccessor;
 
     constructor() {
         super();
 
         this.projectsRepository = new ProjectsRepository();
+        this.slfAccessor = new SlfAccessor();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -29,10 +34,15 @@ export class GroupProjectStatusesQuery extends Query<void, IGroupProjectStatuses
      * Get group project statuses, like "Complete", "In Progress", "Planned", "Closed", etc.
      * @returns Group project statuses
      */
-    protected async MainHandlerAsync(): Promise<IGroupProjectStatusesDto[]> {
-        const all_ProjectsWithGroupStatusCount = await this.projectsRepository.GetGroupProjectStatuses();
+    protected async MainHandlerAsync(request: Request): Promise<IGroupProjectStatusesDto[]> {
+        const token: string = request.headers.authorization as string;
+        const assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(token);
 
-        const projectsWithGroupStatusCount = await this.projectsRepository.GetGroupProjectStatusesByProjectType();
+        const projectsWithGroupStatusCount = await this.projectsRepository.GetGroupProjectStatusesByProjectType(
+            assignedVessels,
+        );
+
+        const all_ProjectsWithGroupStatusCount = await this.projectsRepository.GetGroupProjectStatuses(assignedVessels);
 
         const projectTypes = await this.projectsRepository.GetProjectTypes();
 

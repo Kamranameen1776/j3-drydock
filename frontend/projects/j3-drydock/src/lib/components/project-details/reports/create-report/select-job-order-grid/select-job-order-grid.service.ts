@@ -34,7 +34,7 @@ export class SelectJobOrdersGridService {
     },
     {
       DisplayText: 'Responsible',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.Responsible),
+      FieldName: nameOf<IJobOrderDto>((prop) => prop.DoneBy),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,

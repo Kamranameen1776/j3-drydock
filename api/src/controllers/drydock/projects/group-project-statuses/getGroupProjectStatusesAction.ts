@@ -17,7 +17,7 @@ export async function getGroupProjectStatusesAction(req: Request, res: Response)
         const query = new GroupProjectStatusesQuery();
 
         // Execute query
-        const projects = await query.ExecuteAsync();
+        const projects = await query.ExecuteAsync(req);
 
         return projects;
     });

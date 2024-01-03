@@ -1,13 +1,18 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
+  AdvancedSettings,
   IJbAttachment,
+  IJbMenuItem,
   ITopSectionFieldSet,
   JbAttachmentsComponent,
   JbDetailsTopSectionService,
   eAttachmentButtonTypes,
+  eGridColors,
+  eGridIcons,
   eJMSActionTypes,
   eJMSSectionNames
 } from 'jibe-components';
+import { saveAs } from 'file-saver';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { concatMap, filter, map, takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
@@ -20,7 +25,7 @@ import { ProjectDetailsAccessRights, ProjectDetailsService } from './project-det
 import { TaskManagerService } from '../../services/task-manager.service';
 import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/project-details';
 import { projectDetailsMenuData } from './project-details-menu';
-import { eProjectDetailsSideMenuId, eProjectDetailsSideMenuLabel } from '../../models/enums/project-details.enum';
+import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.enum';
 import { SpecificationsComponent } from './specification/specifications.component';
 import { RfqComponent } from './yard/rfq/rfq.component';
 import { ProjectsService } from '../../services/ProjectsService';
@@ -29,6 +34,7 @@ import { UTCAsLocal } from '../../utils/date';
 import { cloneDeep } from 'lodash';
 import { StatementOfFactsComponent } from './project-monitoring/statement-of-facts/statement-of-facts.component';
 import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
+import { getFileNameDate } from '../../shared/functions/file-name';
 
 @Component({
   selector: 'jb-project-details',
@@ -53,11 +59,18 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   moduleCode = eModule.Project;
   functionCode = eFunction.DryDock;
   projectUid: string;
+  projectDetails: ProjectDetails;
 
   vesselType: number;
   tmDetails: ProjectDetailsFull;
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
+  customedThreeDotActions: AdvancedSettings[] = [
+    { label: 'ExportExcel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
+  ];
+  threeDotsActionsShow = {
+    ExportExcel: true
+  };
 
   editingSection = '';
 
@@ -218,6 +231,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       this.deleteRecord();
     } else if (wfEvent?.event?.type === 'resync') {
       this.resyncRecord();
+    } else if (wfEvent?.event?.type === 'Export') {
+      this.exportExcel();
     }
   }
 
@@ -233,6 +248,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
             StartDate: UTCAsLocal(data.StartDate as string),
             EndDate: UTCAsLocal(data.EndDate as string)
           };
+          this.projectDetails = projectDetails;
 
           this.attachmentConfig = {
             Module_Code: this.moduleCode,
@@ -252,7 +268,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
         this.accessRights = this.projectDetailsService.setupAccessRights(this.tmDetails);
         this.topSectionConfig = this.projectDetailsService.getTopSecConfig(this.tmDetails);
-        this.sectionsConfig = this.projectDetailsService.getSectionsConfig(this.tmDetails.task_status);
+        this.sectionsConfig = this.projectDetailsService.getSectionsConfig();
 
         this.setMenuByAccessRights();
         this.setAttachmentsActions();
@@ -315,14 +331,50 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   }
 
   private setAttachmentsActions() {
-    this.attachmentConfig.actions = this.detailsService.getAttachmnentActions(this.accessRights.attachments);
+    this.attachmentConfig.actions = this.detailsService.getAttachmentActions(this.accessRights.attachments);
   }
 
   private setMenuByAccessRights() {
     this.menu = cloneDeep(projectDetailsMenuData);
 
-    if (this.accessRights.attachments.view) {
-      this.menu[1].items[3] = { label: eProjectDetailsSideMenuLabel.Attachments, id: eProjectDetailsSideMenuId.Attachments };
+    const specificationSection = this.getMenuById(this.menu, eProjectDetailsSideMenuId.Specifications);
+    this.processSpecificationsMenuAccessRights(specificationSection);
+  }
+
+  private processSpecificationsMenuAccessRights(specificationSection: IJbMenuItem) {
+    if (!specificationSection) {
+      return;
     }
+    if (!this.accessRights.attachments.view) {
+      this.hideSubMenuItem(specificationSection, eProjectDetailsSideMenuId.Attachments);
+    }
+    if (!this.accessRights.specificationDetails.view) {
+      this.hideSubMenuItem(specificationSection, eProjectDetailsSideMenuId.TechnicalSpecification);
+    }
+  }
+
+  private getMenuById(menus: IJbMenuItem[], id: eProjectDetailsSideMenuId) {
+    return this.detailsService.getMenuById(menus, id);
+  }
+
+  private hideSubMenuItem(parentMenu: IJbMenuItem, id: eProjectDetailsSideMenuId) {
+    this.detailsService.hideSubMenuItem(parentMenu, id);
+  }
+
+  exportExcel() {
+    if (!this.projectDetails.ShipYardId) {
+      this.growlMessageService.setErrorMessage('Yard is not selected');
+      return;
+    }
+    const res = this.projectDetailsService.exportExcel(this.projectUid, this.projectDetails.ShipYardId);
+    res.subscribe((data) => {
+      saveAs(data, this.getExcelFilename());
+    });
+  }
+
+  private getExcelFilename() {
+    return `${this.projectDetails.VesselName}-${this.projectDetails.ShipYard}-${new Date(
+      this.projectDetails.StartDate
+    ).getFullYear()}-${getFileNameDate()}.xlsx`;
   }
 }
