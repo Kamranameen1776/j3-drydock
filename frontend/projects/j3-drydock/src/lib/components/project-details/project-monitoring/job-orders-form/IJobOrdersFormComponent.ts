@@ -22,4 +22,5 @@ export interface IJobOrdersFormComponent {
   onValueChangesIsFormValid: EventEmitter<boolean>;
 
   onValueChangesIsForm: EventEmitter<FormGroup>;
+  onRemarkValueChanges: EventEmitter<string>;
 }

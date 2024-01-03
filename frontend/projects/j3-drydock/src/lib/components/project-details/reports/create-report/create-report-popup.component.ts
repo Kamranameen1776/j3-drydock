@@ -80,9 +80,12 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
     this.selectJobOrderForm.onValueChangesIsForm.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
       const jobOrder = res.value.jobOrderUpdate;
       this.singleSelectedUpdate.progress = jobOrder.Progress;
-      this.singleSelectedUpdate.remark = jobOrder.Remarks;
       this.singleSelectedUpdate.status = jobOrder.Status;
       this.singleSelectedUpdate.specificationSubject = jobOrder.Subject;
+    });
+
+    this.selectJobOrderForm.onRemarkValueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
+      this.singleSelectedUpdate.remark = res;
     });
   }
 
