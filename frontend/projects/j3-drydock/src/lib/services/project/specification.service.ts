@@ -203,38 +203,6 @@ export class SpecificationGridService {
       gridName: this.gridName
     },
     {
-      DisplayText: 'Due Date From',
-      FieldName: 'due_date_from',
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      type: 'date',
-      placeholder: 'Select',
-      FieldType: 'date',
-      Details: 'due_date_from',
-      addTimeLimit: true,
-      FieldID: 3,
-      default: true,
-      CoupleID: 1,
-      CoupleLabel: 'Due Date Range',
-      gridName: this.gridName
-    },
-    {
-      DisplayText: 'To',
-      FieldName: 'due_date_to',
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      type: 'date',
-      placeholder: 'Select',
-      FieldType: 'date',
-      Details: 'due_date_to',
-      addTimeLimit: true,
-      FieldID: 4,
-      default: true,
-      CoupleID: 1,
-      CoupleLabel: 'Due Date Range',
-      gridName: this.gridName
-    },
-    {
       DisplayText: 'Done By',
       FieldName: 'db_done_by',
       Active_Status: true,
@@ -297,18 +265,6 @@ export class SpecificationGridService {
       type: eFieldControlType.MultiSelect,
       odataKey: 'done_by_uid',
       listValueKey: 'uid'
-    },
-    due_date_to: {
-      type: eFieldControlType.Date,
-      odataKey: 'due_date',
-      alterKey: 'due_date',
-      dateMethod: 'le'
-    },
-    due_date_from: {
-      type: eFieldControlType.Date,
-      odataKey: 'due_date',
-      alterKey: 'due_date',
-      dateMethod: 'ge'
     },
     item_source: {
       type: eFieldControlType.Dropdown,
