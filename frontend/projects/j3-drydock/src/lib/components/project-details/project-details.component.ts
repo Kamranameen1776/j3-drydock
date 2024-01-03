@@ -70,6 +70,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   accessRights: ProjectDetailsAccessRights;
 
+  specificationsCreateNewItems: { label: string; command: () => void }[];
+
   get canView() {
     return this.accessRights?.view;
   }
@@ -78,7 +80,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     return this.accessRights?.edit;
   }
 
-  get specificationsCreateNewItems() {
+  getSpecificationsCreateNewItems() {
     const res = [];
 
     if (this.projectsService.hasAccess(eProjectsAccessActions.addSpecFromStandardJobs)) {
@@ -165,6 +167,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       .subscribe((res) => {
         this.sectionActions(res);
       });
+
+    this.specificationsCreateNewItems = this.getSpecificationsCreateNewItems();
   }
 
   private sectionActions(res: { type?: string; secName?: string; event?: unknown; checkValidation?: boolean }) {
