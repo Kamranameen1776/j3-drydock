@@ -69,13 +69,16 @@ export class JobOrdersRepository {
                 'sd.ProjectUid AS ProjectUid',
                 'tm.Code AS Code',
                 'its.DisplayName as ItemSource',
-                'jo.Progress AS Progress',
                 "usr.FirstName + ' ' + usr.LastName AS Responsible",
-                'jo.LastUpdated AS LastUpdated',
                 'wdetails.StatusDisplayName AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
                 'sd.StartDate as SpecificationStartDate',
                 'sd.EndDate as SpecificationEndDate',
+                'jo.Subject as JobOrderSubject',
+                'jo.Remarks as JobOrderRemarks',
+                'jo.Status as JobOrderStatus',
+                'jo.LastUpdated AS LastUpdated',
+                'jo.Progress AS Progress',
             ])
             .innerJoin(
                 className(SpecificationDetailsEntity),
