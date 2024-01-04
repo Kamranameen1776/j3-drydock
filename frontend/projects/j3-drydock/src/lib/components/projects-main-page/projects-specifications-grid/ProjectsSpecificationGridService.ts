@@ -161,8 +161,7 @@ export class ProjectsSpecificationGridService {
       odataKey: ProjectsGridOdataKeys.ProjectManagerUid
     },
     ShipsYards: {
-      // keep filter options empty for now
-      // webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
+      webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
       type: 'multiselect',
       listValueKey: 'ShipYardId',
       odataKey: ProjectsGridOdataKeys.ShipYardId
@@ -220,7 +219,6 @@ export class ProjectsSpecificationGridService {
       ValueCode: 'FleetCode',
       FieldID: 0,
       default: false,
-      CoupleID: 0,
       CoupleLabel: 'Project',
       gridName: this.gridName
     },
@@ -244,7 +242,6 @@ export class ProjectsSpecificationGridService {
       ValueCode: 'ProjectTypeCode',
       FieldID: 2,
       default: true,
-      CoupleID: 0,
       CoupleLabel: 'Project',
       gridName: this.gridName
     },
@@ -257,7 +254,6 @@ export class ProjectsSpecificationGridService {
       ValueCode: 'ManagerId',
       FieldID: 3,
       default: true,
-      CoupleID: 0,
       CoupleLabel: 'Project',
       gridName: this.gridName
     },
@@ -270,7 +266,6 @@ export class ProjectsSpecificationGridService {
       ValueCode: 'ProjectStatusId',
       FieldID: 4,
       default: true,
-      CoupleID: 0,
       CoupleLabel: 'Project',
       gridName: this.gridName
     },
@@ -283,7 +278,6 @@ export class ProjectsSpecificationGridService {
       ValueCode: 'ShipYardId',
       FieldID: 5,
       default: true,
-      CoupleID: 0,
       CoupleLabel: 'Project',
       gridName: this.gridName
     },
