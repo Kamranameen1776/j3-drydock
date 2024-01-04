@@ -24,7 +24,7 @@ export class recreateSpecificationDetails1704290466569 implements MigrationInter
             BEGIN
                 drop table dry_dock.specification_details;
             end
-        create table specification_details
+        create table dry_dock.specification_details
         (
             uid                      uniqueidentifier
                 constraint DF_specification_details_uid default newid() not null
