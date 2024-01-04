@@ -15,15 +15,20 @@
     (click)="onUpdateClicked(update)"
   >
     <div class="row container">
-      <div class="col-md-10 left">
+      <div class="col-md-9 left">
         <label class="name">{{ update.updatedBy }}</label>
       </div>
-      <div class="col-md-2">
-        <label class="status right">{{ update.lastUpdated | UTCAsLocal | jbDate }}</label>
+      <div class="col-md-3">
+        <label class="code">{{ update.specificationCode }}</label>
       </div>
     </div>
-    <div class="row container left">
-      <label class="status">{{ update.status }}</label>
+    <div class="row container">
+      <div class="col-md-9 left">
+        <label class="status">{{ update.status }}</label>
+      </div>
+      <div class="col-md-3">
+        <label class="lastUpdate">{{ update.lastUpdated | UTCAsLocal | jbDate }}</label>
+      </div>
     </div>
   </button>
   <!-- <hr class="delimiter" /> -->

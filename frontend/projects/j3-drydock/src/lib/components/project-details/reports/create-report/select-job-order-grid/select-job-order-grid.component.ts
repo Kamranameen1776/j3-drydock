@@ -33,11 +33,11 @@ export class SelectJobOrderGridComponent implements OnInit {
   onSelect(rows: IJobOrderDto[]) {
     this.selected = rows.map((row) => {
       return {
-        subject: row.SpecificationSubject,
-        remark: '',
+        subject: row.JobOrderSubject,
+        remark: row.JobOrderRemarks,
         specificationUid: row.SpecificationUid,
         specificationCode: row.Code,
-        status: row.SpecificationStatus,
+        status: row.JobOrderStatus,
         progress: row.Progress,
         lastUpdated: row.LastUpdated,
         specificationSubject: row.SpecificationSubject,
