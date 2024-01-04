@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
 
-export class updateSpecificationRequisitionsTable1701426277852 implements MigrationInterface {
+export class updateSpecificationRequisitionsTable1701426277853 implements MigrationInterface {
     tableName = 'specification_requisitions';
     schemaName = 'dry_dock';
     className = this.constructor.name;
