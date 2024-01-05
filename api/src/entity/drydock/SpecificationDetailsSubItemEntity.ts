@@ -82,6 +82,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     @Min(DISCOUNT_MIN)
     @Max(DISCOUNT_MAX)
     discount?: number;
+
     @ManyToOne(() => SpecificationDetailsEntity, (specificationDetails) => specificationDetails.SubItems)
     @JoinColumn({
         name: 'specification_details_uid',

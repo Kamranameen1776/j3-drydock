@@ -60,5 +60,5 @@ export enum eSpecificationWorkflowStatusAction {
 
 export enum ePmsWlType {
   PmsJob = 'PMS JOB',
-  Findings = 'FINDINGS'
+  Findings = 'FINDING JOB'
 }

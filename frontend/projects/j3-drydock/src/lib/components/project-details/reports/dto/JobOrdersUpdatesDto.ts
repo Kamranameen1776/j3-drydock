@@ -7,4 +7,5 @@ export interface JobOrdersUpdatesDto {
   progress: number;
   lastUpdated: Date;
   specificationSubject: string;
+  updatedBy: string;
 }

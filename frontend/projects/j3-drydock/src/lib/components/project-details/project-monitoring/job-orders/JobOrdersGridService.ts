@@ -70,7 +70,7 @@ export class JobOrdersGridService {
     },
     {
       DisplayText: 'Assigned To',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.DoneBy),
+      FieldName: nameOf<IJobOrderDto>((prop) => prop.Responsible),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
