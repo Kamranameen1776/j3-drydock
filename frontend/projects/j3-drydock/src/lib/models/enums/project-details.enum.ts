@@ -48,7 +48,7 @@ export enum eProjectDetailsSideMenuId {
   Evaluations = 'evaluations'
 }
 
-export enum eProjectWorklowStatusAction {
+export enum eProjectWorkflowStatusAction {
   Raise = 'RAISE',
   'In Progress' = 'IN PROGRESS',
   Complete = 'COMPLETE',

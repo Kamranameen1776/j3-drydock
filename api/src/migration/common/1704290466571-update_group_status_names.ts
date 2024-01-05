@@ -1,8 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
 
-export class updateGroupStatusNames1704202039094 implements MigrationInterface {
-    tableName = 'project_type';
+export class updateGroupStatusNames1704290466571 implements MigrationInterface {
+    tableName = 'group_project_status';
     schemaName = 'dry_dock';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -19,7 +19,7 @@ export class updateGroupStatusNames1704202039094 implements MigrationInterface {
     END`);
 
             await MigrationUtilsService.migrationLog(
-                'updateGroupStatusNames1704202039094',
+                'updateGroupStatusNames1704290466571',
                 '',
                 'S',
                 'dry_dock',
@@ -27,7 +27,7 @@ export class updateGroupStatusNames1704202039094 implements MigrationInterface {
             );
         } catch (error) {
             await MigrationUtilsService.migrationLog(
-                'updateGroupStatusNames1704202039094',
+                'updateGroupStatusNames1704290466571',
                 JSON.stringify(error),
                 'E',
                 'dry_dock',

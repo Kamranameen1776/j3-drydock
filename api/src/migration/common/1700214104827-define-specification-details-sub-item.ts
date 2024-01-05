@@ -24,8 +24,7 @@ export class DefineSpecificationDetailsSubItem1700214104827 implements Migration
                             primary key
                             default newid(),
                         [specification_details_uid] [uniqueidentifier]
-                            not null
-                            references [dry_dock].[specification_details] ([uid]),
+                            not null,
                         [unit_type_uid] [uniqueidentifier]
                             not null
                             references [dbo].[lib_unit_type] ([uid]),

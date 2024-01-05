@@ -4,7 +4,12 @@ import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
 import { map, takeUntil } from 'rxjs/operators';
 import { DayMarkersService } from '@syncfusion/ej2-angular-gantt';
-import { statusBackground, statusIcon, statusProgressBarBackground, statusProgressBarBackgroundShaded } from './status-css.json';
+import {
+  statusBackground,
+  statusIcon,
+  statusProgressBarBackground,
+  statusProgressBarBackgroundShaded
+} from '../../../../shared/status-css.json';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
@@ -63,7 +68,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
       width: '100',
       minWidth: '100',
       template:
-        '<div class="status-field ${SpecificationStatus.StatusClass}"><i class="${SpecificationStatus.IconClass}"></i>${SpecificationStatus.status}</div>'
+        '<div class="status-field ${SpecificationStatus.StatusClass}"><i class="${SpecificationStatus.IconClass}"></i>${SpecificationStatus.statusName}</div>'
     },
     {
       field: 'Progress',
@@ -90,10 +95,11 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
             ...jobOrder,
             Progress: jobOrder.Progress || 0,
             SpecificationStatus: {
-              status: jobOrder.SpecificationStatus,
+              status: jobOrder.SpecificationStatusCode,
+              statusName: jobOrder.SpecificationStatus,
               StatusClass:
-                this.statusCSS?.statusBackground[jobOrder.SpecificationStatus.toUpperCase()] || this.statusCSS.statusBackground.RAISE,
-              IconClass: this.statusCSS?.statusIcon[jobOrder.SpecificationStatus.toUpperCase()] || this.statusCSS.statusIcon.RAISE
+                this.statusCSS?.statusBackground[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusBackground.RAISE,
+              IconClass: this.statusCSS?.statusIcon[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusIcon.RAISE
             }
           }))
         ),

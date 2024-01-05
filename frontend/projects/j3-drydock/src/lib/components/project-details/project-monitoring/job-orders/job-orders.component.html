@@ -23,6 +23,16 @@
   <jb-drydock-grid-cell-popover [value]="rowData.LastUpdated | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
 </ng-template>
 
+<ng-template
+  #statusTemplate
+  let-rowData
+>
+  <jb-current-status
+    [status]="rowData.SpecificationStatus"
+    [statusColor]="statusCSS.statusProgressBarBackground[rowData.SpecificationStatusCode]"
+  ></jb-current-status>
+</ng-template>
+
 <jb-dialog
   (closeDialog)="showUpdateDialog(false)"
   [(dialogVisible)]="updateDialogVisible"
