@@ -1,10 +1,10 @@
-.ui-dialog-content {
+.ui-dialog-content,
+.grid-container {
   overflow: hidden;
   flex-grow: 1;
   height: 60vh;
   white-space: nowrap;
 }
-
 
 :host {
   ::ng-deep {
