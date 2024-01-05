@@ -263,7 +263,7 @@ export class SpecificationDetailsRepository {
                 uid: In(data.StandardJobUid),
             },
             select: ['functionUid', 'description', 'subject'],
-            relations: ['subItems', 'inspection', 'doneBy', 'category', 'materialSuppliedBy'],
+            relations: ['subItems', 'inspection', 'doneBy', 'materialSuppliedBy'],
         });
         const standardJobsItemSource = await dictionariesRepository.getItemSourceByName(ItemName.StandardJob);
 
@@ -278,7 +278,6 @@ export class SpecificationDetailsRepository {
             specification.ActiveStatus = true;
             specification.MaterialSuppliedByUid = standardJob.materialSuppliedBy?.uid!;
             specification.DoneByUid = standardJob.doneBy?.uid!;
-            specification.ItemCategoryUid = standardJob.category?.uid!;
             specification.ItemSourceUid = standardJobsItemSource.uid;
             specification.ProjectUid = data.ProjectUid;
             specification.inspections = standardJob.inspection.map((inspection) => {
