@@ -50,8 +50,8 @@
   let-rowData
 >
   <jb-current-status
-    [status]="rowData.status"
-    [statusColor]="rowData.status | specificationStatus | statusCodeColor"
+    [status]="rowData.statusName"
+    [statusColor]="statusCSS.statusProgressBarBackground[rowData.status]"
   ></jb-current-status>
 </ng-template>
 

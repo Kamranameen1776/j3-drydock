@@ -25,6 +25,7 @@ import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormRes
 })
 export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
   @ViewChild('lastUpdatedTemplate', { static: true }) lastUpdatedTemplate: TemplateRef<unknown>;
+  @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
 
   @Input() projectId: string;
 
@@ -160,6 +161,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, 
     this.gridInputs = this.jobOrdersGridService.getGridInputs();
     this.setGridActions();
     this.setCellTemplate(this.lastUpdatedTemplate, 'LastUpdated');
+    this.setCellTemplate(this.statusTemplate, 'SpecificationStatus');
   }
 
   private setGridActions() {

@@ -34,6 +34,7 @@ export class JobOrdersRepository {
                 'its.DisplayName as ItemSource',
                 'jo.Progress AS Progress',
                 'jo.LastUpdated AS LastUpdated',
+                'tm.Status AS SpecificationStatusCode',
                 'wdetails.StatusDisplayName AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
                 'sd.StartDate as SpecificationStartDate',
