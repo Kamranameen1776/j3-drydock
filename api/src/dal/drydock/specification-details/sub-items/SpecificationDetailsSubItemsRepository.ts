@@ -266,13 +266,11 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     private mapSubItemDtoToEntity(subItemData: Partial<CreateSubItemParams>, subItem: Partial<SubItem>): SubItem {
-        const discount = (subItemData.discount || 0) / 100;
-
         const newSubItem: Partial<SubItem> = {
             ...subItem,
             quantity: subItemData.quantity,
             unitPrice: subItemData.unitPrice,
-            discount: Number(discount.toFixed(2)),
+            discount: Number(subItemData.discount!.toFixed(2)),
             subject: subItemData.subject,
             description: subItemData.description,
         };
