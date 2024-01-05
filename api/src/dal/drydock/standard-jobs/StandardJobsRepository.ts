@@ -55,7 +55,6 @@ export class StandardJobsRepository {
                     'sj."function" as "function",' +
                     'sj."function_uid" as "functionUid",' +
                     'sj.code as code,' +
-                    'sj.category_uid as categoryUid,' +
                     'sj.done_by_uid as doneByUid,' +
                     'db.displayName as doneBy,' +
                     'sj.vessel_type_specific as vesselTypeSpecific,' +
