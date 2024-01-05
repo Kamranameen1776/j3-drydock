@@ -214,11 +214,6 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   }
 
   public saveNewProject() {
-    // if (!this.createProjectFormGroup.valid) {
-    //   this.createProjectFormGroup.markAllAsTouched();
-    //   return;
-    // }
-
     const values: ProjectCreate = cloneDeep(this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId]);
 
     if (values.EndDate) {
