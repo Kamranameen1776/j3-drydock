@@ -23,10 +23,18 @@ export class JobOrdersRepository {
         TaskManagerConstants.specification.status.Planned,
         TaskManagerConstants.specification.status.Closed,
     ];
-    public async GetJobOrders(request: Request): Promise<ODataResult<IJobOrderDto>> {
+
+    public async GetAllJobOrders(request: Request) {
+        return this.GetJobOrders(request, null);
+    }
+
+    public async GetJobOrders(
+        request: Request,
+        statuses: string[] | null = this.statuses,
+    ): Promise<ODataResult<IJobOrderDto>> {
         const SpecificationDetailsRepository = getManager().getRepository(SpecificationDetailsEntity);
 
-        const query: string = SpecificationDetailsRepository.createQueryBuilder('sd')
+        let query = SpecificationDetailsRepository.createQueryBuilder('sd')
             .select([
                 'sd.uid AS SpecificationUid',
                 'sd.ProjectUid AS ProjectUid',
@@ -42,23 +50,48 @@ export class JobOrdersRepository {
                 'db.displayName as DoneBy',
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
-            .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1 ')
-            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
-            .innerJoin(
-                className(JmsDtlWorkflowConfigDetailsEntity),
-                'wdetails',
-                `wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status
-                AND tm.Status IN ('${this.statuses.join(`','`)}')`,
-            )
+            .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid')
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesnt have type. probably should stay that way
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1')
-            .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid')
+            .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid');
 
-            .getQuery();
+        if (statuses) {
+            query = query.innerJoin(
+                className(JmsDtlWorkflowConfigDetailsEntity),
+                'wdetails',
+                `wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status AND tm.Status IN ('${this.statuses.join(
+                    `','`,
+                )}')`,
+            );
+        } else {
+            query = query
+                .innerJoin(
+                    className(JmsDtlWorkflowConfigDetailsEntity),
+                    'wdetails',
+                    'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+                )
+                .groupBy(
+                    [
+                        'sd.uid',
+                        'sd.project_uid',
+                        'tm.job_card_no',
+                        'its.display_name',
+                        'jo.progress',
+                        'jo.last_updated',
+                        'tm.task_status',
+                        'wdetails.status_display_name',
+                        'sd.Subject',
+                        'sd.start_date',
+                        'sd.end_date',
+                        'db.displayName',
+                    ].join(','),
+                );
+        }
 
         const oDataService = new ODataService(request, getConnection);
 
-        return oDataService.getJoinResult(query);
+        return oDataService.getJoinResult(query.getQuery());
     }
 
     public async GetUpdates(request: Request): Promise<ODataResult<IJobOrderDto>> {

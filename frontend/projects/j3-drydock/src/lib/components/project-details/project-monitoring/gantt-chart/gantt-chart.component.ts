@@ -96,7 +96,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
             Progress: jobOrder.Progress || 0,
             SpecificationStatus: {
               status: jobOrder.SpecificationStatusCode,
-              statusName: jobOrder.SpecificationStatusName,
+              statusName: jobOrder.SpecificationStatus,
               StatusClass:
                 this.statusCSS?.statusBackground[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusBackground.RAISE,
               IconClass: this.statusCSS?.statusIcon[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusIcon.RAISE
