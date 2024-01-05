@@ -9,8 +9,9 @@ import { Observable } from 'rxjs';
 import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../../models/interfaces/functions-tree-node';
 import { map, takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../../models/constants/popup';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NewTabService } from '../../../services/new-tab-service';
+import { statusProgressBarBackground } from '../../../shared/status-css.json';
 
 @Component({
   selector: 'jb-specifications',
@@ -31,6 +32,8 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   types = [SpecificationType.ALL, SpecificationType.PMS, SpecificationType.FINDINGS, SpecificationType.STANDARD, SpecificationType.ADHOC];
   isCreatePopupVisible = false;
   addFromStandardJobPopupVisible = false;
+
+  statusCSS = { statusProgressBarBackground: statusProgressBarBackground };
 
   deleteSpecificationDialog: IJbDialog = {
     ...getSmallPopup(),
@@ -53,7 +56,6 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     private formService: SpecificationCreateFormService,
     private functionsService: FunctionsService,
     private gridService: GridService,
-    private router: Router,
     private newTabService: NewTabService,
     private activatedRoute: ActivatedRoute
   ) {
