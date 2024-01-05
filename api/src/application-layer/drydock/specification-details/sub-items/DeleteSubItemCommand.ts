@@ -38,7 +38,7 @@ export class DeleteSubItemCommand extends Command<DeleteSubItemParams, void> {
                 queryRunner.manager,
                 getTableName(SpecificationDetailsSubItemEntity),
                 vessel.VesselId,
-                `SubItemUID = '${this.params.uid}'`,
+                `uid = '${this.params.uid}'`,
             );
         });
     }
