@@ -1,14 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ApiRequestService,
-  ITopSectionFieldSet,
-  JbButtonType,
-  UserRightsService,
-  WebApiRequest,
-  eApiBase,
-  eCrud,
-  eEntities
-} from 'jibe-components';
+import { ApiRequestService, ITopSectionFieldSet, UserRightsService, WebApiRequest, eApiBase, eCrud, eEntities } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
 import { eSpecificationDetailsGeneralInformationFields } from '../../models/enums/specification-details-general-information.enum';
@@ -207,18 +198,6 @@ export class SpecificationDetailsService {
             SectionLabel: eSpecificationDetailsPageMenuLabels.Findings,
             isAddNewButton: true,
             buttonLabel: 'Convert to sub item'
-          },
-          {
-            GridRowStart: 5,
-            GridRowEnd: 6,
-            GridColStart: 1,
-            GridColEnd: 3,
-            active_status: true,
-            SectionCode: eSpecificationDetailsPageMenuIds.Requisitions,
-            SectionLabel: eSpecificationDetailsPageMenuLabels.Requisitions,
-            isAddNewButton: this.accessRights.requisitions.edit,
-            buttonLabel: 'Link Requisitions',
-            addNewButtonType: JbButtonType.NoButton
           }
         ]
       }
