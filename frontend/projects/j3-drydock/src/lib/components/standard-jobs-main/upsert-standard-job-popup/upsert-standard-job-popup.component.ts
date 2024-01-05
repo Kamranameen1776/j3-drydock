@@ -42,7 +42,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     return this.popupForm?.formGroup.getRawValue()[this.formService.formId];
   }
   // TODO fixme to relevant values and use them from eModuleCode and eFunctionCode from jibe-components
-  attachmentConfig: IJbAttachment = { Module_Code: 'j3_drydock', Function_Code: 'standard_jobs' };
+  attachmentConfig: IJbAttachment = { Module_Code: 'j3_drydock', Function_Code: 'standard_job' };
 
   attachmentButton = {
     buttonLabel: 'Add New',

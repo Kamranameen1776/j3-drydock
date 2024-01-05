@@ -21,6 +21,7 @@ export class SpecificationSubItemService {
                     cellStyle: '',
                 },
                 hideActions: true,
+                rowCssClass: 'no-actions',
             } as any;
 
             data.push(totalRow);
