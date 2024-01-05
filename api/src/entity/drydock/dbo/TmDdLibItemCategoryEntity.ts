@@ -10,7 +10,7 @@ export class TmDdLibItemCategory {
 
     @Column('varchar', {
         nullable: false,
-        name: 'item_category',
+        name: 'item_categories',
         length: 250,
     })
     item_category: string;
