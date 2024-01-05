@@ -81,7 +81,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
       const jobOrder = res.value.jobOrderUpdate;
       this.singleSelectedUpdate.progress = jobOrder.Progress;
       this.singleSelectedUpdate.status = jobOrder.Status;
-      this.singleSelectedUpdate.specificationSubject = jobOrder.Subject;
+      this.singleSelectedUpdate.subject = jobOrder.Subject;
     });
 
     this.selectJobOrderForm.onRemarkValueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
@@ -123,7 +123,8 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
             status: jobOrder.status,
             progress: jobOrder.progress,
             lastUpdated: jobOrder.lastUpdated,
-            specificationSubject: jobOrder.specificationSubject
+            specificationSubject: jobOrder.specificationSubject,
+            updatedBy: jobOrder.updatedBy
           };
         });
 
@@ -141,37 +142,17 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
 
   onUpdateSelection(event: JobOrdersUpdatesDto) {
     this.singleSelectedUpdate = event;
-
     const specificationUid = event.specificationUid;
-    this.jobOrdersService
-      .getJobOrderBySpecification({
-        SpecificationUid: specificationUid
-      })
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((jobOrder) => {
-        this.jobOrderForm = {
-          SpecificationUid: specificationUid
-        };
 
-        if (jobOrder) {
-          this.jobOrderForm.Remarks = jobOrder.Remarks;
-          this.jobOrderForm.Subject = jobOrder.Subject;
-          this.jobOrderForm.Status = jobOrder.Status;
-          this.jobOrderForm.SpecificationStartDate = jobOrder.SpecificationStartDate;
-          this.jobOrderForm.SpecificationEndDate = jobOrder.SpecificationEndDate;
-          this.jobOrderForm.Progress = jobOrder.Progress;
-        }
+    this.jobOrderForm = {
+      SpecificationUid: specificationUid
+    };
+    this.jobOrderForm.Remarks = this.singleSelectedUpdate.remark;
+    this.jobOrderForm.Subject = this.singleSelectedUpdate.subject;
+    this.jobOrderForm.Status = this.singleSelectedUpdate.status;
+    this.jobOrderForm.Progress = this.singleSelectedUpdate.progress;
 
-        this.selectJobOrderForm.init(this.jobOrderForm);
-      }),
-      // eslint-disable-next-line rxjs/no-implicit-any-catch
-      (err) => {
-        if (err?.status === 422 && err?.error?.message) {
-          this.growlMessageService.setErrorMessage(err.error.message);
-        } else {
-          this.growlMessageService.setErrorMessage('Server error occurred');
-        }
-      };
+    this.selectJobOrderForm.init(this.jobOrderForm);
   }
 
   private save() {

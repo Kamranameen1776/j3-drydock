@@ -43,7 +43,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   @ViewChild(eSpecificationDetailsPageMenuIds.SubItems) [eSpecificationDetailsPageMenuIds.SubItems]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.PMSJobs) [eSpecificationDetailsPageMenuIds.PMSJobs]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.Findings) [eSpecificationDetailsPageMenuIds.Findings]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.Requisitions) [eSpecificationDetailsPageMenuIds.Requisitions]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.Source) [eSpecificationDetailsPageMenuIds.Source]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationAttachments)
   [eSpecificationDetailsPageMenuIds.SpecificationAttachments]: ElementRef;

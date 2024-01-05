@@ -34,7 +34,7 @@ export class SelectJobOrdersGridService {
     },
     {
       DisplayText: 'Responsible',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.DoneBy),
+      FieldName: nameOf<IJobOrderDto>((prop) => prop.Responsible),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -43,7 +43,7 @@ export class SelectJobOrdersGridService {
     },
     {
       DisplayText: 'Status',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.SpecificationStatus),
+      FieldName: nameOf<IJobOrderDto>((prop) => prop.JobOrderStatus),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,

@@ -24,7 +24,6 @@ import { DeleteSubItemParams } from './dto/DeleteSubItemParams';
 import { FindManyParams } from './dto/FindManyParams';
 import { GetManyParams } from './dto/GetManyParams';
 import { GetSubItemParams } from './dto/GetSubItemParams';
-import { SubItemEditableProps } from './dto/SubItemEditableProps';
 import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
 import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
 
@@ -85,16 +84,18 @@ export class SpecificationDetailsSubItemsRepository {
 
         const { createdBy: created_by, ...props } = params;
 
-        const subItem = this.mapSubItemDtoToEntity(props, {
+        const subItemData = this.mapSubItemDtoToEntity(props, {
             uid: DataUtilService.newUid(),
         });
 
-        subItem.created_by = created_by;
-        subItem.created_at = new Date();
+        subItemData.created_by = created_by;
+        subItemData.created_at = new Date();
 
-        await queryRunner.manager.save(SubItem, subItem);
+        const subItem = queryRunner.manager.create(SubItem, subItemData);
 
-        return subItem;
+        await queryRunner.manager.save(subItem);
+
+        return subItemData;
     }
 
     public async createMany(params: CreateManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
@@ -116,24 +117,27 @@ export class SpecificationDetailsSubItemsRepository {
         return newSubItems;
     }
 
-    public async createRawSubItems(subItems: SubItem[], queryRunner: QueryRunner) {
-        return queryRunner.manager.save(SubItem, subItems);
+    public async createRawSubItems(subItemsData: SubItem[], queryRunner: QueryRunner) {
+        const newSubItems = subItemsData.map((data) => queryRunner.manager.create(SubItem, data));
+        return queryRunner.manager.save(newSubItems);
     }
 
     public async updateOneExistingByUid(params: UpdateSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
-        const subItem = await this.getOneExistingByUid(params, queryRunner);
+        const existingSubItem = await this.getOneExistingByUid(params, queryRunner);
 
         if (params.props.unitUid != null) {
             await this.assertAllUnitTypesExistByUids([params.props.unitUid], queryRunner);
         }
 
-        const subItemData = this.mapSubItemDtoToEntity(params.props, subItem);
+        const subItemData = this.mapSubItemDtoToEntity(params.props, existingSubItem);
 
         // assigned separately for type safety
         subItemData.updated_by = params.updatedBy;
         subItemData.updated_at = new Date();
 
-        await queryRunner.manager.save(SubItem, subItemData);
+        const newSubItem = queryRunner.manager.create(SubItem, subItemData);
+
+        await queryRunner.manager.save(newSubItem);
 
         return subItemData;
     }
@@ -266,13 +270,11 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     private mapSubItemDtoToEntity(subItemData: Partial<CreateSubItemParams>, subItem: Partial<SubItem>): SubItem {
-        const discount = (subItemData.discount || 0) / 100;
-
         const newSubItem: Partial<SubItem> = {
             ...subItem,
             quantity: subItemData.quantity,
             unitPrice: subItemData.unitPrice,
-            discount: Number(discount.toFixed(2)),
+            discount: Number(subItemData.discount!.toFixed(2)),
             subject: subItemData.subject,
             description: subItemData.description,
         };

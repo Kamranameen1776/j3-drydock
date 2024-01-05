@@ -5,3 +5,15 @@
   height: 60vh;
   white-space: nowrap;
 }
+
+:host {
+  ::ng-deep {
+    .specification-sub-items-grid {
+      .ui-table-scrollable-body {
+        tr.no-actions {
+          pointer-events: none !important;
+        }
+      }
+    }
+  }
+}

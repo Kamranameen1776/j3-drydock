@@ -180,6 +180,7 @@ export class SpecificationDetailsRepository {
                     'msb.materialSuppliedBy',
                     'tm.Code as code',
                     'tm.Status as status',
+                    'wdetails.StatusDisplayName as statusName',
                     'tm.title as subject',
                     'sd.project_uid',
                     'sd.ItemSourceUid as item_source_uid',
@@ -196,6 +197,12 @@ export class SpecificationDetailsRepository {
                         },
                     ),
                 ])
+                .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesnt have type. probably should stay that way
+                .innerJoin(
+                    className(JmsDtlWorkflowConfigDetailsEntity),
+                    'wdetails',
+                    'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+                )
                 .groupBy(
                     [
                         'sd.uid',
@@ -207,6 +214,7 @@ export class SpecificationDetailsRepository {
                         'msb.materialSuppliedBy',
                         'tm.Code',
                         'tm.Status',
+                        'wdetails.StatusDisplayName',
                         'tm.title',
                         'sd.project_uid',
                         'sd.item_source_uid',
@@ -255,7 +263,7 @@ export class SpecificationDetailsRepository {
                 uid: In(data.StandardJobUid),
             },
             select: ['functionUid', 'description', 'subject'],
-            relations: ['subItems', 'inspection', 'doneBy', 'category', 'materialSuppliedBy'],
+            relations: ['subItems', 'inspection', 'doneBy', 'materialSuppliedBy'],
         });
         const standardJobsItemSource = await dictionariesRepository.getItemSourceByName(ItemName.StandardJob);
 
@@ -270,7 +278,6 @@ export class SpecificationDetailsRepository {
             specification.ActiveStatus = true;
             specification.MaterialSuppliedByUid = standardJob.materialSuppliedBy?.uid!;
             specification.DoneByUid = standardJob.doneBy?.uid!;
-            specification.ItemCategoryUid = standardJob.category?.uid!;
             specification.ItemSourceUid = standardJobsItemSource.uid;
             specification.ProjectUid = data.ProjectUid;
             specification.inspections = standardJob.inspection.map((inspection) => {

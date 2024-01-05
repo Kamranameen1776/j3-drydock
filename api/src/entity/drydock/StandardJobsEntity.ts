@@ -11,13 +11,7 @@ import {
 } from 'typeorm';
 
 import { BaseDatesEntity } from '../baseDatesEntity';
-import {
-    LibSurveyCertificateAuthority,
-    LibVesseltypes,
-    TmDdLibDoneBy,
-    TmDdLibItemCategory,
-    TmDdLibMaterialSuppliedBy,
-} from './dbo';
+import { LibSurveyCertificateAuthority, LibVesseltypes, TmDdLibDoneBy, TmDdLibMaterialSuppliedBy } from './dbo';
 import { StandardJobsSubItems } from './StandardJobsSubItemsEntity';
 
 @Entity('standard_jobs', { schema: 'dry_dock' })
@@ -64,14 +58,6 @@ export class StandardJobs extends BaseDatesEntity {
         length: 250,
     })
     scope: string;
-
-    @ManyToOne(() => TmDdLibItemCategory)
-    @JoinColumn({
-        name: 'category_uid',
-    })
-    category: Partial<TmDdLibItemCategory>;
-    @RelationId((entity: StandardJobs) => entity.category)
-    categoryUid: string;
 
     @ManyToOne(() => TmDdLibDoneBy)
     @JoinColumn({

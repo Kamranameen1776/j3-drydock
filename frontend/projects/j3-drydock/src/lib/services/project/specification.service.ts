@@ -120,7 +120,7 @@ export class SpecificationGridService {
       FieldName: 'item_number',
       IsActive: true,
       IsMandatory: true,
-      IsVisible: true,
+      IsVisible: false,
       ReadOnly: true,
       width: '70px'
     },

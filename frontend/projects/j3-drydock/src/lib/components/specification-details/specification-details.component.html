@@ -15,8 +15,7 @@
     generalInformation: generalInformation,
     subItems: subItems,
     pmsJobs: pmsJobs,
-    findings: findings,
-    requisitions: requisitions
+    findings: findings
   }"
   [ignoreAccessRights]="true"
   [slideMenus]="menu"
@@ -65,15 +64,6 @@
             [specificationDetailsInfo]="specificationDetailsInfo"
             (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.Findings)"
           ></jb-linked-pms-jobs-findings>
-        </div>
-      </div>
-      <div *ngSwitchCase="eSideMenuId.Requisitions">
-        <div #requisitions>
-          <jb-specification-requisitions
-            *ngIf="accessRights.requisitions.view"
-            #SpecificationRequisitionsComponent
-            [specificationUid]="specificationUid"
-          ></jb-specification-requisitions>
         </div>
       </div>
     </ng-container>
