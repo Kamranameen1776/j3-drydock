@@ -3,7 +3,7 @@ import { IJobOrderDto } from '../../../project-monitoring/job-orders/dtos/IJobOr
 import { GridInputsWithRequest } from '../../../../../models/interfaces/grid-inputs';
 import { SelectJobOrdersGridService } from './select-job-order-grid.service';
 import { JobOrdersGridOdataKeys } from '../../../../../models/enums/JobOrdersGridOdataKeys';
-import { GridComponent } from 'jibe-components';
+import { GridComponent, UserService } from 'jibe-components';
 import { JobOrdersUpdatesDto } from '../../dto/JobOrdersUpdatesDto';
 
 @Component({
@@ -23,7 +23,10 @@ export class SelectJobOrderGridComponent implements OnInit {
   public gridInputs: GridInputsWithRequest;
   selected: JobOrdersUpdatesDto[] = [];
 
-  constructor(private selectJobOrdersGridService: SelectJobOrdersGridService) {}
+  constructor(
+    private selectJobOrdersGridService: SelectJobOrdersGridService,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.gridInputs = this.selectJobOrdersGridService.getGridInputs();
@@ -41,7 +44,7 @@ export class SelectJobOrderGridComponent implements OnInit {
         progress: row.Progress,
         lastUpdated: row.LastUpdated,
         specificationSubject: row.SpecificationSubject,
-        updatedBy: row.SpecificationSubject
+        updatedBy: this.userService.getUserDetails().User_FullName
       };
     });
     this.selectedChanged.emit(this.selected);
