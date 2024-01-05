@@ -16,6 +16,7 @@ import { GrowlMessageService } from '../../../../services/growl-message.service'
 import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
 import { IJobOrdersFormComponent } from '../job-orders-form/IJobOrdersFormComponent';
 import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormResultDto';
+import { statusProgressBarBackground } from '../../../../shared/status-css.json';
 
 @Component({
   selector: 'jb-job-orders',
@@ -48,6 +49,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, 
   updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Details' };
 
   updateJobOrderButtonDisabled = false;
+
+  statusCSS = { statusProgressBarBackground: statusProgressBarBackground };
 
   constructor(
     private jobOrdersGridService: JobOrdersGridService,
