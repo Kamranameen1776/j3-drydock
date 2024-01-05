@@ -553,6 +553,7 @@ export class ReportGeneratorService {
         this.finishReport(reportWorksheet, data);
         const password = process.env.DRY_DOCK_YARD_REPORT_PASSWORD as string;
         await reportWorksheet.protect(password, {});
+        reportWorksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 16, topLeftCell: 'B17' }];
         return workbook;
     }
     public prepareData(data: Array<any>) {
