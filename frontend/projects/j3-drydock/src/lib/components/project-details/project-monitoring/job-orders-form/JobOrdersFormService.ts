@@ -17,8 +17,8 @@ export class JobOrdersFormService {
     private jobOrdersService: JobOrdersService
   ) {}
 
-  public getUpdateJobOrderForm(): FormModel {
-    return {
+  public getUpdateJobOrderForm(hideSpecificationStartEndDate: boolean): FormModel {
+    const model = {
       id: 'UpdateJobOrder',
       label: '',
       type: 'form',
@@ -87,35 +87,39 @@ export class JobOrdersFormService {
               gridColEnd: 4,
               validatorMin: 0,
               validatorMax: 100
-            },
-
-            [eJobOrderUpdateFieldNames.SpecificationStartDate]: {
-              label: eJobOrderUpdateDisplayNames.SpecificationStartDate,
-              type: eFieldControlType.DateTime,
-              sectionID: this.updateJobOrderFormId,
-              enabled: true,
-              validatorRequired: true,
-              gridRowStart: 3,
-              gridRowEnd: 3,
-              gridColStart: 1,
-              gridColEnd: 2
-            },
-
-            [eJobOrderUpdateFieldNames.SpecificationEndDate]: {
-              label: eJobOrderUpdateDisplayNames.SpecificationEndDate,
-              type: eFieldControlType.DateTime,
-              sectionID: this.updateJobOrderFormId,
-              enabled: true,
-              validatorRequired: true,
-              gridRowStart: 3,
-              gridRowEnd: 3,
-              gridColStart: 2,
-              gridColEnd: 4
             }
           }
         }
       }
     };
+
+    if (!hideSpecificationStartEndDate) {
+      model.sections[this.updateJobOrderFormId].fields[eJobOrderUpdateFieldNames.SpecificationStartDate] = {
+        label: eJobOrderUpdateDisplayNames.SpecificationStartDate,
+        type: eFieldControlType.DateTime,
+        sectionID: this.updateJobOrderFormId,
+        enabled: true,
+        validatorRequired: true,
+        gridRowStart: 3,
+        gridRowEnd: 3,
+        gridColStart: 1,
+        gridColEnd: 2
+      };
+
+      model.sections[this.updateJobOrderFormId].fields[eJobOrderUpdateFieldNames.SpecificationEndDate] = {
+        label: eJobOrderUpdateDisplayNames.SpecificationEndDate,
+        type: eFieldControlType.DateTime,
+        sectionID: this.updateJobOrderFormId,
+        enabled: true,
+        validatorRequired: true,
+        gridRowStart: 3,
+        gridRowEnd: 3,
+        gridColStart: 2,
+        gridColEnd: 4
+      };
+    }
+
+    return model as FormModel;
   }
 
   public getRemarksEditorConfig(): EditorConfig {

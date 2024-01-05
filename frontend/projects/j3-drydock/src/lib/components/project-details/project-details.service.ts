@@ -8,7 +8,7 @@ import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/proj
 import {
   eProjectDetailsSideMenuId,
   eProjectDetailsSideMenuLabel,
-  eProjectWorklowStatusAction
+  eProjectWorkflowStatusAction
 } from '../../models/enums/project-details.enum';
 import { ITMDetailTabFields } from 'j3-task-manager-ng';
 import { AttachmentsAccessRight, BaseAccessRight } from '../../models/interfaces/access-rights';
@@ -368,8 +368,8 @@ export class ProjectDetailsService {
 
   isStatusBeforeComplete(status: string) {
     return (
-      this.areStatusesSame(status, eProjectWorklowStatusAction.Raise) ||
-      this.areStatusesSame(status, eProjectWorklowStatusAction['In Progress'])
+      this.areStatusesSame(status, eProjectWorkflowStatusAction.Raise) ||
+      this.areStatusesSame(status, eProjectWorkflowStatusAction['In Progress'])
     );
   }
 
