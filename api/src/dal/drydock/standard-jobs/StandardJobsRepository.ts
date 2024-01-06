@@ -26,7 +26,9 @@ import { FiltersDataResponse, RequestWithOData } from '../../../shared/interface
 import { RepoUtils } from '../utils/RepoUtils';
 
 export class StandardJobsRepository {
-    private standardJobsService = new StandardJobsService();
+    protected readonly startingNumber: number = 1000;
+    protected readonly codePrefix: string = 'SJ';
+    protected readonly standardJobsService = new StandardJobsService();
 
     public async getStandardJobs(
         data: RequestWithOData,
@@ -53,7 +55,6 @@ export class StandardJobsRepository {
                     'sj."function" as "function",' +
                     'sj."function_uid" as "functionUid",' +
                     'sj.code as code,' +
-                    'sj.category_uid as categoryUid,' +
                     'sj.done_by_uid as doneByUid,' +
                     'db.displayName as doneBy,' +
                     'sj.vessel_type_specific as vesselTypeSpecific,' +
@@ -139,13 +140,28 @@ export class StandardJobsRepository {
         return oDataService.getJoinResult(sql, params);
     }
 
-    public async getStandardJobRunningNumber(): Promise<number | undefined> {
+    private async getNextStandardJobNumber(functionUid: string): Promise<number> {
+        // we consider inactive records too
         const result = await getManager()
             .createQueryBuilder(StandardJobs, 'sj')
-            .select('MAX(sj.number)', 'maxNumber')
-            .where('sj.active_status = :activeStatus', { activeStatus: 1 })
-            .getRawOne();
-        return result.maxNumber;
+            .select('max(sj.number) as maxNumber')
+            .where('function_uid = :functionUid', { functionUid })
+            .getRawOne<{ readonly maxNumber?: number }>();
+
+        if (result.maxNumber == null) {
+            return this.startingNumber;
+        }
+
+        return result.maxNumber + 1;
+    }
+
+    protected async getNextStandardJobNumberAndCode(
+        functionUid: string,
+    ): Promise<Pick<StandardJobs, 'number' | 'code'>> {
+        const number = await this.getNextStandardJobNumber(functionUid);
+        const code = `${this.codePrefix} - ${number}`;
+
+        return { number, code };
     }
 
     public async createStandardJob(
@@ -153,6 +169,11 @@ export class StandardJobsRepository {
         createdBy: string,
         queryRunner: QueryRunner,
     ): Promise<StandardJobs> {
+        const { number, code } = await this.getNextStandardJobNumberAndCode(data.functionUid);
+
+        data.number = number;
+        data.code = code;
+
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         standardJob.created_by = createdBy;
         standardJob.uid = new DataUtilService().newUid();
@@ -208,6 +229,9 @@ export class StandardJobsRepository {
 
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         const updateStandardJobData = this.standardJobsService.addUpdateStandardJobsFields(standardJob, updatedBy);
+
+        delete standardJob.number;
+        delete standardJob.code;
 
         const entity: StandardJobs = queryRunner.manager.create(StandardJobs, updateStandardJobData);
         entity.uid = uid;
