@@ -25,7 +25,7 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
   readonly popupConfig: IJbDialog = {
     ...getSmallPopup(),
     dialogWidth: 1000,
-    closableIcon: false,
+    closableIcon: true,
     dialogHeader: 'Edit Sub Item'
   };
 
