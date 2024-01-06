@@ -2,13 +2,13 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
 
-import { Query } from '../../../../application-layer/drydock/core/cqrs/Query';
+import { Query } from '../../core/cqrs/Query';
 import { IJobOrderDto } from '../../../../dal/drydock/projects/job-orders/IJobOrderDto';
 import { JobOrdersRepository } from '../../../../dal/drydock/projects/job-orders/JobOrdersRepository';
 import { ODataResult } from '../../../../shared/interfaces';
 import { GetJobOrdersDto } from './dtos/GetJobOrdersDto';
 
-export class GetAllJobOrdersQuery extends Query<Request, ODataResult<IJobOrderDto>> {
+export class GetAllAppliedJobOrdersQuery extends Query<Request, ODataResult<IJobOrderDto>> {
     repository: JobOrdersRepository;
 
     constructor() {
@@ -38,7 +38,7 @@ export class GetAllJobOrdersQuery extends Query<Request, ODataResult<IJobOrderDt
      * @returns All Job Orders(specifications) by project
      */
     protected async MainHandlerAsync(request: Request): Promise<ODataResult<IJobOrderDto>> {
-        const data = await this.repository.GetAllJobOrders(request);
+        const data = await this.repository.GetAllAppliedJobOrders(request);
 
         return data;
     }
