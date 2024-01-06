@@ -123,7 +123,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
             specificationCode: jobOrder.specificationCode,
             status: jobOrder.status,
             progress: jobOrder.progress,
-            lastUpdated: UTCAsLocal(jobOrder.lastUpdated.toISOString()),
+            lastUpdated: UTCAsLocal(jobOrder.lastUpdated?.toISOString?.()),
             specificationSubject: jobOrder.specificationSubject,
             updatedBy: jobOrder.updatedBy
           };
@@ -181,7 +181,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
           ReportDate: localToUTC(new Date()),
           JobOrdersUpdate: this.jobOrderUpdatesToLink.map((update) => ({
             ...update,
-            lastUpdated: localToUTC(update.lastUpdated)
+            lastUpdated: localToUTC(new Date(update.lastUpdated))
           }))
         })
       : (updatePayload = {
@@ -190,7 +190,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
           ReportName: this.reportName,
           JobOrdersUpdate: this.jobOrderUpdatesToLink.map((update) => ({
             ...update,
-            lastUpdated: localToUTC(update.lastUpdated)
+            lastUpdated: localToUTC(new Date(update.lastUpdated))
           }))
         });
 
