@@ -1,8 +1,13 @@
 .specification-code-link {
   margin-bottom: 20px;
+  padding: 0;
 
   a {
     color: var(--jbBrandBlue700);
     font-weight: 500;
   }
+}
+
+.remarks {
+  padding: 0;
 }

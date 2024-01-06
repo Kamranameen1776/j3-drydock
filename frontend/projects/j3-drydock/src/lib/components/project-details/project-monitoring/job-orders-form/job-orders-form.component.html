@@ -1,14 +1,32 @@
-<div class="specification-code-link">
-  <a (click)="navigateToSpecificationDetails(selectedSpecification.Key)">
-    {{ selectedSpecification.Value }}
-  </a>
+<div class="specification-code-link jb-top-section-container">
+  <div class="jb-top-section-rows">
+    <div class="jb-top-section-row3">
+      <div>
+        <label>Code:&nbsp;</label>
+        <a (click)="navigateToSpecificationDetails(selectedSpecification.Key)">
+          {{ selectedSpecification.Value }}
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
+<hr />
 <jb-form
   (jbFormGroup)="initUpdateJobOrderFormGroup($any($event))"
   [formStructure]="updateJobOrderForm"
   [isVerticalLabel]="true"
   class="form-generator-log"
 ></jb-form>
+
+<div class="remarks jb-top-section-container">
+  <div class="jb-top-section-rows">
+    <div class="jb-top-section-row3">
+      <div>
+        <label>Remarks</label>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="jb-editor-remarks">
   <form [formGroup]="remarksEditorFormGroup">
