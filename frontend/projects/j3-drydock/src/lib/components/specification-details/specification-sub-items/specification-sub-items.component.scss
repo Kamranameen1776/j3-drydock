@@ -2,11 +2,16 @@
 .grid-container {
   overflow: hidden;
   flex-grow: 1;
-  height: 60vh;
   white-space: nowrap;
 }
 
 :host {
+  .host-grid-container,
+  jb-grid {
+    max-height: 422px;
+    display: block;
+  }
+
   ::ng-deep {
     .specification-sub-items-grid {
       .ui-table-scrollable-body {

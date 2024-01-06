@@ -43,10 +43,13 @@ export class ReportGeneratorService {
         worksheet.getCell('C15').protection = {
             locked: false,
         };
-        worksheet.getCell('H12').value = {
-            formula: `SUM(${this.sumArray.join(',')})`,
-        };
-
+        if (this.sumArray.length) {
+            worksheet.getCell('H12').value = {
+                formula: `SUM(${this.sumArray.join(',')})`,
+            };
+        } else {
+            worksheet.getCell('H12').value = 0;
+        }
         worksheet.getRow(this.cRow).height = 30;
         worksheet.mergeCells(`B${this.cRow}:I${this.cRow}`);
         worksheet.getCell(`B${this.cRow}`).value = data.footer;
@@ -550,6 +553,7 @@ export class ReportGeneratorService {
         this.finishReport(reportWorksheet, data);
         const password = process.env.DRY_DOCK_YARD_REPORT_PASSWORD as string;
         await reportWorksheet.protect(password, {});
+        reportWorksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 16, topLeftCell: 'B17' }];
         return workbook;
     }
     public prepareData(data: Array<any>) {
@@ -564,6 +568,7 @@ export class ReportGeneratorService {
         obj.functions = [];
         for (let i = 0; i < data.length; i++) {
             const row = data[i];
+            if (!row.Function) break;
             let functionIndex = obj.functions.findIndex((item: any) => row.Function === item.name);
             if (functionIndex === -1) {
                 functionIndex = obj.functions.length;
