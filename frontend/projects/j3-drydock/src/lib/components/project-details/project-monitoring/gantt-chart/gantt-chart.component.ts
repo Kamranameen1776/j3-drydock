@@ -10,6 +10,9 @@ import {
   statusProgressBarBackground,
   statusProgressBarBackgroundShaded
 } from '../../../../shared/status-css.json';
+import { UTCAsLocal } from 'projects/j3-drydock/src/lib/utils/date';
+import { CentralizedDataService, JbDatePipe, UserService } from 'jibe-components';
+import { DatePipe } from '@angular/common';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
@@ -23,6 +26,8 @@ type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
 export class GanttChartComponent extends UnsubscribeComponent implements OnInit {
   @Input()
   projectId: string;
+
+  dateFormat: string;
 
   tasks: TransformedJobOrder[] = [];
   taskConfig = {
@@ -49,14 +54,14 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
       width: '150'
     },
     {
-      field: 'SpecificationStartDate',
+      field: 'SpecificationStartDateFormatted',
       headerText: 'Start Date',
       width: '80',
       minWidth: '80',
       maxWidth: '80'
     },
     {
-      field: 'SpecificationEndDate',
+      field: 'SpecificationEndDateFormatted',
       headerText: 'End Date',
       width: '80',
       minWidth: '80',
@@ -82,17 +87,31 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
 
   statusCSS = { statusBackground: statusBackground, statusIcon: statusIcon };
 
-  constructor(private ganttChartService: GanttChartService) {
+  private jbPipe: JbDatePipe;
+
+  constructor(
+    private ganttChartService: GanttChartService,
+    private userService: UserService,
+    datePipe: DatePipe,
+    cds: CentralizedDataService
+  ) {
     super();
+
+    this.jbPipe = new JbDatePipe(cds, datePipe);
   }
 
   ngOnInit(): void {
+    this.dateFormat = this.userService.getUserDetails().Date_Format.toLocaleUpperCase();
     this.ganttChartService
       .getData(this.projectId)
       .pipe(
         map((data) =>
           data.records.map((jobOrder) => ({
             ...jobOrder,
+            SpecificationEndDateFormatted: this.jbPipe.transform(UTCAsLocal(jobOrder.SpecificationEndDate)),
+            SpecificationStartDateFormatted: this.jbPipe.transform(UTCAsLocal(jobOrder.SpecificationStartDate)),
+            SpecificationStartDate: UTCAsLocal(jobOrder.SpecificationStartDate),
+            SpecificationEndDate: UTCAsLocal(jobOrder.SpecificationEndDate),
             Progress: jobOrder.Progress || 0,
             SpecificationStatus: {
               status: jobOrder.SpecificationStatusCode,
