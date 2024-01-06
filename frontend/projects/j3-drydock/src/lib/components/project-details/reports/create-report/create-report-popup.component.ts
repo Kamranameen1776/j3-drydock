@@ -14,6 +14,7 @@ import { JobOrdersService } from '../../../../services/project-monitoring/job-or
 import { IJobOrderFormDto } from '../../project-monitoring/job-orders-form/dtos/IJobOrderFormDto';
 import { IJobOrdersFormComponent } from '../../project-monitoring/job-orders-form/IJobOrdersFormComponent';
 import { FormControl, FormGroup } from '@angular/forms';
+import { UTCAsLocal, localToUTC } from 'projects/j3-drydock/src/lib/utils/date';
 @Component({
   selector: 'jb-drydock-create-report-popup',
   templateUrl: './create-report-popup.component.html',
@@ -122,7 +123,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
             specificationCode: jobOrder.specificationCode,
             status: jobOrder.status,
             progress: jobOrder.progress,
-            lastUpdated: jobOrder.lastUpdated,
+            lastUpdated: UTCAsLocal(jobOrder.lastUpdated?.toISOString?.()),
             specificationSubject: jobOrder.specificationSubject,
             updatedBy: jobOrder.updatedBy
           };
@@ -177,14 +178,20 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
       ? (createPayload = {
           ProjectUid: this.projectId,
           ReportName: this.reportName,
-          ReportDate: new Date(),
-          JobOrdersUpdate: this.jobOrderUpdatesToLink
+          ReportDate: localToUTC(new Date()),
+          JobOrdersUpdate: this.jobOrderUpdatesToLink.map((update) => ({
+            ...update,
+            lastUpdated: localToUTC(new Date(update.lastUpdated))
+          }))
         })
       : (updatePayload = {
           DailyReportUid: this.reportUid,
           ProjectUid: this.projectId,
           ReportName: this.reportName,
-          JobOrdersUpdate: this.jobOrderUpdatesToLink
+          JobOrdersUpdate: this.jobOrderUpdatesToLink.map((update) => ({
+            ...update,
+            lastUpdated: localToUTC(new Date(update.lastUpdated))
+          }))
         });
 
     this.isNew

@@ -67,6 +67,12 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     this.loadFunctionsTree();
   }
 
+  cellPlainTextClick({ cellType, rowData, columnDetail }) {
+    if (cellType === 'hyperlink' && columnDetail.FieldName === eStandardJobsMainFields.ItemNumber) {
+      this.editRow(rowData);
+    }
+  }
+
   onGridAction({ type, payload }: GridAction<string, unknown>): void {
     switch (type) {
       case eGridRowActions.Edit:
