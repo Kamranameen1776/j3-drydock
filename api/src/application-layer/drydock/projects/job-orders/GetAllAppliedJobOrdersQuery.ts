@@ -2,10 +2,10 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
 
-import { Query } from '../../core/cqrs/Query';
 import { IJobOrderDto } from '../../../../dal/drydock/projects/job-orders/IJobOrderDto';
 import { JobOrdersRepository } from '../../../../dal/drydock/projects/job-orders/JobOrdersRepository';
 import { ODataResult } from '../../../../shared/interfaces';
+import { Query } from '../../core/cqrs/Query';
 import { GetJobOrdersDto } from './dtos/GetJobOrdersDto';
 
 export class GetAllAppliedJobOrdersQuery extends Query<Request, ODataResult<IJobOrderDto>> {
