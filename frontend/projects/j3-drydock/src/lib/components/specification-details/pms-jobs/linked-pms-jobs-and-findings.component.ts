@@ -28,7 +28,7 @@ export class LinkedPmsJobsAndFindingsComponent implements OnInit {
 
   selectedEntity: TmLinkedRecords[] = [];
   unSelectedEntity: TmLinkedRecords[] = [];
-
+  pmsWlType = ePmsWlType;
   constructor() {}
 
   ngOnInit(): void {
@@ -38,7 +38,8 @@ export class LinkedPmsJobsAndFindingsComponent implements OnInit {
           { taskType: 'NON-PM JOB' },
           { taskType: 'NON-PM-NCR' },
           { taskType: 'RECOMMENDATIONS' },
-          { taskType: 'VETTING OBSERVATION' }
+          { taskType: 'VETTING OBSERVATION' },
+          { taskType: this.pmsWlType.Findings }
         ]
       };
     } else {
