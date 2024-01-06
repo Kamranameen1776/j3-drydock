@@ -42,7 +42,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
             gridColEnd: 1,
             inputWithDlgConfig: {
               inputLabelKey: 'jb_value_label',
-              dlgConfiguration: { appendTo: '' }
+              dlgConfiguration: { appendTo: '', dialogHeader: 'Functions' }
             }
           },
           Subject: {

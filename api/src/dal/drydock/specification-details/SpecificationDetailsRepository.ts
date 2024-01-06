@@ -107,7 +107,7 @@ export class SpecificationDetailsRepository {
                 'spec.subject as Subject',
                 'tm.Code as SpecificationCode',
                 'tm.Status as StatusId',
-                'wdetails.DisplayNameAction as StatusName',
+                'wdetails.StatusDisplayName as StatusName',
 
                 'spec.FunctionUid as FunctionUid',
                 'spec.Function as "Function"',
