@@ -39,10 +39,10 @@ export class JobOrdersFormService {
                 sectionID: this.updateJobOrderFormId,
                 enabled: true,
                 show: 'hidden',
-                gridRowStart: 0,
-                gridRowEnd: 0,
-                gridColStart: 0,
-                gridColEnd: 0
+                gridRowStart: 1,
+                gridRowEnd: 1,
+                gridColStart: 1,
+                gridColEnd: 1
               },
 
               [eJobOrderUpdateFieldNames.Subject]: {
@@ -109,7 +109,7 @@ export class JobOrdersFormService {
           gridRowStart: 1,
           gridRowEnd: 2,
           gridColStart: 1,
-          gridColEnd: 4,
+          gridColEnd: 5,
           fields: {
             [eJobOrderUpdateFieldNames.SpecificationUid]: {
               label: eJobOrderUpdateDisplayNames.SpecificationUid,
@@ -117,10 +117,10 @@ export class JobOrdersFormService {
               sectionID: this.updateJobOrderFormId,
               enabled: true,
               show: 'hidden',
-              gridRowStart: 0,
-              gridRowEnd: 0,
-              gridColStart: 0,
-              gridColEnd: 0
+              gridRowStart: 1,
+              gridRowEnd: 1,
+              gridColStart: 1,
+              gridColEnd: 1
             },
 
             [eJobOrderUpdateFieldNames.Subject]: {
