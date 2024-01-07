@@ -132,7 +132,7 @@ export class JobOrdersFormService {
               gridRowStart: 1,
               gridRowEnd: 1,
               gridColStart: 1,
-              gridColEnd: 3,
+              gridColEnd: 5,
               maxLength: 200,
               minLength: 1
             },
