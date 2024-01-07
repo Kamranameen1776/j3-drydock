@@ -19,6 +19,12 @@ jb-tree {
     display: block;
   }
 
+  jb-tree {
+    .withoutBackground {
+      padding-top: 0px !important;
+    }
+  }
+
   .ui-tree-filter-container {
     margin-top: 12px;
   }
