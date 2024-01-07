@@ -10,9 +10,10 @@ import {
   statusProgressBarBackground,
   statusProgressBarBackgroundShaded
 } from '../../../../shared/status-css.json';
-import { UTCAsLocal } from 'projects/j3-drydock/src/lib/utils/date';
+
 import { CentralizedDataService, JbDatePipe, UserService } from 'jibe-components';
 import { DatePipe } from '@angular/common';
+import { UTCAsLocal } from '../../../../utils/date';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
