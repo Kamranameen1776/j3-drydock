@@ -26,7 +26,7 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
     ...getSmallPopup(),
     dialogWidth: 1000,
     closableIcon: true,
-    dialogHeader: 'Edit Sub Item'
+    dialogHeader: 'Add Sub Item '
   };
 
   formId = 'editSubItemForm';
@@ -64,6 +64,10 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
   }
 
   private save() {
+    if (!this.formGroup.valid) {
+      this.growlService.setErrorMessage('Please fill all the required fields');
+    }
+
     this.loading$.next(true);
     const value = this.formGroup.value[this.specificationSubItemEditService.formId];
     //Because quantity is disabled in form, we need to get it from controls

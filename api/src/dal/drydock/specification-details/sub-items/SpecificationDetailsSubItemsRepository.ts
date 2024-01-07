@@ -247,6 +247,10 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     protected async assertAllUnitTypesExistByUids(unitTypeUids: string[], queryRunner: QueryRunner): Promise<void> {
+        unitTypeUids = unitTypeUids.filter((uid) => uid !== undefined);
+        if (unitTypeUids.length === 0) {
+            return;
+        }
         const unitTypes = await queryRunner.manager.find(UnitTypeEntity, {
             where: {
                 uid: In(unitTypeUids),
@@ -274,7 +278,7 @@ export class SpecificationDetailsSubItemsRepository {
             ...subItem,
             quantity: subItemData.quantity,
             unitPrice: subItemData.unitPrice,
-            discount: Number(subItemData.discount!.toFixed(2)),
+            discount: subItemData.discount ? Number(subItemData.discount.toFixed(2)) : 0,
             subject: subItemData.subject,
             description: subItemData.description,
         };

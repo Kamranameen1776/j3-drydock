@@ -48,6 +48,26 @@ import {
 import { CreateSpecificationFromStandardJobDto } from './dtos/ICreateSpecificationFromStandardJobDto';
 
 export class SpecificationDetailsRepository {
+    public async getSpecificationStatuses(is_office: number | undefined, queryRunner: QueryRunner) {
+        const repository = queryRunner.manager.getRepository(JmsDtlWorkflowConfigDetailsEntity);
+
+        let query = repository
+            .createQueryBuilder('wdetails')
+            .select(['wdetails.WorkflowTypeID as status', 'wdetails.StatusDisplayName as displayName'])
+            .innerJoin(
+                className(JmsDtlWorkflowConfigEntity),
+                'wc',
+                `wc.job_type = 'Specification' AND wdetails.ConfigId = wc.ID`,
+            )
+            .where('wdetails.ActiveStatus = 1');
+
+        if (is_office !== undefined) {
+            query = query.andWhere('wdetails.Is_Office = :is_office', { is_office });
+        }
+
+        return query.execute();
+    }
+
     public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {
         const repository = queryRunner.manager.getRepository(SpecificationPmsEntity);
         await repository.update(

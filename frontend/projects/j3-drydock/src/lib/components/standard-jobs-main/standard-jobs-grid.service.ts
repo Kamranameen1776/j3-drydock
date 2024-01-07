@@ -12,6 +12,7 @@ export class StandardJobsGridService {
     {
       DisplayText: eStandardJobsMainLabels.ItemNumber,
       FieldName: eStandardJobsMainFields.ItemNumber,
+      hyperlink: true,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,

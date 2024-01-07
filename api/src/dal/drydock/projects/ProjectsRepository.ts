@@ -67,11 +67,19 @@ export class ProjectsRepository {
             .createQueryBuilder('gps')
             .select(['gps.GroupProjectStatusId as GroupProjectStatusId', 'count(tm.Status) as ProjectWithStatusCount'])
             .innerJoin(className(ProjectTypeEntity), 'pt', 'gps.ProjectTypeId = pt.WorklistType')
-            .innerJoin(className(ProjectEntity), 'pr', 'pt.uid = pr.ProjectTypeUid')
+            .innerJoin(className(ProjectEntity), 'pr', 'pt.uid = pr.ProjectTypeUid and pr.ActiveStatus = 1')
+            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
+            .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', 'wc.job_type = pt.WorklistType')
             .innerJoin(
                 className(TecTaskManagerEntity),
                 'tm',
                 'tm.uid = pr.TaskManagerUid and tm.Status = gps.ProjectStatusId',
+            )
+            .innerJoin(
+                className(JmsDtlWorkflowConfigDetailsEntity),
+                'wdetails',
+                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status AND wdetails.ActiveStatus = 1 AND tm.raised_location = wdetails.Is_Office',
             )
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .groupBy('gps.GroupProjectStatusId')
@@ -103,11 +111,19 @@ export class ProjectsRepository {
                 'count(tm.Status) as ProjectWithStatusCount',
             ])
             .innerJoin(className(ProjectTypeEntity), 'pt', 'gps.ProjectTypeId = pt.WorklistType')
-            .innerJoin(className(ProjectEntity), 'pr', 'pt.uid = pr.ProjectTypeUid')
+            .innerJoin(className(ProjectEntity), 'pr', 'pt.uid = pr.ProjectTypeUid and pr.ActiveStatus = 1')
+            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
+            .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', 'wc.job_type = pt.WorklistType')
             .innerJoin(
                 className(TecTaskManagerEntity),
                 'tm',
                 'tm.uid = pr.TaskManagerUid and tm.Status = gps.ProjectStatusId',
+            )
+            .innerJoin(
+                className(JmsDtlWorkflowConfigDetailsEntity),
+                'wdetails',
+                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status AND wdetails.ActiveStatus = 1 AND tm.raised_location = wdetails.Is_Office',
             )
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .groupBy('gps.ProjectTypeId, gps.GroupProjectStatusId')
@@ -157,7 +173,7 @@ export class ProjectsRepository {
             query = query.where('sd.active_status = 1');
         }
 
-        return query;
+        return query.groupBy(['sd.uid', 'stm.task_status', 'sd.project_uid'].join(','));
     }
 
     private GetQueryForProjects(uid?: string, assignedVessels?: number[]): SelectQueryBuilder<ProjectEntity> {
@@ -207,7 +223,7 @@ export class ProjectsRepository {
             .innerJoin(
                 className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
-                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status AND wdetails.ActiveStatus = 1',
+                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status AND wdetails.ActiveStatus = 1 AND tm.raised_location = wdetails.Is_Office',
             )
             .innerJoin(
                 className(GroupProjectStatusEntity),

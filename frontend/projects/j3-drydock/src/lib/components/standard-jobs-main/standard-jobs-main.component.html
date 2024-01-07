@@ -10,6 +10,7 @@
   [filterListsSet]="gridInputs.filtersLists"
   [searchFields]="gridInputs.searchFields"
   (action)="onGridAction($any($event))"
+  (cellPlainTextClick)="cellPlainTextClick($event)"
 ></jb-grid>
 
 <jb-upsert-standard-job-popup

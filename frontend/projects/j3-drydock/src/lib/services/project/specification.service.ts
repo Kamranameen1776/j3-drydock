@@ -204,8 +204,8 @@ export class SpecificationGridService {
       Active_Status_Config_Filter: true,
       ControlType: 'simple',
       Details: 'Status',
-      DisplayCode: 'label',
-      ValueCode: 'label',
+      DisplayCode: 'displayName',
+      ValueCode: 'status',
       FieldID: 2,
       default: true,
       gridName: this.gridName
@@ -232,26 +232,21 @@ export class SpecificationGridService {
     }
   ];
 
+  getStatusesRequest(): WebApiRequest {
+    return {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'specification-details/get-specifications-statuses',
+      crud: eCrud.Get,
+      entity: 'drydock'
+    };
+  }
+
   private filtersLists: FilterListSet = {
     status: {
-      list: [
-        {
-          label: SpecificationStatus.APPROVED,
-          value: SpecificationStatus.APPROVED
-        },
-        {
-          label: SpecificationStatus.COMPLETED,
-          value: SpecificationStatus.COMPLETED
-        },
-        {
-          label: SpecificationStatus.RAISED,
-          value: SpecificationStatus.RAISED
-        },
-        {
-          label: SpecificationStatus.REJECTED,
-          value: SpecificationStatus.REJECTED
-        }
-      ],
+      webApiRequest: this.getStatusesRequest(),
+      listValueKey: 'status',
       type: eFieldControlType.MultiSelect,
       odataKey: 'status'
     },

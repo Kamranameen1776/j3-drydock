@@ -44,6 +44,7 @@ export class SpecificationSubItemsComponent implements OnInit {
     switch (action.type) {
       case eGridRowActions.Edit:
         this.selectedSubItem = action.payload;
+        this.selectedSubItem.dialogHeader = 'Edit Sub Item';
         break;
       case eGridRowActions.Delete:
         this.selectedDeleteSubItem = action.payload;
