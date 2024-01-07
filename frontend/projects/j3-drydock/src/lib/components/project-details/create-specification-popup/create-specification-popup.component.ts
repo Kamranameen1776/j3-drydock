@@ -22,7 +22,12 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
 
   @ViewChild(SpecificationFormComponent) popupForm: SpecificationFormComponent;
 
-  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false, dialogHeader: 'New Spec' };
+  readonly popupConfig: IJbDialog = {
+    ...getSmallPopup(),
+    dialogWidth: 1000,
+    closableIcon: false,
+    dialogHeader: 'New Techical Specification'
+  };
 
   isPopupValid = false;
 

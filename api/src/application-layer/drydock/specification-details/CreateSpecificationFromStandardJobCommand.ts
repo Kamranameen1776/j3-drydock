@@ -103,6 +103,7 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<Request,
                             } as SpecificationDetailsEntity,
                             subject: subItem.subject,
                             active_status: true,
+                            discount: 0,
                         };
                         return item as SpecificationDetailsSubItemEntity;
                     });

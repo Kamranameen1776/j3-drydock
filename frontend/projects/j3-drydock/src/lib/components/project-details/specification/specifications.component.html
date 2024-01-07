@@ -7,26 +7,28 @@
     (nodeData)="setNodeData($event)"
     [eventsList]="eventsList"
     [virtualScroll]="true"
-    scrollHeight="500px"
+    scrollHeight="320px"
   ></jb-tree>
 
-  <jb-grid
-    *ngIf="gridData"
-    [gridName]="gridData.gridName"
-    [colData]="gridData.columns"
-    [tableDataReq]="gridData.request"
-    [setActions]="gridData.actions"
-    [filterData]="gridData.filters"
-    [filterListsSet]="gridData.filtersLists"
-    [searchFields]="gridData.searchFields"
-    [includeSearch]="true"
-    [getStyleByContainer]="true"
-    [showSettings]="gridData.showSettings"
-    [advancedSettings]="gridData.advancedSettings"
-    [isDisplayAdvancedFilter]="false"
-    (action)="onActionClick($event)"
-    (cellPlainTextClick)="cellPlainTextClick($event)"
-  ></jb-grid>
+  <div class="grid-content">
+    <jb-grid
+      *ngIf="gridData"
+      [gridName]="gridData.gridName"
+      [colData]="gridData.columns"
+      [tableDataReq]="gridData.request"
+      [setActions]="gridData.actions"
+      [filterData]="gridData.filters"
+      [filterListsSet]="gridData.filtersLists"
+      [searchFields]="gridData.searchFields"
+      [includeSearch]="true"
+      [getStyleByContainer]="true"
+      [showSettings]="gridData.showSettings"
+      [advancedSettings]="gridData.advancedSettings"
+      [isDisplayAdvancedFilter]="false"
+      (action)="onActionClick($event)"
+      (cellPlainTextClick)="cellPlainTextClick($event)"
+    ></jb-grid>
+  </div>
 
   <jb-add-specification-from-standard-job-popup
     *ngIf="addFromStandardJobPopupVisible"

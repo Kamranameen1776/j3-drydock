@@ -3,6 +3,7 @@ import { SpecificationDetails } from '../../../models/interfaces/specification-d
 import { ITaskManagerLinkingComponentSelectionEvent, TmLinkedRecordsRelationType } from 'jibe-components';
 import { TmLinkedRecords } from 'jibe-components/lib/interfaces/tm-linked-records.interface';
 import { BehaviorSubject } from 'rxjs';
+import { ePmsWlType } from '../../../models/enums/specification-details.enum';
 
 @Component({
   selector: 'jb-linked-pms-jobs-findings',
@@ -27,13 +28,25 @@ export class LinkedPmsJobsAndFindingsComponent implements OnInit {
 
   selectedEntity: TmLinkedRecords[] = [];
   unSelectedEntity: TmLinkedRecords[] = [];
-
+  pmsWlType = ePmsWlType;
   constructor() {}
 
   ngOnInit(): void {
-    this.validJobTypes = {
-      [TmLinkedRecordsRelationType.Related]: [{ taskType: this.validTaskType }]
-    };
+    if (this.validTaskType === ePmsWlType.Findings) {
+      this.validJobTypes = {
+        [TmLinkedRecordsRelationType.Related]: [
+          { taskType: 'NON-PM JOB' },
+          { taskType: 'NON-PM-NCR' },
+          { taskType: 'RECOMMENDATIONS' },
+          { taskType: 'VETTING OBSERVATION' },
+          { taskType: this.pmsWlType.Findings }
+        ]
+      };
+    } else {
+      this.validJobTypes = {
+        [TmLinkedRecordsRelationType.Related]: [{ taskType: this.validTaskType }]
+      };
+    }
 
     this.details = {
       WL_TYPE: 'master_review',

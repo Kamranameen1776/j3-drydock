@@ -33,7 +33,7 @@ export class JobOrdersService {
       // entity: eEntities.DryDock,
       // action: eAction.GetSpecificationDetails,
       apiBase: 'dryDockAPI',
-      action: 'projects/job-orders/get-all-job-orders',
+      action: 'projects/job-orders/get-all-applied-job-orders',
       crud: eCrud.Post,
       entity: 'drydock'
     };

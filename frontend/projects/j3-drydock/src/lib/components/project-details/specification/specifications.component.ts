@@ -45,10 +45,11 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   deleteDialogMessage = 'Are you sure want to delete the record?';
   specificationUid: string;
 
-  vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name'> = {
+  vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name' | 'expanded'> = {
     uid: 'vesselParent',
-    name: 'Vessel',
-    parent_function_uid: '0'
+    name: 'Functions',
+    parent_function_uid: '0',
+    expanded: true
   };
 
   constructor(
