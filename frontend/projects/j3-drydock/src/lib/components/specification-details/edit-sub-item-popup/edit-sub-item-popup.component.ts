@@ -26,7 +26,7 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
     ...getSmallPopup(),
     dialogWidth: 1000,
     closableIcon: true,
-    dialogHeader: 'Edit Sub Item'
+    dialogHeader: 'Add Sub Item'
   };
 
   formId = 'editSubItemForm';
