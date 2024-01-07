@@ -192,6 +192,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
       this.createProjectFormGroup.reset();
     }
     this.createNewDialogVisible = isShow;
+    this.saveNewProjectButtonDisabled$.next(true);
   }
 
   public showDeleteDialog(value = true) {
@@ -213,13 +214,6 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   }
 
   public saveNewProject() {
-    this.saveNewProjectButtonDisabled$.next(true);
-
-    if (!this.createProjectFormGroup.valid) {
-      this.createProjectFormGroup.markAllAsTouched();
-      return;
-    }
-
     const values: ProjectCreate = cloneDeep(this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId]);
 
     if (values.EndDate) {
@@ -235,8 +229,11 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
       return;
     }
 
+    this.saveNewProjectButtonDisabled$.next(true);
+    this.showLoader = true;
     this.projectsService.createProject(values).subscribe((uid: string) => {
       this.saveNewProjectButtonDisabled$.next(false);
+      this.showLoader = false;
       this.showCreateNewDialog(false);
       this.projectsGrid.fetchMatrixData();
       this.navigateToDetails(uid);

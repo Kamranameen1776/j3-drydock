@@ -334,6 +334,14 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         this.showEditSubItem = true;
         break;
       case eSpecificationDetailsPageMenuIds.Findings:
+        if (this.selectedAmount[eSpecificationDetailsPageMenuIds.Findings] === 0) {
+          this.jbTMDtlSrv.showGrowlMassage.next({
+            severity: eMessagesSeverityValues.Error,
+            detail: 'No record selected to convert.'
+          });
+
+          break;
+        }
         this.subItemDetails.dialogHeader = null;
         this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.Findings];
         this.showEditSubItem = true;
