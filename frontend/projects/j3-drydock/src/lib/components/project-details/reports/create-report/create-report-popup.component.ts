@@ -14,7 +14,7 @@ import { JobOrdersService } from '../../../../services/project-monitoring/job-or
 import { IJobOrderFormDto } from '../../project-monitoring/job-orders-form/dtos/IJobOrderFormDto';
 import { IJobOrdersFormComponent } from '../../project-monitoring/job-orders-form/IJobOrdersFormComponent';
 import { FormControl, FormGroup } from '@angular/forms';
-import { UTCAsLocal, localToUTC } from 'projects/j3-drydock/src/lib/utils/date';
+import { UTCAsLocal, localToUTC } from '../../../../utils/date';
 @Component({
   selector: 'jb-drydock-create-report-popup',
   templateUrl: './create-report-popup.component.html',

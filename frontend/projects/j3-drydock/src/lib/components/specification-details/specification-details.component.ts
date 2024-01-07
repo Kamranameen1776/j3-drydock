@@ -329,7 +329,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
           break;
         }
-        this.subItemDetails.dialogHeader = null;
+        this.subItemDetails.dialogHeader = 'Add Sub Item';
         this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.PMSJobs];
         this.showEditSubItem = true;
         break;
@@ -342,12 +342,12 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
           break;
         }
-        this.subItemDetails.dialogHeader = null;
+        this.subItemDetails.dialogHeader = 'Add Sub Item';
         this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.Findings];
         this.showEditSubItem = true;
         break;
       case eSpecificationDetailsPageMenuIds.SubItems:
-        this.subItemDetails.dialogHeader = 'Add New Sub Item';
+        this.subItemDetails.dialogHeader = 'Add Sub Item';
         this.showEditSubItem = true;
         break;
       default:
