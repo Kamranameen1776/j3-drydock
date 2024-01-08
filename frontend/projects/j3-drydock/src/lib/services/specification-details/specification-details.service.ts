@@ -18,6 +18,7 @@ import { ITMDetailTabFields } from 'j3-task-manager-ng';
 import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
 
 export interface SpecificationDetailAccessRights extends BaseAccessRight {
+  generalInformation: { view: boolean };
   attachments: BaseAccessRight & { add: boolean };
   subItems: BaseAccessRight;
   requisitions: { view: boolean; edit: boolean };
@@ -29,6 +30,9 @@ export const DEFAULT_PROJECT_DETAILS_ACCESS_RIGHTS: SpecificationDetailAccessRig
   view: false,
   edit: false,
   delete: false,
+  generalInformation: {
+    view: false
+  },
   attachments: {
     view: false,
     edit: false,
@@ -82,6 +86,9 @@ export class SpecificationDetailsService {
       view: canView,
       edit: canEdit,
       delete: canDelete,
+      generalInformation: {
+        view: this.hasAccess(eSpecificationAccessActions.viewGeneralInformationSection)
+      },
       attachments: {
         view: canViewAttachments,
         edit: canEditAttachments,

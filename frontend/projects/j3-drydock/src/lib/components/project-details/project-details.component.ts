@@ -69,7 +69,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     { label: 'ExportExcel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
   ];
   threeDotsActionsShow = {
-    ExportExcel: true
+    ExportExcel: true,
+    showDefaultLables: false
   };
 
   editingSection = '';

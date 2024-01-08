@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { MigrationUtilsService } from 'j2utils';
 
-export class newSpecificationWorkflowChanges1703847178268 implements MigrationInterface {
+export class newSpecificationWorkflowChanges1703847178269 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -15,18 +15,18 @@ export class newSpecificationWorkflowChanges1703847178268 implements MigrationIn
                 (N'59D75561-4778-4AF1-826D-2C32854A437F', N'tm_specification_cancel_office', N'Cancel dry dock from office', N'o', 'project', 'specification_details', N'cancel', 1, GETDATE(), NULL, NULL, 1, N'Cancel Dry Dock from Office', NULL, 1),
                 (N'177C9392-EE1F-45AC-A6D9-ECD8805D7509', N'tm_specification_cancel_vessel', N'Cancel dry dock from vessel', N'v', 'project', 'specification_details', N'cancel', 1, GETDATE(), NULL, NULL, 1, N'Cancel Dry Dock from Vessel', NULL, 1)
                 )
-            
+
                 AS SOURCE (Right_UID, Right_Code, Right_Description, Valid_On, Module_Code, Function_Code, Action, Created_By, Date_Of_Creation, Modified_By,
                 Date_Of_Modification, Active_Status, right_name, api_url, is_work_flow)
                 ON TARGET.Right_UID = SOURCE.Right_UID
-                
+
                 WHEN MATCHED THEN
                 UPDATE SET
                 TARGET.Right_Code = SOURCE.Right_Code, TARGET.Right_Description = SOURCE.Right_Description,
                 TARGET.Valid_On = SOURCE.Valid_On, TARGET.Module_Code = SOURCE.Module_Code, TARGET.Function_Code = SOURCE.Function_Code, TARGET.Action = SOURCE.Action,
                 TARGET.Created_By = SOURCE.Created_By, TARGET.Date_Of_Creation = SOURCE.Date_Of_Creation, TARGET.Modified_By = 1, TARGET.Date_Of_Modification = getDate(),
                 TARGET.Active_Status = SOURCE.Active_Status, TARGET.right_name = SOURCE.right_name, TARGET.api_url = SOURCE.api_url, TARGET.is_work_flow = SOURCE.is_work_flow
-                
+
                 WHEN NOT MATCHED BY TARGET THEN
                 INSERT (Right_UID, Right_Code, Right_Description, Valid_On, Module_Code, Function_Code, Action, Created_By, Date_Of_Creation, Modified_By, Date_Of_Modification, Active_Status, right_name, api_url, is_work_flow)
                 VALUES (
@@ -36,9 +36,9 @@ export class newSpecificationWorkflowChanges1703847178268 implements MigrationIn
                 );
             `);
 
-            await queryRunner.query(`          
+            await queryRunner.query(`
             MERGE INTO INF_lnk_right_user_type AS TARGET USING (
-            VALUES   
+            VALUES
                 (N'C43215D1-DF39-4D1C-87C4-B90478768A18', N'tm_specification_cancel_office', N'3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), NULL, NULL),
                 (N'62ABB746-197D-45D6-B0F8-77000A3A7E20', N'tm_specification_cancel_vessel', N'0F3613B9-9FB5-40E6-8763-FC4941136598', 1, 1, getdate(), NULL, NULL)
                 )
@@ -50,7 +50,7 @@ export class newSpecificationWorkflowChanges1703847178268 implements MigrationIn
                 UPDATE SET TARGET.right_code = SOURCE.right_code,TARGET.user_type_uid = SOURCE.user_type_uid,
                 TARGET.active_status = SOURCE.active_status, TARGET.created_by = SOURCE.created_by, TARGET.date_of_creation = SOURCE.date_of_creation,
                 TARGET.modified_by = 1, TARGET.date_of_modification = GETDATE()
-                
+
                 WHEN NOT MATCHED BY TARGET THEN
                 INSERT (uid, right_code, user_type_uid, active_status, created_by, date_of_creation, modified_by, date_of_modification)
                 VALUES (
@@ -59,7 +59,7 @@ export class newSpecificationWorkflowChanges1703847178268 implements MigrationIn
                 );
             `);
 
-            await queryRunner.query(`          
+            await queryRunner.query(`
             IF Exists(SELECT 1 FROM JMS_DTL_Workflow_config_details WHERE config_id in ( select Id from JMS_DTL_Workflow_config where active_status = 1 and JOB_Type = 'Specification'))
             BEGIN
                DECLARE @id int
@@ -68,14 +68,14 @@ export class newSpecificationWorkflowChanges1703847178268 implements MigrationIn
                OPEN workflow_config_Details
                FETCH NEXT FROM workflow_config_Details
                INTO @id
-    
+
                WHILE @@FETCH_STATUS = 0
                BEGIN
                /* Deleting record */
                if @id is not null
                Delete from JMS_DTL_Workflow_config_Details
                WHERE ID=@id
-    
+
                FETCH NEXT FROM workflow_config_Details
                INTO @id
                END
@@ -84,21 +84,21 @@ export class newSpecificationWorkflowChanges1703847178268 implements MigrationIn
             END
             `);
 
-            await queryRunner.query(`          
+            await queryRunner.query(`
             DECLARE @applocation nvarchar(20)
             SET @applocation = ( SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location' )
             IF( @applocation = 'office')
             BEGIN
-    
+
             BEGIN
             DECLARE @Wf_Pk_Condition varchar(100);
-    
+
             -- To add job type entry in TEC_LIB_Worklist_Type
             BEGIN
                 DECLARE @WorkList_MAX_ID INT
-    
+
                 SELECT @WorkList_MAX_ID = ((SELECT ISNULL(MAX(ID), 0) FROM TEC_LIB_Worklist_Type) + 1)
-    
+
                 MERGE INTO TEC_LIB_Worklist_Type AS TARGET USING (
                         VALUES
                             (@WorkList_MAX_ID, N'Specification', N'Technical Specification', 1, GETDATE(), 1, 0, NULL, 0, 0, 'SPEC')
@@ -122,29 +122,29 @@ export class newSpecificationWorkflowChanges1703847178268 implements MigrationIn
                 VALUES (ID,SOURCE.[Worklist_Type], SOURCE.[Worklist_Type_Display], SOURCE.[Created_By],
                         SOURCE.[Date_Of_Creation],SOURCE.[Active_Status], SOURCE.[Is_Child_Task], SOURCE.[Is_SYNC],SOURCE.[Is_Inspection],
                         SOURCE.[Is_Vetting], SOURCE.[job_card_prefix]);
-    
+
                 ------------- Sync script of TEC_LIB_Worklist_Type -------------
-    
+
                     SET @Wf_Pk_Condition = 'ID='+CAST(@WorkList_MAX_ID AS VARCHAR(50))+''
-    
+
                     EXEC SYNC_SP_DataSynch_MultiPK_DataLog 'TEC_LIB_Worklist_Type', @Wf_Pk_Condition, 0
-    
+
                     SET @WorkList_MAX_ID = 0;
                     SET @Wf_Pk_Condition = null;
-    
+
             END
             END
             ----------------------------------------------Insert 'Specification' details in jms_dtl_workflow_config table--------------------------------------
                     BEGIN
                     DECLARE @MaxID int = 0,
                     @PkCondition varchar(100),
-    
+
                     @JobType varchar(50) = 'Specification', --workflow set for which job type
                     @TotalDays int = 0 , -- total days until finalizing task
                     @VesselAssign int = 0, -- vessel assignment value
                     @SubTask int = 0,
-                    @IncidentCategory int = 0 , 
-                    @MSCATCategory int = 0, 
+                    @IncidentCategory int = 0 ,
+                    @MSCATCategory int = 0,
                     @Due_Date_Config varchar(600)='{"status":"CLOSE","days":"14","due_date":"Start Date"}',
                     @job_type_column_config varchar(1500) = '
                     {"status_config":[{"wfstatus":"Raise","mandatory":"Yes","rework":"No","delete":"Yes","save":"Yes"},
@@ -194,9 +194,9 @@ export class newSpecificationWorkflowChanges1703847178268 implements MigrationIn
                         EXEC SYNC_SP_DataSynch_MultiPK_DataLog 'JMS_DTL_Workflow_config' , @PkCondition, 0
                     END
                 END
-    
+
                 -----------------------------------------Entry of 'Specification' in jms_dtl_workflow_config_details table--------------------
-    
+
                 DECLARE @Wf_App_Location nvarchar(20),
                 @Default_Workflow_OrderID int,
                 @Default_WorkflowType_ID varchar(100),
@@ -222,7 +222,7 @@ export class newSpecificationWorkflowChanges1703847178268 implements MigrationIn
                             (2, 'IN PROGRESS', 'In Progress', 'In Progress', 1, 0, 1,'tm_specification_in_progress_office'),
                             (3, 'COMPLETE', 'Add to Plan', 'Planned', 1, 0, 1,'tm_specification_complete_office'),
                             (4, 'CLOSE', 'Close', 'Closed', 1, 1, 1,'tm_specification_close_office'),
-                            (5, 'CANCEL', 'Cancel', 'Canceled', 1, 0, 1,'tm_specification_cancel_office')
+                            (5, 'UNCLOSE', 'Cancel', 'Canceled', 1, 0, 1,'tm_specification_cancel_office')
                         declare  @DefaultAppLocations table (Is_Office INT)
                         INSERT INTO @DefaultAppLocations (Is_Office)
                         VALUES (1), (0)

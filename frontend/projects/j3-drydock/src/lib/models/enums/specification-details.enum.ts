@@ -34,13 +34,13 @@ export const specificationDetailsMenuData = [
       { label: eSpecificationDetailsPageMenuLabels.GeneralInformation, id: eSpecificationDetailsPageMenuIds.GeneralInformation },
       { label: eSpecificationDetailsPageMenuLabels.SubItems, id: eSpecificationDetailsPageMenuIds.SubItems },
       { label: eSpecificationDetailsPageMenuLabels.PMSJobs, id: eSpecificationDetailsPageMenuIds.PMSJobs },
-      { label: eSpecificationDetailsPageMenuLabels.Findings, id: eSpecificationDetailsPageMenuIds.Findings },
+      { label: eSpecificationDetailsPageMenuLabels.Findings, id: eSpecificationDetailsPageMenuIds.Findings }
       // { label: eSpecificationDetailsPageMenuLabels.Requisitions, id: eSpecificationDetailsPageMenuIds.Requisitions },
       // { label: eSpecificationDetailsPageMenuLabels.Source, id: eSpecificationDetailsPageMenuIds.Source },
-      {
-        label: eSpecificationDetailsPageMenuLabels.SpecificationAttachments,
-        id: eSpecificationDetailsPageMenuIds.SpecificationAttachments
-      }
+      // {
+      //   label: eSpecificationDetailsPageMenuLabels.SpecificationAttachments,
+      //   id: eSpecificationDetailsPageMenuIds.SpecificationAttachments
+      // }
     ]
   },
   { label: eSpecificationDetailsPageMenuLabels.Attachments, id: eSpecificationDetailsPageMenuIds.Attachments, icon: 'icons8-attach' }

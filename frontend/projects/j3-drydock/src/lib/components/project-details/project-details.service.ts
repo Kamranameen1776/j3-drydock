@@ -63,9 +63,7 @@ export class ProjectDetailsService {
       this.hasAccess(eProjectsDetailsAccessActions.editHeader) || this.hasAccess(eProjectsDetailsAccessActions.editHeaderVessel);
     const canDelete = this.hasAccess(eProjectsAccessActions.deleteProject);
     const canViewAttachments =
-      isEditableStatus &&
-      (this.hasAccess(eProjectsDetailsAccessActions.viewAttachments) ||
-        this.hasAccess(eProjectsDetailsAccessActions.viewAttachmentsVessel));
+      this.hasAccess(eProjectsDetailsAccessActions.viewAttachments) || this.hasAccess(eProjectsDetailsAccessActions.viewAttachmentsVessel);
     const canEditAttachments =
       isEditableStatus &&
       (this.hasAccess(eProjectsDetailsAccessActions.editAttachments) ||

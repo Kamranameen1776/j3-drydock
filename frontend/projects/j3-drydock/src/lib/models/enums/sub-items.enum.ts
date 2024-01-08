@@ -12,3 +12,8 @@ export enum eSubItemsFields {
   Description = 'description',
   Uid = 'uid'
 }
+
+export enum eSubItemsDialog {
+  EditHeaderText = 'Edit Sub Item',
+  AddHeaderText = 'Add Sub Item'
+}
