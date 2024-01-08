@@ -83,7 +83,7 @@ export class ProjectsSpecificationGridService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Specifications',
+      DisplayText: 'Specifications (Open/Total)',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.Specification),
       IsActive: true,
       IsMandatory: false,
