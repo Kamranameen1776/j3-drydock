@@ -30,6 +30,7 @@ import { TaskManagerService } from '../../services/task-manager.service';
 import { FormGroup } from '@angular/forms';
 import { SpecificationSubItem } from '../../models/interfaces/specification-sub-item';
 import { SpecificationDetailsSubItemsGridService } from '../../services/specification-details/specification-details-sub-item.service';
+import { eSubItemsDialog } from '../../models/enums/sub-items.enum';
 
 @Component({
   selector: 'jb-specification-details',
@@ -329,7 +330,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
           break;
         }
-        this.subItemDetails.dialogHeader = 'Add Sub Item';
+        this.subItemDetails.dialogHeader = eSubItemsDialog.AddHeaderText;
         this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.PMSJobs];
         this.showEditSubItem = true;
         break;
@@ -342,12 +343,12 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
           break;
         }
-        this.subItemDetails.dialogHeader = 'Add Sub Item';
+        this.subItemDetails.dialogHeader = eSubItemsDialog.AddHeaderText;
         this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.Findings];
         this.showEditSubItem = true;
         break;
       case eSpecificationDetailsPageMenuIds.SubItems:
-        this.subItemDetails.dialogHeader = 'Add Sub Item';
+        this.subItemDetails.dialogHeader = eSubItemsDialog.AddHeaderText;
         this.showEditSubItem = true;
         break;
       default:
