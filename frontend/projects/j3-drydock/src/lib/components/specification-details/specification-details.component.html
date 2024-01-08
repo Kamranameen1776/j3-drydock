@@ -17,7 +17,6 @@
     pmsJobs: pmsJobs,
     findings: findings
   }"
-  [ignoreAccessRights]="true"
   [slideMenus]="menu"
 >
   <ng-template
@@ -29,7 +28,7 @@
         <div #generalInformation>
           <jb-specification-general-information
             #SpecificationGeneralInformationComponent
-            *ngIf="specificationDetailsInfo"
+            *ngIf="specificationDetailsInfo && accessRights.generalInformation.view"
             [specificationDetailsInfo]="specificationDetailsInfo"
             (formValue)="validateDetail($event)"
           ></jb-specification-general-information>
@@ -48,7 +47,7 @@
         <div #pmsJobs>
           <jb-linked-pms-jobs-findings
             #PmsJobsComponent
-            *ngIf="specificationDetailsInfo"
+            *ngIf="specificationDetailsInfo && accessRights.pmsJobs.view"
             [validTaskType]="pmsWlType.PmsJob"
             [specificationDetailsInfo]="specificationDetailsInfo"
             (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.PMSJobs)"
@@ -59,7 +58,7 @@
         <div #findings>
           <jb-linked-pms-jobs-findings
             #FindingsComponent
-            *ngIf="specificationDetailsInfo"
+            *ngIf="specificationDetailsInfo && accessRights.findings.view"
             [validTaskType]="pmsWlType.Findings"
             [specificationDetailsInfo]="specificationDetailsInfo"
             (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.Findings)"
