@@ -77,7 +77,7 @@ export class SpecificationDetailsService {
     const canView = this.hasAccess(eSpecificationAccessActions.viewSpecificationDetail);
     const canEdit = this.hasAccess(eSpecificationAccessActions.editGeneralInformation);
     const canDelete = this.hasAccess(eSpecificationAccessActions.deleteSpecificationDetail);
-    const canViewAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.viewAttachmentsSection);
+    const canViewAttachments = this.hasAccess(eSpecificationAccessActions.viewAttachmentsSection);
     const canEditAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.editAttachments);
     const canDeleteAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.deleteAttachments);
     const canAddAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.addAttachments);
