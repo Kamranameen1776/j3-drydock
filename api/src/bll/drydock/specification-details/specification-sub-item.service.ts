@@ -10,7 +10,7 @@ export class SpecificationSubItemService {
         });
 
         if (data.length > 0) {
-            const totalCost = data.reduce((acc, curr) => acc + (curr.cost || 0), 0);
+            const totalCost = data.reduce((acc, curr) => acc + (curr.getCost() || 0), 0);
             const totalRow = {
                 discount: {
                     innerHTML: `<span class="totalCost">Total cost</span><style>.totalCost { font-weight: bold }</style>`,
