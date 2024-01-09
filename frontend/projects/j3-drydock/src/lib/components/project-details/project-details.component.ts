@@ -35,6 +35,7 @@ import { cloneDeep } from 'lodash';
 import { StatementOfFactsComponent } from './project-monitoring/statement-of-facts/statement-of-facts.component';
 import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
 import { getFileNameDate } from '../../shared/functions/file-name';
+import { localDateJbStringAsUTC } from '../../utils/date';
 
 @Component({
   selector: 'jb-project-details',
@@ -287,11 +288,19 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       this.growlMessageService.setErrorMessage(event.errorMsg);
     }
 
+    const data = event.payload;
+
+    if (!this.checkValidStartEndDates(data)) {
+      this.growlMessageService.setErrorMessage('Start Date cannot be greater than End Date');
+      setTimeout(() => this.jbTMDtlSrv.closeDialog.next(true));
+      return;
+    }
+
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
 
     this.projectDetailsService
       .save(this.projectUid, {
-        ...event.payload
+        ...data
       })
       .subscribe(() => {
         // TODO reset here forms, etc if needed
@@ -377,5 +386,24 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     return `${this.projectDetails.VesselName}-${this.projectDetails.ShipYard}-${new Date(
       this.projectDetails.StartDate
     ).getFullYear()}-${getFileNameDate()}.xlsx`;
+  }
+
+  private checkValidStartEndDates(formData) {
+    let endDate: Date;
+    let startDate: Date;
+
+    if (formData?.StartDate) {
+      startDate = localDateJbStringAsUTC(formData.StartDate);
+    }
+
+    if (formData?.EndDate) {
+      endDate = localDateJbStringAsUTC(formData.EndDate);
+    }
+
+    if (endDate && startDate && endDate.getTime() < startDate.getTime()) {
+      return false;
+    }
+
+    return true;
   }
 }
