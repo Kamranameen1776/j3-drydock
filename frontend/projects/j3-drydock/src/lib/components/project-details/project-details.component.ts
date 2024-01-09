@@ -67,10 +67,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
   customedThreeDotActions: AdvancedSettings[] = [
-    { label: 'ExportExcel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
+    { label: 'Export Excel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
   ];
   threeDotsActionsShow = {
-    ExportExcel: true,
+    'Export Excel': true,
     showDefaultLables: false
   };
 
@@ -233,7 +233,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       this.deleteRecord();
     } else if (wfEvent?.event?.type === 'resync') {
       this.resyncRecord();
-    } else if (wfEvent?.event?.type === 'Export') {
+    } else if (wfEvent?.event?.type === 'Export Excel') {
       this.exportExcel();
     }
   }
