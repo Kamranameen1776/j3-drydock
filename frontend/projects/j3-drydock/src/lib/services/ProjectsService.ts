@@ -92,7 +92,7 @@ export class ProjectsService {
     return apiRequest;
   }
 
-  public getProjectStatuses(): Observable<IProjectStatusDto> {
+  public getProjectStatuses(): Observable<IProjectStatusDto[]> {
     const apiRequest = this.getProjectStatusesRequest();
 
     return this.apiRequestService.sendApiReq(apiRequest);
