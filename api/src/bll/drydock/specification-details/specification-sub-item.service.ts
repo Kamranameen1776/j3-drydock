@@ -1,16 +1,26 @@
-import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { FindManyRecord } from '../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
+
+export interface SpecificationSubItem {
+    uid?: string;
+    subject?: string;
+    unitUid?: string;
+    quantity?: number;
+    unitPrice?: string;
+    cost: string | object;
+    discount?: number | object;
+    description?: string;
+}
 
 export class SpecificationSubItemService {
-    public mapQueryResult(entities: SpecificationDetailsSubItemEntity[]): SpecificationDetailsSubItemEntity[] {
-        const data = entities.map((entity) => {
+    public mapQueryResult(entities: FindManyRecord[]): SpecificationSubItem[] {
+        const data: SpecificationSubItem[] = entities.map((entity) => {
             return {
                 ...entity,
-                discount: (entity.discount || 0) * 100,
-            } as SpecificationDetailsSubItemEntity;
+                discount: (+entity.discount || 0) * 100,
+            };
         });
-
-        if (data.length > 0) {
-            const totalCost = data.reduce((acc, curr) => acc + (curr.cost || 0), 0);
+        if (entities.length > 0) {
+            const totalCost = data.reduce((acc, curr) => acc + (+curr.cost || 0), 0);
             const totalRow = {
                 discount: {
                     innerHTML: `<span class="totalCost">Total cost</span><style>.totalCost { font-weight: bold }</style>`,
@@ -22,7 +32,7 @@ export class SpecificationSubItemService {
                 },
                 hideActions: true,
                 rowCssClass: 'no-actions',
-            } as any;
+            };
 
             data.push(totalRow);
         }

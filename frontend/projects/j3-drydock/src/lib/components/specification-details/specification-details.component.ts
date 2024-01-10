@@ -47,7 +47,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   @ViewChild(eSpecificationDetailsPageMenuIds.Source) [eSpecificationDetailsPageMenuIds.Source]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationAttachments)
   [eSpecificationDetailsPageMenuIds.SpecificationAttachments]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.Attachments) [eSpecificationDetailsPageMenuIds.Attachments]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.AuditTrail) [eSpecificationDetailsPageMenuIds.AuditTrail]: ElementRef;
 
   public specificationDetailsInfo: SpecificationDetails;
@@ -215,7 +214,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       uid: this.specificationDetailsInfo.uid,
       Subject: event.payload.Job_Short_Description,
       AccountCode: detailForm.accountCode,
-      Description: detailForm.description,
+      Description: this.detailForm.value.editors.description,
       DoneByUid: detailForm.doneBy,
       PriorityUid: detailForm.priorityUid,
       Inspections: detailForm.inspectionId
@@ -330,7 +329,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
           break;
         }
-        this.subItemDetails.dialogHeader = eSubItemsDialog.AddHeaderText;
+        this.subItemDetails.dialogHeader = eSubItemsDialog.AddText;
         this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.PMSJobs];
         this.showEditSubItem = true;
         break;
@@ -343,12 +342,12 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
           break;
         }
-        this.subItemDetails.dialogHeader = eSubItemsDialog.AddHeaderText;
+        this.subItemDetails.dialogHeader = eSubItemsDialog.AddText;
         this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.Findings];
         this.showEditSubItem = true;
         break;
       case eSpecificationDetailsPageMenuIds.SubItems:
-        this.subItemDetails.dialogHeader = eSubItemsDialog.AddHeaderText;
+        this.subItemDetails.dialogHeader = eSubItemsDialog.AddText;
         this.showEditSubItem = true;
         break;
       default:

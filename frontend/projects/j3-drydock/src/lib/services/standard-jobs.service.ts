@@ -288,12 +288,16 @@ export class StandardJobsService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private getUpsertStandardJobBody(uid: string, formValue: any) {
+  private getUpsertStandardJobBody(uid: string, formValue: { editors: any; standardJobsUpsertFormId: any }) {
+    const { editors, standardJobsUpsertFormId } = formValue;
+
     return {
-      ...formValue,
+      ...standardJobsUpsertFormId,
       [eStandardJobsMainFields.UID]: uid || '',
-      [eStandardJobsMainFields.Function]: formValue.function.jb_value_label || '',
-      [eStandardJobsMainFields.FunctionUid]: formValue.function.Child_ID || ''
+      [eStandardJobsMainFields.Function]: standardJobsUpsertFormId.function.jb_value_label || '',
+      [eStandardJobsMainFields.FunctionUid]: standardJobsUpsertFormId.function.Child_ID || '',
+      [eStandardJobsMainFields.Description]: editors.description,
+      [eStandardJobsMainFields.Scope]: editors.scope
     };
   }
 }

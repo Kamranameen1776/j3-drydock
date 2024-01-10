@@ -10,6 +10,7 @@ import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree
 import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 import { SpecificationDetails } from '../../../models/interfaces/specification-details';
+import { EditorConfig } from '../../../models/interfaces/EditorConfig';
 
 @Injectable()
 export class SpecificationGeneralInformationInputservice extends FormServiceBase {
@@ -40,9 +41,9 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: false,
         validatorRequired: true,
         gridRowStart: 1,
-        gridRowEnd: 2,
+        gridRowEnd: 1,
         gridColStart: 1,
-        gridColEnd: 2
+        gridColEnd: 1
       },
       [eSpecificationDetailsGeneralInformationFields.AccountCode]: {
         type: eFieldControlType.Text,
@@ -51,9 +52,9 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: true,
         validatorRequired: false,
         gridRowStart: 1,
-        gridRowEnd: 2,
+        gridRowEnd: 1,
         gridColStart: 2,
-        gridColEnd: 3,
+        gridColEnd: 2,
         placeHolder: 'Account Code',
         maxTextLength: 200
       },
@@ -64,9 +65,9 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: false,
         validatorRequired: false,
         gridRowStart: 2,
-        gridRowEnd: 3,
+        gridRowEnd: 2,
         gridColStart: 1,
-        gridColEnd: 2,
+        gridColEnd: 1,
         placeHolder: 'Select Item Source',
         listRequest: {
           labelKey: 'display_name',
@@ -81,10 +82,10 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: false,
         show: 'hidden',
         validatorRequired: false,
-        gridRowStart: 2,
-        gridRowEnd: 3,
-        gridColStart: 2,
-        gridColEnd: 3,
+        gridRowStart: 0,
+        gridRowEnd: 0,
+        gridColStart: 0,
+        gridColEnd: 0,
         placeHolder: 'Item Number'
       },
       [eSpecificationDetailsGeneralInformationFields.DoneBy]: {
@@ -94,9 +95,9 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: true,
         validatorRequired: false,
         gridRowStart: 3,
-        gridRowEnd: 4,
+        gridRowEnd: 3,
         gridColStart: 1,
-        gridColEnd: 2,
+        gridColEnd: 1,
         listRequest: {
           labelKey: 'displayName',
           valueKey: 'uid',
@@ -110,9 +111,9 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: true,
         validatorRequired: false,
         gridRowStart: 2,
-        gridRowEnd: 3,
+        gridRowEnd: 2,
         gridColStart: 2,
-        gridColEnd: 3,
+        gridColEnd: 2,
         placeHolder: 'Select Inspection',
         listRequest: {
           labelKey: 'displayName',
@@ -129,9 +130,9 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: false,
         validatorRequired: false,
         gridRowStart: 4,
-        gridRowEnd: 5,
+        gridRowEnd: 4,
         gridColStart: 1,
-        gridColEnd: 2,
+        gridColEnd: 1,
         placeHolder: 'Equipment Description',
         maxLength: 200
       },
@@ -142,28 +143,15 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: true,
         validatorRequired: false,
         gridRowStart: 3,
-        gridRowEnd: 4,
+        gridRowEnd: 3,
         gridColStart: 2,
-        gridColEnd: 3,
+        gridColEnd: 2,
         placeHolder: 'Select Priority',
         listRequest: {
           labelKey: 'display_name',
           valueKey: 'uid',
           webApiRequest: this.specificationDetailService.getPriorityRequest()
         }
-      },
-      [eSpecificationDetailsGeneralInformationFields.Description]: {
-        type: eFieldControlType.TextAreaType,
-        sectionID: this.sectionId,
-        label: eSpecificationDetailsGeneralInformationLabels.Description,
-        enabled: true,
-        autoResize: true,
-        validatorRequired: true,
-        gridRowStart: 5,
-        gridRowEnd: 6,
-        gridColStart: 1,
-        gridColEnd: 3,
-        maxTextLength: 1000
       }
     };
 
@@ -208,14 +196,47 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
           label: '',
           formID: this.generalInformationFormId,
           gridRowStart: 1,
-          gridRowEnd: 1,
+          gridRowEnd: 4,
           gridColStart: 1,
-          gridColEnd: 1,
+          gridColEnd: 2,
           fields: this.getFields()
         }
       }
     };
 
     return baseModel;
+  }
+
+  getDescriptionEditorConfig(key1: string, vesselId: number): EditorConfig {
+    return {
+      id: 'description',
+      maxLength: 1000,
+      placeholder: '',
+      crtlName: 'description',
+      moduleCode: 'project',
+      functionCode: 'job_description_jb_editor',
+      key1: key1,
+      vesselId: vesselId,
+      inlineMode: {
+        enable: false,
+        onSelection: true
+      },
+      tools: {
+        items: [
+          'Bold',
+          'Italic',
+          'Underline',
+          'StrikeThrough',
+          'FontName',
+          'FontSize',
+          'FontColor',
+          'Formats',
+          'Alignments',
+          'Image',
+          'ClearFormat',
+          'FullScreen'
+        ]
+      }
+    };
   }
 }
