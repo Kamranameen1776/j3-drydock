@@ -14,6 +14,7 @@ import {
 import { CentralizedDataService, JbDatePipe, UserService } from 'jibe-components';
 import { DatePipe } from '@angular/common';
 import { UTCAsLocal } from '../../../../utils/date';
+import { Router } from '@angular/router';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
@@ -50,8 +51,23 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
 
   columns = [
     {
+      field: 'SpecificationURL',
+      headerText: '',
+      width: '0',
+      minWidth: '0',
+      maxWidth: '0'
+    },
+    {
+      field: 'SpecificationCode',
+      headerText: 'Specification',
+      width: '100',
+      minWidth: '100',
+      maxWidth: '100',
+      template: '<a href="${SpecificationURL}" target="_blank" class="gantt-grid-link" >${SpecificationCode}</a>'
+    },
+    {
       field: 'SpecificationSubject',
-      headerText: 'Task Name',
+      headerText: 'Description',
       width: '150'
     },
     {
@@ -78,11 +94,18 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
     },
     {
       field: 'Progress',
-      headerText: ' ',
+      headerText: 'Progress',
       width: '60',
       minWidth: '60',
       maxWidth: '60',
       template: '<div>${Progress}%</div>'
+    },
+    {
+      field: 'Responsible',
+      headerText: 'Responsible',
+      width: '100',
+      minWidth: '100',
+      maxWidth: '100'
     }
   ];
 
@@ -93,6 +116,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
   constructor(
     private ganttChartService: GanttChartService,
     private userService: UserService,
+    private router: Router,
     datePipe: DatePipe,
     cds: CentralizedDataService
   ) {
@@ -103,12 +127,16 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
 
   ngOnInit(): void {
     this.dateFormat = this.userService.getUserDetails().Date_Format.toLocaleUpperCase();
+
     this.ganttChartService
       .getData(this.projectId)
       .pipe(
         map((data) =>
           data.records.map((jobOrder) => ({
             ...jobOrder,
+            SpecificationCode: jobOrder.Code,
+            SpecificationURL: this.router.createUrlTree(['dry-dock', 'specification-details', jobOrder.SpecificationUid]).toString(),
+            Responsible: jobOrder.DoneBy,
             SpecificationEndDateFormatted: this.jbPipe.transform(UTCAsLocal(jobOrder.SpecificationEndDate)),
             SpecificationStartDateFormatted: this.jbPipe.transform(UTCAsLocal(jobOrder.SpecificationStartDate)),
             SpecificationStartDate: UTCAsLocal(jobOrder.SpecificationStartDate),
