@@ -308,6 +308,7 @@ export class ProjectsRepository {
             .select(['usr.uid as ManagerId', `usr.FirstName + ' ' + usr.LastName as FullName`])
             .innerJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
             .where('pr.ActiveStatus = :activeStatus', { activeStatus: 1 })
+            .orderBy('FullName')
             .distinct(true)
             .distinctOn(['usr.uid'])
             .execute();
