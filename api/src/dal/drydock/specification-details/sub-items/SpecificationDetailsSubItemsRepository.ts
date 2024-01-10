@@ -28,7 +28,7 @@ import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
 import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
 
 export class SpecificationDetailsSubItemsRepository {
-    public async findMany(params: FindManyParams): Promise<ODataResult<SubItem>> {
+    public async findMany(params: FindManyParams): Promise<ODataResult<FindManyRecord>> {
         const [script, substitutions] = getManager()
             .createQueryBuilder(SubItem, 'subItem')
             .select([
@@ -295,6 +295,20 @@ export class SpecificationDetailsSubItemsRepository {
 
         return newSubItem as SubItem;
     }
+}
+
+export interface FindManyRecord {
+    uid: string;
+    number: number;
+    subject: string;
+    quantity: number;
+    unitPrice: string;
+    discount: string;
+    cost: string;
+    specificationDetailsUid: string;
+    unitTypeUid: string;
+    description: string;
+    unitType: string;
 }
 
 export class SpecificationDetailsSubItemNotFoundByUidError extends BusinessException {
