@@ -4,11 +4,7 @@ import * as httpStatus from 'http-status-codes';
 import { AccessRights } from 'j2utils';
 
 import { UserFromToken } from '../../../../application-layer/drydock/core/cqrs/UserDto';
-import {
-    ApplicationException,
-    AuthorizationException,
-    BusinessException,
-} from '../../../../bll/drydock/core/exceptions';
+import { AuthorizationException, BusinessException } from '../../../../bll/drydock/core/exceptions';
 import { log } from '../../../../logger';
 import { ProblemDetails, ProblemDetailsType } from '../ProblemDetails';
 import { ExceptionLogDataDto } from './ExceptionLogDataDto';
@@ -34,7 +30,12 @@ export class MiddlewareHandler {
             const authUser = AccessRights.authorizationDecode(req) as UserFromToken;
             const result = await getResult(req, res, authUser);
 
-            res.status(httpStatus.OK).json(result);
+            res.status(httpStatus.OK);
+            if (result instanceof Buffer) {
+                res.send(result);
+            } else {
+                res.json(result);
+            }
 
             return;
         } catch (exception: unknown) {
