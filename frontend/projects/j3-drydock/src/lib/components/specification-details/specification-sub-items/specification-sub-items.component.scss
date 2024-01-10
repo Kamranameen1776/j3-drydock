@@ -1,24 +1,24 @@
 .ui-dialog-content,
 .grid-container {
-  overflow: hidden;
-  flex-grow: 1;
-  white-space: nowrap;
+    overflow: hidden;
+    flex-grow: 1;
+    white-space: nowrap;
 }
 
 :host {
-  .host-grid-container,
-  jb-grid {
-    max-height: 422px;
-    display: block;
-  }
-
-  ::ng-deep {
-    .specification-sub-items-grid {
-      .ui-table-scrollable-body {
-        tr.no-actions {
-          pointer-events: none !important;
+    ::ng-deep {
+        .host-grid-container,
+        jb-grid {
+            max-height: 422px;
+            display: block;
         }
-      }
+
+        .specification-sub-items-grid {
+            .ui-table-scrollable-body {
+                tr.no-actions {
+                    pointer-events: none !important;
+                }
+            }
+        }
     }
-  }
 }

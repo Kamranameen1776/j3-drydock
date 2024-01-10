@@ -51,23 +51,6 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
   @ViewChild('startDateTemplate', { static: true }) startDateTemplate: TemplateRef<unknown>;
   @ViewChild('endDateTemplate', { static: true }) endDateTemplate: TemplateRef<unknown>;
   @ViewChild('codeTemplate', { static: true }) codeTemplate: TemplateRef<unknown>;
-
-  private readonly allProjectsProjectTypeId = 'all_projects';
-
-  private readonly plannedProjectStatusId = 'RAISE';
-
-  private accessActions = eProjectsAccessActions;
-
-  private canViewDetails = false;
-
-  private canCreateProject = false;
-
-  private canDeleteProject = false;
-
-  private currentVessels = [];
-
-  private allVessels = [];
-
   public canView = false;
 
   public DeleteBtnLabel = eProjectDelete.DeleteBtnLabel;
@@ -108,6 +91,22 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   showLoader = false;
 
+  private readonly allProjectsProjectTypeId = 'all_projects';
+
+  private readonly plannedProjectStatusId = 'RAISE';
+
+  private accessActions = eProjectsAccessActions;
+
+  private canViewDetails = false;
+
+  private canCreateProject = false;
+
+  private canDeleteProject = false;
+
+  private currentVessels = [];
+
+  private allVessels = [];
+
   constructor(
     private router: Router,
     private projectsGridService: ProjectsSpecificationGridService,
@@ -142,6 +141,8 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     this.leftPanelFilterService.groupStatusChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((filter: IProjectGroupStatusDto) => {
       this.leftPanelProjectGroupStatusFilter = filter;
       this.projectsGrid?.fetchMatrixData();
+      const newFilters = this.leftPanelFilterService.statusToFilterMap[filter.GroupProjectStatusId];
+      this.selectGridDefaultStatuses(newFilters);
     });
   }
 
@@ -253,12 +254,10 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     });
   }
 
-  private selectGridDefaultStatuses(statuses: IProjectStatusDto[]) {
+  private selectGridDefaultStatuses(statuses: IProjectStatusDto[] = []) {
     this.projectsGridService.filters.find(
       (filter) => filter.FieldName === this.projectsGridService.ProjectStatusesFilterName
-    ).selectedValues = statuses
-      .filter((status) => status.ProjectStatusId === this.plannedProjectStatusId)
-      .map((status) => status.ProjectStatusId);
+    ).selectedValues = statuses.map((status) => status.ProjectStatusId);
   }
 
   private setAccessRights() {
@@ -276,7 +275,8 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
       .getProjectStatuses()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((statuses) => {
-        this.selectGridDefaultStatuses(statuses as unknown as IProjectStatusDto[]);
+        const raiseFilter = statuses.filter((status) => status.ProjectStatusId === this.plannedProjectStatusId);
+        this.selectGridDefaultStatuses(raiseFilter);
         this.gridInputs = this.projectsGridService.getGridInputs();
         this.gridInputs.gridButton.show = this.canCreateProject;
         this.setCellTemplate(

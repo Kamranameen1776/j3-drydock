@@ -282,7 +282,7 @@ export class SpecificationDetailsRepository {
             where: {
                 uid: In(data.StandardJobUid),
             },
-            select: ['functionUid', 'description', 'subject'],
+            select: ['functionUid', 'description', 'subject', 'function'],
             relations: ['subItems', 'inspection', 'doneBy', 'materialSuppliedBy'],
         });
         const standardJobsItemSource = await dictionariesRepository.getItemSourceByName(ItemName.StandardJob);
@@ -291,6 +291,7 @@ export class SpecificationDetailsRepository {
             const specification = new SpecificationDetailsEntity();
             specification.uid = new DataUtilService().newUid();
             specification.FunctionUid = standardJob.functionUid;
+            specification.Function = standardJob.function;
             specification.Description = standardJob.description;
             specification.Subject = standardJob.subject;
             specification.CreatedByUid = createdBy;
