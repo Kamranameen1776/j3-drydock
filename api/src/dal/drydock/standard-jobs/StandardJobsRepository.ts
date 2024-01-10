@@ -290,13 +290,13 @@ export class StandardJobsRepository {
         const uidString = uids.map((uid) => `'${uid}'`).join(',');
         return getManager()
             .createQueryBuilder(StandardJobsSubItems, 'sub_items')
-            .select(
-                'sub_items.uid as uid,' +
-                    'CONCAT(sub_items.code, sub_items.number) as code,' +
-                    'sub_items.subject as subject,' +
-                    'sub_items.description as description,' +
-                    'sub_items.standard_job_uid as standardJobUid',
-            )
+            .select([
+                'sub_items.uid as uid',
+                'sub_items.number as code',
+                'sub_items.subject as subject',
+                'sub_items.description as description',
+                'sub_items.standard_job_uid as standardJobUid',
+            ])
             .where('sub_items.active_status = 1')
             .andWhere(`sub_items.standard_job_uid IN (${uidString})`)
             .getRawMany();
