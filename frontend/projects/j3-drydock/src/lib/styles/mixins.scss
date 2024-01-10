@@ -93,3 +93,19 @@
       text-decoration: underline;
   }
 }
+
+@mixin form-label($required: false) {
+    font-weight: 700;
+    color: #7886a2;
+    text-align: left;
+    text-transform: capitalize;
+    margin-bottom: 5px;
+
+    @if $required {
+        &:after {
+            content: '*';
+            padding-left: 10px;
+            color:  var(--jbRegularRed);
+        }
+    }
+}

@@ -16,6 +16,7 @@ import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { ITMDetailTabFields } from 'j3-task-manager-ng';
 import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
+import { eSubItemsDialog } from '../../models/enums/sub-items.enum';
 
 export interface SpecificationDetailAccessRights extends BaseAccessRight {
   generalInformation: { view: boolean };
@@ -182,7 +183,7 @@ export class SpecificationDetailsService {
             SectionCode: eSpecificationDetailsPageMenuIds.SubItems,
             SectionLabel: eSpecificationDetailsPageMenuLabels.SubItems,
             isAddNewButton: true,
-            buttonLabel: 'Add New Sub Item'
+            buttonLabel: eSubItemsDialog.AddText
           },
           {
             GridRowStart: 3,

@@ -26,16 +26,12 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
     ...getSmallPopup(),
     dialogWidth: 1000,
     closableIcon: false,
-    dialogHeader: 'New Techical Specification'
+    dialogHeader: 'New Technical Specification'
   };
 
   isPopupValid = false;
 
   isSaving: boolean;
-
-  get jobFormValue() {
-    return this.popupForm?.formGroup.getRawValue()[this.formService.formId];
-  }
 
   formStructure: FormModel = this.formService.formStructure;
 
@@ -70,12 +66,15 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
       return;
     }
 
-    const value = this.jobFormValue;
+    const rawValue = this.popupForm?.formGroup.getRawValue();
+
+    const value = rawValue[this.formService.formId];
+    const editors = rawValue[this.formService.editors];
 
     this.isSaving = true;
 
     this.specificationService
-      .createSpecification({ ...value, ProjectUid: this.projectId, VesselUid: this.vesselUid })
+      .createSpecification({ ...value, Description: editors.description, ProjectUid: this.projectId, VesselUid: this.vesselUid })
       .pipe(
         finalize(() => {
           this.isSaving = false;

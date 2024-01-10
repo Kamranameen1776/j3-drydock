@@ -1,3 +1,5 @@
+import { ToolbarModule } from 'primeng';
+
 export interface EditorConfig {
   id: string;
 
@@ -16,4 +18,6 @@ export interface EditorConfig {
   vesselId?: number;
 
   key1?: string;
+
+  tools?: ToolbarModule;
 }
