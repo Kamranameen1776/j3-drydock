@@ -27,7 +27,7 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
     ...getSmallPopup(),
     dialogWidth: 1000,
     closableIcon: true,
-    dialogHeader: eSubItemsDialog.AddHeaderText
+    dialogHeader: eSubItemsDialog.AddText
   };
 
   formId = 'editSubItemForm';
@@ -50,7 +50,7 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
 
   ngAfterViewInit(): void {
     //@Description: Disable quantity field if this Popup is called for convert to sub item from Linking Component
-    if (this.popupConfig.dialogHeader === eSubItemsDialog.AddHeaderText && this.subItemDetails.quantity > 0) {
+    if (this.popupConfig.dialogHeader === eSubItemsDialog.AddText && this.subItemDetails.quantity > 0) {
       this.formGroup.controls[this.specificationSubItemEditService.formId].get('quantity').disable();
     }
   }
