@@ -17,3 +17,21 @@
     [fieldName]="fieldName"
   ></jb-drydock-functions-tree-select>
 </ng-template>
+
+<label class="specs-description-label">Description</label>
+
+<form [formGroup]="editorsFormGroup">
+  <ng-container *ngIf="formGroup">
+    <jb-editor
+      class="drydock-editor"
+      [id]="descriptionEditorConfig.id"
+      [maxLength]="descriptionEditorConfig.maxLength"
+      [placeholder]="descriptionEditorConfig.placeholder"
+      [crtlName]="descriptionEditorConfig.crtlName"
+      [moduleCode]="descriptionEditorConfig.moduleCode"
+      [functionCode]="descriptionEditorConfig.functionCode"
+      [inlineMode]="descriptionEditorConfig.inlineMode"
+      [tools]="descriptionEditorConfig.tools"
+    ></jb-editor>
+  </ng-container>
+</form>

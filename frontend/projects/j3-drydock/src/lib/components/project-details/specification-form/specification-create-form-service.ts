@@ -7,12 +7,15 @@ import { BehaviorSubject } from 'rxjs';
 import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-main.enum';
 import { SpecificationGridService } from '../../../services/project/specification.service';
+import { EditorConfig } from '../../../models/interfaces/EditorConfig';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpecificationCreateFormService extends FormServiceBase {
   readonly formId = 'specificationFormId';
+
+  readonly editors = 'editors';
 
   functionsFlatTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
 
@@ -88,18 +91,6 @@ export class SpecificationCreateFormService extends FormServiceBase {
               valueKey: 'uid',
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.DoneBy)
             }
-          },
-          Description: {
-            type: eFieldControlType.TextAreaType,
-            label: 'Description',
-            sectionID: this.formId,
-            enabled: true,
-            validatorRequired: true,
-            maxTextLength: 1000,
-            gridRowStart: 1,
-            gridRowEnd: 6,
-            gridColStart: 2,
-            gridColEnd: 12
           }
         }
       }
@@ -125,5 +116,38 @@ export class SpecificationCreateFormService extends FormServiceBase {
     private specifications: SpecificationGridService
   ) {
     super();
+  }
+
+  getDescriptionEditorConfig(key1: string, vesselId: number): EditorConfig {
+    return {
+      id: 'description',
+      maxLength: 1000,
+      placeholder: '',
+      crtlName: 'description',
+      moduleCode: 'project',
+      functionCode: 'job_description_jb_editor',
+      key1: key1,
+      vesselId: vesselId,
+      inlineMode: {
+        enable: false,
+        onSelection: true
+      },
+      tools: {
+        items: [
+          'Bold',
+          'Italic',
+          'Underline',
+          'StrikeThrough',
+          'FontName',
+          'FontSize',
+          'FontColor',
+          'Formats',
+          'Alignments',
+          'Image',
+          'ClearFormat',
+          'FullScreen'
+        ]
+      }
+    };
   }
 }

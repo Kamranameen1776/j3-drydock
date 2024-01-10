@@ -215,7 +215,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       uid: this.specificationDetailsInfo.uid,
       Subject: event.payload.Job_Short_Description,
       AccountCode: detailForm.accountCode,
-      Description: detailForm.description,
+      Description: this.detailForm.value.editors.description,
       DoneByUid: detailForm.doneBy,
       PriorityUid: detailForm.priorityUid,
       Inspections: detailForm.inspectionId
