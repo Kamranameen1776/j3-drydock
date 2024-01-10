@@ -12,6 +12,7 @@ import {
     RelationId,
 } from 'typeorm';
 
+import { Decimal, decimalTransformer } from '../../dal/drydock/utils/DecimalTransformer';
 import { BaseDatesEntity } from '../baseDatesEntity';
 import { SpecificationDetailsEntity } from './SpecificationDetailsEntity';
 import { UnitTypeEntity } from './UnitTypeEntity';
@@ -21,8 +22,18 @@ export const DISCOUNT_MIN = 0;
 export const DISCOUNT_MAX = 1;
 export const DISCOUNT_DEFAULT = DISCOUNT_MIN;
 
+/** @private */
+const ZERO = new Decimal(0);
+
+/** @private */
+const ONE = new Decimal(1);
+
 /** @private Depends on {@link SUBJECT_MAX_LENGTH} */
 const SUBJECT_COLUMN_LENGTH = 512; // next power of 2
+
+export const costFactorsKeys = ['quantity', 'unitPrice', 'discount'] satisfies Array<
+    keyof SpecificationDetailsSubItemEntity
+>;
 
 @Entity('specification_details_sub_item', { schema: 'dry_dock' })
 @Index('idx_specification_details_sub_item_subject', ['subject'])
@@ -59,8 +70,9 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         name: 'quantity',
         type: 'int',
         nullable: true,
+        transformer: decimalTransformer,
     })
-    quantity?: number;
+    quantity?: Decimal;
 
     @Column({
         name: 'unit_price',
@@ -68,8 +80,9 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         precision: 10,
         scale: 2,
         nullable: true,
+        transformer: decimalTransformer,
     })
-    unitPrice?: number;
+    unitPrice?: Decimal;
 
     @Column({
         name: 'discount',
@@ -77,11 +90,12 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         precision: 5,
         scale: 4,
         nullable: true,
-        default: DISCOUNT_DEFAULT,
+        transformer: decimalTransformer,
+        default: () => `(${DISCOUNT_DEFAULT})`,
     })
     @Min(DISCOUNT_MIN)
     @Max(DISCOUNT_MAX)
-    discount?: number;
+    discount?: Decimal;
 
     @ManyToOne(() => SpecificationDetailsEntity, (specificationDetails) => specificationDetails.SubItems)
     @JoinColumn({
@@ -114,21 +128,24 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         precision: 10,
         scale: 4,
         nullable: true,
+        transformer: decimalTransformer,
     })
-    protected cost: number;
+    protected cost: Decimal;
 
     // Methods and Hooks
 
-    public getCost(): number {
+    public getCost(): Decimal {
         return this.cost;
     }
 
-    public calculateCost(): number {
-        const quantity = this.quantity || 0;
-        const unitPrice = this.unitPrice || 0;
-        const discount = this.discount || 0;
+    public calculateCost(): Decimal {
+        const quantity = this.quantity ?? ZERO;
+        const unitPrice = this.unitPrice ?? ZERO;
+        const discount = this.discount ?? ZERO;
+        const discountQuotient = ONE.minus(discount);
 
-        return quantity * unitPrice * (1 - discount);
+        // quantity * unitPrice * (1 - discount)
+        return quantity.times(unitPrice).times(discountQuotient);
     }
 
     @BeforeInsert()

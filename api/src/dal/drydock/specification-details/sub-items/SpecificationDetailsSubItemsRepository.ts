@@ -1,3 +1,5 @@
+import { plainToInstance } from 'class-transformer';
+import { Decimal } from 'decimal.js';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, In, QueryRunner } from 'typeorm';
 
@@ -10,6 +12,7 @@ import { className } from '../../../../common/drydock/ts-helpers/className';
 import { entriesOf } from '../../../../common/drydock/ts-helpers/entries-of';
 import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import {
+    costFactorsKeys,
     SpecificationDetailsSubItemEntity,
     SpecificationDetailsSubItemEntity as SubItem,
 } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
@@ -28,7 +31,7 @@ import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
 import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
 
 export class SpecificationDetailsSubItemsRepository {
-    public async findMany(params: FindManyParams): Promise<ODataResult<FindManyRecord>> {
+    public async findMany(params: FindManyParams): Promise<ODataResult<SubItem>> {
         const [script, substitutions] = getManager()
             .createQueryBuilder(SubItem, 'subItem')
             .select([
@@ -52,7 +55,13 @@ export class SpecificationDetailsSubItemsRepository {
             .getQueryAndParameters();
 
         const odataService = new ODataService({ query: params.odata }, getConnection);
-        return odataService.getJoinResult(script, substitutions);
+        const resultRaw = await odataService.getJoinResult(script, substitutions);
+        const records = resultRaw.records.map((recordRaw) => plainToInstance(SubItem, recordRaw));
+
+        return {
+            records,
+            count: resultRaw.count,
+        };
     }
 
     public async getOneByUid(params: GetSubItemParams, queryRunner: QueryRunner): Promise<SubItem | null> {
@@ -276,12 +285,15 @@ export class SpecificationDetailsSubItemsRepository {
     private mapSubItemDtoToEntity(subItemData: Partial<CreateSubItemParams>, subItem: Partial<SubItem>): SubItem {
         const newSubItem: Partial<SubItem> = {
             ...subItem,
-            quantity: subItemData.quantity,
-            unitPrice: subItemData.unitPrice,
-            discount: subItemData.discount ? Number(subItemData.discount.toFixed(2)) : 0,
             subject: subItemData.subject,
             description: subItemData.description,
         };
+
+        for (const key of costFactorsKeys) {
+            if (subItemData[key] != null) {
+                newSubItem[key] = new Decimal(subItemData[key] ?? 0);
+            }
+        }
 
         const specificationDetails = new SpecificationDetailsEntity();
         specificationDetails.uid = subItemData.specificationDetailsUid!;
@@ -295,20 +307,6 @@ export class SpecificationDetailsSubItemsRepository {
 
         return newSubItem as SubItem;
     }
-}
-
-export interface FindManyRecord {
-    uid: string;
-    number: number;
-    subject: string;
-    quantity: number;
-    unitPrice: string;
-    discount: string;
-    cost: string;
-    specificationDetailsUid: string;
-    unitTypeUid: string;
-    description: string;
-    unitType: string;
 }
 
 export class SpecificationDetailsSubItemNotFoundByUidError extends BusinessException {
