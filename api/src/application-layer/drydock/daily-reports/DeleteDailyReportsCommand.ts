@@ -48,6 +48,7 @@ export class DeleteDailyReportsCommand extends Command<DeleteDailyReportsDto, vo
                 },
                 queryRunner,
             );
+
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.dailyReportsTable,

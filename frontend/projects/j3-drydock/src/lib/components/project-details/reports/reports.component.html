@@ -45,10 +45,9 @@
 
 <jb-drydock-create-report-popup
   *ngIf="createPopupVisible"
-  [isNew]="isNew"
   [isOpen]="createPopupVisible"
   (closeDialog)="onCloseCreatePopup($event)"
-  [reportUid]="isNew === true ? '' : reportInfo.uid"
+  [reportUid]="reportInfo?.uid"
   [projectId]="projectId"
 ></jb-drydock-create-report-popup>
 

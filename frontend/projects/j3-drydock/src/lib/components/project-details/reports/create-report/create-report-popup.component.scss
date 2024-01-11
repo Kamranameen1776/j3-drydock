@@ -3,40 +3,34 @@
 :host {
   ::ng-deep {
     @include progress-spinner-fix;
+
+     .e-richtexteditor  {
+      .e-content {
+        min-height: 200px !important;
+      }
+     }
+  }
+
+  .report-label {
+    @include form-label;
+  }
+
+  .content {
+    max-height: 616px;
+  }
+
+  .add-updates-button {
+    display: block;
+    margin: 10px 0;
+  }
+
+  .jb-fields-crtl {
+    margin-top: 5px;
+
+    input,
+    ::ng-deep .ui-inputtext {
+      font-size: 14px !important;
+    }
   }
 }
 
-.content {
-  display: flex;
-  gap: 12px;
-  max-height: 616px;
-  margin-top: 10px;
-}
-
-.content-left {
-  width: 30%;
-}
-
-.content-right {
-  width: 70%;
-}
-
-::ng-deep label.jb-fields-label {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--jbGreyBlue400);
-  text-align: left;
-  text-transform: capitalize;
-}
-
-::ng-deep div.jb-fields-crtl {
-  margin-top: 5px;
-
-  input,
-  ::ng-deep .ui-inputtext {
-    font-size: 14px !important;
-  }
-}

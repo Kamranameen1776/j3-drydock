@@ -6,26 +6,36 @@
   <div jb-dialog-body>
     <form [formGroup]="createReportForm">
       <div class="header">
-        <label class="jb-fields-label">Report Name</label>
+        <label class="report-label">Report Name</label>
         <div class="jb-fields-crtl">
           <jb-textbox [content]="reportNameText"></jb-textbox>
         </div>
       </div>
     </form>
     <div class="content">
-      <div class="content-left">
-        <jb-left-side-list
-          [jobOrdersToLink]="jobOrderUpdatesToLink"
-          (openJobOrderDialog)="openJobOrderDialog($event)"
-          (selectedUpdate)="onUpdateSelection($event)"
-        ></jb-left-side-list>
-      </div>
-      <div class="content-right">
-        <jb-job-orders-form
-          #selectJobOrderForm
-          [hideSpecificationStartEndDate]="true"
-        ></jb-job-orders-form>
-      </div>
+      <jb-button
+        class="add-updates-button"
+        label="Add Updates"
+        type="NoButton"
+        (click)="openJobOrderDialog()"
+      ></jb-button>
+
+      <label class="report-label">Body</label>
+
+      <form [formGroup]="bodyForm">
+        <jb-editor
+          #bodyEditor
+          class="drydock-editor"
+          [id]="bodyConfig.id"
+          [maxLength]="bodyConfig.maxLength"
+          [placeholder]="bodyConfig.placeholder"
+          [crtlName]="bodyConfig.crtlName"
+          [moduleCode]="bodyConfig.moduleCode"
+          [functionCode]="bodyConfig.functionCode"
+          [inlineMode]="bodyConfig.inlineMode"
+          [tools]="bodyConfig.tools"
+        ></jb-editor>
+      </form>
     </div>
   </div>
 
@@ -34,7 +44,7 @@
       [isOkBtnDisabled]="isSaving"
       [isCancelBtnDisabled]="isSaving"
       [okBtnLabel]="saveLabel"
-      (ok)="submit()"
+      (ok)="onSubmit()"
       (cancel)="onClosePopup()"
     ></jb-dialog-footer>
   </ng-container>
@@ -42,14 +52,13 @@
 
 <jb-select-job-order-popup
   #jobOrderPopup
-  [isOpen]="jobOrderPopupVisible"
+  [isOpen]="isJobOrderPopupVisible"
   (closeDialog)="onCloseJobOrderPopup($event)"
   [projectId]="projectId"
-  (selectedJobOrders)="onSelectedUpdates($event)"
 ></jb-select-job-order-popup>
 
 <jb-progress-spinner
   class="progress-spinner"
-  *ngIf="showLoader"
+  *ngIf="isSaving"
   [theme]="'figma'"
 ></jb-progress-spinner>
