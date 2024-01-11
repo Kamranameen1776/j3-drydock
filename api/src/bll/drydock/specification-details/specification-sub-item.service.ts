@@ -2,17 +2,12 @@ import { Decimal } from 'decimal.js';
 
 import { type MergeOverride } from '../../../common/drydock/ts-helpers/merge-override';
 import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
-
-/** @private */
-interface HTMLRepresentable {
-    readonly innerHTML: string;
-    readonly cellStyle: string;
-}
+import { type HtmlCell } from '../../../shared/interfaces';
 
 /** @private */
 interface TotalRow {
-    readonly discount: HTMLRepresentable;
-    readonly cost: HTMLRepresentable;
+    readonly discount: HtmlCell;
+    readonly cost: HtmlCell;
     readonly hideActions: boolean;
     readonly rowCssClass: string;
 }
@@ -57,10 +52,12 @@ export class SpecificationSubItemService {
             discount: {
                 innerHTML: `<span class="totalCost">Total cost</span><style>.totalCost { font-weight: bold }</style>`,
                 cellStyle: '',
+                value: '',
             },
             cost: {
                 innerHTML: `<span class="totalCost">${totalCostText}</span><style>.totalCost { font-weight: bold }</style>`,
                 cellStyle: '',
+                value: '',
             },
             hideActions: true,
             rowCssClass: 'no-actions',
