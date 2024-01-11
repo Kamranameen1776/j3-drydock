@@ -1,9 +1,12 @@
 <ejs-gantt
   [dataSource]="tasks"
   [taskFields]="taskFields"
+  [timelineSettings]="timelineSettings"
   [splitterSettings]="splitterSettings"
   [eventMarkers]="eventMarkers"
   (queryTaskbarInfo)="queryTaskbarInfo($event)"
   [columns]="columns"
   height="324px"
+  [projectStartDate]="projectStartDate"
+  [projectEndDate]="projectEndDate"
 ></ejs-gantt>

@@ -15,6 +15,7 @@ import { CentralizedDataService, JbDatePipe, UserService } from 'jibe-components
 import { DatePipe } from '@angular/common';
 import { UTCAsLocal } from '../../../../utils/date';
 import { Router } from '@angular/router';
+import moment from 'moment';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
@@ -109,6 +110,12 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
     }
   ];
 
+  // TODO: Fill with correct dates
+  projectStartDate;
+  projectEndDate;
+
+  timelineSettings: any;
+
   statusCSS = { statusBackground: statusBackground, statusIcon: statusIcon };
 
   private jbPipe: JbDatePipe;
@@ -127,6 +134,30 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
 
   ngOnInit(): void {
     this.dateFormat = this.userService.getUserDetails().Date_Format.toLocaleUpperCase();
+    this.timelineSettings = {
+      timelineUnitSize: 40,
+      weekendBackground: '#f5f5f5',
+      topTier: {
+        unit: 'Month',
+        formatter: (date: Date) => {
+          const dateStr = moment(date).format(this.dateFormat);
+
+          return dateStr;// + `<a href='#40'>g</a>`;
+        }
+      },
+      bottomTier: {
+        unit: 'Day',
+        formatter: (date: Date) => {
+          const days = 'SMTWTFS';
+
+          const dayOfWeek = days[date.getDay()];
+          const dayOfMonth = date.getDate();
+          const str = `<span id='gantt-day-of-year-${date.getDay()}' class='gantt-day-of-month'>${dayOfMonth}</span><span class='gantt-day-of-week'>${dayOfWeek}</span>`;
+
+          return str;
+        }
+      }
+    };
 
     this.ganttChartService
       .getData(this.projectId)

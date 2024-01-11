@@ -110,4 +110,14 @@
         text-decoration: underline;
     }
   }
+
+  .gantt-day-of-month{
+    color: var(--jbGreyBlue700);
+    font-weight: bold;
+    padding-right: 5px;
+  }
+
+  .gantt-day-of-week{
+    font-size: smaller;
+  }
 }
