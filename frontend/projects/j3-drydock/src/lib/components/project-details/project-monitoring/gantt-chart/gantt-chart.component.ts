@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
@@ -20,12 +20,12 @@ type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
 };
 @Component({
-  selector: 'jb-gantt-chart',
+  selector: 'jb-project-gantt-chart',
   templateUrl: './gantt-chart.component.html',
   styleUrls: ['./gantt-chart.component.scss'],
   providers: [GanttChartService, DayMarkersService]
 })
-export class GanttChartComponent extends UnsubscribeComponent implements OnInit {
+export class GanttChartComponent extends UnsubscribeComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input()
   projectId: string;
 
@@ -63,7 +63,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
       width: '100',
       minWidth: '100',
       maxWidth: '100',
-      template: '<a href="${SpecificationURL}" target="_blank" class="gantt-grid-link" >${SpecificationCode}</a>'
+      template: '<span target="_blank" class="gantt-grid-link jb_grid_topCellValue">${SpecificationCode}</span>'
     },
     {
       field: 'SpecificationSubject',
@@ -111,12 +111,15 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
 
   statusCSS = { statusBackground: statusBackground, statusIcon: statusIcon };
 
+  id = 'project_gantt';
+
   private jbPipe: JbDatePipe;
 
   constructor(
     private ganttChartService: GanttChartService,
     private userService: UserService,
     private router: Router,
+    private element: ElementRef,
     datePipe: DatePipe,
     cds: CentralizedDataService
   ) {
@@ -158,6 +161,15 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
       });
   }
 
+  ngAfterViewInit(): void {
+    this.listenGanttClicks();
+  }
+
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.element.nativeElement.querySelector(`#${this.id}`).removeEventListener('click', this.linkClick);
+  }
+
   queryTaskbarInfo(args: { data: TransformedJobOrder } & Record<string, string>) {
     args.progressBarBgColor =
       statusProgressBarBackgroundShaded[args.data.SpecificationStatus?.status?.toUpperCase()] || statusProgressBarBackgroundShaded.RAISE;
@@ -166,4 +178,13 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
     args.taskbarBorderColor =
       statusProgressBarBackground[args.data.SpecificationStatus?.status?.toUpperCase()] || statusProgressBarBackground.RAISE;
   }
+
+  private listenGanttClicks() {
+    this.element.nativeElement.querySelector(`#${this.id}`).addEventListener('click', this.linkClick);
+  }
+
+  private linkClick = (e) => {
+    // eslint-disable-next-line no-console
+    console.log(e.target.innerText);
+  };
 }

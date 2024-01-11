@@ -1,9 +1,10 @@
 <ejs-gantt
+  id="{{id}}"
   [dataSource]="tasks"
   [taskFields]="taskFields"
   [splitterSettings]="splitterSettings"
   [eventMarkers]="eventMarkers"
-  (queryTaskbarInfo)="queryTaskbarInfo($event)"
   [columns]="columns"
+  (queryTaskbarInfo)="queryTaskbarInfo($event)"
   height="324px"
 ></ejs-gantt>
