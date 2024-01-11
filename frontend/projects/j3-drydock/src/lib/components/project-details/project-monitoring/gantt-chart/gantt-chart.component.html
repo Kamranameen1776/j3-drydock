@@ -1,11 +1,12 @@
 <ejs-gantt
+  id="{{id}}"
   [dataSource]="tasks"
   [taskFields]="taskFields"
   [timelineSettings]="timelineSettings"
   [splitterSettings]="splitterSettings"
   [eventMarkers]="eventMarkers"
-  (queryTaskbarInfo)="queryTaskbarInfo($event)"
   [columns]="columns"
+  (queryTaskbarInfo)="queryTaskbarInfo($event)"
   height="324px"
   [projectStartDate]="projectStartDate"
   [projectEndDate]="projectEndDate"
