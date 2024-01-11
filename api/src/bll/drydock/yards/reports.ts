@@ -6,10 +6,6 @@ export class ReportGeneratorService {
     cRow = 17;
     sumArray: Array<string> = [];
     private finishReport(worksheet: ExcelJS.Worksheet, data: any) {
-        worksheet.getCell('C3').value = data.notes;
-        worksheet.getCell('C3').protection = {
-            locked: false,
-        };
         worksheet.getCell('D8').value = '';
         worksheet.getCell('D8').protection = {
             locked: false,
@@ -565,8 +561,6 @@ export class ReportGeneratorService {
     }
     public prepareData(data: Array<any>) {
         const obj: any = {};
-        //set header
-        obj.notes = '';
         obj.vessel = data[0].VesselName;
         obj.requestedBy = data[0].ManagementCompany;
         obj.yard = data[0].YardName;
