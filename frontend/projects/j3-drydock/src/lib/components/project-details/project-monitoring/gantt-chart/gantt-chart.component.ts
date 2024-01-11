@@ -32,7 +32,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
   dateFormat: string;
 
   tasks: TransformedJobOrder[] = [];
-  taskConfig = {
+  taskFields = {
     id: 'SpecificationUid',
     name: 'SpecificationSubject',
     startDate: 'SpecificationStartDate',
