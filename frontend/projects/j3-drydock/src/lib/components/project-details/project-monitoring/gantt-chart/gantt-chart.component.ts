@@ -67,7 +67,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
     },
     {
       field: 'SpecificationSubject',
-      headerText: 'Description',
+      headerText: 'Subject',
       width: '150'
     },
     {
@@ -95,9 +95,9 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
     {
       field: 'Progress',
       headerText: 'Progress',
-      width: '60',
-      minWidth: '60',
-      maxWidth: '60',
+      width: '80',
+      minWidth: '80',
+      maxWidth: '80',
       template: '<div>${Progress}%</div>'
     },
     {
@@ -136,7 +136,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit 
             ...jobOrder,
             SpecificationCode: jobOrder.Code,
             SpecificationURL: this.router.createUrlTree(['dry-dock', 'specification-details', jobOrder.SpecificationUid]).toString(),
-            Responsible: jobOrder.DoneBy,
+            Responsible: jobOrder.Responsible,
             SpecificationEndDateFormatted: this.jbPipe.transform(UTCAsLocal(jobOrder.SpecificationEndDate)),
             SpecificationStartDateFormatted: this.jbPipe.transform(UTCAsLocal(jobOrder.SpecificationStartDate)),
             SpecificationStartDate: UTCAsLocal(jobOrder.SpecificationStartDate),

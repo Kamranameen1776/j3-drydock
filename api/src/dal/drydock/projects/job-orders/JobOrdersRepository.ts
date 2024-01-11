@@ -48,13 +48,13 @@ export class JobOrdersRepository {
                 'sd.Subject AS SpecificationSubject',
                 'sd.StartDate as SpecificationStartDate',
                 'sd.EndDate as SpecificationEndDate',
-                'db.displayName as DoneBy',
+                'db.displayName as Responsible',
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid')
             .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesnt have type. probably should stay that way
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
-            .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid');
+            .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1');
 
         if (appliedOnly) {
             query = query.innerJoin(
@@ -117,7 +117,7 @@ export class JobOrdersRepository {
                 'sd.ProjectUid AS ProjectUid',
                 'tm.Code AS Code',
                 'its.DisplayName as ItemSource',
-                "usr.FirstName + ' ' + usr.LastName AS Responsible",
+                'db.displayName AS Responsible',
                 'wdetails.StatusDisplayName AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
                 'sd.StartDate as SpecificationStartDate',
@@ -143,7 +143,7 @@ export class JobOrdersRepository {
                 AND tm.Status IN ('${this.statuses.join(`','`)}')`,
             )
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
-            .leftJoin(className(LibUserEntity), 'usr', 'sd.DoneByUid = usr.uid and usr.ActiveStatus = 1')
+            .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1')
 
             .getQuery();
 
