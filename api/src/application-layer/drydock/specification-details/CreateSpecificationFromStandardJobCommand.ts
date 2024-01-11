@@ -105,7 +105,9 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<Request,
                             active_status: true,
                             discount: 0,
                         };
-                        return item as SpecificationDetailsSubItemEntity;
+
+                        // FIXME: fix typings
+                        return item as unknown as SpecificationDetailsSubItemEntity;
                     });
 
                     specificationSubItems.push(...newSubItems);
