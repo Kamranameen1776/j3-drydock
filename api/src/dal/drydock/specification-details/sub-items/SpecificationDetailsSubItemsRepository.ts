@@ -228,8 +228,8 @@ export class SpecificationDetailsSubItemsRepository {
                 'spec.uid = sub_item.specification_details_uid and spec.active_status = 1',
             )
             .select('count(sub_item_pms.uid) as count')
-            .where(`sub_item_pms.j3_pms_agg_job_uid = '${pmsJobUid}'`)
-            .andWhere(`spec.uid = '${specificationUid}'`)
+            .where(`sub_item_pms.j3_pms_agg_job_uid = :pmsJobUid`, { pmsJobUid })
+            .andWhere(`spec.uid = :specificationUid`, { specificationUid })
             .andWhere('sub_item_pms.active_status = 1')
             .execute();
 
