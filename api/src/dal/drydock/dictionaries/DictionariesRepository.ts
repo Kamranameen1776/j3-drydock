@@ -11,6 +11,9 @@ export class DictionariesRepository {
                 UserType: 'OFFICE USER',
                 ActiveStatus: true,
             },
+            order: {
+                FirstName: 'ASC',
+            },
         });
     }
 
