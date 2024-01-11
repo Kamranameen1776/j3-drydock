@@ -1,5 +1,7 @@
 import * as ExcelJS from 'exceljs';
 
+import { ApplicationException } from '../core/exceptions';
+
 export class ReportGeneratorService {
     cRow = 17;
     sumArray: Array<string> = [];
@@ -551,7 +553,12 @@ export class ReportGeneratorService {
 
         this.addFunctions(reportWorksheet, data.functions);
         this.finishReport(reportWorksheet, data);
-        const password = process.env.DRY_DOCK_YARD_REPORT_PASSWORD as string;
+        const password = process.env.DRY_DOCK_YARD_REPORT_PASSWORD;
+        if (!password) {
+            throw new ApplicationException(
+                `Can't protect report worksheet. Environment variable "DRY_DOCK_YARD_REPORT_PASSWORD" is not set`,
+            );
+        }
         await reportWorksheet.protect(password, {});
         reportWorksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 16, topLeftCell: 'B17' }];
         return workbook;
