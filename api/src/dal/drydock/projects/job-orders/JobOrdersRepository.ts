@@ -6,7 +6,6 @@ import { className } from '../../../../common/drydock/ts-helpers/className';
 import {
     JmsDtlWorkflowConfigDetailsEntity,
     LibItemSourceEntity,
-    LibUserEntity,
     ProjectEntity,
     SpecificationDetailsEntity,
     TecTaskManagerEntity,
@@ -52,7 +51,7 @@ export class JobOrdersRepository {
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid')
-            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesnt have type. probably should stay that way
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesn't have type. probably should stay that way
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1');
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
@@ -11,11 +11,16 @@ import {
   statusProgressBarBackgroundShaded
 } from '../../../../shared/status-css.json';
 
-import { CentralizedDataService, JbDatePipe, UserService } from 'jibe-components';
+import { CentralizedDataService, IJbDialog, JbDatePipe, UserService } from 'jibe-components';
 import { DatePipe } from '@angular/common';
-import { UTCAsLocal } from '../../../../utils/date';
-import { Router } from '@angular/router';
-import moment from 'moment';
+import { UTCAsLocal, currentLocalAsUTC, localToUTC } from '../../../../utils/date';
+import moment, { min } from 'moment';
+import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
+import { JobOrdersService } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/JobOrdersService';
+import { IJobOrdersFormComponent } from '../job-orders-form/IJobOrdersFormComponent';
+import { GrowlMessageService } from 'projects/j3-drydock/src/lib/services/growl-message.service';
+import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormResultDto';
+import { IUpdateJobOrderDto } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/IUpdateJobOrderDto';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
@@ -29,6 +34,17 @@ type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
 export class GanttChartComponent extends UnsubscribeComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input()
   projectId: string;
+
+  @ViewChild('jobOrderForm')
+  jobOrderForm: IJobOrdersFormComponent;
+
+  public updateBtnLabel = 'Update';
+
+  public updateDialogVisible = false;
+
+  updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Job Order' };
+
+  updateJobOrderButtonDisabled = false;
 
   dateFormat: string;
 
@@ -52,38 +68,33 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   columns = [
     {
-      field: 'SpecificationURL',
-      headerText: '',
-      width: '0',
-      minWidth: '0',
-      maxWidth: '0'
-    },
-    {
       field: 'SpecificationCode',
       headerText: 'Specification',
-      width: '100',
-      minWidth: '100',
-      maxWidth: '100',
-      template: '<span target="_blank" class="gantt-grid-link jb_grid_topCellValue">${SpecificationCode}</span>'
+      width: '120',
+      minWidth: '120',
+      maxWidth: '120',
+      template:
+        '<span data-name="gantt-grid-specification-code" data-specification-code="${SpecificationCode.Code}"  data-specification-uid="${SpecificationCode.SpecificationUid}" target="_blank" class="gantt-grid-link jb_grid_topCellValue">${SpecificationCode.Code}</span>'
     },
     {
       field: 'SpecificationSubject',
-      headerText: 'Subject',
-      width: '150'
+      headerText: 'Description',
+      width: '150',
+      minWidth: '50'
     },
     {
       field: 'SpecificationStartDateFormatted',
       headerText: 'Start Date',
-      width: '80',
-      minWidth: '80',
-      maxWidth: '80'
+      width: '100',
+      minWidth: '100',
+      maxWidth: '100'
     },
     {
       field: 'SpecificationEndDateFormatted',
       headerText: 'End Date',
-      width: '80',
-      minWidth: '80',
-      maxWidth: '80'
+      width: '100',
+      minWidth: '100',
+      maxWidth: '100'
     },
     {
       field: 'SpecificationStatus',
@@ -125,8 +136,9 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   constructor(
     private ganttChartService: GanttChartService,
     private userService: UserService,
-    private router: Router,
     private element: ElementRef,
+    private jobOrdersService: JobOrdersService,
+    private growlMessageService: GrowlMessageService,
     datePipe: DatePipe,
     cds: CentralizedDataService
   ) {
@@ -145,7 +157,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
         formatter: (date: Date) => {
           const dateStr = moment(date).format(this.dateFormat);
 
-          return dateStr;// + `<a href='#40'>g</a>`;
+          return dateStr;
         }
       },
       bottomTier: {
@@ -168,8 +180,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
         map((data) =>
           data.records.map((jobOrder) => ({
             ...jobOrder,
-            SpecificationCode: jobOrder.Code,
-            SpecificationURL: this.router.createUrlTree(['dry-dock', 'specification-details', jobOrder.SpecificationUid]).toString(),
+            SpecificationCode: { Code: jobOrder.Code, SpecificationUid: jobOrder.SpecificationUid },
             Responsible: jobOrder.Responsible,
             SpecificationEndDateFormatted: this.jbPipe.transform(UTCAsLocal(jobOrder.SpecificationEndDate)),
             SpecificationStartDateFormatted: this.jbPipe.transform(UTCAsLocal(jobOrder.SpecificationStartDate)),
@@ -194,6 +205,10 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   ngAfterViewInit(): void {
     this.listenGanttClicks();
+
+    this.jobOrderForm.onValueChangesIsFormValid.pipe(takeUntil(this.unsubscribe$)).subscribe((isValid) => {
+      this.updateJobOrderButtonDisabled = !isValid;
+    });
   }
 
   ngOnDestroy(): void {
@@ -210,12 +225,83 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       statusProgressBarBackground[args.data.SpecificationStatus?.status?.toUpperCase()] || statusProgressBarBackground.RAISE;
   }
 
+  public showUpdateDialog(value = true) {
+    this.updateDialogVisible = value;
+  }
+
+  public updateJobOrder() {
+    this.updateJobOrderButtonDisabled = true;
+
+    const result = this.jobOrderForm.save();
+
+    if (result instanceof Error) {
+      this.growlMessageService.setErrorMessage(result.message);
+      return;
+    }
+
+    const jobOrder = result as IJobOrderFormResultDto;
+
+    const data: IUpdateJobOrderDto = {
+      SpecificationUid: jobOrder.SpecificationUid,
+      LastUpdated: currentLocalAsUTC(),
+      Progress: jobOrder.Progress,
+
+      SpecificationStartDate: localToUTC(jobOrder.SpecificationStartDate),
+      SpecificationEndDate: localToUTC(jobOrder.SpecificationEndDate),
+
+      Status: jobOrder.Status,
+      Subject: jobOrder.Subject,
+
+      Remarks: jobOrder.Remarks
+    };
+
+    this.jobOrdersService
+      .updateJobOrder(data)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.updateJobOrderButtonDisabled = false;
+        this.showUpdateDialog(false);
+
+        this.ngOnInit();
+      });
+  }
+
   private listenGanttClicks() {
     this.element.nativeElement.querySelector(`#${this.id}`).addEventListener('click', this.linkClick);
   }
 
   private linkClick = (e) => {
-    // eslint-disable-next-line no-console
-    console.log(e.target.innerText);
+    if (e.target.attributes['data-name']?.value === 'gantt-grid-specification-code') {
+      const specificationUid = e.target.attributes['data-specification-uid'].value;
+      const code = e.target.attributes['data-specification-code'].value;
+      this.showJobOrderForm(specificationUid, code);
+    }
   };
+
+  private showJobOrderForm(specificationUid: string, code: string) {
+    this.jobOrdersService
+      .getJobOrderBySpecification({
+        SpecificationUid: specificationUid
+      })
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((jobOrder) => {
+        const jobOrderForm: IJobOrderFormDto = {
+          SpecificationUid: specificationUid,
+          Code: code
+        };
+
+        if (jobOrder) {
+          jobOrderForm.Remarks = jobOrder.Remarks;
+          jobOrderForm.Progress = jobOrder.Progress;
+          jobOrderForm.Subject = jobOrder.Subject;
+          jobOrderForm.Status = jobOrder.Status;
+          jobOrderForm.SpecificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate).toISOString();
+          jobOrderForm.SpecificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate).toISOString();
+        }
+
+        this.jobOrderForm.init(jobOrderForm);
+
+        this.showUpdateDialog(true);
+      });
+  }
 }

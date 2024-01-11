@@ -87,12 +87,12 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, 
         .subscribe((jobOrder) => {
           const jobOrderForm: IJobOrderFormDto = {
             SpecificationUid: jobOrderDto.SpecificationUid,
-            Progress: jobOrderDto.Progress,
             Code: jobOrderDto.Code
           };
 
           if (jobOrder) {
             jobOrderForm.Remarks = jobOrder.Remarks;
+            jobOrderForm.Progress = jobOrder.Progress;
             jobOrderForm.Subject = jobOrder.Subject;
             jobOrderForm.Status = jobOrder.Status;
             jobOrderForm.SpecificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate).toISOString();
