@@ -42,7 +42,7 @@ export class SpecificationSubItemService {
         }
 
         const totalCost = subItems.reduce((sum, subItem) => sum.plus(subItem.cost || 0), new Decimal(0));
-        const totalCostText = totalCost.toPrecision(2);
+        const totalCostText = totalCost.toFixed(2);
 
         return {
             discount: {
