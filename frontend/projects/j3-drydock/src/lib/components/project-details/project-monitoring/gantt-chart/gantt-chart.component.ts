@@ -271,7 +271,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((jobOrder) => {
-
         const data: IUpdateJobOrderDto = {
           SpecificationUid: jobOrder.SpecificationUid,
           LastUpdated: currentLocalAsUTC(),
