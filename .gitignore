@@ -5,3 +5,4 @@ node_modules
 api/.cache/
 .idea/
 .vscode/launch.json
+.env

@@ -34,7 +34,7 @@ const startServer = async () => {
             console.log(`Node server listening on http://localhost:${PORT}`);
         });
     } catch (error) {
-        await log.error(error);
+        await log.error(error, 'Error starting server');
 
         await databaseConnection?.close();
 
