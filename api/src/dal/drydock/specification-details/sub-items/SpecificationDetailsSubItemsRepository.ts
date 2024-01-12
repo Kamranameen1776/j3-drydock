@@ -10,10 +10,7 @@ import {
 import { className } from '../../../../common/drydock/ts-helpers/className';
 import { entriesOf } from '../../../../common/drydock/ts-helpers/entries-of';
 import { SpecificationDetailsEntity } from '../../../../entity/drydock';
-import {
-    costFactorsKeys,
-    SpecificationDetailsSubItemEntity as SubItem,
-} from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { SpecificationDetailsSubItemEntity as SubItem } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { SpecificationSubItemFindingEntity } from '../../../../entity/drydock/SpecificationSubItemFindingEntity';
 import { SpecificationSubItemPmsEntity } from '../../../../entity/drydock/SpecificationSubItemPmsJobEntity';
 import { UnitTypeEntity } from '../../../../entity/drydock/UnitTypeEntity';
@@ -296,11 +293,9 @@ export class SpecificationDetailsSubItemsRepository {
             description: subItemData.description,
         };
 
-        for (const key of costFactorsKeys) {
-            if (subItemData[key] != null) {
-                newSubItem[key] = new Decimal(subItemData[key] ?? 0).toString();
-            }
-        }
+        newSubItem.quantity = new Decimal(subItemData.quantity ?? 0).toNumber();
+        newSubItem.unitPrice = new Decimal(subItemData.unitPrice ?? 0).toString();
+        newSubItem.discount = new Decimal(subItemData.discount ?? 0).toString();
 
         const specificationDetails = new SpecificationDetailsEntity();
         specificationDetails.uid = subItemData.specificationDetailsUid!;
