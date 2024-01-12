@@ -6,6 +6,7 @@ import { className } from '../../../../common/drydock/ts-helpers/className';
 import {
     JmsDtlWorkflowConfigDetailsEntity,
     LibItemSourceEntity,
+    LibUserEntity,
     ProjectEntity,
     SpecificationDetailsEntity,
     TecTaskManagerEntity,
@@ -47,12 +48,13 @@ export class JobOrdersRepository {
                 'sd.Subject AS SpecificationSubject',
                 'ISNULL(sd.StartDate, p.StartDate) as SpecificationStartDate',
                 'ISNULL(sd.EndDate, p.EndDate) as SpecificationEndDate',
-                'db.displayName as Responsible',
+                "usr.FirstName + ' ' + usr.LastName AS Responsible",
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid')
             .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesn't have type. probably should stay that way
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
+            .innerJoin(className(LibUserEntity), 'usr', 'p.project_manager_Uid = usr.uid and usr.ActiveStatus = 1')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1');
 
         if (appliedOnly) {
@@ -116,7 +118,7 @@ export class JobOrdersRepository {
                 'sd.ProjectUid AS ProjectUid',
                 'tm.Code AS Code',
                 'its.DisplayName as ItemSource',
-                'db.displayName AS Responsible',
+                "usr.FirstName + ' ' + usr.LastName AS Responsible",
                 'wdetails.StatusDisplayName AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
                 'ISNULL(sd.StartDate, p.StartDate) as SpecificationStartDate',
@@ -134,6 +136,7 @@ export class JobOrdersRepository {
             )
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
+            .innerJoin(className(LibUserEntity), 'usr', 'p.project_manager_Uid = usr.uid and usr.ActiveStatus = 1')
             .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
             .innerJoin(
                 className(JmsDtlWorkflowConfigDetailsEntity),
