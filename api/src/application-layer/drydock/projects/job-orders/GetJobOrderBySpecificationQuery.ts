@@ -1,6 +1,6 @@
 import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
-import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { JobOrdersRepository } from '../../../../dal/drydock/projects/job-orders/JobOrdersRepository';
+import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Query } from '../../core/cqrs/Query';
 import { GetJobOrderBySpecificationDto } from './dtos/GetJobOrderBySpecificationDto';
