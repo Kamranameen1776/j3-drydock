@@ -10,6 +10,8 @@
   height="324px"
   [projectStartDate]="projectStartDate"
   [projectEndDate]="projectEndDate"
+  [editSettings]="editSettings"
+  (taskbarEditing)="taskbarEditing($event)"
 ></ejs-gantt>
 
 <jb-dialog

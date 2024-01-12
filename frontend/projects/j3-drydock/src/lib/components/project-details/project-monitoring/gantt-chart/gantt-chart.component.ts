@@ -3,7 +3,7 @@ import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.bas
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
 import { map, takeUntil } from 'rxjs/operators';
-import { DayMarkersService } from '@syncfusion/ej2-angular-gantt';
+import { DayMarkersService, EditService, ToolbarService } from '@syncfusion/ej2-angular-gantt';
 import {
   statusBackground,
   statusIcon,
@@ -13,14 +13,14 @@ import {
 
 import { CentralizedDataService, IJbDialog, JbDatePipe, UserService } from 'jibe-components';
 import { DatePipe } from '@angular/common';
-import { UTCAsLocal, currentLocalAsUTC, localDateJbStringAsUTC, localToUTC } from '../../../../utils/date';
-import moment, { min } from 'moment';
+import { UTCAsLocal, currentLocalAsUTC } from '../../../../utils/date';
 import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
 import { JobOrdersService } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/JobOrdersService';
 import { IJobOrdersFormComponent } from '../job-orders-form/IJobOrdersFormComponent';
 import { GrowlMessageService } from 'projects/j3-drydock/src/lib/services/growl-message.service';
 import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormResultDto';
 import { IUpdateJobOrderDto } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/IUpdateJobOrderDto';
+import moment from 'moment';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
@@ -29,7 +29,7 @@ type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   selector: 'jb-project-gantt-chart',
   templateUrl: './gantt-chart.component.html',
   styleUrls: ['./gantt-chart.component.scss'],
-  providers: [GanttChartService, DayMarkersService]
+  providers: [GanttChartService, DayMarkersService, EditService]
 })
 export class GanttChartComponent extends UnsubscribeComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input()
@@ -67,6 +67,15 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   ];
 
   columns = [
+    {
+      // This column is needed for the editing taskbar
+
+      field: 'SpecificationUid',
+      headerText: '',
+      maxWidth: '0',
+      minWidth: '0',
+      isPrimaryKey: true
+    },
     {
       field: 'SpecificationCode',
       headerText: 'Specification',
@@ -121,7 +130,11 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     }
   ];
 
-  // TODO: Fill with correct dates
+  editSettings = {
+    allowEditing: true,
+    allowTaskbarEditing: true
+  };
+
   projectStartDate;
   projectEndDate;
 
@@ -232,6 +245,18 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       statusProgressBarBackground[args.data.SpecificationStatus?.status?.toUpperCase()] || statusProgressBarBackground.RAISE;
     args.taskbarBorderColor =
       statusProgressBarBackground[args.data.SpecificationStatus?.status?.toUpperCase()] || statusProgressBarBackground.RAISE;
+  }
+
+  taskbarEditing(event) {
+    // if (event && event.data && event.editingFields) {
+    //   console.log('data.SpecificationUid: ' + event.data.SpecificationUid);
+    //   console.log('data.Progress: ' + event.data.Progress);
+    //   console.log('data.SpecificationStartDate: ' + event.data.SpecificationStartDate);
+    //   console.log('data.SpecificationEndDate: ' + event.data.SpecificationEndDate);
+    //   console.log('ev.progress' + event.editingFields.progress);
+    //   console.log('ev.startDate' + event.editingFields.startDate);
+    //   console.log('ev.endDate' + event.editingFields.endDate);
+    // }
   }
 
   public showUpdateDialog(value = true) {
