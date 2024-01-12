@@ -39,7 +39,7 @@ export class SubItemEditableProps {
     @Type(() => Number)
     @IsInt()
     @Min(0)
-    readonly quantity: string;
+    readonly quantity: number;
 
     @Type(() => Number)
     @IsNormalNumber()

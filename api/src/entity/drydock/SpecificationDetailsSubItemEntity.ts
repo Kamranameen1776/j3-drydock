@@ -65,7 +65,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         type: 'int',
         nullable: true,
     })
-    quantity?: string | null;
+    quantity?: number | null;
 
     @Column({
         name: 'unit_price',
