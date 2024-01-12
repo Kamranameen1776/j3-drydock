@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormGroupDirective } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
-import { UTCAsLocal, currentLocalAsUTC, localToUTC } from '../../../../utils/date';
+import { currentLocalAsUTC } from '../../../../utils/date';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
 import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
 import { IJobOrdersFormComponent } from '../job-orders-form/IJobOrdersFormComponent';
