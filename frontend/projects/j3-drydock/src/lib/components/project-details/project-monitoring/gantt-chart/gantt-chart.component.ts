@@ -271,16 +271,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((jobOrder) => {
-        // TODO: rework this, it's not working properly, oldEndDate not being set always
-        // if (
-        //   new Date(jobOrder.SpecificationEndDate).getTime() !== oldEndDate.getTime() ||
-        //   new Date(jobOrder.SpecificationStartDate).getTime() !== oldStartDate.getTime() ||
-        //   jobOrder.Progress !== oldProgress
-        // ) {
-        //   this.growlMessageService.setErrorMessage(
-        //     'Cannot update job order. It was already updated. Please refresh the page and try again.'
-        //   );
-        // }
 
         const data: IUpdateJobOrderDto = {
           SpecificationUid: jobOrder.SpecificationUid,
