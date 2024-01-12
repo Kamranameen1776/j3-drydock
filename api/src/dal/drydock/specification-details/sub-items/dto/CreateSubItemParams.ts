@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 import { type SubItemActionParams } from './SubItemActionParams';
 import { SubItemEditableProps } from './SubItemEditableProps';
@@ -12,12 +12,4 @@ export class CreateSubItemParams extends SubItemEditableProps implements SubItem
 
     @IsUUID('4')
     readonly specificationDetailsUid: string;
-
-    @IsUUID('4', { each: true })
-    @IsOptional()
-    pmsJobUid: string[];
-
-    @IsUUID('4', { each: true })
-    @IsOptional()
-    findingUid: string[];
 }

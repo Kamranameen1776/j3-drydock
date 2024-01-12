@@ -1,4 +1,3 @@
-import { plainToInstance } from 'class-transformer';
 import { Decimal } from 'decimal.js';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, In, QueryRunner } from 'typeorm';
@@ -13,7 +12,6 @@ import { entriesOf } from '../../../../common/drydock/ts-helpers/entries-of';
 import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import {
     costFactorsKeys,
-    SpecificationDetailsSubItemEntity,
     SpecificationDetailsSubItemEntity as SubItem,
 } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { SpecificationSubItemFindingEntity } from '../../../../entity/drydock/SpecificationSubItemFindingEntity';
@@ -30,8 +28,23 @@ import { GetSubItemParams } from './dto/GetSubItemParams';
 import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
 import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
 
+export type FindManyRecord = Pick<
+    SubItem,
+    | 'uid'
+    | 'number'
+    | 'subject'
+    | 'quantity'
+    | 'unitPrice'
+    | 'discount'
+    | 'cost'
+    | 'specificationDetailsUid'
+    | 'unitTypeUid'
+    | 'description'
+    | 'unitType'
+>;
+
 export class SpecificationDetailsSubItemsRepository {
-    public async findMany(params: FindManyParams): Promise<ODataResult<SubItem>> {
+    public async findMany(params: FindManyParams): Promise<ODataResult<FindManyRecord>> {
         const [script, substitutions] = getManager()
             .createQueryBuilder(SubItem, 'subItem')
             .select([
@@ -55,13 +68,7 @@ export class SpecificationDetailsSubItemsRepository {
             .getQueryAndParameters();
 
         const odataService = new ODataService({ query: params.odata }, getConnection);
-        const resultRaw = await odataService.getJoinResult(script, substitutions);
-        const records = resultRaw.records.map((recordRaw) => plainToInstance(SubItem, recordRaw));
-
-        return {
-            records,
-            count: resultRaw.count,
-        };
+        return odataService.getJoinResult(script, substitutions);
     }
 
     public async getOneByUid(params: GetSubItemParams, queryRunner: QueryRunner): Promise<SubItem | null> {
@@ -227,7 +234,7 @@ export class SpecificationDetailsSubItemsRepository {
         const pmsJobs = await getManager()
             .createQueryBuilder(className(SpecificationSubItemPmsEntity), 'sub_item_pms')
             .innerJoin(
-                className(SpecificationDetailsSubItemEntity),
+                className(SubItem),
                 'sub_item',
                 'sub_item.uid = sub_item_pms.specification_sub_item_uid and sub_item.active_status = 1',
             )
@@ -291,7 +298,7 @@ export class SpecificationDetailsSubItemsRepository {
 
         for (const key of costFactorsKeys) {
             if (subItemData[key] != null) {
-                newSubItem[key] = new Decimal(subItemData[key] ?? 0);
+                newSubItem[key] = new Decimal(subItemData[key] ?? 0).toString();
             }
         }
 

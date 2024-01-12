@@ -1,10 +1,9 @@
 import { Decimal } from 'decimal.js';
 
 import { type MergeOverride } from '../../../common/drydock/ts-helpers/merge-override';
-import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { type FindManyRecord } from '../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { type HtmlCell } from '../../../shared/interfaces';
 
-/** @private */
 interface TotalRow {
     readonly discount: HtmlCell;
     readonly cost: HtmlCell;
@@ -12,7 +11,6 @@ interface TotalRow {
     readonly rowCssClass: string;
 }
 
-/** @private */
 type WithDiscountFormatted<Value extends object> = MergeOverride<
     Value,
     {
@@ -20,19 +18,17 @@ type WithDiscountFormatted<Value extends object> = MergeOverride<
     }
 >;
 
-/** @private */
-type SubItemFormatted = WithDiscountFormatted<SpecificationDetailsSubItemEntity>;
+type RecordFormatted = WithDiscountFormatted<FindManyRecord>;
 
-export type Record = SubItemFormatted | TotalRow;
+export type Record = RecordFormatted | TotalRow;
 
 export class SpecificationSubItemService {
-    protected formatSubItems(subItems: SpecificationDetailsSubItemEntity[]): SubItemFormatted[] {
-        const subItemsFormatted: SubItemFormatted[] = [];
+    protected formatSubItems(subItems: FindManyRecord[]): RecordFormatted[] {
+        const subItemsFormatted: RecordFormatted[] = [];
 
-        // FIXME: mutates values in the original array
         for (const subItem of subItems) {
-            const discountFormatted = subItem.discount?.times(100).toNumber() ?? 0;
-            const subItemFormatted: SubItemFormatted = Object.assign(subItem, { discount: discountFormatted });
+            const discountFormatted = new Decimal(subItem.discount || 0).times(100).toNumber();
+            const subItemFormatted: RecordFormatted = Object.assign(subItem, { discount: discountFormatted });
 
             subItemsFormatted.push(subItemFormatted);
         }
@@ -40,12 +36,12 @@ export class SpecificationSubItemService {
         return subItemsFormatted;
     }
 
-    protected calculateTotalRow(subItems: SpecificationDetailsSubItemEntity[]): TotalRow | null {
+    protected calculateTotalRow(subItems: FindManyRecord[]): TotalRow | null {
         if (subItems.length === 0) {
             return null;
         }
 
-        const totalCost = subItems.reduce((sum, subItem) => sum.plus(subItem.getCost()), new Decimal(0));
+        const totalCost = subItems.reduce((sum, subItem) => sum.plus(subItem.cost || 0), new Decimal(0));
         const totalCostText = totalCost.toPrecision(2);
 
         return {
@@ -64,7 +60,7 @@ export class SpecificationSubItemService {
         };
     }
 
-    public mapQueryResult(subItems: SpecificationDetailsSubItemEntity[]): Record[] {
+    public mapQueryResult(subItems: FindManyRecord[]): Record[] {
         const recordsFormatted = this.formatSubItems(subItems);
         const totalRow = this.calculateTotalRow(subItems);
         const records: Record[] = recordsFormatted;
