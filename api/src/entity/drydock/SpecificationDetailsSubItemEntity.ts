@@ -10,14 +10,13 @@ export const DISCOUNT_MIN = 0;
 export const DISCOUNT_MAX = 1;
 export const DISCOUNT_DEFAULT = DISCOUNT_MIN;
 
-/** @private Depends on {@link SUBJECT_MAX_LENGTH} */
+/** Depends on {@link SUBJECT_MAX_LENGTH} */
 const SUBJECT_COLUMN_LENGTH = 512; // next power of 2
 
 export const costFactorsKeys = ['quantity', 'unitPrice', 'discount'] satisfies Array<
     keyof SpecificationDetailsSubItemEntity
 >;
 
-/** @private */
 type SubItemCostFactorsExcerpt = Pick<SpecificationDetailsSubItemEntity, (typeof costFactorsKeys)[number]>;
 
 export function calculateCost(subItem: SubItemCostFactorsExcerpt): Decimal {
