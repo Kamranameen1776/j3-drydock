@@ -247,16 +247,64 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       statusProgressBarBackground[args.data.SpecificationStatus?.status?.toUpperCase()] || statusProgressBarBackground.RAISE;
   }
 
-  taskbarEditing(event) {
-    // if (event && event.data && event.editingFields) {
-    //   console.log('data.SpecificationUid: ' + event.data.SpecificationUid);
-    //   console.log('data.Progress: ' + event.data.Progress);
-    //   console.log('data.SpecificationStartDate: ' + event.data.SpecificationStartDate);
-    //   console.log('data.SpecificationEndDate: ' + event.data.SpecificationEndDate);
-    //   console.log('ev.progress' + event.editingFields.progress);
-    //   console.log('ev.startDate' + event.editingFields.startDate);
-    //   console.log('ev.endDate' + event.editingFields.endDate);
-    // }
+  taskbarEdited(event) {
+    if (!event && !event.previousData && !event.editingFields) {
+      return;
+    }
+
+    const oldProgress = event.previousData.Progress;
+    const oldStartDate = event.previousData.SpecificationStartDate;
+    const oldEndDate = event.previousData.SpecificationEndDate;
+
+    const newProgress = event.editingFields.progress;
+    const newStartDate = event.editingFields.startDate;
+    const newEndDate = event.editingFields.endDate;
+
+    if (oldProgress === newProgress && oldStartDate.getTime() === newStartDate.getTime() && oldEndDate.getTime() === newEndDate.getTime()) {
+      return;
+    }
+
+    this.jobOrdersService
+      .getJobOrderBySpecification({
+        SpecificationUid: event.data.SpecificationUid
+      })
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((jobOrder) => {
+
+        // TODO: rework this, it's not working properly, oldEndDate not being set always
+        // if (
+        //   new Date(jobOrder.SpecificationEndDate).getTime() !== oldEndDate.getTime() ||
+        //   new Date(jobOrder.SpecificationStartDate).getTime() !== oldStartDate.getTime() ||
+        //   jobOrder.Progress !== oldProgress
+        // ) {
+        //   this.growlMessageService.setErrorMessage(
+        //     'Cannot update job order. It was already updated. Please refresh the page and try again.'
+        //   );
+        // }
+
+        const data: IUpdateJobOrderDto = {
+          SpecificationUid: jobOrder.SpecificationUid,
+          LastUpdated: currentLocalAsUTC(),
+          Progress: newProgress,
+
+          SpecificationStartDate: newStartDate,
+          SpecificationEndDate: newEndDate,
+
+          // TODO: optimize this, possibly create a new API service
+          // to save just Progress and SpecificationStartDate and SpecificationEndDate
+          //
+          Status: jobOrder.Status,
+          Subject: jobOrder.Subject,
+          Remarks: jobOrder.Remarks
+        };
+
+        this.jobOrdersService
+          .updateJobOrder(data)
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe(() => {
+            this.ngOnInit();
+          });
+      });
   }
 
   public showUpdateDialog(value = true) {
