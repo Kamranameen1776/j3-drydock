@@ -8,4 +8,6 @@ export interface JobOrdersUpdatesDto {
   lastUpdated: Date;
   specificationSubject: string;
   updatedBy: string;
+  specificationEndDate?: string;
+  specificationStartDate?: string;
 }

@@ -287,7 +287,6 @@ export class StandardJobsRepository {
     }
 
     public getStandardJobSubItems(uids: string[]): Promise<StandardJobsSubItems[]> {
-        const uidString = uids.map((uid) => `'${uid}'`).join(',');
         return getManager()
             .createQueryBuilder(StandardJobsSubItems, 'sub_items')
             .select([
@@ -298,7 +297,7 @@ export class StandardJobsRepository {
                 'sub_items.standard_job_uid as standardJobUid',
             ])
             .where('sub_items.active_status = 1')
-            .andWhere(`sub_items.standard_job_uid IN (${uidString})`)
+            .andWhere(`sub_items.standard_job_uid IN (:...uids)`, { uids })
             .getRawMany();
     }
 

@@ -1,5 +1,3 @@
-import { JobOrdersUpdatesDto } from './JobOrdersUpdatesDto';
-
 export interface IOneDailyReportsResultDto {
     uid: string;
     projectUid: string;
@@ -7,5 +5,5 @@ export interface IOneDailyReportsResultDto {
     createdBy: string;
     reportName: string;
     reportDate: Date;
-    jobOrdersUpdate: Array<JobOrdersUpdatesDto>;
+    Body: string;
 }

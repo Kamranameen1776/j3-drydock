@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { ApiRequestService, Column, GridRowActions, WebApiRequest, eCrud, eGridAction, GridButton } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
-import { localAsUTC } from '../../../utils/date';
-import { CreateDailyReportsDto } from './dto/CreateDailyReportsDto';
-import { UpdateDailyReportsDto } from './dto/UpdateDailyReportsDto';
+import { DailyReportCreate, DailyReportUpdate } from '../../../models/interfaces/project-details';
+import { Observable } from 'rxjs';
+import { IDailyReportsResultDto } from './dto/IDailyReportsResultDto';
 
 @Injectable()
 export class DailyReportsGridService {
@@ -90,22 +90,21 @@ export class DailyReportsGridService {
     return this.apiRequestService.sendApiReq(request);
   }
 
-  createDailyReport(data: CreateDailyReportsDto) {
+  createDailyReport(data: DailyReportCreate) {
     const request: WebApiRequest = {
       apiBase: 'dryDockAPI',
       entity: 'drydock',
       action: 'daily-reports/create-daily-reports',
       crud: eCrud.Post,
       body: {
-        ...data,
-        ReportDate: localAsUTC(data.ReportDate)
+        ...data
       }
     };
 
     return this.apiRequestService.sendApiReq(request);
   }
 
-  updateDailyReport(data: UpdateDailyReportsDto) {
+  updateDailyReport(data: DailyReportUpdate) {
     const request: WebApiRequest = {
       apiBase: 'dryDockAPI',
       entity: 'drydock',
@@ -130,7 +129,7 @@ export class DailyReportsGridService {
     return this.apiRequestService.sendApiReq(request);
   }
 
-  getOneDailyReport(reportUid: string) {
+  getOneDailyReport(reportUid: string): Observable<IDailyReportsResultDto> {
     const request = {
       apiBase: 'dryDockAPI',
       action: 'daily-reports/get-one-daily-report',

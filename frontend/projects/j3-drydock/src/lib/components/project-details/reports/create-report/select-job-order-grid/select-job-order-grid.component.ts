@@ -44,7 +44,9 @@ export class SelectJobOrderGridComponent implements OnInit {
         progress: row.Progress,
         lastUpdated: row.LastUpdated,
         specificationSubject: row.SpecificationSubject,
-        updatedBy: this.userService.getUserDetails().User_FullName
+        updatedBy: this.userService.getUserDetails().User_FullName,
+        specificationStartDate: row.SpecificationStartDate,
+        specificationEndDate: row.SpecificationEndDate
       };
     });
     this.selectedChanged.emit(this.selected);

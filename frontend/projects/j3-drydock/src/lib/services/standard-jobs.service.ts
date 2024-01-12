@@ -18,7 +18,6 @@ import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../models/enum
 import { SubItem } from '../models/interfaces/sub-items';
 import { eModule } from '../models/enums/module.enum';
 import { eFunction } from '../models/enums/function.enum';
-import { FunctionsService } from './functions.service';
 import { GridInputsWithRequest } from '../models/interfaces/grid-inputs';
 
 @Injectable({ providedIn: 'root' })
@@ -140,8 +139,7 @@ export class StandardJobsService {
 
   constructor(
     private apiRequestService: ApiRequestService,
-    private userRights: UserRightsService,
-    private functionsService: FunctionsService
+    private userRights: UserRightsService
   ) {}
 
   getStandardJobsRequest(): WebApiRequest {
@@ -264,10 +262,6 @@ export class StandardJobsService {
       }
     };
     return this.apiRequestService.sendApiReq(apiRequest);
-  }
-
-  getStandardJobFunctions() {
-    return this.functionsService.getFunctions();
   }
 
   getVesselSpecificList() {

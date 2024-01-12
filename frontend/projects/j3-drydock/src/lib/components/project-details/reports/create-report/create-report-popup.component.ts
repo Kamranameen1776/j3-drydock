@@ -1,30 +1,23 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { GridService, IJbDialog, IJbTextBox } from 'jibe-components';
+import { EditorConfig } from './../../../../models/interfaces/EditorConfig';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { IJbDialog, IJbTextBox, JbDatePipe } from 'jibe-components';
 import { getSmallPopup } from '../../../../models/constants/popup';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
-import { IDailyReportsResultDto } from '../dto/IDailyReportsResultDto';
 import { DailyReportsGridService } from '../reports.service';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { JobOrdersUpdatesDto } from '../dto/JobOrdersUpdatesDto';
-import { CreateDailyReportsDto } from '../dto/CreateDailyReportsDto';
-import { IJobOrderDto } from '../../project-monitoring/job-orders/dtos/IJobOrderDto';
-import { UpdateDailyReportsDto } from '../dto/UpdateDailyReportsDto';
-import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
-import { IJobOrderFormDto } from '../../project-monitoring/job-orders-form/dtos/IJobOrderFormDto';
-import { IJobOrdersFormComponent } from '../../project-monitoring/job-orders-form/IJobOrdersFormComponent';
-import { FormControl, FormGroup } from '@angular/forms';
-import { UTCAsLocal, localToUTC } from '../../../../utils/date';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UTCAsLocal, localAsUTC } from '../../../../utils/date';
+import { DailyReportCreate, DailyReportUpdate } from '../../../../models/interfaces/project-details';
+
 @Component({
   selector: 'jb-drydock-create-report-popup',
   templateUrl: './create-report-popup.component.html',
-  styleUrls: ['./create-report-popup.component.scss']
+  styleUrls: ['./create-report-popup.component.scss'],
+  providers: [JbDatePipe]
 })
-export class CreateReportPopupComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
-  @ViewChild('selectJobOrderForm')
-  selectJobOrderForm: IJobOrdersFormComponent;
-
-  @Input() isNew: boolean;
+export class CreateReportPopupComponent extends UnsubscribeComponent implements OnInit {
   @Input() isOpen: boolean;
   @Input() reportUid: string;
   @Input() projectId: string;
@@ -34,16 +27,13 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
   readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, dialogHeader: 'Daily Report' };
 
   saveLabel = 'Save';
-  jobOrderUpdatesToLink: JobOrdersUpdatesDto[] = [];
-  jobOrdersToLink: IJobOrderDto[];
-  reportInfo: IDailyReportsResultDto;
+
   isSaving: boolean;
-  jobOrderPopupVisible: boolean;
-  reportName: string;
-  showLoader = false;
+
+  isJobOrderPopupVisible: boolean;
 
   createReportForm = new FormGroup({
-    reportName: new FormControl('')
+    reportName: new FormControl('', Validators.required)
   });
 
   reportNameText: IJbTextBox = {
@@ -53,107 +43,96 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
     pValidateOnly: false,
     style: '',
     type: 'text',
-    placeholder: 'Report name',
+    placeholder: 'Report Name',
     required: true
   };
 
-  singleSelectedUpdate: JobOrdersUpdatesDto;
-  jobOrderForm: IJobOrderFormDto;
+  bodyForm: FormGroup = new FormGroup({
+    body: new FormControl('')
+  });
+
+  bodyConfig: EditorConfig = {
+    id: 'editorBody',
+    maxLength: 5000,
+    placeholder: '',
+    crtlName: 'body',
+    moduleCode: 'project',
+    functionCode: 'remarks_jb_editor',
+    inlineMode: {
+      enable: false,
+      onSelection: true
+    },
+    tools: {
+      items: [
+        'Bold',
+        'Italic',
+        'Underline',
+        'StrikeThrough',
+        'FontName',
+        'FontSize',
+        'FontColor',
+        'Formats',
+        'Alignments',
+        'Image',
+        'ClearFormat',
+        'FullScreen'
+      ]
+    }
+  };
+
+  private get isEditing() {
+    return !!this.reportUid;
+  }
+
+  private get bodyControl() {
+    return this.bodyForm.get('body') as FormControl;
+  }
 
   constructor(
     private growlMessageService: GrowlMessageService,
     private reportsService: DailyReportsGridService,
-    private gridService: GridService,
-    private jobOrdersService: JobOrdersService
+    private jbDatePipe: JbDatePipe
   ) {
     super();
   }
 
   ngOnInit(): void {
-    if (!this.isNew) {
-      this.getDailyReport(true);
+    if (this.isEditing) {
+      this.getDailyReport();
     } else {
-      this.reportName = '';
+      this.createReportForm.controls.reportName.setValue('Report Name' + this.jbDatePipe.transform(new Date()));
     }
-  }
-
-  ngAfterViewInit(): void {
-    this.selectJobOrderForm.onValueChangesIsForm.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
-      const jobOrder = res.value.jobOrderUpdate;
-      this.singleSelectedUpdate.progress = jobOrder.Progress;
-      this.singleSelectedUpdate.status = jobOrder.Status;
-      this.singleSelectedUpdate.subject = jobOrder.Subject;
-    });
-
-    this.selectJobOrderForm.onRemarkValueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe((res) => {
-      this.singleSelectedUpdate.remark = res;
-    });
   }
 
   onClosePopup() {
     this.closePopup();
   }
 
-  submit() {
+  onSubmit() {
     this.save();
   }
 
-  private closePopup(isSaved = false) {
-    this.closeDialog.emit(isSaved);
+  openJobOrderDialog() {
+    this.isJobOrderPopupVisible = true;
   }
 
-  onSelectedUpdates(event: JobOrdersUpdatesDto[]) {
-    const selectedUpdates = [...event];
-    this.jobOrderUpdatesToLink.push(...selectedUpdates);
-    this.onUpdateSelection(selectedUpdates[0]);
+  onCloseJobOrderPopup(updates: JobOrdersUpdatesDto[]) {
+    this.processSelectedUpdates(updates);
+    this.isJobOrderPopupVisible = false;
   }
 
-  getDailyReport(initialize = false) {
+  private getDailyReport() {
     this.reportsService
       .getOneDailyReport(this.reportUid)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((reportInfo) => {
-        this.reportInfo = reportInfo;
-        this.createReportForm.controls.reportName.setValue(this.reportInfo.reportName);
-        this.jobOrderUpdatesToLink = this.reportInfo.jobOrdersUpdate.map((jobOrder) => {
-          return {
-            subject: jobOrder.subject,
-            remark: jobOrder.remark,
-            specificationUid: jobOrder.specificationUid,
-            specificationCode: jobOrder.specificationCode,
-            status: jobOrder.status,
-            progress: jobOrder.progress,
-            lastUpdated: UTCAsLocal(jobOrder.lastUpdated?.toISOString?.()),
-            specificationSubject: jobOrder.specificationSubject,
-            updatedBy: jobOrder.updatedBy
-          };
-        });
-
-        initialize ? this.onUpdateSelection(this.jobOrderUpdatesToLink[0]) : null;
-      }),
-      // eslint-disable-next-line rxjs/no-implicit-any-catch
-      (err) => {
-        if (err?.status === 422 && err?.error?.message) {
-          this.growlMessageService.setErrorMessage(err.error.message);
-        } else {
-          this.growlMessageService.setErrorMessage('Server error occurred');
-        }
-      };
+        this.createReportForm.get('reportName').setValue(reportInfo.reportName);
+        this.bodyControl.setValue(reportInfo.body);
+      });
   }
 
-  onUpdateSelection(event: JobOrdersUpdatesDto) {
-    this.singleSelectedUpdate = event;
-    const specificationUid = event.specificationUid;
-
-    this.jobOrderForm = {
-      SpecificationUid: specificationUid
-    };
-    this.jobOrderForm.Remarks = this.singleSelectedUpdate.remark;
-    this.jobOrderForm.Subject = this.singleSelectedUpdate.subject;
-    this.jobOrderForm.Status = this.singleSelectedUpdate.status;
-    this.jobOrderForm.Progress = this.singleSelectedUpdate.progress;
-
-    this.selectJobOrderForm.init(this.jobOrderForm);
+  private closePopup(isSaved = false) {
+    this.closeDialog.emit(isSaved);
   }
 
   private save() {
@@ -162,92 +141,80 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
       return;
     }
 
-    if (!this.jobOrderUpdatesToLink || !this.jobOrderUpdatesToLink.length) {
-      this.growlMessageService.setErrorMessage('Updates are required');
-      return;
+    this.isSaving = true;
+
+    let payload: DailyReportCreate | DailyReportUpdate;
+
+    if (this.isEditing) {
+      payload = {
+        DailyReportUid: this.reportUid,
+        ProjectUid: this.projectId,
+        ReportName: this.createReportForm.controls.reportName.value,
+        Body: this.bodyControl.value
+      };
+    } else {
+      payload = {
+        ProjectUid: this.projectId,
+        ReportName: this.createReportForm.controls.reportName.value,
+        ReportDate: localAsUTC(new Date()),
+        Body: this.bodyControl.value
+      };
     }
 
-    this.isSaving = true;
-    this.showLoader = true;
-    this.reportName = this.createReportForm.controls.reportName.value;
+    const request$ = this.isEditing
+      ? this.reportsService.updateDailyReport(payload as DailyReportUpdate)
+      : this.reportsService.createDailyReport(payload as DailyReportCreate);
 
-    let createPayload: CreateDailyReportsDto;
-    let updatePayload: UpdateDailyReportsDto;
-
-    this.isNew
-      ? (createPayload = {
-          ProjectUid: this.projectId,
-          ReportName: this.reportName,
-          ReportDate: localToUTC(new Date()),
-          JobOrdersUpdate: this.jobOrderUpdatesToLink.map((update) => ({
-            ...update,
-            lastUpdated: localToUTC(new Date(update.lastUpdated))
-          }))
-        })
-      : (updatePayload = {
-          DailyReportUid: this.reportUid,
-          ProjectUid: this.projectId,
-          ReportName: this.reportName,
-          JobOrdersUpdate: this.jobOrderUpdatesToLink.map((update) => ({
-            ...update,
-            lastUpdated: localToUTC(new Date(update.lastUpdated))
-          }))
-        });
-
-    this.isNew
-      ? this.reportsService
-          .createDailyReport(createPayload)
-          .pipe(
-            finalize(() => {
-              this.isSaving = false;
-            })
-          )
-          .subscribe(
-            () => {
-              this.growlMessageService.setSuccessMessage('Daily report created successfully');
-              this.showLoader = false;
-              this.closePopup(true);
-            },
-            // eslint-disable-next-line rxjs/no-implicit-any-catch
-            (err) => {
-              if (err?.status === 422 && err?.error?.message) {
-                this.growlMessageService.setErrorMessage(err.error.message);
-              } else {
-                this.growlMessageService.setErrorMessage('Server error occurred');
-              }
-              this.showLoader = false;
-            }
-          )
-      : this.reportsService
-          .updateDailyReport(updatePayload)
-          .pipe(
-            finalize(() => {
-              this.isSaving = false;
-            })
-          )
-          .subscribe(
-            () => {
-              this.growlMessageService.setSuccessMessage('Daily report updated successfully');
-              this.showLoader = false;
-              this.closePopup(true);
-            },
-            // eslint-disable-next-line rxjs/no-implicit-any-catch
-            (err) => {
-              if (err?.status === 422 && err?.error?.message) {
-                this.growlMessageService.setErrorMessage(err.error.message);
-              } else {
-                this.growlMessageService.setErrorMessage('Server error occurred');
-              }
-              this.showLoader = false;
-            }
-          );
+    request$
+      .pipe(
+        finalize(() => {
+          this.isSaving = false;
+        }),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(
+        () => {
+          const message = this.isEditing ? 'Daily report updated successfully' : 'Daily report created successfully';
+          this.growlMessageService.setSuccessMessage(message);
+          this.closePopup(true);
+        },
+        (err) => {
+          if (err?.status === 422 && err?.error?.message) {
+            this.growlMessageService.setErrorMessage(err.error.message);
+          } else {
+            this.growlMessageService.setErrorMessage('Server error occurred');
+          }
+        }
+      );
   }
 
-  openJobOrderDialog(event: boolean) {
-    this.jobOrderPopupVisible = event;
+  private processSelectedUpdates(updates: JobOrdersUpdatesDto[]) {
+    if (!updates) {
+      return;
+    }
+    const selectedUpdates = [...updates];
+
+    let bodyValue: string = this.bodyControl.value ?? '';
+
+    selectedUpdates.forEach((update) => {
+      bodyValue = bodyValue + this.createEditorUpdate(update);
+    });
+
+    this.bodyControl.setValue(bodyValue);
   }
 
-  onCloseJobOrderPopup(event: boolean) {
-    this.jobOrderPopupVisible = event;
+  private createEditorUpdate(update: JobOrdersUpdatesDto) {
+    return (
+      this.stringInParagraph(`1. Specification Code: ${update.specificationCode}`) +
+      this.stringInParagraph(`2. Specification Name: ${update.specificationSubject}`) +
+      this.stringInParagraph(`3. Status: ${update.status}`) +
+      this.stringInParagraph(`4. Start Date: ${this.jbDatePipe.transform(UTCAsLocal(update.specificationStartDate))}`) +
+      this.stringInParagraph(`5. End Date: ${this.jbDatePipe.transform(UTCAsLocal(update.specificationEndDate))}`) +
+      this.stringInParagraph(`6. Remarks: ${update.remark}`)
+    );
+  }
+
+  private stringInParagraph(str: string) {
+    return `<p>${str}</p>`;
   }
 }
