@@ -43,3 +43,17 @@ export interface ProjectDetails {
 }
 
 export interface ProjectDetailsFull extends ProjectDetails, ITMDetails {}
+
+export interface DailyReportCreate {
+  ProjectUid: string;
+  ReportName: string;
+  ReportDate: string;
+  Body: string;
+}
+
+export interface DailyReportUpdate {
+  DailyReportUid: string;
+  ProjectUid: string;
+  ReportName: string;
+  Body: string;
+}

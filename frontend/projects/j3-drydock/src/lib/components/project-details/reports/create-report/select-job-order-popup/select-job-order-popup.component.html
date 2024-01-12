@@ -14,8 +14,7 @@
 
   <ng-container jb-dialog-footer>
     <jb-dialog-footer
-      [isOkBtnDisabled]="isSaving"
-      [isCancelBtnDisabled]="isSaving"
+      [isOkBtnDisabled]="!jobOrdersToLink?.length"
       [okBtnLabel]="okLabel"
       (ok)="onOkPopup()"
       (cancel)="onClosePopup()"

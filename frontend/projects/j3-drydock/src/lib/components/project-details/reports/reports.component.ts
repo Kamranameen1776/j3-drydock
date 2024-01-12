@@ -21,7 +21,6 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
 
   reportUid: string;
   reportInfo: IDailyReportsResultDto;
-  isNew: boolean;
   showLoader = false;
   deleteReportDialog: IJbDialog = {
     ...getSmallPopup(),
@@ -58,18 +57,17 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
         this.showDeleteDialog(true);
         break;
       case eGridRowActions.Edit:
-        this.showCreateReport(false);
+        this.showCreateReport();
         break;
       case this.gridData.gridButton.label:
-        this.showCreateReport(true);
+        this.showCreateReport();
         break;
       default:
         return;
     }
   }
 
-  showCreateReport(isNew: boolean) {
-    this.isNew = isNew;
+  showCreateReport() {
     this.createPopupVisible = true;
   }
 
@@ -91,6 +89,7 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
 
   onCloseCreatePopup(hasSaved?: boolean) {
     this.createPopupVisible = false;
+    this.reportInfo = null;
 
     if (hasSaved) {
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);

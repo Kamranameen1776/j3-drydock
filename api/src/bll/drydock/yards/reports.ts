@@ -1,13 +1,11 @@
 import * as ExcelJS from 'exceljs';
 
+import { ApplicationException } from '../core/exceptions';
+
 export class ReportGeneratorService {
     cRow = 17;
     sumArray: Array<string> = [];
     private finishReport(worksheet: ExcelJS.Worksheet, data: any) {
-        worksheet.getCell('C3').value = data.notes;
-        worksheet.getCell('C3').protection = {
-            locked: false,
-        };
         worksheet.getCell('D8').value = '';
         worksheet.getCell('D8').protection = {
             locked: false,
@@ -551,15 +549,18 @@ export class ReportGeneratorService {
 
         this.addFunctions(reportWorksheet, data.functions);
         this.finishReport(reportWorksheet, data);
-        const password = process.env.DRY_DOCK_YARD_REPORT_PASSWORD as string;
+        const password = process.env.DRY_DOCK_YARD_REPORT_PASSWORD;
+        if (!password) {
+            throw new ApplicationException(
+                `Can't protect report worksheet. Environment variable "DRY_DOCK_YARD_REPORT_PASSWORD" is not set`,
+            );
+        }
         await reportWorksheet.protect(password, {});
         reportWorksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 16, topLeftCell: 'B17' }];
         return workbook;
     }
     public prepareData(data: Array<any>) {
         const obj: any = {};
-        //set header
-        obj.notes = '';
         obj.vessel = data[0].VesselName;
         obj.requestedBy = data[0].ManagementCompany;
         obj.yard = data[0].YardName;

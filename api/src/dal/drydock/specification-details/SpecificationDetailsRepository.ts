@@ -48,7 +48,7 @@ import {
 import { CreateSpecificationFromStandardJobDto } from './dtos/ICreateSpecificationFromStandardJobDto';
 
 export class SpecificationDetailsRepository {
-    public async getSpecificationStatuses(is_office: number | undefined, queryRunner: QueryRunner) {
+    public async getSpecificationStatuses(isOffice: number | undefined, queryRunner: QueryRunner) {
         const repository = queryRunner.manager.getRepository(JmsDtlWorkflowConfigDetailsEntity);
 
         let query = repository
@@ -61,8 +61,8 @@ export class SpecificationDetailsRepository {
             )
             .where('wdetails.ActiveStatus = 1');
 
-        if (is_office !== undefined) {
-            query = query.andWhere('wdetails.Is_Office = :is_office', { is_office });
+        if (isOffice !== undefined) {
+            query = query.andWhere('wdetails.Is_Office = :isOffice', { isOffice });
         }
 
         return query.execute();
@@ -418,7 +418,7 @@ export class SpecificationDetailsRepository {
             .innerJoin(J3PrcRfqEntity, 'rfq', 'rq.uid = rfq.requisition_uid')
             .innerJoin(J3PrcCompanyRegistryEntity, 'supplier', 'rfq.supplier_uid = supplier.uid')
             .innerJoin(J3PrcTaskStatusEntity, 'ts', 'rq.uid = ts.objectUid')
-            .where(`sd.uid = '${specificationUid}'`)
+            .where(`sd.uid = :specificationUid`, { specificationUid })
             .andWhere('rq.active_status = 1')
             .getSql();
 
@@ -435,8 +435,8 @@ export class SpecificationDetailsRepository {
         const existingEntities = await queryRunner.manager
             .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
             .select(['sr.specificationUid', 'sr.requisitionUid', 'sr.uid', 'sr.activeStatus'])
-            .where(`sr.specificationUid = '${specificationUid}'`)
-            .andWhere(`sr.requisitionUid IN ('${requisitionUid.join(`','`)}')`)
+            .where(`sr.specificationUid = :specificationUid`, { specificationUid })
+            .andWhere(`sr.requisitionUid IN (:...requisitionUid)`, { requisitionUid })
             .getMany();
 
         const existingRequisitionUid = existingEntities.map((entity) => entity.requisitionUid);
@@ -465,8 +465,8 @@ export class SpecificationDetailsRepository {
             .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
             .update()
             .set({ activeStatus: false })
-            .where(`specification_uid = '${specificationUid}'`)
-            .andWhere(`requisition_uid = '${requisitionUid}'`)
+            .where(`specification_uid = :specificationUid`, { specificationUid })
+            .andWhere(`requisition_uid = :requisitionUid`, { requisitionUid })
             .execute();
     }
 

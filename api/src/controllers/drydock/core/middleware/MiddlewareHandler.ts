@@ -49,7 +49,6 @@ export class MiddlewareHandler {
             const userId = AccessRights.getUserIdFromReq(req);
             const moduleCode = 'project';
             const functionCode = this.functionCode || 'project';
-            const api = 'DryDockAPI';
             const locationId = null;
             const isClient = null;
 
@@ -65,7 +64,7 @@ export class MiddlewareHandler {
                 logData.Details = details;
 
                 // Business exceptions it is expected behavior
-                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
 
                 res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.getJibeError());
 
@@ -78,7 +77,7 @@ export class MiddlewareHandler {
 
                 logData.Details = details;
 
-                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
 
                 res.status(httpStatus.FORBIDDEN).json(details.getJibeError());
 
@@ -101,7 +100,7 @@ export class MiddlewareHandler {
                     type: ProblemDetailsType.ValidationException,
                 });
                 logData.Details = details;
-                log.warn(message, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+                log.warn(message, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
 
                 res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.getJibeError());
 
@@ -113,7 +112,7 @@ export class MiddlewareHandler {
                 type: ProblemDetailsType.ApplicationException,
             });
             logData.Details = details;
-            log.error(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+            log.error(logMessage, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
             res.status(httpStatus.INTERNAL_SERVER_ERROR).json(details.getJibeError());
         }
     }

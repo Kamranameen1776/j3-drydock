@@ -10,4 +10,6 @@ export interface IJobOrderDto {
   JobOrderRemarks: string;
   JobOrderStatus: string;
   JobOrderSubject: string;
+  SpecificationStartDate: string;
+  SpecificationEndDate: string;
 }
