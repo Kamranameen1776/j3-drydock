@@ -95,8 +95,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, 
             jobOrderForm.Progress = jobOrder.Progress;
             jobOrderForm.Subject = jobOrder.Subject;
             jobOrderForm.Status = jobOrder.Status;
-            jobOrderForm.SpecificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate).toISOString();
-            jobOrderForm.SpecificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate).toISOString();
+            jobOrderForm.SpecificationStartDate = jobOrder.SpecificationStartDate;
+            jobOrderForm.SpecificationEndDate = jobOrder.SpecificationEndDate;
           }
 
           this.jobOrderForm.init(jobOrderForm);
@@ -127,8 +127,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, 
       LastUpdated: currentLocalAsUTC(),
       Progress: jobOrder.Progress,
 
-      SpecificationStartDate: localToUTC(jobOrder.SpecificationStartDate),
-      SpecificationEndDate: localToUTC(jobOrder.SpecificationEndDate),
+      SpecificationStartDate: jobOrder.SpecificationStartDate,
+      SpecificationEndDate: jobOrder.SpecificationEndDate,
 
       Status: jobOrder.Status,
       Subject: jobOrder.Subject,

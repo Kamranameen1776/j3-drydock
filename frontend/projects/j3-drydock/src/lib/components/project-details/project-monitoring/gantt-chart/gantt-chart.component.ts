@@ -13,7 +13,7 @@ import {
 
 import { CentralizedDataService, IJbDialog, JbDatePipe, UserService } from 'jibe-components';
 import { DatePipe } from '@angular/common';
-import { UTCAsLocal, currentLocalAsUTC, localToUTC } from '../../../../utils/date';
+import { UTCAsLocal, currentLocalAsUTC, localDateJbStringAsUTC, localToUTC } from '../../../../utils/date';
 import moment, { min } from 'moment';
 import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
 import { JobOrdersService } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/JobOrdersService';
@@ -178,23 +178,32 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       .getData(this.projectId)
       .pipe(
         map((data) =>
-          data.records.map((jobOrder) => ({
-            ...jobOrder,
-            SpecificationCode: { Code: jobOrder.Code, SpecificationUid: jobOrder.SpecificationUid },
-            Responsible: jobOrder.Responsible,
-            SpecificationEndDateFormatted: this.jbPipe.transform(UTCAsLocal(jobOrder.SpecificationEndDate)),
-            SpecificationStartDateFormatted: this.jbPipe.transform(UTCAsLocal(jobOrder.SpecificationStartDate)),
-            SpecificationStartDate: UTCAsLocal(jobOrder.SpecificationStartDate),
-            SpecificationEndDate: UTCAsLocal(jobOrder.SpecificationEndDate),
-            Progress: jobOrder.Progress || 0,
-            SpecificationStatus: {
-              status: jobOrder.SpecificationStatusCode,
-              statusName: jobOrder.SpecificationStatus,
-              StatusClass:
-                this.statusCSS?.statusBackground[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusBackground.RAISE,
-              IconClass: this.statusCSS?.statusIcon[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusIcon.RAISE
-            }
-          }))
+          data.records.map((jobOrder) => {
+            const specificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate);
+            const specificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate);
+            const obj = {
+              ...jobOrder,
+              SpecificationCode: { Code: jobOrder.Code, SpecificationUid: jobOrder.SpecificationUid },
+              Responsible: jobOrder.Responsible,
+
+              SpecificationStartDateFormatted: moment(specificationStartDate).format(this.dateFormat),
+              SpecificationEndDateFormatted: moment(specificationEndDate).format(this.dateFormat),
+
+              SpecificationStartDate: specificationStartDate,
+              SpecificationEndDate: specificationEndDate,
+
+              Progress: jobOrder.Progress || 0,
+              SpecificationStatus: {
+                status: jobOrder.SpecificationStatusCode,
+                statusName: jobOrder.SpecificationStatus,
+                StatusClass:
+                  this.statusCSS?.statusBackground[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusBackground.RAISE,
+                IconClass: this.statusCSS?.statusIcon[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusIcon.RAISE
+              }
+            };
+
+            return obj;
+          })
         ),
         takeUntil(this.unsubscribe$)
       )
@@ -246,8 +255,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       LastUpdated: currentLocalAsUTC(),
       Progress: jobOrder.Progress,
 
-      SpecificationStartDate: localToUTC(jobOrder.SpecificationStartDate),
-      SpecificationEndDate: localToUTC(jobOrder.SpecificationEndDate),
+      SpecificationStartDate: jobOrder.SpecificationStartDate,
+      SpecificationEndDate: jobOrder.SpecificationEndDate,
 
       Status: jobOrder.Status,
       Subject: jobOrder.Subject,
@@ -295,8 +304,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
           jobOrderForm.Progress = jobOrder.Progress;
           jobOrderForm.Subject = jobOrder.Subject;
           jobOrderForm.Status = jobOrder.Status;
-          jobOrderForm.SpecificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate).toISOString();
-          jobOrderForm.SpecificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate).toISOString();
+          jobOrderForm.SpecificationStartDate = jobOrder.SpecificationStartDate;
+          jobOrderForm.SpecificationEndDate = jobOrder.SpecificationEndDate;
         }
 
         this.jobOrderForm.init(jobOrderForm);

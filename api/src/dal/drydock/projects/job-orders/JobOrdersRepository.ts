@@ -45,8 +45,8 @@ export class JobOrdersRepository {
                 'tm.Status AS SpecificationStatusCode',
                 'wdetails.StatusDisplayName AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
-                'sd.StartDate as SpecificationStartDate',
-                'sd.EndDate as SpecificationEndDate',
+                'ISNULL(sd.StartDate, p.StartDate) as SpecificationStartDate',
+                'ISNULL(sd.EndDate, p.EndDate) as SpecificationEndDate',
                 'db.displayName as Responsible',
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
@@ -119,8 +119,8 @@ export class JobOrdersRepository {
                 'db.displayName AS Responsible',
                 'wdetails.StatusDisplayName AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
-                'sd.StartDate as SpecificationStartDate',
-                'sd.EndDate as SpecificationEndDate',
+                'ISNULL(sd.StartDate, p.StartDate) as SpecificationStartDate',
+                'ISNULL(sd.EndDate, p.EndDate) as SpecificationEndDate',
                 'jo.Subject as JobOrderSubject',
                 'jo.Remarks as JobOrderRemarks',
                 'jo.Status as JobOrderStatus',
