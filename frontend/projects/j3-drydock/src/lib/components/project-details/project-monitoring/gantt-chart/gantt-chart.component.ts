@@ -3,7 +3,7 @@ import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.bas
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
 import { map, takeUntil } from 'rxjs/operators';
-import { DayMarkersService, EditService, ToolbarService } from '@syncfusion/ej2-angular-gantt';
+import { DayMarkersService, EditService } from '@syncfusion/ej2-angular-gantt';
 import {
   statusBackground,
   statusIcon,
@@ -138,6 +138,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   projectStartDate;
   projectEndDate;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   timelineSettings: any;
 
   statusCSS = { statusBackground: statusBackground, statusIcon: statusIcon };
@@ -270,7 +271,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((jobOrder) => {
-
         // TODO: rework this, it's not working properly, oldEndDate not being set always
         // if (
         //   new Date(jobOrder.SpecificationEndDate).getTime() !== oldEndDate.getTime() ||
