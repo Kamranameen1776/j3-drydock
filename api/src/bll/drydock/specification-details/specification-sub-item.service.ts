@@ -27,6 +27,7 @@ export class SpecificationSubItemService {
         const subItemsFormatted: RecordFormatted[] = [];
 
         for (const subItem of subItems) {
+            // FIXME: (find-sub-items) 1.1.3.1.1 format discount value (0.1) as percents (10)
             const discountFormatted = new Decimal(subItem.discount || 0).times(100).toNumber();
             const subItemFormatted: RecordFormatted = Object.assign(subItem, { discount: discountFormatted });
 
@@ -61,11 +62,14 @@ export class SpecificationSubItemService {
     }
 
     public mapQueryResult(subItems: FindManyRecord[]): Record[] {
+        // FIXME: (find-sub-items) 1.1.3.1 format results
         const recordsFormatted = this.formatSubItems(subItems);
+        // FIXME: (find-sub-items) 1.1.3.2 calculate summary
         const totalRow = this.calculateTotalRow(subItems);
         const records: Record[] = recordsFormatted;
 
         if (totalRow != null) {
+            // FIXME: (find-sub-items) 1.1.3.3 append summary, if any
             records.push(totalRow);
         }
 

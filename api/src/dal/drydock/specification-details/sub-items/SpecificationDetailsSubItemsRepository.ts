@@ -47,6 +47,7 @@ export class SpecificationDetailsSubItemsRepository {
     public async findMany(params: FindManyParams): Promise<ODataResult<FindManyRecord>> {
         const [script, substitutions] = getManager()
             .createQueryBuilder(SubItem, 'subItem')
+            // FIXME: (find-sub-items) 1.1.2.1 extract quantity, unitPrice, discount, and cost
             .select([
                 'subItem.uid as uid',
                 'subItem.number as number',
@@ -67,6 +68,7 @@ export class SpecificationDetailsSubItemsRepository {
             .andWhere('subItem.active_status = 1')
             .getQueryAndParameters();
 
+        // FIXME: (find-sub-items) 1.1.2.2 paginate results
         const odataService = new ODataService({ query: params.odata }, getConnection);
         return odataService.getJoinResult(script, substitutions);
     }

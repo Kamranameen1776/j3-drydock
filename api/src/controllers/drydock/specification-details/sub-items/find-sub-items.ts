@@ -14,8 +14,10 @@ async function findSubItems(
     await middlewareHandler.ExecuteAsync(req, res, async () => {
         const query = new FindSubItemsQuery();
 
+        // FIXME: (find-sub-items) 1.1 convert request to response
         return query.ExecuteAsync(req.body);
     });
 }
 
+// FIXME: (find-sub-items) 1 handle endpoint
 exports.post = findSubItems;
