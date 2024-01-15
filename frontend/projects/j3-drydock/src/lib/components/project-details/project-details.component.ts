@@ -19,13 +19,13 @@ import { GrowlMessageService } from '../../services/growl-message.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { eFunction } from '../../models/enums/function.enum';
 import { eModule } from '../../models/enums/module.enum';
-import { ITMDetailTabFields, JbTaskManagerDetailsService } from 'j3-task-manager-ng';
+import { ITMDetailTabFields, JbTaskManagerDetailsComponent, JbTaskManagerDetailsService } from 'j3-task-manager-ng';
 import { Title } from '@angular/platform-browser';
 import { ProjectDetailsAccessRights, ProjectDetailsService } from './project-details.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/project-details';
 import { projectDetailsMenuData } from './project-details-menu';
-import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.enum';
+import { eProjectDetailsSideMenuId, eProjectWorkflowStatusAction } from '../../models/enums/project-details.enum';
 import { SpecificationsComponent } from './specification/specifications.component';
 import { RfqComponent } from './yard/rfq/rfq.component';
 import { ProjectsService } from '../../services/ProjectsService';
@@ -44,6 +44,7 @@ import { localDateJbStringAsUTC } from '../../utils/date';
   providers: [GrowlMessageService, ProjectDetailsService]
 })
 export class ProjectDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
+  @ViewChild('detailsComponent') detailsComponent: JbTaskManagerDetailsComponent;
   @ViewChild('attachmentsComponent') attachmentsComponent: JbAttachmentsComponent;
   @ViewChild('specificationsComponent') specificationsComponent: SpecificationsComponent;
   @ViewChild('rfqComponent') rfqComponent: RfqComponent;
@@ -347,6 +348,19 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   private setMenuByAccessRights() {
     this.menu = cloneDeep(projectDetailsMenuData);
 
+    if (!this.isCurrentStatusComplete()) {
+      this.menu = this.hideMenuItem(this.menu, eProjectDetailsSideMenuId.ProjectMonitoring);
+      this.menu = this.hideMenuItem(this.menu, eProjectDetailsSideMenuId.Reporting);
+
+      if (
+        this.detailsComponent?.selectedTab === eProjectDetailsSideMenuId.ProjectMonitoring ||
+        this.detailsComponent?.selectedTab === eProjectDetailsSideMenuId.Reporting
+      ) {
+        this.detailsComponent.selectedTab = '';
+        this.detailsComponent.onMenuTabChange(this.menu[0]);
+      }
+    }
+
     const specificationSection = this.getMenuById(this.menu, eProjectDetailsSideMenuId.Specifications);
     this.processSpecificationsMenuAccessRights(specificationSection);
   }
@@ -369,6 +383,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   private hideSubMenuItem(parentMenu: IJbMenuItem, id: eProjectDetailsSideMenuId) {
     this.detailsService.hideSubMenuItem(parentMenu, id);
+  }
+
+  private hideMenuItem(menu: IJbMenuItem[], id: eProjectDetailsSideMenuId) {
+    return this.detailsService.getMenuWithHiddenMenuItem(menu, id);
   }
 
   exportExcel() {
@@ -405,5 +423,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     }
 
     return true;
+  }
+
+  private isCurrentStatusComplete() {
+    return this.projectDetailsService.areStatusesSame(this.tmDetails.ProjectStatusId, eProjectWorkflowStatusAction.Complete);
   }
 }
