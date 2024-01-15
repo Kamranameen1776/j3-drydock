@@ -9,5 +9,9 @@
 :host {
   ::ng-deep {
     @include progress-spinner-fix;
+
+    .jb-section-DetailPage-figma>section .jb-section-wrapper .jb-section-feed-discussion {
+      z-index: 1000 !important;
+    }
   }
 }

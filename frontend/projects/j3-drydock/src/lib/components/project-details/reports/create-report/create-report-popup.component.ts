@@ -24,7 +24,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
 
   @Output() closeDialog = new EventEmitter<boolean>();
 
-  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, dialogHeader: 'Daily Report' };
+  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1200, dialogHeader: 'Daily Report' };
 
   saveLabel = 'Save';
 
