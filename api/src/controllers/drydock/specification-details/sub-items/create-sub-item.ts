@@ -17,6 +17,7 @@ async function createSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
     await middlewareHandler.ExecuteAsync(req, res, async () => {
         const command = new CreateSubItemCommand();
 
+        // FIXME: (create-sub-item) 1.1 convert request to response
         await command.ExecuteAsync({
             ...req.body,
             createdBy,
@@ -24,4 +25,5 @@ async function createSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
     });
 }
 
+// FIXME: (create-sub-item) 1 map endpoint to handler
 exports.post = createSubItem;

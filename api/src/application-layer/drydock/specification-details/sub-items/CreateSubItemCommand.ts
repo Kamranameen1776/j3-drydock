@@ -20,6 +20,7 @@ export class CreateSubItemCommand extends Command<CreateSubItemParams, Specifica
     private params: CreateSubItemParams;
 
     protected async ValidationHandlerAsync(request: CreateSubItemParams): Promise<void> {
+        // FIXME: (create-sub-item) 1.1.1 validate request
         this.params = await validateAgainstModel(CreateSubItemParams, request, {
             validate: {
                 whitelist: true,
@@ -34,6 +35,7 @@ export class CreateSubItemCommand extends Command<CreateSubItemParams, Specifica
                 queryRunner,
             );
 
+            // FIXME: (create-sub-item) 1.1.2 create sub-item
             const res = await this.subItemRepo.createOne(this.params, queryRunner);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
@@ -75,6 +77,7 @@ export class CreateSubItemCommand extends Command<CreateSubItemParams, Specifica
                 );
             }
 
+            // FIXME: (create-sub-item) 1.1.3 return created sub-item
             return res;
         });
     }

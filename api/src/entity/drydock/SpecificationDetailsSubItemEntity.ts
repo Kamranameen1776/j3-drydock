@@ -20,11 +20,13 @@ export const costFactorsKeys = ['quantity', 'unitPrice', 'discount'] satisfies A
 export type SubItemCostFactorsExcerpt = Pick<SpecificationDetailsSubItemEntity, (typeof costFactorsKeys)[number]>;
 
 export function calculateCost(subItem: SubItemCostFactorsExcerpt): Decimal {
+    // FIXME: (create-sub-item) 1.1.2.1.2.1 gather cost factors
     const quantity = new Decimal(subItem.quantity || 0);
     const unitPrice = new Decimal(subItem.unitPrice || 0);
     const discount = new Decimal(subItem.discount || 0);
     const discountQuotient = new Decimal(1).minus(discount);
 
+    // FIXME: (create-sub-item) 1.1.2.1.2.2 calculate cost
     // quantity * unitPrice * (1 - discount)
     return quantity.times(unitPrice).times(discountQuotient);
 }
@@ -60,6 +62,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     })
     description?: string;
 
+    // FIXME: (create-sub-item) 1.1.2.2.1 define quantity as int / number
     @Column({
         name: 'quantity',
         type: 'int',
@@ -67,6 +70,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     })
     quantity?: number | null;
 
+    // FIXME: (create-sub-item) 1.1.2.2.2 define unit_price as decimal(10, 2) / string
     @Column({
         name: 'unit_price',
         type: 'decimal',
@@ -76,6 +80,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     })
     unitPrice?: string | null;
 
+    // FIXME: (create-sub-item) 1.1.2.2.3 define discount as decimal(5, 4) / string
     @Column({
         name: 'discount',
         type: 'decimal',
@@ -107,6 +112,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     @RelationId<SpecificationDetailsSubItemEntity>((subItem) => subItem.unitType)
     unitTypeUid: string;
 
+    // FIXME: (create-sub-item) 1.1.2.2.4 define cost as decimal(10, 4) / string
     @Column({
         name: 'cost',
         type: 'decimal',

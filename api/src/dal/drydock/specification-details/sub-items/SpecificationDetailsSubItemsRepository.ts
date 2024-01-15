@@ -102,6 +102,7 @@ export class SpecificationDetailsSubItemsRepository {
 
         const { createdBy: created_by, ...props } = params;
 
+        // FIXME: (create-sub-item) 1.1.2.1 map inputs to instance props
         const subItemData = this.mapSubItemDtoToEntity(props, {
             uid: DataUtilService.newUid(),
         });
@@ -109,8 +110,10 @@ export class SpecificationDetailsSubItemsRepository {
         subItemData.created_by = created_by;
         subItemData.created_at = new Date();
 
+        // FIXME: (create-sub-item) 1.1.2.2 map props to an instance
         const subItem = queryRunner.manager.create(SubItem, subItemData);
 
+        // FIXME: (create-sub-item) 1.1.2.3 insert data in db
         await queryRunner.manager.save(subItem);
 
         return subItemData;
@@ -292,6 +295,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     private mapSubItemDtoToEntity(subItemData: Partial<CreateSubItemParams>, subItem: Partial<SubItem>): SubItem {
+        // FIXME: (create-sub-item) 1.1.2.1.1 gather cost factors
         const newSubItemCostFactorsExcerpt: SubItemCostFactorsExcerpt = {
             quantity: subItemData.quantity ?? 0,
             unitPrice: subItemData.unitPrice ?? '0',
@@ -301,11 +305,13 @@ export class SpecificationDetailsSubItemsRepository {
         const newSubItem: Partial<SubItem> = {
             ...subItem,
             ...newSubItemCostFactorsExcerpt,
+            // FIXME: (create-sub-item) 1.1.2.1.2 update cost from cost factors
             cost: calculateCost(newSubItemCostFactorsExcerpt).toFixed(2),
             subject: subItemData.subject,
             description: subItemData.description,
         };
 
+        // FIXME: (create-sub-item) 1.1.2.1.3 attach specification details entity
         const specificationDetails = new SpecificationDetailsEntity();
         specificationDetails.uid = subItemData.specificationDetailsUid!;
         newSubItem.specificationDetails = specificationDetails;
