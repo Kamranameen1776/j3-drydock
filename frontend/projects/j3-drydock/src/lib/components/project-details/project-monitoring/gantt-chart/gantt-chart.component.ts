@@ -15,11 +15,11 @@ import { CentralizedDataService, IJbDialog, JbDatePipe, UserService } from 'jibe
 import { DatePipe } from '@angular/common';
 import { UTCAsLocal, currentLocalAsUTC } from '../../../../utils/date';
 import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
-import { JobOrdersService } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/JobOrdersService';
+import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { IJobOrdersFormComponent } from '../job-orders-form/IJobOrdersFormComponent';
-import { GrowlMessageService } from 'projects/j3-drydock/src/lib/services/growl-message.service';
+import { GrowlMessageService } from '../../../../services/growl-message.service';
 import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormResultDto';
-import { IUpdateJobOrderDto } from 'projects/j3-drydock/src/lib/services/project-monitoring/job-orders/IUpdateJobOrderDto';
+import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
 import moment from 'moment';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
