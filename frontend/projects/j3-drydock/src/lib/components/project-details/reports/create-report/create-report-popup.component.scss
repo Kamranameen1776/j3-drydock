@@ -6,7 +6,7 @@
 
      .e-richtexteditor  {
       .e-content {
-        min-height: 200px !important;
+        min-height: 300px !important;
       }
      }
   }
@@ -15,13 +15,23 @@
     @include form-label;
   }
 
-  .content {
-    max-height: 616px;
+  .report-label-required {
+    @include form-label(true);
   }
 
-  .add-updates-button {
-    display: block;
-    margin: 10px 0;
+  .daily-report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+
+    .daily-report-form {
+      width: 400px;
+    }
+
+    .add-updates-button {
+      display: block;
+    }
   }
 
   .jb-fields-crtl {

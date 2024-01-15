@@ -1,9 +1,38 @@
 <ejs-gantt
+  id="{{ id }}"
   [dataSource]="tasks"
-  [taskFields]="taskConfig"
+  [taskFields]="taskFields"
+  [timelineSettings]="timelineSettings"
   [splitterSettings]="splitterSettings"
   [eventMarkers]="eventMarkers"
-  (queryTaskbarInfo)="queryTaskbarInfo($event)"
   [columns]="columns"
+  (queryTaskbarInfo)="queryTaskbarInfo($event)"
   height="324px"
+  [projectStartDate]="projectStartDate"
+  [projectEndDate]="projectEndDate"
+  [editSettings]="editSettings"
+  (taskbarEdited)="taskbarEdited($event)"
 ></ejs-gantt>
+
+<jb-dialog
+  (closeDialog)="showUpdateDialog(false)"
+  [(dialogVisible)]="updateDialogVisible"
+  [dialogContent]="updateJobOrderDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-job-orders-form #jobOrderForm></jb-job-orders-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="updateJobOrderButtonDisabled"
+      [okBtnLabel]="updateBtnLabel"
+      (ok)="updateJobOrder()"
+      (cancel)="showUpdateDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

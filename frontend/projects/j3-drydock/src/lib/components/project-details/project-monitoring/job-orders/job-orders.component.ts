@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormGroupDirective } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
-import { UTCAsLocal, currentLocalAsUTC, localToUTC } from '../../../../utils/date';
+import { currentLocalAsUTC } from '../../../../utils/date';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
 import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
 import { IJobOrdersFormComponent } from '../job-orders-form/IJobOrdersFormComponent';
@@ -87,16 +87,16 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, 
         .subscribe((jobOrder) => {
           const jobOrderForm: IJobOrderFormDto = {
             SpecificationUid: jobOrderDto.SpecificationUid,
-            Progress: jobOrderDto.Progress,
             Code: jobOrderDto.Code
           };
 
           if (jobOrder) {
             jobOrderForm.Remarks = jobOrder.Remarks;
+            jobOrderForm.Progress = jobOrder.Progress;
             jobOrderForm.Subject = jobOrder.Subject;
             jobOrderForm.Status = jobOrder.Status;
-            jobOrderForm.SpecificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate).toISOString();
-            jobOrderForm.SpecificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate).toISOString();
+            jobOrderForm.SpecificationStartDate = jobOrder.SpecificationStartDate;
+            jobOrderForm.SpecificationEndDate = jobOrder.SpecificationEndDate;
           }
 
           this.jobOrderForm.init(jobOrderForm);
@@ -127,8 +127,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, 
       LastUpdated: currentLocalAsUTC(),
       Progress: jobOrder.Progress,
 
-      SpecificationStartDate: localToUTC(jobOrder.SpecificationStartDate),
-      SpecificationEndDate: localToUTC(jobOrder.SpecificationEndDate),
+      SpecificationStartDate: jobOrder.SpecificationStartDate,
+      SpecificationEndDate: jobOrder.SpecificationEndDate,
 
       Status: jobOrder.Status,
       Subject: jobOrder.Subject,
