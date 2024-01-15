@@ -17,7 +17,7 @@ export const costFactorsKeys = ['quantity', 'unitPrice', 'discount'] satisfies A
     keyof SpecificationDetailsSubItemEntity
 >;
 
-type SubItemCostFactorsExcerpt = Pick<SpecificationDetailsSubItemEntity, (typeof costFactorsKeys)[number]>;
+export type SubItemCostFactorsExcerpt = Pick<SpecificationDetailsSubItemEntity, (typeof costFactorsKeys)[number]>;
 
 export function calculateCost(subItem: SubItemCostFactorsExcerpt): Decimal {
     const quantity = new Decimal(subItem.quantity || 0);
