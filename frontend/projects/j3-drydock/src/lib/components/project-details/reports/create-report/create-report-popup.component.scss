@@ -12,7 +12,7 @@
   }
 
   .report-label {
-    @include form-label;
+    @include form-label(true);
   }
 
   .content {
