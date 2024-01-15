@@ -17,6 +17,7 @@ async function updateSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
     await middlewareHandler.ExecuteAsync(req, res, async () => {
         const command = new UpdateSubItemCommand();
 
+        // FIXME: (update-sub-item) 1.1 convert request to response
         await command.ExecuteAsync({
             ...req.body,
             updatedBy,
@@ -24,4 +25,5 @@ async function updateSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
     });
 }
 
+// FIXME: (update-sub-item) 1 map endpoint to handler
 exports.put = updateSubItem;

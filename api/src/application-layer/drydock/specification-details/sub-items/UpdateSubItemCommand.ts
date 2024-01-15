@@ -19,6 +19,7 @@ export class UpdateSubItemCommand extends Command<UpdateSubItemParams, Specifica
     private params: UpdateSubItemParams;
 
     protected async ValidationHandlerAsync(request: UpdateSubItemParams): Promise<void> {
+        // FIXME: (update-sub-item) 1.1.1 validate request
         this.params = await validateAgainstModel(UpdateSubItemParams, request, {
             validate: {
                 whitelist: true,
@@ -33,6 +34,7 @@ export class UpdateSubItemCommand extends Command<UpdateSubItemParams, Specifica
                 queryRunner,
             );
 
+            // FIXME: (update-sub-item) 1.1.2 update sub-item
             const res = await this.subItemRepo.updateOneExistingByUid(this.params, queryRunner);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,

@@ -74,6 +74,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async getOneByUid(params: GetSubItemParams, queryRunner: QueryRunner): Promise<SubItem | null> {
+        // FIXME: (update-sub-item) 1.1.2.1.1.1 find an active record by its UID within specification-details
         const subItem = await queryRunner.manager.findOne(SubItem, {
             where: {
                 specificationDetails: {
@@ -84,13 +85,16 @@ export class SpecificationDetailsSubItemsRepository {
             },
         });
 
+        // FIXME: (update-sub-item) 1.1.2.1.1.2 return `null` if it doesn't exists
         return subItem ?? null;
     }
 
     public async getOneExistingByUid(params: GetSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
+        // FIXME: (update-sub-item) 1.1.2.1.1 find sub-item
         const subItem = await this.getOneByUid(params, queryRunner);
 
         if (subItem == null) {
+            // FIXME: (update-sub-item) 1.1.2.1.2 throw error if the sub-item doesn't exist
             throw new SpecificationDetailsSubItemNotFoundByUidError(params.uid, params.specificationDetailsUid);
         }
 
@@ -144,20 +148,24 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async updateOneExistingByUid(params: UpdateSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
+        // FIXME: (update-sub-item) 1.1.2.1 get sub-item
         const existingSubItem = await this.getOneExistingByUid(params, queryRunner);
 
         if (params.props.unitUid != null) {
             await this.assertAllUnitTypesExistByUids([params.props.unitUid], queryRunner);
         }
 
+        // FIXME: (update-sub-item) 1.1.2.2 map inputs to instance props
         const subItemData = this.mapSubItemDtoToEntity(params.props, existingSubItem);
 
         // assigned separately for type safety
         subItemData.updated_by = params.updatedBy;
         subItemData.updated_at = new Date();
 
+        // FIXME: (update-sub-item) 1.1.2.3 map props to instance
         const newSubItem = queryRunner.manager.create(SubItem, subItemData);
 
+        // FIXME: (update-sub-item) 1.1.2.4 insert value in db
         await queryRunner.manager.save(newSubItem);
 
         return subItemData;
@@ -296,6 +304,7 @@ export class SpecificationDetailsSubItemsRepository {
 
     private mapSubItemDtoToEntity(subItemData: Partial<CreateSubItemParams>, subItem: Partial<SubItem>): SubItem {
         // FIXME: (create-sub-item) 1.1.2.1.1 gather cost factors
+        // FIXME: (update-sub-item) 1.1.2.4.1 gather cost factors
         const newSubItemCostFactorsExcerpt: SubItemCostFactorsExcerpt = {
             quantity: subItemData.quantity ?? 0,
             unitPrice: subItemData.unitPrice ?? '0',
@@ -306,12 +315,14 @@ export class SpecificationDetailsSubItemsRepository {
             ...subItem,
             ...newSubItemCostFactorsExcerpt,
             // FIXME: (create-sub-item) 1.1.2.1.2 update cost from cost factors
+            // FIXME: (update-sub-item) 1.1.2.4.2 update cost from cost factors
             cost: calculateCost(newSubItemCostFactorsExcerpt).toFixed(2),
             subject: subItemData.subject,
             description: subItemData.description,
         };
 
         // FIXME: (create-sub-item) 1.1.2.1.3 attach specification details entity
+        // FIXME: (update-sub-item) 1.1.2.4.3 attach specification details entity
         const specificationDetails = new SpecificationDetailsEntity();
         specificationDetails.uid = subItemData.specificationDetailsUid!;
         newSubItem.specificationDetails = specificationDetails;
