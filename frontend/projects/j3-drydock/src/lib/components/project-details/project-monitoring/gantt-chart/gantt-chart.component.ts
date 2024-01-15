@@ -269,6 +269,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
         SpecificationUid: event.data.SpecificationUid
       })
       .pipe(
+        takeUntil(this.unsubscribe$),
         map((jobOrder) => {
           const data: IUpdateJobOrderDto = {
             SpecificationUid: jobOrder.SpecificationUid,
@@ -289,7 +290,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
         }),
         mergeMap((data) => this.jobOrdersService.updateJobOrder(data))
       )
-      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         this.ngOnInit();
       });
