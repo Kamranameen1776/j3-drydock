@@ -357,7 +357,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         this.detailsComponent?.selectedTab === eProjectDetailsSideMenuId.Reporting
       ) {
         this.detailsComponent.selectedTab = '';
-        this.detailsComponent.selectedTabObj = {};
         this.detailsComponent.onMenuTabChange(this.menu[0]);
       }
     }
