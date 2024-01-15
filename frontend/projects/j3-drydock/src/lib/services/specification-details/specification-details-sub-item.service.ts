@@ -6,7 +6,7 @@ import {
   eSpecificationDetailsSubItemsLabels
 } from '../../models/enums/specification-details-sub-items.enum';
 import { SpecificationDetailsService } from './specification-details.service';
-import { eProjectsDetailsAccessActions, eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
+import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
 
 @Injectable()
 export class SpecificationDetailsSubItemsGridService {
@@ -15,7 +15,6 @@ export class SpecificationDetailsSubItemsGridService {
   public readonly gridName: string = 'specificationSubItemGrid';
   private readonly columns: Column[] = [
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Number,
       FieldName: eSpecificationDetailsSubItemsFields.Number,
       IsActive: true,
@@ -25,7 +24,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '70px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Subject,
       FieldName: eSpecificationDetailsSubItemsFields.Subject,
       IsActive: true,
@@ -35,7 +33,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '324px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Unit,
       FieldName: eSpecificationDetailsSubItemsFields.Unit,
       IsActive: true,
@@ -45,7 +42,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '83px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Quantity,
       FieldName: eSpecificationDetailsSubItemsFields.Quantity,
       IsActive: true,
@@ -55,7 +51,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '84px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.UnitPrice,
       FieldName: eSpecificationDetailsSubItemsFields.UnitPrice,
       IsActive: true,
@@ -65,7 +60,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '130px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Discount,
       FieldName: eSpecificationDetailsSubItemsFields.Discount,
       IsActive: true,
@@ -75,7 +69,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '182px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Cost,
       FieldName: eSpecificationDetailsSubItemsFields.Cost,
       IsActive: true,

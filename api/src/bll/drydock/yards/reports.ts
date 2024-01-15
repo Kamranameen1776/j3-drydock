@@ -1,13 +1,11 @@
 import * as ExcelJS from 'exceljs';
 
+import { ApplicationException } from '../core/exceptions';
+
 export class ReportGeneratorService {
     cRow = 17;
     sumArray: Array<string> = [];
     private finishReport(worksheet: ExcelJS.Worksheet, data: any) {
-        worksheet.getCell('C3').value = data.notes;
-        worksheet.getCell('C3').protection = {
-            locked: false,
-        };
         worksheet.getCell('D8').value = '';
         worksheet.getCell('D8').protection = {
             locked: false,
@@ -17,7 +15,17 @@ export class ReportGeneratorService {
         worksheet.getCell('C9').value = data.yard;
         worksheet.getCell('C10').value = data.project;
         worksheet.getCell('C11').value = data.period;
-        worksheet.getCell('C12').value = data.currency;
+        worksheet.getCell('C12').dataValidation = {
+            type: 'list',
+            formulae: [`"${data.currencies.join(',')}"`],
+            allowBlank: false,
+            showErrorMessage: true,
+            errorTitle: 'Invalid Value',
+            error: 'Please select a value from the list',
+        };
+        if (data.currencies.length) {
+            worksheet.getCell('C12').value = data.currencies[0];
+        }
         worksheet.getCell('C12').protection = {
             locked: false,
         };
@@ -33,10 +41,13 @@ export class ReportGeneratorService {
         worksheet.getCell('C15').protection = {
             locked: false,
         };
-        worksheet.getCell('H12').value = {
-            formula: `SUM(${this.sumArray.join(',')})`,
-        };
-
+        if (this.sumArray.length) {
+            worksheet.getCell('H12').value = {
+                formula: `SUM(${this.sumArray.join(',')})`,
+            };
+        } else {
+            worksheet.getCell('H12').value = 0;
+        }
         worksheet.getRow(this.cRow).height = 30;
         worksheet.mergeCells(`B${this.cRow}:I${this.cRow}`);
         worksheet.getCell(`B${this.cRow}`).value = data.footer;
@@ -318,6 +329,7 @@ export class ReportGeneratorService {
         this.cRow++;
     }
     private addSpecificationFooter(worksheet: ExcelJS.Worksheet, startRow: number) {
+        const passwordFreeCol = ['C', 'D', 'E', 'F', 'G', 'I'];
         for (let i = 0; i < 3; i++) {
             worksheet.getCell(`B${this.cRow}`).style = {
                 font: { size: 10, color: { theme: 1 }, name: 'Aptos narrow' },
@@ -418,6 +430,9 @@ export class ReportGeneratorService {
                 },
                 alignment: { horizontal: 'right', vertical: 'top' },
             };
+            worksheet.getCell(`H${this.cRow}`).value = {
+                formula: `IF(ISNUMBER(D${this.cRow}),(D${this.cRow}*F${this.cRow})-(D${this.cRow}*F${this.cRow}*G${this.cRow}),"")`,
+            };
             worksheet.getCell(`H${this.cRow}`).style = {
                 numFmt: '#,##0.00 _k_r_.;[Red]#,##0.00 _k_r_.',
                 font: { bold: true, size: 10, color: { theme: 1 }, name: 'Arial' },
@@ -456,7 +471,12 @@ export class ReportGeneratorService {
                     shrinkToFit: false,
                 },
             };
-
+            passwordFreeCol.forEach((col) => {
+                const cell = `${col}${this.cRow}`;
+                worksheet.getCell(cell).protection = {
+                    locked: false,
+                };
+            });
             this.cRow++;
         }
         worksheet.mergeCells(`B${this.cRow}:G${this.cRow}`);
@@ -525,27 +545,31 @@ export class ReportGeneratorService {
         this.sumArray = [];
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(`${__dirname}/../../../assets/drydock/Yard Quotation Template.xlsx`);
-        const worksheet = workbook.getWorksheet(1) as ExcelJS.Worksheet;
+        const reportWorksheet = workbook.getWorksheet(1) as ExcelJS.Worksheet;
 
-        this.addFunctions(worksheet, data.functions);
-        this.finishReport(worksheet, data);
-        const password = process.env.DRY_DOCK_YARD_REPORT_PASSWORD as string;
-        await worksheet.protect(password, {});
+        this.addFunctions(reportWorksheet, data.functions);
+        this.finishReport(reportWorksheet, data);
+        const password = process.env.DRY_DOCK_YARD_REPORT_PASSWORD;
+        if (!password) {
+            throw new ApplicationException(
+                `Can't protect report worksheet. Environment variable "DRY_DOCK_YARD_REPORT_PASSWORD" is not set`,
+            );
+        }
+        await reportWorksheet.protect(password, {});
+        reportWorksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 16, topLeftCell: 'B17' }];
         return workbook;
     }
     public prepareData(data: Array<any>) {
         const obj: any = {};
-        //set header
-        obj.notes = '';
         obj.vessel = data[0].VesselName;
         obj.requestedBy = data[0].ManagementCompany;
         obj.yard = data[0].YardName;
         obj.project = data[0].Subject;
-        obj.currency = 'EUR';
         obj.period = `${this.formatDateString(data[0].StartDate)} - ${this.formatDateString(data[0].EndDate)}`;
         obj.functions = [];
         for (let i = 0; i < data.length; i++) {
             const row = data[i];
+            if (!row.Function) break;
             let functionIndex = obj.functions.findIndex((item: any) => row.Function === item.name);
             if (functionIndex === -1) {
                 functionIndex = obj.functions.length;
@@ -580,6 +604,11 @@ export class ReportGeneratorService {
         obj.filename = `${obj.vessel}-${obj.yard}-${new Date(
             data[0].StartDate,
         ).getFullYear()}-${this.getFileNameDate()}`;
+
+        obj.currencies = [];
+        if (data[0].YardCurrencies) {
+            obj.currencies = JSON.parse(data[0].YardCurrencies);
+        }
 
         return obj;
     }

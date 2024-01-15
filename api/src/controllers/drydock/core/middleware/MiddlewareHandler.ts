@@ -4,11 +4,7 @@ import * as httpStatus from 'http-status-codes';
 import { AccessRights } from 'j2utils';
 
 import { UserFromToken } from '../../../../application-layer/drydock/core/cqrs/UserDto';
-import {
-    ApplicationException,
-    AuthorizationException,
-    BusinessException,
-} from '../../../../bll/drydock/core/exceptions';
+import { AuthorizationException, BusinessException } from '../../../../bll/drydock/core/exceptions';
 import { log } from '../../../../logger';
 import { ProblemDetails, ProblemDetailsType } from '../ProblemDetails';
 import { ExceptionLogDataDto } from './ExceptionLogDataDto';
@@ -34,7 +30,12 @@ export class MiddlewareHandler {
             const authUser = AccessRights.authorizationDecode(req) as UserFromToken;
             const result = await getResult(req, res, authUser);
 
-            res.status(httpStatus.OK).json(result);
+            res.status(httpStatus.OK);
+            if (result instanceof Buffer) {
+                res.send(result);
+            } else {
+                res.json(result);
+            }
 
             return;
         } catch (exception: unknown) {
@@ -48,7 +49,6 @@ export class MiddlewareHandler {
             const userId = AccessRights.getUserIdFromReq(req);
             const moduleCode = 'project';
             const functionCode = this.functionCode || 'project';
-            const api = 'DryDockAPI';
             const locationId = null;
             const isClient = null;
 
@@ -64,7 +64,7 @@ export class MiddlewareHandler {
                 logData.Details = details;
 
                 // Business exceptions it is expected behavior
-                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
 
                 res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.getJibeError());
 
@@ -77,7 +77,7 @@ export class MiddlewareHandler {
 
                 logData.Details = details;
 
-                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
 
                 res.status(httpStatus.FORBIDDEN).json(details.getJibeError());
 
@@ -100,7 +100,7 @@ export class MiddlewareHandler {
                     type: ProblemDetailsType.ValidationException,
                 });
                 logData.Details = details;
-                log.warn(message, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+                log.warn(message, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
 
                 res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.getJibeError());
 
@@ -112,7 +112,7 @@ export class MiddlewareHandler {
                 type: ProblemDetailsType.ApplicationException,
             });
             logData.Details = details;
-            log.error(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+            log.error(logMessage, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
             res.status(httpStatus.INTERNAL_SERVER_ERROR).json(details.getJibeError());
         }
     }

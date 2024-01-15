@@ -43,7 +43,7 @@ export class ProjectsSpecificationGridService {
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.ShortDescription
+      width: '123px'
     },
     {
       DisplayText: 'Vessel',
@@ -83,7 +83,7 @@ export class ProjectsSpecificationGridService {
     },
     {
       DisableSort: true,
-      DisplayText: 'Specifications',
+      DisplayText: 'Specifications (Open/Total)',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.Specification),
       IsActive: true,
       IsMandatory: false,
@@ -161,8 +161,7 @@ export class ProjectsSpecificationGridService {
       odataKey: ProjectsGridOdataKeys.ProjectManagerUid
     },
     ShipsYards: {
-      // keep filter options empty for now
-      // webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
+      webApiRequest: this.projectsService.getProjectsShipsYardsRequest(),
       type: 'multiselect',
       listValueKey: 'ShipYardId',
       odataKey: ProjectsGridOdataKeys.ShipYardId
@@ -220,7 +219,6 @@ export class ProjectsSpecificationGridService {
       ValueCode: 'FleetCode',
       FieldID: 0,
       default: false,
-      CoupleID: 0,
       CoupleLabel: 'Project',
       gridName: this.gridName
     },
@@ -244,7 +242,6 @@ export class ProjectsSpecificationGridService {
       ValueCode: 'ProjectTypeCode',
       FieldID: 2,
       default: true,
-      CoupleID: 0,
       CoupleLabel: 'Project',
       gridName: this.gridName
     },
@@ -257,7 +254,6 @@ export class ProjectsSpecificationGridService {
       ValueCode: 'ManagerId',
       FieldID: 3,
       default: true,
-      CoupleID: 0,
       CoupleLabel: 'Project',
       gridName: this.gridName
     },
@@ -270,7 +266,6 @@ export class ProjectsSpecificationGridService {
       ValueCode: 'ProjectStatusId',
       FieldID: 4,
       default: true,
-      CoupleID: 0,
       CoupleLabel: 'Project',
       gridName: this.gridName
     },
@@ -283,7 +278,6 @@ export class ProjectsSpecificationGridService {
       ValueCode: 'ShipYardId',
       FieldID: 5,
       default: true,
-      CoupleID: 0,
       CoupleLabel: 'Project',
       gridName: this.gridName
     },
@@ -294,7 +288,7 @@ export class ProjectsSpecificationGridService {
       ControlType: eFieldControlType.Date,
       DataType: 'datetime',
       Details: 'FromStartDate',
-      DisplayText: 'Start Date',
+      DisplayText: 'Start Date From',
       FieldID: 6,
       FieldName: 'FromStartDate',
       CoupleID: 1,
@@ -310,7 +304,7 @@ export class ProjectsSpecificationGridService {
       ControlType: eFieldControlType.Date,
       DataType: 'datetime',
       Details: 'ToStartDate',
-      DisplayText: 'Start Date',
+      DisplayText: 'Start Date To',
       FieldID: 7,
       FieldName: 'ToStartDate',
       CoupleID: 1,
@@ -326,7 +320,7 @@ export class ProjectsSpecificationGridService {
       ControlType: eFieldControlType.Date,
       DataType: 'datetime',
       Details: 'FromEndDate',
-      DisplayText: 'End Date',
+      DisplayText: 'End Date From',
       FieldID: 8,
       FieldName: 'FromEndDate',
       CoupleID: 2,
@@ -342,7 +336,7 @@ export class ProjectsSpecificationGridService {
       ControlType: eFieldControlType.Date,
       DataType: 'datetime',
       Details: 'ToEndDate',
-      DisplayText: 'End Date',
+      DisplayText: 'End Date To',
       FieldID: 9,
       FieldName: 'ToEndDate',
       CoupleID: 2,
@@ -459,7 +453,6 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Dropdown,
               sectionID: this.createProjectFormId,
               enabled: true,
-              validatorRequired: true,
               gridRowStart: 5,
               gridRowEnd: 6,
               gridColStart: 1,
@@ -475,7 +468,6 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Date,
               sectionID: this.createProjectFormId,
               enabled: true,
-              validatorRequired: true,
               gridRowStart: 6,
               gridRowEnd: 7,
               gridColStart: 1,
@@ -487,7 +479,6 @@ export class ProjectsSpecificationGridService {
               type: eFieldControlType.Date,
               sectionID: this.createProjectFormId,
               enabled: true,
-              validatorRequired: true,
               gridRowStart: 7,
               gridRowEnd: 8,
               gridColStart: 1,

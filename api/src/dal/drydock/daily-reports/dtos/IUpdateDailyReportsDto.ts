@@ -3,4 +3,5 @@ export interface IUpdateDailyReportsDto {
     ReportName: string;
     UserUid: string;
     UpdatedAt: Date;
+    Body: string;
 }

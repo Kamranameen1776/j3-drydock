@@ -34,7 +34,7 @@ const startServer = async () => {
             console.log(`Node server listening on http://localhost:${PORT}`);
         });
     } catch (error) {
-        await log.error(error);
+        await log.error(error, 'Error starting server');
 
         await databaseConnection?.close();
 
@@ -45,11 +45,11 @@ const startServer = async () => {
 startServer();
 
 process.on('uncaughtException', (err) => {
-    log.error('Caught exception:', err);
+    log.error(err, 'Uncaught exception');
 });
 
 process.on('unhandledRejection', (err) => {
-    log.error('Unhandled rejection:', err);
+    log.error(err, 'Unhandled rejection');
 });
 
 export = { app, server };

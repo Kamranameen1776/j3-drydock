@@ -39,10 +39,15 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   }
 
   get jobFormValue() {
-    return this.popupForm?.formGroup.getRawValue()[this.formService.formId];
+    return this.popupForm?.formGroup.getRawValue();
   }
+
+  get functionUid() {
+    return this.popupForm?.formGroup.getRawValue()[this.formService.formId]?.function?.Child_ID;
+  }
+
   // TODO fixme to relevant values and use them from eModuleCode and eFunctionCode from jibe-components
-  attachmentConfig: IJbAttachment = { Module_Code: 'j3_drydock', Function_Code: 'standard_jobs' };
+  attachmentConfig: IJbAttachment = { Module_Code: 'j3_drydock', Function_Code: 'standard_job' };
 
   attachmentButton = {
     buttonLabel: 'Add New',
@@ -103,7 +108,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   }
 
   private setPopupFooter() {
-    this.okLabel = 'Save';
+    this.okLabel = 'Save & Close';
   }
 
   private closePopup(isSaved = false) {

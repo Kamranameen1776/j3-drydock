@@ -69,7 +69,7 @@ export class JobOrdersGridService {
       width: eGridColumnsWidth.ShortDescription
     },
     {
-      DisplayText: 'Responsible',
+      DisplayText: 'Assigned To',
       FieldName: nameOf<IJobOrderDto>((prop) => prop.Responsible),
       IsActive: true,
       IsMandatory: true,

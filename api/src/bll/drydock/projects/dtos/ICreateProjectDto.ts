@@ -19,6 +19,7 @@ export class CreateProjectDto {
     @MaxLength(200)
     Subject: string;
 
+    @IsOptional()
     @IsUUID('4')
     ProjectManagerUid: string;
 

@@ -11,11 +11,12 @@ import { ActivatedRoute } from '@angular/router';
 import { FormGroupDirective } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
-import { currentLocalAsUTC } from '../../../../utils/date';
+import { UTCAsLocal, currentLocalAsUTC, localToUTC } from '../../../../utils/date';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
 import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
 import { IJobOrdersFormComponent } from '../job-orders-form/IJobOrdersFormComponent';
 import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormResultDto';
+import { statusProgressBarBackground } from '../../../../shared/status-css.json';
 
 @Component({
   selector: 'jb-job-orders',
@@ -25,6 +26,7 @@ import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormRes
 })
 export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
   @ViewChild('lastUpdatedTemplate', { static: true }) lastUpdatedTemplate: TemplateRef<unknown>;
+  @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
 
   @Input() projectId: string;
 
@@ -44,9 +46,11 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, 
 
   public updateDialogVisible = false;
 
-  updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Details' };
+  updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Job Order' };
 
   updateJobOrderButtonDisabled = false;
+
+  statusCSS = { statusProgressBarBackground: statusProgressBarBackground };
 
   constructor(
     private jobOrdersGridService: JobOrdersGridService,
@@ -91,8 +95,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, 
             jobOrderForm.Remarks = jobOrder.Remarks;
             jobOrderForm.Subject = jobOrder.Subject;
             jobOrderForm.Status = jobOrder.Status;
-            jobOrderForm.SpecificationStartDate = jobOrder.SpecificationStartDate;
-            jobOrderForm.SpecificationEndDate = jobOrder.SpecificationEndDate;
+            jobOrderForm.SpecificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate).toISOString();
+            jobOrderForm.SpecificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate).toISOString();
           }
 
           this.jobOrderForm.init(jobOrderForm);
@@ -123,8 +127,8 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, 
       LastUpdated: currentLocalAsUTC(),
       Progress: jobOrder.Progress,
 
-      SpecificationStartDate: jobOrder.SpecificationStartDate,
-      SpecificationEndDate: jobOrder.SpecificationEndDate,
+      SpecificationStartDate: localToUTC(jobOrder.SpecificationStartDate),
+      SpecificationEndDate: localToUTC(jobOrder.SpecificationEndDate),
 
       Status: jobOrder.Status,
       Subject: jobOrder.Subject,
@@ -160,6 +164,7 @@ export class JobOrdersComponent extends UnsubscribeComponent implements OnInit, 
     this.gridInputs = this.jobOrdersGridService.getGridInputs();
     this.setGridActions();
     this.setCellTemplate(this.lastUpdatedTemplate, 'LastUpdated');
+    this.setCellTemplate(this.statusTemplate, 'SpecificationStatus');
   }
 
   private setGridActions() {

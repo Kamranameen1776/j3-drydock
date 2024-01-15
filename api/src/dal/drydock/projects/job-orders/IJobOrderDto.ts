@@ -8,10 +8,11 @@ export interface IJobOrderDto {
     ItemSource: string;
 
     SpecificationStatus: string;
+    SpecificationStatusCode: string;
 
     Progress: number;
 
-    Responsible: string;
+    DoneBy: string;
 
     LastUpdated: Date;
 

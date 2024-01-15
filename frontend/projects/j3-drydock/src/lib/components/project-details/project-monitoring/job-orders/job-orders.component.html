@@ -10,6 +10,7 @@
     [sortField]="gridInputs.sortField"
     [sortOrder]="gridInputs.sortOrder"
     [getStyleByContainer]="true"
+    [isDisplayAdvancedFilter]="false"
     (action)="onGridAction($any($event), $event?.payload)"
     (cellPlainTextClick)="onCellPlainTextClick($event)"
     (matrixRequestChanged)="onMatrixRequestChanged()"
@@ -21,6 +22,16 @@
   let-rowData
 >
   <jb-drydock-grid-cell-popover [value]="rowData.LastUpdated | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
+</ng-template>
+
+<ng-template
+  #statusTemplate
+  let-rowData
+>
+  <jb-current-status
+    [status]="rowData.SpecificationStatus"
+    [statusColor]="statusCSS.statusProgressBarBackground[rowData.SpecificationStatusCode]"
+  ></jb-current-status>
 </ng-template>
 
 <jb-dialog

@@ -8,6 +8,7 @@ import { IProjectStatusDto } from './dtos/IProjectStatusDto';
 import { eModule } from '../models/enums/module.enum';
 import { eFunction } from '../models/enums/function.enum';
 import { eProjectsAccessActions } from '../models/enums/access-actions.enum';
+import { FileService } from './file.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ import { eProjectsAccessActions } from '../models/enums/access-actions.enum';
 export class ProjectsService {
   constructor(
     private apiRequestService: ApiRequestService,
+    private api: FileService,
     private userRights: UserRightsService
   ) {}
 
@@ -90,7 +92,7 @@ export class ProjectsService {
     return apiRequest;
   }
 
-  public getProjectStatuses(): Observable<IProjectStatusDto> {
+  public getProjectStatuses(): Observable<IProjectStatusDto[]> {
     const apiRequest = this.getProjectStatusesRequest();
 
     return this.apiRequestService.sendApiReq(apiRequest);
@@ -170,5 +172,9 @@ export class ProjectsService {
 
   public hasAccess(action: eProjectsAccessActions, func = eFunction.DryDock): boolean {
     return !!this.userRights.getUserRights(eModule.Project, func, action);
+  }
+
+  exportExcel(projectId: string, yardId: string): Observable<Blob> {
+    return this.api.getFile(`yards/get-yards-report?ProjectUid=${projectId}&YardUid=${yardId}`, null, null, null, 'dryDockAPI');
   }
 }

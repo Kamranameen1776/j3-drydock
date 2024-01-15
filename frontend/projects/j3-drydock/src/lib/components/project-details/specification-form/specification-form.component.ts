@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { FormModel, FormValues } from 'jibe-components';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormModel, FormValues, UserService } from 'jibe-components';
 import { SpecificationCreateFormService } from './specification-create-form-service';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
+import { EditorConfig } from '../../../models/interfaces/EditorConfig';
 
 @Component({
   selector: 'jb-specification-form',
@@ -13,6 +14,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class SpecificationFormComponent extends UnsubscribeComponent implements OnInit {
   @Input() formStructure: FormModel;
+  @Input() projectId: string;
 
   @ViewChild('treeTemplate', { static: true }) treeTemplate: TemplateRef<unknown>;
 
@@ -26,18 +28,34 @@ export class SpecificationFormComponent extends UnsubscribeComponent implements 
 
   functionsFlatTree$ = this.popupFormService.functionsFlatTree$;
 
-  constructor(private popupFormService: SpecificationCreateFormService) {
+  editorsFormGroup: FormGroup = new FormGroup({
+    description: new FormControl('', Validators.required)
+  });
+
+  descriptionEditorConfig: EditorConfig;
+
+  constructor(
+    private popupFormService: SpecificationCreateFormService,
+    private userService: UserService
+  ) {
     super();
   }
 
   ngOnInit(): void {
     this.setFunctionConfig();
+
+    const key1 = this.projectId;
+    const vesselId = this.userService.getUserDetails().VesselId;
+
+    this.descriptionEditorConfig = this.popupFormService.getDescriptionEditorConfig(key1, vesselId);
   }
 
   dispatchForm(event: FormGroup) {
     this.formGroup = event;
 
     this.listenFormValid();
+
+    this.setEditorsForm();
   }
 
   private listenFormValid() {
@@ -54,5 +72,9 @@ export class SpecificationFormComponent extends UnsubscribeComponent implements 
       return;
     }
     field.inputWithDlgConfig.dlgTemplate = this.treeTemplate;
+  }
+
+  private setEditorsForm() {
+    this.formGroup.addControl(this.popupFormService.editors, this.editorsFormGroup);
   }
 }

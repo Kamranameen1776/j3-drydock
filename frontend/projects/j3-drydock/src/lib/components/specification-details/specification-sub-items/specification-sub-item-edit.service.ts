@@ -37,11 +37,13 @@ export class SpecificationSubItemEditService extends FormServiceBase {
             type: eFieldControlType.Text,
             sectionID: this.formId,
             enabled: true,
-            validatorRequired: false,
+            validatorRequired: true,
             gridRowStart: 1,
             gridRowEnd: 2,
             gridColStart: 1,
-            gridColEnd: 2
+            gridColEnd: 2,
+            minLength: 1,
+            maxLength: 200
           },
           [eSpecificationDetailsSubItemsFields.UnitUid]: {
             label: eSpecificationDetailsSubItemsLabels.Unit,
@@ -59,16 +61,17 @@ export class SpecificationSubItemEditService extends FormServiceBase {
               valueKey: 'uid'
             }
           },
-          [`${eSpecificationDetailsSubItemsFields.Quantity}`]: {
+          [eSpecificationDetailsSubItemsFields.Quantity]: {
             label: eSpecificationDetailsSubItemsLabels.Quantity,
             type: eFieldControlType.Number,
             sectionID: this.formId,
             enabled: true,
-            validatorRequired: false,
+            validatorRequired: true,
             gridRowStart: 2,
             gridRowEnd: 3,
             gridColStart: 1,
-            gridColEnd: 2
+            gridColEnd: 2,
+            validatorMin: 0
           },
           [`${eSpecificationDetailsSubItemsFields.UnitPrice}`]: {
             label: eSpecificationDetailsSubItemsLabels.UnitPrice,
@@ -79,7 +82,8 @@ export class SpecificationSubItemEditService extends FormServiceBase {
             gridRowStart: 2,
             gridRowEnd: 3,
             gridColStart: 2,
-            gridColEnd: 3
+            gridColEnd: 3,
+            validatorMin: 0
           },
           [`${eSpecificationDetailsSubItemsFields.Discount}`]: {
             label: eSpecificationDetailsSubItemsLabels.Discount,
@@ -163,9 +167,30 @@ export class SpecificationSubItemEditService extends FormServiceBase {
           unitUid: data[eSpecificationDetailsSubItemsFields.UnitUid],
           quantity: data[eSpecificationDetailsSubItemsFields.Quantity],
           unitPrice: data[eSpecificationDetailsSubItemsFields.UnitPrice],
-          discount: data[eSpecificationDetailsSubItemsFields.Discount],
+          discount: data[eSpecificationDetailsSubItemsFields.Discount] / 100,
           description: data[eSpecificationDetailsSubItemsFields.Description]
         }
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(request);
+  }
+
+  public createSubItem(data: SpecificationSubItem, specificationUid: string): Observable<SpecificationSubItem> {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      entity: 'drydock',
+      action: 'specification-details/sub-items/create-sub-item',
+      crud: eCrud.Post,
+      body: {
+        specificationDetailsUid: specificationUid,
+
+        subject: data[eSpecificationDetailsSubItemsFields.Subject],
+        unitUid: data[eSpecificationDetailsSubItemsFields.UnitUid],
+        quantity: data[eSpecificationDetailsSubItemsFields.Quantity],
+        unitPrice: data[eSpecificationDetailsSubItemsFields.UnitPrice],
+        discount: data[eSpecificationDetailsSubItemsFields.Discount] / 100,
+        description: data[eSpecificationDetailsSubItemsFields.Description]
       }
     };
 

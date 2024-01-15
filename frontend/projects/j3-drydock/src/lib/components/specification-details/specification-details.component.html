@@ -7,6 +7,7 @@
   [functionCode]="functionCode"
   [hideAuditTrail]="true"
   [hideAttachments]="false"
+  [attachmentRights]="accessRights.attachments"
   [showExport]="false"
   [isViewRight]="canView"
   (onWorkflowActions)="onWorkflowAction($event)"
@@ -14,10 +15,11 @@
     specificationDetails: specificationsDetailsTab,
     generalInformation: generalInformation,
     subItems: subItems,
-    requisitions: requisitions
+    pmsJobs: pmsJobs,
+    findings: findings
   }"
-  [ignoreAccessRights]="true"
   [slideMenus]="menu"
+  [ignoreAccessRights]="true"
 >
   <ng-template
     #specificationsDetailsTab
@@ -28,7 +30,7 @@
         <div #generalInformation>
           <jb-specification-general-information
             #SpecificationGeneralInformationComponent
-            *ngIf="specificationDetailsInfo"
+            *ngIf="specificationDetailsInfo && accessRights.generalInformation.view"
             [specificationDetailsInfo]="specificationDetailsInfo"
             (formValue)="validateDetail($event)"
           ></jb-specification-general-information>
@@ -43,13 +45,26 @@
           ></jb-specification-sub-items>
         </div>
       </div>
-      <div *ngSwitchCase="eSideMenuId.Requisitions">
-        <div #requisitions>
-          <jb-specification-requisitions
-            *ngIf="accessRights.requisitions.view"
-            #SpecificationRequisitionsComponent
-            [specificationUid]="specificationUid"
-          ></jb-specification-requisitions>
+      <div *ngSwitchCase="eSideMenuId.PMSJobs">
+        <div #pmsJobs>
+          <jb-linked-pms-jobs-findings
+            #PmsJobsComponent
+            *ngIf="specificationDetailsInfo && accessRights.pmsJobs.view"
+            [validTaskType]="pmsWlType.PmsJob"
+            [specificationDetailsInfo]="specificationDetailsInfo"
+            (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.PMSJobs)"
+          ></jb-linked-pms-jobs-findings>
+        </div>
+      </div>
+      <div *ngSwitchCase="eSideMenuId.Findings">
+        <div #findings>
+          <jb-linked-pms-jobs-findings
+            #FindingsComponent
+            *ngIf="specificationDetailsInfo && accessRights.findings.view"
+            [validTaskType]="pmsWlType.Findings"
+            [specificationDetailsInfo]="specificationDetailsInfo"
+            (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.Findings)"
+          ></jb-linked-pms-jobs-findings>
         </div>
       </div>
     </ng-container>
@@ -61,3 +76,11 @@
   *ngIf="showLoader"
   [theme]="'figma'"
 ></jb-progress-spinner>
+
+<jb-edit-sub-item-popup
+  *ngIf="showEditSubItem"
+  [isOpen]="!!showEditSubItem"
+  [subItemDetails]="subItemDetails"
+  [specificationUid]="specificationDetailsInfo.uid"
+  (closeDialog)="closeDialog($event)"
+></jb-edit-sub-item-popup>

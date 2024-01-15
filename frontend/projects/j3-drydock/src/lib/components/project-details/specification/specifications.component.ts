@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { SpecificationGridService, SpecificationType } from '../../../services/project/specification.service';
 import { GridService, IGridAction, IJbDialog, eGridRefreshType, eGridRowActions, eJbTreeEvents } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
@@ -9,8 +9,9 @@ import { Observable } from 'rxjs';
 import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../../models/interfaces/functions-tree-node';
 import { map, takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../../models/constants/popup';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NewTabService } from '../../../services/new-tab-service';
+import { statusProgressBarBackground } from '../../../shared/status-css.json';
 
 @Component({
   selector: 'jb-specifications',
@@ -21,6 +22,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   @Input() projectId: string;
   @Input() vesselUid: string;
   @Input() vesselType: number;
+  @Output() exportExcel = new EventEmitter();
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
   treeData$: Observable<FunctionsFlatTreeNode[]>;
   gridData: GridInputsWithRequest;
@@ -30,6 +32,8 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   types = [SpecificationType.ALL, SpecificationType.PMS, SpecificationType.FINDINGS, SpecificationType.STANDARD, SpecificationType.ADHOC];
   isCreatePopupVisible = false;
   addFromStandardJobPopupVisible = false;
+
+  statusCSS = { statusProgressBarBackground: statusProgressBarBackground };
 
   deleteSpecificationDialog: IJbDialog = {
     ...getSmallPopup(),
@@ -41,10 +45,11 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   deleteDialogMessage = 'Are you sure want to delete the record?';
   specificationUid: string;
 
-  vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name'> = {
+  vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name' | 'expanded'> = {
     uid: 'vesselParent',
-    name: 'Vessel',
-    parent_function_uid: '0'
+    name: 'Functions',
+    parent_function_uid: '0',
+    expanded: true
   };
 
   constructor(
@@ -52,7 +57,6 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     private formService: SpecificationCreateFormService,
     private functionsService: FunctionsService,
     private gridService: GridService,
-    private router: Router,
     private newTabService: NewTabService,
     private activatedRoute: ActivatedRoute
   ) {
