@@ -299,7 +299,7 @@ export class SpecificationDetailsSubItemsRepository {
         const newSubItem: Partial<SubItem> = {
             ...subItem,
             ...newSubItemCostFactorsExcerpt,
-            cost: calculateCost(newSubItemCostFactorsExcerpt).toString(),
+            cost: calculateCost(newSubItemCostFactorsExcerpt).toFixed(2),
             subject: subItemData.subject,
             description: subItemData.description,
         };
