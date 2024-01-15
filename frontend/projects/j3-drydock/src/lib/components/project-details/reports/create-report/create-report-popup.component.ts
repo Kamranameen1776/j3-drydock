@@ -37,8 +37,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
   });
 
   reportNameText: IJbTextBox = {
-    maxLength: 200,
-    minLength: 1,
+    maxTextLength: 200,
     id: 'reportName',
     pValidateOnly: false,
     style: '',
