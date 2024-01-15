@@ -95,10 +95,10 @@
     <ng-container [ngSwitch]="section.SectionCode">
       <div *ngSwitchCase="eSideMenuId.GanttChart">
         <div #gantt_chart>
-          <jb-gantt-chart
+          <jb-project-gantt-chart
             #ganttChartComponent
             [projectId]="projectUid"
-          ></jb-gantt-chart>
+          ></jb-project-gantt-chart>
         </div>
       </div>
       <div *ngSwitchCase="eSideMenuId.StatementOfFacts">
