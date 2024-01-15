@@ -2,8 +2,8 @@ import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChi
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
-import { map, takeUntil } from 'rxjs/operators';
-import { DayMarkersService, EditService } from '@syncfusion/ej2-angular-gantt';
+import { map, mergeMap, takeUntil } from 'rxjs/operators';
+import { ColumnModel, DayMarkersService, EditService, EditSettingsModel, TimelineSettingsModel } from '@syncfusion/ej2-angular-gantt';
 import {
   statusBackground,
   statusIcon,
@@ -66,7 +66,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     }
   ];
 
-  columns = [
+  columns: ColumnModel[] = [
     {
       // This column is needed for the editing taskbar
 
@@ -130,16 +130,15 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     }
   ];
 
-  editSettings = {
+  editSettings: EditSettingsModel = {
     allowEditing: true,
     allowTaskbarEditing: true
   };
 
-  projectStartDate;
-  projectEndDate;
+  projectStartDate: Date;
+  projectEndDate: Date;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  timelineSettings: any;
+  timelineSettings: TimelineSettingsModel;
 
   statusCSS = { statusBackground: statusBackground, statusIcon: statusIcon };
 
@@ -269,26 +268,30 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       .getJobOrderBySpecification({
         SpecificationUid: event.data.SpecificationUid
       })
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map((jobOrder) => {
+          const data: IUpdateJobOrderDto = {
+            SpecificationUid: jobOrder.SpecificationUid,
+            LastUpdated: currentLocalAsUTC(),
+            Progress: newProgress,
+
+            SpecificationStartDate: newStartDate,
+            SpecificationEndDate: newEndDate,
+
+            // TODO: verify if it is needed optimize this, possibly create a new API service
+            // to save just Progress and SpecificationStartDate and SpecificationEndDate
+            //
+            Status: jobOrder.Status,
+            Subject: jobOrder.Subject,
+            Remarks: jobOrder.Remarks
+          };
+          return data;
+        })
+      )
       .subscribe((jobOrder) => {
-        const data: IUpdateJobOrderDto = {
-          SpecificationUid: jobOrder.SpecificationUid,
-          LastUpdated: currentLocalAsUTC(),
-          Progress: newProgress,
-
-          SpecificationStartDate: newStartDate,
-          SpecificationEndDate: newEndDate,
-
-          // TODO: optimize this, possibly create a new API service
-          // to save just Progress and SpecificationStartDate and SpecificationEndDate
-          //
-          Status: jobOrder.Status,
-          Subject: jobOrder.Subject,
-          Remarks: jobOrder.Remarks
-        };
-
         this.jobOrdersService
-          .updateJobOrder(data)
+          .updateJobOrder(jobOrder)
           .pipe(takeUntil(this.unsubscribe$))
           .subscribe(() => {
             this.ngOnInit();
