@@ -1,6 +1,7 @@
 <jb-growl [content]="growlMessage$ | async"></jb-growl>
 
 <jb-task-manager-details
+  #detailsComponent
   *ngIf="sectionsConfig"
   [topSectionConfig]="topSectionConfig"
   [customedThreeDotActions]="customedThreeDotActions"
