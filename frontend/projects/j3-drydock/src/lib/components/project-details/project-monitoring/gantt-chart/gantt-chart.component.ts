@@ -268,8 +268,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       .getJobOrderBySpecification({
         SpecificationUid: event.data.SpecificationUid
       })
+      .pipe(takeUntil(this.unsubscribe$))
       .pipe(
-        takeUntil(this.unsubscribe$),
         map((jobOrder) => {
           const data: IUpdateJobOrderDto = {
             SpecificationUid: jobOrder.SpecificationUid,
