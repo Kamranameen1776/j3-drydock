@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChi
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
-import { map, mergeMap, takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { ColumnModel, DayMarkersService, EditService, EditSettingsModel, TimelineSettingsModel } from '@syncfusion/ej2-angular-gantt';
 import {
   statusBackground,
