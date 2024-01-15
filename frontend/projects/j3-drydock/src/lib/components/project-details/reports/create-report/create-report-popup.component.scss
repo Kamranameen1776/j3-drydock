@@ -12,6 +12,10 @@
   }
 
   .report-label {
+    @include form-label;
+  }
+
+  .report-label-required {
     @include form-label(true);
   }
 
