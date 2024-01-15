@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChi
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, mergeMap, takeUntil } from 'rxjs/operators';
 import { ColumnModel, DayMarkersService, EditService, EditSettingsModel, TimelineSettingsModel } from '@syncfusion/ej2-angular-gantt';
 import {
   statusBackground,
@@ -269,7 +269,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
         SpecificationUid: event.data.SpecificationUid
       })
       .pipe(
-        takeUntil(this.unsubscribe$),
         map((jobOrder) => {
           const data: IUpdateJobOrderDto = {
             SpecificationUid: jobOrder.SpecificationUid,
@@ -287,15 +286,12 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
             Remarks: jobOrder.Remarks
           };
           return data;
-        })
+        }),
+        mergeMap((data) => this.jobOrdersService.updateJobOrder(data))
       )
-      .subscribe((jobOrder) => {
-        this.jobOrdersService
-          .updateJobOrder(jobOrder)
-          .pipe(takeUntil(this.unsubscribe$))
-          .subscribe(() => {
-            this.ngOnInit();
-          });
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.ngOnInit();
       });
   }
 
