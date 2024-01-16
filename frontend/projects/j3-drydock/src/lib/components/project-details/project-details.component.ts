@@ -25,7 +25,7 @@ import { ProjectDetailsAccessRights, ProjectDetailsService } from './project-det
 import { TaskManagerService } from '../../services/task-manager.service';
 import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/project-details';
 import { projectDetailsMenuData } from './project-details-menu';
-import { eProjectDetailsSideMenuId, eProjectWorkflowStatusAction } from '../../models/enums/project-details.enum';
+import { eProjectDetailsSideMenuId } from '../../models/enums/project-details.enum';
 import { SpecificationsComponent } from './specification/specifications.component';
 import { RfqComponent } from './yard/rfq/rfq.component';
 import { ProjectsService } from '../../services/ProjectsService';
@@ -153,7 +153,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       )
       .subscribe((projectId) => {
         this.projectUid = projectId;
-        this.titleService.setTitle('');
         this.getDetails();
       });
 
@@ -348,7 +347,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   private setMenuByAccessRights() {
     this.menu = cloneDeep(projectDetailsMenuData);
 
-    if (!this.isCurrentStatusComplete()) {
+    if (this.projectDetailsService.isStatusBeforeComplete(this.tmDetails.ProjectStatusId)) {
       this.menu = this.hideMenuItem(this.menu, eProjectDetailsSideMenuId.ProjectMonitoring);
       this.menu = this.hideMenuItem(this.menu, eProjectDetailsSideMenuId.Reporting);
 
@@ -423,9 +422,5 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     }
 
     return true;
-  }
-
-  private isCurrentStatusComplete() {
-    return this.projectDetailsService.areStatusesSame(this.tmDetails.ProjectStatusId, eProjectWorkflowStatusAction.Complete);
   }
 }
