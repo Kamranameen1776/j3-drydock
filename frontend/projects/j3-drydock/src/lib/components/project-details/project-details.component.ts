@@ -36,6 +36,7 @@ import { StatementOfFactsComponent } from './project-monitoring/statement-of-fac
 import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
 import { getFileNameDate } from '../../shared/functions/file-name';
 import { localDateJbStringAsUTC } from '../../utils/date';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'jb-project-details',
@@ -53,10 +54,11 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild(eProjectDetailsSideMenuId.TechnicalSpecification) [eProjectDetailsSideMenuId.TechnicalSpecification]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.Attachments) [eProjectDetailsSideMenuId.Attachments]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.RFQ) [eProjectDetailsSideMenuId.RFQ]: ElementRef;
+  @ViewChild(eProjectDetailsSideMenuId.GanttChart) [eProjectDetailsSideMenuId.GanttChart]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.StatementOfFacts) [eProjectDetailsSideMenuId.StatementOfFacts]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.JobOrders) [eProjectDetailsSideMenuId.JobOrders]: ElementRef;
+  @ViewChild(eProjectDetailsSideMenuId.CostUpdates) [eProjectDetailsSideMenuId.CostUpdates]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.DailyReports) [eProjectDetailsSideMenuId.DailyReports]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.GanttChart) [eProjectDetailsSideMenuId.GanttChart]: ElementRef;
 
   moduleCode = eModule.Project;
   functionCode = eFunction.DryDock;
@@ -88,6 +90,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   specificationsCreateNewItems: { label: string; command: () => void }[];
 
+  updateCostsPayload = {};
+  showLoader = false;
   get canView() {
     return this.accessRights?.view;
   }
@@ -281,6 +285,11 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       });
   }
 
+  updatesCostsData(data) {
+    this.jbTMDtlSrv.isUnsavedChanges.next(true);
+    this.updateCostsPayload = data;
+  }
+
   private saveRecord(event) {
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
     // TODO add validations here if needed
@@ -298,15 +307,24 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
 
-    this.projectDetailsService
-      .save(this.projectUid, {
+    this.showLoader = true;
+    forkJoin([
+      this.projectDetailsService.saveCostUpdates(this.updateCostsPayload),
+      this.projectDetailsService.save(this.projectUid, {
         ...data
       })
-      .subscribe(() => {
+    ]).subscribe(
+      () => {
         // TODO reset here forms, etc if needed
         this.getDetails(true);
         this.jbTMDtlSrv.isUnsavedChanges.next(false);
-      });
+        this.showLoader = false;
+      },
+      (error) => {
+        this.showLoader = false;
+        this.growlMessageService.setErrorMessage(error.error.message);
+      }
+    );
   }
 
   private deleteRecord() {

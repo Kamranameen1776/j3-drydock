@@ -9,6 +9,7 @@ import { eModule } from '../models/enums/module.enum';
 import { eFunction } from '../models/enums/function.enum';
 import { eProjectsAccessActions } from '../models/enums/access-actions.enum';
 import { FileService } from './file.service';
+import { UpdateCostsDto } from '../models/dto/specification-details/ISpecificationCostUpdateDto';
 
 @Injectable({
   providedIn: 'root'
@@ -125,6 +126,18 @@ export class ProjectsService {
     const apiRequest: WebApiRequest = {
       apiBase: 'dryDockAPI',
       action: 'projects/update-project',
+      crud: eCrud.Put,
+      entity: 'drydock',
+      body: data
+    };
+
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
+  public updateCosts(data: UpdateCostsDto): Observable<any> {
+    const apiRequest: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      action: 'specification-details/sub-items/update-sub-item-utilized',
       crud: eCrud.Put,
       entity: 'drydock',
       body: data
