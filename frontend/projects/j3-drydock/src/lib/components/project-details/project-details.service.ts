@@ -322,6 +322,17 @@ export class ProjectDetailsService {
             SectionLabel: eProjectDetailsSideMenuLabel.JobOrders,
             IconClass: 'icons8-more-details-2',
             isAddNewButton: false
+          },
+          {
+            GridRowStart: 4,
+            GridRowEnd: 5,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
+            SectionCode: eProjectDetailsSideMenuId.CostUpdates,
+            SectionLabel: eProjectDetailsSideMenuLabel.CostUpdates,
+            IconClass: 'icons8-more-details-2',
+            isAddNewButton: false
           }
         ]
       },
@@ -362,6 +373,10 @@ export class ProjectDetailsService {
     };
 
     return this.projectsService.updateProject(data);
+  }
+
+  saveCostUpdates(payload) {
+    return this.projectsService.updateCosts(payload);
   }
 
   isStatusBeforeComplete(status: string) {

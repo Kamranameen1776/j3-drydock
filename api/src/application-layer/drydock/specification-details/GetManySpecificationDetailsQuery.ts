@@ -1,7 +1,7 @@
 import { Request } from 'express';
 
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
-import { SpecificationDetailsEntity } from '../../../entity/drydock/SpecificationDetailsEntity';
+import { SpecificationDetailsEntity } from '../../../entity/drydock';
 import { GridFilter } from '../../../shared/interfaces/GridFilter';
 import { Query } from '../core/cqrs/Query';
 import {

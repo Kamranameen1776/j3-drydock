@@ -26,6 +26,7 @@
     gantt_chart: gantt_chart,
     statement_of_facts: statement_of_facts,
     job_orders: job_orders,
+    cost_updates: cost_updates,
     reporting: reportingTab
   }"
   [sectionHeaderTemplateRef]="{ technical_specification: specificationsButtonsTmpl }"
@@ -115,6 +116,14 @@
           <jb-job-orders [projectId]="projectUid"></jb-job-orders>
         </div>
       </div>
+      <div *ngSwitchCase="eSideMenuId.CostUpdates">
+        <div #cost_updates>
+          <jb-cost-updates
+            [projectId]="projectUid"
+            (updatesCostsData)="updatesCostsData($event)"
+          ></jb-cost-updates>
+        </div>
+      </div>
     </ng-container>
   </ng-template>
 </jb-task-manager-details>
@@ -148,3 +157,9 @@
     [model]="specificationsCreateNewItems"
   ></jb-split-button>
 </ng-template>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>

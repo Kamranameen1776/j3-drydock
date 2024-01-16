@@ -38,7 +38,7 @@ export class GetAllAppliedJobOrdersQuery extends Query<Request, ODataResult<IJob
      * @returns All Job Orders(specifications) by project
      */
     protected async MainHandlerAsync(request: Request): Promise<ODataResult<IJobOrderDto>> {
-        const data = await this.repository.GetAllAppliedJobOrders(request);
+        const data = await this.repository.GetJobOrders(request);
 
         return data;
     }

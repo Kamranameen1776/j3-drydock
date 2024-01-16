@@ -105,4 +105,12 @@
   .gantt-day-of-week{
     font-size: 9px;
   }
+
+  th>.e-headercelldiv>.gantt-grid-header{
+    padding-top: 35px;
+  }
+
+  .e-gantt-chart-pane{
+    border-top: 1px solid #d8d8d8;
+  }
 }

@@ -102,7 +102,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
     this.remarksEditor.key1 = jobOrderFormDto.SpecificationUid;
     this.remarksEditor.vesselId = this.userService.getUserDetails().VesselId;
 
-    this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(jobOrderFormDto.Remarks);
+    this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(jobOrderFormDto.Remarks ?? '');
     controls.Subject.setValue(jobOrderFormDto.Subject);
     controls.Status.setValue(jobOrderFormDto.Status);
 

@@ -45,16 +45,24 @@ export class SubItemEditableProps {
     @IsNormalNumber()
     @IsPositive()
     @IsOptional()
-    readonly unitPrice: number;
+    readonly unitPrice: string;
 
     @Type(() => Number)
     @IsNormalNumber()
     @Min(DISCOUNT_MIN)
     @Max(DISCOUNT_MAX)
     @IsOptional()
-    readonly discount: number;
+    readonly discount: string;
 
     @IsString()
     @IsOptional()
     readonly description: string;
+
+    @IsUUID('4', { each: true })
+    @IsOptional()
+    readonly pmsJobUid: string[];
+
+    @IsUUID('4', { each: true })
+    @IsOptional()
+    readonly findingUid: string[];
 }

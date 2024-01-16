@@ -9,6 +9,7 @@ import { LinkSpecificationRequisitionsRequestDto } from '../../../application-la
 import { UpdateSpecificationPmsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationPMSRequestDto';
 import { SpecificationDetailsGridFiltersKeys } from '../../../application-layer/drydock/specification-details/SpecificationDetailsConstants';
 import { className } from '../../../common/drydock/ts-helpers/className';
+import { Req } from '../../../common/drydock/ts-helpers/req-res';
 import {
     ItemName,
     J3PrcCompanyRegistryEntity,
@@ -46,6 +47,10 @@ import {
     SpecificationDetailsResultDto,
 } from './dtos';
 import { CreateSpecificationFromStandardJobDto } from './dtos/ICreateSpecificationFromStandardJobDto';
+import {
+    SpecificationCostUpdateQueryResult,
+    SpecificationCostUpdateRequestDto,
+} from './dtos/ISpecificationCostUpdateDto';
 
 export class SpecificationDetailsRepository {
     public async getSpecificationStatuses(isOffice: number | undefined, queryRunner: QueryRunner) {
@@ -258,6 +263,36 @@ export class SpecificationDetailsRepository {
                 `Method: GetSpecificationDetails / Class: SpecificationDetailsRepository / Error: ${error}`,
             );
         }
+    }
+
+    public async getSpecificationCostUpdates(
+        data: Req<SpecificationCostUpdateRequestDto>,
+    ): Promise<ODataResult<SpecificationCostUpdateQueryResult>> {
+        const oDataService = new ODataService(data, getConnection);
+
+        const query = getManager()
+            .createQueryBuilder(SpecificationDetailsEntity, 'sd')
+            .select([
+                'sd.uid as uid',
+                'sd.subject as subject',
+                'sd.item_number as itemNumber',
+                'sd.description as description',
+                'sdsi.uid as subItemUid',
+                'sdsi.subject as subItemSubject',
+                'sdsi.cost as subItemCost',
+                'sdsi.utilized as subItemUtilized',
+                'tm.Code as code',
+                'tm.Status as status',
+            ])
+            .innerJoin(className(SpecificationDetailsSubItemEntity), 'sdsi', 'sd.uid = sdsi.specification_details_uid')
+            .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
+            .innerJoin(className(ProjectEntity), 'proj', 'sd.project_uid = proj.uid')
+            .where('sd.active_status = 1')
+            .andWhere(`proj.uid = :projectUid`, { projectUid: data.body.projectUid });
+
+        const [sql, parameters] = query.getQueryAndParameters();
+
+        return oDataService.getJoinResult(sql, parameters);
     }
 
     public async CreateSpecificationDetails(data: ICreateSpecificationDetailsDto, queryRunner: QueryRunner) {
@@ -473,12 +508,10 @@ export class SpecificationDetailsRepository {
     public async TryGetSpecification(specificationUid: string): Promise<SpecificationDetailsEntity | undefined> {
         const jobOrdersRepository = getManager().getRepository(SpecificationDetailsEntity);
 
-        const jobOrder = await jobOrdersRepository.findOne({
+        return jobOrdersRepository.findOne({
             where: {
                 uid: specificationUid,
             },
         });
-
-        return jobOrder;
     }
 }

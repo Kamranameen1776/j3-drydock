@@ -1,6 +1,6 @@
 {
   "name": "@j3-drydock/api",
-  "version": "3.241.133",
+  "version": "3.241.134",
   "description": "DryDock API",
   "main": "src/index.ts",
   "engines": {
@@ -43,6 +43,7 @@
     "class-transformer": "0.5.1",
     "class-validator": "0.14.0",
     "cors": "2.8.5",
+    "decimal.js": "10.4.3",
     "exceljs": "4.4.0",
     "express": "4.18.2",
     "http-status-codes": "1.4.0",
@@ -64,7 +65,7 @@
     "start:build": "node -r dotenv/config build/index.js",
     "local": "nodemon -r dotenv/config src/index.ts",
     "localpm2": "pm2 start . -n %npm_package_name% --watch && concurrently --kill-others \"tsc -w\" \"pm2 logs\"",
-    "test": "jest --forceExit --detectOpenHandles",
+    "test": "jest",
     "test:coverage": "npm run test -- --coverage",
     "test:integration": "npm run test -- --c jest.integration.config.js",
     "test:watch": "jest --watch",
