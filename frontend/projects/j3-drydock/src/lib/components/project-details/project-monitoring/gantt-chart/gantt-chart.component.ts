@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChi
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
-import { map, mergeMap, takeUntil } from 'rxjs/operators';
+import { finalize, map, mergeMap, takeUntil } from 'rxjs/operators';
 import { ColumnModel, DayMarkersService, EditService, EditSettingsModel, TimelineSettingsModel } from '@syncfusion/ej2-angular-gantt';
 import {
   statusBackground,
@@ -48,6 +48,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   dateFormat: string;
 
+  showSpinner: boolean;
+
   tasks: TransformedJobOrder[] = [];
   taskFields = {
     id: 'SpecificationUid',
@@ -57,7 +59,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     progress: 'Progress'
   };
   splitterSettings = {
-    position: '50%'
+    position: '65%'
   };
   eventMarkers = [
     {
@@ -72,61 +74,70 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
       field: 'SpecificationUid',
       headerText: '',
+      allowEditing: false,
       maxWidth: '0',
       minWidth: '0',
       isPrimaryKey: true
     },
     {
       field: 'SpecificationCode',
-      headerText: 'Specification',
-      width: '120',
-      minWidth: '120',
-      maxWidth: '120',
+      headerTemplate: '<div class="gantt-grid-header">Specification</div>',
+      allowEditing: false,
+      width: '80',
+      minWidth: '80',
+      maxWidth: '80',
       template:
         '<span data-name="gantt-grid-specification-code" data-specification-code="${SpecificationCode.Code}"  data-specification-uid="${SpecificationCode.SpecificationUid}" target="_blank" class="gantt-grid-link jb_grid_topCellValue">${SpecificationCode.Code}</span>'
     },
     {
       field: 'SpecificationSubject',
-      headerText: 'Description',
-      width: '150',
-      minWidth: '50'
+      headerTemplate: '<div class="gantt-grid-header">Description</div>',
+      allowEditing: false,
+      width: '80',
+      minWidth: '80'
     },
     {
       field: 'SpecificationStartDateFormatted',
-      headerText: 'Start Date',
-      width: '100',
-      minWidth: '100',
-      maxWidth: '100'
+      headerTemplate: '<div class="gantt-grid-header">Start Date</div>',
+      allowEditing: false,
+      width: '65',
+      minWidth: '65',
+      maxWidth: '65'
     },
     {
       field: 'SpecificationEndDateFormatted',
-      headerText: 'End Date',
-      width: '100',
-      minWidth: '100',
-      maxWidth: '100'
+      headerTemplate: '<div class="gantt-grid-header">Start Date</div>',
+      allowEditing: false,
+      width: '65',
+      minWidth: '65',
+      maxWidth: '65'
     },
     {
       field: 'SpecificationStatus',
-      headerText: 'Status',
-      width: '100',
-      minWidth: '100',
+      headerTemplate: '<div class="gantt-grid-header">Status</div>',
+      allowEditing: false,
+      width: '60',
+      minWidth: '60',
+      maxWidth: '80',
       template:
         '<div class="status-field ${SpecificationStatus.StatusClass}"><i class="${SpecificationStatus.IconClass}"></i>${SpecificationStatus.statusName}</div>'
     },
     {
       field: 'Progress',
-      headerText: 'Progress',
-      width: '80',
-      minWidth: '80',
-      maxWidth: '80',
+      headerTemplate: '<div class="gantt-grid-header">Progress</div>',
+      allowEditing: false,
+      width: '60',
+      minWidth: '60',
+      maxWidth: '60',
       template: '<div>${Progress}%</div>'
     },
     {
       field: 'Responsible',
-      headerText: 'Responsible',
-      width: '100',
-      minWidth: '100',
-      maxWidth: '100'
+      headerTemplate: '<div class="gantt-grid-header">Responsible</div>',
+      allowEditing: false,
+      width: '120',
+      minWidth: '120',
+      maxWidth: '180'
     }
   ];
 
@@ -161,68 +172,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   }
 
   ngOnInit(): void {
-    this.dateFormat = this.userService.getUserDetails().Date_Format.toLocaleUpperCase();
-    this.timelineSettings = {
-      timelineUnitSize: 40,
-      weekendBackground: '#f5f5f5',
-      topTier: {
-        unit: 'Month',
-        formatter: (date: Date) => {
-          const dateStr = moment(date).format(this.dateFormat);
-
-          return dateStr;
-        }
-      },
-      bottomTier: {
-        unit: 'Day',
-        formatter: (date: Date) => {
-          const days = 'SMTWTFS';
-
-          const dayOfWeek = days[date.getDay()];
-          const dayOfMonth = date.getDate();
-          const str = `<span id='gantt-day-of-year-${date.getDay()}' class='gantt-day-of-month'>${dayOfMonth}</span><span class='gantt-day-of-week'>${dayOfWeek}</span>`;
-
-          return str;
-        }
-      }
-    };
-
-    this.ganttChartService
-      .getData(this.projectId)
-      .pipe(
-        map((data) =>
-          data.records.map((jobOrder) => {
-            const specificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate);
-            const specificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate);
-            const obj = {
-              ...jobOrder,
-              SpecificationCode: { Code: jobOrder.Code, SpecificationUid: jobOrder.SpecificationUid },
-              Responsible: jobOrder.Responsible,
-
-              SpecificationStartDateFormatted: moment(specificationStartDate).format(this.dateFormat),
-              SpecificationEndDateFormatted: moment(specificationEndDate).format(this.dateFormat),
-
-              SpecificationStartDate: specificationStartDate,
-              SpecificationEndDate: specificationEndDate,
-
-              Progress: jobOrder.Progress || 0,
-              SpecificationStatus: {
-                status: jobOrder.SpecificationStatusCode,
-                statusName: jobOrder.SpecificationStatus,
-                StatusClass:
-                  this.statusCSS?.statusBackground[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusBackground.RAISE,
-                IconClass: this.statusCSS?.statusIcon[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusIcon.RAISE
-              }
-            };
-
-            return obj;
-          })
-        ),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe((data) => {
-        this.tasks = data;
-      });
+    this.initComponent();
   }
 
   ngAfterViewInit(): void {
@@ -264,6 +214,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       return;
     }
 
+    this.showSpinner = true;
+
     this.jobOrdersService
       .getJobOrderBySpecification({
         SpecificationUid: event.data.SpecificationUid
@@ -284,15 +236,23 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
             //
             Status: jobOrder.Status,
             Subject: jobOrder.Subject,
-            Remarks: jobOrder.Remarks
+            Remarks: jobOrder.Remarks ?? ''
           };
           return data;
         }),
-        mergeMap((data) => this.jobOrdersService.updateJobOrder(data))
+        mergeMap((data) => this.jobOrdersService.updateJobOrder(data)),
+        finalize(() => {
+          this.showSpinner = false;
+        })
       )
-      .subscribe(() => {
-        this.ngOnInit();
-      });
+      .subscribe(
+        () => {
+          this.initComponent();
+        },
+        (error) => {
+          return this.growlMessageService.setErrorMessage(error?.error?.name ?? 'Unexpected error.');
+        }
+      );
   }
 
   public showUpdateDialog(value = true) {
@@ -332,7 +292,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
         this.updateJobOrderButtonDisabled = false;
         this.showUpdateDialog(false);
 
-        this.ngOnInit();
+        this.initComponent();
       });
   }
 
@@ -372,6 +332,77 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
         this.jobOrderForm.init(jobOrderForm);
 
         this.showUpdateDialog(true);
+      });
+  }
+
+  private initComponent(): void {
+    this.dateFormat = this.userService.getUserDetails().Date_Format.toLocaleUpperCase();
+    this.timelineSettings = {
+      timelineUnitSize: 40,
+      weekendBackground: '#f5f5f5',
+      topTier: {
+        unit: 'Month',
+        formatter: (date: Date) => {
+          const dateStr = moment(date).format(this.dateFormat);
+
+          return dateStr;
+        }
+      },
+      bottomTier: {
+        unit: 'Day',
+        formatter: (date: Date) => {
+          const days = 'SMTWTFS';
+
+          const dayOfWeek = days[date.getDay()];
+          const dayOfMonth = date.getDate();
+          const str = `<span id='gantt-day-of-year-${date.getDay()}' class='gantt-day-of-month'>${dayOfMonth}</span><span class='gantt-day-of-week'>${dayOfWeek}</span>`;
+
+          return str;
+        }
+      }
+    };
+
+    this.showSpinner = true;
+
+    this.ganttChartService
+      .getData(this.projectId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        map((data) =>
+          data.records.map((jobOrder) => {
+            const specificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate);
+            const specificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate);
+            const obj = {
+              ...jobOrder,
+              SpecificationCode: { Code: jobOrder.Code, SpecificationUid: jobOrder.SpecificationUid },
+              Responsible: jobOrder.Responsible,
+
+              SpecificationStartDateFormatted: moment(specificationStartDate).format(this.dateFormat),
+              SpecificationEndDateFormatted: moment(specificationEndDate).format(this.dateFormat),
+
+              SpecificationStartDate: specificationStartDate,
+              SpecificationEndDate: specificationEndDate,
+
+              Progress: jobOrder.Progress || 0,
+              SpecificationStatus: {
+                status: jobOrder.SpecificationStatusCode,
+                statusName: jobOrder.SpecificationStatus,
+                StatusClass:
+                  this.statusCSS?.statusBackground[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusBackground.RAISE,
+                IconClass: this.statusCSS?.statusIcon[jobOrder.SpecificationStatusCode.toUpperCase()] || this.statusCSS.statusIcon.RAISE
+              }
+            };
+
+            return obj;
+          })
+        ),
+        finalize(() => {
+          this.showSpinner = false;
+        })
+      )
+      .subscribe((data) => {
+        this.showSpinner = false;
+        this.tasks = data;
       });
   }
 }

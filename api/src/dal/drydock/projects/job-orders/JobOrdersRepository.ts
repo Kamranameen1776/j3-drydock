@@ -24,13 +24,8 @@ export class JobOrdersRepository {
         TaskManagerConstants.specification.status.Closed,
     ];
 
-    public async GetAllAppliedJobOrders(request: Request) {
-        return this.GetJobOrders(request, true);
-    }
-
     public async GetJobOrders(
         request: Request,
-        appliedOnly = false,
         statuses: string[] | null = this.statuses,
     ): Promise<ODataResult<IJobOrderDto>> {
         const SpecificationDetailsRepository = getManager().getRepository(SpecificationDetailsEntity);
@@ -55,21 +50,8 @@ export class JobOrdersRepository {
             .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesn't have type. probably should stay that way
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .innerJoin(className(LibUserEntity), 'usr', 'p.project_manager_Uid = usr.uid and usr.ActiveStatus = 1')
-            .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1');
-
-        if (appliedOnly) {
-            query = query.innerJoin(
-                className(JobOrderEntity),
-                'jo',
-                'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1',
-            );
-        } else {
-            query = query.leftJoin(
-                className(JobOrderEntity),
-                'jo',
-                'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1',
-            );
-        }
+            .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1')
+            .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1');
 
         if (statuses) {
             query = query.innerJoin(
