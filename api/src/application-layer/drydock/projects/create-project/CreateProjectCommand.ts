@@ -6,6 +6,7 @@ import { CreateProjectDto } from '../../../../bll/drydock/projects/dtos/ICreateP
 import { ProjectService } from '../../../../bll/drydock/projects/ProjectService';
 import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { ICreateNewProjectDto } from '../../../../dal/drydock/projects/dtos/ICreateNewProjectDto';
+import { IProjectsForMainPageRecordDto } from '../../../../dal/drydock/projects/dtos/IProjectsForMainPageRecordDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { LibVesselsEntity } from '../../../../entity/drydock/dbo/LibVesselsEntity';
@@ -22,7 +23,7 @@ enum ProjectStates {
     Report = 3,
 }
 
-export class CreateProjectCommand extends Command<CreateProjectDataDto, string> {
+export class CreateProjectCommand extends Command<CreateProjectDataDto, IProjectsForMainPageRecordDto[]> {
     projectsRepository: ProjectsRepository;
     projectsService: ProjectService;
     vesselsRepository: VesselsRepository;
@@ -55,7 +56,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, string> 
      * @param request Project data for creation of the new project
      * @returns New created project result
      */
-    protected async MainHandlerAsync(request: CreateProjectDataDto): Promise<string> {
+    protected async MainHandlerAsync(request: CreateProjectDataDto): Promise<IProjectsForMainPageRecordDto[]> {
         const token: string = request.Token;
         const createProjectDto: CreateProjectDto = request.ProjectDto;
 
@@ -91,7 +92,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, string> 
                 projectId,
                 vessel.VesselId,
             );
-            return projectId;
+            return this.projectsRepository.GetProject(projectId);
         });
 
         return result;
