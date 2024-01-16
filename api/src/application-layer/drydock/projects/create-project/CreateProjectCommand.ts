@@ -92,9 +92,9 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, IProject
                 projectId,
                 vessel.VesselId,
             );
-            return this.projectsRepository.GetProject(projectId);
+            return projectId;
         });
 
-        return result;
+        return this.projectsRepository.GetProject(result);
     }
 }
