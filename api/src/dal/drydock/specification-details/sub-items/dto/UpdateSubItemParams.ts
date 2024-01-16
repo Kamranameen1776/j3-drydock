@@ -16,10 +16,10 @@ class SubItemEditablePropsPartial implements Partial<SubItemEditableProps> {
     readonly quantity?: number;
 
     @IsOptional()
-    readonly unitPrice?: number;
+    readonly unitPrice?: string;
 
     @IsOptional()
-    readonly discount?: number;
+    readonly discount?: string;
 
     @IsOptional()
     readonly description?: string;

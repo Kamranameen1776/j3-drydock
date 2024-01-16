@@ -10,8 +10,9 @@ import { className } from '../../../../common/drydock/ts-helpers/className';
 import { entriesOf } from '../../../../common/drydock/ts-helpers/entries-of';
 import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import {
-    SpecificationDetailsSubItemEntity,
+    calculateCost,
     SpecificationDetailsSubItemEntity as SubItem,
+    type SubItemCostFactorsExcerpt,
 } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { SpecificationSubItemFindingEntity } from '../../../../entity/drydock/SpecificationSubItemFindingEntity';
 import { SpecificationSubItemPmsEntity } from '../../../../entity/drydock/SpecificationSubItemPmsJobEntity';
@@ -26,6 +27,21 @@ import { GetManyParams } from './dto/GetManyParams';
 import { GetSubItemParams } from './dto/GetSubItemParams';
 import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
 import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
+
+export type FindManyRecord = Pick<
+    SubItem,
+    | 'uid'
+    | 'number'
+    | 'subject'
+    | 'quantity'
+    | 'unitPrice'
+    | 'discount'
+    | 'cost'
+    | 'specificationDetailsUid'
+    | 'unitTypeUid'
+    | 'description'
+    | 'unitType'
+>;
 
 export class SpecificationDetailsSubItemsRepository {
     public async findMany(params: FindManyParams): Promise<ODataResult<FindManyRecord>> {
@@ -218,7 +234,7 @@ export class SpecificationDetailsSubItemsRepository {
         const pmsJobs = await getManager()
             .createQueryBuilder(className(SpecificationSubItemPmsEntity), 'sub_item_pms')
             .innerJoin(
-                className(SpecificationDetailsSubItemEntity),
+                className(SubItem),
                 'sub_item',
                 'sub_item.uid = sub_item_pms.specification_sub_item_uid and sub_item.active_status = 1',
             )
@@ -274,11 +290,16 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     private mapSubItemDtoToEntity(subItemData: Partial<CreateSubItemParams>, subItem: Partial<SubItem>): SubItem {
+        const newSubItemCostFactorsExcerpt: SubItemCostFactorsExcerpt = {
+            quantity: subItemData.quantity ?? 0,
+            unitPrice: subItemData.unitPrice ?? '0',
+            discount: subItemData.discount ?? '0',
+        };
+
         const newSubItem: Partial<SubItem> = {
             ...subItem,
-            quantity: subItemData.quantity,
-            unitPrice: subItemData.unitPrice,
-            discount: subItemData.discount ? Number(subItemData.discount.toFixed(2)) : 0,
+            ...newSubItemCostFactorsExcerpt,
+            cost: calculateCost(newSubItemCostFactorsExcerpt).toFixed(2),
             subject: subItemData.subject,
             description: subItemData.description,
         };
@@ -295,20 +316,6 @@ export class SpecificationDetailsSubItemsRepository {
 
         return newSubItem as SubItem;
     }
-}
-
-export interface FindManyRecord {
-    uid: string;
-    number: number;
-    subject: string;
-    quantity: number;
-    unitPrice: string;
-    discount: string;
-    cost: string;
-    specificationDetailsUid: string;
-    unitTypeUid: string;
-    description: string;
-    unitType: string;
 }
 
 export class SpecificationDetailsSubItemNotFoundByUidError extends BusinessException {

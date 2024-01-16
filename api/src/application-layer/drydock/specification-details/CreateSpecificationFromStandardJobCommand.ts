@@ -95,17 +95,16 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<Request,
                 }
 
                 if (subItems.length) {
-                    const newSubItems: SpecificationDetailsSubItemEntity[] = subItems.map((subItem) => {
-                        const item = {
+                    const newSubItems = subItems.map((subItem) => {
+                        return {
                             uid: DataUtilService.newUid(),
                             specificationDetails: {
                                 uid: specification.uid,
                             } as SpecificationDetailsEntity,
                             subject: subItem.subject,
                             active_status: true,
-                            discount: 0,
-                        };
-                        return item as SpecificationDetailsSubItemEntity;
+                            discount: '0',
+                        } as SpecificationDetailsSubItemEntity;
                     });
 
                     specificationSubItems.push(...newSubItems);

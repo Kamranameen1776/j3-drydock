@@ -1,42 +1,79 @@
-import { FindManyRecord } from '../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
+import { Decimal } from 'decimal.js';
 
-export interface SpecificationSubItem {
-    uid?: string;
-    subject?: string;
-    unitUid?: string;
-    quantity?: number;
-    unitPrice?: string;
-    cost: string | object;
-    discount?: number | object;
-    description?: string;
+import { type MergeOverride } from '../../../common/drydock/ts-helpers/merge-override';
+import { type FindManyRecord } from '../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
+import { type HtmlCell } from '../../../shared/interfaces';
+
+interface TotalRow {
+    readonly discount: HtmlCell;
+    readonly cost: HtmlCell;
+    readonly hideActions: boolean;
+    readonly rowCssClass: string;
 }
 
+type WithDiscountFormatted<Value extends object> = MergeOverride<
+    Value,
+    {
+        readonly discount: number;
+    }
+>;
+
+type RecordFormatted = WithDiscountFormatted<FindManyRecord>;
+
+export type Record = RecordFormatted | TotalRow;
+
 export class SpecificationSubItemService {
-    public mapQueryResult(entities: FindManyRecord[]): SpecificationSubItem[] {
-        const data: SpecificationSubItem[] = entities.map((entity) => {
-            return {
-                ...entity,
-                discount: (+entity.discount || 0) * 100,
-            };
-        });
-        if (entities.length > 0) {
-            const totalCost = data.reduce((acc, curr) => acc + (+curr.cost || 0), 0);
-            const totalRow = {
-                discount: {
-                    innerHTML: `<span class="totalCost">Total cost</span><style>.totalCost { font-weight: bold }</style>`,
-                    cellStyle: '',
-                },
-                cost: {
-                    innerHTML: `<span class="totalCost">${totalCost}</span><style>.totalCost { font-weight: bold }</style>`,
-                    cellStyle: '',
-                },
-                hideActions: true,
-                rowCssClass: 'no-actions',
+    protected formatSubItems(subItems: FindManyRecord[]): RecordFormatted[] {
+        const subItemsFormatted: RecordFormatted[] = [];
+
+        for (const subItem of subItems) {
+            const subItemFormatted: RecordFormatted = {
+                ...subItem,
+                discount: new Decimal(subItem.discount || 0).times(100).toNumber(),
+                // TODO: for some reason the cost returned from the database is a number, not a string, we should fix
+                // that and then we can remove this "toFixed()"
+                cost: new Decimal(subItem.cost || 0).toFixed(2),
             };
 
-            data.push(totalRow);
+            subItemsFormatted.push(subItemFormatted);
         }
 
-        return data;
+        return subItemsFormatted;
+    }
+
+    protected calculateTotalRow(subItems: FindManyRecord[]): TotalRow | null {
+        if (subItems.length === 0) {
+            return null;
+        }
+
+        const totalCost = subItems.reduce((sum, subItem) => sum.plus(subItem.cost || 0), new Decimal(0));
+        const totalCostText = totalCost.toFixed(2);
+
+        return {
+            discount: {
+                innerHTML: `<span class="totalCost">Total cost</span><style>.totalCost { font-weight: bold }</style>`,
+                cellStyle: '',
+                value: '',
+            },
+            cost: {
+                innerHTML: `<span class="totalCost">${totalCostText}</span><style>.totalCost { font-weight: bold }</style>`,
+                cellStyle: '',
+                value: '',
+            },
+            hideActions: true,
+            rowCssClass: 'no-actions',
+        };
+    }
+
+    public mapQueryResult(subItems: FindManyRecord[]): Record[] {
+        const recordsFormatted = this.formatSubItems(subItems);
+        const totalRow = this.calculateTotalRow(subItems);
+        const records: Record[] = recordsFormatted;
+
+        if (totalRow != null) {
+            records.push(totalRow);
+        }
+
+        return records;
     }
 }
