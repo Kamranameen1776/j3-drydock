@@ -125,7 +125,7 @@ export class SpecificationGridService {
       width: '70px'
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Code',
       FieldName: 'code',
       hyperlink: true,
@@ -135,7 +135,7 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Subject',
       FieldName: 'subject',
       IsActive: true,
@@ -144,7 +144,7 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Item Source',
       FieldName: 'item_source',
       IsActive: true,
@@ -153,7 +153,7 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Done by',
       FieldName: 'db_done_by',
       IsActive: true,
@@ -162,7 +162,7 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Inspection / Survey',
       FieldName: 'inspection',
       IsActive: true,
@@ -171,7 +171,7 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Status',
       FieldName: 'status',
       IsActive: true,
