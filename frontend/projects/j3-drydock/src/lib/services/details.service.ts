@@ -61,4 +61,8 @@ export class DetailsService extends UnsubscribeComponent {
   hideSubMenuItem<T extends string>(parentMenu: IJbMenuItem, id: T) {
     parentMenu.items = (parentMenu.items as IJbMenuItem[]).filter((item) => item.id !== id);
   }
+
+  getMenuWithHiddenMenuItem<T extends string>(menus: IJbMenuItem[], id: T) {
+    return menus.filter((item) => item.id !== id);
+  }
 }

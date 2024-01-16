@@ -44,9 +44,10 @@ export class SpecificationGeneralInformationComponent implements OnInit {
 
   handleDispatchForm(event: FormGroup) {
     this.formGroup = event;
-    this.formValue.next(event);
 
     this.setEditorsForm();
+
+    this.formValue.next(event);
   }
 
   private setEditorsForm() {

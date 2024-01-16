@@ -1,0 +1,11 @@
+<jb-grid
+  #treeTable
+  class="cost-updates-grid"
+  gridName="gridInputs.gridName"
+  [colData]="gridInputs.columns"
+  [tableDataReq]="gridInputs.request"
+  [showTreeGrid]="true"
+  [disableFeature]="disableFeature"
+  (cellPlainTextClick)="cellPlainTextClick($event)"
+  (cellChange)="onCellChange($event)"
+></jb-grid>

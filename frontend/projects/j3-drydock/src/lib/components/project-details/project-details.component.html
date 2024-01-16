@@ -1,6 +1,7 @@
 <jb-growl [content]="growlMessage$ | async"></jb-growl>
 
 <jb-task-manager-details
+  #detailsComponent
   *ngIf="sectionsConfig"
   [topSectionConfig]="topSectionConfig"
   [customedThreeDotActions]="customedThreeDotActions"
@@ -25,6 +26,7 @@
     gantt_chart: gantt_chart,
     statement_of_facts: statement_of_facts,
     job_orders: job_orders,
+    cost_updates: cost_updates,
     reporting: reportingTab
   }"
   [sectionHeaderTemplateRef]="{ technical_specification: specificationsButtonsTmpl }"
@@ -95,10 +97,10 @@
     <ng-container [ngSwitch]="section.SectionCode">
       <div *ngSwitchCase="eSideMenuId.GanttChart">
         <div #gantt_chart>
-          <jb-gantt-chart
+          <jb-project-gantt-chart
             #ganttChartComponent
             [projectId]="projectUid"
-          ></jb-gantt-chart>
+          ></jb-project-gantt-chart>
         </div>
       </div>
       <div *ngSwitchCase="eSideMenuId.StatementOfFacts">
@@ -112,6 +114,14 @@
       <div *ngSwitchCase="eSideMenuId.JobOrders">
         <div #job_orders>
           <jb-job-orders [projectId]="projectUid"></jb-job-orders>
+        </div>
+      </div>
+      <div *ngSwitchCase="eSideMenuId.CostUpdates">
+        <div #cost_updates>
+          <jb-cost-updates
+            [projectId]="projectUid"
+            (updatesCostsData)="updatesCostsData($event)"
+          ></jb-cost-updates>
         </div>
       </div>
     </ng-container>
@@ -147,3 +157,9 @@
     [model]="specificationsCreateNewItems"
   ></jb-split-button>
 </ng-template>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>
