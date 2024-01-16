@@ -1,7 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { LibSurveyCertificateAuthority } from './dbo/LibSurveyCertificateAuthorityEntity';
-import { J3PrcRequisition } from './prc/J3PrcRequisitionEntity';
+import { LibSurveyCertificateAuthority } from './dbo';
+import { J3PrcRequisition } from './prc';
 import { SpecificationDetailsSubItemEntity } from './SpecificationDetailsSubItemEntity';
 
 @Entity('specification_details', { schema: 'dry_dock' })

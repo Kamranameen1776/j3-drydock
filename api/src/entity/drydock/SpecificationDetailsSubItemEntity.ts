@@ -115,4 +115,12 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         nullable: true,
     })
     cost: string | null;
+
+    @Column({
+        name: 'utilized',
+        type: 'decimal',
+        precision: 10,
+        scale: 4,
+    })
+    utilized: number;
 }
