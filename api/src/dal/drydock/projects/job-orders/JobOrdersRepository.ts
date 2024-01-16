@@ -74,9 +74,8 @@ export class JobOrdersRepository {
             query = query.innerJoin(
                 className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
-                `wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status AND tm.Status IN ('${this.statuses.join(
-                    `','`,
-                )}')`,
+                `wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status AND tm.Status IN (:...tmStatuses)`,
+                { tmStatuses: statuses },
             );
         } else {
             query = query
