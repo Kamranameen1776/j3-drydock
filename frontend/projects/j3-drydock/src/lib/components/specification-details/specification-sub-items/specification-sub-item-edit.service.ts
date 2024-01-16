@@ -8,7 +8,7 @@ import {
   eSpecificationDetailsSubItemsLabels
 } from '../../../models/enums/specification-details-sub-items.enum';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
-import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
+import { CreateSpecificationSubItemData, SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
 import { Observable } from 'rxjs';
 import { SectionModel } from 'jibe-components/lib/interfaces/section.model';
 
@@ -176,7 +176,7 @@ export class SpecificationSubItemEditService extends FormServiceBase {
     return this.apiRequestService.sendApiReq(request);
   }
 
-  public createSubItem(data: SpecificationSubItem, specificationUid: string): Observable<SpecificationSubItem> {
+  public createSubItem(data: CreateSpecificationSubItemData, specificationUid: string): Observable<SpecificationSubItem> {
     const request: WebApiRequest = {
       apiBase: 'dryDockAPI',
       entity: 'drydock',
@@ -190,7 +190,9 @@ export class SpecificationSubItemEditService extends FormServiceBase {
         quantity: data[eSpecificationDetailsSubItemsFields.Quantity],
         unitPrice: data[eSpecificationDetailsSubItemsFields.UnitPrice],
         discount: data[eSpecificationDetailsSubItemsFields.Discount] / 100,
-        description: data[eSpecificationDetailsSubItemsFields.Description]
+        description: data[eSpecificationDetailsSubItemsFields.Description],
+        pmsJobUid: data.pmsJobUid,
+        findingUid: data.findingUid
       }
     };
 

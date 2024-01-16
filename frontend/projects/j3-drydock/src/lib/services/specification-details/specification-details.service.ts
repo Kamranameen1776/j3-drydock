@@ -369,6 +369,36 @@ export class SpecificationDetailsService {
     return !!this.userRights.getUserRights(module, func, action);
   }
 
+  public validatePmsJobDeletion(pmsJobUid: string, specificationUid: string): Observable<boolean> {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      action: 'specification-details/sub-items/validate-pms-job-deletion',
+      crud: eCrud.Post,
+      entity: 'drydock',
+      body: {
+        pmsJobUid,
+        specificationUid
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(request);
+  }
+
+  public validateFindingDeletion(findingUid: string, specificationUid: string): Observable<boolean> {
+    const request: WebApiRequest = {
+      apiBase: 'dryDockAPI',
+      action: 'specification-details/sub-items/validate-finding-deletion',
+      crud: eCrud.Post,
+      entity: 'drydock',
+      body: {
+        findingUid,
+        specificationUid
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(request);
+  }
+
   private setAccessRights(rights: SpecificationDetailAccessRights) {
     this.accessRights = rights;
   }

@@ -26,6 +26,7 @@ import { FindManyParams } from './dto/FindManyParams';
 import { GetManyParams } from './dto/GetManyParams';
 import { GetSubItemParams } from './dto/GetSubItemParams';
 import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
+import { ValidateFindingDeleteDto } from './dto/ValidateFindingDeleteDto';
 import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
 
 export type FindManyRecord = Pick<
@@ -268,9 +269,33 @@ export class SpecificationDetailsSubItemsRepository {
             .where(`sub_item_pms.j3_pms_agg_job_uid = :pmsJobUid`, { pmsJobUid })
             .andWhere(`spec.uid = :specificationUid`, { specificationUid })
             .andWhere('sub_item_pms.active_status = 1')
-            .execute();
+            .getCount();
 
-        return pmsJobs.count > 0;
+        // True if no sub-items are linked to the PMS job
+        return !(pmsJobs > 0);
+    }
+
+    public async validateFindingDelete({ specificationUid, findingUid }: ValidateFindingDeleteDto) {
+        const findings = await getManager()
+            .createQueryBuilder(className(SpecificationSubItemFindingEntity), 'sub_item_finding')
+            .innerJoin(
+                className(SpecificationDetailsSubItemEntity),
+                'sub_item',
+                'sub_item.uid = sub_item_finding.specification_sub_item_uid and sub_item.active_status = 1',
+            )
+            .innerJoin(
+                className(SpecificationDetailsEntity),
+                'spec',
+                'spec.uid = sub_item.specification_details_uid and spec.active_status = 1',
+            )
+            .select('count(sub_item_finding.uid) as count')
+            .where(`sub_item_finding.finding_uid = :findingUid`, { findingUid })
+            .andWhere(`spec.uid = :specificationUid`, { specificationUid })
+            .andWhere('sub_item_finding.active_status = 1')
+            .getCount();
+
+        // True if no sub-items are linked to the PMS job
+        return !(findings > 0);
     }
 
     protected async getManyByUids(
