@@ -106,7 +106,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     },
     {
       field: 'SpecificationEndDateFormatted',
-      headerTemplate: '<div class="gantt-grid-header">Start Date</div>',
+      headerTemplate: '<div class="gantt-grid-header">End Date</div>',
       allowEditing: false,
       width: '65',
       minWidth: '65',
