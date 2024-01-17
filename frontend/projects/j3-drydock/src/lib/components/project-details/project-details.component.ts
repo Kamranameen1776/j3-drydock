@@ -36,7 +36,8 @@ import { StatementOfFactsComponent } from './project-monitoring/statement-of-fac
 import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
 import { getFileNameDate } from '../../shared/functions/file-name';
 import { localDateJbStringAsUTC } from '../../utils/date';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { UpdateCostsDto } from '../../models/dto/specification-details/ISpecificationCostUpdateDto';
 
 @Component({
   selector: 'jb-project-details',
@@ -90,7 +91,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   specificationsCreateNewItems: { label: string; command: () => void }[];
 
-  updateCostsPayload = {};
+  updateCostsPayload: UpdateCostsDto;
   showLoader = false;
   get canView() {
     return this.accessRights?.view;
@@ -308,10 +309,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     }
 
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
-
     this.showLoader = true;
     forkJoin([
-      this.projectDetailsService.saveCostUpdates(this.updateCostsPayload),
+      this.updateCostsPayload?.specificationDetailsUid ? this.projectDetailsService.saveCostUpdates(this.updateCostsPayload) : of(null),
       this.projectDetailsService.save(this.projectUid, {
         ...data
       })
