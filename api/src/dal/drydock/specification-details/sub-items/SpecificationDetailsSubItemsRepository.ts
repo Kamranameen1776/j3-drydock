@@ -45,6 +45,48 @@ export type FindManyRecord = Pick<
 >;
 
 export class SpecificationDetailsSubItemsRepository {
+    public async validateSubItemSpecAgainstProject(
+        SubItemArray: Array<SpecificationDetailsSubItemEntity>,
+        ProjectUid: string,
+        queryRunner: QueryRunner,
+    ) {
+        const specUids = SubItemArray.map((item) => item.specificationDetails.uid);
+        const dbValues = await queryRunner.manager
+            .createQueryBuilder(className(SpecificationDetailsEntity), 'spec')
+            .select('spec.uid as uid')
+            .where(`spec.ActiveStatus = 1`)
+            .andWhere(`spec.ProjectUid = :ProjectUid`, { ProjectUid })
+            .andWhere(`spec.uid IN (:...specUids)`, { specUids })
+            .execute();
+
+        return SubItemArray.filter((item) => {
+            const res = dbValues.find((val: any) => val.uid === item.specificationDetails.uid);
+            return !!res;
+        });
+    }
+    public async validateSubItemsAgainstProject(
+        SubItemArray: Array<SpecificationDetailsSubItemEntity>,
+        ProjectUid: string,
+        queryRunner: QueryRunner,
+    ) {
+        const subItemUids = SubItemArray.map((item) => item.uid);
+        const dbValues = await queryRunner.manager
+            .createQueryBuilder(className(SpecificationDetailsSubItemEntity), 'item')
+            .select('item.uid as uid')
+            .innerJoin(
+                className(SpecificationDetailsEntity),
+                'spec',
+                'item.specification_details_uid = spec.uid and spec.active_status = 1',
+            )
+            .where(`spec.ProjectUid = :ProjectUid`, { ProjectUid })
+            .andWhere(`item.uid IN (:...subItemUids)`, { subItemUids })
+            .execute();
+
+        return SubItemArray.filter((item) => {
+            const res = dbValues.find((val: any) => val.uid === item.uid);
+            return !!res;
+        });
+    }
     public async findMany(params: FindManyParams): Promise<ODataResult<FindManyRecord>> {
         const [script, substitutions] = getManager()
             .createQueryBuilder(SpecificationDetailsSubItemEntity, 'subItem')
@@ -151,6 +193,19 @@ export class SpecificationDetailsSubItemsRepository {
             queryRunner.manager.create(SpecificationDetailsSubItemEntity, data),
         );
         return queryRunner.manager.save(newSubItems);
+    }
+    public async updateMultipleEntities(subItemsData: SpecificationDetailsSubItemEntity[], queryRunner: QueryRunner) {
+        const repository = queryRunner.manager.getRepository(SpecificationDetailsSubItemEntity);
+        const promises = subItemsData.map((entity) => {
+            return repository.update(
+                {
+                    uid: entity.uid,
+                    active_status: true,
+                },
+                entity,
+            );
+        });
+        await Promise.all(promises);
     }
 
     public async updateRawSubItem(subItemData: Partial<SpecificationDetailsSubItemEntity>, queryRunner: QueryRunner) {
