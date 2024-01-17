@@ -1,5 +1,5 @@
 <jb-task-manager-details
-  *ngIf="sectionsConfig && canView"
+  *ngIf="sectionsConfig"
   [topSectionConfig]="topSectionConfig"
   [sectionsConfig]="sectionsConfig"
   [tmDetails]="tmDetails"
@@ -84,3 +84,5 @@
   [specificationUid]="specificationDetailsInfo.uid"
   (closeDialog)="closeDialog($event)"
 ></jb-edit-sub-item-popup>
+
+<jb-growl [content]="growlMessage$ | async"></jb-growl>

@@ -26,6 +26,7 @@ import { FindManyParams } from './dto/FindManyParams';
 import { GetManyParams } from './dto/GetManyParams';
 import { GetSubItemParams } from './dto/GetSubItemParams';
 import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
+import { ValidateFindingDeleteDto } from './dto/ValidateFindingDeleteDto';
 import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
 
 export type FindManyRecord = Pick<
@@ -44,6 +45,48 @@ export type FindManyRecord = Pick<
 >;
 
 export class SpecificationDetailsSubItemsRepository {
+    public async validateSubItemSpecAgainstProject(
+        SubItemArray: Array<SpecificationDetailsSubItemEntity>,
+        ProjectUid: string,
+        queryRunner: QueryRunner,
+    ) {
+        const specUids = SubItemArray.map((item) => item.specificationDetails.uid);
+        const dbValues = await queryRunner.manager
+            .createQueryBuilder(className(SpecificationDetailsEntity), 'spec')
+            .select('spec.uid as uid')
+            .where(`spec.ActiveStatus = 1`)
+            .andWhere(`spec.ProjectUid = :ProjectUid`, { ProjectUid })
+            .andWhere(`spec.uid IN (:...specUids)`, { specUids })
+            .execute();
+
+        return SubItemArray.filter((item) => {
+            const res = dbValues.find((val: any) => val.uid === item.specificationDetails.uid);
+            return !!res;
+        });
+    }
+    public async validateSubItemsAgainstProject(
+        SubItemArray: Array<SpecificationDetailsSubItemEntity>,
+        ProjectUid: string,
+        queryRunner: QueryRunner,
+    ) {
+        const subItemUids = SubItemArray.map((item) => item.uid);
+        const dbValues = await queryRunner.manager
+            .createQueryBuilder(className(SpecificationDetailsSubItemEntity), 'item')
+            .select('item.uid as uid')
+            .innerJoin(
+                className(SpecificationDetailsEntity),
+                'spec',
+                'item.specification_details_uid = spec.uid and spec.active_status = 1',
+            )
+            .where(`spec.ProjectUid = :ProjectUid`, { ProjectUid })
+            .andWhere(`item.uid IN (:...subItemUids)`, { subItemUids })
+            .execute();
+
+        return SubItemArray.filter((item) => {
+            const res = dbValues.find((val: any) => val.uid === item.uid);
+            return !!res;
+        });
+    }
     public async findMany(params: FindManyParams): Promise<ODataResult<FindManyRecord>> {
         const [script, substitutions] = getManager()
             .createQueryBuilder(SpecificationDetailsSubItemEntity, 'subItem')
@@ -150,6 +193,19 @@ export class SpecificationDetailsSubItemsRepository {
             queryRunner.manager.create(SpecificationDetailsSubItemEntity, data),
         );
         return queryRunner.manager.save(newSubItems);
+    }
+    public async updateMultipleEntities(subItemsData: SpecificationDetailsSubItemEntity[], queryRunner: QueryRunner) {
+        const repository = queryRunner.manager.getRepository(SpecificationDetailsSubItemEntity);
+        const promises = subItemsData.map((entity) => {
+            return repository.update(
+                {
+                    uid: entity.uid,
+                    active_status: true,
+                },
+                entity,
+            );
+        });
+        await Promise.all(promises);
     }
 
     public async updateRawSubItem(subItemData: Partial<SpecificationDetailsSubItemEntity>, queryRunner: QueryRunner) {
@@ -268,9 +324,33 @@ export class SpecificationDetailsSubItemsRepository {
             .where(`sub_item_pms.j3_pms_agg_job_uid = :pmsJobUid`, { pmsJobUid })
             .andWhere(`spec.uid = :specificationUid`, { specificationUid })
             .andWhere('sub_item_pms.active_status = 1')
-            .execute();
+            .getCount();
 
-        return pmsJobs.count > 0;
+        // True if no sub-items are linked to the PMS job
+        return !(pmsJobs > 0);
+    }
+
+    public async validateFindingDelete({ specificationUid, findingUid }: ValidateFindingDeleteDto) {
+        const findings = await getManager()
+            .createQueryBuilder(className(SpecificationSubItemFindingEntity), 'sub_item_finding')
+            .innerJoin(
+                className(SpecificationDetailsSubItemEntity),
+                'sub_item',
+                'sub_item.uid = sub_item_finding.specification_sub_item_uid and sub_item.active_status = 1',
+            )
+            .innerJoin(
+                className(SpecificationDetailsEntity),
+                'spec',
+                'spec.uid = sub_item.specification_details_uid and spec.active_status = 1',
+            )
+            .select('count(sub_item_finding.uid) as count')
+            .where(`sub_item_finding.finding_uid = :findingUid`, { findingUid })
+            .andWhere(`spec.uid = :specificationUid`, { specificationUid })
+            .andWhere('sub_item_finding.active_status = 1')
+            .getCount();
+
+        // True if no sub-items are linked to the PMS job
+        return !(findings > 0);
     }
 
     protected async getManyByUids(

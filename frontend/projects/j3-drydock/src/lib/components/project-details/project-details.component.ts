@@ -2,8 +2,10 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import {
   AdvancedSettings,
   IJbAttachment,
+  IJbDialog,
   IJbMenuItem,
   ITopSectionFieldSet,
+  IUploads,
   JbAttachmentsComponent,
   JbDetailsTopSectionService,
   eAttachmentButtonTypes,
@@ -14,7 +16,7 @@ import {
 } from 'jibe-components';
 import { saveAs } from 'file-saver';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
-import { concatMap, filter, map, takeUntil } from 'rxjs/operators';
+import { concatMap, filter, finalize, map, takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { eFunction } from '../../models/enums/function.enum';
@@ -36,7 +38,8 @@ import { StatementOfFactsComponent } from './project-monitoring/statement-of-fac
 import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
 import { getFileNameDate } from '../../shared/functions/file-name';
 import { localDateJbStringAsUTC } from '../../utils/date';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { UpdateCostsDto } from '../../models/dto/specification-details/ISpecificationCostUpdateDto';
 
 @Component({
   selector: 'jb-project-details',
@@ -56,7 +59,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild(eProjectDetailsSideMenuId.RFQ) [eProjectDetailsSideMenuId.RFQ]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.GanttChart) [eProjectDetailsSideMenuId.GanttChart]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.StatementOfFacts) [eProjectDetailsSideMenuId.StatementOfFacts]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.JobOrders) [eProjectDetailsSideMenuId.JobOrders]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.CostUpdates) [eProjectDetailsSideMenuId.CostUpdates]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.DailyReports) [eProjectDetailsSideMenuId.DailyReports]: ElementRef;
 
@@ -70,10 +72,12 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
   customedThreeDotActions: AdvancedSettings[] = [
-    { label: 'Export Excel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
+    { label: 'Export Excel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true },
+    { label: 'Import', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
   ];
   threeDotsActionsShow = {
     'Export Excel': true,
+    Import: true,
     showDefaultLables: false
   };
 
@@ -89,8 +93,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   accessRights: ProjectDetailsAccessRights;
 
   specificationsCreateNewItems: { label: string; command: () => void }[];
+  isImportDialogVisible: boolean;
 
-  updateCostsPayload = {};
+  updateCostsPayload: UpdateCostsDto;
   showLoader = false;
   get canView() {
     return this.accessRights?.view;
@@ -130,6 +135,30 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     return this.tmDetails?.VesselUid;
   }
 
+  importDialogueProperties: IJbDialog = {
+    closableIcon: true,
+    resizableDialog: false,
+    dialogWidth: 470,
+    dialogHeader: 'Import',
+    appendTo: 'body',
+    styleClass: 'jb-dialog-header'
+  };
+
+  uploadConfig: IUploads = {
+    multiple: false,
+    ModuleCode: eModule.Project,
+    FunctionCode: eFunction.DryDock,
+    key1: 'invoice',
+    showUploadButton: true,
+    accept: '.xlsx'
+  };
+
+  okBtnLabel = 'Import';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  syncTo: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fileImportData: any;
+
   growlMessage$ = this.growlMessageService.growlMessage$;
 
   constructor(
@@ -150,12 +179,17 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   ngOnInit(): void {
     this.jbTMDtlSrv.isFormValid = true;
 
+    this.titleService.setTitle(this.route.snapshot.queryParamMap.get('pageTitle'));
+
     this.route.paramMap
       .pipe(
         map((params) => params.get('projectId')),
         takeUntil(this.unsubscribe$)
       )
       .subscribe((projectId) => {
+        if (!projectId) {
+          return;
+        }
         this.projectUid = projectId;
         this.getDetails();
       });
@@ -207,8 +241,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   }
 
   private processWidgetNewBtn(secName: string) {
-    // TODO add check by access rights for each section and hide in configuration for details page instead of here
-
     // eslint-disable-next-line default-case
     switch (secName) {
       case eProjectDetailsSideMenuId.RFQ: {
@@ -239,7 +271,41 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       this.resyncRecord();
     } else if (wfEvent?.event?.type === 'Export Excel') {
       this.exportExcel();
+    } else if (wfEvent?.event?.type === 'Import') {
+      this.importFile();
     }
+  }
+
+  importFile() {
+    this.isImportDialogVisible = true;
+  }
+
+  closeGuidanceDialog() {
+    this.isImportDialogVisible = false;
+  }
+
+  uploadInvoice() {
+    this.showLoader = true;
+    const res = this.projectsService.importFile(this.fileImportData, this.projectUid);
+    res
+      .pipe(
+        finalize(() => {
+          this.showLoader = false;
+          this.isImportDialogVisible = false;
+        })
+      )
+      .subscribe(
+        () => {
+          this.growlMessageService.setSuccessMessage('File has been imported successfully');
+        },
+        (error) => {
+          this.growlMessageService.errorHandler(error);
+        }
+      );
+  }
+
+  onSelectNewFile(event) {
+    this.fileImportData = event.uploadFiles[0];
   }
 
   private getDetails(refresh = false) {
@@ -264,7 +330,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
           this.vesselType = data?.VesselType;
 
-          this.titleService.setTitle(`${projectDetails.ProjectTypeName} ${projectDetails.ProjectCode}`);
           return this.taskManagerService.getWorkflow(projectDetails.TaskManagerUid, projectDetails.ProjectTypeCode);
         }),
         takeUntil(this.unsubscribe$)
@@ -306,10 +371,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     }
 
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
-
     this.showLoader = true;
     forkJoin([
-      this.projectDetailsService.saveCostUpdates(this.updateCostsPayload),
+      this.updateCostsPayload?.specificationDetailsUid ? this.projectDetailsService.saveCostUpdates(this.updateCostsPayload) : of(null),
       this.projectDetailsService.save(this.projectUid, {
         ...data
       })

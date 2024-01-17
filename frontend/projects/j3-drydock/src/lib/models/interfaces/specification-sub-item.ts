@@ -12,3 +12,8 @@ export interface SpecificationSubItem {
   description: string;
   dialogHeader: string;
 }
+
+export interface CreateSpecificationSubItemData extends SpecificationSubItem {
+  pmsJobUid: string[];
+  findingUid: string[];
+}

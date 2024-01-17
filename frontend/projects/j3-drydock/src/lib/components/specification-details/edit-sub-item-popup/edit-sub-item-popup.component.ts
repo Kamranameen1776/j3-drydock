@@ -3,7 +3,7 @@ import { getSmallPopup } from '../../../models/constants/popup';
 import { FormModel, FormValues, IJbDialog } from 'jibe-components';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { FormGroup } from '@angular/forms';
-import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
+import { CreateSpecificationSubItemData, SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
 import { SpecificationSubItemEditService } from '../specification-sub-items/specification-sub-item-edit.service';
 import { GrowlMessageService } from '../../../services/growl-message.service';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -18,7 +18,7 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
   @Input() isOpen: boolean;
   @Input() projectId: string;
   @Input() vesselUid: string;
-  @Input() subItemDetails: SpecificationSubItem;
+  @Input() subItemDetails: CreateSpecificationSubItemData;
   @Input() specificationUid: string;
 
   @Output() closeDialog = new EventEmitter<boolean>();
@@ -82,11 +82,17 @@ export class EditSubItemPopupComponent extends UnsubscribeComponent implements O
     const controls = this.formGroup.controls[this.specificationSubItemEditService.formId];
     value.quantity = controls.get('quantity').value;
 
+    const data = {
+      ...value,
+      pmsJobUid: this.subItemDetails.pmsJobUid,
+      findingUid: this.subItemDetails.findingUid
+    };
+
     let action$: Observable<SpecificationSubItem>;
     if (this.subItemDetails.uid) {
-      action$ = this.specificationSubItemEditService.updateSubItem(value, this.subItemDetails.uid, this.specificationUid);
+      action$ = this.specificationSubItemEditService.updateSubItem(data, this.subItemDetails.uid, this.specificationUid);
     } else {
-      action$ = this.specificationSubItemEditService.createSubItem(value, this.specificationUid);
+      action$ = this.specificationSubItemEditService.createSubItem(data, this.specificationUid);
     }
     action$.subscribe(
       () => {

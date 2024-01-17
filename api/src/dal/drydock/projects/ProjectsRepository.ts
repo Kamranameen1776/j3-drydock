@@ -2,7 +2,7 @@
 // UpdateProjectDto should be a part of the Infrastructure layer(DAL)
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, In, QueryRunner, SelectQueryBuilder } from 'typeorm';
+import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { J3PrcCompanyRegistryEntity, SpecificationDetailsEntity, YardsProjectsEntity } from '../../../entity/drydock';
