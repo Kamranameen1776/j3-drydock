@@ -42,7 +42,6 @@ import { SimpleConfirmationPopupComponent } from './shared/components/simple-con
 import { StatementOfFactsComponent } from './components/project-details/project-monitoring/statement-of-facts/statement-of-facts.component';
 import { ReworkPopupFormComponent } from './shared/components/rework-popup/rework-popup-form/rework-popup-form.component';
 import { ReworkPopupComponent } from './shared/components/rework-popup/rework-popup.component';
-import { JobOrdersComponent } from './components/project-details/project-monitoring/job-orders/job-orders.component';
 import { AddSpecificationFromStandardJobPopupComponent } from './components/project-details/add-specification-from-standard-job-popup/add-specification-from-standard-job-popup.component';
 
 export function winEnv(): unknown {
@@ -106,7 +105,6 @@ import { CostUpdatesComponent } from './components/project-details/project-monit
     ReworkPopupFormComponent,
     ReworkPopupComponent,
     AddSpecificationFromStandardJobPopupComponent,
-    JobOrdersComponent,
     SpecificationRequisitionsComponent,
     EditSubItemPopupComponent,
     UTCAsLocalPipe,

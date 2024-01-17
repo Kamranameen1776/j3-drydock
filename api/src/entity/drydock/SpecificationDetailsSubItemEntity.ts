@@ -117,6 +117,14 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     cost: string | null;
 
     @Column({
+        name: 'yard_comments',
+        type: 'varchar',
+        length: 2048,
+        nullable: true,
+    })
+    yardComments: string;
+
+    @Column({
         name: 'utilized',
         type: 'decimal',
         precision: 10,

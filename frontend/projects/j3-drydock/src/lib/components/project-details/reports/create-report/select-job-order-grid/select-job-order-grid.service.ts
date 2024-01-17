@@ -3,7 +3,7 @@ import { nameOf } from '../../../../../utils/nameOf';
 import { JobOrdersService } from '../../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { GridInputsWithRequest } from '../../../../../models/interfaces/grid-inputs';
 import { Injectable } from '@angular/core';
-import { IJobOrderDto } from '../../../project-monitoring/job-orders/dtos/IJobOrderDto';
+import { IJobOrderDto } from './IJobOrderDto';
 
 @Injectable()
 export class SelectJobOrdersGridService {

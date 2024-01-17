@@ -25,7 +25,6 @@
     rfq: rfq,
     gantt_chart: gantt_chart,
     statement_of_facts: statement_of_facts,
-    job_orders: job_orders,
     cost_updates: cost_updates,
     reporting: reportingTab
   }"
@@ -111,11 +110,6 @@
           ></jb-statement-of-facts>
         </div>
       </div>
-      <div *ngSwitchCase="eSideMenuId.JobOrders">
-        <div #job_orders>
-          <jb-job-orders [projectId]="projectUid"></jb-job-orders>
-        </div>
-      </div>
       <div *ngSwitchCase="eSideMenuId.CostUpdates">
         <div #cost_updates>
           <jb-cost-updates
@@ -163,3 +157,31 @@
   *ngIf="showLoader"
   [theme]="'figma'"
 ></jb-progress-spinner>
+
+<jb-dialog
+  [dialogContent]="importDialogueProperties"
+  [(dialogVisible)]="isImportDialogVisible"
+  (closeDialog)="closeGuidanceDialog()"
+>
+  <ng-container jb-dialog-body>
+    <div>
+      <jb-uploads
+        class="jms-upload-ui"
+        #uploadRef
+        [uploads]="uploadConfig"
+        [syncTo]="syncTo"
+        [parentControl]="true"
+        (parentDispatch)="onSelectNewFile($event)"
+        (onSelect)="onSelectNewFile($event)"
+      ></jb-uploads>
+    </div>
+  </ng-container>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [okBtnLabel]="okBtnLabel"
+      (ok)="uploadInvoice()"
+      (cancel)="closeGuidanceDialog()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

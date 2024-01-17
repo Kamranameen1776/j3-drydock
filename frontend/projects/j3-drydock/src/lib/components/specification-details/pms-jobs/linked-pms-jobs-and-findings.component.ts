@@ -1,9 +1,12 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { SpecificationDetails } from '../../../models/interfaces/specification-details';
-import { ITaskManagerLinkingComponentSelectionEvent, TmLinkedRecordsRelationType } from 'jibe-components';
-import { TmLinkedRecords } from 'jibe-components/lib/interfaces/tm-linked-records.interface';
+import { TmLinkedRecordsRelationType } from 'jibe-components';
+import { TmLinkedRecords, TmSelectedMenuOption } from 'jibe-components/lib/interfaces/tm-linked-records.interface';
 import { BehaviorSubject } from 'rxjs';
-import { ePmsWlType } from '../../../models/enums/specification-details.enum';
+import { ePmsWlType, TmJobTypes } from '../../../models/enums/specification-details.enum';
+import { ITaskManagerLinkingComponentLinkingChangedEvent, ITaskMangerDetails } from 'jibe-components/lib/interfaces/task-manager-interface';
+import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
+import { GrowlMessageService } from '../../../services/growl-message.service';
 
 @Component({
   selector: 'jb-linked-pms-jobs-findings',
@@ -13,10 +16,10 @@ import { ePmsWlType } from '../../../models/enums/specification-details.enum';
 export class LinkedPmsJobsAndFindingsComponent implements OnInit {
   @Input() specificationDetailsInfo: SpecificationDetails;
   @Input() validTaskType = '';
-  @Output() updateSelectedAmount = new BehaviorSubject<number>(0);
+  @Output() updateSelectedAmount = new BehaviorSubject<TmLinkedRecords[]>([]);
 
-  public details = {};
-  public hiddenSegments: string[] = [TmLinkedRecordsRelationType.Parent, TmLinkedRecordsRelationType.Child];
+  public details: ITaskMangerDetails;
+  public hiddenSegments: TmLinkedRecordsRelationType[] = [TmLinkedRecordsRelationType.Parent, TmLinkedRecordsRelationType.Child];
   public entitySelectionEnabledSegments = [TmLinkedRecordsRelationType.Related];
   public additionalEntityMenuOptions = {
     [TmLinkedRecordsRelationType.Parent]: [],
@@ -24,28 +27,32 @@ export class LinkedPmsJobsAndFindingsComponent implements OnInit {
     [TmLinkedRecordsRelationType.Related]: []
   };
 
-  public validJobTypes = {};
+  public validJobTypes: Record<TmLinkedRecordsRelationType, { taskType: string }[]> = {
+    [TmLinkedRecordsRelationType.Related]: [],
+    [TmLinkedRecordsRelationType.Parent]: [],
+    [TmLinkedRecordsRelationType.Child]: []
+  };
 
   selectedEntity: TmLinkedRecords[] = [];
   unSelectedEntity: TmLinkedRecords[] = [];
   pmsWlType = ePmsWlType;
-  constructor() {}
+
+  constructor(
+    private specificationService: SpecificationDetailsService,
+    private growlService: GrowlMessageService
+  ) {}
 
   ngOnInit(): void {
     if (this.validTaskType === ePmsWlType.Findings) {
-      this.validJobTypes = {
-        [TmLinkedRecordsRelationType.Related]: [
-          { taskType: 'NON-PM JOB' },
-          { taskType: 'NON-PM-NCR' },
-          { taskType: 'RECOMMENDATIONS' },
-          { taskType: 'VETTING OBSERVATION' },
-          { taskType: this.pmsWlType.Findings }
-        ]
-      };
+      this.validJobTypes[TmLinkedRecordsRelationType.Related] = [
+        { taskType: TmJobTypes.NonPmsJob },
+        { taskType: TmJobTypes.NonPmsNcr },
+        { taskType: TmJobTypes.Recommendations },
+        { taskType: TmJobTypes.VettingObservation },
+        { taskType: TmJobTypes.Findings }
+      ];
     } else {
-      this.validJobTypes = {
-        [TmLinkedRecordsRelationType.Related]: [{ taskType: this.validTaskType }]
-      };
+      this.validJobTypes[TmLinkedRecordsRelationType.Related] = [{ taskType: this.validTaskType }];
     }
 
     this.details = {
@@ -59,11 +66,31 @@ export class LinkedPmsJobsAndFindingsComponent implements OnInit {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  selectionValidator = (changedEntities: ITaskManagerLinkingComponentSelectionEvent): Promise<boolean> => {
-    //TODO: Add validation logic here
+  selectionValidator = async (changes: ITaskManagerLinkingComponentLinkingChangedEvent) => {
+    const validations = await Promise.all(
+      changes.unlinkedEntities.map((item) => {
+        switch (item.type) {
+          case TmJobTypes.PmsJob:
+            return this.specificationService.validatePmsJobDeletion(item.id, this.specificationDetailsInfo.uid).toPromise();
+          case TmJobTypes.Findings:
+          case TmJobTypes.NonPmsJob:
+          case TmJobTypes.NonPmsNcr:
+          case TmJobTypes.VettingObservation:
+          case TmJobTypes.Recommendations:
+            return this.specificationService.validateFindingDeletion(item.id, this.specificationDetailsInfo.uid).toPromise();
+          default:
+            return true;
+        }
+      })
+    );
 
-    return Promise.resolve(true);
+    const result = validations.every((item) => item);
+
+    if (!result) {
+      this.growlService.setErrorMessage('Cannot unlink entities that have attached sub-items');
+    }
+
+    return result;
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -74,12 +101,12 @@ export class LinkedPmsJobsAndFindingsComponent implements OnInit {
   entitySelectionChanged(event: { [key in TmLinkedRecordsRelationType]?: TmLinkedRecords[] }): void {
     this.selectedEntity = event.Related;
 
-    const count = event?.Related?.length || 0;
-    this.updateSelectedAmount.next(count);
+    const items = event?.Related || [];
+    this.updateSelectedAmount.next(items);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  entityMenuOptionSelected(event: string): void {
+  entityMenuOptionSelected(event: TmSelectedMenuOption): void {
     //TODO: Add validation logic here
   }
 }

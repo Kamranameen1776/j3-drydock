@@ -1,4 +1,4 @@
-import { GrowlMessageService } from './../../../../services/growl-message.service';
+import { GrowlMessageService } from '../../../../services/growl-message.service';
 import { subItemUpsertFormId } from '../../../../models/constants/constants';
 import { SubItem } from '../../../../models/interfaces/sub-items';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';

@@ -36,7 +36,6 @@ export const projectDetailsMenuData: IJbMenuItem[] = [
     items: [
       { label: eProjectDetailsSideMenuLabel.GanttChart, id: eProjectDetailsSideMenuId.GanttChart },
       { label: eProjectDetailsSideMenuLabel.StatementOfFacts, id: eProjectDetailsSideMenuId.StatementOfFacts },
-      { label: eProjectDetailsSideMenuLabel.JobOrders, id: eProjectDetailsSideMenuId.JobOrders },
       { label: eProjectDetailsSideMenuLabel.CostUpdates, id: eProjectDetailsSideMenuId.CostUpdates }
     ]
   },

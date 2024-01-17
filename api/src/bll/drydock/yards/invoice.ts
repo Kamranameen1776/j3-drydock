@@ -1,11 +1,14 @@
 import * as ExcelJS from 'exceljs';
 
+import { IInvoiceRawDataDto } from '../../../dal/drydock/yards/dtos/InvoiceDataDto';
 import { ApplicationException } from '../core/exceptions';
-
-export class ReportGeneratorService {
+import { InvoiceFunctionDto, InvoiceJobDto, InvoicePreparedDataDto, InvoiceSubItemDto } from './dto/InvoiceDto';
+export class InvoiceGeneratorService {
     cRow = 17;
     sumArray: Array<string> = [];
-    private finishReport(worksheet: ExcelJS.Worksheet, data: any) {
+    private finishReport(worksheet: ExcelJS.Worksheet, data: InvoicePreparedDataDto) {
+        worksheet.getCell('A1').value = data.invoiceId;
+        worksheet.getCell('A1').numFmt = ';;;';
         worksheet.getCell('D8').value = '';
         worksheet.getCell('D8').protection = {
             locked: false,
@@ -50,7 +53,7 @@ export class ReportGeneratorService {
         }
         worksheet.getRow(this.cRow).height = 30;
         worksheet.mergeCells(`B${this.cRow}:I${this.cRow}`);
-        worksheet.getCell(`B${this.cRow}`).value = data.footer;
+        worksheet.getCell(`B${this.cRow}`).value = '';
         const ftStyle = {
             font: { bold: true, size: 10, color: { theme: 0 }, name: 'Arial' },
             border: {
@@ -75,6 +78,8 @@ export class ReportGeneratorService {
         worksheet.getCell(`G${this.cRow}`).style = ftStyle;
         worksheet.getCell(`H${this.cRow}`).style = ftStyle;
         worksheet.getCell(`I${this.cRow}`).style = ftStyle;
+        worksheet.getCell(`A${this.cRow}`).value = data.invoiceId;
+        worksheet.getCell(`A${this.cRow}`).numFmt = ';;;';
     }
 
     private addFunctionHeader(worksheet: ExcelJS.Worksheet, name: string) {
@@ -154,8 +159,10 @@ export class ReportGeneratorService {
         worksheet.getCell(`I${this.cRow}`).style = hStyle;
         this.cRow++;
     }
-    private addSubItem(worksheet: ExcelJS.Worksheet, item: any) {
-        const { code, description, qty, uom, price, discount, comment } = item;
+    private addSubItem(worksheet: ExcelJS.Worksheet, item: InvoiceSubItemDto) {
+        const { code, description, qty, uom, price, discount, comment, technicalData } = item;
+        worksheet.getCell(`A${this.cRow}`).value = technicalData;
+        worksheet.getCell(`A${this.cRow}`).numFmt = ';;;';
 
         worksheet.getCell(`B${this.cRow}`).value = code;
         worksheet.getCell(`B${this.cRow}`).style = {
@@ -328,9 +335,11 @@ export class ReportGeneratorService {
 
         this.cRow++;
     }
-    private addSpecificationFooter(worksheet: ExcelJS.Worksheet, startRow: number) {
+    private addSpecificationFooter(worksheet: ExcelJS.Worksheet, startRow: number, specificationUid: string) {
         const passwordFreeCol = ['C', 'D', 'E', 'F', 'G', 'I'];
         for (let i = 0; i < 3; i++) {
+            worksheet.getCell(`A${this.cRow}`).value = specificationUid;
+            worksheet.getCell(`A${this.cRow}`).numFmt = ';;;';
             worksheet.getCell(`B${this.cRow}`).style = {
                 font: { size: 10, color: { theme: 1 }, name: 'Aptos narrow' },
                 border: {
@@ -525,22 +534,22 @@ export class ReportGeneratorService {
         this.sumArray.push(`H${this.cRow}`);
         this.cRow++;
     }
-    private addFunctions(worksheet: ExcelJS.Worksheet, functions: Array<any>) {
+    private addFunctions(worksheet: ExcelJS.Worksheet, functions: Array<InvoiceFunctionDto>) {
         functions.forEach((func) => {
             const { name, jobs } = func;
             this.addFunctionHeader(worksheet, name);
-            jobs.forEach((job: any) => {
-                const { specificationCode, specificationDescription, subItems } = job;
+            jobs.forEach((job: InvoiceJobDto) => {
+                const { specificationCode, specificationDescription, subItems, specificationUid } = job;
                 this.addSpecificationHeader(worksheet, specificationCode, specificationDescription);
                 const startRow = this.cRow;
-                subItems.forEach((item: any) => {
+                subItems.forEach((item: InvoiceSubItemDto) => {
                     this.addSubItem(worksheet, item);
                 });
-                this.addSpecificationFooter(worksheet, startRow);
+                this.addSpecificationFooter(worksheet, startRow, specificationUid);
             });
         });
     }
-    public async generateReport(data: any) {
+    public async generateInvoice(data: InvoicePreparedDataDto): Promise<ExcelJS.Buffer> {
         this.cRow = 17;
         this.sumArray = [];
         const workbook = new ExcelJS.Workbook();
@@ -557,11 +566,12 @@ export class ReportGeneratorService {
         }
         await reportWorksheet.protect(password, {});
         reportWorksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 16, topLeftCell: 'B17' }];
-        return workbook;
+        return workbook.xlsx.writeBuffer();
     }
-    public prepareData(data: Array<any>) {
-        const obj: any = {};
+    public prepareData(data: Array<IInvoiceRawDataDto>): InvoicePreparedDataDto {
+        const obj: InvoicePreparedDataDto = {} as InvoicePreparedDataDto;
         obj.vessel = data[0].VesselName;
+        obj.invoiceId = 'invoice';
         obj.requestedBy = data[0].ManagementCompany;
         obj.yard = data[0].YardName;
         obj.project = data[0].Subject;
@@ -570,7 +580,7 @@ export class ReportGeneratorService {
         for (let i = 0; i < data.length; i++) {
             const row = data[i];
             if (!row.Function) break;
-            let functionIndex = obj.functions.findIndex((item: any) => row.Function === item.name);
+            let functionIndex = obj.functions.findIndex((item: InvoiceFunctionDto) => row.Function === item.name);
             if (functionIndex === -1) {
                 functionIndex = obj.functions.length;
                 obj.functions.push({
@@ -579,29 +589,39 @@ export class ReportGeneratorService {
                 });
             }
             let jobIndex = obj.functions[functionIndex].jobs.findIndex(
-                (item: any) => item.specificationCode === row.SpecificationCode,
+                (item: InvoiceJobDto) => item.specificationCode === row.SpecificationCode,
             );
             if (jobIndex === -1) {
                 jobIndex = obj.functions[functionIndex].jobs.length;
                 obj.functions[functionIndex].jobs.push({
                     specificationCode: row.SpecificationCode,
                     specificationDescription: row.SpecificationSubject,
+                    specificationUid: row.SpecificationUid,
                     subItems: [],
                 });
             }
             if (row.ItemNumber) {
+                const itemObj = {
+                    uid: row.ItemUid,
+                    uom: row.ItemUOM,
+                    qty: row.ItemQTY,
+                    unitPrice: row.ItemUnitPrice,
+                    discount: row.ItemDiscount,
+                    comments: row.ItemComment,
+                };
                 obj.functions[functionIndex].jobs[jobIndex].subItems.push({
+                    technicalData: JSON.stringify(itemObj),
                     code: `${row.SpecificationNumber}.${row.ItemNumber}`,
                     description: row.ItemSubject,
                     qty: row.ItemQTY,
                     uom: row.ItemUOM,
                     price: row.ItemUnitPrice,
                     discount: row.ItemDiscount,
-                    comment: '',
+                    comment: row.ItemComment,
                 });
             }
         }
-        obj.filename = `${obj.vessel}-${obj.yard}-${new Date(
+        obj.filename = `${obj.vessel.split(' ').join('-')}-${obj.yard}-${new Date(
             data[0].StartDate,
         ).getFullYear()}-${this.getFileNameDate()}`;
 
