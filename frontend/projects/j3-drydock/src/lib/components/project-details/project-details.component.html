@@ -25,7 +25,6 @@
     rfq: rfq,
     gantt_chart: gantt_chart,
     statement_of_facts: statement_of_facts,
-    job_orders: job_orders,
     cost_updates: cost_updates,
     reporting: reportingTab
   }"
@@ -109,11 +108,6 @@
             #statementOfFactsComponent
             [projectId]="projectUid"
           ></jb-statement-of-facts>
-        </div>
-      </div>
-      <div *ngSwitchCase="eSideMenuId.JobOrders">
-        <div #job_orders>
-          <jb-job-orders [projectId]="projectUid"></jb-job-orders>
         </div>
       </div>
       <div *ngSwitchCase="eSideMenuId.CostUpdates">
