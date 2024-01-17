@@ -190,4 +190,12 @@ export class ProjectsService {
   exportExcel(projectId: string, yardId: string): Observable<Blob> {
     return this.api.getFile('yards/download-yard-invoice', `ProjectUid=${projectId}&YardUid=${yardId}`, null, null, 'dryDockAPI');
   }
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  public importFile(file, projectId: string): Observable<Object> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('ProjectUid', projectId);
+    return this.api.postFile(formData, 'yards/upload-yard-invoice', null, 'dryDockAPI');
+  }
 }

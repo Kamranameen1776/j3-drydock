@@ -2,8 +2,10 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import {
   AdvancedSettings,
   IJbAttachment,
+  IJbDialog,
   IJbMenuItem,
   ITopSectionFieldSet,
+  IUploads,
   JbAttachmentsComponent,
   JbDetailsTopSectionService,
   eAttachmentButtonTypes,
@@ -14,7 +16,7 @@ import {
 } from 'jibe-components';
 import { saveAs } from 'file-saver';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
-import { concatMap, filter, map, takeUntil } from 'rxjs/operators';
+import { concatMap, filter, finalize, map, takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { eFunction } from '../../models/enums/function.enum';
@@ -70,10 +72,12 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
   customedThreeDotActions: AdvancedSettings[] = [
-    { label: 'Export Excel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
+    { label: 'Export Excel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true },
+    { label: 'Import', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
   ];
   threeDotsActionsShow = {
     'Export Excel': true,
+    Import: true,
     showDefaultLables: false
   };
 
@@ -89,6 +93,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   accessRights: ProjectDetailsAccessRights;
 
   specificationsCreateNewItems: { label: string; command: () => void }[];
+  isImportDialogVisible: boolean;
 
   updateCostsPayload: UpdateCostsDto;
   showLoader = false;
@@ -129,6 +134,30 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   get vesselUid() {
     return this.tmDetails?.VesselUid;
   }
+
+  importDialogueProperties: IJbDialog = {
+    closableIcon: true,
+    resizableDialog: false,
+    dialogWidth: 470,
+    dialogHeader: 'Import',
+    appendTo: 'body',
+    styleClass: 'jb-dialog-header'
+  };
+
+  uploadConfig: IUploads = {
+    multiple: false,
+    ModuleCode: eModule.Project,
+    FunctionCode: eFunction.DryDock,
+    key1: 'invoice',
+    showUploadButton: true,
+    accept: '.xlsx'
+  };
+
+  okBtnLabel = 'Import';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  syncTo: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fileImportData: any;
 
   growlMessage$ = this.growlMessageService.growlMessage$;
 
@@ -242,7 +271,41 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       this.resyncRecord();
     } else if (wfEvent?.event?.type === 'Export Excel') {
       this.exportExcel();
+    } else if (wfEvent?.event?.type === 'Import') {
+      this.importFile();
     }
+  }
+
+  importFile() {
+    this.isImportDialogVisible = true;
+  }
+
+  closeGuidanceDialog() {
+    this.isImportDialogVisible = false;
+  }
+
+  uploadInvoice() {
+    this.showLoader = true;
+    const res = this.projectsService.importFile(this.fileImportData, this.projectUid);
+    res
+      .pipe(
+        finalize(() => {
+          this.showLoader = false;
+          this.isImportDialogVisible = false;
+        })
+      )
+      .subscribe(
+        () => {
+          this.growlMessageService.setSuccessMessage('File has been imported successfully');
+        },
+        (error) => {
+          this.growlMessageService.errorHandler(error);
+        }
+      );
+  }
+
+  onSelectNewFile(event) {
+    this.fileImportData = event.uploadFiles[0];
   }
 
   private getDetails(refresh = false) {
