@@ -150,6 +150,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   ngOnInit(): void {
     this.jbTMDtlSrv.isFormValid = true;
 
+    this.titleService.setTitle(this.route.snapshot.queryParamMap.get('pageTitle'));
+
     this.route.paramMap
       .pipe(
         map((params) => params.get('projectId')),
@@ -160,7 +162,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
           return;
         }
         this.projectUid = projectId;
-        this.titleService.setTitle(this.route.snapshot.queryParamMap.get('pageTitle'));
         this.getDetails();
       });
 
