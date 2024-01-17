@@ -188,6 +188,6 @@ export class ProjectsService {
   }
 
   exportExcel(projectId: string, yardId: string): Observable<Blob> {
-    return this.api.getFile(`yards/get-yards-report?ProjectUid=${projectId}&YardUid=${yardId}`, null, null, null, 'dryDockAPI');
+    return this.api.getFile('yards/get-yards-report', `ProjectUid=${projectId}&YardUid=${yardId}`, null, null, 'dryDockAPI');
   }
 }
