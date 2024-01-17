@@ -156,7 +156,11 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         takeUntil(this.unsubscribe$)
       )
       .subscribe((projectId) => {
+        if (!projectId) {
+          return;
+        }
         this.projectUid = projectId;
+        this.titleService.setTitle(this.route.snapshot.queryParamMap.get('pageTitle'));
         this.getDetails();
       });
 
@@ -207,8 +211,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   }
 
   private processWidgetNewBtn(secName: string) {
-    // TODO add check by access rights for each section and hide in configuration for details page instead of here
-
     // eslint-disable-next-line default-case
     switch (secName) {
       case eProjectDetailsSideMenuId.RFQ: {
@@ -264,7 +266,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
           this.vesselType = data?.VesselType;
 
-          this.titleService.setTitle(`${projectDetails.ProjectTypeName} ${projectDetails.ProjectCode}`);
           return this.taskManagerService.getWorkflow(projectDetails.TaskManagerUid, projectDetails.ProjectTypeCode);
         }),
         takeUntil(this.unsubscribe$)
