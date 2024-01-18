@@ -26,6 +26,8 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
   // can be used from parent to get formvalue when submitting
   public formGroup: FormGroup;
 
+  public newUid: string;
+
   formValues: FormValues;
 
   isFormValid = false;
@@ -45,8 +47,6 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
 
   scopeEditorConfig: EditorConfig;
 
-  newUid: string;
-
   constructor(private popupFormService: StandardJobUpsertFormService) {
     super();
   }
@@ -56,6 +56,7 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
     this.setFunctionConfig();
 
     this.newUid = uuid();
+
     this.descriptionEditorConfig = this.popupFormService.getDescriptionEditorConfig();
     this.scopeEditorConfig = this.popupFormService.getScopeEditorConfig();
   }
@@ -90,8 +91,6 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
           Child_ID: this.item.functionUid
         }
       });
-    } else {
-      Object.assign(values, { uid: this.newUid });
     }
   }
 
