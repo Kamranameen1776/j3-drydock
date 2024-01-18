@@ -1,5 +1,18 @@
 <jb-growl [content]="growlMessage$ | async"></jb-growl>
 
+<jb-export-report
+  [moduleCode]="moduleCode"
+  [functionCode]="functionCode"
+  [detail]="{
+    uid: projectUid,
+    Vessel_ID: tmDetails.Vessel_ID,
+    WL_TYPE: tmDetails.wl_type,
+    Worklist_Type_Display: tmDetails.Worklist_Type_Display,
+    Vessel_Name: projectDetails.VesselName,
+    Job_card_No: tmDetails.Job_Code
+  }"
+  *ngIf="exportEnable"
+></jb-export-report>
 <jb-task-manager-details
   #detailsComponent
   *ngIf="sectionsConfig"
@@ -129,10 +142,10 @@
   <ng-container [ngSwitch]="section.SectionCode">
     <div *ngSwitchCase="eSideMenuId.DailyReports">
       <div #daily_reports>
-        <jb-daily-reports
+        <jb-drydock-daily-reports
           #dailyReportsComponent
           [projectId]="projectUid"
-        ></jb-daily-reports>
+        ></jb-drydock-daily-reports>
       </div>
     </div>
   </ng-container>
@@ -140,11 +153,12 @@
 
 <ng-template #specificationsButtonsTmpl>
   <!-- Return after export to PDF is done -->
-  <!-- <jb-button
+  <jb-button
     type="NoButton"
     icon="icons8-anchor"
     label="Export"
-  ></jb-button> -->
+    (click)="exportEnable = !exportEnable"
+  ></jb-button>
   <jb-split-button
     type="NoButton"
     label="Create new"

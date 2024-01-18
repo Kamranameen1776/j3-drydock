@@ -113,12 +113,12 @@ export class StandardJobsService {
         standardJob.description = data.description;
         standardJob.number = data.number;
         standardJob.code = data.code;
-        if (data.doneByUid) {
+        if ('doneByUid' in data) {
             standardJob.doneBy = {
                 uid: data.doneByUid,
             };
         }
-        if (data.materialSuppliedByUid) {
+        if ('materialSuppliedByUid' in data) {
             standardJob.materialSuppliedBy = {
                 uid: data.materialSuppliedByUid,
             };

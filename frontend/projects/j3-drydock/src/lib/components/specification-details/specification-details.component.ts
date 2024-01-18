@@ -108,8 +108,10 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     return this.accessRights?.edit;
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     this.jbTMDtlSrv.isFormValid = true;
+
+    this.title.setTitle(this.activatedRoute.snapshot.queryParamMap.get('pageTitle'));
 
     this.activatedRoute.paramMap
       .pipe(
@@ -118,7 +120,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       )
       .subscribe((specificationUid) => {
         this.specificationUid = specificationUid;
-        this.title.setTitle('');
         this.getDetails();
       });
 
@@ -270,7 +271,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
             Key1: this.specificationDetailsInfo.TaskManagerUid
           };
 
-          this.title.setTitle(`Specification ${this.specificationDetailsInfo?.SpecificationCode}`);
           return this.taskManagerService.getWorkflow(
             this.specificationDetailsInfo.TaskManagerUid,
             this.specificationDetailsInfo.SpecificationTypeCode

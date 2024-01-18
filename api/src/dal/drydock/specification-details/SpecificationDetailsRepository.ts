@@ -21,6 +21,7 @@ import {
     LibSurveyCertificateAuthority,
     LibUserEntity,
     LibVesselsEntity,
+    LibVesseltypes,
     PriorityEntity,
     ProjectEntity,
     SpecificationDetailsEntity,
@@ -32,6 +33,7 @@ import {
     TmDdLibDoneBy,
     TmDdLibMaterialSuppliedBy,
 } from '../../../entity/drydock';
+import { J3PmsLibFunction } from '../../../entity/drydock/dbo/J3PmsLibFunctionEntity';
 import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
 import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
@@ -154,6 +156,7 @@ export class SpecificationDetailsRepository {
                 `pr.DisplayName as PriorityName`,
 
                 'ves.VesselName AS VesselName',
+                'vesType.VesselTypes AS VesselType',
                 'ves.uid AS VesselUid',
                 'ves.VesselId AS VesselId',
                 'spec.ProjectUid AS ProjectUid',
@@ -169,6 +172,7 @@ export class SpecificationDetailsRepository {
             .leftJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
             .leftJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
             .leftJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
+            .leftJoin(className(LibVesseltypes), 'vesType', 'ves.VesselType = vesType.ID')
             .leftJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
             .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesnt have type. probably should stay that way
             .innerJoin(
@@ -263,6 +267,16 @@ export class SpecificationDetailsRepository {
                 `Method: GetSpecificationDetails / Class: SpecificationDetailsRepository / Error: ${error}`,
             );
         }
+    }
+
+    public async findSpecificationsForProject(projectUid: string): Promise<SpecificationDetailsEntity[]> {
+        const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
+        return specificationRepository.find({
+            where: {
+                ProjectUid: projectUid,
+                ActiveStatus: true,
+            },
+        });
     }
 
     public async getSpecificationCostUpdates(
@@ -514,4 +528,62 @@ export class SpecificationDetailsRepository {
             },
         });
     }
+
+    public async findSpecificationsForProjectReport(projectUid: string): Promise<SpecificationForReport[]> {
+        const res = (await getManager()
+            .createQueryBuilder(SpecificationDetailsEntity, 'sd')
+            .where('sd.ProjectUid = :projectUid', { projectUid })
+            .andWhere('sd.active_status = 1')
+            .getMany()) as any[];
+
+        for (const specification of res) {
+            specification.functionTree = await this.getFunctionTree(specification.FunctionUid);
+        }
+        return res;
+    }
+
+    private async fetchFunctionByUID(uid: string): Promise<J3PmsLibFunction | undefined> {
+        return getManager().createQueryBuilder(J3PmsLibFunction, 'pms_fn').where('pms_fn.uid = :uid', { uid }).getOne();
+    }
+
+    private async getFunctionTree(functionUid: string): Promise<{ rootFunction: string; functionPath: string }> {
+        const getParentFunction = async (uid: string): Promise<J3PmsLibFunction | undefined> => {
+            return this.fetchFunctionByUID(uid);
+        };
+
+        let currentFunction = await this.fetchFunctionByUID(functionUid);
+        if (!currentFunction) {
+            throw new Error('Function with the given UID not found');
+        }
+
+        const functionPath = [];
+        let rootFunction = '';
+
+        while (currentFunction.parent_function_uid) {
+            const parentFunction = await getParentFunction(currentFunction.parent_function_uid);
+            if (parentFunction) {
+                functionPath.unshift(parentFunction.name);
+                currentFunction = parentFunction;
+            } else {
+                break;
+            }
+        }
+
+        // The root function is the last 'currentFunction' in the loop
+        rootFunction = currentFunction.name!;
+
+        // Remove the root function name from the path if it exists
+        if (functionPath[0] === rootFunction) {
+            functionPath.shift();
+        }
+
+        return {
+            rootFunction: rootFunction,
+            functionPath: functionPath.join(', '),
+        };
+    }
 }
+
+export type SpecificationForReport = SpecificationDetailsEntity & {
+    functionTree: { rootFunction: string; functionPath: string };
+};

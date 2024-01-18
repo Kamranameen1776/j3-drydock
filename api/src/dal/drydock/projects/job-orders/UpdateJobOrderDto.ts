@@ -32,6 +32,6 @@ export class UpdateJobOrderDto {
     @IsNotEmpty()
     LastUpdated: Date;
 
-    @MaxLength(5000)
+    @MaxLength(8000)
     Remarks: string;
 }

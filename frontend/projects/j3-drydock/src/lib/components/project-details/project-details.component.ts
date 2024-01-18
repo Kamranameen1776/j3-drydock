@@ -40,6 +40,7 @@ import { getFileNameDate } from '../../shared/functions/file-name';
 import { localDateJbStringAsUTC } from '../../utils/date';
 import { forkJoin, of } from 'rxjs';
 import { UpdateCostsDto } from '../../models/dto/specification-details/ISpecificationCostUpdateDto';
+import { DailyReportsComponent } from './reports/reports.component';
 
 @Component({
   selector: 'jb-project-details',
@@ -53,6 +54,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild('specificationsComponent') specificationsComponent: SpecificationsComponent;
   @ViewChild('rfqComponent') rfqComponent: RfqComponent;
   @ViewChild('statementOfFactsComponent') statementOfFactsComponent: StatementOfFactsComponent;
+  @ViewChild('dailyReportsComponent') dailyReportsComponent: DailyReportsComponent;
 
   @ViewChild(eProjectDetailsSideMenuId.TechnicalSpecification) [eProjectDetailsSideMenuId.TechnicalSpecification]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.Attachments) [eProjectDetailsSideMenuId.Attachments]: ElementRef;
@@ -61,6 +63,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild(eProjectDetailsSideMenuId.StatementOfFacts) [eProjectDetailsSideMenuId.StatementOfFacts]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.CostUpdates) [eProjectDetailsSideMenuId.CostUpdates]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.DailyReports) [eProjectDetailsSideMenuId.DailyReports]: ElementRef;
+  @ViewChild(eProjectDetailsSideMenuId.GanttChart) [eProjectDetailsSideMenuId.GanttChart]: ElementRef;
+  exportEnable = false;
 
   moduleCode = eModule.Project;
   functionCode = eFunction.DryDock;
@@ -253,6 +257,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       }
       case eProjectDetailsSideMenuId.StatementOfFacts: {
         this.statementOfFactsComponent?.showCreateDialog();
+        break;
+      }
+      case eProjectDetailsSideMenuId.DailyReports: {
+        this.dailyReportsComponent?.showReportDialog(true);
         break;
       }
     }
