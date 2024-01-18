@@ -129,10 +129,10 @@
   <ng-container [ngSwitch]="section.SectionCode">
     <div *ngSwitchCase="eSideMenuId.DailyReports">
       <div #daily_reports>
-        <jb-daily-reports
+        <jb-drydock-daily-reports
           #dailyReportsComponent
           [projectId]="projectUid"
-        ></jb-daily-reports>
+        ></jb-drydock-daily-reports>
       </div>
     </div>
   </ng-container>

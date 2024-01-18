@@ -343,7 +343,8 @@ export class ProjectDetailsService {
             SectionCode: eProjectDetailsSideMenuId.DailyReports,
             SectionLabel: eProjectDetailsSideMenuLabel.DailyReports,
             IconClass: 'icons8-more-details-2',
-            isAddNewButton: false
+            buttonLabel: 'Add Report',
+            isAddNewButton: true
           }
         ]
       }
