@@ -163,8 +163,11 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
     });
   }
 
-  public navigateToSpecificationDetails(specificationUid: string) {
-    this.newTabService.navigate(['../../specification-details', specificationUid], { relativeTo: this.activatedRoute });
+  public navigateToSpecificationDetails(specification: KeyValuePair<string, string>) {
+    this.newTabService.navigate(['../../specification-details', specification.Key], {
+      relativeTo: this.activatedRoute,
+      queryParams: { pageTitle: `Specification ${specification.Value}` }
+    });
   }
 
   private reset() {
