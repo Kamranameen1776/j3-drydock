@@ -10,6 +10,8 @@ import { JobOrdersUpdatesDto } from '../dto/JobOrdersUpdatesDto';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UTCAsLocal, localAsUTC } from '../../../../utils/date';
 import { DailyReportCreate, DailyReportUpdate } from '../../../../models/interfaces/project-details';
+import { eFunction } from '../../../../models/enums/function.enum';
+import { eModule } from '../../../../models/enums/module.enum';
 
 @Component({
   selector: 'jb-drydock-create-report-popup',
@@ -55,8 +57,8 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
     maxLength: 8000,
     placeholder: '',
     crtlName: 'body',
-    moduleCode: 'project',
-    functionCode: 'remarks_jb_editor',
+    moduleCode: eModule.Project,
+    functionCode: eFunction.SpecificationDetails,
     inlineMode: {
       enable: false,
       onSelection: true

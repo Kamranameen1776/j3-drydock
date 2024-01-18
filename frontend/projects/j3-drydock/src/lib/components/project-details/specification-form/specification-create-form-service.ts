@@ -8,6 +8,8 @@ import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree
 import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-main.enum';
 import { SpecificationGridService } from '../../../services/project/specification.service';
 import { EditorConfig } from '../../../models/interfaces/EditorConfig';
+import { eFunction } from '../../../models/enums/function.enum';
+import { eModule } from '../../../models/enums/module.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -124,8 +126,8 @@ export class SpecificationCreateFormService extends FormServiceBase {
       maxLength: 8000,
       placeholder: '',
       crtlName: 'description',
-      moduleCode: 'project',
-      functionCode: 'job_description_jb_editor',
+      moduleCode: eModule.Project,
+      functionCode: eFunction.SpecificationDetails,
       key1: key1,
       vesselId: vesselId,
       inlineMode: {
