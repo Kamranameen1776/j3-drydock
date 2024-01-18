@@ -177,7 +177,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
     super();
   }
 
-  getDescriptionEditorConfig(key1: string, vesselId: number): EditorConfig {
+  getDescriptionEditorConfig(): EditorConfig {
     return {
       id: 'description',
       maxLength: 8000,
@@ -185,8 +185,6 @@ export class StandardJobUpsertFormService extends FormServiceBase {
       crtlName: 'description',
       moduleCode: eModule.Project,
       functionCode: eFunction.StandardJob,
-      key1: key1,
-      vesselId: vesselId,
       tools: this.getEditorTools(),
       inlineMode: {
         enable: false,
@@ -195,7 +193,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
     };
   }
 
-  getScopeEditorConfig(key1: string, vesselId: number): EditorConfig {
+  getScopeEditorConfig(): EditorConfig {
     return {
       id: 'scope',
       maxLength: 8000,
@@ -203,8 +201,6 @@ export class StandardJobUpsertFormService extends FormServiceBase {
       crtlName: 'scope',
       moduleCode: eModule.Project,
       functionCode: eFunction.StandardJob,
-      key1: key1,
-      vesselId: vesselId,
       inlineMode: {
         enable: false,
         onSelection: true

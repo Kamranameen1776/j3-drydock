@@ -1,7 +1,7 @@
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { getSmallPopup } from '../../../models/constants/popup';
-import { FormModel, IJbAttachment, IJbDialog, eAttachmentButtonTypes } from 'jibe-components';
+import { FormModel, IJbAttachment, IJbDialog, eAttachmentButtonTypes, JmsService, eJMSWorkflowAction } from 'jibe-components';
 import { UpsertStandardJobFormComponent } from '../upsert-standard-job-form/upsert-standard-job-form.component';
 import { StandardJobUpsertFormService } from '../upsert-standard-job-form/standard-job-upsert-form.service';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
@@ -56,15 +56,14 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   formStructure: FormModel = this.popupFormService.formStructure;
 
-  showLoader = false;
-
   private changedSubItems: SubItem[] = [];
 
   constructor(
     private formService: StandardJobUpsertFormService,
     private standardJobsService: StandardJobsService,
     private growlMessageService: GrowlMessageService,
-    private popupFormService: StandardJobUpsertFormService
+    private popupFormService: StandardJobUpsertFormService,
+    private jmsService: JmsService
   ) {
     super();
   }
@@ -122,7 +121,8 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
       return;
     }
 
-    this.showLoader = true;
+    this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
+
     const value = this.jobFormValue;
 
     this.isSaving = true;
@@ -140,7 +140,6 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
       .subscribe(
         () => {
           this.growlMessageService.setSuccessMessage('Standard Job saved successfully.');
-          this.showLoader = false;
           this.closePopup(true);
         },
         // eslint-disable-next-line rxjs/no-implicit-any-catch
