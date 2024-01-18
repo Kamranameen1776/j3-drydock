@@ -114,6 +114,17 @@ export class SpecificationDetailsSubItemsRepository {
         return odataService.getJoinResult(script, substitutions);
     }
 
+    public async getBySpecificationDetailsUid(specificationDetailsUid: string[]) {
+        return getManager().find(SpecificationDetailsSubItemEntity, {
+            where: {
+                specificationDetails: {
+                    uid: In(specificationDetailsUid),
+                },
+                active_status: true,
+            },
+        });
+    }
+
     public async getOneByUid(
         params: GetSubItemParams,
         queryRunner: QueryRunner,
