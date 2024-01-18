@@ -55,7 +55,7 @@ export class StandardJobs extends BaseDatesEntity {
     @Column('varchar', {
         nullable: true,
         name: 'scope',
-        length: 250,
+        length: 8000,
     })
     scope: string;
 
@@ -120,7 +120,7 @@ export class StandardJobs extends BaseDatesEntity {
     @Column('varchar', {
         nullable: true,
         name: 'description',
-        length: 5000,
+        length: 8000,
     })
     description: string;
 }

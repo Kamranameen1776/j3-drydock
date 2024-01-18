@@ -10,6 +10,8 @@ import { JobOrdersUpdatesDto } from '../dto/JobOrdersUpdatesDto';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UTCAsLocal, localAsUTC } from '../../../../utils/date';
 import { DailyReportCreate, DailyReportUpdate } from '../../../../models/interfaces/project-details';
+import { eFunction } from '../../../../models/enums/function.enum';
+import { eModule } from '../../../../models/enums/module.enum';
 
 @Component({
   selector: 'jb-drydock-create-report-popup',
@@ -52,11 +54,11 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
 
   bodyConfig: EditorConfig = {
     id: 'editorBody',
-    maxLength: 5000,
+    maxLength: 8000,
     placeholder: '',
     crtlName: 'body',
-    moduleCode: 'project',
-    functionCode: 'remarks_jb_editor',
+    moduleCode: eModule.Project,
+    functionCode: eFunction.SpecificationDetails,
     inlineMode: {
       enable: false,
       onSelection: true
@@ -99,7 +101,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
     if (this.isEditing) {
       this.getDailyReport();
     } else {
-      this.createReportForm.controls.reportName.setValue('Report Name ' + this.jbDatePipe.transform(new Date()));
+      this.createReportForm.controls.reportName.setValue('Daily Report ' + this.jbDatePipe.transform(new Date()));
     }
   }
 

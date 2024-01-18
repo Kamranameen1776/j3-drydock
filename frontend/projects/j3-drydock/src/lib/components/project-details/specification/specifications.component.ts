@@ -22,8 +22,11 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   @Input() projectId: string;
   @Input() vesselUid: string;
   @Input() vesselType: number;
+
   @Output() exportExcel = new EventEmitter();
+
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
+
   treeData$: Observable<FunctionsFlatTreeNode[]>;
   gridData: GridInputsWithRequest;
   eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.UnSelect];
@@ -111,7 +114,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   cellPlainTextClick({ cellType, rowData, columnDetail }) {
     if (cellType === 'hyperlink' && columnDetail.FieldName === 'code') {
-      this.newTabService.navigate(['../../specification-details', rowData.uid], { relativeTo: this.activatedRoute });
+      this.openSpecificationPage(rowData.uid, rowData.code);
     }
   }
 
@@ -128,7 +131,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   }
 
   async onActionClick({ type, payload }: IGridAction) {
-    const { uid } = payload;
+    const { uid, code } = payload;
     this.specificationUid = uid;
 
     switch (type) {
@@ -136,7 +139,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
         this.showDeleteDialog(true);
         break;
       case eGridRowActions.Edit:
-        this.openSpecificationPage(uid);
+        this.openSpecificationPage(uid, code);
         break;
       default:
         return;
@@ -161,7 +164,10 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     return gridData;
   }
 
-  private openSpecificationPage(uid: string) {
-    this.newTabService.navigate(['../../specification-details', uid], { relativeTo: this.activatedRoute });
+  private openSpecificationPage(uid: string, code: string) {
+    this.newTabService.navigate(['../../specification-details', uid], {
+      relativeTo: this.activatedRoute,
+      queryParams: { pageTitle: `Specification ${code}` }
+    });
   }
 }

@@ -29,7 +29,7 @@ export class JobOrderEntity {
     @Column('varchar', {
         nullable: true,
         name: 'remarks',
-        length: 5000,
+        length: 8000,
     })
     Remarks: string;
 

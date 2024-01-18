@@ -32,7 +32,7 @@ export class StandardJobsSubItems extends BaseDatesEntity {
     @Column('varchar', {
         nullable: false,
         name: 'description',
-        length: 5000,
+        length: 8000,
     })
     description: string;
 

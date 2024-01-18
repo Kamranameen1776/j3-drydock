@@ -9,10 +9,7 @@ import { IDailyReportsResultDto } from './dto/IDailyReportsResultDto';
 @Injectable()
 export class DailyReportsGridService {
   public readonly gridName: string = 'reportsGrid';
-  private readonly gridButton: GridButton = {
-    label: 'Add report',
-    show: true
-  };
+
   private readonly columns: Column[] = [
     {
       DisableSort: false,
@@ -21,7 +18,8 @@ export class DailyReportsGridService {
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
-      ReadOnly: true
+      ReadOnly: true,
+      hyperlink: true
     },
     {
       DisableSort: false,
@@ -68,7 +66,6 @@ export class DailyReportsGridService {
       gridName: this.gridName,
       request: this.getDailyReportsAPIRequest(projectId),
       actions: this.gridActions,
-      gridButton: this.gridButton,
       searchFields: ['reportName'],
       filters: [],
       filtersLists: {}

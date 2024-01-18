@@ -5,18 +5,18 @@
   [tableDataReq]="gridData.request"
   [setActions]="gridData.actions"
   [filterData]="gridData.filters"
-  [button]="gridData.gridButton"
   [searchFields]="gridData.searchFields"
   [filterListsSet]="gridData.filtersLists"
   [isDisplayAdvancedSettings]="false"
   [isDisplayAdvancedFilter]="false"
   [getStyleByContainer]="true"
   (action)="onActionClick($event)"
+  (cellPlainTextClick)="onCellPlainTextClick($event)"
 ></jb-grid>
 
 <jb-dialog
   (closeDialog)="showDeleteDialog(false)"
-  [(dialogVisible)]="deleteDialogVisible"
+  [(dialogVisible)]="isShowDeleteDialog"
   [dialogContent]="deleteReportDialog"
   class="dialog"
 >
@@ -30,7 +30,7 @@
   <ng-container jb-dialog-footer>
     <jb-dialog-footer
       [okBtnLabel]="deleteBtnLabel"
-      (ok)="deleteReportHandler()"
+      (ok)="onDeleteReport()"
       (cancel)="showDeleteDialog(false)"
     ></jb-dialog-footer>
   </ng-container>
@@ -44,8 +44,8 @@
 </ng-template>
 
 <jb-drydock-create-report-popup
-  *ngIf="createPopupVisible"
-  [isOpen]="createPopupVisible"
+  *ngIf="isShowReportDialog"
+  [isOpen]="isShowReportDialog"
   (closeDialog)="onCloseCreatePopup($event)"
   [reportUid]="reportInfo?.uid"
   [projectId]="projectId"
@@ -53,6 +53,6 @@
 
 <jb-progress-spinner
   class="progress-spinner"
-  *ngIf="showLoader"
+  *ngIf="isShowLoader"
   [theme]="'figma'"
 ></jb-progress-spinner>

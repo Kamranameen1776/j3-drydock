@@ -17,6 +17,7 @@ type subItemDataType = { [key: string]: { uid: string; utilized: number } };
 })
 export class CostUpdatesComponent implements OnInit {
   @Input() projectId: string;
+
   @Output() updatesCostsData = new EventEmitter<UpdateCostsDto>();
 
   gridInputs: GridInputsWithRequest;
@@ -43,7 +44,10 @@ export class CostUpdatesComponent implements OnInit {
 
   cellPlainTextClick({ cellType, rowData, columnDetail }) {
     if (cellType === 'hyperlink' && columnDetail.FieldName === 'code') {
-      this.newTabService.navigate(['../../specification-details', rowData.specificationUid], { relativeTo: this.activatedRoute });
+      this.newTabService.navigate(['../../specification-details', rowData.specificationUid], {
+        relativeTo: this.activatedRoute,
+        queryParams: { pageTitle: `Specification ${rowData.code}` }
+      });
     }
   }
 

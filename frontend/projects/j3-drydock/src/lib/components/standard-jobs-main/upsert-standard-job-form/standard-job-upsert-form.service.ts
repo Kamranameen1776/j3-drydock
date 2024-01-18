@@ -9,6 +9,8 @@ import { BehaviorSubject } from 'rxjs';
 import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 import { EditorConfig } from '../../../models/interfaces/EditorConfig';
 import { ToolbarModule } from 'primeng';
+import { eFunction } from '../../../models/enums/function.enum';
+import { eModule } from '../../../models/enums/module.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -178,11 +180,11 @@ export class StandardJobUpsertFormService extends FormServiceBase {
   getDescriptionEditorConfig(key1: string, vesselId: number): EditorConfig {
     return {
       id: 'description',
-      maxLength: 1000,
+      maxLength: 8000,
       placeholder: '',
       crtlName: 'description',
-      moduleCode: 'project',
-      functionCode: 'job_description_jb_editor',
+      moduleCode: eModule.Project,
+      functionCode: eFunction.StandardJob,
       key1: key1,
       vesselId: vesselId,
       tools: this.getEditorTools(),
@@ -196,11 +198,11 @@ export class StandardJobUpsertFormService extends FormServiceBase {
   getScopeEditorConfig(key1: string, vesselId: number): EditorConfig {
     return {
       id: 'scope',
-      maxLength: 1000,
+      maxLength: 8000,
       placeholder: '',
       crtlName: 'scope',
-      moduleCode: 'project',
-      functionCode: 'job_scope_jb_editor',
+      moduleCode: eModule.Project,
+      functionCode: eFunction.StandardJob,
       key1: key1,
       vesselId: vesselId,
       inlineMode: {

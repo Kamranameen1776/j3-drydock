@@ -1,5 +1,5 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
-import { GridService, IGridAction, IJbDialog, eGridRefreshType, eGridRowActions } from 'jibe-components';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { GridCellData, GridService, IGridAction, IJbDialog, eGridRefreshType, eGridRowActions } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
@@ -8,27 +8,29 @@ import { DailyReportsGridService } from './reports.service';
 import { IDailyReportsResultDto } from './dto/IDailyReportsResultDto';
 
 @Component({
-  selector: 'jb-daily-reports',
+  selector: 'jb-drydock-daily-reports',
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.scss'],
   providers: [DailyReportsGridService]
 })
-export class DailyReportsComponent extends UnsubscribeComponent implements OnInit, OnChanges {
+export class DailyReportsComponent extends UnsubscribeComponent implements OnInit {
   @Input() projectId: string;
-  gridData: GridInputsWithRequest;
 
   @ViewChild('reportDateTemplate', { static: true }) reportDateTemplate: TemplateRef<unknown>;
 
+  gridData: GridInputsWithRequest;
+
   reportUid: string;
   reportInfo: IDailyReportsResultDto;
-  showLoader = false;
+
+  isShowLoader = false;
+  isShowDeleteDialog = false;
+  isShowReportDialog = false;
+
   deleteReportDialog: IJbDialog = {
     ...getSmallPopup(),
     dialogHeader: 'Delete Daily Report'
   };
-
-  deleteDialogVisible = false;
-  createPopupVisible = false;
   deleteBtnLabel = 'Delete';
   deleteDialogMessage = 'Are you sure you want to delete this report?';
 
@@ -39,17 +41,17 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
     super();
   }
 
+  // public shows that it is used from parent of this component
+  public showReportDialog(value: boolean) {
+    this.isShowReportDialog = value;
+  }
+
   ngOnInit(): void {
-    this.gridData = this.getData();
+    this.setGridData();
+    this.setCellTemplate(this.reportDateTemplate, 'reportDate');
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.projectId) {
-      this.getData(changes.projectId.currentValue);
-    }
-  }
-
-  async onActionClick({ type, payload }: IGridAction) {
+  onActionClick({ type, payload }: IGridAction) {
     this.reportInfo = payload;
 
     switch (type) {
@@ -57,38 +59,31 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
         this.showDeleteDialog(true);
         break;
       case eGridRowActions.Edit:
-        this.showCreateReport();
-        break;
-      case this.gridData.gridButton.label:
-        this.showCreateReport();
+        this.showReportDialog(true);
         break;
       default:
         return;
     }
   }
 
-  showCreateReport() {
-    this.createPopupVisible = true;
+  showDeleteDialog(value: boolean) {
+    this.isShowDeleteDialog = value;
   }
 
-  public deleteReportHandler() {
-    this.showLoader = true;
+  onDeleteReport() {
+    this.isShowLoader = true;
     this.reportsService
       .deleteDailyReport({ uid: this.reportInfo.uid, projectUid: this.projectId })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
-        this.showLoader = false;
+        this.isShowLoader = false;
         this.showDeleteDialog(false);
         this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
       });
   }
 
-  public showDeleteDialog(value: boolean) {
-    this.deleteDialogVisible = value;
-  }
-
   onCloseCreatePopup(hasSaved?: boolean) {
-    this.createPopupVisible = false;
+    this.showReportDialog(false);
     this.reportInfo = null;
 
     if (hasSaved) {
@@ -96,10 +91,22 @@ export class DailyReportsComponent extends UnsubscribeComponent implements OnIni
     }
   }
 
-  private getData(projectId?: string) {
-    const gridData = this.reportsService.getGridData(projectId || this.projectId);
-    const dateCol = gridData.columns.find((col) => col.FieldName === 'reportDate');
-    dateCol.cellTemplate = this.reportDateTemplate;
-    return gridData;
+  onCellPlainTextClick({ cellType, rowData, columnDetail }: GridCellData) {
+    if (cellType === 'hyperlink' && columnDetail.FieldName === 'reportName') {
+      this.reportInfo = rowData;
+      this.showReportDialog(true);
+    }
+  }
+
+  private setGridData() {
+    this.gridData = this.reportsService.getGridData(this.projectId);
+  }
+
+  private setCellTemplate(template: TemplateRef<unknown>, fieldName: string) {
+    const col = this.gridData.columns.find((col) => col.FieldName === fieldName);
+    if (!col) {
+      return;
+    }
+    col.cellTemplate = template;
   }
 }
