@@ -9,8 +9,15 @@ export class addYardCommentTable1705309018457 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
             await queryRunner.query(`
+
+            IF NOT EXISTS (Select *
+               from INFORMATION_SCHEMA.COLUMNS
+               where TABLE_NAME = '${this.tableName}'
+                 AND TABLE_SCHEMA = '${this.schemaName}'
+                 AND COLUMN_NAME = 'yard_comments' )
+
             BEGIN
-            alter table dry_dock.specification_details_sub_item add yard_comments varchar(2048);
+            alter table ${this.schemaName}.${this.tableName} add yard_comments varchar(2048);
             END
             `);
 
