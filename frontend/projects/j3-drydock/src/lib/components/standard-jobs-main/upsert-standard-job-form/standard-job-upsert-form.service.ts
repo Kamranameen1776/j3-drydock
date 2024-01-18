@@ -178,7 +178,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
   getDescriptionEditorConfig(key1: string, vesselId: number): EditorConfig {
     return {
       id: 'description',
-      maxLength: 1000,
+      maxLength: 8000,
       placeholder: '',
       crtlName: 'description',
       moduleCode: 'project',
@@ -196,7 +196,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
   getScopeEditorConfig(key1: string, vesselId: number): EditorConfig {
     return {
       id: 'scope',
-      maxLength: 1000,
+      maxLength: 8000,
       placeholder: '',
       crtlName: 'scope',
       moduleCode: 'project',

@@ -55,7 +55,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     @Column({
         name: 'description',
         type: 'varchar',
-        length: 5000,
+        length: 8000,
         nullable: true,
     })
     description?: string;

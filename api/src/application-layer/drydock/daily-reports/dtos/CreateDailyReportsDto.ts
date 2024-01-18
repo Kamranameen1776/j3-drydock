@@ -11,7 +11,7 @@ export class CreateDailyReportsDto {
     @MaxLength(200)
     ReportName: string;
 
-    @MaxLength(5000)
+    @MaxLength(8000)
     Body: string;
 
     @IsDateString()
