@@ -99,7 +99,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
     if (this.isEditing) {
       this.getDailyReport();
     } else {
-      this.createReportForm.controls.reportName.setValue('Report Name ' + this.jbDatePipe.transform(new Date()));
+      this.createReportForm.controls.reportName.setValue('Daily Report ' + this.jbDatePipe.transform(new Date()));
     }
   }
 
