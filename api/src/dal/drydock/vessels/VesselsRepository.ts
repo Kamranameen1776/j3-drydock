@@ -3,10 +3,13 @@ import { getConnection, QueryRunner } from 'typeorm';
 import { className } from '../../../common/drydock/ts-helpers/className';
 import {
     LibVesselsEntity,
+    LibVesseltypes,
     ProjectEntity,
     SpecificationDetailsEntity,
     StatementOfFactsEntity,
 } from '../../../entity/drydock';
+import { VesselFieldDetailEntity } from '../../../entity/drydock/dbo/VesselFieldDetailEntity';
+import { VesselFieldEntity } from '../../../entity/drydock/dbo/VesselFieldEntity';
 
 export class VesselsRepository {
     public async GetVessel(
@@ -82,5 +85,35 @@ export class VesselsRepository {
             .andWhere('spec.uid = :uid', { uid })
             .getRawOne();
         return this.GetVesselByUID(res.VesselUid, queryRunner);
+    }
+
+    public async GetVesselType(vesselTypeId: number): Promise<string | undefined> {
+        const vesselTypeRepository = getConnection().getRepository(LibVesseltypes);
+
+        const data = await vesselTypeRepository.findOne({
+            where: {
+                ID: vesselTypeId,
+            },
+        });
+
+        return data?.VesselTypes;
+    }
+
+    public async GetVesselFields(vesselId: number): Promise<Record<string, string>> {
+        const vesselFieldValues = await getConnection()
+            .getRepository(VesselFieldDetailEntity)
+            .createQueryBuilder('vesselFieldDetail')
+            .select(['vesselField.FieldName as name', 'vesselFieldDetail.FieldValue as value'])
+            .where('vesselFieldDetail.Vessel_ID = :vesselId', { vesselId })
+            .leftJoin(className(VesselFieldEntity), 'vesselField', 'vesselField.FieldID = vesselFieldDetail.FieldID')
+            .getRawMany<{
+                name: string;
+                value: string;
+            }>();
+
+        return vesselFieldValues.reduce((acc, curr) => ({
+            ...acc,
+            [curr.name]: curr.value,
+        }));
     }
 }

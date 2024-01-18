@@ -21,6 +21,8 @@ export class SpecificationDetailsResultDto {
     PriorityName: string;
     VesselName: string;
     VesselUid: string;
+    VesselType: string;
+    VesselId: number;
     ProjectManager: string;
     ProjectManagerUid: string;
     Inspections: Array<InspectionsResultDto>;
