@@ -22,6 +22,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   @Input() projectId: string;
   @Input() vesselUid: string;
   @Input() vesselType: number;
+  @Input() vesselId: string;
 
   @Output() exportExcel = new EventEmitter();
 

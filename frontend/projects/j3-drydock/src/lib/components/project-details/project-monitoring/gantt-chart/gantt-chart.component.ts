@@ -11,7 +11,7 @@ import {
   statusProgressBarBackgroundShaded
 } from '../../../../shared/status-css.json';
 
-import { CentralizedDataService, IJbDialog, JbDatePipe, UserService } from 'jibe-components';
+import { CentralizedDataService, IJbDialog, JbDatePipe, JmsService, UserService, eJMSWorkflowAction } from 'jibe-components';
 import { DatePipe } from '@angular/common';
 import { UTCAsLocal, currentLocalAsUTC } from '../../../../utils/date';
 import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
@@ -35,6 +35,8 @@ type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
 export class GanttChartComponent extends UnsubscribeComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input()
   projectId: string;
+
+  @Input() vesselId: number;
 
   @ViewChild('jobOrderForm')
   jobOrderForm: IJobOrdersFormComponent;
@@ -165,7 +167,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     private jobOrdersService: JobOrdersService,
     private growlMessageService: GrowlMessageService,
     datePipe: DatePipe,
-    cds: CentralizedDataService
+    cds: CentralizedDataService,
+    private jmsService: JmsService
   ) {
     super();
 
@@ -289,6 +292,9 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
       Remarks: jobOrder.Remarks
     };
+
+    // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
+    this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
 
     this.jobOrdersService
       .updateJobOrder(data)
