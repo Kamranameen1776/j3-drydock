@@ -234,7 +234,7 @@ export class StandardJobsRepository {
         delete standardJob.code;
 
         const entity: StandardJobs = queryRunner.manager.create(StandardJobs, updateStandardJobData);
-        entity.uid = uid;
+        entity.uid = uid as string;
 
         const result = await queryRunner.manager.save(StandardJobs, entity);
 
