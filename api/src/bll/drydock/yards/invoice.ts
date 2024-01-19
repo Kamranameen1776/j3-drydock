@@ -1,8 +1,15 @@
 import * as ExcelJS from 'exceljs';
 
+import { transformHtmlToText } from '../../../common/drydock/ts-helpers/html-to-text';
 import { IInvoiceRawDataDto } from '../../../dal/drydock/yards/dtos/InvoiceDataDto';
 import { ApplicationException } from '../core/exceptions';
 import { InvoiceFunctionDto, InvoiceJobDto, InvoicePreparedDataDto, InvoiceSubItemDto } from './dto/InvoiceDto';
+
+type RichText = {
+    text: string;
+    font?: { bold: boolean; size: number; color: { theme: number }; name: string };
+};
+
 export class InvoiceGeneratorService {
     cRow = 17;
     sumArray: Array<string> = [];
@@ -114,7 +121,8 @@ export class InvoiceGeneratorService {
     private addSpecificationHeader(
         worksheet: ExcelJS.Worksheet,
         specificationCode: string,
-        specificationDescription: string,
+        specificationSubject: string,
+        specificationDescription: string | null,
     ) {
         worksheet.getCell(`B${this.cRow}`).value = specificationCode;
         worksheet.getCell(`B${this.cRow}`).style = {
@@ -131,13 +139,25 @@ export class InvoiceGeneratorService {
                 fgColor: { argb: 'FFD8D8D8' },
                 bgColor: { argb: 'FFD8D8D8' },
             },
-            alignment: { horizontal: 'left' },
+            alignment: { horizontal: 'left', vertical: 'top' },
         };
 
         worksheet.mergeCells(`C${this.cRow}:I${this.cRow}`);
-        worksheet.getCell(`C${this.cRow}`).value = specificationDescription;
+        const richText: RichText[] = [
+            { text: specificationSubject, font: { bold: true, size: 10, color: { theme: 1 }, name: 'Arial' } },
+        ];
+
+        if (specificationDescription && specificationDescription.length) {
+            richText.push({
+                text: `\n${specificationDescription}`,
+                font: { bold: false, size: 10, color: { theme: 1 }, name: 'Arial' },
+            });
+            worksheet.getRow(this.cRow).height = 36;
+        }
+        worksheet.getCell(`C${this.cRow}`).value = {
+            richText,
+        };
         const hStyle = {
-            font: { bold: true, size: 10, color: { theme: 1 }, name: 'Arial' },
             border: {
                 top: { style: 'thin', color: { argb: 'FF000000' } },
                 right: { style: 'medium', color: { argb: 'FF000000' } },
@@ -148,7 +168,7 @@ export class InvoiceGeneratorService {
                 fgColor: { argb: 'FFD8D8D8' },
                 bgColor: { argb: 'FFD8D8D8' },
             },
-            alignment: { horizontal: 'left' },
+            alignment: { horizontal: 'left', vertical: 'top', wrapText: true },
         } as ExcelJS.Style;
         worksheet.getCell(`C${this.cRow}`).style = hStyle;
         worksheet.getCell(`D${this.cRow}`).style = hStyle;
@@ -160,7 +180,7 @@ export class InvoiceGeneratorService {
         this.cRow++;
     }
     private addSubItem(worksheet: ExcelJS.Worksheet, item: InvoiceSubItemDto) {
-        const { code, description, qty, uom, price, discount, comment, technicalData } = item;
+        const { code, description, subject, qty, uom, price, discount, comment, technicalData } = item;
         worksheet.getCell(`A${this.cRow}`).value = technicalData;
         worksheet.getCell(`A${this.cRow}`).numFmt = ';;;';
 
@@ -179,10 +199,15 @@ export class InvoiceGeneratorService {
                 fgColor: { argb: 'FFD8D8D8' },
                 bgColor: { argb: 'FFD8D8D8' },
             },
-            alignment: { horizontal: 'left' },
+            alignment: { horizontal: 'left', vertical: 'top' },
         };
 
-        worksheet.getCell(`C${this.cRow}`).value = description;
+        let value = subject;
+        if (description && description.length) {
+            worksheet.getRow(this.cRow).height = 36;
+            value += `\n${description}`;
+        }
+        worksheet.getCell(`C${this.cRow}`).value = value;
         worksheet.getCell(`C${this.cRow}`).style = {
             font: { size: 10, color: { theme: 1 }, name: 'Arial' },
             border: {
@@ -197,6 +222,7 @@ export class InvoiceGeneratorService {
                 fgColor: { argb: 'FFD8D8D8' },
                 bgColor: { argb: 'FFD8D8D8' },
             },
+            alignment: { horizontal: 'left', vertical: 'top', wrapText: true },
         };
 
         worksheet.getCell(`D${this.cRow}`).value = qty;
@@ -236,7 +262,7 @@ export class InvoiceGeneratorService {
                 fgColor: { argb: 'FFDBE9F9' },
                 bgColor: { argb: 'FFDBE9F9' },
             },
-            alignment: { horizontal: 'left' },
+            alignment: { horizontal: 'left', vertical: 'top' },
         };
         worksheet.getCell(`E${this.cRow}`).protection = {
             locked: false,
@@ -539,8 +565,19 @@ export class InvoiceGeneratorService {
             const { name, jobs } = func;
             this.addFunctionHeader(worksheet, name);
             jobs.forEach((job: InvoiceJobDto) => {
-                const { specificationCode, specificationDescription, subItems, specificationUid } = job;
-                this.addSpecificationHeader(worksheet, specificationCode, specificationDescription);
+                const {
+                    specificationCode,
+                    specificationDescription,
+                    subItems,
+                    specificationSubject,
+                    specificationUid,
+                } = job;
+                this.addSpecificationHeader(
+                    worksheet,
+                    specificationCode,
+                    specificationSubject,
+                    specificationDescription,
+                );
                 const startRow = this.cRow;
                 subItems.forEach((item: InvoiceSubItemDto) => {
                     this.addSubItem(worksheet, item);
@@ -555,7 +592,6 @@ export class InvoiceGeneratorService {
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(`${__dirname}/../../../assets/drydock/Yard Quotation Template.xlsx`);
         const reportWorksheet = workbook.getWorksheet(1) as ExcelJS.Worksheet;
-
         this.addFunctions(reportWorksheet, data.functions);
         this.finishReport(reportWorksheet, data);
         const password = process.env.DRY_DOCK_YARD_REPORT_PASSWORD;
@@ -571,7 +607,7 @@ export class InvoiceGeneratorService {
     public prepareData(data: Array<IInvoiceRawDataDto>): InvoicePreparedDataDto {
         const obj: InvoicePreparedDataDto = {} as InvoicePreparedDataDto;
         obj.vessel = data[0].VesselName;
-        obj.invoiceId = 'invoice';
+        obj.invoiceId = data[0].ProjectUid;
         obj.requestedBy = data[0].ManagementCompany;
         obj.yard = data[0].YardName;
         obj.project = data[0].Subject;
@@ -595,7 +631,8 @@ export class InvoiceGeneratorService {
                 jobIndex = obj.functions[functionIndex].jobs.length;
                 obj.functions[functionIndex].jobs.push({
                     specificationCode: row.SpecificationCode,
-                    specificationDescription: row.SpecificationSubject,
+                    specificationSubject: row.SpecificationSubject,
+                    specificationDescription: transformHtmlToText(row.SpecificationDescription),
                     specificationUid: row.SpecificationUid,
                     subItems: [],
                 });
@@ -612,12 +649,13 @@ export class InvoiceGeneratorService {
                 obj.functions[functionIndex].jobs[jobIndex].subItems.push({
                     technicalData: JSON.stringify(itemObj),
                     code: `${row.SpecificationNumber}.${row.ItemNumber}`,
-                    description: row.ItemSubject,
+                    subject: row.ItemSubject,
                     qty: row.ItemQTY,
                     uom: row.ItemUOM,
                     price: row.ItemUnitPrice,
                     discount: row.ItemDiscount,
                     comment: row.ItemComment,
+                    description: transformHtmlToText(row.ItemDescription),
                 });
             }
         }

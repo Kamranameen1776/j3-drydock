@@ -1,5 +1,6 @@
 export interface IInvoiceRawDataDto {
     SpecificationUid: string;
+    ProjectUid: string;
     StartDate: string;
     EndDate: string;
     Subject: string;
@@ -19,4 +20,6 @@ export interface IInvoiceRawDataDto {
     ItemUnitPrice: number;
     ItemDiscount: number;
     ItemComment: string;
+    SpecificationDescription: string;
+    ItemDescription: string;
 }

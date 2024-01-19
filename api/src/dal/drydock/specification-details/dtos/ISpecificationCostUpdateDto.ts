@@ -1,5 +1,4 @@
 import { IsUUID } from 'class-validator';
-import Decimal from 'decimal.js';
 
 import { ODataBodyDto } from '../../../../shared/dto';
 import { HtmlCell } from '../../../../shared/interfaces';

@@ -36,6 +36,8 @@ export class YardsRepository {
             .createQueryBuilder('pr')
             .select([
                 'spec.uid as SpecificationUid',
+                'spec.Description as SpecificationDescription',
+                'spec.ProjectUid as ProjectUid',
                 'pr.StartDate as StartDate',
                 'pr.EndDate as EndDate',
                 'pr.Subject as Subject',
@@ -55,6 +57,7 @@ export class YardsRepository {
                 'item.unit_price as ItemUnitPrice',
                 'item.discount as ItemDiscount',
                 'item.yardComments as ItemComment',
+                'item.description as ItemDescription',
             ])
             .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .innerJoin(className(YardsProjectsEntity), 'yp', `yp.project_uid = pr.uid`)
