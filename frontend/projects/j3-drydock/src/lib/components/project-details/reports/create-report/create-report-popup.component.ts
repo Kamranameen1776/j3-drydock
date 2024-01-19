@@ -55,7 +55,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
 
   bodyConfig: EditorConfig = {
     id: 'editorBody',
-    maxLength: 8000,
+    maxLength: 10000,
     placeholder: '',
     crtlName: 'body',
     moduleCode: eModule.Project,

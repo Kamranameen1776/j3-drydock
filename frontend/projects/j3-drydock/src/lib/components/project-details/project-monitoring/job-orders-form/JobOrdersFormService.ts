@@ -203,7 +203,7 @@ export class JobOrdersFormService {
   public getRemarksEditorConfig(): EditorConfig {
     return {
       id: 'Remarks',
-      maxLength: 8000,
+      maxLength: 10000,
       placeholder: 'Enter Remarks',
       crtlName: 'RemarksCtrl',
       moduleCode: eModule.Project,

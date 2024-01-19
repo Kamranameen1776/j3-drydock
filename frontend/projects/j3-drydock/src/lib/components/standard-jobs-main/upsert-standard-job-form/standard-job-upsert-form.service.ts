@@ -180,7 +180,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
   getDescriptionEditorConfig(): EditorConfig {
     return {
       id: 'description',
-      maxLength: 8000,
+      maxLength: 10000,
       placeholder: '',
       crtlName: 'description',
       moduleCode: eModule.Project,
@@ -196,7 +196,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
   getScopeEditorConfig(): EditorConfig {
     return {
       id: 'scope',
-      maxLength: 8000,
+      maxLength: 10000,
       placeholder: '',
       crtlName: 'scope',
       moduleCode: eModule.Project,

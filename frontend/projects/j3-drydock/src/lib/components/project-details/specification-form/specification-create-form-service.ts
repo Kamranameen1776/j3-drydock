@@ -123,7 +123,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
   getDescriptionEditorConfig(): EditorConfig {
     return {
       id: 'description',
-      maxLength: 8000,
+      maxLength: 10000,
       placeholder: '',
       crtlName: 'description',
       moduleCode: eModule.Project,

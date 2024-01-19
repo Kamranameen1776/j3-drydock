@@ -52,10 +52,10 @@ export class StandardJobs extends BaseDatesEntity {
     })
     number: number;
 
-    @Column('varchar', {
+    @Column('nvarchar', {
         nullable: true,
         name: 'scope',
-        length: 8000,
+        length: 'max',
     })
     scope: string;
 
@@ -117,10 +117,10 @@ export class StandardJobs extends BaseDatesEntity {
     })
     inspection: Partial<LibSurveyCertificateAuthority>[];
 
-    @Column('varchar', {
+    @Column('nvarchar', {
         nullable: true,
         name: 'description',
-        length: 8000,
+        length: 'max',
     })
     description: string;
 }
