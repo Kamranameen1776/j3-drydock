@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChi
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
-import { finalize, map, mergeMap, takeUntil } from 'rxjs/operators';
+import { finalize, map, takeUntil } from 'rxjs/operators';
 import { ColumnModel, DayMarkersService, EditService, EditSettingsModel, TimelineSettingsModel } from '@syncfusion/ej2-angular-gantt';
 import {
   statusBackground,
@@ -21,6 +21,7 @@ import { GrowlMessageService } from '../../../../services/growl-message.service'
 import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormResultDto';
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
 import moment from 'moment';
+import { IUpdateJobOrderDurationDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDurationDto';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
@@ -198,7 +199,15 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   }
 
   taskbarEdited(event) {
-    if (!event && !event.previousData && !event.editingFields) {
+    if (!event || !event.previousData || !event.editingFields || !event.data || !event.data.taskData || !event.taskBarEditAction) {
+      return;
+    }
+
+    const jobOrderUid = event.data.taskData.JobOrderUid;
+
+    if (event.taskBarEditAction === 'ProgressResizing' && !jobOrderUid) {
+      this.growlMessageService.setErrorMessage("The progress can't be changed Please fill job order form first.");
+      this.initComponent();
       return;
     }
 
@@ -206,51 +215,47 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     const oldStartDate = event.previousData.SpecificationStartDate;
     const oldEndDate = event.previousData.SpecificationEndDate;
 
-    const newProgress = event.editingFields.progress;
+    let newProgress: number;
+
+    if (jobOrderUid) {
+      newProgress = event.editingFields.progress;
+    }
+
     const newStartDate = event.editingFields.startDate;
     const newEndDate = event.editingFields.endDate;
 
-    if (oldProgress === newProgress && oldStartDate.getTime() === newStartDate.getTime() && oldEndDate.getTime() === newEndDate.getTime()) {
+    if (
+      oldProgress === newProgress &&
+      oldStartDate?.getTime() === newStartDate.getTime() &&
+      oldEndDate?.getTime() === newEndDate.getTime()
+    ) {
       return;
     }
 
     this.showSpinner = true;
 
+    const dto: IUpdateJobOrderDurationDto = {
+      SpecificationUid: event.data.SpecificationUid,
+      SpecificationStartDate: newStartDate,
+      SpecificationEndDate: newEndDate,
+      Progress: newProgress,
+      LastUpdated: currentLocalAsUTC()
+    };
+
     this.jobOrdersService
-      .getJobOrderBySpecification({
-        SpecificationUid: event.data.SpecificationUid
-      })
-      .pipe(takeUntil(this.unsubscribe$))
+      .updateJobOrderDuration(dto)
       .pipe(
-        map((jobOrder) => {
-          const data: IUpdateJobOrderDto = {
-            SpecificationUid: jobOrder.SpecificationUid,
-            LastUpdated: currentLocalAsUTC(),
-            Progress: newProgress,
-
-            SpecificationStartDate: newStartDate,
-            SpecificationEndDate: newEndDate,
-
-            // TODO: verify if it is needed optimize this, possibly create a new API service
-            // to save just Progress and SpecificationStartDate and SpecificationEndDate
-            //
-            Status: jobOrder.Status,
-            Subject: jobOrder.Subject,
-            Remarks: jobOrder.Remarks ?? ''
-          };
-          return data;
-        }),
-        mergeMap((data) => this.jobOrdersService.updateJobOrder(data)),
+        takeUntil(this.unsubscribe$),
         finalize(() => {
-          this.showSpinner = false;
+          this.initComponent();
         })
       )
       .subscribe(
         () => {
-          this.initComponent();
+          return;
         },
         (error) => {
-          return this.growlMessageService.setErrorMessage(error?.error?.name ?? 'Unexpected error.');
+          this.growlMessageService.setErrorMessage(error?.error?.name ?? 'Unexpected error.');
         }
       );
   }
@@ -374,6 +379,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
             const specificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate);
             const obj = {
               ...jobOrder,
+              JobOrderUid: jobOrder.JobOrderUid,
               SpecificationCode: { Code: jobOrder.Code, SpecificationUid: jobOrder.SpecificationUid },
               Responsible: jobOrder.Responsible,
 

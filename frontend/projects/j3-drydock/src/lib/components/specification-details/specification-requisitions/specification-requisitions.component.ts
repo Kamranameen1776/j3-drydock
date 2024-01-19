@@ -3,7 +3,9 @@ import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import {
   Column,
+  eApiBase,
   eCrud,
+  eEntities,
   eFieldControlType,
   eGridRefreshType,
   eGridRowActions,
@@ -188,11 +190,10 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
 
   private getApiRequest(): WebApiRequest {
     return {
-      // apiBase: eApiBase.DryDockApi,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/get-specification-requisitions',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: { uid: this.specificationUid }
     };
   }

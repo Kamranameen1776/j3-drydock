@@ -6,7 +6,9 @@ import {
   FilterListSet,
   GridRowActions,
   WebApiRequest,
+  eApiBase,
   eCrud,
+  eEntities,
   eFieldControlType,
   eGridAction,
   eGridColors,
@@ -52,12 +54,10 @@ export class SpecificationGridService {
     }
 
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/get-many-specification-details',
       crud: eCrud.Post,
-      entity: 'drydock',
       odata: {
         filter
       }
@@ -69,8 +69,8 @@ export class SpecificationGridService {
   public createSpecification(formValue: any) {
     const action = 'specification-details/create-specification-details';
     const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       crud: eCrud.Post,
       action: action,
       body: {
@@ -102,8 +102,8 @@ export class SpecificationGridService {
 
   deleteSpecification(data: { uid: string }) {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/delete-specification-details',
       crud: eCrud.Put,
       body: data
@@ -234,12 +234,10 @@ export class SpecificationGridService {
 
   getStatusesRequest(): WebApiRequest {
     return {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/get-specifications-statuses',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
   }
 
@@ -285,10 +283,10 @@ export class SpecificationGridService {
 
   public getItemSources() {
     const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'dictionaries/item-source',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
 
     return apiRequest;

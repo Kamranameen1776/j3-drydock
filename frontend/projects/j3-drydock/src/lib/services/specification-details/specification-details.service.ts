@@ -214,24 +214,18 @@ export class SpecificationDetailsService {
 
   public getProjectsManagersRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'projects/projects-managers',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
     return apiRequest;
   }
 
   getSpecificationDetails(specificationUid: string): Observable<SpecificationDetails> {
     const request: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      // entity: eEntities.DryDock,
-      // action: eAction.GetSpecificationDetails,
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/get-specification-details',
       crud: eCrud.Get,
       params: `uid=${specificationUid}`
@@ -245,8 +239,8 @@ export class SpecificationDetailsService {
    **/
   updateSpecification(data: UpdateSpecificationDetailsDto): Observable<string> {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/update-specification-details',
       crud: eCrud.Put,
       body: data
@@ -301,12 +295,10 @@ export class SpecificationDetailsService {
 
   public getStandardJobsFiltersRequest(fieldName: eSpecificationDetailsGeneralInformationFields) {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'standard-jobs/get-standard-jobs-filters',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: {
         key: fieldName
       }
@@ -316,8 +308,8 @@ export class SpecificationDetailsService {
 
   deleteSpecification(data: { uid: string }) {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/delete-specification-details',
       crud: eCrud.Put,
       body: data
@@ -327,8 +319,8 @@ export class SpecificationDetailsService {
 
   deleteSpecificationRequisition(specificationUid: string, requisitionUid: string) {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/delete-specification-requisition',
       crud: eCrud.Post,
       body: {
@@ -342,8 +334,8 @@ export class SpecificationDetailsService {
 
   createSpecificationFromStandardJob(ProjectUid: string, StandardJobUid: string[]) {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/create-specification-from-standard-job',
       crud: eCrud.Post,
       body: {
@@ -371,10 +363,10 @@ export class SpecificationDetailsService {
 
   public validatePmsJobDeletion(pmsJobUid: string, specificationUid: string): Observable<boolean> {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/sub-items/validate-pms-job-deletion',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: {
         pmsJobUid,
         specificationUid
@@ -386,10 +378,10 @@ export class SpecificationDetailsService {
 
   public validateFindingDeletion(findingUid: string, specificationUid: string): Observable<boolean> {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/sub-items/validate-finding-deletion',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: {
         findingUid,
         specificationUid

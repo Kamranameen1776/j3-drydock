@@ -1,5 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Column, Filter, FilterListSet, GridRowActions, WebApiRequest, eColor, eCrud, eGridRowActions, eIconNames } from 'jibe-components';
+import {
+  Column,
+  Filter,
+  FilterListSet,
+  GridRowActions,
+  WebApiRequest,
+  eApiBase,
+  eColor,
+  eCrud,
+  eEntities,
+  eGridRowActions,
+  eIconNames
+} from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import {
   eSpecificationDetailsSubItemsFields,
@@ -115,11 +127,10 @@ export class SpecificationDetailsSubItemsGridService {
 
   public getApiRequest(specificationUid): WebApiRequest {
     return {
-      // apiBase: eApiBase.DryDockApi,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/sub-items/find-sub-items',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: {
         specificationDetailsUid: specificationUid
       }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
-import { ApiRequestService, eCrud, UserRightsService, WebApiRequest } from 'jibe-components';
+import { ApiRequestService, eApiBase, eCrud, eEntities, UserRightsService, WebApiRequest } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { ProjectCreate, ProjectEdit } from '../models/interfaces/projects';
 import { IGroupProjectStatusesDto } from './dtos/IGroupProjectStatusesDto';
@@ -23,72 +23,60 @@ export class ProjectsService {
 
   public getProjectsForMainPageGridRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'projects/get-projects-for-main-page',
-      crud: eCrud.Post,
-      entity: 'drydock'
+      crud: eCrud.Post
     };
     return apiRequest;
   }
 
   public getProjectTypesRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'projects/project-types',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
     return apiRequest;
   }
 
   public getProjectsManagersRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'projects/projects-managers',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
     return apiRequest;
   }
 
   public getProjectsManagersDictionariesRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'dictionaries/managers',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
     return apiRequest;
   }
 
   public getProjectsShipsYardsRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'projects/projects-ships-yards',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
     return apiRequest;
   }
 
   public getProjectStatusesRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'projects/projects-statuses',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
     return apiRequest;
   }
@@ -101,10 +89,10 @@ export class ProjectsService {
 
   public getFleetsRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'dictionaries/fleets',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
 
     return apiRequest;
@@ -112,10 +100,10 @@ export class ProjectsService {
 
   public createProject(data: ProjectCreate): Observable<any> {
     const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'projects/create-project',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: data
     };
 
@@ -124,10 +112,10 @@ export class ProjectsService {
 
   public updateProject(data: ProjectEdit): Observable<any> {
     const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'projects/update-project',
       crud: eCrud.Put,
-      entity: 'drydock',
       body: data
     };
 
@@ -136,10 +124,10 @@ export class ProjectsService {
 
   public updateCosts(data: UpdateCostsDto): Observable<any> {
     const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'specification-details/sub-items/update-sub-item-utilized',
       crud: eCrud.Put,
-      entity: 'drydock',
       body: data
     };
 
@@ -148,8 +136,8 @@ export class ProjectsService {
 
   public getProject(projectId: string) {
     const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       crud: eCrud.Get,
       action: 'projects/get-project',
       params: `uid=${projectId}`
@@ -160,10 +148,10 @@ export class ProjectsService {
 
   public deleteProject(projectUid: string): Observable<any> {
     const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'projects/delete-project',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: {
         ProjectId: projectUid
       }
@@ -174,10 +162,10 @@ export class ProjectsService {
 
   public groupProjectStatuses(): Observable<IGroupProjectStatusesDto[]> {
     const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBase.DryDockApi,
       action: 'projects/group-project-statuses',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
 
     return this.apiRequestService.sendApiReq(apiRequest);
@@ -188,7 +176,7 @@ export class ProjectsService {
   }
 
   exportExcel(projectId: string, yardId: string): Observable<Blob> {
-    return this.api.getFile('yards/download-yard-invoice', `ProjectUid=${projectId}&YardUid=${yardId}`, null, null, 'dryDockAPI');
+    return this.api.getFile('yards/download-yard-invoice', `ProjectUid=${projectId}&YardUid=${yardId}`, null, null, eApiBase.DryDockApi);
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
