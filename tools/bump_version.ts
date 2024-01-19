@@ -172,7 +172,7 @@ class Application {
             );
 
             console.log(
-                `\n\n-- JiBe2Web updated. Create a pull request here: https://dev.azure.com/jibe-erp/JiBe/_git/JiBe2Web/pullrequestcreate?sourceRef=${branchName}&targetRef=dev and link it with work item "658790"`
+                `\n\n-- JiBe2Web updated. Create a pull request here: https://dev.azure.com/jibe-erp/JiBe/_git/JiBe2Web/pullrequestcreate?sourceRef=${branchName}&targetRef=dev add the release task as work item`
             );
         } catch (error) {
             console.error(`-- Error preparing frontend: ${error}`);
