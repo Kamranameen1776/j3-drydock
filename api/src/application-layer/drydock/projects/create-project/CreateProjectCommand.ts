@@ -71,6 +71,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, IProject
         createProjectDto.TaskManagerUid = taskManagerData.uid;
 
         const newProjectDto: ICreateNewProjectDto = {
+            uid: createProjectDto.uid,
             EndDate: createProjectDto.EndDate,
             StartDate: createProjectDto.StartDate,
             ProjectManagerUid: createProjectDto.ProjectManagerUid,

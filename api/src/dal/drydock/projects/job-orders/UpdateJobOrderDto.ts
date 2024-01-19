@@ -3,6 +3,9 @@ import { IsDateString, IsNotEmpty, IsUUID, Max, MaxLength, Min, MinLength } from
 import { JobOrderStatus } from './JobOrderStatus';
 
 export class UpdateJobOrderDto {
+    @IsUUID('4')
+    uid?: string;
+
     @IsUUID()
     @IsNotEmpty()
     SpecificationUid: string;
