@@ -120,18 +120,18 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     if (!this.isValidationsPassed()) {
       return;
     }
-
+    // Event to upload editor images
     this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
 
     const value = this.jobFormValue;
 
     this.isSaving = true;
-    // TODO for subitems
+
     const updateSubitemsRequest$ = this.item?.uid
       ? this.standardJobsService.updateJobSubItems(this.item.uid, this.changedSubItems)
       : of(null);
 
-    forkJoin([this.standardJobsService.upsertStandardJob(this.item?.uid || this.popupForm.newUid, value), updateSubitemsRequest$])
+    forkJoin([this.standardJobsService.upsertStandardJob(this.item?.uid, value), updateSubitemsRequest$])
       .pipe(
         finalize(() => {
           this.isSaving = false;

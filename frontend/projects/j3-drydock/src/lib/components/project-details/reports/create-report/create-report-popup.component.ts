@@ -23,6 +23,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
   @Input() isOpen: boolean;
   @Input() reportUid: string;
   @Input() projectId: string;
+  @Input() vesselId: number;
 
   @Output() closeDialog = new EventEmitter<boolean>();
 

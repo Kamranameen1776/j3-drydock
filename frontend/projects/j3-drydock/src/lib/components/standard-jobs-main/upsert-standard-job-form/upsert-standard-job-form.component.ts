@@ -7,7 +7,6 @@ import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { startWith, takeUntil } from 'rxjs/operators';
 import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-main.enum';
 import { EditorConfig } from '../../../models/interfaces/EditorConfig';
-import * as uuid from 'uuid/v4';
 
 @Component({
   selector: 'jb-upsert-standard-job-form',
@@ -25,8 +24,6 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
 
   // can be used from parent to get formvalue when submitting
   public formGroup: FormGroup;
-
-  public newUid: string;
 
   formValues: FormValues;
 
@@ -54,8 +51,6 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
   ngOnInit(): void {
     this.initFormValues();
     this.setFunctionConfig();
-
-    this.newUid = uuid();
 
     this.descriptionEditorConfig = this.popupFormService.getDescriptionEditorConfig();
     this.scopeEditorConfig = this.popupFormService.getScopeEditorConfig();

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { getSmallPopup } from '../../../models/constants/popup';
-import { FormModel, IJbDialog } from 'jibe-components';
+import { FormModel, IJbDialog, JmsService, eJMSWorkflowAction } from 'jibe-components';
 import { SpecificationFormComponent } from '../specification-form/specification-form.component';
 import { SpecificationCreateFormService } from '../specification-form/specification-create-form-service';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
@@ -17,6 +17,7 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
   @Input() isOpen: boolean;
   @Input() projectId: string;
   @Input() vesselUid: string;
+  @Input() vesselId: string;
 
   @Output() closeDialog = new EventEmitter<boolean>();
 
@@ -38,7 +39,8 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
   constructor(
     private formService: SpecificationCreateFormService,
     private specificationService: SpecificationGridService,
-    private growlMessageService: GrowlMessageService
+    private growlMessageService: GrowlMessageService,
+    private jmsService: JmsService
   ) {
     super();
   }
@@ -65,6 +67,8 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
     if (!this.isValidationsPassed()) {
       return;
     }
+    // Event to upload editor images
+    this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
 
     const rawValue = this.popupForm?.formGroup.getRawValue();
 

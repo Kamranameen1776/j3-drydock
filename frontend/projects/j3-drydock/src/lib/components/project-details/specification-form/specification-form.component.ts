@@ -15,6 +15,7 @@ import { EditorConfig } from '../../../models/interfaces/EditorConfig';
 export class SpecificationFormComponent extends UnsubscribeComponent implements OnInit {
   @Input() formStructure: FormModel;
   @Input() projectId: string;
+  @Input() vesselId: string;
 
   @ViewChild('treeTemplate', { static: true }) treeTemplate: TemplateRef<unknown>;
 
