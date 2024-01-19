@@ -115,20 +115,20 @@
           ></jb-project-gantt-chart>
         </div>
       </div>
-      <div *ngSwitchCase="eSideMenuId.StatementOfFacts">
-        <div #statement_of_facts>
-          <jb-statement-of-facts
-            #statementOfFactsComponent
-            [projectId]="projectUid"
-          ></jb-statement-of-facts>
-        </div>
-      </div>
       <div *ngSwitchCase="eSideMenuId.CostUpdates">
         <div #cost_updates>
           <jb-cost-updates
             [projectId]="projectUid"
             (updatesCostsData)="updatesCostsData($event)"
           ></jb-cost-updates>
+        </div>
+      </div>
+      <div *ngSwitchCase="eSideMenuId.StatementOfFacts">
+        <div #statement_of_facts>
+          <jb-statement-of-facts
+            #statementOfFactsComponent
+            [projectId]="projectUid"
+          ></jb-statement-of-facts>
         </div>
       </div>
     </ng-container>
