@@ -1,7 +1,6 @@
-/* eslint-disable no-console */
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { FormModel, FormValues, UserService } from 'jibe-components';
+import { FormModel, FormValues } from 'jibe-components';
 import { SpecificationCreateFormService } from './specification-create-form-service';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
@@ -35,20 +34,14 @@ export class SpecificationFormComponent extends UnsubscribeComponent implements 
 
   descriptionEditorConfig: EditorConfig;
 
-  constructor(
-    private popupFormService: SpecificationCreateFormService,
-    private userService: UserService
-  ) {
+  constructor(private popupFormService: SpecificationCreateFormService) {
     super();
   }
 
   ngOnInit(): void {
     this.setFunctionConfig();
 
-    const key1 = this.projectId;
-    const vesselId = this.userService.getUserDetails().VesselId;
-
-    this.descriptionEditorConfig = this.popupFormService.getDescriptionEditorConfig(key1, vesselId);
+    this.descriptionEditorConfig = this.popupFormService.getDescriptionEditorConfig();
   }
 
   dispatchForm(event: FormGroup) {
