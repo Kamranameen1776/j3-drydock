@@ -7,6 +7,7 @@ import {
 } from '../../../../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { nameOf } from '../../../../utils/nameOf';
 import { eSortOrder } from '../../../../models/enums/sorting.enum';
+
 @Injectable()
 export class CostUpdatesService {
   gridName = 'costUpdatesGrid';
@@ -80,7 +81,9 @@ export class CostUpdatesService {
       gridName: this.gridName,
       request: this.getCostUpdatesAPIRequest(projectId),
       sortField: nameOf<SpecificationCostUpdate>((prop) => prop.code),
-      sortOrder: eSortOrder.Ascending
+      sortOrder: eSortOrder.Ascending,
+      paginator: false,
+      rows: 1000
     };
   }
 

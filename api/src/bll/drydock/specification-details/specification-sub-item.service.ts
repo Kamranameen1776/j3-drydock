@@ -66,12 +66,6 @@ export class SpecificationSubItemService {
                     specification.children = [];
                 }
 
-                specification.data.estimatedCost = new Decimal(specification.data.estimatedCost)
-                    .add(curr.subItemCost)
-                    .toFixed(2);
-                specification.data.utilizedCost = new Decimal(specification.data.utilizedCost || 0)
-                    .add(curr.subItemUtilized)
-                    .toFixed(2);
                 specification.data.variance = this.mapCostUpdateVariance(
                     variance.add(specification.data.variance.value),
                 );
@@ -80,22 +74,33 @@ export class SpecificationSubItemService {
                     data: subItem,
                 });
             } else {
+                const variance = new Decimal(curr.subItemCost || 0).sub(curr.subItemUtilized || 0);
                 const item: SpecificationCostUpdate = {
                     specificationUid: curr.uid,
                     subject: curr.subject,
                     code: curr.code,
                     status: curr.status,
-                    estimatedCost: zero.toFixed(2),
-                    variance: this.mapCostUpdateVariance(zero),
-                    utilizedCost: zero.toFixed(2),
+                    estimatedCost: new Decimal(curr.estimatedCost || 0).toFixed(2),
+                    utilizedCost: new Decimal(curr.utilizedCost || 0).toFixed(2),
+                    variance: this.mapCostUpdateVariance(variance),
                     rowCssClass: 'no-actions',
                 };
+                const subItem: SpecificationSubItemCostUpdate = {
+                    subItemUid: curr.subItemUid,
+                    subItemSubject: curr.subItemSubject,
+                    estimatedCost: new Decimal(curr.subItemCost || 0).toFixed(2),
+                    utilizedCost: new Decimal(curr.subItemUtilized || 0).toFixed(2),
+                    variance: this.mapCostUpdateVariance(variance),
+                };
 
-                acc.push({ data: item });
+                acc.push({ data: item, children: [{ data: subItem }] });
             }
 
             return acc;
         }, [] as FoldableGridData<SpecificationCostUpdateDto>[]);
+
+        const varianceStyle = `.variance { font-weight: bold; padding-left: unset; }`;
+        const varianceClass = 'variance';
 
         const totalEstimated = specifications.reduce((acc, curr) => acc.add(curr.data.estimatedCost), zero);
         const totalUtilized = specifications.reduce((acc, curr) => acc.add(curr.data.utilizedCost || 0), zero);
@@ -113,7 +118,7 @@ export class SpecificationSubItemService {
                 cellStyle: '',
                 value: totalEstimated.toFixed(2),
             },
-            variance: this.mapCostUpdateVariance(totalVariance, true),
+            variance: this.mapCostUpdateVariance(totalVariance, varianceStyle, varianceClass),
             utilizedCost: {
                 cellStyle: '',
                 value: totalUtilized.toFixed(2),
@@ -172,15 +177,14 @@ export class SpecificationSubItemService {
         };
     }
 
-    private mapCostUpdateVariance(variance: Decimal, addBold = false) {
+    private mapCostUpdateVariance(variance: Decimal, extraStyle?: string, extraClass?: string): HtmlCell {
         const color = variance.gt(0) ? 'green' : 'red';
         let varianceClass = !variance.eq(0) ? (variance.gt(0) ? 'greenValue' : 'redValue') : '';
-        const boldStyle = `.bold { font-weight: bold }`;
         const style = !variance.eq(0)
-            ? `<style>.${varianceClass} { color: ${color} } ${addBold ? boldStyle : ''}</style>`
+            ? `<style>.${varianceClass} { color: ${color} } ${extraStyle ? extraStyle : ''}</style>`
             : '';
-        if (addBold) {
-            varianceClass += ' bold';
+        if (extraClass) {
+            varianceClass += ` ${extraClass}`;
         }
         const html = `<span class="${varianceClass}">${variance.toFixed(2)}</span>${style}`;
         return {
