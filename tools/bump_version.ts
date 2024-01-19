@@ -172,7 +172,7 @@ class Application {
             );
 
             console.log(
-                `\n\n-- JiBe2Web updated. Create a pull request here: https://dev.azure.com/jibe-erp/JiBe/_git/JiBe2Web/pullrequestcreate?sourceRef=${branchName}&targetRef=dev add the release task as work item`
+                `\n\n-- JiBe2Web updated. Create a pull request here: https://dev.azure.com/jibe-erp/JiBe/_git/JiBe2Web/pullrequestcreate?sourceRef=${branchName}&targetRef=dev and link the release task as work item`
             );
         } catch (error) {
             console.error(`-- Error preparing frontend: ${error}`);
@@ -222,7 +222,7 @@ class Application {
             '.'
         );
         console.log(
-            `\n\n-- j3-drydock updated. Create a pull request here: https://dev.azure.com/jibe-erp/JiBe/_git/j3-drydock/pullrequestcreate?sourceRef=${dryDockNewBranchName}&targetRef=dev and link it with work item "658790"\n\n`
+            `\n\n-- j3-drydock updated. Create a pull request here: https://dev.azure.com/jibe-erp/JiBe/_git/j3-drydock/pullrequestcreate?sourceRef=${dryDockNewBranchName}&targetRef=dev and link the release task as work item\n\n`
         );
     }
 }
