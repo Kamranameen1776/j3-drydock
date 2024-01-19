@@ -29,8 +29,10 @@
       [crtlName]="descriptionEditorConfig.crtlName"
       [moduleCode]="descriptionEditorConfig.moduleCode"
       [functionCode]="descriptionEditorConfig.functionCode"
+      [key1]="item?.uid"
       [inlineMode]="descriptionEditorConfig.inlineMode"
       [tools]="descriptionEditorConfig.tools"
+      (updateParentCtrlValue)="updateDescriptionEditorCtrlValue($event)"
     ></jb-editor>
     <label class="job-scope-label">Scope</label>
     <jb-editor
@@ -41,8 +43,10 @@
       [crtlName]="scopeEditorConfig.crtlName"
       [moduleCode]="scopeEditorConfig.moduleCode"
       [functionCode]="scopeEditorConfig.functionCode"
+      [key1]="item?.uid"
       [inlineMode]="scopeEditorConfig.inlineMode"
       [tools]="descriptionEditorConfig.tools"
+      (updateParentCtrlValue)="updateScopeEditorCtrlValue($event)"
     ></jb-editor>
   </ng-container>
 </form>

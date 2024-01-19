@@ -22,10 +22,9 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class JobOrdersFormComponent extends UnsubscribeComponent implements OnInit, IJobOrdersFormComponent, AfterViewInit {
   @Input()
-  specificationUid: string;
-
-  @Input()
   hideSpecificationStartEndDate = false;
+
+  @Input() vesselId: number;
 
   @ViewChild('remarksEditor')
   remarksEditor: JbEditorComponent;
@@ -100,7 +99,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
     this.selectedSpecification.Value = jobOrderFormDto.Code;
 
     this.remarksEditor.key1 = jobOrderFormDto.SpecificationUid;
-    this.remarksEditor.vesselId = this.userService.getUserDetails().VesselId;
+    this.remarksEditor.vesselId = this.vesselId;
 
     this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(jobOrderFormDto.Remarks ?? '');
     controls.Subject.setValue(jobOrderFormDto.Subject);

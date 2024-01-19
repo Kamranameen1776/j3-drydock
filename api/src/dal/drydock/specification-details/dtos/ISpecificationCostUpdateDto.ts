@@ -1,5 +1,4 @@
 import { IsUUID } from 'class-validator';
-import Decimal from 'decimal.js';
 
 import { ODataBodyDto } from '../../../../shared/dto';
 import { HtmlCell } from '../../../../shared/interfaces';
@@ -17,6 +16,8 @@ export interface SpecificationCostUpdateQueryResult {
     subItemDescription: string;
     subItemCost: number;
     subItemUtilized: number;
+    estimatedCost: number;
+    utilizedCost: number;
 }
 
 export type SpecificationCostUpdateDto = SpecificationCostUpdate | SpecificationSubItemCostUpdate;

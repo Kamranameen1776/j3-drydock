@@ -23,6 +23,5 @@ export class GetOneDailyReportDto {
     @IsDateString()
     reportDate: Date;
 
-    @MaxLength(8000)
     Body: string;
 }

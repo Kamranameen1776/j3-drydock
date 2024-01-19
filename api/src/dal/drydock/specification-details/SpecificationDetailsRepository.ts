@@ -297,8 +297,11 @@ export class SpecificationDetailsRepository {
                 'sdsi.utilized as subItemUtilized',
                 'tm.Code as code',
                 'tm.Status as status',
+                'SUM(sdsi.cost) OVER (PARTITION BY sd.uid) as estimatedCost',
+                'SUM(sdsi.utilized) OVER (PARTITION BY sd.uid) as utilizedCost',
+                '(SUM(sdsi.cost) OVER (PARTITION BY sd.uid)) - (SUM(sdsi.utilized) OVER (PARTITION BY sd.uid)) as variance',
             ])
-            .innerJoin(className(SpecificationDetailsSubItemEntity), 'sdsi', 'sd.uid = sdsi.specification_details_uid')
+            .leftJoin(className(SpecificationDetailsSubItemEntity), 'sdsi', 'sd.uid = sdsi.specification_details_uid')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
             .innerJoin(className(ProjectEntity), 'proj', 'sd.project_uid = proj.uid')
             .where('sd.active_status = 1')

@@ -7,7 +7,7 @@
   [eventMarkers]="eventMarkers"
   [columns]="columns"
   (queryTaskbarInfo)="queryTaskbarInfo($event)"
-  height="324px"
+  height="421px"
   [projectStartDate]="projectStartDate"
   [projectEndDate]="projectEndDate"
   [editSettings]="editSettings"
@@ -24,7 +24,10 @@
     class="dialog-body"
     jb-dialog-body
   >
-    <jb-job-orders-form #jobOrderForm></jb-job-orders-form>
+    <jb-job-orders-form
+      [vesselId]="vesselId"
+      #jobOrderForm
+    ></jb-job-orders-form>
   </div>
 
   <ng-container jb-dialog-footer>

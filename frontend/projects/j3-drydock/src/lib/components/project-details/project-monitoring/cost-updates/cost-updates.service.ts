@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Column, WebApiRequest, eCrud, eFieldControlType, eGridCellType, eGridColumnsWidth } from 'jibe-components';
+import { Column, WebApiRequest, eCrud, eEntities, eFieldControlType, eGridCellType } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
 import {
   SpecificationCostUpdate,
@@ -7,6 +7,8 @@ import {
 } from '../../../../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { nameOf } from '../../../../utils/nameOf';
 import { eSortOrder } from '../../../../models/enums/sorting.enum';
+import { eApiBaseDryDockAPI } from '../../../../models/constants/constants';
+
 @Injectable()
 export class CostUpdatesService {
   gridName = 'costUpdatesGrid';
@@ -80,18 +82,18 @@ export class CostUpdatesService {
       gridName: this.gridName,
       request: this.getCostUpdatesAPIRequest(projectId),
       sortField: nameOf<SpecificationCostUpdate>((prop) => prop.code),
-      sortOrder: eSortOrder.Ascending
+      sortOrder: eSortOrder.Ascending,
+      paginator: false,
+      rows: 1000
     };
   }
 
   public getCostUpdatesAPIRequest(projectId: string): WebApiRequest {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/get-specification-cost-updates',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: {
         projectUid: projectId
       },

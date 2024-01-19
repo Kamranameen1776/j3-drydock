@@ -41,22 +41,21 @@ export class StatementOfFactsGridService {
       ReadOnly: true
     },
     {
-      DisplayText: 'Fact',
-      FieldName: nameOf<IStatementOfFactDto>((prop) => prop.Fact),
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: true,
-      ReadOnly: true,
-      width: eGridColumnsWidth.ShortDescription
-    },
-    {
       DisplayText: 'Date & Time',
       FieldName: nameOf<IStatementOfFactDto>((prop) => prop.DateAndTime),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
       ReadOnly: true,
-      width: eGridColumnsWidth.ShortDescription
+      width: eGridColumnsWidth.LongDescription
+    },
+    {
+      DisplayText: 'Fact',
+      FieldName: nameOf<IStatementOfFactDto>((prop) => prop.Fact),
+      IsActive: true,
+      IsMandatory: true,
+      IsVisible: true,
+      ReadOnly: true
     }
   ];
 

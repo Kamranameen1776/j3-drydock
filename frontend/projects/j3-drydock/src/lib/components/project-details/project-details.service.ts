@@ -144,7 +144,8 @@ export class ProjectDetailsService {
             id: 'StartDate',
             type: 'date',
             placeholder: 'Select',
-            calendarWithInputIcon: true
+            calendarWithInputIcon: true,
+            calendarMax: details.EndDate
           }
         },
         {
@@ -160,7 +161,8 @@ export class ProjectDetailsService {
             id: 'EndDate',
             type: 'date',
             placeholder: 'Select',
-            calendarWithInputIcon: true
+            calendarWithInputIcon: true,
+            calendarMin: details.StartDate
           }
         },
         {
@@ -305,12 +307,10 @@ export class ProjectDetailsService {
             GridColStart: 1,
             GridColEnd: 3,
             active_status: true,
-            SectionCode: eProjectDetailsSideMenuId.StatementOfFacts,
-            SectionLabel: eProjectDetailsSideMenuLabel.StatementOfFacts,
+            SectionCode: eProjectDetailsSideMenuId.CostUpdates,
+            SectionLabel: eProjectDetailsSideMenuLabel.CostUpdates,
             IconClass: 'icons8-more-details-2',
-            isAddNewButton: true,
-            buttonLabel: 'Add Fact',
-            addNewButtonType: JbButtonType.NoButton
+            isAddNewButton: false
           },
           {
             GridRowStart: 3,
@@ -318,10 +318,12 @@ export class ProjectDetailsService {
             GridColStart: 1,
             GridColEnd: 3,
             active_status: true,
-            SectionCode: eProjectDetailsSideMenuId.CostUpdates,
-            SectionLabel: eProjectDetailsSideMenuLabel.CostUpdates,
+            SectionCode: eProjectDetailsSideMenuId.StatementOfFacts,
+            SectionLabel: eProjectDetailsSideMenuLabel.StatementOfFacts,
             IconClass: 'icons8-more-details-2',
-            isAddNewButton: false
+            isAddNewButton: true,
+            buttonLabel: 'Add Fact',
+            addNewButtonType: JbButtonType.NoButton
           }
         ]
       },

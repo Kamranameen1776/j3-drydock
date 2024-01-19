@@ -19,6 +19,7 @@ import { SubItem } from '../models/interfaces/sub-items';
 import { eModule } from '../models/enums/module.enum';
 import { eFunction } from '../models/enums/function.enum';
 import { GridInputsWithRequest } from '../models/interfaces/grid-inputs';
+import { eApiBaseDryDockAPI } from '../models/constants/constants';
 
 @Injectable({ providedIn: 'root' })
 export class StandardJobsService {
@@ -144,12 +145,10 @@ export class StandardJobsService {
 
   getStandardJobsRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'standard-jobs/get-standard-jobs',
       crud: eCrud.Post,
-      entity: 'drydock',
       odata: {
         orderby: 'code asc'
       }
@@ -180,12 +179,10 @@ export class StandardJobsService {
     }
 
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'standard-jobs/get-standard-jobs',
       crud: eCrud.Post,
-      entity: 'drydock',
       odata: {
         filter,
         orderby: 'code asc'
@@ -196,8 +193,8 @@ export class StandardJobsService {
 
   deleteStandardJob(uid: string) {
     const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       crud: eCrud.Put,
       action: 'standard-jobs/delete-standard-jobs',
       body: {
@@ -212,8 +209,8 @@ export class StandardJobsService {
     const body = this.getUpsertStandardJobBody(uid, formValue);
     const action = uid ? 'standard-jobs/update-standard-jobs' : 'standard-jobs/create-standard-jobs';
     const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       crud: uid ? eCrud.Put : eCrud.Post,
       action: action,
       body: body
@@ -223,12 +220,10 @@ export class StandardJobsService {
 
   getStandardJobsFiltersRequest(fieldName: eStandardJobsMainFields) {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'standard-jobs/get-standard-jobs-filters',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: {
         key: fieldName
       }
@@ -252,10 +247,10 @@ export class StandardJobsService {
 
   updateJobSubItems(jobUid: string, subItems: SubItem[]) {
     const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'standard-jobs/update-standard-jobs-sub-items',
       crud: eCrud.Put,
-      entity: 'drydock',
       body: {
         uid: jobUid,
         subItems: subItems

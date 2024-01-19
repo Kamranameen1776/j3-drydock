@@ -8,6 +8,7 @@ import {
     SubItemCostFactorsExcerpt,
 } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { UnitTypeEntity } from '../../../entity/drydock/UnitTypeEntity';
+import { BusinessException } from '../core/exceptions';
 import {
     IUploadInvoiceRawDataCreateDto,
     IUploadInvoiceRawDataUpdateDto,
@@ -15,11 +16,14 @@ import {
 } from './dto/UploadInvoiceDto';
 
 export class UploadInvoiceService {
-    public async getRawData(buffer: Buffer): Promise<IUploadRawDataDto> {
+    public async getRawData(buffer: Buffer, ProjectUid: string): Promise<IUploadRawDataDto> {
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.load(buffer);
         const worksheet = workbook.getWorksheet(1) as ExcelJS.Worksheet;
         const invoiceId = worksheet.getCell('A1').value?.toString() as string;
+        if (invoiceId !== ProjectUid) {
+            throw new BusinessException('That invoice doesnt belong to this project');
+        }
         let index = 16;
         const update: Array<IUploadInvoiceRawDataUpdateDto> = [];
         const create: Array<IUploadInvoiceRawDataCreateDto> = [];
@@ -36,9 +40,17 @@ export class UploadInvoiceService {
                         comments: worksheet.getCell(`I${index}`).value as string,
                     });
                 } else if (!!worksheet.getCell(`C${index}`).value) {
+                    const text = worksheet.getCell(`C${index}`).value as string;
+                    const lines = text.split('\n');
+                    const subject = lines.shift() as string;
+                    let description: string | undefined = undefined;
+                    if (lines.length) {
+                        description = lines.join('\n');
+                    }
                     create.push({
                         technicalData: worksheet.getCell(`A${index}`).value as string,
-                        description: worksheet.getCell(`C${index}`).value as string,
+                        subject,
+                        description,
                         qty: worksheet.getCell(`D${index}`).value as number,
                         uom: worksheet.getCell(`E${index}`).value as string,
                         unitPrice: worksheet.getCell(`F${index}`).value as string,
@@ -95,7 +107,8 @@ export class UploadInvoiceService {
             const ut = UnitTypes.find((unit) => unit.types === item.uom);
             const entity = new SpecificationDetailsSubItemEntity();
             entity.uid = DataUtilService.newUid();
-            entity.subject = item.description;
+            entity.subject = item.subject;
+            entity.description = item.description;
             entity.quantity = item.qty;
             entity.unitPrice = item.unitPrice;
             entity.discount = item.discount;
