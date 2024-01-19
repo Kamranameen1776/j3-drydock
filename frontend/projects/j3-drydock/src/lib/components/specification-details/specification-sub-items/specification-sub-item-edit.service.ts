@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { ApiRequestService, eApiBase, eCrud, eEntities, eFieldControlType, FormModel, FormValues, WebApiRequest } from 'jibe-components';
-import { specificationSubItemEditFormId } from '../../../models/constants/constants';
+import { ApiRequestService, eCrud, eEntities, eFieldControlType, FormModel, FormValues, WebApiRequest } from 'jibe-components';
+import { eApiBaseDryDockAPI, specificationSubItemEditFormId } from '../../../models/constants/constants';
 import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import {
   eSpecificationDetailsSubItemsFields,
@@ -156,7 +156,7 @@ export class SpecificationSubItemEditService extends FormServiceBase {
   public updateSubItem(data: SpecificationSubItem, uid: string, specificationUid: string): Observable<SpecificationSubItem> {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/sub-items/update-sub-item',
       crud: eCrud.Put,
       body: {
@@ -179,7 +179,7 @@ export class SpecificationSubItemEditService extends FormServiceBase {
   public createSubItem(data: CreateSpecificationSubItemData, specificationUid: string): Observable<SpecificationSubItem> {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/sub-items/create-sub-item',
       crud: eCrud.Post,
       body: {
@@ -202,7 +202,7 @@ export class SpecificationSubItemEditService extends FormServiceBase {
   public deleteSubItem(uid: string, specificationUid: string): Observable<SpecificationSubItem> {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/sub-items/delete-sub-item',
       crud: eCrud.Put,
       body: {

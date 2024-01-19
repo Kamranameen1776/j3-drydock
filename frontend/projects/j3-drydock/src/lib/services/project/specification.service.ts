@@ -6,7 +6,6 @@ import {
   FilterListSet,
   GridRowActions,
   WebApiRequest,
-  eApiBase,
   eCrud,
   eEntities,
   eFieldControlType,
@@ -19,6 +18,7 @@ import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
 import { StandardJobsService } from '../standard-jobs.service';
+import { eApiBaseDryDockAPI } from '../../models/constants/constants';
 
 export enum SpecificationType {
   ALL = 'All',
@@ -55,7 +55,7 @@ export class SpecificationGridService {
 
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/get-many-specification-details',
       crud: eCrud.Post,
       odata: {
@@ -70,7 +70,7 @@ export class SpecificationGridService {
     const action = 'specification-details/create-specification-details';
     const apiReq: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       crud: eCrud.Post,
       action: action,
       body: {
@@ -103,7 +103,7 @@ export class SpecificationGridService {
   deleteSpecification(data: { uid: string }) {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/delete-specification-details',
       crud: eCrud.Put,
       body: data
@@ -235,7 +235,7 @@ export class SpecificationGridService {
   getStatusesRequest(): WebApiRequest {
     return {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/get-specifications-statuses',
       crud: eCrud.Get
     };
@@ -284,7 +284,7 @@ export class SpecificationGridService {
   public getItemSources() {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'dictionaries/item-source',
       crud: eCrud.Get
     };

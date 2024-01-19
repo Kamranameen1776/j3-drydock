@@ -19,6 +19,7 @@ import { SubItem } from '../models/interfaces/sub-items';
 import { eModule } from '../models/enums/module.enum';
 import { eFunction } from '../models/enums/function.enum';
 import { GridInputsWithRequest } from '../models/interfaces/grid-inputs';
+import { eApiBaseDryDockAPI } from '../models/constants/constants';
 
 @Injectable({ providedIn: 'root' })
 export class StandardJobsService {
@@ -145,7 +146,7 @@ export class StandardJobsService {
   getStandardJobsRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'standard-jobs/get-standard-jobs',
       crud: eCrud.Post,
       odata: {
@@ -179,7 +180,7 @@ export class StandardJobsService {
 
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'standard-jobs/get-standard-jobs',
       crud: eCrud.Post,
       odata: {
@@ -193,7 +194,7 @@ export class StandardJobsService {
   deleteStandardJob(uid: string) {
     const apiReq: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       crud: eCrud.Put,
       action: 'standard-jobs/delete-standard-jobs',
       body: {
@@ -209,7 +210,7 @@ export class StandardJobsService {
     const action = uid ? 'standard-jobs/update-standard-jobs' : 'standard-jobs/create-standard-jobs';
     const apiReq: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       crud: uid ? eCrud.Put : eCrud.Post,
       action: action,
       body: body
@@ -220,7 +221,7 @@ export class StandardJobsService {
   getStandardJobsFiltersRequest(fieldName: eStandardJobsMainFields) {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'standard-jobs/get-standard-jobs-filters',
       crud: eCrud.Post,
       body: {
@@ -247,7 +248,7 @@ export class StandardJobsService {
   updateJobSubItems(jobUid: string, subItems: SubItem[]) {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'standard-jobs/update-standard-jobs-sub-items',
       crud: eCrud.Put,
       body: {

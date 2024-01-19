@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Column, WebApiRequest, eApiBase, eCrud, eEntities, eFieldControlType, eGridCellType } from 'jibe-components';
+import { Column, WebApiRequest, eCrud, eEntities, eFieldControlType, eGridCellType } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
 import {
   SpecificationCostUpdate,
@@ -7,6 +7,7 @@ import {
 } from '../../../../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { nameOf } from '../../../../utils/nameOf';
 import { eSortOrder } from '../../../../models/enums/sorting.enum';
+import { eApiBaseDryDockAPI } from '../../../../models/constants/constants';
 
 @Injectable()
 export class CostUpdatesService {
@@ -90,7 +91,7 @@ export class CostUpdatesService {
   public getCostUpdatesAPIRequest(projectId: string): WebApiRequest {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/get-specification-cost-updates',
       crud: eCrud.Post,
       body: {

@@ -4,7 +4,6 @@ import {
   Column,
   GridRowActions,
   WebApiRequest,
-  eApiBase,
   eCrud,
   eEntities,
   eGridAction,
@@ -15,6 +14,7 @@ import ODataFilterBuilder from 'odata-filter-builder';
 import { DailyReportCreate, DailyReportUpdate } from '../../../models/interfaces/project-details';
 import { Observable } from 'rxjs';
 import { IDailyReportsResultDto } from './dto/IDailyReportsResultDto';
+import { eApiBaseDryDockAPI } from '../../../models/constants/constants';
 
 @Injectable()
 export class DailyReportsGridService {
@@ -58,7 +58,7 @@ export class DailyReportsGridService {
 
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'daily-reports/get-daily-reports',
       crud: eCrud.Post,
       odata: {
@@ -84,7 +84,7 @@ export class DailyReportsGridService {
   deleteDailyReport(data: { uid: string; projectUid: string }) {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'daily-reports/delete-daily-reports',
       crud: eCrud.Put,
       body: {
@@ -99,7 +99,7 @@ export class DailyReportsGridService {
   createDailyReport(data: DailyReportCreate) {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'daily-reports/create-daily-reports',
       crud: eCrud.Post,
       body: {
@@ -113,7 +113,7 @@ export class DailyReportsGridService {
   updateDailyReport(data: DailyReportUpdate) {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'daily-reports/update-daily-reports',
       crud: eCrud.Put,
       body: {
@@ -127,7 +127,7 @@ export class DailyReportsGridService {
   getJobOrders() {
     const request = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'projects/job-orders/get-job-orders',
       crud: eCrud.Post
     };
@@ -138,7 +138,7 @@ export class DailyReportsGridService {
   getOneDailyReport(reportUid: string): Observable<IDailyReportsResultDto> {
     const request = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'daily-reports/get-one-daily-report',
       crud: eCrud.Get,
       params: `uid=${reportUid}`

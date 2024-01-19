@@ -3,7 +3,6 @@ import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import {
   Column,
-  eApiBase,
   eCrud,
   eEntities,
   eFieldControlType,
@@ -26,6 +25,7 @@ import {
   SpecificationRequisitionsFieldNames
 } from '../../../models/enums/specification-requisitions.enum';
 import { eSpecificationAccessActions } from '../../../models/enums/access-actions.enum';
+import { eApiBaseDryDockAPI } from '../../../models/constants/constants';
 
 @Component({
   selector: 'jb-specification-requisitions',
@@ -191,7 +191,7 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
   private getApiRequest(): WebApiRequest {
     return {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/get-specification-requisitions',
       crud: eCrud.Post,
       body: { uid: this.specificationUid }

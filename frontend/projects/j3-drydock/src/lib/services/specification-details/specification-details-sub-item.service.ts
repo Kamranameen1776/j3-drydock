@@ -5,7 +5,6 @@ import {
   FilterListSet,
   GridRowActions,
   WebApiRequest,
-  eApiBase,
   eColor,
   eCrud,
   eEntities,
@@ -19,6 +18,7 @@ import {
 } from '../../models/enums/specification-details-sub-items.enum';
 import { SpecificationDetailsService } from './specification-details.service';
 import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
+import { eApiBaseDryDockAPI } from '../../models/constants/constants';
 
 @Injectable()
 export class SpecificationDetailsSubItemsGridService {
@@ -128,7 +128,7 @@ export class SpecificationDetailsSubItemsGridService {
   public getApiRequest(specificationUid): WebApiRequest {
     return {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/sub-items/find-sub-items',
       crud: eCrud.Post,
       body: {

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, WebApiRequest, eApiBase, eCrud, eEntities } from 'jibe-components';
+import { ApiRequestService, WebApiRequest, eCrud, eEntities } from 'jibe-components';
 import { IDeleteStatementOfFactDto } from './IDeleteStatementOfFactDto';
 import { Observable } from 'rxjs';
 import { ICreateStatementOfFactDto } from './ICreateStatementOfFactDto';
 import { IUpdateStatementOfFactDto } from './IUpdateStatementOfFactDto';
+import { eApiBaseDryDockAPI } from '../../../models/constants/constants';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,7 +14,7 @@ export class StatementOfFactsService {
   getStatementOfFactsRequest(): WebApiRequest {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'statement-of-facts/get-statement-of-facts',
       crud: eCrud.Post
     };
@@ -24,7 +25,7 @@ export class StatementOfFactsService {
   deleteStatementOfFactRequest(deleteStatementOfFact: IDeleteStatementOfFactDto): WebApiRequest {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'statement-of-facts/delete-statement-of-fact',
       crud: eCrud.Post,
       body: deleteStatementOfFact
@@ -40,7 +41,7 @@ export class StatementOfFactsService {
   createStatementOfFactRequest(createStatementOfFact: ICreateStatementOfFactDto): WebApiRequest {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'statement-of-facts/create-statement-of-fact',
       crud: eCrud.Post,
       body: createStatementOfFact
@@ -56,7 +57,7 @@ export class StatementOfFactsService {
   updateStatementOfFactRequest(updateStatementOfFact: IUpdateStatementOfFactDto): WebApiRequest {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
-      apiBase: eApiBase.DryDockApi,
+      apiBase: eApiBaseDryDockAPI,
       action: 'statement-of-facts/update-statement-of-fact',
       crud: eCrud.Put,
       body: updateStatementOfFact
