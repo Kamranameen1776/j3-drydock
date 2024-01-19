@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, Column, GridRowActions, WebApiRequest, eCrud, eGridAction, GridButton } from 'jibe-components';
+import { ApiRequestService, Column, GridRowActions, WebApiRequest, eCrud, eGridAction, eGridColumnsWidth } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
 import { DailyReportCreate, DailyReportUpdate } from '../../../models/interfaces/project-details';
@@ -13,6 +13,16 @@ export class DailyReportsGridService {
   private readonly columns: Column[] = [
     {
       DisableSort: false,
+      DisplayText: 'Report Date',
+      FieldName: 'reportDate',
+      IsActive: true,
+      IsMandatory: true,
+      IsVisible: true,
+      ReadOnly: true,
+      width: eGridColumnsWidth.ShortDescription
+    },
+    {
+      DisableSort: false,
       DisplayText: 'Report Name',
       FieldName: 'reportName',
       IsActive: true,
@@ -20,15 +30,6 @@ export class DailyReportsGridService {
       IsVisible: true,
       ReadOnly: true,
       hyperlink: true
-    },
-    {
-      DisableSort: false,
-      DisplayText: 'Report Date',
-      FieldName: 'reportDate',
-      IsActive: true,
-      IsMandatory: true,
-      IsVisible: true,
-      ReadOnly: true
     }
   ];
   private gridActions: GridRowActions[] = [
