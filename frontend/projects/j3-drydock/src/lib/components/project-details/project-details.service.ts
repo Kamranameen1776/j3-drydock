@@ -144,7 +144,8 @@ export class ProjectDetailsService {
             id: 'StartDate',
             type: 'date',
             placeholder: 'Select',
-            calendarWithInputIcon: true
+            calendarWithInputIcon: true,
+            calendarMax: details.EndDate
           }
         },
         {
@@ -160,7 +161,8 @@ export class ProjectDetailsService {
             id: 'EndDate',
             type: 'date',
             placeholder: 'Select',
-            calendarWithInputIcon: true
+            calendarWithInputIcon: true,
+            calendarMin: details.StartDate
           }
         },
         {
