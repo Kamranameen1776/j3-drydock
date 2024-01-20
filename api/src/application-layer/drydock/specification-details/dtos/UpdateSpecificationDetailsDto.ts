@@ -19,7 +19,6 @@ export class UpdateSpecificationDetailsDto {
     DoneByUid?: string;
 
     @MinLength(1)
-    @MaxLength(8000)
     @IsOptional()
     Description?: string;
 

@@ -5,7 +5,7 @@ import {
     SpecificationCostUpdateRequestDto,
 } from '../../../dal/drydock/specification-details/dtos/ISpecificationCostUpdateDto';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
-import { ODataResult, RequestWithOData } from '../../../shared/interfaces';
+import { ODataResult } from '../../../shared/interfaces';
 import { FoldableGridData } from '../../../shared/interfaces/foldable-grid-data.interface';
 import { Query } from '../core/cqrs/Query';
 

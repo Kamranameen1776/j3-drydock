@@ -66,6 +66,7 @@
             #specificationsComponent
             [projectId]="projectUid"
             [vesselUid]="vesselUid"
+            [vesselId]="tmDetails?.VesselId"
             [vesselType]="vesselType"
           ></jb-specifications>
         </div>
@@ -112,15 +113,8 @@
           <jb-project-gantt-chart
             #ganttChartComponent
             [projectId]="projectUid"
+            [vesselId]="tmDetails?.VesselId"
           ></jb-project-gantt-chart>
-        </div>
-      </div>
-      <div *ngSwitchCase="eSideMenuId.StatementOfFacts">
-        <div #statement_of_facts>
-          <jb-statement-of-facts
-            #statementOfFactsComponent
-            [projectId]="projectUid"
-          ></jb-statement-of-facts>
         </div>
       </div>
       <div *ngSwitchCase="eSideMenuId.CostUpdates">
@@ -129,6 +123,14 @@
             [projectId]="projectUid"
             (updatesCostsData)="updatesCostsData($event)"
           ></jb-cost-updates>
+        </div>
+      </div>
+      <div *ngSwitchCase="eSideMenuId.StatementOfFacts">
+        <div #statement_of_facts>
+          <jb-statement-of-facts
+            #statementOfFactsComponent
+            [projectId]="projectUid"
+          ></jb-statement-of-facts>
         </div>
       </div>
     </ng-container>

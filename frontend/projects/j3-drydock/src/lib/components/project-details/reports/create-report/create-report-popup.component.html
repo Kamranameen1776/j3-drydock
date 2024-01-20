@@ -35,8 +35,11 @@
           [crtlName]="bodyConfig.crtlName"
           [moduleCode]="bodyConfig.moduleCode"
           [functionCode]="bodyConfig.functionCode"
+          [key1]="projectId"
+          [vesselId]="vesselId"
           [inlineMode]="bodyConfig.inlineMode"
           [tools]="bodyConfig.tools"
+          (updateParentCtrlValue)="updateEditorCtrlValue($event)"
         ></jb-editor>
       </form>
     </div>

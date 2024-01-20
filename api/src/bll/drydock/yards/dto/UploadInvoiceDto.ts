@@ -14,7 +14,8 @@ export interface IUploadInvoiceRawDataCreateDto {
     unitPrice: string;
     discount: string;
     comments: string;
-    description: string;
+    description: string | undefined;
+    subject: string;
 }
 
 export interface IUploadRawDataDto {

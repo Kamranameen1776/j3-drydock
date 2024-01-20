@@ -33,7 +33,7 @@ export class UploadYardsInvoiceCommand extends Command<Request, void> {
         return this.uow.ExecuteAsync(async (queryRunner) => {
             const buffer = request.file?.buffer as Buffer;
             const ProjectUid = request.body.ProjectUid as string;
-            const rawData = await this.uploadService.getRawData(buffer);
+            const rawData = await this.uploadService.getRawData(buffer, ProjectUid);
             const UnitTypes = await this.yardsRepository.getSubItemUnitTypes(queryRunner);
             let createEntities = await this.uploadService.prepareCreateData(rawData.create, UnitTypes);
             if (createEntities.length) {

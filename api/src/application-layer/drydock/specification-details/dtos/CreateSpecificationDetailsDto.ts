@@ -17,7 +17,6 @@ export class CreateSpecificationDetailsDto {
     Subject: string;
 
     @MinLength(1)
-    @MaxLength(8000)
     Description: string;
 
     @IsArray()

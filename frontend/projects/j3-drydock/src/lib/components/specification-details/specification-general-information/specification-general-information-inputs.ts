@@ -209,16 +209,14 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
     return baseModel;
   }
 
-  getDescriptionEditorConfig(key1: string, vesselId: number): EditorConfig {
+  getDescriptionEditorConfig(): EditorConfig {
     return {
       id: 'description',
-      maxLength: 8000,
+      maxLength: 10000,
       placeholder: '',
       crtlName: 'description',
       moduleCode: eModule.Project,
       functionCode: eFunction.SpecificationDetails,
-      key1: key1,
-      vesselId: vesselId,
       inlineMode: {
         enable: false,
         onSelection: true

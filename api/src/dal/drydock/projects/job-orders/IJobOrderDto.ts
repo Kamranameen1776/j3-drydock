@@ -17,4 +17,6 @@ export interface IJobOrderDto {
     LastUpdated: Date;
 
     SpecificationSubject: string;
+
+    JobOrderUid?: string;
 }

@@ -1,6 +1,6 @@
 import { EditorConfig } from './../../../../models/interfaces/EditorConfig';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IJbDialog, IJbTextBox, JbDatePipe } from 'jibe-components';
+import { IJbDialog, IJbTextBox, JbDatePipe, JmsService, eJMSWorkflowAction } from 'jibe-components';
 import { getSmallPopup } from '../../../../models/constants/popup';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
@@ -23,6 +23,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
   @Input() isOpen: boolean;
   @Input() reportUid: string;
   @Input() projectId: string;
+  @Input() vesselId: number;
 
   @Output() closeDialog = new EventEmitter<boolean>();
 
@@ -54,7 +55,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
 
   bodyConfig: EditorConfig = {
     id: 'editorBody',
-    maxLength: 8000,
+    maxLength: 10000,
     placeholder: '',
     crtlName: 'body',
     moduleCode: eModule.Project,
@@ -92,7 +93,8 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
   constructor(
     private growlMessageService: GrowlMessageService,
     private reportsService: DailyReportsGridService,
-    private jbDatePipe: JbDatePipe
+    private jbDatePipe: JbDatePipe,
+    private jmsService: JmsService
   ) {
     super();
   }
@@ -122,6 +124,10 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
     this.isJobOrderPopupVisible = false;
   }
 
+  updateEditorCtrlValue(event) {
+    this.bodyControl.setValue(event.value);
+  }
+
   private getDailyReport() {
     this.reportsService
       .getOneDailyReport(this.reportUid)
@@ -141,6 +147,9 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
       this.growlMessageService.setErrorMessage('Report name is required');
       return;
     }
+
+    // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
+    this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
 
     this.isSaving = true;
 

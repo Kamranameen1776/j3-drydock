@@ -29,10 +29,10 @@ export class StandardJobsSubItems extends BaseDatesEntity {
     })
     subject: string;
 
-    @Column('varchar', {
+    @Column('nvarchar', {
         nullable: false,
         name: 'description',
-        length: 8000,
+        length: 'max',
     })
     description: string;
 

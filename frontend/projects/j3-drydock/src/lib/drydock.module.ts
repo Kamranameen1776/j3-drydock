@@ -69,6 +69,7 @@ import { GanttModule } from '@syncfusion/ej2-angular-gantt';
 import { GanttChartComponent } from './components/project-details/project-monitoring/gantt-chart/gantt-chart.component';
 import { LinkedPmsJobsAndFindingsComponent } from './components/specification-details/pms-jobs/linked-pms-jobs-and-findings.component';
 import { CostUpdatesComponent } from './components/project-details/project-monitoring/cost-updates/cost-updates.component';
+import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
 
 @NgModule({
   declarations: [
@@ -135,7 +136,8 @@ import { CostUpdatesComponent } from './components/project-details/project-monit
     FormsModule,
     PrimeNgModule,
     MenuModule,
-    GanttModule
+    GanttModule,
+    SplitterModule
   ],
   providers: [
     DatePipe,

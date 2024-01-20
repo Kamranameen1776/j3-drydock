@@ -1,4 +1,5 @@
-import { IsDateString, IsUUID, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsUUID, MaxLength } from 'class-validator';
 
 export class UpdateProjectDto {
     @IsUUID()
@@ -9,15 +10,18 @@ export class UpdateProjectDto {
 
     public ProjectManagerUid: string;
 
-    @IsDateString()
+    @Type(() => Date)
+    @IsDate()
     public StartDate: Date;
 
-    @IsDateString()
+    @Type(() => Date)
+    @IsDate()
     public EndDate: Date;
 
     public ShipYardId: string;
 
-    @IsDateString()
+    @Type(() => Date)
+    @IsDate()
     public LastUpdated: Date;
 
     public UpdatedBy: string;

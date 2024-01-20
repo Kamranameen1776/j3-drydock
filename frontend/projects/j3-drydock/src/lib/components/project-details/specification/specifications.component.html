@@ -1,51 +1,67 @@
-<div class="specs-content">
-  <jb-tree
-    [treeMode]="'single'"
-    [staticNodes]="treeData$ | async"
-    [showSetting]="{ showSearch: true, showButtons: false }"
-    filterPlaceholder="Search Function"
-    (nodeData)="setNodeData($event)"
-    [eventsList]="eventsList"
-    [virtualScroll]="true"
-    scrollHeight="320px"
-  ></jb-tree>
+<ejs-splitter class="specs-content">
+  <e-panes>
+    <e-pane
+      size="260px"
+      [resizable]="false"
+      [collapsible]="true"
+    >
+      <ng-template #content>
+        <jb-tree
+          [treeMode]="'single'"
+          [staticNodes]="treeData$ | async"
+          [showSetting]="{ showSearch: true, showButtons: false }"
+          filterPlaceholder="Search Function"
+          (nodeData)="setNodeData($event)"
+          [eventsList]="eventsList"
+          [virtualScroll]="true"
+          scrollHeight="320px"
+        ></jb-tree>
+      </ng-template>
+    </e-pane>
 
-  <div class="grid-content">
-    <jb-grid
-      *ngIf="gridData"
-      [gridName]="gridData.gridName"
-      [colData]="gridData.columns"
-      [tableDataReq]="gridData.request"
-      [setActions]="gridData.actions"
-      [filterData]="gridData.filters"
-      [filterListsSet]="gridData.filtersLists"
-      [searchFields]="gridData.searchFields"
-      [includeSearch]="true"
-      [getStyleByContainer]="true"
-      [showSettings]="gridData.showSettings"
-      [advancedSettings]="gridData.advancedSettings"
-      [isDisplayAdvancedFilter]="false"
-      (action)="onActionClick($event)"
-      (cellPlainTextClick)="cellPlainTextClick($event)"
-    ></jb-grid>
-  </div>
+    <e-pane
+      class="grid-content"
+      [resizable]="false"
+    >
+      <ng-template #content>
+        <jb-grid
+          *ngIf="gridData"
+          [gridName]="gridData.gridName"
+          [colData]="gridData.columns"
+          [tableDataReq]="gridData.request"
+          [setActions]="gridData.actions"
+          [filterData]="gridData.filters"
+          [filterListsSet]="gridData.filtersLists"
+          [searchFields]="gridData.searchFields"
+          [includeSearch]="true"
+          [getStyleByContainer]="true"
+          [showSettings]="gridData.showSettings"
+          [advancedSettings]="gridData.advancedSettings"
+          [isDisplayAdvancedFilter]="false"
+          (action)="onActionClick($event)"
+          (cellPlainTextClick)="cellPlainTextClick($event)"
+        ></jb-grid>
+      </ng-template>
+    </e-pane>
+  </e-panes>
+</ejs-splitter>
 
-  <jb-add-specification-from-standard-job-popup
-    *ngIf="addFromStandardJobPopupVisible"
-    [treeData]="treeData$ | async"
-    [isOpen]="addFromStandardJobPopupVisible"
-    [vesselType]="vesselType"
-    [projectUid]="projectId"
-    (closeDialog)="onCloseCreatePopup($event)"
-  ></jb-add-specification-from-standard-job-popup>
+<jb-add-specification-from-standard-job-popup
+  *ngIf="addFromStandardJobPopupVisible"
+  [treeData]="treeData$ | async"
+  [isOpen]="addFromStandardJobPopupVisible"
+  [vesselType]="vesselType"
+  [projectUid]="projectId"
+  (closeDialog)="onCloseCreatePopup($event)"
+></jb-add-specification-from-standard-job-popup>
 
-  <jb-create-specification-popup
-    [isOpen]="isCreatePopupVisible"
-    [projectId]="projectId"
-    [vesselUid]="vesselUid"
-    (closeDialog)="onCloseCreatePopup($event)"
-  ></jb-create-specification-popup>
-</div>
+<jb-create-specification-popup
+  [isOpen]="isCreatePopupVisible"
+  [projectId]="projectId"
+  [vesselUid]="vesselUid"
+  [vesselId]="vesselId"
+  (closeDialog)="onCloseCreatePopup($event)"
+></jb-create-specification-popup>
 
 <ng-template
   #statusTemplate

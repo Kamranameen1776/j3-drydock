@@ -1,17 +1,19 @@
 export interface InvoiceSubItemDto {
     technicalData: string;
     code: string;
-    description: string;
+    description: string | null;
     qty: string;
     uom: string;
     price: number;
     discount: number;
     comment: string;
+    subject: string;
 }
 
 export interface InvoiceJobDto {
     specificationCode: string;
-    specificationDescription: string;
+    specificationSubject: string;
+    specificationDescription: string | null;
     specificationUid: string;
     subItems: Array<InvoiceSubItemDto>;
 }
