@@ -196,6 +196,10 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   }
 
   public async save(event): Promise<void> {
+    if (!this.detailForm) {
+      return;
+    }
+
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
     if (this.detailForm.invalid) {
       this.jbTMDtlSrv.showGrowlMassage.next({
