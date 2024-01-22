@@ -4,9 +4,11 @@ import { Request } from 'express';
 import { SynchronizerService } from 'j2utils';
 
 import { UploadInvoiceService } from '../../../bll/drydock/yards/upload';
+import { ExceptionLogDataDto } from '../../../controllers/drydock/core/middleware/ExceptionLogDataDto';
 import { SpecificationDetailsSubItemsRepository } from '../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { YardsRepository } from '../../../dal/drydock/yards/YardsRepository';
+import { log } from '../../../logger';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UploadBody } from './dtos/InvoiceDto';
@@ -57,12 +59,27 @@ export class UploadYardsInvoiceCommand extends Command<Request, void> {
             if (uids.length) {
                 const condition = `uid IN ('${uids.join(`','`)}')`;
                 const vessel = await this.vesselRepository.GetVesselByProjectUid(ProjectUid);
+                /** TODO: there is some bug appears on demo env. HAVE TO BE FIX before production release.
                 await SynchronizerService.dataSynchronizeByConditionManager(
                     queryRunner.manager,
                     this.tableName,
                     vessel.VesselId,
                     condition,
                 );
+                    */
+                //ADDING LOGS TO DEBUG ERROR ABOVE
+                const logMessage = JSON.stringify({
+                    condition,
+                    vessel: JSON.stringify(vessel),
+                });
+                const logData = new ExceptionLogDataDto();
+                logData.Stack = logMessage;
+                const method = '/drydock/yards/upload-yard-invoice/';
+                const moduleCode = 'project';
+                const functionCode = 'invoice';
+                const locationId = null;
+                const isClient = null;
+                await log.warn(logMessage, logData, method, null, moduleCode, functionCode, null, locationId, isClient);
             }
         });
     }
