@@ -57,8 +57,8 @@ export class SpecificationSubItemService {
                 const subItem: SpecificationSubItemCostUpdate = {
                     subItemUid: curr.subItemUid,
                     subItemSubject: curr.subItemSubject,
-                    estimatedCost: new Decimal(curr.subItemCost).toFixed(2),
-                    utilizedCost: new Decimal(curr.subItemUtilized).toFixed(2),
+                    estimatedCost: new Decimal(curr.subItemCost || 0).toFixed(2),
+                    utilizedCost: new Decimal(curr.subItemUtilized || 0).toFixed(2),
                     variance: this.mapCostUpdateVariance(variance),
                 };
 
