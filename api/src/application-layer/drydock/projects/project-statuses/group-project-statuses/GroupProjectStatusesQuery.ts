@@ -2,11 +2,11 @@ import { Request } from 'express';
 
 import { GroupProjectStatusId } from '../../../../../bll/drydock/projects/Project/GroupProjectStatusId';
 import { ProjectsRepository } from '../../../../../dal/drydock/projects/ProjectsRepository';
+import { Cache } from '../../../../../external-services/drydock/Cache';
 import { SlfAccessor } from '../../../../../external-services/drydock/SlfAccessor';
 import { Query } from '../../../core/cqrs/Query';
 import { IGroupProjectStatusDto } from './dtos/IGroupProjectStatusDto';
 import { IGroupProjectStatusesDto } from './dtos/IGroupProjectStatusesDto';
-
 export class GroupProjectStatusesQuery extends Query<Request, IGroupProjectStatusesDto[]> {
     readonly allProjectsProjectTypeId = 'all_projects';
 
@@ -14,6 +14,7 @@ export class GroupProjectStatusesQuery extends Query<Request, IGroupProjectStatu
 
     readonly projectsRepository: ProjectsRepository;
     readonly slfAccessor: SlfAccessor;
+    readonly cache = new Cache('project', 'dry_dock', '.groupStatuses');
 
     constructor() {
         super();
@@ -37,7 +38,11 @@ export class GroupProjectStatusesQuery extends Query<Request, IGroupProjectStatu
     protected async MainHandlerAsync(request: Request): Promise<IGroupProjectStatusesDto[]> {
         const token: string = request.headers.authorization as string;
         const assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(token);
-
+        const cacheKey = assignedVessels.join('|');
+        const cacheValue = await this.cache.get(cacheKey);
+        if (cacheValue) {
+            return cacheValue;
+        }
         const projectsWithGroupStatusCount = await this.projectsRepository.GetGroupProjectStatusesByProjectType(
             assignedVessels,
         );
@@ -68,8 +73,9 @@ export class GroupProjectStatusesQuery extends Query<Request, IGroupProjectStatu
                 GroupProjectStatuses: this.populateGroupStatuses(groupStatuses),
             };
         });
-
-        return [...[all_projects], ...groupStatusesByType];
+        const results = [...[all_projects], ...groupStatusesByType];
+        await this.cache.put(results, cacheKey, 10);
+        return results;
     }
 
     public populateGroupStatuses(projectStatuses: IGroupProjectStatusDto[]): IGroupProjectStatusDto[] {
