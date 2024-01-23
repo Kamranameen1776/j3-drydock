@@ -3,7 +3,15 @@ import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.bas
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
 import { finalize, map, takeUntil } from 'rxjs/operators';
-import { ColumnModel, DayMarkersService, EditService, EditSettingsModel, TimelineSettingsModel } from '@syncfusion/ej2-angular-gantt';
+import {
+  ColumnModel,
+  DayMarkersService,
+  EditService,
+  EditSettingsModel,
+  TooltipSettingsModel,
+  TimelineSettingsModel,
+  Gantt
+} from '@syncfusion/ej2-angular-gantt';
 import {
   statusBackground,
   statusIcon,
@@ -54,6 +62,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   showSpinner: boolean;
 
   tasks: TransformedJobOrder[] = [];
+
   taskFields = {
     id: 'SpecificationUid',
     name: 'SpecificationSubject',
@@ -71,16 +80,35 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     }
   ];
 
+  ganttChart: Gantt;
+  tooltipSettings: TooltipSettingsModel = {
+    taskbar:
+      '<div class="d-flex flex-row">' +
+      '<div>${SpecificationSubject}</div>' +
+      '<div>Start Date: ${SpecificationStartDateFormatted}</div>' +
+      '<div>End Date: ${SpecificationEndDateFormatted}</div>' +
+      '<div>Progress: ${Progress}</div>' +
+      '<div>Duration: ${DurationInDays} days</div>' +
+      '<div>Status: ${SpecificationStatus.statusName}</div>' +
+      '</div>',
+    showTooltip: true
+  };
+
   columns: ColumnModel[] = [
     {
-      // This column is needed for the editing taskbar
+      // This column with 'isPrimaryKey' is needed for the editing taskbar
 
       field: 'SpecificationUid',
       headerText: '',
       allowEditing: false,
-      maxWidth: '0',
-      minWidth: '0',
+      visible: false,
       isPrimaryKey: true
+    },
+    {
+      field: 'DurationInDays',
+      headerText: '',
+      allowEditing: false,
+      visible: false
     },
     {
       field: 'SpecificationCode',
@@ -395,6 +423,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
               SpecificationStartDate: specificationStartDate,
               SpecificationEndDate: specificationEndDate,
 
+              DurationInDays: this.calculateCountOfDays(specificationEndDate, specificationStartDate),
+
               Progress: jobOrder.Progress || 0,
               SpecificationStatus: {
                 status: jobOrder.SpecificationStatusCode,
@@ -416,5 +446,11 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
         this.showSpinner = false;
         this.tasks = data;
       });
+  }
+
+  private calculateCountOfDays(startDate: Date, endDate: Date): number {
+    const msInOneDay = 1000 * 60 * 60 * 24;
+
+    return Math.abs(Math.ceil((endDate.getTime() - startDate.getTime()) / msInOneDay));
   }
 }
