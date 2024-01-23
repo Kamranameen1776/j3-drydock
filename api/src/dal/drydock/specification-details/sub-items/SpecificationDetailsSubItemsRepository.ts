@@ -378,7 +378,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     protected async assertAllUnitTypesExistByUids(unitTypeUids: string[], queryRunner: QueryRunner): Promise<void> {
-        unitTypeUids = unitTypeUids.filter((uid) => uid !== undefined);
+        unitTypeUids = unitTypeUids.filter((uid) => !!uid);
         if (unitTypeUids.length === 0) {
             return;
         }
