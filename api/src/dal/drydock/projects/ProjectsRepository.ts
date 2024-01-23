@@ -28,6 +28,54 @@ import { IProjectTypeResultDto } from './dtos/IProjectTypeResultDto';
 import { IProjectVesselsResultDto } from './dtos/IProjectVesselsResultDto';
 
 export class ProjectsRepository {
+    public async GetGroupStatusesRawData(assignedVessels?: number[]): Promise<any> {
+        const groupProjectStatusRepository = getManager().getRepository(GroupProjectStatusEntity);
+        const projectRepository = getManager().getRepository(ProjectEntity);
+
+        let firstQuery = projectRepository
+            .createQueryBuilder('pr')
+            .select([
+                'count(pt.uid) as counter',
+                'gps.GroupProjectStatusId as GroupProjectStatusId',
+                'gps.ProjectTypeId as ProjectTypeId',
+            ])
+            .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = pr.ProjectTypeUid')
+            .innerJoin(className(TecTaskManagerEntity), 'tm', 'tm.uid = pr.TaskManagerUid')
+            .innerJoin(
+                className(GroupProjectStatusEntity),
+                'gps',
+                'tm.Status = gps.ProjectStatusId and pt.WorklistType = gps.ProjectTypeId',
+            )
+            .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
+            .groupBy('gps.GroupProjectStatusId, gps.ProjectTypeId')
+            .where('gps.ActiveStatus = 1')
+            .andWhere('pr.ActiveStatus = 1');
+
+        if (assignedVessels) {
+            firstQuery = firstQuery.andWhere(`vessel.vessel_id IN (${assignedVessels.join(',')})`);
+        }
+        console.log(firstQuery.getQuery());
+        const secondQuery = groupProjectStatusRepository
+            .createQueryBuilder('t1')
+            .select([
+                't1.GroupProjectStatusId as GroupProjectStatusId',
+                't1.ProjectTypeId as ProjectTypeId',
+                't1.DisplayName as GroupProjectDisplayName',
+                'ISNULL(t2.counter, 0) as ProjectWithStatusCount',
+                'wt.WorklistTypeDisplay as ProjectTypeName',
+            ])
+            .leftJoin(
+                `(${firstQuery.getQuery()})`,
+                't2',
+                't1.GroupProjectStatusId = t2.GroupProjectStatusId and t1.ProjectTypeId = t2.ProjectTypeId',
+            )
+            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 't1.ProjectTypeId = wt.WorklistType')
+            .where('t1.ActiveStatus = 1')
+            .groupBy('t1.GroupProjectStatusId, t1.ProjectTypeId, t1.DisplayName, counter, wt.WorklistTypeDisplay');
+
+        const result = await secondQuery.execute();
+        return result;
+    }
     /**
      * Loads project statuses, that are configured in the Workflow Configurations page
      * @example In Progress, Completed, Cancelled

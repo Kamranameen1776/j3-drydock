@@ -28,6 +28,13 @@ export class GroupProjectStatusEntity {
     })
     ProjectStatusId: string;
 
+    @Column('varchar', {
+        nullable: true,
+        name: 'display_name',
+        length: 128,
+    })
+    DisplayName: string;
+
     @Column('bit', {
         nullable: true,
         name: 'active_status',

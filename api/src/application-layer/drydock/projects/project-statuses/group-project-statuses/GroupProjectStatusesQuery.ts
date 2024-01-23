@@ -43,39 +43,88 @@ export class GroupProjectStatusesQuery extends Query<Request, IGroupProjectStatu
         if (cacheValue) {
             return cacheValue;
         }
-        const projectsWithGroupStatusCount = await this.projectsRepository.GetGroupProjectStatusesByProjectType(
-            assignedVessels,
-        );
 
-        const all_ProjectsWithGroupStatusCount = await this.projectsRepository.GetGroupProjectStatuses(assignedVessels);
+        const rawData = await this.projectsRepository.GetGroupStatusesRawData(assignedVessels);
 
-        const projectTypes = await this.projectsRepository.GetProjectTypes();
+        const result: any = [
+            {
+                ProjectTypeId: this.allProjectsProjectTypeId,
+                ProjectTypeName: this.allProjectsName,
+                GroupProjectStatuses: [],
+            },
+        ];
+        for (let i = 0; i < rawData.length; i++) {
+            const {
+                GroupProjectStatusId,
+                ProjectTypeId,
+                GroupProjectDisplayName,
+                ProjectWithStatusCount,
+                ProjectTypeName,
+            } = rawData[i];
+            const all: any = result[0];
+            let index = all.GroupProjectStatuses.findIndex((t: any) => t.GroupProjectStatusId === GroupProjectStatusId);
+            if (index === -1) {
+                index = all.GroupProjectStatuses.length;
+                const obj: any = {
+                    GroupProjectStatusId,
+                    GroupProjectDisplayName,
+                    ProjectWithStatusCount: 0,
+                };
+                all.GroupProjectStatuses.push(obj);
+            }
+            all.GroupProjectStatuses[index].ProjectWithStatusCount += ProjectWithStatusCount;
 
-        const all_projects: IGroupProjectStatusesDto = {
-            ProjectTypeId: this.allProjectsProjectTypeId,
-            ProjectTypeName: this.allProjectsName,
-            GroupProjectStatuses: this.populateGroupStatuses(all_ProjectsWithGroupStatusCount),
-        };
-
-        const groupStatusesByType: IGroupProjectStatusesDto[] = projectTypes.map((projectType) => {
-            const groupStatuses: IGroupProjectStatusDto[] = projectsWithGroupStatusCount
-                .filter((project) => project.ProjectTypeId === projectType.ProjectTypeCode)
-                .map((project) => {
-                    return {
-                        GroupProjectStatusId: project.GroupProjectStatusId,
-                        ProjectWithStatusCount: project.ProjectWithStatusCount,
-                    };
+            let typeIndex = result.findIndex((t: any) => t.ProjectTypeId === ProjectTypeId);
+            if (typeIndex === -1) {
+                typeIndex = result.length;
+                result.push({
+                    ProjectTypeId,
+                    ProjectTypeName,
+                    GroupProjectStatuses: [],
                 });
-
-            return {
-                ProjectTypeId: projectType.ProjectTypeCode,
-                ProjectTypeName: projectType.ProjectTypeName,
-                GroupProjectStatuses: this.populateGroupStatuses(groupStatuses),
+            }
+            const obj: any = {
+                GroupProjectStatusId,
+                GroupProjectDisplayName,
+                ProjectWithStatusCount,
             };
-        });
-        const results = [...[all_projects], ...groupStatusesByType];
-        await this.cache.put(results, cacheKey, 10);
-        return results;
+            result[typeIndex].GroupProjectStatuses.push(obj);
+        }
+
+        // const projectsWithGroupStatusCount = await this.projectsRepository.GetGroupProjectStatusesByProjectType(
+        //     assignedVessels,
+        // );
+        //
+        // const all_ProjectsWithGroupStatusCount = await this.projectsRepository.GetGroupProjectStatuses(assignedVessels);
+        //
+        // const projectTypes = await this.projectsRepository.GetProjectTypes();
+        //
+        // const all_projects: IGroupProjectStatusesDto = {
+        //     ProjectTypeId: this.allProjectsProjectTypeId,
+        //     ProjectTypeName: this.allProjectsName,
+        //     GroupProjectStatuses: this.populateGroupStatuses(all_ProjectsWithGroupStatusCount),
+        // };
+        //
+        // const groupStatusesByType: IGroupProjectStatusesDto[] = projectTypes.map((projectType) => {
+        //     const groupStatuses: IGroupProjectStatusDto[] = projectsWithGroupStatusCount
+        //         .filter((project) => project.ProjectTypeId === projectType.ProjectTypeCode)
+        //         .map((project) => {
+        //             return {
+        //                 GroupProjectStatusId: project.GroupProjectStatusId,
+        //                 ProjectWithStatusCount: project.ProjectWithStatusCount,
+        //             };
+        //         });
+        //
+        //     return {
+        //         ProjectTypeId: projectType.ProjectTypeCode,
+        //         ProjectTypeName: projectType.ProjectTypeName,
+        //         GroupProjectStatuses: this.populateGroupStatuses(groupStatuses),
+        //     };
+        // });
+        // const result = [...[all_projects], ...groupStatusesByType];
+
+        await this.cache.put(result, cacheKey, 300);
+        return result;
     }
 
     public populateGroupStatuses(projectStatuses: IGroupProjectStatusDto[]): IGroupProjectStatusDto[] {
