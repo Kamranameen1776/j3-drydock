@@ -1,11 +1,11 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, TemplateRef, ViewChild } from '@angular/core';
 import { DisableGridFeature } from 'jibe-components';
 import { CostUpdatesService } from './cost-updates.service';
 import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
 import { NewTabService } from '../../../../services/new-tab-service';
 import { ActivatedRoute } from '@angular/router';
-import { SpecificationCostUpdateDto, UpdateCostsDto } from '../../../../models/dto/specification-details/ISpecificationCostUpdateDto';
-import { JbCellChangeEvent } from '../../../../models/interfaces/jb-cell-change-event';
+import { SpecificationSubItemCostUpdate, UpdateCostsDto } from '../../../../models/dto/specification-details/ISpecificationCostUpdateDto';
+import { nameOf } from '../../../../utils/nameOf';
 
 type subItemDataType = { [key: string]: { uid: string; utilized: number } };
 
@@ -19,6 +19,7 @@ export class CostUpdatesComponent implements OnInit {
   @Input() projectId: string;
 
   @Output() updatesCostsData = new EventEmitter<UpdateCostsDto>();
+  @ViewChild('utilizedTemplate', { static: true }) utilizedTemplate: TemplateRef<unknown>;
 
   gridInputs: GridInputsWithRequest;
 
@@ -40,6 +41,14 @@ export class CostUpdatesComponent implements OnInit {
 
   ngOnInit(): void {
     this.gridInputs = this.costUpdatesService.getGridInputs(this.projectId);
+
+    const col = this.gridInputs.columns.find(
+      (col) => col.FieldName === nameOf<SpecificationSubItemCostUpdate>((prop) => prop.utilizedCost)
+    );
+
+    if (col) {
+      col.cellTemplate = this.utilizedTemplate;
+    }
   }
 
   cellPlainTextClick({ cellType, rowData, columnDetail }) {
@@ -51,17 +60,10 @@ export class CostUpdatesComponent implements OnInit {
     }
   }
 
-  onCellChange(cellData: JbCellChangeEvent<SpecificationCostUpdateDto>) {
-    let subItemsData;
-
-    if (cellData.rowIndex.parent) {
-      this.subItemData[cellData.rowData.subItemUid] = { uid: cellData.rowData.subItemUid, utilized: cellData.cellvalue as number };
-      subItemsData = Object.values(this.subItemData);
-    }
-
-    if (subItemsData) {
-      this.updatePayload = { subItems: subItemsData, specificationDetailsUid: cellData.rowIndex.parent?.data.specificationUid };
-      this.updatesCostsData.emit(this.updatePayload);
-    }
+  onCellChange(cellData: SpecificationSubItemCostUpdate) {
+    this.subItemData[cellData.subItemUid] = { uid: cellData.subItemUid, utilized: cellData.utilizedCost };
+    const subItemsData = Object.values(this.subItemData);
+    this.updatePayload = { subItems: subItemsData, specificationDetailsUid: cellData.specificationUid };
+    this.updatesCostsData.emit(this.updatePayload);
   }
 }

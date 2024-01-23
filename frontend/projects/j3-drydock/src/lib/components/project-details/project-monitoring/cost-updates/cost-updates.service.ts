@@ -53,7 +53,7 @@ export class CostUpdatesService {
       ReadOnly: true
     },
     {
-      DisplayText: 'Utilized',
+      DisplayText: 'Utilized Cost',
       DisableSort: true,
       FieldName: nameOf<SpecificationSubItemCostUpdate>((prop) => prop.utilizedCost),
       FieldType: eGridCellType.Number,
