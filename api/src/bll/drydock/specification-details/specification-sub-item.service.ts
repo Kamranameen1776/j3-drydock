@@ -57,9 +57,11 @@ export class SpecificationSubItemService {
                 const subItem: SpecificationSubItemCostUpdate = {
                     subItemUid: curr.subItemUid,
                     subItemSubject: curr.subItemSubject,
+                    specificationUid: curr.uid,
                     estimatedCost: new Decimal(curr.subItemCost || 0).toFixed(2),
                     utilizedCost: new Decimal(curr.subItemUtilized || 0).toFixed(2),
                     variance: this.mapCostUpdateVariance(variance),
+                    rowCssClass: 'child-row',
                 };
 
                 if (!specification.children) {
@@ -124,7 +126,7 @@ export class SpecificationSubItemService {
                 value: totalUtilized.toFixed(2),
             },
             hideActions: true,
-            rowCssClass: 'no-actions',
+            rowCssClass: 'total-row',
         };
 
         specifications.push({ data: totalRow });
