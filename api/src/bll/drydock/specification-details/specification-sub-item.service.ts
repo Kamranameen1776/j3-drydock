@@ -93,6 +93,7 @@ export class SpecificationSubItemService {
                     estimatedCost: new Decimal(curr.subItemCost || 0).toFixed(2),
                     utilizedCost: new Decimal(curr.subItemUtilized || 0).toFixed(2),
                     variance: this.mapCostUpdateVariance(variance),
+                    rowCssClass: 'child-row',
                 };
 
                 acc.push({ data: item, children: [{ data: subItem }] });
