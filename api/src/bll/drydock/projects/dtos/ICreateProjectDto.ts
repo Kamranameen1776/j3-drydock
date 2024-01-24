@@ -2,6 +2,7 @@ import { IsDateString, IsNumber, IsOptional, IsUUID, MaxLength, MinLength } from
 
 export class CreateProjectDto {
     @IsUUID('4')
+    @IsOptional()
     uid?: string;
 
     ProjectCode?: string;
