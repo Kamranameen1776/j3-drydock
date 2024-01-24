@@ -1,37 +1,38 @@
 import { BehaviorSubject } from 'rxjs';
 import { IProjectGroupStatusDto } from './IProjectGroupStatusDto';
 import { IProjectStatusDto } from '../../../services/dtos/IProjectStatusDto';
+import { eProjectStatus, eProjectWorkflowStatusAction } from '../../../models/enums/project-details.enum';
 
 export class LeftPanelFilterService {
   public groupStatusSelected: IProjectGroupStatusDto;
   public groupStatusChanged: BehaviorSubject<IProjectGroupStatusDto>;
   public vesselsChanged: BehaviorSubject<number[]>;
-  public statusToFilterMap: { [key: string]: IProjectStatusDto[] } = {
-    Planned: [
+  public statusToFilterMap: { [key in eProjectStatus]: IProjectStatusDto[] } = {
+    [eProjectStatus.Planned]: [
       {
-        ProjectStatusId: 'RAISE',
+        ProjectStatusId: eProjectWorkflowStatusAction.Raise,
         ProjectStatusName: 'Planned'
       }
     ],
-    Active: [
+    [eProjectStatus.Active]: [
       {
-        ProjectStatusId: 'IN PROGRESS',
+        ProjectStatusId: eProjectWorkflowStatusAction['In Progress'],
         ProjectStatusName: 'Yard Selection'
       }
     ],
-    Completed: [
+    [eProjectStatus.Completed]: [
       {
-        ProjectStatusId: 'COMPLETE',
+        ProjectStatusId: eProjectWorkflowStatusAction.Complete,
         ProjectStatusName: 'Execution'
       },
       {
-        ProjectStatusId: 'VERIFY',
+        ProjectStatusId: eProjectWorkflowStatusAction.Verify,
         ProjectStatusName: 'Reporting'
       }
     ],
-    Closed: [
+    [eProjectStatus.Closed]: [
       {
-        ProjectStatusId: 'CLOSE',
+        ProjectStatusId: eProjectWorkflowStatusAction.Close,
         ProjectStatusName: 'Closed'
       }
     ]
@@ -39,7 +40,6 @@ export class LeftPanelFilterService {
 
   constructor() {
     this.groupStatusSelected = {
-      GroupProjectStatusId: '',
       ProjectTypeId: ''
     };
 

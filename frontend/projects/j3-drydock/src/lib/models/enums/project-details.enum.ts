@@ -67,3 +67,10 @@ export enum eProjectCreate {
   BtnLabel = 'Create',
   DialogueHeader = 'Create New Project'
 }
+
+export enum eProjectStatus {
+  Planned = 'Planned',
+  Active = 'Active',
+  Completed = 'Completed',
+  Closed = 'Closed'
+}
