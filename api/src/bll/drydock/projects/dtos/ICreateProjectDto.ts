@@ -1,6 +1,9 @@
 import { IsDateString, IsNumber, IsOptional, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class CreateProjectDto {
+    @IsUUID('4')
+    uid?: string;
+
     ProjectCode?: string;
 
     CreatedAtOffice?: number;

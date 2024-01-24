@@ -335,7 +335,7 @@ export class ProjectsRepository {
 
     public async CreateProject(data: ICreateNewProjectDto, queryRunner: QueryRunner): Promise<string> {
         const project = new ProjectEntity();
-        project.uid = new DataUtilService().newUid();
+        project.uid = data.uid ?? new DataUtilService().newUid();
         project.CreatedAtOffice = !!data.CreatedAtOffice;
         project.VesselUid = data.VesselUid;
         project.ProjectTypeUid = data.ProjectTypeUid;

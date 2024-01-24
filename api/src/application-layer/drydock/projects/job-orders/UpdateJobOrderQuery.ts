@@ -81,7 +81,7 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
             if (!jobOrder) {
                 jobOrder = new JobOrderEntity();
                 jobOrder.SpecificationUid = specification.uid;
-                jobOrder.uid = new DataUtilService().newUid();
+                jobOrder.uid = request.uid ?? new DataUtilService().newUid();
                 jobOrder.ProjectUid = specification.ProjectUid;
             }
 

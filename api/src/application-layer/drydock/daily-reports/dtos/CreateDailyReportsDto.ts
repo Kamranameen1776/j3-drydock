@@ -1,6 +1,9 @@
 import { IsDateString, IsDefined, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class CreateDailyReportsDto {
+    @IsUUID(4)
+    uid?: string;
+
     @IsDefined()
     @IsUUID(4)
     ProjectUid: string;

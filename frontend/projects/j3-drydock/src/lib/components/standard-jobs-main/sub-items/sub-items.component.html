@@ -18,6 +18,7 @@
 <jb-dialog
   [dialogContent]="confirmationPopUp"
   [(dialogVisible)]="isConfirmDeleteVisible"
+  (closeDialog)="onCloseConfirmationDeletePopup()"
 >
   <div
     jb-dialog-body

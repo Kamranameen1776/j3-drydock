@@ -20,6 +20,8 @@ import { StandardJobsService } from '../../../services/standard-jobs.service';
 export class SubItemsComponent extends UnsubscribeComponent implements OnChanges, OnInit {
   @Input() job: StandardJobResult;
 
+  @Input() newUid: string;
+
   @Input() functionUid: string;
 
   @Output() changed = new EventEmitter<SubItem[]>();
@@ -109,6 +111,10 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
     this.isConfirmDeleteVisible = false;
   }
 
+  onCloseConfirmationDeletePopup() {
+    this.currentRow = undefined;
+  }
+
   searchFn = (record: SubItem, term: string) => {
     term = term ?? '';
     return record.subject?.toLowerCase().includes(term.toLowerCase());
@@ -124,16 +130,15 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
     this.isConfirmDeleteVisible = true;
   }
 
-  private delete(record) {
+  private delete(record: SubItem) {
     this.showLoader = true;
-
     const idx = this.subItems.findIndex((item) => item === record);
     if (idx > -1) {
       this.subItems = [...this.subItems];
       this.subItems.splice(idx, 1);
     }
 
-    this.standardJobsService.updateJobSubItems(record.standardJobUid, this.subItems).subscribe(
+    this.standardJobsService.updateJobSubItems(this.job?.uid || this.newUid, this.subItems).subscribe(
       () => {
         this.growlMessageService.setSuccessMessage('Sub item removed successfully.');
         this.showLoader = false;

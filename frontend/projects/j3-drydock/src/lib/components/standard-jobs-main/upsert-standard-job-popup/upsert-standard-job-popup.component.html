@@ -15,20 +15,15 @@
           (formValid)="onIsFormValid($event)"
         ></jb-upsert-standard-job-form>
       </p-tabPanel>
-      <p-tabPanel
-        header="Sub Items"
-        [disabled]="!isEditing"
-      >
+      <p-tabPanel header="Sub Items">
         <jb-drydock-sub-items
           [job]="item"
+          [newUid]="newItemUid"
           [functionUid]="functionUid"
           (changed)="onSubItemsChanged($event)"
         ></jb-drydock-sub-items>
       </p-tabPanel>
-      <p-tabPanel
-        header="Attachment"
-        [disabled]="!isEditing"
-      >
+      <p-tabPanel header="Attachment">
         <jb-attachments
           class="attachments"
           [attachConfig]="attachmentConfig"

@@ -205,13 +205,13 @@ export class StandardJobsService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  upsertStandardJob(uid: string, formValue: any) {
+  upsertStandardJob(uid: string, formValue: any, isUpdating: boolean) {
     const body = this.getUpsertStandardJobBody(uid, formValue);
-    const action = uid ? 'standard-jobs/update-standard-jobs' : 'standard-jobs/create-standard-jobs';
+    const action = isUpdating ? 'standard-jobs/update-standard-jobs' : 'standard-jobs/create-standard-jobs';
     const apiReq: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
-      crud: uid ? eCrud.Put : eCrud.Post,
+      crud: isUpdating ? eCrud.Put : eCrud.Post,
       action: action,
       body: body
     };
