@@ -115,6 +115,10 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async getBySpecificationDetailsUid(specificationDetailsUid: string[]) {
+        if (specificationDetailsUid.length === 0) {
+            return [];
+        }
+
         return getManager().find(SpecificationDetailsSubItemEntity, {
             where: {
                 specificationDetails: {
