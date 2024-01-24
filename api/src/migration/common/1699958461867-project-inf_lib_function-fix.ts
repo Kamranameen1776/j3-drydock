@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class ProjectInfLibFunctionFix1699958461867 implements MigrationInterface {
@@ -31,7 +32,7 @@ export class ProjectInfLibFunctionFix1699958461867 implements MigrationInterface
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.moduleName,
                 'Populate INF_Lib_Function table with parent_function_code and parent_module_code',

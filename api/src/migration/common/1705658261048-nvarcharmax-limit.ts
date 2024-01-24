@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class nvarcharmaxLimit1705658261048 implements MigrationInterface {
     schemaName = 'dry_dock';
@@ -29,7 +30,7 @@ export class nvarcharmaxLimit1705658261048 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.moduleName,
                 `Update length for varchars`,

@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class createSpecification_details_LIB_Survey_CertificateAuthority1699958461849 implements MigrationInterface {
@@ -41,7 +42,7 @@ export class createSpecification_details_LIB_Survey_CertificateAuthority16999584
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.moduleName,
                 'Create table specification_details_LIB_Survey_CertificateAuthority',

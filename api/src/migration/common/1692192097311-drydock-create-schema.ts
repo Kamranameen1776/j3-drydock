@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 export class dryDockCreateSchema1692192097311  implements MigrationInterface {
     schemaName = 'dry_dock';
@@ -23,7 +24,7 @@ export class dryDockCreateSchema1692192097311  implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'dryDockCreateSchema1692192097311',
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'Create schema',

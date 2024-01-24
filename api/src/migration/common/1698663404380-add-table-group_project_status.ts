@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 export class AddTableGroupProjectStatus1698663404380 implements MigrationInterface {
     tableName = 'project';
@@ -73,7 +74,7 @@ WHEN NOT MATCHED THEN
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'AddTableGroupProjectStatus1698663404380',
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'Add table group_project_status (Up migration)',
