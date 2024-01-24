@@ -197,7 +197,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   public async save(event): Promise<void> {
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
-    if (this.detailForm.invalid) {
+    if (this.detailForm?.invalid) {
       this.jbTMDtlSrv.showGrowlMassage.next({
         severity: eJMSActionTypes.Error,
         detail: 'Please fill all the required fields'
@@ -209,17 +209,17 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       return;
     }
     this.showLoader = true;
-    const detailForm = this.detailForm.value.generalInformation;
+    const detailForm = this.detailForm?.value.generalInformation;
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
 
     const data: UpdateSpecificationDetailsDto = {
       uid: this.specificationDetailsInfo.uid,
       Subject: event.payload.Job_Short_Description,
-      AccountCode: detailForm.accountCode,
-      Description: this.detailForm.value.editors.description,
-      DoneByUid: detailForm.doneBy,
-      PriorityUid: detailForm.priorityUid,
-      Inspections: detailForm.inspectionId
+      AccountCode: detailForm?.accountCode,
+      Description: this.detailForm?.value.editors.description,
+      DoneByUid: detailForm?.doneBy,
+      PriorityUid: detailForm?.priorityUid,
+      Inspections: detailForm?.inspectionId
     };
 
     try {
