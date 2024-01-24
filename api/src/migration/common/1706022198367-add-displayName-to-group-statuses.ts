@@ -17,11 +17,13 @@ export class addDsiplayNameToGroupStatuses1706022198367 implements MigrationInte
 
             BEGIN
             alter table dry_dock.group_project_status add display_name varchar(128);
-            UPDATE dry_dock.group_project_status SET display_name = N'Specification Planning' WHERE group_status_id = N'Planned';
-            UPDATE dry_dock.group_project_status SET display_name = N'Yard Selection' WHERE group_status_id = N'Active';
-            UPDATE dry_dock.group_project_status SET display_name = N'In Progress' WHERE group_status_id = N'Completed';
-            UPDATE dry_dock.group_project_status SET display_name = N'Closed' WHERE group_status_id = N'Closed';
-            END
+            alter table dry_dock.group_project_status add status_order int default 0;
+            END;
+            UPDATE dry_dock.group_project_status SET display_name = N'Specification Planning', status_order = 1 WHERE group_status_id = N'Planned';
+            UPDATE dry_dock.group_project_status SET display_name = N'Yard Selection', status_order = 2 WHERE group_status_id = N'Active';
+            UPDATE dry_dock.group_project_status SET display_name = N'In Progress', status_order = 3 WHERE group_status_id = N'Completed';
+            UPDATE dry_dock.group_project_status SET display_name = N'Closed', status_order = 4 WHERE group_status_id = N'Closed';
+
             `);
 
             await MigrationUtilsService.migrationLog(

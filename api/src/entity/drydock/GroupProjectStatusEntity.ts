@@ -35,6 +35,12 @@ export class GroupProjectStatusEntity {
     })
     DisplayName: string;
 
+    @Column('int', {
+        nullable: true,
+        name: 'status_order',
+    })
+    StatusOrder: number;
+
     @Column('bit', {
         nullable: true,
         name: 'active_status',

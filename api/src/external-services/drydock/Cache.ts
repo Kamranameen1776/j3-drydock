@@ -8,6 +8,9 @@ export class Cache {
     public async get(key: string, options?: any): Promise<any> {
         try {
             const result = await this.j2UtilsCache.get(key, options);
+            console.log(`retrieving from cache:`);
+            console.log(`key - ${key}`);
+            console.log(`value - ${JSON.stringify(result)}`);
             return result;
         } catch (e) {
             //TODO: think if we need to catch it somehow.
