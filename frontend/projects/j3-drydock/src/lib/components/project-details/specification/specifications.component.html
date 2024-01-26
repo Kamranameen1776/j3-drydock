@@ -40,6 +40,8 @@
           [isDisplayAdvancedFilter]="false"
           (action)="onActionClick($event)"
           (cellPlainTextClick)="cellPlainTextClick($event)"
+          [sortField]="gridData.sortField"
+          [sortOrder]="gridData.sortOrder"
         ></jb-grid>
       </ng-template>
     </e-pane>
