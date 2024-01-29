@@ -1,4 +1,5 @@
 import { AccessRights } from 'j2utils';
+import { Body, Controller, Post } from 'tsoa';
 
 import { CreateSubItemCommand } from '../../../../application-layer/drydock/specification-details/sub-items/CreateSubItemCommand';
 import { type Req, type Res } from '../../../../common/drydock/ts-helpers/req-res';
@@ -15,13 +16,25 @@ async function createSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
-        const command = new CreateSubItemCommand();
-
-        await command.ExecuteAsync({
+        const result = await new CreateSubItemController().createSubItem({
             ...req.body,
             createdBy,
         });
+
+        return result;
     });
 }
 
 exports.post = createSubItem;
+
+// @Route('drydock/specification-details/sub-items/create-sub-item')
+export class CreateSubItemController extends Controller {
+    @Post()
+    public async createSubItem(@Body() request: CreateSubItemParams): Promise<SpecificationDetailsSubItemEntity> {
+        const query = new CreateSubItemCommand();
+
+        const result = await query.ExecuteAsync(request);
+
+        return result;
+    }
+}

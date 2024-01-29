@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+import { Body, Controller, Get } from 'tsoa';
 
+import { IGroupResponseDto } from '../../../../application-layer/drydock/projects/project-statuses/group-project-statuses/dtos/IGroupProjectStatusDto';
 import { GroupProjectStatusesQuery } from '../../../../application-layer/drydock/projects/project-statuses/group-project-statuses/GroupProjectStatusesQuery';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
@@ -14,11 +16,20 @@ export async function getGroupProjectStatusesAction(req: Request, res: Response)
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
+        const result = await new GetGroupProjectStatusesActionController().getGroupProjectStatusesAction(req);
+
+        return result;
+    });
+}
+
+// @Route('drydock/projects/group-project-statuses')
+export class GetGroupProjectStatusesActionController extends Controller {
+    @Get()
+    public async getGroupProjectStatusesAction(@Body() request: Request): Promise<IGroupResponseDto> {
         const query = new GroupProjectStatusesQuery();
 
-        // Execute query
-        const projects = await query.ExecuteAsync(req);
+        const result = await query.ExecuteAsync(request);
 
-        return projects;
-    });
+        return result;
+    }
 }

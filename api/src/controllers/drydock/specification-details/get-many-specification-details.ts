@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
+import { Body, Controller, Post } from 'tsoa';
 
 import { GetManySpecificationDetailsQuery } from '../../../application-layer/drydock/specification-details/GetManySpecificationDetailsQuery';
+import { SpecificationDetailsEntity } from '../../../entity/drydock';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 /**
@@ -13,15 +15,25 @@ import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 export async function getManySpecificationDetails(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (queryDto: Request) => {
-        // Prepare query payload
-        const query = new GetManySpecificationDetailsQuery();
+    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
+        const result = await new GetManySpecificationDetailsController().getManySpecificationDetails(request);
 
-        // Execute query
-        const projects = await query.ExecuteAsync(queryDto as Request);
-
-        return projects;
+        return result;
     });
 }
 
 exports.post = getManySpecificationDetails;
+
+// @Route('drydock/specification-details/get-many-specification-details')
+export class GetManySpecificationDetailsController extends Controller {
+    @Post()
+    public async getManySpecificationDetails(
+        @Body() request: Request,
+    ): Promise<{ records: SpecificationDetailsEntity[]; count?: number }> {
+        const query = new GetManySpecificationDetailsQuery();
+
+        const result = await query.ExecuteAsync(request);
+
+        return result;
+    }
+}
