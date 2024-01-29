@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 
-import { ApiRequestService, eCrud, eFieldControlType, FormModel, FormValues, WebApiRequest } from 'jibe-components';
-import { specificationSubItemEditFormId } from '../../../models/constants/constants';
+import { ApiRequestService, eCrud, eEntities, eFieldControlType, FormModel, FormValues, WebApiRequest } from 'jibe-components';
+import { eApiBaseDryDockAPI, specificationSubItemEditFormId } from '../../../models/constants/constants';
 import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import {
   eSpecificationDetailsSubItemsFields,
   eSpecificationDetailsSubItemsLabels
 } from '../../../models/enums/specification-details-sub-items.enum';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
-import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
+import { CreateSpecificationSubItemData, SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
 import { Observable } from 'rxjs';
 import { SectionModel } from 'jibe-components/lib/interfaces/section.model';
 
@@ -155,8 +155,8 @@ export class SpecificationSubItemEditService extends FormServiceBase {
 
   public updateSubItem(data: SpecificationSubItem, uid: string, specificationUid: string): Observable<SpecificationSubItem> {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/sub-items/update-sub-item',
       crud: eCrud.Put,
       body: {
@@ -176,10 +176,10 @@ export class SpecificationSubItemEditService extends FormServiceBase {
     return this.apiRequestService.sendApiReq(request);
   }
 
-  public createSubItem(data: SpecificationSubItem, specificationUid: string): Observable<SpecificationSubItem> {
+  public createSubItem(data: CreateSpecificationSubItemData, specificationUid: string): Observable<SpecificationSubItem> {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/sub-items/create-sub-item',
       crud: eCrud.Post,
       body: {
@@ -190,7 +190,9 @@ export class SpecificationSubItemEditService extends FormServiceBase {
         quantity: data[eSpecificationDetailsSubItemsFields.Quantity],
         unitPrice: data[eSpecificationDetailsSubItemsFields.UnitPrice],
         discount: data[eSpecificationDetailsSubItemsFields.Discount] / 100,
-        description: data[eSpecificationDetailsSubItemsFields.Description]
+        description: data[eSpecificationDetailsSubItemsFields.Description],
+        pmsJobUid: data.pmsJobUid,
+        findingUid: data.findingUid
       }
     };
 
@@ -199,8 +201,8 @@ export class SpecificationSubItemEditService extends FormServiceBase {
 
   public deleteSubItem(uid: string, specificationUid: string): Observable<SpecificationSubItem> {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/sub-items/delete-sub-item',
       crud: eCrud.Put,
       body: {

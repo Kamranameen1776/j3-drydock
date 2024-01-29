@@ -14,7 +14,6 @@ export enum eProjectDetailsSideMenuLabel {
   ProjectMonitoring = 'Project Monitoring',
   GanttChart = 'Gantt Chart',
   StatementOfFacts = 'Statement of Facts',
-  JobOrders = 'Job Orders',
   CostUpdates = 'Cost Updates',
 
   Reporting = 'Reporting',
@@ -39,7 +38,6 @@ export enum eProjectDetailsSideMenuId {
   ProjectMonitoring = 'project_monitoring',
   GanttChart = 'gantt_chart',
   StatementOfFacts = 'statement_of_facts',
-  JobOrders = 'job_orders',
   CostUpdates = 'cost_updates',
 
   Reporting = 'reporting',
@@ -68,4 +66,11 @@ export enum eProjectDelete {
 export enum eProjectCreate {
   BtnLabel = 'Create',
   DialogueHeader = 'Create New Project'
+}
+
+export enum eProjectStatus {
+  Planned = 'Planned',
+  Active = 'Active',
+  Completed = 'Completed',
+  Closed = 'Closed'
 }

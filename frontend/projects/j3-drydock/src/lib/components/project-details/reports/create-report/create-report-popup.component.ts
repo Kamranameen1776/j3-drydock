@@ -1,6 +1,6 @@
 import { EditorConfig } from './../../../../models/interfaces/EditorConfig';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IJbDialog, IJbTextBox, JbDatePipe } from 'jibe-components';
+import { IJbDialog, IJbTextBox, JbDatePipe, JmsService, eJMSWorkflowAction } from 'jibe-components';
 import { getSmallPopup } from '../../../../models/constants/popup';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
@@ -10,6 +10,8 @@ import { JobOrdersUpdatesDto } from '../dto/JobOrdersUpdatesDto';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UTCAsLocal, localAsUTC } from '../../../../utils/date';
 import { DailyReportCreate, DailyReportUpdate } from '../../../../models/interfaces/project-details';
+import { eFunction } from '../../../../models/enums/function.enum';
+import { eModule } from '../../../../models/enums/module.enum';
 
 @Component({
   selector: 'jb-drydock-create-report-popup',
@@ -21,10 +23,11 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
   @Input() isOpen: boolean;
   @Input() reportUid: string;
   @Input() projectId: string;
+  @Input() vesselId: number;
 
   @Output() closeDialog = new EventEmitter<boolean>();
 
-  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, dialogHeader: 'Daily Report' };
+  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1200, dialogHeader: 'Daily Report' };
 
   saveLabel = 'Save';
 
@@ -37,8 +40,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
   });
 
   reportNameText: IJbTextBox = {
-    maxLength: 200,
-    minLength: 1,
+    maxTextLength: 200,
     id: 'reportName',
     pValidateOnly: false,
     style: '',
@@ -53,11 +55,11 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
 
   bodyConfig: EditorConfig = {
     id: 'editorBody',
-    maxLength: 5000,
+    maxLength: 10000,
     placeholder: '',
     crtlName: 'body',
-    moduleCode: 'project',
-    functionCode: 'remarks_jb_editor',
+    moduleCode: eModule.Project,
+    functionCode: eFunction.SpecificationDetails,
     inlineMode: {
       enable: false,
       onSelection: true
@@ -91,7 +93,8 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
   constructor(
     private growlMessageService: GrowlMessageService,
     private reportsService: DailyReportsGridService,
-    private jbDatePipe: JbDatePipe
+    private jbDatePipe: JbDatePipe,
+    private jmsService: JmsService
   ) {
     super();
   }
@@ -100,7 +103,7 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
     if (this.isEditing) {
       this.getDailyReport();
     } else {
-      this.createReportForm.controls.reportName.setValue('Report Name' + this.jbDatePipe.transform(new Date()));
+      this.createReportForm.controls.reportName.setValue('Daily Report ' + this.jbDatePipe.transform(new Date()));
     }
   }
 
@@ -119,6 +122,10 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
   onCloseJobOrderPopup(updates: JobOrdersUpdatesDto[]) {
     this.processSelectedUpdates(updates);
     this.isJobOrderPopupVisible = false;
+  }
+
+  updateEditorCtrlValue(event) {
+    this.bodyControl.setValue(event.value);
   }
 
   private getDailyReport() {
@@ -140,6 +147,9 @@ export class CreateReportPopupComponent extends UnsubscribeComponent implements 
       this.growlMessageService.setErrorMessage('Report name is required');
       return;
     }
+
+    // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
+    this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
 
     this.isSaving = true;
 

@@ -46,7 +46,7 @@ export const statusProgressBarBackground = {
   RAISE: '#d356ff',
   NEW: '#d356ff',
   'APPROVAL PENDING': '#d356ff',
-  CLOSE: '#2676BB',
+  CLOSE: '#A1B2CC',
   APPROVED: '#349258',
   REWORK: '#7F8594',
   CANCEL: '#DB0012'

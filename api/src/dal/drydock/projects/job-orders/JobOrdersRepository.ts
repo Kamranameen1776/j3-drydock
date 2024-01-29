@@ -24,13 +24,8 @@ export class JobOrdersRepository {
         TaskManagerConstants.specification.status.Closed,
     ];
 
-    public async GetAllAppliedJobOrders(request: Request) {
-        return this.GetJobOrders(request, true);
-    }
-
     public async GetJobOrders(
         request: Request,
-        appliedOnly = false,
         statuses: string[] | null = this.statuses,
     ): Promise<ODataResult<IJobOrderDto>> {
         const SpecificationDetailsRepository = getManager().getRepository(SpecificationDetailsEntity);
@@ -46,29 +41,18 @@ export class JobOrdersRepository {
                 'tm.Status AS SpecificationStatusCode',
                 'wdetails.StatusDisplayName AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
-                'sd.StartDate as SpecificationStartDate',
-                'sd.EndDate as SpecificationEndDate',
-                'db.displayName as DoneBy',
+                'ISNULL(sd.StartDate, p.StartDate) as SpecificationStartDate',
+                'ISNULL(sd.EndDate, p.EndDate) as SpecificationEndDate',
+                "usr.FirstName + ' ' + usr.LastName AS Responsible",
+                'jo.uid AS JobOrderUid',
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid')
-            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesnt have type. probably should stay that way
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesn't have type. probably should stay that way
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
-            .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid');
-
-        if (appliedOnly) {
-            query = query.innerJoin(
-                className(JobOrderEntity),
-                'jo',
-                'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1',
-            );
-        } else {
-            query = query.leftJoin(
-                className(JobOrderEntity),
-                'jo',
-                'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1',
-            );
-        }
+            .leftJoin(className(LibUserEntity), 'usr', 'p.project_manager_Uid = usr.uid and usr.ActiveStatus = 1')
+            .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1')
+            .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1');
 
         if (statuses) {
             query = query.innerJoin(
@@ -120,8 +104,8 @@ export class JobOrdersRepository {
                 "usr.FirstName + ' ' + usr.LastName AS Responsible",
                 'wdetails.StatusDisplayName AS SpecificationStatus',
                 'sd.Subject AS SpecificationSubject',
-                'sd.StartDate as SpecificationStartDate',
-                'sd.EndDate as SpecificationEndDate',
+                'ISNULL(sd.StartDate, p.StartDate) as SpecificationStartDate',
+                'ISNULL(sd.EndDate, p.EndDate) as SpecificationEndDate',
                 'jo.Subject as JobOrderSubject',
                 'jo.Remarks as JobOrderRemarks',
                 'jo.Status as JobOrderStatus',
@@ -135,6 +119,7 @@ export class JobOrdersRepository {
             )
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
+            .innerJoin(className(LibUserEntity), 'usr', 'p.project_manager_Uid = usr.uid and usr.ActiveStatus = 1')
             .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
             .innerJoin(
                 className(JmsDtlWorkflowConfigDetailsEntity),
@@ -143,7 +128,7 @@ export class JobOrdersRepository {
                 AND tm.Status IN ('${this.statuses.join(`','`)}')`,
             )
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
-            .leftJoin(className(LibUserEntity), 'usr', 'sd.DoneByUid = usr.uid and usr.ActiveStatus = 1')
+            .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1')
 
             .getQuery();
 

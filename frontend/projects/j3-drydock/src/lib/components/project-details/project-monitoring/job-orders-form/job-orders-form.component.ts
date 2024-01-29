@@ -22,10 +22,9 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class JobOrdersFormComponent extends UnsubscribeComponent implements OnInit, IJobOrdersFormComponent, AfterViewInit {
   @Input()
-  specificationUid: string;
-
-  @Input()
   hideSpecificationStartEndDate = false;
+
+  @Input() vesselId: number;
 
   @ViewChild('remarksEditor')
   remarksEditor: JbEditorComponent;
@@ -100,9 +99,9 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
     this.selectedSpecification.Value = jobOrderFormDto.Code;
 
     this.remarksEditor.key1 = jobOrderFormDto.SpecificationUid;
-    this.remarksEditor.vesselId = this.userService.getUserDetails().VesselId;
+    this.remarksEditor.vesselId = this.vesselId;
 
-    this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(jobOrderFormDto.Remarks);
+    this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(jobOrderFormDto.Remarks ?? '');
     controls.Subject.setValue(jobOrderFormDto.Subject);
     controls.Status.setValue(jobOrderFormDto.Status);
 
@@ -163,8 +162,11 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
     });
   }
 
-  public navigateToSpecificationDetails(specificationUid: string) {
-    this.newTabService.navigate(['../../specification-details', specificationUid], { relativeTo: this.activatedRoute });
+  public navigateToSpecificationDetails(specification: KeyValuePair<string, string>) {
+    this.newTabService.navigate(['../../specification-details', specification.Key], {
+      relativeTo: this.activatedRoute,
+      queryParams: { pageTitle: `Specification ${specification.Value}` }
+    });
   }
 
   private reset() {

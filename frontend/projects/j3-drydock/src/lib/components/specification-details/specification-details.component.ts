@@ -28,9 +28,10 @@ import { SpecificationDetailsFull, SpecificationDetails } from '../../models/int
 import { ITMDetailTabFields, JbTaskManagerDetailsService } from 'j3-task-manager-ng';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { FormGroup } from '@angular/forms';
-import { SpecificationSubItem } from '../../models/interfaces/specification-sub-item';
+import { CreateSpecificationSubItemData } from '../../models/interfaces/specification-sub-item';
 import { SpecificationDetailsSubItemsGridService } from '../../services/specification-details/specification-details-sub-item.service';
 import { eSubItemsDialog } from '../../models/enums/sub-items.enum';
+import { TmLinkedRecords } from 'jibe-components/lib/interfaces/tm-linked-records.interface';
 
 @Component({
   selector: 'jb-specification-details',
@@ -64,14 +65,14 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   accessRights: SpecificationDetailAccessRights;
   editingSection = '';
   showLoader = false;
-  selectedAmount = {
-    [eSpecificationDetailsPageMenuIds.PMSJobs]: 0,
-    [eSpecificationDetailsPageMenuIds.Findings]: 0
+  selectedItems: { [key in eSpecificationDetailsPageMenuIds]?: TmLinkedRecords[] } = {
+    [eSpecificationDetailsPageMenuIds.PMSJobs]: [],
+    [eSpecificationDetailsPageMenuIds.Findings]: []
   };
   showEditSubItem = false;
   subItemDetails = {
     quantity: 0
-  } as SpecificationSubItem;
+  } as CreateSpecificationSubItemData;
 
   pmsWlType = ePmsWlType;
 
@@ -107,8 +108,10 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     return this.accessRights?.edit;
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     this.jbTMDtlSrv.isFormValid = true;
+
+    this.title.setTitle(this.activatedRoute.snapshot.queryParamMap.get('pageTitle'));
 
     this.activatedRoute.paramMap
       .pipe(
@@ -117,7 +120,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       )
       .subscribe((specificationUid) => {
         this.specificationUid = specificationUid;
-        this.title.setTitle('');
         this.getDetails();
       });
 
@@ -195,7 +197,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   public async save(event): Promise<void> {
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
-    if (this.detailForm.invalid) {
+    if (this.detailForm?.invalid) {
       this.jbTMDtlSrv.showGrowlMassage.next({
         severity: eJMSActionTypes.Error,
         detail: 'Please fill all the required fields'
@@ -207,17 +209,17 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       return;
     }
     this.showLoader = true;
-    const detailForm = this.detailForm.value.generalInformation;
+    const detailForm = this.detailForm?.value.generalInformation;
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
 
     const data: UpdateSpecificationDetailsDto = {
       uid: this.specificationDetailsInfo.uid,
       Subject: event.payload.Job_Short_Description,
-      AccountCode: detailForm.accountCode,
-      Description: this.detailForm.value.editors.description,
-      DoneByUid: detailForm.doneBy,
-      PriorityUid: detailForm.priorityUid,
-      Inspections: detailForm.inspectionId
+      AccountCode: detailForm?.accountCode,
+      Description: this.detailForm?.value.editors.description,
+      DoneByUid: detailForm?.doneBy,
+      PriorityUid: detailForm?.priorityUid,
+      Inspections: detailForm?.inspectionId
     };
 
     try {
@@ -242,8 +244,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     }
   }
 
-  updateSelectedAmount(amount: number, type: eSpecificationDetailsPageMenuIds) {
-    this.selectedAmount[type] = amount;
+  updateSelectedAmount(items: TmLinkedRecords[], type: eSpecificationDetailsPageMenuIds) {
+    this.selectedItems[type] = items;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -269,7 +271,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
             Key1: this.specificationDetailsInfo.TaskManagerUid
           };
 
-          this.title.setTitle(`Specification ${this.specificationDetailsInfo?.SpecificationCode}`);
           return this.taskManagerService.getWorkflow(
             this.specificationDetailsInfo.TaskManagerUid,
             this.specificationDetailsInfo.SpecificationTypeCode
@@ -321,7 +322,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         break;
       }
       case eSpecificationDetailsPageMenuIds.PMSJobs:
-        if (this.selectedAmount[eSpecificationDetailsPageMenuIds.PMSJobs] === 0) {
+        if (this.selectedItems[eSpecificationDetailsPageMenuIds.PMSJobs].length === 0) {
           this.jbTMDtlSrv.showGrowlMassage.next({
             severity: eMessagesSeverityValues.Error,
             detail: 'No record selected to convert.'
@@ -329,12 +330,15 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
           break;
         }
-        this.subItemDetails.dialogHeader = eSubItemsDialog.AddText;
-        this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.PMSJobs];
+        this.subItemDetails = {
+          dialogHeader: eSubItemsDialog.AddText,
+          quantity: this.selectedItems[eSpecificationDetailsPageMenuIds.PMSJobs].length,
+          pmsJobUid: this.selectedItems[eSpecificationDetailsPageMenuIds.PMSJobs].map((item) => item.uid)
+        } as CreateSpecificationSubItemData;
         this.showEditSubItem = true;
         break;
       case eSpecificationDetailsPageMenuIds.Findings:
-        if (this.selectedAmount[eSpecificationDetailsPageMenuIds.Findings] === 0) {
+        if (this.selectedItems[eSpecificationDetailsPageMenuIds.Findings].length === 0) {
           this.jbTMDtlSrv.showGrowlMassage.next({
             severity: eMessagesSeverityValues.Error,
             detail: 'No record selected to convert.'
@@ -342,8 +346,11 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
           break;
         }
-        this.subItemDetails.dialogHeader = eSubItemsDialog.AddText;
-        this.subItemDetails.quantity = this.selectedAmount[eSpecificationDetailsPageMenuIds.Findings];
+        this.subItemDetails = {
+          dialogHeader: eSubItemsDialog.AddText,
+          quantity: this.selectedItems[eSpecificationDetailsPageMenuIds.Findings].length,
+          findingUid: this.selectedItems[eSpecificationDetailsPageMenuIds.Findings].map((item) => item.uid)
+        } as CreateSpecificationSubItemData;
         this.showEditSubItem = true;
         break;
       case eSpecificationDetailsPageMenuIds.SubItems:

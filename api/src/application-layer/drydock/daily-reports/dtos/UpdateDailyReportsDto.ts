@@ -17,6 +17,5 @@ export class UpdateDailyReportsDto {
     @IsNotEmpty()
     UserUid: string;
 
-    @MaxLength(5000)
     Body: string;
 }

@@ -3,5 +3,9 @@
 :host {
   ::ng-deep {
     @include progress-spinner-fix;
+
+    .jb-section-feed-discussion {
+      z-index: 100;
+    }
   }
 }

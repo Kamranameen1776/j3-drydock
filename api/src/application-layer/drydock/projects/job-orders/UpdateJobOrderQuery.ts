@@ -19,7 +19,9 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
 
     specificationDetailsRepository: SpecificationDetailsRepository;
 
-    tableName = getTableName(JobOrderEntity);
+    jobOrderTableName = getTableName(JobOrderEntity);
+
+    specificationDetailsTableName = getTableName(SpecificationDetailsEntity);
 
     uow: UnitOfWork;
 
@@ -79,7 +81,7 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
             if (!jobOrder) {
                 jobOrder = new JobOrderEntity();
                 jobOrder.SpecificationUid = specification.uid;
-                jobOrder.uid = new DataUtilService().newUid();
+                jobOrder.uid = request.uid ?? new DataUtilService().newUid();
                 jobOrder.ProjectUid = specification.ProjectUid;
             }
 
@@ -93,9 +95,17 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
 
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
-                this.tableName,
+                this.jobOrderTableName,
                 'specification_uid',
                 jobOrder.SpecificationUid,
+                vessel.VesselId,
+            );
+
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                this.specificationDetailsTableName,
+                'uid',
+                specification.uid,
                 vessel.VesselId,
             );
         });

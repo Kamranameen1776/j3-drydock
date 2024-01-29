@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class updateSpecificationRequisitionsTable1701426277853 implements MigrationInterface {
     tableName = 'specification_requisitions';
@@ -33,7 +34,7 @@ export class updateSpecificationRequisitionsTable1701426277853 implements Migrat
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 this.description,

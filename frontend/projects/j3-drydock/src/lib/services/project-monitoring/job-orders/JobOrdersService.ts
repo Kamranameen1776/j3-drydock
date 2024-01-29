@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, WebApiRequest, eCrud } from 'jibe-components';
+import { ApiRequestService, WebApiRequest, eCrud, eEntities } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { IUpdateJobOrderDto } from './IUpdateJobOrderDto';
 import { KeyValuePair } from '../../../utils/KeyValuePair';
 import { GetJobOrderBySpecificationDto } from './GetJobOrderBySpecificationDto';
 import { JobOrderDto } from './JobOrderDto';
+import { IUpdateJobOrderDurationDto } from './IUpdateJobOrderDurationDto';
+import { eApiBaseDryDockAPI } from '../../../models/constants/constants';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,29 +15,10 @@ export class JobOrdersService {
 
   getJobOrdersRequest(): WebApiRequest {
     const request: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      // entity: eEntities.DryDock,
-      // action: eAction.GetSpecificationDetails,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'projects/job-orders/get-job-orders',
-      crud: eCrud.Post,
-      entity: 'drydock'
-    };
-
-    return request;
-  }
-
-  getAllJobOrdersRequest(): WebApiRequest {
-    const request: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      // entity: eEntities.DryDock,
-      // action: eAction.GetSpecificationDetails,
-      apiBase: 'dryDockAPI',
-      action: 'projects/job-orders/get-all-applied-job-orders',
-      crud: eCrud.Post,
-      entity: 'drydock'
+      crud: eCrud.Post
     };
 
     return request;
@@ -43,14 +26,10 @@ export class JobOrdersService {
 
   getJobOrdersUpdatesRequest(): WebApiRequest {
     const request: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      // entity: eEntities.DryDock,
-      // action: eAction.GetSpecificationDetails,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'projects/job-orders/get-updates',
-      crud: eCrud.Post,
-      entity: 'drydock'
+      crud: eCrud.Post
     };
 
     return request;
@@ -58,14 +37,10 @@ export class JobOrdersService {
 
   getJobOrderBySpecificationRequest(getJobOrderBySpecificationDto: GetJobOrderBySpecificationDto): WebApiRequest {
     const request: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      // entity: eEntities.DryDock,
-      // action: eAction.GetSpecificationDetails,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'projects/job-orders/get-job-order-by-specification',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: getJobOrderBySpecificationDto
     };
 
@@ -78,14 +53,10 @@ export class JobOrdersService {
 
   getJobOrderStatusesRequest(): WebApiRequest {
     const request: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      // entity: eEntities.DryDock,
-      // action: eAction.GetSpecificationDetails,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'projects/job-orders/get-job-order-statuses',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
 
     return request;
@@ -97,14 +68,10 @@ export class JobOrdersService {
 
   updateJobOrderRequest(updateStatementOfFact: IUpdateJobOrderDto): WebApiRequest {
     const request: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      // entity: eEntities.DryDock,
-      // action: eAction.GetSpecificationDetails,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'projects/job-orders/update-job-order',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: updateStatementOfFact
     };
 
@@ -113,5 +80,21 @@ export class JobOrdersService {
 
   updateJobOrder(updateJobOrder: IUpdateJobOrderDto): Observable<void> {
     return this.apiRequestService.sendApiReq(this.updateJobOrderRequest(updateJobOrder));
+  }
+
+  updateJobOrderDurationRequest(updateJobOrderDurationDto: IUpdateJobOrderDurationDto): WebApiRequest {
+    const request: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'projects/job-orders/update-job-order-duration',
+      crud: eCrud.Post,
+      body: updateJobOrderDurationDto
+    };
+
+    return request;
+  }
+
+  updateJobOrderDuration(updateJobOrderDurationDto: IUpdateJobOrderDurationDto): Observable<void> {
+    return this.apiRequestService.sendApiReq(this.updateJobOrderDurationRequest(updateJobOrderDurationDto));
   }
 }

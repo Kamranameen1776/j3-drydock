@@ -11,7 +11,7 @@ export class GanttChartService {
   ) {}
 
   getData(projectId: string) {
-    const request = { ...this.jobOrdersService.getAllJobOrdersRequest() };
+    const request = { ...this.jobOrdersService.getJobOrdersRequest() };
 
     request.odata = { filter: new ODataFilterBuilder('and'), top: '99999999' };
 

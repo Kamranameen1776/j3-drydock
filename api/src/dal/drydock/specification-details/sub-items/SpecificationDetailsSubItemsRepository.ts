@@ -10,8 +10,9 @@ import { className } from '../../../../common/drydock/ts-helpers/className';
 import { entriesOf } from '../../../../common/drydock/ts-helpers/entries-of';
 import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import {
+    calculateCost,
     SpecificationDetailsSubItemEntity,
-    SpecificationDetailsSubItemEntity as SubItem,
+    SubItemCostFactorsExcerpt,
 } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { SpecificationSubItemFindingEntity } from '../../../../entity/drydock/SpecificationSubItemFindingEntity';
 import { SpecificationSubItemPmsEntity } from '../../../../entity/drydock/SpecificationSubItemPmsJobEntity';
@@ -25,12 +26,70 @@ import { FindManyParams } from './dto/FindManyParams';
 import { GetManyParams } from './dto/GetManyParams';
 import { GetSubItemParams } from './dto/GetSubItemParams';
 import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
+import { ValidateFindingDeleteDto } from './dto/ValidateFindingDeleteDto';
 import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
 
+export type FindManyRecord = Pick<
+    SpecificationDetailsSubItemEntity,
+    | 'uid'
+    | 'number'
+    | 'subject'
+    | 'quantity'
+    | 'unitPrice'
+    | 'discount'
+    | 'cost'
+    | 'specificationDetailsUid'
+    | 'unitTypeUid'
+    | 'description'
+    | 'unitType'
+>;
+
 export class SpecificationDetailsSubItemsRepository {
+    public async validateSubItemSpecAgainstProject(
+        SubItemArray: Array<SpecificationDetailsSubItemEntity>,
+        ProjectUid: string,
+        queryRunner: QueryRunner,
+    ) {
+        const specUids = SubItemArray.map((item) => item.specificationDetails.uid);
+        const dbValues = await queryRunner.manager
+            .createQueryBuilder(className(SpecificationDetailsEntity), 'spec')
+            .select('spec.uid as uid')
+            .where(`spec.ActiveStatus = 1`)
+            .andWhere(`spec.ProjectUid = :ProjectUid`, { ProjectUid })
+            .andWhere(`spec.uid IN (:...specUids)`, { specUids })
+            .execute();
+
+        return SubItemArray.filter((item) => {
+            const res = dbValues.find((val: any) => val.uid === item.specificationDetails.uid);
+            return !!res;
+        });
+    }
+    public async validateSubItemsAgainstProject(
+        SubItemArray: Array<SpecificationDetailsSubItemEntity>,
+        ProjectUid: string,
+        queryRunner: QueryRunner,
+    ) {
+        const subItemUids = SubItemArray.map((item) => item.uid);
+        const dbValues = await queryRunner.manager
+            .createQueryBuilder(className(SpecificationDetailsSubItemEntity), 'item')
+            .select('item.uid as uid')
+            .innerJoin(
+                className(SpecificationDetailsEntity),
+                'spec',
+                'item.specification_details_uid = spec.uid and spec.active_status = 1',
+            )
+            .where(`spec.ProjectUid = :ProjectUid`, { ProjectUid })
+            .andWhere(`item.uid IN (:...subItemUids)`, { subItemUids })
+            .execute();
+
+        return SubItemArray.filter((item) => {
+            const res = dbValues.find((val: any) => val.uid === item.uid);
+            return !!res;
+        });
+    }
     public async findMany(params: FindManyParams): Promise<ODataResult<FindManyRecord>> {
         const [script, substitutions] = getManager()
-            .createQueryBuilder(SubItem, 'subItem')
+            .createQueryBuilder(SpecificationDetailsSubItemEntity, 'subItem')
             .select([
                 'subItem.uid as uid',
                 'subItem.number as number',
@@ -55,8 +114,26 @@ export class SpecificationDetailsSubItemsRepository {
         return odataService.getJoinResult(script, substitutions);
     }
 
-    public async getOneByUid(params: GetSubItemParams, queryRunner: QueryRunner): Promise<SubItem | null> {
-        const subItem = await queryRunner.manager.findOne(SubItem, {
+    public async getBySpecificationDetailsUid(specificationDetailsUid: string[]) {
+        if (specificationDetailsUid.length === 0) {
+            return [];
+        }
+
+        return getManager().find(SpecificationDetailsSubItemEntity, {
+            where: {
+                specificationDetails: {
+                    uid: In(specificationDetailsUid),
+                },
+                active_status: true,
+            },
+        });
+    }
+
+    public async getOneByUid(
+        params: GetSubItemParams,
+        queryRunner: QueryRunner,
+    ): Promise<SpecificationDetailsSubItemEntity | null> {
+        const subItem = await queryRunner.manager.findOne(SpecificationDetailsSubItemEntity, {
             where: {
                 specificationDetails: {
                     uid: params.specificationDetailsUid,
@@ -69,7 +146,10 @@ export class SpecificationDetailsSubItemsRepository {
         return subItem ?? null;
     }
 
-    public async getOneExistingByUid(params: GetSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
+    public async getOneExistingByUid(
+        params: GetSubItemParams,
+        queryRunner: QueryRunner,
+    ): Promise<SpecificationDetailsSubItemEntity> {
         const subItem = await this.getOneByUid(params, queryRunner);
 
         if (subItem == null) {
@@ -79,7 +159,10 @@ export class SpecificationDetailsSubItemsRepository {
         return subItem;
     }
 
-    public async createOne(params: CreateSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
+    public async createOne(
+        params: CreateSubItemParams,
+        queryRunner: QueryRunner,
+    ): Promise<SpecificationDetailsSubItemEntity> {
         await this.assertAllUnitTypesExistByUids([params.unitUid], queryRunner);
 
         const { createdBy: created_by, ...props } = params;
@@ -91,20 +174,23 @@ export class SpecificationDetailsSubItemsRepository {
         subItemData.created_by = created_by;
         subItemData.created_at = new Date();
 
-        const subItem = queryRunner.manager.create(SubItem, subItemData);
+        const subItem = queryRunner.manager.create(SpecificationDetailsSubItemEntity, subItemData);
 
         await queryRunner.manager.save(subItem);
 
         return subItemData;
     }
 
-    public async createMany(params: CreateManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
+    public async createMany(
+        params: CreateManyParams,
+        queryRunner: QueryRunner,
+    ): Promise<SpecificationDetailsSubItemEntity[]> {
         const unitUids = params.subItems.map((props) => props.unitUid);
 
         await this.assertAllUnitTypesExistByUids(unitUids, queryRunner);
 
-        const newSubItems = params.subItems.map((props): SubItem => {
-            return queryRunner.manager.create(SubItem, {
+        const newSubItems = params.subItems.map((props): SpecificationDetailsSubItemEntity => {
+            return queryRunner.manager.create(SpecificationDetailsSubItemEntity, {
                 ...props,
                 specificationDetailsUid: params.specificationDetailsUid,
                 created_by: params.createdBy,
@@ -117,12 +203,34 @@ export class SpecificationDetailsSubItemsRepository {
         return newSubItems;
     }
 
-    public async createRawSubItems(subItemsData: SubItem[], queryRunner: QueryRunner) {
-        const newSubItems = subItemsData.map((data) => queryRunner.manager.create(SubItem, data));
+    public async createRawSubItems(subItemsData: SpecificationDetailsSubItemEntity[], queryRunner: QueryRunner) {
+        const newSubItems = subItemsData.map((data) =>
+            queryRunner.manager.create(SpecificationDetailsSubItemEntity, data),
+        );
         return queryRunner.manager.save(newSubItems);
     }
+    public async updateMultipleEntities(subItemsData: SpecificationDetailsSubItemEntity[], queryRunner: QueryRunner) {
+        const repository = queryRunner.manager.getRepository(SpecificationDetailsSubItemEntity);
+        const promises = subItemsData.map((entity) => {
+            return repository.update(
+                {
+                    uid: entity.uid,
+                    active_status: true,
+                },
+                entity,
+            );
+        });
+        await Promise.all(promises);
+    }
 
-    public async updateOneExistingByUid(params: UpdateSubItemParams, queryRunner: QueryRunner): Promise<SubItem> {
+    public async updateRawSubItem(subItemData: Partial<SpecificationDetailsSubItemEntity>, queryRunner: QueryRunner) {
+        return queryRunner.manager.update(SpecificationDetailsSubItemEntity, { uid: subItemData.uid }, subItemData);
+    }
+
+    public async updateOneExistingByUid(
+        params: UpdateSubItemParams,
+        queryRunner: QueryRunner,
+    ): Promise<SpecificationDetailsSubItemEntity> {
         const existingSubItem = await this.getOneExistingByUid(params, queryRunner);
 
         if (params.props.unitUid != null) {
@@ -135,7 +243,7 @@ export class SpecificationDetailsSubItemsRepository {
         subItemData.updated_by = params.updatedBy;
         subItemData.updated_at = new Date();
 
-        const newSubItem = queryRunner.manager.create(SubItem, subItemData);
+        const newSubItem = queryRunner.manager.create(SpecificationDetailsSubItemEntity, subItemData);
 
         await queryRunner.manager.save(newSubItem);
 
@@ -231,13 +339,40 @@ export class SpecificationDetailsSubItemsRepository {
             .where(`sub_item_pms.j3_pms_agg_job_uid = :pmsJobUid`, { pmsJobUid })
             .andWhere(`spec.uid = :specificationUid`, { specificationUid })
             .andWhere('sub_item_pms.active_status = 1')
-            .execute();
+            .getCount();
 
-        return pmsJobs.count > 0;
+        // True if no sub-items are linked to the PMS job
+        return !(pmsJobs > 0);
     }
 
-    protected async getManyByUids(params: GetManyParams, queryRunner: QueryRunner): Promise<SubItem[]> {
-        return queryRunner.manager.find(SubItem, {
+    public async validateFindingDelete({ specificationUid, findingUid }: ValidateFindingDeleteDto) {
+        const findings = await getManager()
+            .createQueryBuilder(className(SpecificationSubItemFindingEntity), 'sub_item_finding')
+            .innerJoin(
+                className(SpecificationDetailsSubItemEntity),
+                'sub_item',
+                'sub_item.uid = sub_item_finding.specification_sub_item_uid and sub_item.active_status = 1',
+            )
+            .innerJoin(
+                className(SpecificationDetailsEntity),
+                'spec',
+                'spec.uid = sub_item.specification_details_uid and spec.active_status = 1',
+            )
+            .select('count(sub_item_finding.uid) as count')
+            .where(`sub_item_finding.finding_uid = :findingUid`, { findingUid })
+            .andWhere(`spec.uid = :specificationUid`, { specificationUid })
+            .andWhere('sub_item_finding.active_status = 1')
+            .getCount();
+
+        // True if no sub-items are linked to the PMS job
+        return !(findings > 0);
+    }
+
+    protected async getManyByUids(
+        params: GetManyParams,
+        queryRunner: QueryRunner,
+    ): Promise<SpecificationDetailsSubItemEntity[]> {
+        return queryRunner.manager.find(SpecificationDetailsSubItemEntity, {
             where: {
                 specificationDetailsUid: params.specificationDetailsUid,
                 uid: In(params.uids),
@@ -247,7 +382,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     protected async assertAllUnitTypesExistByUids(unitTypeUids: string[], queryRunner: QueryRunner): Promise<void> {
-        unitTypeUids = unitTypeUids.filter((uid) => uid !== undefined);
+        unitTypeUids = unitTypeUids.filter((uid) => !!uid);
         if (unitTypeUids.length === 0) {
             return;
         }
@@ -267,18 +402,26 @@ export class SpecificationDetailsSubItemsRepository {
         }
     }
 
-    protected markAsDeleted(subItem: SubItem, deletedBy: string): void {
+    protected markAsDeleted(subItem: SpecificationDetailsSubItemEntity, deletedBy: string): void {
         subItem.active_status = false;
         subItem.deleted_by = deletedBy;
         subItem.deleted_at = new Date();
     }
 
-    private mapSubItemDtoToEntity(subItemData: Partial<CreateSubItemParams>, subItem: Partial<SubItem>): SubItem {
-        const newSubItem: Partial<SubItem> = {
+    private mapSubItemDtoToEntity(
+        subItemData: Partial<CreateSubItemParams>,
+        subItem: Partial<SpecificationDetailsSubItemEntity>,
+    ): SpecificationDetailsSubItemEntity {
+        const newSubItemCostFactorsExcerpt: SubItemCostFactorsExcerpt = {
+            quantity: subItemData.quantity ?? 0,
+            unitPrice: subItemData.unitPrice ?? '0',
+            discount: subItemData.discount ?? '0',
+        };
+
+        const newSubItem: Partial<SpecificationDetailsSubItemEntity> = {
             ...subItem,
-            quantity: subItemData.quantity,
-            unitPrice: subItemData.unitPrice,
-            discount: subItemData.discount ? Number(subItemData.discount.toFixed(2)) : 0,
+            ...newSubItemCostFactorsExcerpt,
+            cost: calculateCost(newSubItemCostFactorsExcerpt).toFixed(2),
             subject: subItemData.subject,
             description: subItemData.description,
         };
@@ -293,22 +436,8 @@ export class SpecificationDetailsSubItemsRepository {
             newSubItem.unitType = unitType;
         }
 
-        return newSubItem as SubItem;
+        return newSubItem as SpecificationDetailsSubItemEntity;
     }
-}
-
-export interface FindManyRecord {
-    uid: string;
-    number: number;
-    subject: string;
-    quantity: number;
-    unitPrice: string;
-    discount: string;
-    cost: string;
-    specificationDetailsUid: string;
-    unitTypeUid: string;
-    description: string;
-    unitType: string;
 }
 
 export class SpecificationDetailsSubItemNotFoundByUidError extends BusinessException {

@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class updateProjectManager1704260923440 implements MigrationInterface {
     public readonly name = this.constructor.name;
@@ -29,7 +30,7 @@ export class updateProjectManager1704260923440 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.name,
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 this.description,

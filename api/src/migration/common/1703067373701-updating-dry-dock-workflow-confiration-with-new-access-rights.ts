@@ -1,5 +1,6 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { MigrationUtilsService } from 'j2utils';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class updatingDryDockWorkflowConfirationWithNewAccessRights1703067373701 implements MigrationInterface {
     public className = this.constructor.name;
@@ -12,16 +13,16 @@ export class updatingDryDockWorkflowConfirationWithNewAccessRights1703067373701 
             SET @applocation = ( SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location' )
             IF( @applocation = 'office')
             BEGIN
-    
+
             BEGIN
             DECLARE @Wf_Pk_Condition varchar(100);
-    
+
             -- To add job type entry in TEC_LIB_Worklist_Type
             BEGIN
                 DECLARE @WorkList_MAX_ID INT
-    
+
                 SELECT @WorkList_MAX_ID = ((SELECT ISNULL(MAX(ID), 0) FROM TEC_LIB_Worklist_Type) + 1)
-    
+
                 MERGE INTO TEC_LIB_Worklist_Type AS TARGET USING (
                         VALUES
                             (@WorkList_MAX_ID, N'dry_dock', N'Dry Dock', 1, GETDATE(), 1, 0, NULL, 0, 0, 'DD')
@@ -45,29 +46,29 @@ export class updatingDryDockWorkflowConfirationWithNewAccessRights1703067373701 
                 VALUES (ID,SOURCE.[Worklist_Type], SOURCE.[Worklist_Type_Display], SOURCE.[Created_By],
                         SOURCE.[Date_Of_Creation],SOURCE.[Active_Status], SOURCE.[Is_Child_Task], SOURCE.[Is_SYNC],SOURCE.[Is_Inspection],
                         SOURCE.[Is_Vetting], SOURCE.[job_card_prefix]);
-    
+
                 ------------- Sync script of TEC_LIB_Worklist_Type -------------
-    
+
                     SET @Wf_Pk_Condition = 'ID='+CAST(@WorkList_MAX_ID AS VARCHAR(50))+''
-    
+
                     EXEC SYNC_SP_DataSynch_MultiPK_DataLog 'TEC_LIB_Worklist_Type', @Wf_Pk_Condition, 0
-    
+
                     SET @WorkList_MAX_ID = 0;
                     SET @Wf_Pk_Condition = null;
-    
+
             END
             END
             ----------------------------------------------Insert 'Dry Dock' details in jms_dtl_workflow_config table--------------------------------------
                     BEGIN
                     DECLARE @MaxID int = 0,
                     @PkCondition varchar(100),
-    
+
                     @JobType varchar(50) = 'dry_dock', --workflow set for which job type
                     @TotalDays int = 0 , -- total days until finalizing task
                     @VesselAssign int = 0, -- vessel assignment value
                     @SubTask int = 0,
-                    @IncidentCategory int = 0 , 
-                    @MSCATCategory int = 0, 
+                    @IncidentCategory int = 0 ,
+                    @MSCATCategory int = 0,
                     @Due_Date_Config varchar(600)='{"status":"CLOSE","days":"14","due_date":"Start Date"}',
                     @job_type_column_config varchar(1500) = '
                     {"status_config":[{"wfstatus":"Raise","mandatory":"Yes","rework":"No","delete":"Yes","save":"Yes"},
@@ -120,9 +121,9 @@ export class updatingDryDockWorkflowConfirationWithNewAccessRights1703067373701 
                         EXEC SYNC_SP_DataSynch_MultiPK_DataLog 'JMS_DTL_Workflow_config' , @PkCondition, 0
                     END
                 END
-    
+
                 -----------------------------------------Entry of 'Dry Dock' in jms_dtl_workflow_config_details table--------------------
-    
+
                 DECLARE @Wf_App_Location nvarchar(20),
                 @Default_Workflow_OrderID int,
                 @Default_WorkflowType_ID varchar(100),
@@ -276,7 +277,7 @@ export class updatingDryDockWorkflowConfirationWithNewAccessRights1703067373701 
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'update dry dock workflow',

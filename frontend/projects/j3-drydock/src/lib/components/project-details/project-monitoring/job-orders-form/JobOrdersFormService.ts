@@ -3,6 +3,8 @@ import { JobOrdersService } from '../../../../services/project-monitoring/job-or
 import { Injectable } from '@angular/core';
 import { eJobOrderUpdateDisplayNames, eJobOrderUpdateFieldNames } from '../../../../models/enums/job-order-update.enum';
 import { EditorConfig } from '../../../../models/interfaces/EditorConfig';
+import { eFunction } from '../../../../models/enums/function.enum';
+import { eModule } from '../../../../models/enums/module.enum';
 
 @Injectable()
 export class JobOrdersFormService {
@@ -201,11 +203,11 @@ export class JobOrdersFormService {
   public getRemarksEditorConfig(): EditorConfig {
     return {
       id: 'Remarks',
-      maxLength: 5000,
+      maxLength: 10000,
       placeholder: 'Enter Remarks',
       crtlName: 'RemarksCtrl',
-      moduleCode: 'project',
-      functionCode: 'remarks_jb_editor',
+      moduleCode: eModule.Project,
+      functionCode: eFunction.SpecificationDetails,
       inlineMode: {
         enable: false,
         onSelection: true

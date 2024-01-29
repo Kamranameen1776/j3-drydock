@@ -4,22 +4,25 @@
   (closeDialog)="onClosePopup()"
 >
   <div jb-dialog-body>
-    <form [formGroup]="createReportForm">
-      <div class="header">
-        <label class="report-label">Report Name</label>
+    <div class="daily-report-header">
+      <form
+        [formGroup]="createReportForm"
+        class="daily-report-form"
+      >
+        <label class="report-label-required">Report Name</label>
         <div class="jb-fields-crtl">
           <jb-textbox [content]="reportNameText"></jb-textbox>
         </div>
-      </div>
-    </form>
-    <div class="content">
+      </form>
       <jb-button
         class="add-updates-button"
         label="Add Updates"
         type="NoButton"
         (click)="openJobOrderDialog()"
       ></jb-button>
+    </div>
 
+    <div class="daily-report-content">
       <label class="report-label">Body</label>
 
       <form [formGroup]="bodyForm">
@@ -32,8 +35,11 @@
           [crtlName]="bodyConfig.crtlName"
           [moduleCode]="bodyConfig.moduleCode"
           [functionCode]="bodyConfig.functionCode"
+          [key1]="projectId"
+          [vesselId]="vesselId"
           [inlineMode]="bodyConfig.inlineMode"
           [tools]="bodyConfig.tools"
+          (updateParentCtrlValue)="updateEditorCtrlValue($event)"
         ></jb-editor>
       </form>
     </div>

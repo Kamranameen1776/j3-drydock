@@ -31,7 +31,10 @@ export const specificationDetailsMenuData = [
     icon: 'icons8-more-details-2',
     isOpen: true,
     items: [
-      { label: eSpecificationDetailsPageMenuLabels.GeneralInformation, id: eSpecificationDetailsPageMenuIds.GeneralInformation },
+      {
+        label: eSpecificationDetailsPageMenuLabels.GeneralInformation,
+        id: eSpecificationDetailsPageMenuIds.GeneralInformation
+      },
       { label: eSpecificationDetailsPageMenuLabels.SubItems, id: eSpecificationDetailsPageMenuIds.SubItems },
       { label: eSpecificationDetailsPageMenuLabels.PMSJobs, id: eSpecificationDetailsPageMenuIds.PMSJobs },
       { label: eSpecificationDetailsPageMenuLabels.Findings, id: eSpecificationDetailsPageMenuIds.Findings }
@@ -43,7 +46,11 @@ export const specificationDetailsMenuData = [
       // }
     ]
   },
-  { label: eSpecificationDetailsPageMenuLabels.Attachments, id: eSpecificationDetailsPageMenuIds.Attachments, icon: 'icons8-attach' }
+  {
+    label: eSpecificationDetailsPageMenuLabels.Attachments,
+    id: eSpecificationDetailsPageMenuIds.Attachments,
+    icon: 'icons8-attach'
+  }
   // { label: eSpecificationDetailsPageMenuLabels.AuditTrail, id: eSpecificationDetailsPageMenuIds.AuditTrail, icon: 'icons8-order-history-3' }
 ];
 
@@ -61,4 +68,13 @@ export enum eSpecificationWorkflowStatusAction {
 export enum ePmsWlType {
   PmsJob = 'PMS JOB',
   Findings = 'FINDING JOB'
+}
+
+export enum TmJobTypes {
+  PmsJob = 'PMS JOB',
+  Findings = 'FINDING JOB',
+  NonPmsJob = 'NON-PM JOB',
+  NonPmsNcr = 'NON-PM-NCR',
+  Recommendations = 'RECOMMENDATIONS',
+  VettingObservation = 'VETTING OBSERVATION'
 }

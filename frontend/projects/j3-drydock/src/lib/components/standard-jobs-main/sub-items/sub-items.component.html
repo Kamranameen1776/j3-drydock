@@ -18,6 +18,7 @@
 <jb-dialog
   [dialogContent]="confirmationPopUp"
   [(dialogVisible)]="isConfirmDeleteVisible"
+  (closeDialog)="onCloseConfirmationDeletePopup()"
 >
   <div
     jb-dialog-body
@@ -39,9 +40,3 @@
     ></jb-dialog-footer>
   </ng-container>
 </jb-dialog>
-
-<jb-progress-spinner
-  class="progress-spinner"
-  *ngIf="showLoader"
-  [theme]="'figma'"
-></jb-progress-spinner>

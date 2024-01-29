@@ -32,7 +32,7 @@ import { statusBackground, statusIcon } from '../../../shared/statuses';
 import { ProjectCreate } from '../../../models/interfaces/projects';
 import { localAsUTCFromJbString } from '../../../utils/date';
 import { GrowlMessageService } from '../../../services/growl-message.service';
-import { eProjectCreate, eProjectDelete } from '../../../models/enums/project-details.enum';
+import { eProjectCreate, eProjectDelete, eProjectStatus } from '../../../models/enums/project-details.enum';
 import { FleetService } from '../../../services/fleet.service';
 import { eProjectsCreateFieldNames } from '../../../models/enums/projects-create.enum';
 import { nameOf } from '../../../utils/nameOf';
@@ -175,14 +175,14 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
         throw new Error('Project is null');
       }
 
-      this.navigateToDetails(project.ProjectId);
+      this.navigateToDetails(project.ProjectId, this.getProjectPageTitle(project));
     } else if (type === this.gridInputs.gridButton.label) {
       this.showCreateNewDialog();
     }
   }
 
   public onCodeClick(project: IProjectsForMainPageGridDto) {
-    this.navigateToDetails(project.ProjectId);
+    this.navigateToDetails(project.ProjectId, this.getProjectPageTitle(project));
   }
 
   public showCreateNewDialog(isShow = true) {
@@ -232,12 +232,16 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
     this.saveNewProjectButtonDisabled$.next(true);
     this.showLoader = true;
-    this.projectsService.createProject(values).subscribe((uid: string) => {
+    this.projectsService.createProject(values).subscribe((created: IProjectsForMainPageGridDto[]) => {
       this.saveNewProjectButtonDisabled$.next(false);
       this.showLoader = false;
       this.showCreateNewDialog(false);
       this.projectsGrid.fetchMatrixData();
-      this.navigateToDetails(uid);
+      const project = created?.[0];
+      if (!project) {
+        return;
+      }
+      this.navigateToDetails(project.ProjectId, this.getProjectPageTitle(project));
     });
   }
 
@@ -312,7 +316,11 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     if (this.canDeleteProject) {
       this.gridInputs.actions.push({
         name: eGridRowActions.Delete,
-        label: 'Delete'
+        label: 'Delete',
+        fieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectStatusName),
+        condition: eProjectStatus.Planned,
+        actionTrueValue: true,
+        actionFalseValue: false
       });
     }
   }
@@ -419,7 +427,14 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     );
   }
 
-  private navigateToDetails(projectId: string) {
-    this.newTabService.navigate(['../project', projectId], { relativeTo: this.activatedRoute });
+  private navigateToDetails(projectId: string, pageTitle: string) {
+    this.newTabService.navigate(['../project', projectId], {
+      relativeTo: this.activatedRoute,
+      queryParams: { pageTitle }
+    });
+  }
+
+  private getProjectPageTitle(project: IProjectsForMainPageGridDto) {
+    return `${project.ProjectTypeName} ${project.ProjectCode}`;
   }
 }

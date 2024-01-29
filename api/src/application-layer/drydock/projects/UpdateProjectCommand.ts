@@ -1,8 +1,9 @@
+import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { DataUtilService, SynchronizerService } from 'j2utils';
 import { QueryRunner } from 'typeorm';
 
-import { ApplicationException } from '../../../bll/drydock/core/exceptions';
+import { ApplicationException, BusinessException } from '../../../bll/drydock/core/exceptions';
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
 import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { YardsProjectsRepository } from '../../../dal/drydock/project-yards/YardsProjectsRepository';
@@ -37,10 +38,14 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
             throw new Error('Request is null');
         }
 
-        const result = await validate(request);
+        const result = await validate(plainToClass(UpdateProjectDto, request));
 
         if (result.length) {
             throw result;
+        }
+
+        if (request.EndDate < request.StartDate) {
+            throw new BusinessException('Project start date must be earlier than or equal to project end date');
         }
     }
 

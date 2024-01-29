@@ -7,6 +7,7 @@ import {
   GridRowActions,
   WebApiRequest,
   eCrud,
+  eEntities,
   eFieldControlType,
   eGridAction,
   eGridColors,
@@ -17,6 +18,8 @@ import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
 import { StandardJobsService } from '../standard-jobs.service';
+import { eApiBaseDryDockAPI } from '../../models/constants/constants';
+import { eSortOrder } from '../../models/enums/sorting.enum';
 
 export enum SpecificationType {
   ALL = 'All',
@@ -52,12 +55,10 @@ export class SpecificationGridService {
     }
 
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/get-many-specification-details',
       crud: eCrud.Post,
-      entity: 'drydock',
       odata: {
         filter
       }
@@ -69,8 +70,8 @@ export class SpecificationGridService {
   public createSpecification(formValue: any) {
     const action = 'specification-details/create-specification-details';
     const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       crud: eCrud.Post,
       action: action,
       body: {
@@ -96,14 +97,16 @@ export class SpecificationGridService {
         showDefaultLables: false,
         [eGridEvents.ClearFilters]: true
       },
-      advancedSettings: [{ label: eGridEvents.ClearFilters, icon: eGridIcons.ClearFilters3, color: eGridColors.JbBlack, show: true }]
+      advancedSettings: [{ label: eGridEvents.ClearFilters, icon: eGridIcons.ClearFilters3, color: eGridColors.JbBlack, show: true }],
+      sortField: 'code',
+      sortOrder: eSortOrder.Descending
     };
   }
 
   deleteSpecification(data: { uid: string }) {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/delete-specification-details',
       crud: eCrud.Put,
       body: data
@@ -125,7 +128,7 @@ export class SpecificationGridService {
       width: '70px'
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Code',
       FieldName: 'code',
       hyperlink: true,
@@ -135,7 +138,7 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Subject',
       FieldName: 'subject',
       IsActive: true,
@@ -144,7 +147,7 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Item Source',
       FieldName: 'item_source',
       IsActive: true,
@@ -153,7 +156,7 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Done by',
       FieldName: 'db_done_by',
       IsActive: true,
@@ -162,7 +165,7 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Inspection / Survey',
       FieldName: 'inspection',
       IsActive: true,
@@ -171,7 +174,7 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Status',
       FieldName: 'status',
       IsActive: true,
@@ -234,12 +237,10 @@ export class SpecificationGridService {
 
   getStatusesRequest(): WebApiRequest {
     return {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/get-specifications-statuses',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
   }
 
@@ -285,10 +286,10 @@ export class SpecificationGridService {
 
   public getItemSources() {
     const apiRequest: WebApiRequest = {
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'dictionaries/item-source',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
 
     return apiRequest;

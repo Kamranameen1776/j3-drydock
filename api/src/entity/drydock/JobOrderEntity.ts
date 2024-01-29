@@ -26,10 +26,10 @@ export class JobOrderEntity {
     })
     Subject: string;
 
-    @Column('varchar', {
+    @Column('nvarchar', {
         nullable: true,
         name: 'remarks',
-        length: 5000,
+        length: 'max',
     })
     Remarks: string;
 

@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { IJobOrderDto } from '../../../project-monitoring/job-orders/dtos/IJobOrderDto';
 import { GridInputsWithRequest } from '../../../../../models/interfaces/grid-inputs';
 import { SelectJobOrdersGridService } from './select-job-order-grid.service';
 import { JobOrdersGridOdataKeys } from '../../../../../models/enums/JobOrdersGridOdataKeys';
 import { GridComponent, UserService } from 'jibe-components';
 import { JobOrdersUpdatesDto } from '../../dto/JobOrdersUpdatesDto';
+import { IJobOrderDto } from './IJobOrderDto';
 
 @Component({
   selector: 'jb-select-job-order-grid',

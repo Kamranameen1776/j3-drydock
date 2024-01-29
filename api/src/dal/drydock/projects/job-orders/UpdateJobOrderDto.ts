@@ -1,8 +1,12 @@
-import { IsDateString, IsNotEmpty, IsUUID, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsUUID, Max, MaxLength, Min, MinLength } from 'class-validator';
 
 import { JobOrderStatus } from './JobOrderStatus';
 
 export class UpdateJobOrderDto {
+    @IsUUID('4')
+    @IsOptional()
+    uid?: string;
+
     @IsUUID()
     @IsNotEmpty()
     SpecificationUid: string;
@@ -32,6 +36,5 @@ export class UpdateJobOrderDto {
     @IsNotEmpty()
     LastUpdated: Date;
 
-    @MaxLength(5000)
     Remarks: string;
 }

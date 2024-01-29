@@ -11,6 +11,8 @@ import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 import { SpecificationDetails } from '../../../models/interfaces/specification-details';
 import { EditorConfig } from '../../../models/interfaces/EditorConfig';
+import { eFunction } from '../../../models/enums/function.enum';
+import { eModule } from '../../../models/enums/module.enum';
 
 @Injectable()
 export class SpecificationGeneralInformationInputservice extends FormServiceBase {
@@ -207,16 +209,14 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
     return baseModel;
   }
 
-  getDescriptionEditorConfig(key1: string, vesselId: number): EditorConfig {
+  getDescriptionEditorConfig(): EditorConfig {
     return {
       id: 'description',
-      maxLength: 1000,
+      maxLength: 10000,
       placeholder: '',
       crtlName: 'description',
-      moduleCode: 'project',
-      functionCode: 'job_description_jb_editor',
-      key1: key1,
-      vesselId: vesselId,
+      moduleCode: eModule.Project,
+      functionCode: eFunction.SpecificationDetails,
       inlineMode: {
         enable: false,
         onSelection: true

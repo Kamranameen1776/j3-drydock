@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 export class createYards1699957353538 implements MigrationInterface {
     tableName = 'yards';
@@ -25,7 +26,7 @@ export class createYards1699957353538 implements MigrationInterface {
                 [updated_at] [datetime] NULL,
                 [deleted_by] [uniqueidentifier] NULL,
                 [deleted_at] [datetime] NULL,
-            PRIMARY KEY CLUSTERED 
+            PRIMARY KEY CLUSTERED
             (
                 [uid] ASC
             )
@@ -45,7 +46,7 @@ export class createYards1699957353538 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createYards1699957353538',
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'Create yards table',

@@ -7,6 +7,6 @@ export class SlfAccessor {
 
     public async getUserAssignedVessels(token: string): Promise<number[]> {
         const userVessels = await new ApiRequestService().infra(token, this.UserSlfPath, ApiRequestMethods.Get);
-        return userVessels.data;
+        return userVessels.data.sort();
     }
 }

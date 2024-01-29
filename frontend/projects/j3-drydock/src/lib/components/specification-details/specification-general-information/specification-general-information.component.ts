@@ -27,6 +27,9 @@ export class SpecificationGeneralInformationComponent implements OnInit {
 
   descriptionEditorConfig: EditorConfig;
 
+  specificationUid: string;
+  vesselId: number;
+
   constructor(
     private specificationInformationInputService: SpecificationGeneralInformationInputservice,
     private userService: UserService
@@ -37,16 +40,22 @@ export class SpecificationGeneralInformationComponent implements OnInit {
     this.formStructure = formModel;
     this.formValues = formValues;
 
-    const vesselId = this.userService.getUserDetails().VesselId;
-    const key1 = this.specificationDetailsInfo.uid;
-    this.descriptionEditorConfig = this.specificationInformationInputService.getDescriptionEditorConfig(key1, vesselId);
+    this.vesselId = this.specificationDetailsInfo.VesselId;
+    this.specificationUid = this.specificationDetailsInfo.uid;
+
+    this.descriptionEditorConfig = this.specificationInformationInputService.getDescriptionEditorConfig();
   }
 
   handleDispatchForm(event: FormGroup) {
     this.formGroup = event;
-    this.formValue.next(event);
 
     this.setEditorsForm();
+
+    this.formValue.next(event);
+  }
+
+  updateEditorCtrlValue(event) {
+    this.editorsFormGroup.get('description').setValue(event.value);
   }
 
   private setEditorsForm() {

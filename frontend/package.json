@@ -1,6 +1,6 @@
 {
   "name": "@j3-drydock/frontend",
-  "version": "3.241.131",
+  "version": "3.241.221",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -65,7 +65,7 @@
     "fullcalendar": "4.0.0-alpha.4",
     "html2pdf.js": "0.9.3",
     "j3-task-manager-ng": "3.241.112-3",
-    "jibe-components": "3.241.121",
+    "jibe-components": "3.241.131-1",
     "jquery": "3.7.1",
     "js2xmlparser": "3.0.0",
     "json-to-table": "4.2.1",
@@ -84,7 +84,8 @@
     "rxjs": "6.5.5",
     "sortablejs": "1.15.1",
     "tslib": "1.14.1",
-    "zone.js": "0.9.1"
+    "zone.js": "0.9.1",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.901.13",
@@ -121,6 +122,7 @@
     "prettier": "3.1.1",
     "protractor": "7.0.0",
     "ts-node": "8.3.0",
-    "typescript": "3.8.3"
+    "typescript": "3.8.3",
+    "@types/uuid": "^8.3.4"
   }
 }

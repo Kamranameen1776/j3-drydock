@@ -35,9 +35,8 @@ export const projectDetailsMenuData: IJbMenuItem[] = [
     icon: 'icons8-more-details-2',
     items: [
       { label: eProjectDetailsSideMenuLabel.GanttChart, id: eProjectDetailsSideMenuId.GanttChart },
-      { label: eProjectDetailsSideMenuLabel.StatementOfFacts, id: eProjectDetailsSideMenuId.StatementOfFacts },
-      { label: eProjectDetailsSideMenuLabel.JobOrders, id: eProjectDetailsSideMenuId.JobOrders }
-      // { label: eProjectDetailsSideMenuLabel.CostUpdates, id: eProjectDetailsSideMenuId.CostUpdates }
+      { label: eProjectDetailsSideMenuLabel.CostUpdates, id: eProjectDetailsSideMenuId.CostUpdates },
+      { label: eProjectDetailsSideMenuLabel.StatementOfFacts, id: eProjectDetailsSideMenuId.StatementOfFacts }
     ]
   },
   {

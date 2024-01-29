@@ -1,6 +1,20 @@
 <jb-growl [content]="growlMessage$ | async"></jb-growl>
 
+<jb-export-report
+  [moduleCode]="moduleCode"
+  [functionCode]="functionCode"
+  [detail]="{
+    uid: projectUid,
+    Vessel_ID: tmDetails.Vessel_ID,
+    WL_TYPE: tmDetails.wl_type,
+    Worklist_Type_Display: tmDetails.Worklist_Type_Display,
+    Vessel_Name: projectDetails.VesselName,
+    Job_card_No: tmDetails.Job_Code
+  }"
+  *ngIf="exportEnable"
+></jb-export-report>
 <jb-task-manager-details
+  #detailsComponent
   *ngIf="sectionsConfig"
   [topSectionConfig]="topSectionConfig"
   [customedThreeDotActions]="customedThreeDotActions"
@@ -24,7 +38,7 @@
     rfq: rfq,
     gantt_chart: gantt_chart,
     statement_of_facts: statement_of_facts,
-    job_orders: job_orders,
+    cost_updates: cost_updates,
     reporting: reportingTab
   }"
   [sectionHeaderTemplateRef]="{ technical_specification: specificationsButtonsTmpl }"
@@ -52,6 +66,7 @@
             #specificationsComponent
             [projectId]="projectUid"
             [vesselUid]="vesselUid"
+            [vesselId]="tmDetails?.VesselId"
             [vesselType]="vesselType"
           ></jb-specifications>
         </div>
@@ -95,10 +110,19 @@
     <ng-container [ngSwitch]="section.SectionCode">
       <div *ngSwitchCase="eSideMenuId.GanttChart">
         <div #gantt_chart>
-          <jb-gantt-chart
+          <jb-project-gantt-chart
             #ganttChartComponent
             [projectId]="projectUid"
-          ></jb-gantt-chart>
+            [vesselId]="tmDetails?.VesselId"
+          ></jb-project-gantt-chart>
+        </div>
+      </div>
+      <div *ngSwitchCase="eSideMenuId.CostUpdates">
+        <div #cost_updates>
+          <jb-cost-updates
+            [projectId]="projectUid"
+            (updatesCostsData)="updatesCostsData($event)"
+          ></jb-cost-updates>
         </div>
       </div>
       <div *ngSwitchCase="eSideMenuId.StatementOfFacts">
@@ -107,11 +131,6 @@
             #statementOfFactsComponent
             [projectId]="projectUid"
           ></jb-statement-of-facts>
-        </div>
-      </div>
-      <div *ngSwitchCase="eSideMenuId.JobOrders">
-        <div #job_orders>
-          <jb-job-orders [projectId]="projectUid"></jb-job-orders>
         </div>
       </div>
     </ng-container>
@@ -125,10 +144,10 @@
   <ng-container [ngSwitch]="section.SectionCode">
     <div *ngSwitchCase="eSideMenuId.DailyReports">
       <div #daily_reports>
-        <jb-daily-reports
+        <jb-drydock-daily-reports
           #dailyReportsComponent
           [projectId]="projectUid"
-        ></jb-daily-reports>
+        ></jb-drydock-daily-reports>
       </div>
     </div>
   </ng-container>
@@ -136,14 +155,49 @@
 
 <ng-template #specificationsButtonsTmpl>
   <!-- Return after export to PDF is done -->
-  <!-- <jb-button
+  <jb-button
     type="NoButton"
     icon="icons8-anchor"
     label="Export"
-  ></jb-button> -->
+    (click)="exportEnable = !exportEnable"
+  ></jb-button>
   <jb-split-button
     type="NoButton"
     label="Create new"
     [model]="specificationsCreateNewItems"
   ></jb-split-button>
 </ng-template>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>
+
+<jb-dialog
+  [dialogContent]="importDialogueProperties"
+  [(dialogVisible)]="isImportDialogVisible"
+  (closeDialog)="closeGuidanceDialog()"
+>
+  <ng-container jb-dialog-body>
+    <div>
+      <jb-uploads
+        class="jms-upload-ui"
+        #uploadRef
+        [uploads]="uploadConfig"
+        [syncTo]="syncTo"
+        [parentControl]="true"
+        (parentDispatch)="onSelectNewFile($event)"
+        (onSelect)="onSelectNewFile($event)"
+      ></jb-uploads>
+    </div>
+  </ng-container>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [okBtnLabel]="okBtnLabel"
+      (ok)="uploadInvoice()"
+      (cancel)="closeGuidanceDialog()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
