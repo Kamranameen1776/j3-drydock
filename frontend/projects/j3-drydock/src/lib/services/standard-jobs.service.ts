@@ -165,7 +165,7 @@ export class StandardJobsService {
     };
   }
 
-  public getStandardJobsRequestWithFilters(vesselType: number, functionUIDs: string[]): WebApiRequest {
+  getStandardJobsRequestWithFilters(vesselType: number, functionUIDs: string[]): WebApiRequest {
     const filter = ODataFilterBuilder('and');
 
     if (vesselType) {

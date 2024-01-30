@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ProjectsSpecificationGridService } from './ProjectsSpecificationGridService';
+import { ProjectsGridService } from './projects-grid.service';
 import {
   eDropdownLabels,
   eDropdownValues,
@@ -38,32 +38,32 @@ import { eProjectsCreateFieldNames } from '../../../models/enums/projects-create
 import { nameOf } from '../../../utils/nameOf';
 
 @Component({
-  selector: 'jb-projects-specifications-grid',
-  templateUrl: './projects-specifications-grid.component.html',
-  styleUrls: ['./projects-specifications-grid.component.scss'],
-  providers: [ProjectsSpecificationGridService, GrowlMessageService]
+  selector: 'jb-projects-grid',
+  templateUrl: './projects-grid.component.html',
+  styleUrls: ['./projects-grid.component.scss'],
+  providers: [ProjectsGridService, GrowlMessageService]
 })
-export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
-  @ViewChild('projectsGrid')
-  projectsGrid: GridComponent;
+export class ProjectsGridComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
+  @ViewChild('projectsGrid') projectsGrid: GridComponent;
 
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
   @ViewChild('startDateTemplate', { static: true }) startDateTemplate: TemplateRef<unknown>;
   @ViewChild('endDateTemplate', { static: true }) endDateTemplate: TemplateRef<unknown>;
   @ViewChild('codeTemplate', { static: true }) codeTemplate: TemplateRef<unknown>;
-  public canView = false;
 
-  public DeleteBtnLabel = eProjectDelete.DeleteBtnLabel;
+  canView = false;
 
-  public deleteProjectText = eProjectDelete.ProjectDeleteText;
+  readonly deleteBtnLabel = eProjectDelete.DeleteBtnLabel;
 
-  public CreateBtnLabel = eProjectCreate.BtnLabel;
+  readonly deleteProjectText = eProjectDelete.ProjectDeleteText;
 
-  public gridInputs: GridInputsWithRequest;
+  readonly createBtnLabel = eProjectCreate.BtnLabel;
 
-  public createNewDialogVisible = false;
+  gridInputs: GridInputsWithRequest;
 
-  public deleteDialogVisible = false;
+  createNewDialogVisible = false;
+
+  deleteDialogVisible = false;
 
   createProjectDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: eProjectCreate.DialogueHeader };
 
@@ -109,7 +109,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
 
   constructor(
     private router: Router,
-    private projectsGridService: ProjectsSpecificationGridService,
+    private projectsGridService: ProjectsGridService,
     private projectsService: ProjectsService,
     private leftPanelFilterService: LeftPanelFilterService,
     private newTabService: NewTabService,
@@ -166,7 +166,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     }
   }
 
-  public onGridAction({ type }: GridAction<string, string>, project: IProjectsForMainPageGridDto): void {
+  onGridAction({ type }: GridAction<string, string>, project: IProjectsForMainPageGridDto): void {
     if (type === eGridRowActions.Delete) {
       this.selectedProjectID = project.ProjectId;
       this.showDeleteDialog();
@@ -181,11 +181,11 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     }
   }
 
-  public onCodeClick(project: IProjectsForMainPageGridDto) {
+  onCodeClick(project: IProjectsForMainPageGridDto) {
     this.navigateToDetails(project.ProjectId, this.getProjectPageTitle(project));
   }
 
-  public showCreateNewDialog(isShow = true) {
+  showCreateNewDialog(isShow = true) {
     if (!isShow) {
       if (this.getCreateFormControlValue(eProjectsCreateFieldNames.Fleet) != null) {
         this.setCurrentVesselsAndList(this.allVessels);
@@ -196,11 +196,11 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     this.saveNewProjectButtonDisabled$.next(true);
   }
 
-  public showDeleteDialog(value = true) {
+  showDeleteDialog(value = true) {
     this.deleteDialogVisible = value;
   }
 
-  public initCreateNewProjectFormGroup(action: FormGroup): void {
+  initCreateNewProjectFormGroup(action: FormGroup): void {
     this.createProjectFormGroup = action;
     this.createProjectFormGroup.valueChanges.subscribe(() => {
       if (this.createProjectFormGroup.valid) {
@@ -214,7 +214,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     this.listenVesselChanges();
   }
 
-  public saveNewProject() {
+  saveNewProject() {
     const values: ProjectCreate = cloneDeep(this.createProjectFormGroup.value[this.projectsGridService.createProjectFormId]);
 
     if (values.EndDate) {
@@ -245,7 +245,7 @@ export class ProjectsSpecificationsGridComponent extends UnsubscribeComponent im
     });
   }
 
-  public deleteProject() {
+  deleteProject() {
     this.showLoader = true;
     this.deleteProjectButtonDisabled$.next(true);
 
