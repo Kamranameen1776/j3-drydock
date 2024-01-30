@@ -200,6 +200,15 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   public async save(event): Promise<void> {
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
+
+    if (event.payload.Job_Short_Description.length > 200) {
+      this.jbTMDtlSrv.showGrowlMassage.next({
+        severity: eJMSActionTypes.Error,
+        detail: 'Subject/Title cannot be more than 200 characters'
+      });
+      return;
+    }
+
     if (this.detailForm?.invalid) {
       this.jbTMDtlSrv.showGrowlMassage.next({
         severity: eJMSActionTypes.Error,
