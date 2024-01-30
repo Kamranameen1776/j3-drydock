@@ -83,14 +83,25 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   ganttChart: Gantt;
   tooltipSettings: TooltipSettingsModel = {
     taskbar:
-      '<div class="d-flex flex-row">' +
-      '<div>${SpecificationSubject}</div>' +
-      '<div>Start Date: ${SpecificationStartDateFormatted}</div>' +
-      '<div>End Date: ${SpecificationEndDateFormatted}</div>' +
-      '<div>Progress: ${Progress}</div>' +
-      '<div>Duration: ${DurationInDays} days</div>' +
-      '<div>Status: ${SpecificationStatus.statusName}</div>' +
-      '</div>',
+      '<table class="e-gantt-tooltiptable">' +
+      '<tbody>' +
+      '<tr class="e-gantt-tooltip-rowcell">' +
+      '<td colspan="3">${SpecificationSubject}</td>' +
+      '</tr>' +
+      '<tr>' +
+      '<td class="e-gantt-tooltip-label">Start Date</td><td>:</td>' +
+      '<td class="e-gantt-tooltip-value">&nbsp;${SpecificationStartDateFormatted}</td>' +
+      '</tr>' +
+      '<tr><td class="e-gantt-tooltip-label">End Date</td><td>:</td>' +
+      '<td class="e-gantt-tooltip-value">&nbsp;${SpecificationEndDateFormatted}</td></tr>' +
+      '<td class="e-gantt-tooltip-label">Progress</td><td>:</td>' +
+      '<td class="e-gantt-tooltip-value">&nbsp;${Progress}</td></tr>' +
+      '<tr><td class="e-gantt-tooltip-label">Duration</td><td>:</td>' +
+      '<td class="e-gantt-tooltip-value">&nbsp;${DurationInDays}</td></tr><tr>' +
+      '<td class="e-gantt-tooltip-label">Status</td><td>:</td>' +
+      '<td class="e-gantt-tooltip-value">&nbsp;${SpecificationStatus.statusName}</td></tr>' +
+      '</tbody>' +
+      '</table>',
     showTooltip: true
   };
 
