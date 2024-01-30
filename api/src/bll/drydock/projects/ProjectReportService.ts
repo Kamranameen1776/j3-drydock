@@ -106,6 +106,8 @@ export class ProjectDetailReport {
             Table_Of_Contents: tableOfContents,
             Specifications: specifications.map((spec) => ({
                 Root_Function: spec.functionTree.rootFunction,
+                Subject: spec.Subject,
+                Code: spec.SpecificationCode,
                 Function_Path: spec.functionTree.functionPath || spec.functionTree.rootFunction,
                 Description: spec.Description,
                 Sub_Items: subItemsBySpecification[spec.uid] ?? [],
