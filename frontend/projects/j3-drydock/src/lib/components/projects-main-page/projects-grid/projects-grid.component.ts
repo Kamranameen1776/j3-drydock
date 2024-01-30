@@ -428,10 +428,14 @@ export class ProjectsGridComponent extends UnsubscribeComponent implements OnIni
   }
 
   private navigateToDetails(projectId: string, pageTitle: string) {
-    this.newTabService.navigate(['../project', projectId], {
-      relativeTo: this.activatedRoute,
-      queryParams: { pageTitle }
-    });
+    this.newTabService.navigate(
+      ['../project', projectId],
+      {
+        relativeTo: this.activatedRoute,
+        queryParams: { pageTitle }
+      },
+      pageTitle
+    );
   }
 
   private getProjectPageTitle(project: IProjectsForMainPageGridDto) {
