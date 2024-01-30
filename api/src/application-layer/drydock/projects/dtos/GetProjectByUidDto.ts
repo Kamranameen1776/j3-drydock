@@ -4,4 +4,7 @@ export class GetProjectByUidDto {
     @IsNotEmpty()
     @IsUUID()
     public uid: string;
+
+    @IsNotEmpty()
+    token: string;
 }

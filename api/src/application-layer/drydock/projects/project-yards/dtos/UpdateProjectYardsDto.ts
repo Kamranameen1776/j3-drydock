@@ -11,4 +11,7 @@ export class UpdateProjectYardsDto {
 
     @IsBoolean()
     isSelected: boolean;
+
+    @IsNotEmpty()
+    updatedBy: string;
 }
