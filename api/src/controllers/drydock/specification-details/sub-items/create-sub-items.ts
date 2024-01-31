@@ -27,10 +27,12 @@ async function createSubItems(req: Req<ReqBody>, res: Res<SpecificationDetailsSu
 
 exports.post = createSubItems;
 
-// @Route('drydock/specification-details/sub-items/create-sub-items')
+@Route('drydock/specification-details/sub-items/create-sub-items')
 export class CreateSubItemsController extends Controller {
     @Post()
-    public async createSubItems(@Body() request: CreateManyParams): Promise<SpecificationDetailsSubItemEntity[]> {
+    // TODO: check if newer version of tsoa supports async return types
+    // public async createSubItems(@Body() request: CreateManyParams): Promise<SpecificationDetailsSubItemEntity[]> {
+    public async createSubItems(@Body() request: CreateManyParams): Promise<unknown> {
         const query = new CreateSubItemsCommand();
 
         const result = await query.ExecuteAsync(request);
