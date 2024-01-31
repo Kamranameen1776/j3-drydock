@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
@@ -29,7 +29,7 @@ import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormRes
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
 import moment from 'moment';
 import { IUpdateJobOrderDurationDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDurationDto';
-import { ProjectsService } from 'projects/j3-drydock/src/lib/services/ProjectsService';
+import { ProjectDetailsFull } from '../../../../models/interfaces/project-details';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
@@ -40,11 +40,13 @@ type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   styleUrls: ['./gantt-chart.component.scss'],
   providers: [GanttChartService, DayMarkersService, EditService]
 })
-export class GanttChartComponent extends UnsubscribeComponent implements OnInit, OnDestroy, AfterViewInit {
+export class GanttChartComponent extends UnsubscribeComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
   @Input()
   projectId: string;
 
   @Input() vesselId: number;
+
+  @Input() project: ProjectDetailsFull;
 
   @ViewChild('jobOrderForm')
   jobOrderForm: IJobOrdersFormComponent;
@@ -203,41 +205,20 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     private element: ElementRef,
     private jobOrdersService: JobOrdersService,
     private growlMessageService: GrowlMessageService,
-    private jmsService: JmsService,
-    private projectsService: ProjectsService
+    private jmsService: JmsService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.initComponent();
-    this.projectsService.currentProject.subscribe((project) => {
-      const eventMarkers = [
-        {
-          day: new Date(),
-          label: '',
-          cssClass: ''
-        }
-      ];
+    this.updateEventMarkers(this.project);
+  }
 
-      if (project.StartDate) {
-        eventMarkers.push({
-          day: new Date(project.StartDate),
-          label: '',
-          cssClass: 'overdue-line'
-        });
-      }
-
-      if (project.EndDate) {
-        eventMarkers.push({
-          day: new Date(project.EndDate),
-          label: '',
-          cssClass: 'overdue-line'
-        });
-      }
-
-      this.eventMarkers = eventMarkers;
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.project) {
+      this.updateEventMarkers(changes.project.currentValue);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -251,6 +232,34 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   ngOnDestroy(): void {
     super.ngOnDestroy();
     this.element.nativeElement.querySelector(`#${this.id}`).removeEventListener('click', this.linkClick);
+  }
+
+  updateEventMarkers(project: ProjectDetailsFull) {
+    const eventMarkers = [
+      {
+        day: new Date(),
+        label: '',
+        cssClass: ''
+      }
+    ];
+
+    if (project?.StartDate) {
+      eventMarkers.push({
+        day: new Date(project?.StartDate),
+        label: '',
+        cssClass: 'overdue-line'
+      });
+    }
+
+    if (project.EndDate) {
+      eventMarkers.push({
+        day: new Date(project?.EndDate),
+        label: '',
+        cssClass: 'overdue-line'
+      });
+    }
+
+    this.eventMarkers = eventMarkers;
   }
 
   queryTaskbarInfo(args: { data: TransformedJobOrder } & Record<string, string>) {
