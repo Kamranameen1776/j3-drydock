@@ -14,4 +14,6 @@ export class UpdateSubItemUtilizedDto {
 
     @IsUUID('4')
     specificationDetailsUid: string;
+
+    UserId: string;
 }
