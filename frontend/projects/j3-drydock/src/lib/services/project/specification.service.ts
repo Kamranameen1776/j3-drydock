@@ -19,6 +19,7 @@ import ODataFilterBuilder from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
 import { StandardJobsService } from '../standard-jobs.service';
 import { eApiBaseDryDockAPI } from '../../models/constants/constants';
+import { eSortOrder } from '../../models/enums/sorting.enum';
 
 export enum SpecificationType {
   ALL = 'All',
@@ -96,7 +97,9 @@ export class SpecificationGridService {
         showDefaultLables: false,
         [eGridEvents.ClearFilters]: true
       },
-      advancedSettings: [{ label: eGridEvents.ClearFilters, icon: eGridIcons.ClearFilters3, color: eGridColors.JbBlack, show: true }]
+      advancedSettings: [{ label: eGridEvents.ClearFilters, icon: eGridIcons.ClearFilters3, color: eGridColors.JbBlack, show: true }],
+      sortField: 'code',
+      sortOrder: eSortOrder.Descending
     };
   }
 

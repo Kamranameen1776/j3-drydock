@@ -169,9 +169,14 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   }
 
   private openSpecificationPage(uid: string, code: string) {
-    this.newTabService.navigate(['../../specification-details', uid], {
-      relativeTo: this.activatedRoute,
-      queryParams: { pageTitle: `Specification ${code}` }
-    });
+    const tab_title = `Specification ${code}`;
+    this.newTabService.navigate(
+      ['../../specification-details', uid],
+      {
+        relativeTo: this.activatedRoute,
+        queryParams: { tab_title }
+      },
+      tab_title
+    );
   }
 }

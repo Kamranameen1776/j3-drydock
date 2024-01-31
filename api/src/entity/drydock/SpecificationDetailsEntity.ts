@@ -101,6 +101,18 @@ export class SpecificationDetailsEntity {
 
     @Column('int', {
         nullable: true,
+        name: 'completion',
+    })
+    Completion: number;
+
+    @Column('int', {
+        nullable: true,
+        name: 'duration',
+    })
+    Duration: number;
+
+    @Column('int', {
+        nullable: true,
         name: 'estimated_days',
     })
     EstimatedDays: number;

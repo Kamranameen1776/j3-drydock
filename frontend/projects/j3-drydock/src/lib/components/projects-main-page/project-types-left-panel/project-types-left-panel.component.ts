@@ -41,8 +41,10 @@ export class ProjectTypesLeftPanelComponent extends UnsubscribeComponent impleme
     this.projectsService
       .groupProjectStatuses()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((groupProjectStatuses: IGroupProjectStatusesDto[]) => {
-        this.projectsStatusFilters = groupProjectStatuses;
+      .subscribe((groupProjectStatuses) => {
+        this.projectsStatusFilters = Object.keys(groupProjectStatuses ?? {}).map((key) => {
+          return { ...groupProjectStatuses[key], ProjectTypeId: key };
+        });
 
         this.vesselsSelectDropdownList.registerOnChange(this.onVesselsSelected.bind(this));
       });

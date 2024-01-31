@@ -22,18 +22,153 @@ import { ProjectsGridOdataKeys } from '../../../models/enums/ProjectsGridOdataKe
 import { eSortOrder } from '../../../models/enums/sorting.enum';
 
 @Injectable()
-export class ProjectsSpecificationGridService {
+export class ProjectsGridService {
   // TODO: get from the backend service
-  public readonly minDate: Date = new Date('2010-01-01');
-  public readonly maxDate: Date = new Date('2100-01-01');
+  readonly minDate: Date = new Date('2010-01-01');
+  readonly maxDate: Date = new Date('2100-01-01');
 
-  public readonly gridName: string = 'projectsSpecificationGrid';
+  readonly gridName: string = 'projectsGrid';
 
-  public readonly ProjectStatusesFilterName = 'ProjectStatuses';
+  readonly ProjectStatusesFilterName = 'ProjectStatuses';
 
-  public readonly dateFormat = this.userService.getUserDetails().Date_Format;
+  readonly dateFormat = this.userService.getUserDetails().Date_Format;
 
-  initDate: Date = new Date();
+  readonly createProjectFormId = 'projectCreate';
+
+  readonly deleteProjectFormId = 'projectDelete';
+
+  filters: Filter[] = [
+    {
+      Active_Status_Config_Filter: true,
+      DisplayText: 'Fleet',
+      Active_Status: true,
+      FieldName: 'Fleets',
+      DisplayCode: 'FleetName',
+      ValueCode: 'FleetCode',
+      FieldID: 0,
+      default: false,
+      gridName: this.gridName
+    },
+    {
+      Active_Status_Config_Filter: true,
+      DisplayText: 'Vessel',
+      Active_Status: true,
+      FieldName: 'VesselName',
+      DisplayCode: 'Vessel_Name',
+      ValueCode: 'Vessel_ID',
+      FieldID: 1,
+      default: false,
+      gridName: this.gridName
+    },
+    {
+      Active_Status_Config_Filter: true,
+      DisplayText: 'Project Type',
+      Active_Status: true,
+      FieldName: 'ProjectTypes',
+      DisplayCode: 'ProjectTypeName',
+      ValueCode: 'ProjectTypeCode',
+      FieldID: 2,
+      default: true,
+      gridName: this.gridName
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      DisplayText: 'Project Manager',
+      FieldName: 'ProjectsManages',
+      DisplayCode: 'FullName',
+      ValueCode: 'ManagerId',
+      FieldID: 3,
+      default: true,
+      gridName: this.gridName
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      DisplayText: 'Status',
+      FieldName: this.ProjectStatusesFilterName,
+      DisplayCode: 'ProjectStatusName',
+      ValueCode: 'ProjectStatusId',
+      FieldID: 4,
+      default: true,
+      gridName: this.gridName
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      DisplayText: 'Ship Yard',
+      FieldName: 'ShipsYards',
+      DisplayCode: 'ShipYardName',
+      ValueCode: 'ShipYardId',
+      FieldID: 5,
+      default: true,
+      gridName: this.gridName
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'FromStartDate',
+      DisplayText: 'Start Date From',
+      FieldID: 6,
+      FieldName: 'FromStartDate',
+      CoupleID: 1,
+      CoupleLabel: 'Start Date',
+      default: false,
+      gridName: this.gridName,
+      addTimeLimit: true
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'ToStartDate',
+      DisplayText: 'Start Date To',
+      FieldID: 7,
+      FieldName: 'ToStartDate',
+      CoupleID: 1,
+      CoupleLabel: 'Start Date',
+      default: false,
+      gridName: this.gridName,
+      addTimeLimit: true
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'FromEndDate',
+      DisplayText: 'End Date From',
+      FieldID: 8,
+      FieldName: 'FromEndDate',
+      CoupleID: 2,
+      CoupleLabel: 'End Date',
+      default: true,
+      gridName: this.gridName,
+      addTimeLimit: true
+    },
+    {
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      FieldType: 'date',
+      ControlType: eFieldControlType.Date,
+      DataType: 'datetime',
+      Details: 'ToEndDate',
+      DisplayText: 'End Date To',
+      FieldID: 9,
+      FieldName: 'ToEndDate',
+      CoupleID: 2,
+      CoupleLabel: 'End Date',
+      default: true,
+      gridName: this.gridName,
+      addTimeLimit: true
+    }
+  ];
 
   private readonly columns: Column[] = [
     {
@@ -209,154 +344,13 @@ export class ProjectsSpecificationGridService {
     }
   };
 
-  public filters: Filter[] = [
-    {
-      Active_Status_Config_Filter: true,
-      DisplayText: 'Fleet',
-      Active_Status: true,
-      FieldName: 'Fleets',
-      DisplayCode: 'FleetName',
-      ValueCode: 'FleetCode',
-      FieldID: 0,
-      default: false,
-      CoupleLabel: 'Project',
-      gridName: this.gridName
-    },
-    {
-      Active_Status_Config_Filter: true,
-      DisplayText: 'Vessel',
-      Active_Status: true,
-      FieldName: 'VesselName',
-      DisplayCode: 'Vessel_Name',
-      ValueCode: 'Vessel_ID',
-      FieldID: 1,
-      default: false,
-      gridName: this.gridName
-    },
-    {
-      Active_Status_Config_Filter: true,
-      DisplayText: 'Project Type',
-      Active_Status: true,
-      FieldName: 'ProjectTypes',
-      DisplayCode: 'ProjectTypeName',
-      ValueCode: 'ProjectTypeCode',
-      FieldID: 2,
-      default: true,
-      CoupleLabel: 'Project',
-      gridName: this.gridName
-    },
-    {
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      DisplayText: 'Project Manager',
-      FieldName: 'ProjectsManages',
-      DisplayCode: 'FullName',
-      ValueCode: 'ManagerId',
-      FieldID: 3,
-      default: true,
-      CoupleLabel: 'Project',
-      gridName: this.gridName
-    },
-    {
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      DisplayText: 'Status',
-      FieldName: this.ProjectStatusesFilterName,
-      DisplayCode: 'ProjectStatusName',
-      ValueCode: 'ProjectStatusId',
-      FieldID: 4,
-      default: true,
-      CoupleLabel: 'Project',
-      gridName: this.gridName
-    },
-    {
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      DisplayText: 'Ship Yard',
-      FieldName: 'ShipsYards',
-      DisplayCode: 'ShipYardName',
-      ValueCode: 'ShipYardId',
-      FieldID: 5,
-      default: true,
-      CoupleLabel: 'Project',
-      gridName: this.gridName
-    },
-    {
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      FieldType: 'date',
-      ControlType: eFieldControlType.Date,
-      DataType: 'datetime',
-      Details: 'FromStartDate',
-      DisplayText: 'Start Date From',
-      FieldID: 6,
-      FieldName: 'FromStartDate',
-      CoupleID: 1,
-      CoupleLabel: 'Start Date',
-      default: false,
-      gridName: this.gridName,
-      addTimeLimit: true
-    },
-    {
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      FieldType: 'date',
-      ControlType: eFieldControlType.Date,
-      DataType: 'datetime',
-      Details: 'ToStartDate',
-      DisplayText: 'Start Date To',
-      FieldID: 7,
-      FieldName: 'ToStartDate',
-      CoupleID: 1,
-      CoupleLabel: 'Start Date',
-      default: false,
-      gridName: this.gridName,
-      addTimeLimit: true
-    },
-    {
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      FieldType: 'date',
-      ControlType: eFieldControlType.Date,
-      DataType: 'datetime',
-      Details: 'FromEndDate',
-      DisplayText: 'End Date From',
-      FieldID: 8,
-      FieldName: 'FromEndDate',
-      CoupleID: 2,
-      CoupleLabel: 'End Date',
-      default: true,
-      gridName: this.gridName,
-      addTimeLimit: true
-    },
-    {
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      FieldType: 'date',
-      ControlType: eFieldControlType.Date,
-      DataType: 'datetime',
-      Details: 'ToEndDate',
-      DisplayText: 'End Date To',
-      FieldID: 9,
-      FieldName: 'ToEndDate',
-      CoupleID: 2,
-      CoupleLabel: 'End Date',
-      default: true,
-      gridName: this.gridName,
-      addTimeLimit: true
-    }
-  ];
-
   private searchFields: string[] = [
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.Subject),
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectCode),
     nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectManager)
   ];
+
   private gridActions: GridRowActions[] = [];
-
-  public createProjectFormId = 'projectCreate';
-
-  public deleteProjectFormId = 'projectDelete';
 
   constructor(
     private userService: UserService,
@@ -365,7 +359,7 @@ export class ProjectsSpecificationGridService {
     private vesselService: VesselService
   ) {}
 
-  public getGridInputs(): GridInputsWithRequest {
+  getGridInputs(): GridInputsWithRequest {
     return {
       columns: this.columns,
       gridName: this.gridName,
@@ -380,7 +374,7 @@ export class ProjectsSpecificationGridService {
     };
   }
 
-  public getCreateProjectForm(): FormModel {
+  getCreateProjectForm(): FormModel {
     return {
       id: 'createNewProject',
       label: '',

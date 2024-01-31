@@ -1,3 +1,4 @@
+import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { DataUtilService, SynchronizerService } from 'j2utils';
 import { QueryRunner } from 'typeorm';
@@ -37,7 +38,7 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
             throw new Error('Request is null');
         }
 
-        const result = await validate(request);
+        const result = await validate(plainToClass(UpdateProjectDto, request));
 
         if (result.length) {
             throw result;

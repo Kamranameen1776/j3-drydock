@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
+import { Controller, Get, Route } from 'tsoa';
 
 import { ProjectTypesQuery } from '../../../../application-layer/drydock/projects/project-types/ProjectTypesQuery';
+import { IProjectTypeResultDto } from '../../../../dal/drydock/projects/dtos/IProjectTypeResultDto';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
 /**
@@ -14,11 +16,20 @@ export async function getProjectTypesAction(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
+        const result = await new GetProjectTypesActionController().getProjectTypesAction();
+
+        return result;
+    });
+}
+
+@Route('drydock/projects/project-types')
+export class GetProjectTypesActionController extends Controller {
+    @Get()
+    public async getProjectTypesAction(): Promise<IProjectTypeResultDto[]> {
         const query = new ProjectTypesQuery();
 
-        // Execute query
-        const projects = await query.ExecuteAsync();
+        const result = await query.ExecuteAsync();
 
-        return projects;
-    });
+        return result;
+    }
 }

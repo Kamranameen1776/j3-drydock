@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
+import { Controller, Get, Route } from 'tsoa';
 
 import { ProjectsVesselsQuery } from '../../../../application-layer/drydock/projects/projects-vessels/ProjectsVesselsQuery';
+import { IProjectVesselsResultDto } from '../../../../dal/drydock/projects/dtos/IProjectVesselsResultDto';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
 /**
@@ -14,11 +16,20 @@ export async function getProjectsVesselsAction(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
+        const result = await new GetProjectsVesselsActionController().getProjectsVesselsAction();
+
+        return result;
+    });
+}
+
+@Route('drydock/projects/projects-vessels/getProjectsVesselsAction')
+export class GetProjectsVesselsActionController extends Controller {
+    @Get()
+    public async getProjectsVesselsAction(): Promise<IProjectVesselsResultDto[]> {
         const query = new ProjectsVesselsQuery();
 
-        // Execute query
-        const projects = await query.ExecuteAsync();
+        const result = await query.ExecuteAsync();
 
-        return projects;
-    });
+        return result;
+    }
 }

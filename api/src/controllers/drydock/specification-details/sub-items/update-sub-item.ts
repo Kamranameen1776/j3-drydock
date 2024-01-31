@@ -1,4 +1,5 @@
 import { AccessRights } from 'j2utils';
+import { Body, Controller, Put, Route } from 'tsoa';
 
 import { UpdateSubItemCommand } from '../../../../application-layer/drydock/specification-details/sub-items/UpdateSubItemCommand';
 import { type Req, type Res } from '../../../../common/drydock/ts-helpers/req-res';
@@ -15,13 +16,25 @@ async function updateSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
-        const command = new UpdateSubItemCommand();
-
-        await command.ExecuteAsync({
+        const result = await new UpdateSubItemController().updateSubItem({
             ...req.body,
             updatedBy,
         });
+
+        return result;
     });
 }
 
 exports.put = updateSubItem;
+
+// @Route('drydock/specification-details/sub-items/update-sub-item')
+export class UpdateSubItemController extends Controller {
+    @Put()
+    public async updateSubItem(@Body() request: UpdateSubItemParams): Promise<SpecificationDetailsSubItemEntity> {
+        const query = new UpdateSubItemCommand();
+
+        const result = await query.ExecuteAsync(request);
+
+        return result;
+    }
+}

@@ -20,7 +20,7 @@ import { UpsertSubItemPopupComponent } from './components/standard-jobs-main/sub
 import { StandardJobsStatusNamePipe } from './components/standard-jobs-main/pipes/status-name.pipe';
 import { StandardJobsStatusColorPipe } from './components/standard-jobs-main/pipes/status-color.pipe';
 import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
-import { ProjectsSpecificationsGridComponent } from './components/projects-main-page/projects-specifications-grid/projects-specifications-grid.component';
+import { ProjectsGridComponent } from './components/projects-main-page/projects-grid/projects-grid.component';
 import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
 import { CreateSpecificationPopupComponent } from './components/project-details/create-specification-popup/create-specification-popup.component';
 import { SpecificationFormComponent } from './components/project-details/specification-form/specification-form.component';
@@ -78,7 +78,7 @@ import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
     ProjectDetailsComponent,
     SpecificationsComponent,
     ProjectsMainPageComponent,
-    ProjectsSpecificationsGridComponent,
+    ProjectsGridComponent,
     StandardJobsMainComponent,
     UpsertStandardJobPopupComponent,
     UpsertStandardJobFormComponent,

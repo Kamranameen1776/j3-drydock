@@ -63,7 +63,7 @@ export class SetAttachPrefixOfDryDockSpecAndStandardJobsByCode1706008729054 impl
                         set
                             target.[attach_prefix] = source.[attach_prefix],
                             target.[Modified_By] = 1,
-                            target.[Date_Of_Modification] = GETDATE()
+                            target.[Date_Of_Modification] = GETDATE();
             `,
                 [this.moduleCode],
             );
