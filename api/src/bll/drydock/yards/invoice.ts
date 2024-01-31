@@ -524,7 +524,7 @@ export class InvoiceGeneratorService {
                 fgColor: { argb: 'FFD8D8D8' },
                 bgColor: { argb: 'FFD8D8D8' },
             },
-            alignment: { horizontal: 'right', vertical: 'middle' },
+            alignment: { horizontal: 'left', vertical: 'middle' },
         };
         worksheet.getCell(`B${this.cRow}`).value = 'Job Total';
 
