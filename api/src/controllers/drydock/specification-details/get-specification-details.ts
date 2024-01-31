@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { Body, Controller, Get } from 'tsoa';
+import * as express from 'express';
+import { Controller, Get, Query, Request, Route } from 'tsoa';
 
 import { GetSpecificationByUidDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationByUidDto';
 import { GetSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationDetailsDto';
@@ -11,11 +11,14 @@ import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
  * @param {Request} req Express request
  * @param {Response} res Express response
  */
-export async function getSpecificationDetails(req: Request, res: Response) {
+export async function getSpecificationDetails(req: express.Request, res: express.Response) {
     const middlewareHandler = new MiddlewareHandler();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        const result = await new GetSpecificationDetailsController().getSpecificationDetails(request);
+    await middlewareHandler.ExecuteAsync(req, res, async (request: express.Request) => {
+        const result = await new GetSpecificationDetailsController().getSpecificationDetails(
+            request.query.uid as string,
+            request,
+        );
 
         return result;
     });
@@ -23,13 +26,20 @@ export async function getSpecificationDetails(req: Request, res: Response) {
 
 exports.get = getSpecificationDetails;
 
-// @Route('drydock/specification-details/get-specification-details')
+@Route('drydock/specification-details/get-specification-details')
 export class GetSpecificationDetailsController extends Controller {
     @Get()
-    public async getSpecificationDetails(@Body() request: Request): Promise<GetSpecificationDetailsDto> {
+    public async getSpecificationDetails(
+        @Query() uid: string,
+        @Request() request: express.Request,
+    ): Promise<GetSpecificationDetailsDto> {
         const query = new GetSpecificationDetailsQuery();
 
-        const result = await query.ExecuteAsync(request, GetSpecificationByUidDto, 'query');
+        const dto = new GetSpecificationByUidDto();
+        dto.uid = uid;
+        dto.token = request.headers.authorization as string;
+
+        const result = await query.ExecuteAsync(dto);
 
         return result;
     }
