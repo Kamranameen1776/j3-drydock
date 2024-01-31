@@ -111,7 +111,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   ngOnInit(): void {
     this.jbTMDtlSrv.isFormValid = true;
 
-    const title = this.activatedRoute.snapshot.queryParamMap.get('pageTitle');
+    const title = this.activatedRoute.snapshot.queryParamMap.get('tab_title');
     if (title) {
       this.title.setTitle(title);
     }

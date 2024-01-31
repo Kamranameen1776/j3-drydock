@@ -182,7 +182,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   ngOnInit(): void {
     this.jbTMDtlSrv.isFormValid = true;
-    const title = this.route.snapshot.queryParamMap.get('pageTitle');
+    const title = this.route.snapshot.queryParamMap.get('tab_title');
     if (title) {
       this.titleService.setTitle(title);
     }

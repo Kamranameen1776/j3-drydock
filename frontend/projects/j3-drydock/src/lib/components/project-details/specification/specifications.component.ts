@@ -169,14 +169,14 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   }
 
   private openSpecificationPage(uid: string, code: string) {
-    const pageTitle = `Specification ${code}`;
+    const tab_title = `Specification ${code}`;
     this.newTabService.navigate(
       ['../../specification-details', uid],
       {
         relativeTo: this.activatedRoute,
-        queryParams: { pageTitle }
+        queryParams: { tab_title }
       },
-      pageTitle
+      tab_title
     );
   }
 }
