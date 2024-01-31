@@ -1,22 +1,19 @@
-import { Request, Response } from 'express';
-import { Body, Controller, Post } from 'tsoa';
+import * as express from 'express';
+import { Body, Controller, Post, Request, Route } from 'tsoa';
 
+import { GridRequest } from '../../../application-layer/drydock/core/cqrs/jbGrid/GridRequest';
+import { GridRequestBody } from '../../../application-layer/drydock/core/cqrs/jbGrid/GridRequestBody';
 import { GetManySpecificationDetailsQuery } from '../../../application-layer/drydock/specification-details/GetManySpecificationDetailsQuery';
-import { SpecificationDetailsEntity } from '../../../entity/drydock';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
-/**
- * This handler returns all available shipments
- * GET /drydock/specifications-details/getManySpecificationDetails
- * @exports
- * @param {Request} req Express request
- * @param {Response} res Express response
- */
-export async function getManySpecificationDetails(req: Request, res: Response) {
+export async function getManySpecificationDetails(req: express.Request, res: express.Response) {
     const middlewareHandler = new MiddlewareHandler();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        const result = await new GetManySpecificationDetailsController().getManySpecificationDetails(request);
+    await middlewareHandler.ExecuteAsync(req, res, async (request: express.Request) => {
+        const result = await new GetManySpecificationDetailsController().getManySpecificationDetails(
+            request.body,
+            request,
+        );
 
         return result;
     });
@@ -24,15 +21,21 @@ export async function getManySpecificationDetails(req: Request, res: Response) {
 
 exports.post = getManySpecificationDetails;
 
-// @Route('drydock/specification-details/get-many-specification-details')
+@Route('drydock/specification-details/get-many-specification-details')
 export class GetManySpecificationDetailsController extends Controller {
     @Post()
     public async getManySpecificationDetails(
-        @Body() request: Request,
-    ): Promise<{ records: SpecificationDetailsEntity[]; count?: number }> {
+        @Body() body: GridRequestBody,
+        @Request() request: express.Request,
+
+        // TODO: check if newer version of tsoa supports this
+        //
+        // ): Promise<{ records: SpecificationDetailsEntity[]; count?: number }> {
+    ): Promise<{ records: unknown; count?: number }> {
+        const dto = new GridRequest(body, request);
         const query = new GetManySpecificationDetailsQuery();
 
-        const result = await query.ExecuteAsync(request);
+        const result = await query.ExecuteAsync(dto);
 
         return result;
     }

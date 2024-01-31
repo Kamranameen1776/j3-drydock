@@ -1,8 +1,6 @@
-import { Request } from 'express';
-
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { SpecificationDetailsEntity } from '../../../entity/drydock';
-import { GridFilter } from '../../../shared/interfaces/GridFilter';
+import { GridRequest } from '../core/cqrs/jbGrid/GridRequest';
 import { Query } from '../core/cqrs/Query';
 import {
     SpecificationDetailsGridFiltersKeys,
@@ -10,7 +8,7 @@ import {
 } from './SpecificationDetailsConstants';
 
 export class GetManySpecificationDetailsQuery extends Query<
-    Request,
+    GridRequest,
     { records: SpecificationDetailsEntity[]; count?: number }
 > {
     specificationDetailsRepository: SpecificationDetailsRepository = new SpecificationDetailsRepository();
@@ -27,9 +25,8 @@ export class GetManySpecificationDetailsQuery extends Query<
      *
      * @returns All specification details
      */
-    protected async MainHandlerAsync(request: Request) {
-        const gridFilter = request.body.gridFilters as GridFilter[];
-        const filters = gridFilter.reduce(
+    protected async MainHandlerAsync(request: GridRequest) {
+        const filters = request.gridFilters.reduce(
             (acc, { odataKey, selectedValues }) =>
                 specificationDetailsGridFiltersKeys.includes(odataKey as SpecificationDetailsGridFiltersKeys) &&
                 Array.isArray(selectedValues) &&
@@ -42,6 +39,6 @@ export class GetManySpecificationDetailsQuery extends Query<
             {} as Record<SpecificationDetailsGridFiltersKeys, string[]>,
         );
 
-        return this.specificationDetailsRepository.GetManySpecificationDetails(request, filters);
+        return this.specificationDetailsRepository.GetManySpecificationDetails(request.request, filters);
     }
 }
