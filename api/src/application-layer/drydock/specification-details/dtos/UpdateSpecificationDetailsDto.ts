@@ -30,4 +30,6 @@ export class UpdateSpecificationDetailsDto {
     @IsNumber({}, { each: true })
     @IsOptional()
     Inspections?: Array<number>;
+
+    UserId: string;
 }

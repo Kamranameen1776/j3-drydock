@@ -119,6 +119,7 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
                     Inspections: specification.inspections.map((inspection) => inspection.ID!),
                     Description: specification.Description,
                     DoneByUid: specification.DoneByUid,
+                    UserId: '',
                 };
 
                 specificationAuditData.push(auditData);
