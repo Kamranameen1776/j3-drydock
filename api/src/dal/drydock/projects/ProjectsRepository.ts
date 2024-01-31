@@ -29,26 +29,24 @@ import { IProjectVesselsResultDto } from './dtos/IProjectVesselsResultDto';
 export class ProjectsRepository {
     public async GetGroupStatusesRawData(assignedVessels?: number[]): Promise<IGroupProjectStatusesRawDataDto[]> {
         const groupProjectStatusRepository = getManager().getRepository(GroupProjectStatusEntity);
-        const projectRepository = getManager().getRepository(ProjectEntity);
 
-        let firstQuery = projectRepository
-            .createQueryBuilder('pr')
+        let firstQuery = getManager()
+            .createQueryBuilder()
             .select([
-                'count(pt.uid) as counter',
+                'count(prs.ProjectId) as counter',
                 'gps.GroupProjectStatusId as GroupProjectStatusId',
                 'gps.ProjectTypeId as ProjectTypeId',
             ])
-            .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = pr.ProjectTypeUid')
-            .innerJoin(className(TecTaskManagerEntity), 'tm', 'tm.uid = pr.TaskManagerUid')
+            .from(`(${this.GetQueryForProjects().getQuery()})`, 'prs')
+            .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = prs.ProjectTypeUid')
             .innerJoin(
                 className(GroupProjectStatusEntity),
                 'gps',
-                'tm.Status = gps.ProjectStatusId and pt.WorklistType = gps.ProjectTypeId',
+                'prs.ProjectStatusId = gps.ProjectStatusId and pt.WorklistType = gps.ProjectTypeId',
             )
-            .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
+            .innerJoin(className(LibVesselsEntity), 'vessel', 'prs.VesselUid = vessel.uid')
             .groupBy('gps.GroupProjectStatusId, gps.ProjectTypeId')
-            .where('gps.ActiveStatus = 1')
-            .andWhere('pr.ActiveStatus = 1');
+            .where('gps.ActiveStatus = 1');
 
         if (assignedVessels) {
             firstQuery = firstQuery.andWhere(`vessel.vessel_id IN (${assignedVessels.join(',')})`);
@@ -174,6 +172,7 @@ export class ProjectsRepository {
                 'pr.TaskManagerUid as TaskManagerUid',
                 'yd.registeredName as ShipYard',
                 'yd.uid as ShipYardUid',
+                'pr.ProjectTypeUid as ProjectTypeUid',
                 `CONCAT(COUNT(CASE WHEN sc.status = '${TaskManagerConstants.specification.status.Closed}' THEN 1 END), '/', COUNT(sc.uid)) AS Specification`,
             ])
             .leftJoin((qb) => this.getSpecificationCountQuery(qb, uid), 'sc', 'sc.projectUid = pr.uid')
@@ -227,6 +226,7 @@ export class ProjectsRepository {
                     'pr.task_manager_uid',
                     'yd.registered_name',
                     '"yd"."uid"',
+                    'pr.project_type_uid',
                     'sc.projectUid',
                 ].join(','),
             )

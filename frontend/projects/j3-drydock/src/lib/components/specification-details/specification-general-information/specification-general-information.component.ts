@@ -1,9 +1,8 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SpecificationGeneralInformationInputservice } from './specification-general-information-inputs';
 import { FormModel, FormValues, UserService } from 'jibe-components';
 import { SpecificationDetails } from '../../../models/interfaces/specification-details';
-import { Subject } from 'rxjs';
 import { EditorConfig } from '../../../models/interfaces/EditorConfig';
 @Component({
   selector: 'jb-specification-general-information',
@@ -13,7 +12,7 @@ import { EditorConfig } from '../../../models/interfaces/EditorConfig';
 })
 export class SpecificationGeneralInformationComponent implements OnInit {
   @Input() specificationDetailsInfo: SpecificationDetails;
-  @Output() formValue = new Subject<FormGroup>();
+  @Output() formValue = new EventEmitter<FormGroup>();
 
   public formGroup: FormGroup;
 

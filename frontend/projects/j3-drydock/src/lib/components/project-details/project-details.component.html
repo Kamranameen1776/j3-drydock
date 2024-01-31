@@ -17,7 +17,7 @@
   #detailsComponent
   *ngIf="sectionsConfig"
   [topSectionConfig]="topSectionConfig"
-  [customedThreeDotActions]="customedThreeDotActions"
+  [customedThreeDotActions]="customThreeDotActions"
   [threeDotsActionsShow]="threeDotsActionsShow"
   [sectionsConfig]="sectionsConfig"
   [tmDetails]="tmDetails"
@@ -60,29 +60,31 @@
     let-section
   >
     <ng-container [ngSwitch]="section.SectionCode">
-      <div *ngSwitchCase="eSideMenuId.TechnicalSpecification">
-        <div #technical_specification>
-          <jb-specifications
-            #specificationsComponent
-            [projectId]="projectUid"
-            [vesselUid]="vesselUid"
-            [vesselId]="tmDetails?.VesselId"
-            [vesselType]="vesselType"
-          ></jb-specifications>
-        </div>
+      <div
+        #technical_specification
+        *ngSwitchCase="eSideMenuId.TechnicalSpecification"
+      >
+        <jb-specifications
+          #specificationsComponent
+          [projectId]="projectUid"
+          [vesselUid]="vesselUid"
+          [vesselId]="tmDetails?.VesselId"
+          [vesselType]="vesselType"
+        ></jb-specifications>
       </div>
 
-      <div *ngSwitchCase="eSideMenuId.Attachments">
-        <div #attachmentss>
-          <jb-attachments
-            *ngIf="attachmentConfig"
-            #attachmentsComponent
-            class="attachments"
-            [attachConfig]="attachmentConfig"
-            [onUploadBtn]="false"
-            [defaultActions]="true"
-          ></jb-attachments>
-        </div>
+      <div
+        #attachmentss
+        *ngSwitchCase="eSideMenuId.Attachments"
+      >
+        <jb-attachments
+          *ngIf="attachmentConfig"
+          #attachmentsComponent
+          class="attachments"
+          [attachConfig]="attachmentConfig"
+          [onUploadBtn]="false"
+          [defaultActions]="true"
+        ></jb-attachments>
       </div>
     </ng-container>
   </ng-template>
@@ -92,13 +94,14 @@
     let-section
   >
     <ng-container [ngSwitch]="section.SectionCode">
-      <div *ngSwitchCase="eSideMenuId.RFQ">
-        <div #rfq>
-          <jb-drydock-rfq
-            [projectId]="projectUid"
-            #rfqComponent
-          ></jb-drydock-rfq>
-        </div>
+      <div
+        #rfq
+        *ngSwitchCase="eSideMenuId.RFQ"
+      >
+        <jb-drydock-rfq
+          [projectId]="projectUid"
+          #rfqComponent
+        ></jb-drydock-rfq>
       </div>
     </ng-container>
   </ng-template>
@@ -108,30 +111,33 @@
     let-section
   >
     <ng-container [ngSwitch]="section.SectionCode">
-      <div *ngSwitchCase="eSideMenuId.GanttChart">
-        <div #gantt_chart>
-          <jb-project-gantt-chart
-            #ganttChartComponent
-            [projectId]="projectUid"
-            [vesselId]="tmDetails?.VesselId"
-          ></jb-project-gantt-chart>
-        </div>
+      <div
+        #gantt_chart
+        *ngSwitchCase="eSideMenuId.GanttChart"
+      >
+        <jb-project-gantt-chart
+          #ganttChartComponent
+          [projectId]="projectUid"
+          [vesselId]="tmDetails?.VesselId"
+        ></jb-project-gantt-chart>
       </div>
-      <div *ngSwitchCase="eSideMenuId.CostUpdates">
-        <div #cost_updates>
-          <jb-cost-updates
-            [projectId]="projectUid"
-            (updatesCostsData)="updatesCostsData($event)"
-          ></jb-cost-updates>
-        </div>
+      <div
+        #cost_updates
+        *ngSwitchCase="eSideMenuId.CostUpdates"
+      >
+        <jb-cost-updates
+          [projectId]="projectUid"
+          (updatesCostsData)="updatesCostsData($event)"
+        ></jb-cost-updates>
       </div>
-      <div *ngSwitchCase="eSideMenuId.StatementOfFacts">
-        <div #statement_of_facts>
-          <jb-statement-of-facts
-            #statementOfFactsComponent
-            [projectId]="projectUid"
-          ></jb-statement-of-facts>
-        </div>
+      <div
+        #statement_of_facts
+        *ngSwitchCase="eSideMenuId.StatementOfFacts"
+      >
+        <jb-statement-of-facts
+          #statementOfFactsComponent
+          [projectId]="projectUid"
+        ></jb-statement-of-facts>
       </div>
     </ng-container>
   </ng-template>
@@ -142,13 +148,14 @@
   let-section
 >
   <ng-container [ngSwitch]="section.SectionCode">
-    <div *ngSwitchCase="eSideMenuId.DailyReports">
-      <div #daily_reports>
-        <jb-drydock-daily-reports
-          #dailyReportsComponent
-          [projectId]="projectUid"
-        ></jb-drydock-daily-reports>
-      </div>
+    <div
+      #daily_reports
+      *ngSwitchCase="eSideMenuId.DailyReports"
+    >
+      <jb-drydock-daily-reports
+        #dailyReportsComponent
+        [projectId]="projectUid"
+      ></jb-drydock-daily-reports>
     </div>
   </ng-container>
 </ng-template>

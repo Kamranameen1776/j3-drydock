@@ -1,14 +1,14 @@
-import { Request } from 'express';
 import { map } from 'lodash';
 
 import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { SlfAccessor } from '../../../../external-services/drydock/SlfAccessor';
 import { ODataResult } from '../../../../shared/interfaces/odata-result.interface';
+import { OdataRequest } from '../../core/cqrs/odata/OdataRequest';
 import { Query } from '../../core/cqrs/Query';
 import { IProjectsFromMainPageRecordDto } from './dtos/IProjectsFromMainPageRecordDto';
 
-export class ProjectsFromMainPageQuery extends Query<Request, ODataResult<IProjectsFromMainPageRecordDto>> {
+export class ProjectsFromMainPageQuery extends Query<OdataRequest, ODataResult<IProjectsFromMainPageRecordDto>> {
     projectsRepository: ProjectsRepository;
     slfAccessor: SlfAccessor;
 
@@ -23,11 +23,7 @@ export class ProjectsFromMainPageQuery extends Query<Request, ODataResult<IProje
         return;
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
-        if (!request || !request.body || !request.body.odata) {
-            throw new ApplicationException('Request odata is required');
-        }
-
+    protected async ValidationHandlerAsync(request: OdataRequest): Promise<void> {
         return;
     }
 
@@ -36,11 +32,11 @@ export class ProjectsFromMainPageQuery extends Query<Request, ODataResult<IProje
      * @param request Http request
      * @returns Projects from main page
      */
-    protected async MainHandlerAsync(request: Request): Promise<ODataResult<IProjectsFromMainPageRecordDto>> {
-        const token: string = request.headers.authorization as string;
+    protected async MainHandlerAsync(request: OdataRequest): Promise<ODataResult<IProjectsFromMainPageRecordDto>> {
+        const token: string = request.request.headers.authorization as string;
 
         const assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(token);
-        const data = await this.projectsRepository.GetProjectsForMainPage(request, assignedVessels);
+        const data = await this.projectsRepository.GetProjectsForMainPage(request.request, assignedVessels);
 
         const result: ODataResult<IProjectsFromMainPageRecordDto> = {
             count: data.count,

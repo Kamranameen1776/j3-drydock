@@ -8,4 +8,7 @@ export class CreateProjectYardsDto {
     @IsArray()
     @ArrayMinSize(0)
     yardsUids: Array<string>;
+
+    @IsNotEmpty()
+    createdBy: string;
 }

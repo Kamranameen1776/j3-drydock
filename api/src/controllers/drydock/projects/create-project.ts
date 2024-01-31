@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { Body, Controller, Post } from 'tsoa';
+import * as express from 'express';
+import { Body, Controller, Post, Request, Route } from 'tsoa';
 
 import { CreateProjectCommand } from '../../../application-layer/drydock/projects';
 import { CreateProjectDataDto } from '../../../application-layer/drydock/projects/create-project/CreateProjectDataDto';
@@ -7,14 +7,13 @@ import { CreateProjectDto } from '../../../bll/drydock/projects/dtos/ICreateProj
 import { IProjectsForMainPageRecordDto } from '../../../dal/drydock/projects/dtos/IProjectsForMainPageRecordDto';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
-async function createProject(req: Request, res: Response) {
+async function createProject(req: express.Request, res: express.Response) {
     const middlewareHandler = new MiddlewareHandler();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        const token: string = request.headers.authorization as string;
+    await middlewareHandler.ExecuteAsync(req, res, async (request: express.Request) => {
         const createProjectDto: CreateProjectDto = request.body as CreateProjectDto;
 
-        const result = await new CreateProjectController().createProject(createProjectDto, token);
+        const result = await new CreateProjectController().createProject(createProjectDto, request);
 
         return result;
     });
@@ -22,13 +21,15 @@ async function createProject(req: Request, res: Response) {
 
 exports.post = createProject;
 
-// @Route('drydock/projects/create-project')
+@Route('drydock/projects/create-project')
 export class CreateProjectController extends Controller {
     @Post()
     public async createProject(
         @Body() createProjectDto: CreateProjectDto,
-        token: string,
+        @Request() request: express.Request,
     ): Promise<IProjectsForMainPageRecordDto[]> {
+        const token: string = request.headers.authorization as string;
+
         const query = new CreateProjectCommand();
 
         const dto: CreateProjectDataDto = {

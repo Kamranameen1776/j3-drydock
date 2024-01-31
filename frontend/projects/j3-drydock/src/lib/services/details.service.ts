@@ -1,28 +1,16 @@
 import { Injectable } from '@angular/core';
-import {
-  ApiRequestService,
-  DiscussionFeedService,
-  IJbMenuItem,
-  UserService,
-  eAppLocation,
-  eIconNames,
-  eJMSActionTypes
-} from 'jibe-components';
-import { TaskManagerService } from './task-manager.service';
+import { IJbMenuItem, UserService, eAppLocation, eIconNames, eJMSActionTypes } from 'jibe-components';
 
 import { UnsubscribeComponent } from '../shared/classes/unsubscribe.base';
 
 import { AttachmentsAccessRight } from '../models/interfaces/access-rights';
+import { localDateJbStringAsUTC } from '../utils/date';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DetailsService extends UnsubscribeComponent {
-  constructor(
-    private apiRequestService: ApiRequestService,
-    private taskManagerService: TaskManagerService,
-    private feedSvc: DiscussionFeedService
-  ) {
+  constructor() {
     super();
   }
 
@@ -30,11 +18,11 @@ export class DetailsService extends UnsubscribeComponent {
     return UserService.getUserDetails().AppLocation === eAppLocation.Office ? 1 : 0;
   }
 
-  getDiscussionFeedSetting(uid: string, vesseld: number) {
+  getDiscussionFeedSetting(uid: string, vesselId: number) {
     return {
       key1: uid,
       key2: String(this.isOffice()),
-      key3: String(vesseld),
+      key3: String(vesselId),
       uid: uid
     };
   }
@@ -64,5 +52,24 @@ export class DetailsService extends UnsubscribeComponent {
 
   getMenuWithHiddenMenuItem<T extends string>(menus: IJbMenuItem[], id: T) {
     return menus.filter((item) => item.id !== id);
+  }
+
+  checkValidStartEndDates(start: string, end: string) {
+    let endDate: Date;
+    let startDate: Date;
+
+    if (start) {
+      startDate = localDateJbStringAsUTC(start);
+    }
+
+    if (end) {
+      endDate = localDateJbStringAsUTC(end);
+    }
+
+    if (endDate && startDate && endDate.getTime() < startDate.getTime()) {
+      return false;
+    }
+
+    return true;
   }
 }

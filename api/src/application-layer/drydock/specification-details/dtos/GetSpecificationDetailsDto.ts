@@ -7,12 +7,9 @@ export class GetSpecificationDetailsDto {
     Status: string;
     FunctionUid: string;
     AccountCode: string;
-
     ItemSourceUid: string;
     ItemSourceText: string;
-
     ItemNumber: string;
-
     DoneByUid: string;
     DoneByDisplayName: string;
     EquipmentDescription: string;
@@ -24,4 +21,8 @@ export class GetSpecificationDetailsDto {
     ProjectManager: string;
     ProjectManagerUid: string;
     Inspections: Array<InspectionsResultDto>;
+    StartDate: Date;
+    EndDate: Date;
+    Completion: number;
+    Duration: number;
 }
