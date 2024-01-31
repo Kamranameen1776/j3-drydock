@@ -1,5 +1,14 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, ITopSectionFieldSet, UserRightsService, WebApiRequest, eApiBase, eCrud, eEntities } from 'jibe-components';
+import {
+  ApiRequestService,
+  ITopSectionFieldSet,
+  UserRightsService,
+  WebApiRequest,
+  eApiBase,
+  eCrud,
+  eEntities,
+  eFieldControlType
+} from 'jibe-components';
 import { Observable } from 'rxjs';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
 import { eSpecificationDetailsGeneralInformationFields } from '../../models/enums/specification-details-general-information.enum';
@@ -137,7 +146,7 @@ export class SpecificationDetailsService {
           label: 'Assigned To',
           isRequired: false,
           isEditable: false,
-          type: 'dropdown',
+          type: eFieldControlType.Dropdown,
           getFieldName: 'ProjectManagerUid',
           saveFieldName: 'ProjectManagerUid',
           controlContent: {
@@ -147,6 +156,72 @@ export class SpecificationDetailsService {
             selectedValue: details.ProjectManagerUid,
             selectedLabel: details.ProjectManager,
             apiRequest: this.getProjectsManagersRequest()
+          }
+        },
+        {
+          id: 'Duration',
+          label: 'Duration (Days)',
+          type: eFieldControlType.Text,
+          isRequired: false,
+          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.StatusId),
+          getFieldName: 'Duration',
+          saveFieldName: 'Duration',
+          controlContent: {
+            value: '',
+            id: 'Duration',
+            type: eFieldControlType.Text,
+            pattern: /[0-9]/,
+            disabled: false
+          }
+        },
+        {
+          id: 'StartDate',
+          label: 'Start Date',
+          isRequired: true,
+          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.StatusId),
+          type: eFieldControlType.Date,
+          getFieldName: 'StartDate',
+          saveFieldName: 'StartDate',
+          formatDate: true,
+          controlContent: {
+            id: 'StartDate',
+            type: 'date',
+            placeholder: 'Select',
+            calendarWithInputIcon: true,
+            calendarMax: details.EndDate
+          }
+        },
+        {
+          id: 'EndDate',
+          label: 'End Date',
+          isRequired: true,
+          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.StatusId),
+          type: eFieldControlType.Date,
+          getFieldName: 'EndDate',
+          saveFieldName: 'EndDate',
+          formatDate: true,
+          controlContent: {
+            id: 'EndDate',
+            type: 'date',
+            placeholder: 'Select',
+            calendarWithInputIcon: true,
+            calendarMin: details.StartDate
+          }
+        },
+        {
+          id: 'Completion',
+          label: 'Percentage Completion',
+          type: eFieldControlType.Text,
+          isRequired: false,
+          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.StatusId),
+          getFieldName: 'Completion',
+          saveFieldName: 'Completion',
+          controlContent: {
+            value: '',
+            id: 'Completion',
+            type: eFieldControlType.Text,
+            pattern: /[0-9]/,
+            disabled: false
           }
         }
       ]

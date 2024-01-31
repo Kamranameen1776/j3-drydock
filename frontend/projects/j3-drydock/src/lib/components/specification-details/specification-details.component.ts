@@ -32,6 +32,9 @@ import { CreateSpecificationSubItemData } from '../../models/interfaces/specific
 import { SpecificationDetailsSubItemsGridService } from '../../services/specification-details/specification-details-sub-item.service';
 import { eSubItemsDialog } from '../../models/enums/sub-items.enum';
 import { TmLinkedRecords } from 'jibe-components/lib/interfaces/tm-linked-records.interface';
+import { Subscription } from 'rxjs';
+import { UTCAsLocal, localDateJbStringAsUTC } from '../../utils/date';
+import { DetailsService } from '../../services/details.service';
 
 @Component({
   selector: 'jb-specification-details',
@@ -50,11 +53,11 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   [eSpecificationDetailsPageMenuIds.SpecificationAttachments]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.AuditTrail) [eSpecificationDetailsPageMenuIds.AuditTrail]: ElementRef;
 
-  public specificationDetailsInfo: SpecificationDetails;
-  public updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
-  public specificationUid: string;
-  public attachmentConfig: IJbAttachment;
-  public detailForm: FormGroup;
+  specificationDetailsInfo: SpecificationDetails;
+  updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
+  specificationUid: string;
+  attachmentConfig: IJbAttachment;
+  detailForm: FormGroup;
 
   growlMessage$ = this.growlMessageService.growlMessage$;
   moduleCode = eModule.Project;
@@ -79,7 +82,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   readonly menu = specificationDetailsMenuData;
   readonly eSideMenuId = eSpecificationDetailsPageMenuIds;
 
-  public eSpecificationDetailsPageMenuIds = eSpecificationDetailsPageMenuIds;
+  eSpecificationDetailsPageMenuIds = eSpecificationDetailsPageMenuIds;
+
+  private formValuesSub: Subscription;
 
   constructor(
     private title: Title,
@@ -91,7 +96,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     private jbTopSecSrv: JbDetailsTopSectionService,
     private taskManagerService: TaskManagerService,
     private gridService: GridService,
-    private subItemsGridService: SpecificationDetailsSubItemsGridService
+    private subItemsGridService: SpecificationDetailsSubItemsGridService,
+    private detailsService: DetailsService
   ) {
     super();
   }
@@ -111,7 +117,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   ngOnInit(): void {
     this.jbTMDtlSrv.isFormValid = true;
 
-    const title = this.activatedRoute.snapshot.queryParamMap.get('pageTitle');
+    const title = this.activatedRoute.snapshot.queryParamMap.get('tab_title');
     if (title) {
       this.title.setTitle(title);
     }
@@ -154,6 +160,11 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       });
   }
 
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.formValuesSub?.unsubscribe();
+  }
+
   onValueChange(event) {
     if (event?.dirty) {
       this.jbTMDtlSrv.isUnsavedChanges.next(true);
@@ -168,10 +179,13 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     }
   }
 
-  validateDetail(form: FormGroup) {
-    form.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+  dispatchGeneralInformationForm(form: FormGroup) {
+    this.detailForm = form;
+
+    this.formValuesSub?.unsubscribe();
+
+    this.formValuesSub = this.detailForm.valueChanges.subscribe(() => {
       this.jbTMDtlSrv.isUnsavedChanges.next(true);
-      this.detailForm = form;
     });
   }
 
@@ -201,7 +215,21 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   public async save(event): Promise<void> {
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
 
-    if (event.payload.Job_Short_Description.length > 200) {
+    const headerFormValue = event.payload;
+
+    if (!this.checkValidStartEndDates(headerFormValue)) {
+      this.growlMessageService.setErrorMessage('Start Date cannot be greater than End Date');
+      setTimeout(() => this.jbTMDtlSrv.closeDialog.next(true));
+      return;
+    }
+
+    if (headerFormValue.Completion != null && (+headerFormValue.Completion > 100 || +headerFormValue.Completion < 0)) {
+      this.growlMessageService.setErrorMessage('Percentage Completion must be from 0 to 100');
+      setTimeout(() => this.jbTMDtlSrv.closeDialog.next(true));
+      return;
+    }
+
+    if (headerFormValue.Job_Short_Description.length > 200) {
       this.jbTMDtlSrv.showGrowlMassage.next({
         severity: eJMSActionTypes.Error,
         detail: 'Subject/Title cannot be more than 200 characters'
@@ -216,23 +244,43 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       });
       return;
     }
+
     if (event.type === eJMSActionTypes.Error) {
       this.jbTMDtlSrv.showGrowlMassage.next({ severity: eJMSActionTypes.Error, detail: event.errorMsg });
       return;
     }
+
     this.showLoader = true;
+
     const detailForm = this.detailForm?.value.generalInformation;
+
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
 
     const data: UpdateSpecificationDetailsDto = {
       uid: this.specificationDetailsInfo.uid,
-      Subject: event.payload.Job_Short_Description,
+      Subject: headerFormValue.Job_Short_Description,
       AccountCode: detailForm?.accountCode,
       Description: this.detailForm?.value.editors.description,
       DoneByUid: detailForm?.doneBy,
       PriorityUid: detailForm?.priorityUid,
       Inspections: detailForm?.inspectionId
     };
+
+    if (headerFormValue.StartDate) {
+      data.StartDate = localDateJbStringAsUTC(headerFormValue.StartDate);
+    }
+
+    if (headerFormValue.EndDate) {
+      data.EndDate = localDateJbStringAsUTC(headerFormValue.EndDate);
+    }
+
+    if (headerFormValue.Completion != null) {
+      data.Completion = +headerFormValue.Completion;
+    }
+
+    if (headerFormValue.Duration != null) {
+      data.Duration = +headerFormValue.Duration;
+    }
 
     try {
       this.specificationDetailService
@@ -274,7 +322,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       .pipe(
         concatMap((data) => {
           this.specificationDetailsInfo = {
-            ...data
+            ...data,
+            StartDate: UTCAsLocal(data.StartDate as string),
+            EndDate: UTCAsLocal(data.EndDate as string)
           };
 
           this.attachmentConfig = {
@@ -372,5 +422,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       default:
         break;
     }
+  }
+
+  private checkValidStartEndDates(formValue) {
+    return this.detailsService.checkValidStartEndDates(formValue?.StartDate, formValue?.EndDate);
   }
 }

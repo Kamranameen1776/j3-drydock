@@ -7,11 +7,9 @@ import { Title } from '@angular/platform-browser';
   styleUrls: ['./projects-main-page.component.scss']
 })
 export class ProjectsMainPageComponent implements OnInit {
-  private readonly pageTitle = 'Projects Main';
-
   constructor(private title: Title) {}
 
   ngOnInit(): void {
-    this.title.setTitle(this.pageTitle);
+    this.title.setTitle('Projects Main');
   }
 }

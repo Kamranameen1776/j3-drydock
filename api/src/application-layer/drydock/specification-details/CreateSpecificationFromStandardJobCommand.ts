@@ -119,6 +119,10 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
                     Inspections: specification.inspections.map((inspection) => inspection.ID!),
                     Description: specification.Description,
                     DoneByUid: specification.DoneByUid,
+                    Completion: specification.Completion,
+                    Duration: specification.Duration,
+                    StartDate: specification.StartDate ?? undefined,
+                    EndDate: specification.EndDate ?? undefined,
                     UserId: '',
                 };
 

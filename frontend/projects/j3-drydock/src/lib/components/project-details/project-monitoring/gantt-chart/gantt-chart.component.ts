@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GanttChartService } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
@@ -19,8 +19,7 @@ import {
   statusProgressBarBackgroundShaded
 } from '../../../../shared/status-css.json';
 
-import { CentralizedDataService, IJbDialog, JbDatePipe, JmsService, UserService, eJMSWorkflowAction } from 'jibe-components';
-import { DatePipe } from '@angular/common';
+import { IJbDialog, JmsService, UserService, eJMSWorkflowAction } from 'jibe-components';
 import { UTCAsLocal, currentLocalAsUTC } from '../../../../utils/date';
 import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
@@ -30,6 +29,7 @@ import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormRes
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
 import moment from 'moment';
 import { IUpdateJobOrderDurationDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDurationDto';
+import { ProjectDetailsFull } from '../../../../models/interfaces/project-details';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
@@ -40,11 +40,13 @@ type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   styleUrls: ['./gantt-chart.component.scss'],
   providers: [GanttChartService, DayMarkersService, EditService]
 })
-export class GanttChartComponent extends UnsubscribeComponent implements OnInit, OnDestroy, AfterViewInit {
+export class GanttChartComponent extends UnsubscribeComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
   @Input()
   projectId: string;
 
   @Input() vesselId: number;
+
+  @Input() project: ProjectDetailsFull;
 
   @ViewChild('jobOrderForm')
   jobOrderForm: IJobOrdersFormComponent;
@@ -197,25 +199,26 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   id = 'project_gantt';
 
-  private jbPipe: JbDatePipe;
-
   constructor(
     private ganttChartService: GanttChartService,
     private userService: UserService,
     private element: ElementRef,
     private jobOrdersService: JobOrdersService,
     private growlMessageService: GrowlMessageService,
-    datePipe: DatePipe,
-    cds: CentralizedDataService,
     private jmsService: JmsService
   ) {
     super();
-
-    this.jbPipe = new JbDatePipe(cds, datePipe);
   }
 
   ngOnInit(): void {
     this.initComponent();
+    this.updateEventMarkers(this.project);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.project) {
+      this.updateEventMarkers(changes.project.currentValue);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -229,6 +232,34 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   ngOnDestroy(): void {
     super.ngOnDestroy();
     this.element.nativeElement.querySelector(`#${this.id}`).removeEventListener('click', this.linkClick);
+  }
+
+  updateEventMarkers(project: ProjectDetailsFull) {
+    const eventMarkers = [
+      {
+        day: new Date(),
+        label: '',
+        cssClass: ''
+      }
+    ];
+
+    if (project?.StartDate) {
+      eventMarkers.push({
+        day: new Date(project?.StartDate),
+        label: '',
+        cssClass: 'overdue-line'
+      });
+    }
+
+    if (project.EndDate) {
+      eventMarkers.push({
+        day: new Date(project?.EndDate),
+        label: '',
+        cssClass: 'overdue-line'
+      });
+    }
+
+    this.eventMarkers = eventMarkers;
   }
 
   queryTaskbarInfo(args: { data: TransformedJobOrder } & Record<string, string>) {

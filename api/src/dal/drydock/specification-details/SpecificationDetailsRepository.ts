@@ -135,26 +135,19 @@ export class SpecificationDetailsRepository {
                 'tm.Code as SpecificationCode',
                 'tm.Status as StatusId',
                 'wdetails.StatusDisplayName as StatusName',
-
                 'spec.FunctionUid as FunctionUid',
                 'spec.Function as "Function"',
                 'spec.AccountCode as AccountCode',
                 'spec.TecTaskManagerUid as TaskManagerUid',
-
                 'spec.ItemSourceUid as ItemSourceUid',
                 'its.DisplayName as ItemSourceText',
-
                 'spec.ItemNumber as ItemNumber',
-
                 'spec.DoneByUid as DoneByUid',
                 'db.displayName as DoneByDisplayName',
-
                 'spec.EquipmentDescription as EquipmentDescription',
                 'spec.Description as Description',
-
                 'spec.PriorityUid as PriorityUid',
                 `pr.DisplayName as PriorityName`,
-
                 'ves.VesselName AS VesselName',
                 'vesType.VesselTypes AS VesselType',
                 'ves.uid AS VesselUid',
@@ -165,6 +158,10 @@ export class SpecificationDetailsRepository {
                 //TODO: strange constants, but Specifications doesnt have type. probably should stay that way
                 `'dry_dock' as SpecificationTypeCode`,
                 `'Dry Dock' as SpecificationTypeName`,
+                'spec.EndDate AS EndDate',
+                'spec.StartDate AS StartDate',
+                'spec.Completion AS Completion',
+                'spec.Duration AS Duration',
             ])
             .leftJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
             .leftJoin(className(LibItemSourceEntity), 'its', 'spec.ItemSourceUid = its.uid')
