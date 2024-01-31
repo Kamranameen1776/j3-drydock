@@ -55,13 +55,14 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild('statementOfFactsComponent') statementOfFactsComponent: StatementOfFactsComponent;
   @ViewChild('dailyReportsComponent') dailyReportsComponent: DailyReportsComponent;
 
-  @ViewChild(eProjectDetailsSideMenuId.TechnicalSpecification) [eProjectDetailsSideMenuId.TechnicalSpecification]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.Attachments) [eProjectDetailsSideMenuId.Attachments]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.RFQ) [eProjectDetailsSideMenuId.RFQ]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.StatementOfFacts) [eProjectDetailsSideMenuId.StatementOfFacts]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.CostUpdates) [eProjectDetailsSideMenuId.CostUpdates]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.DailyReports) [eProjectDetailsSideMenuId.DailyReports]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.GanttChart) [eProjectDetailsSideMenuId.GanttChart]: ElementRef;
+  @ViewChild('technical_specification') technical_specification: ElementRef;
+  @ViewChild('attachmentss') attachmentss: ElementRef;
+  @ViewChild('rfq') rfq: ElementRef;
+  @ViewChild('statement_of_facts') statement_of_facts: ElementRef;
+  @ViewChild('cost_updates') cost_updates: ElementRef;
+  @ViewChild('daily_reports') daily_reports: ElementRef;
+  @ViewChild('gantt_chart') gantt_chart: ElementRef;
+
   exportEnable = false;
 
   moduleCode = eModule.Project;
