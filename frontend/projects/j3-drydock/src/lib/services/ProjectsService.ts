@@ -11,8 +11,8 @@ import { eProjectsAccessActions } from '../models/enums/access-actions.enum';
 import { FileService } from './file.service';
 import { UpdateCostsDto } from '../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { eApiBaseDryDockAPI } from '../models/constants/constants';
-import { IProjectsForMainPageGridDto } from '../components/projects-main-page/projects-specifications-grid/dtos/IProjectsForMainPageGridDto';
 import { tap } from 'rxjs/operators';
+import { IProjectsForMainPageGridDto } from '../components/projects-main-page/projects-grid/dtos/IProjectsForMainPageGridDto';
 
 @Injectable({
   providedIn: 'root'
