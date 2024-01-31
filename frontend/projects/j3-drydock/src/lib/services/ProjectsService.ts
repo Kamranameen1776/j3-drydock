@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { ApiRequestService, eCrud, eEntities, UserRightsService, WebApiRequest } from 'jibe-components';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ProjectCreate, ProjectEdit } from '../models/interfaces/projects';
 import { IGroupProjectStatusesDto } from './dtos/IGroupProjectStatusesDto';
 import { IProjectStatusDto } from './dtos/IProjectStatusDto';
@@ -11,11 +11,15 @@ import { eProjectsAccessActions } from '../models/enums/access-actions.enum';
 import { FileService } from './file.service';
 import { UpdateCostsDto } from '../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { eApiBaseDryDockAPI } from '../models/constants/constants';
+import { IProjectsForMainPageGridDto } from '../components/projects-main-page/projects-specifications-grid/dtos/IProjectsForMainPageGridDto';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectsService {
+  currentProject = new BehaviorSubject<IProjectsForMainPageGridDto>(null);
+
   constructor(
     private apiRequestService: ApiRequestService,
     private api: FileService,
@@ -144,7 +148,11 @@ export class ProjectsService {
       params: `uid=${projectId}`
     };
 
-    return this.apiRequestService.sendApiReq(apiRequest);
+    return this.apiRequestService.sendApiReq(apiRequest).pipe(
+      tap((data) => {
+        this.currentProject.next(data);
+      })
+    );
   }
 
   public deleteProject(projectUid: string): Observable<any> {

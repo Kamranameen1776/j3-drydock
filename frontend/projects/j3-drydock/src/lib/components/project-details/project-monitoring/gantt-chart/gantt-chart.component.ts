@@ -19,8 +19,7 @@ import {
   statusProgressBarBackgroundShaded
 } from '../../../../shared/status-css.json';
 
-import { CentralizedDataService, IJbDialog, JbDatePipe, JmsService, UserService, eJMSWorkflowAction } from 'jibe-components';
-import { DatePipe } from '@angular/common';
+import { IJbDialog, JmsService, UserService, eJMSWorkflowAction } from 'jibe-components';
 import { UTCAsLocal, currentLocalAsUTC } from '../../../../utils/date';
 import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
@@ -30,6 +29,7 @@ import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormRes
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
 import moment from 'moment';
 import { IUpdateJobOrderDurationDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDurationDto';
+import { ProjectsService } from 'projects/j3-drydock/src/lib/services/ProjectsService';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
@@ -186,25 +186,47 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   id = 'project_gantt';
 
-  private jbPipe: JbDatePipe;
-
   constructor(
     private ganttChartService: GanttChartService,
     private userService: UserService,
     private element: ElementRef,
     private jobOrdersService: JobOrdersService,
     private growlMessageService: GrowlMessageService,
-    datePipe: DatePipe,
-    cds: CentralizedDataService,
-    private jmsService: JmsService
+    private jmsService: JmsService,
+    private projectsService: ProjectsService
   ) {
     super();
-
-    this.jbPipe = new JbDatePipe(cds, datePipe);
   }
 
   ngOnInit(): void {
     this.initComponent();
+    this.projectsService.currentProject.subscribe((project) => {
+      const eventMarkers = [
+        {
+          day: new Date(),
+          label: '',
+          cssClass: ''
+        }
+      ];
+
+      if (project.StartDate) {
+        eventMarkers.push({
+          day: new Date(project.StartDate),
+          label: '',
+          cssClass: 'overdue-line'
+        });
+      }
+
+      if (project.EndDate) {
+        eventMarkers.push({
+          day: new Date(project.EndDate),
+          label: '',
+          cssClass: 'overdue-line'
+        });
+      }
+
+      this.eventMarkers = eventMarkers;
+    });
   }
 
   ngAfterViewInit(): void {
