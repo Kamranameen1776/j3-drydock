@@ -37,7 +37,6 @@ import { cloneDeep } from 'lodash';
 import { StatementOfFactsComponent } from './project-monitoring/statement-of-facts/statement-of-facts.component';
 import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
 import { getFileNameDate } from '../../shared/functions/file-name';
-import { localDateJbStringAsUTC } from '../../utils/date';
 import { forkJoin, of } from 'rxjs';
 import { UpdateCostsDto } from '../../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { DailyReportsComponent } from './reports/reports.component';
@@ -56,14 +55,14 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild('statementOfFactsComponent') statementOfFactsComponent: StatementOfFactsComponent;
   @ViewChild('dailyReportsComponent') dailyReportsComponent: DailyReportsComponent;
 
-  @ViewChild(eProjectDetailsSideMenuId.TechnicalSpecification) [eProjectDetailsSideMenuId.TechnicalSpecification]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.Attachments) [eProjectDetailsSideMenuId.Attachments]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.RFQ) [eProjectDetailsSideMenuId.RFQ]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.GanttChart) [eProjectDetailsSideMenuId.GanttChart]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.StatementOfFacts) [eProjectDetailsSideMenuId.StatementOfFacts]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.CostUpdates) [eProjectDetailsSideMenuId.CostUpdates]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.DailyReports) [eProjectDetailsSideMenuId.DailyReports]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.GanttChart) [eProjectDetailsSideMenuId.GanttChart]: ElementRef;
+  @ViewChild('technical_specification') technical_specification: ElementRef;
+  @ViewChild('attachmentss') attachmentss: ElementRef;
+  @ViewChild('rfq') rfq: ElementRef;
+  @ViewChild('statement_of_facts') statement_of_facts: ElementRef;
+  @ViewChild('cost_updates') cost_updates: ElementRef;
+  @ViewChild('daily_reports') daily_reports: ElementRef;
+  @ViewChild('gantt_chart') gantt_chart: ElementRef;
+
   exportEnable = false;
 
   moduleCode = eModule.Project;
@@ -75,7 +74,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   tmDetails: ProjectDetailsFull;
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
-  customedThreeDotActions: AdvancedSettings[] = [
+  customThreeDotActions: AdvancedSettings[] = [
     { label: 'Export Excel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true },
     { label: 'Import', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
   ];
@@ -182,8 +181,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   ngOnInit(): void {
     this.jbTMDtlSrv.isFormValid = true;
-
-    this.titleService.setTitle(this.route.snapshot.queryParamMap.get('pageTitle'));
+    const title = this.route.snapshot.queryParamMap.get('tab_title');
+    if (title) {
+      this.titleService.setTitle(title);
+    }
 
     this.route.paramMap
       .pipe(
@@ -495,22 +496,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     ).getFullYear()}-${getFileNameDate()}.xlsx`;
   }
 
-  private checkValidStartEndDates(formData) {
-    let endDate: Date;
-    let startDate: Date;
-
-    if (formData?.StartDate) {
-      startDate = localDateJbStringAsUTC(formData.StartDate);
-    }
-
-    if (formData?.EndDate) {
-      endDate = localDateJbStringAsUTC(formData.EndDate);
-    }
-
-    if (endDate && startDate && endDate.getTime() < startDate.getTime()) {
-      return false;
-    }
-
-    return true;
+  private checkValidStartEndDates(formValue) {
+    return this.detailsService.checkValidStartEndDates(formValue?.StartDate, formValue?.EndDate);
   }
 }

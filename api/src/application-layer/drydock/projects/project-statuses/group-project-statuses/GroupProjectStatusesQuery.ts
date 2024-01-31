@@ -1,11 +1,9 @@
-import { Request } from 'express';
-
 import { ProjectsRepository } from '../../../../../dal/drydock/projects/ProjectsRepository';
 import { Cache } from '../../../../../external-services/drydock/Cache';
 import { SlfAccessor } from '../../../../../external-services/drydock/SlfAccessor';
 import { Query } from '../../../core/cqrs/Query';
 import { IGroupProjectStatusDto, IGroupProjectStatusesDto, IGroupResponseDto } from './dtos/IGroupProjectStatusDto';
-export class GroupProjectStatusesQuery extends Query<Request, IGroupResponseDto> {
+export class GroupProjectStatusesQuery extends Query<string, IGroupResponseDto> {
     readonly allProjectsProjectTypeId = 'all_projects';
 
     readonly allProjectsName = 'All Projects';
@@ -33,9 +31,8 @@ export class GroupProjectStatusesQuery extends Query<Request, IGroupResponseDto>
      * Get group project statuses, like "Complete", "In Progress", "Planned", "Closed", etc.
      * @returns Group project statuses
      */
-    protected async MainHandlerAsync(request: Request): Promise<IGroupResponseDto> {
-        const token: string = request.headers.authorization as string;
-        const assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(token);
+    protected async MainHandlerAsync(request: string): Promise<IGroupResponseDto> {
+        const assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(request);
         const cacheKey = assignedVessels.join('|');
         const cacheValue = await this.cache.get(cacheKey);
         if (cacheValue) {

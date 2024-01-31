@@ -3,10 +3,13 @@ import { ITMDetails } from 'j3-task-manager-ng';
 
 export interface SpecificationDetails {
   AccountCode: string;
+  Completion?: number;
   Description: string;
   DoneByDisplayName: string;
   DoneByUid: string;
+  Duration?: number;
   EquipmentDescription: string;
+  EndDate?: Date | string;
   FunctionUid: string;
   Function: string;
   Inspections: InspectionsDto[];
@@ -20,6 +23,7 @@ export interface SpecificationDetails {
   SpecificationCode: string;
   StatusId: string;
   StatusName: string;
+  StartDate?: Date | string;
   Subject: string;
   VesselName: string;
   VesselUid: string;

@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
 
-export class addDsiplayNameToGroupStatuses1706022198367 implements MigrationInterface {
+export class addCompletionAndDurationToSpec1706599266780 implements MigrationInterface {
     schemaName = 'dry_dock';
     className = this.constructor.name;
     moduleName = 'dry_dock';
-    tableName = 'group_project_status'
+    tableName = 'specification_details'
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
             await queryRunner.query(`
@@ -13,11 +13,11 @@ export class addDsiplayNameToGroupStatuses1706022198367 implements MigrationInte
                from INFORMATION_SCHEMA.COLUMNS
                where TABLE_NAME = '${this.tableName}'
                  AND TABLE_SCHEMA = '${this.schemaName}'
-                 AND COLUMN_NAME = 'display_name' )
+                 AND COLUMN_NAME = 'Completion' )
 
             BEGIN
-            alter table dry_dock.group_project_status add display_name varchar(128);
-            alter table dry_dock.group_project_status add status_order int default 0;
+                ALTER TABLE  dry_dock.specification_details
+                ADD Completion INT NULL, Duration INT NULL;
             END;
             `);
 
@@ -26,7 +26,7 @@ export class addDsiplayNameToGroupStatuses1706022198367 implements MigrationInte
                 '',
                 'S',
                 this.moduleName,
-                `Update ${this.tableName}`,
+                `Add Completion And Duration To Spec`,
             );
         } catch (error) {
             await MigrationUtilsService.migrationLog(
@@ -34,7 +34,7 @@ export class addDsiplayNameToGroupStatuses1706022198367 implements MigrationInte
                 error as string,
                 'E',
                 this.moduleName,
-                `Update ${this.tableName}`,
+                `Add Completion And Duration To Spec`,
                 true,
             );
         }
