@@ -6,4 +6,8 @@ export interface UpdateSpecificationDetailsDto {
   Description?: string;
   PriorityUid?: string;
   Inspections?: Array<number>;
+  StartDate?: Date;
+  EndDate?: Date;
+  Completion?: number;
+  Duration?: number;
 }

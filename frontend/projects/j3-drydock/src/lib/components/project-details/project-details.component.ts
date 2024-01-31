@@ -37,7 +37,6 @@ import { cloneDeep } from 'lodash';
 import { StatementOfFactsComponent } from './project-monitoring/statement-of-facts/statement-of-facts.component';
 import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
 import { getFileNameDate } from '../../shared/functions/file-name';
-import { localDateJbStringAsUTC } from '../../utils/date';
 import { forkJoin, of } from 'rxjs';
 import { UpdateCostsDto } from '../../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { DailyReportsComponent } from './reports/reports.component';
@@ -59,7 +58,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild(eProjectDetailsSideMenuId.TechnicalSpecification) [eProjectDetailsSideMenuId.TechnicalSpecification]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.Attachments) [eProjectDetailsSideMenuId.Attachments]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.RFQ) [eProjectDetailsSideMenuId.RFQ]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.GanttChart) [eProjectDetailsSideMenuId.GanttChart]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.StatementOfFacts) [eProjectDetailsSideMenuId.StatementOfFacts]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.CostUpdates) [eProjectDetailsSideMenuId.CostUpdates]: ElementRef;
   @ViewChild(eProjectDetailsSideMenuId.DailyReports) [eProjectDetailsSideMenuId.DailyReports]: ElementRef;
@@ -75,7 +73,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   tmDetails: ProjectDetailsFull;
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
-  customedThreeDotActions: AdvancedSettings[] = [
+  customThreeDotActions: AdvancedSettings[] = [
     { label: 'Export Excel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true },
     { label: 'Import', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
   ];
@@ -497,22 +495,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     ).getFullYear()}-${getFileNameDate()}.xlsx`;
   }
 
-  private checkValidStartEndDates(formData) {
-    let endDate: Date;
-    let startDate: Date;
-
-    if (formData?.StartDate) {
-      startDate = localDateJbStringAsUTC(formData.StartDate);
-    }
-
-    if (formData?.EndDate) {
-      endDate = localDateJbStringAsUTC(formData.EndDate);
-    }
-
-    if (endDate && startDate && endDate.getTime() < startDate.getTime()) {
-      return false;
-    }
-
-    return true;
+  private checkValidStartEndDates(formValue) {
+    return this.detailsService.checkValidStartEndDates(formValue?.StartDate, formValue?.EndDate);
   }
 }

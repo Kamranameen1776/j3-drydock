@@ -10,7 +10,6 @@
   [attachmentRights]="accessRights.attachments"
   [showExport]="false"
   [isViewRight]="canView"
-  (onWorkflowActions)="onWorkflowAction($event)"
   [templateRefObj]="{
     specificationDetails: specificationsDetailsTab,
     generalInformation: generalInformation,
@@ -20,6 +19,7 @@
   }"
   [slideMenus]="menu"
   [ignoreAccessRights]="true"
+  (onWorkflowActions)="onWorkflowAction($event)"
 >
   <ng-template
     #specificationsDetailsTab
@@ -32,7 +32,7 @@
             #SpecificationGeneralInformationComponent
             *ngIf="specificationDetailsInfo && accessRights.generalInformation.view"
             [specificationDetailsInfo]="specificationDetailsInfo"
-            (formValue)="validateDetail($event)"
+            (formValue)="dispatchGeneralInformationForm($event)"
           ></jb-specification-general-information>
         </div>
       </div>
