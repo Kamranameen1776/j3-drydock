@@ -68,7 +68,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   moduleCode = eModule.Project;
   functionCode = eFunction.DryDock;
   projectUid: string;
-  projectDetails: ProjectDetails;
 
   vesselType: number;
   tmDetails: ProjectDetailsFull;
@@ -329,7 +328,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
             StartDate: UTCAsLocal(data.StartDate as string),
             EndDate: UTCAsLocal(data.EndDate as string)
           };
-          this.projectDetails = projectDetails;
 
           this.attachmentConfig = {
             Module_Code: this.moduleCode,
@@ -480,19 +478,19 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   }
 
   exportExcel() {
-    if (!this.projectDetails.ShipYardId) {
+    if (!this.tmDetails.ShipYardId) {
       this.growlMessageService.setErrorMessage('Yard is not selected');
       return;
     }
-    const res = this.projectDetailsService.exportExcel(this.projectUid, this.projectDetails.ShipYardId);
+    const res = this.projectDetailsService.exportExcel(this.projectUid, this.tmDetails.ShipYardId);
     res.subscribe((data) => {
       saveAs(data, this.getExcelFilename());
     });
   }
 
   private getExcelFilename() {
-    return `${this.projectDetails.VesselName}-${this.projectDetails.ShipYard}-${new Date(
-      this.projectDetails.StartDate
+    return `${this.tmDetails.VesselName}-${this.tmDetails.ShipYard}-${new Date(
+      this.tmDetails.StartDate
     ).getFullYear()}-${getFileNameDate()}.xlsx`;
   }
 
