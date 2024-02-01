@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class createProjectsAccessRights1699007166547 implements MigrationInterface {
@@ -371,7 +372,7 @@ WHEN NOT MATCHED BY TARGET THEN
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 className,
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'crew_accounts',
                 'create access rights for j3 dry dock projects',

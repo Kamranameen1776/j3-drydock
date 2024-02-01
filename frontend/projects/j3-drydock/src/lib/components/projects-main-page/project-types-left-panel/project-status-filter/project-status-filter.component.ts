@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LeftPanelFilterService } from '../../services/LeftPanelFilterService';
 import { IGroupProjectStatusesDto } from '../../../../services/dtos/IGroupProjectStatusesDto';
+import { eProjectStatus } from '../../../../models/enums/project-details.enum';
 
 @Component({
   selector: 'jb-project-status-filter',
@@ -17,14 +18,14 @@ export class ProjectStatusFilterComponent implements OnInit {
     return;
   }
 
-  onGroupStatusClicked(projectTypeId: string, groupProjectStatusId: string) {
+  onGroupStatusClicked(projectTypeId: string, groupProjectStatusId: eProjectStatus) {
     this.leftPanelFilterService.setGroupStatusSelected({
       ProjectTypeId: projectTypeId,
       GroupProjectStatusId: groupProjectStatusId
     });
   }
 
-  isActive(projectTypeId: string, groupProjectStatusId: string): boolean {
+  isActive(projectTypeId: string, groupProjectStatusId: eProjectStatus): boolean {
     return this.leftPanelFilterService.isGroupStatusSelected({
       ProjectTypeId: projectTypeId,
       GroupProjectStatusId: groupProjectStatusId

@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class createSpecification_details_j3_pms_agg_job1700489277478 implements MigrationInterface {
     /**
@@ -22,15 +23,15 @@ export class createSpecification_details_j3_pms_agg_job1700489277478 implements 
                     [uid] [uniqueidentifier] NOT NULL,
                     [specification_uid] [uniqueidentifier] NULL,
                     [j3_pms_agg_job_uid] [uniqueidentifier] NULL,
-                PRIMARY KEY CLUSTERED 
+                PRIMARY KEY CLUSTERED
                 (
                     [uid] ASC
                 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
                 ) ON [PRIMARY]
-                
+
                 ALTER TABLE [dry_dock].[specification_details_j3_pms_agg_job] ADD  DEFAULT (newid()) FOR [uid]
-                
-                END      
+
+                END
             `,
             );
 
@@ -44,7 +45,7 @@ export class createSpecification_details_j3_pms_agg_job1700489277478 implements 
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.moduleName,
                 'Create table specification_details_j3_pms_agg_job',
@@ -53,31 +54,5 @@ export class createSpecification_details_j3_pms_agg_job1700489277478 implements 
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF Exists(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dry_dock].[specification_details_j3_pms_agg_job]') AND type in (N'U'))
-            BEGIN
-                DROP TABLE [dry_dock].[specification_details_j3_pms_agg_job];
-            END
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                '',
-                'S',
-                this.moduleName,
-                'Create table specification_details_j3_pms_agg_job (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                error as string,
-                'E',
-                this.moduleName,
-                'Create table specification_details_j3_pms_agg_job (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

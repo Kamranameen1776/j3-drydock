@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class createSpecification_details_LIB_Survey_CertificateAuthority1699958461849 implements MigrationInterface {
@@ -17,25 +18,17 @@ export class createSpecification_details_LIB_Survey_CertificateAuthority16999584
                 `
                 IF NOT Exists(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'[dry_dock].[specification_details_LIB_Survey_CertificateAuthority]') AND type in (N'U'))
                 BEGIN
-                
-                CREATE TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority](
-                    [uid] [uniqueidentifier] NOT NULL,
-                    [specification_details_uid] [uniqueidentifier] NOT NULL,
-                    [LIB_Survey_CertificateAuthority_ID] [int] NOT NULL,
-                PRIMARY KEY CLUSTERED 
+
+                create table specification_details_LIB_Survey_CertificateAuthority
                 (
-                    [uid] ASC
-                )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-                ) ON [PRIMARY]
+                    uid                                uniqueidentifier default newid() not null
+                        primary key,
+                    specification_details_uid          uniqueidentifier                 not null,
+                    LIB_Survey_CertificateAuthority_ID int                              not null,
+                    active_status                      bit              default 1       not null
+                );
 
-                ALTER TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority] ADD  DEFAULT (newid()) FOR [uid]
-
-                ALTER TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority]  WITH CHECK ADD FOREIGN KEY([LIB_Survey_CertificateAuthority_ID])
-                REFERENCES [dbo].[LIB_Survey_CertificateAuthority] ([ID])
-
-                ALTER TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority]  WITH CHECK ADD FOREIGN KEY([specification_details_uid])
-                REFERENCES [dry_dock].[specification_details] ([uid])
-                END      
+                END
             `,
             );
 
@@ -49,7 +42,7 @@ export class createSpecification_details_LIB_Survey_CertificateAuthority16999584
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.moduleName,
                 'Create table specification_details_LIB_Survey_CertificateAuthority',
@@ -58,31 +51,5 @@ export class createSpecification_details_LIB_Survey_CertificateAuthority16999584
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF Exists(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dry_dock].[specification_details_LIB_Survey_CertificateAuthority]') AND type in (N'U'))
-            BEGIN
-                DROP TABLE [dry_dock].[specification_details_LIB_Survey_CertificateAuthority];
-            END
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                '',
-                'S',
-                this.moduleName,
-                'Create table specification_details_LIB_Survey_CertificateAuthority (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                error as string,
-                'E',
-                this.moduleName,
-                'Create table specification_details_LIB_Survey_CertificateAuthority (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

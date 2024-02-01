@@ -1,7 +1,7 @@
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { getSmallPopup } from '../../../models/constants/popup';
-import { FormModel, IJbAttachment, IJbDialog, eAttachmentButtonTypes } from 'jibe-components';
+import { FormModel, IJbAttachment, IJbDialog, eAttachmentButtonTypes, JmsService, eJMSWorkflowAction } from 'jibe-components';
 import { UpsertStandardJobFormComponent } from '../upsert-standard-job-form/upsert-standard-job-form.component';
 import { StandardJobUpsertFormService } from '../upsert-standard-job-form/standard-job-upsert-form.service';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
@@ -11,6 +11,9 @@ import { GrowlMessageService } from '../../../services/growl-message.service';
 import { SubItem } from '../../../models/interfaces/sub-items';
 import { forkJoin, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
+import { eModule } from '../../../models/enums/module.enum';
+import { eFunction } from '../../../models/enums/function.enum';
+import * as uuid from 'uuid/v4';
 
 @Component({
   selector: 'jb-upsert-standard-job-popup',
@@ -39,10 +42,18 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   }
 
   get jobFormValue() {
-    return this.popupForm?.formGroup.getRawValue()[this.formService.formId];
+    return this.popupForm?.formGroup.getRawValue();
   }
-  // TODO fixme to relevant values and use them from eModuleCode and eFunctionCode from jibe-components
-  attachmentConfig: IJbAttachment = { Module_Code: 'j3_drydock', Function_Code: 'standard_jobs' };
+
+  get functionUid() {
+    return this.popupForm?.formGroup.getRawValue()[this.formService.formId]?.function?.Child_ID;
+  }
+
+  private get itemUid() {
+    return this.item?.uid || this.newItemUid;
+  }
+
+  attachmentConfig: IJbAttachment;
 
   attachmentButton = {
     buttonLabel: 'Add New',
@@ -51,23 +62,27 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   formStructure: FormModel = this.popupFormService.formStructure;
 
+  newItemUid: string;
+
   private changedSubItems: SubItem[] = [];
 
   constructor(
     private formService: StandardJobUpsertFormService,
     private standardJobsService: StandardJobsService,
     private growlMessageService: GrowlMessageService,
-    private popupFormService: StandardJobUpsertFormService
+    private popupFormService: StandardJobUpsertFormService,
+    private jmsService: JmsService
   ) {
     super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.item) {
+    if (changes.isOpen && this.isOpen) {
+      this.setNewItemUid();
       this.setPopupHeader();
       this.setPopupFooter();
       this.setAttachmentConfig();
-      this.initChangedSubIems();
+      this.initChangedSubItems();
     }
   }
 
@@ -87,39 +102,43 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     this.changedSubItems = subItems;
   }
 
-  // TODO fixme to relevant values and use them from eModuleCode and eFunctionCode from jibe-components
   private setAttachmentConfig() {
     this.attachmentConfig = {
-      Module_Code: 'project',
-      Function_Code: 'standard_job',
-      Key1: this.item?.uid
+      Module_Code: eModule.Project,
+      Function_Code: eFunction.StandardJob,
+      Key1: this.itemUid
     };
   }
 
   private setPopupHeader() {
-    this.popupConfig.dialogHeader = !this.isEditing ? 'Create New Standard Job' : 'Edit Standard Job';
+    this.popupConfig.dialogHeader = this.isEditing ? 'Edit Standard Job' : 'Create New Standard Job';
   }
 
   private setPopupFooter() {
-    this.okLabel = 'Save';
+    this.okLabel = 'Save & Close';
   }
 
   private closePopup(isSaved = false) {
     this.closeDialog.emit(isSaved);
     this.isPopupValid = false;
     this.changedSubItems = [];
+    this.newItemUid = null;
   }
 
   private save() {
+    if (!this.isValidationsPassed()) {
+      return;
+    }
+    // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
+    this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
+
     const value = this.jobFormValue;
 
     this.isSaving = true;
 
-    const updateSubitemsRequest$ = this.item?.uid
-      ? this.standardJobsService.updateJobSubItems(this.item.uid, this.changedSubItems)
-      : of(null);
+    const updateSubitemsRequest$ = this.standardJobsService.updateJobSubItems(this.itemUid, this.changedSubItems);
 
-    forkJoin([this.standardJobsService.upsertStandardJob(this.item?.uid, value), updateSubitemsRequest$])
+    forkJoin([this.standardJobsService.upsertStandardJob(this.itemUid, value, this.isEditing), updateSubitemsRequest$])
       .pipe(
         finalize(() => {
           this.isSaving = false;
@@ -127,20 +146,32 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
       )
       .subscribe(
         () => {
+          this.growlMessageService.setSuccessMessage('Standard Job saved successfully.');
           this.closePopup(true);
         },
+        // eslint-disable-next-line rxjs/no-implicit-any-catch
         (err) => {
-          if (err?.status === 422) {
-            this.growlMessageService.setErrorMessage(err.error);
-          } else {
-            this.growlMessageService.setErrorMessage('Server error occured');
-          }
+          this.growlMessageService.errorHandler(err);
         }
       );
   }
 
-  private initChangedSubIems() {
+  private initChangedSubItems() {
     const subItems = this.item?.subItems ?? [];
     this.changedSubItems = cloneDeep(subItems);
+  }
+
+  private isValidationsPassed(): boolean {
+    if (!this.isPopupValid) {
+      this.growlMessageService.setErrorMessage('Please fill the required fields');
+      return false;
+    }
+    return true;
+  }
+
+  private setNewItemUid() {
+    if (!this.item) {
+      this.newItemUid = uuid();
+    }
   }
 }

@@ -7,13 +7,19 @@ import {
   GridRowActions,
   WebApiRequest,
   eCrud,
+  eEntities,
   eFieldControlType,
-  eGridAction
+  eGridAction,
+  eGridColors,
+  eGridEvents,
+  eGridIcons
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
 import { StandardJobsService } from '../standard-jobs.service';
+import { eApiBaseDryDockAPI } from '../../models/constants/constants';
+import { eSortOrder } from '../../models/enums/sorting.enum';
 
 export enum SpecificationType {
   ALL = 'All',
@@ -49,12 +55,10 @@ export class SpecificationGridService {
     }
 
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/get-many-specification-details',
       crud: eCrud.Post,
-      entity: 'drydock',
       odata: {
         filter
       }
@@ -62,17 +66,16 @@ export class SpecificationGridService {
     return apiRequest;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public createSpecification(formValue: any) {
     const action = 'specification-details/create-specification-details';
     const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       crud: eCrud.Post,
       action: action,
       body: {
         ...formValue,
-        // HardCoded for future
-        ItemSourceUid: '3EEF2E1B-2533-45C7-82C7-C13D6AA79559',
         FunctionUid: formValue.FunctionUid.Child_ID || '',
         Function: formValue.FunctionUid.jb_value_label || '',
         Inspections: formValue.Inspections || []
@@ -88,8 +91,27 @@ export class SpecificationGridService {
       request: this.getSpecificationDetailsAPIRequest(projectId, functionUIDs),
       actions: this.gridActions,
       filters: this.filters,
-      filtersLists: this.filtersLists
+      searchFields: this.searchFields,
+      filtersLists: this.filtersLists,
+      showSettings: {
+        showDefaultLables: false,
+        [eGridEvents.ClearFilters]: true
+      },
+      advancedSettings: [{ label: eGridEvents.ClearFilters, icon: eGridIcons.ClearFilters3, color: eGridColors.JbBlack, show: true }],
+      sortField: 'code',
+      sortOrder: eSortOrder.Descending
     };
+  }
+
+  deleteSpecification(data: { uid: string }) {
+    const request: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'specification-details/delete-specification-details',
+      crud: eCrud.Put,
+      body: data
+    };
+    return this.apiRequestService.sendApiReq(request);
   }
 
   public readonly gridName: string = 'specificationGrid';
@@ -101,12 +123,12 @@ export class SpecificationGridService {
       FieldName: 'item_number',
       IsActive: true,
       IsMandatory: true,
-      IsVisible: true,
+      IsVisible: false,
       ReadOnly: true,
       width: '70px'
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Code',
       FieldName: 'code',
       hyperlink: true,
@@ -116,7 +138,7 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Subject',
       FieldName: 'subject',
       IsActive: true,
@@ -125,25 +147,34 @@ export class SpecificationGridService {
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
+      DisplayText: 'Item Source',
+      FieldName: 'item_source',
+      IsActive: true,
+      IsMandatory: true,
+      IsVisible: true,
+      ReadOnly: true
+    },
+    {
+      DisableSort: false,
       DisplayText: 'Done by',
       FieldName: 'db_done_by',
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Inspection / Survey',
       FieldName: 'inspection',
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true,
       ReadOnly: true
     },
     {
-      DisableSort: true,
+      DisableSort: false,
       DisplayText: 'Status',
       FieldName: 'status',
       IsActive: true,
@@ -154,16 +185,6 @@ export class SpecificationGridService {
   ];
 
   private readonly filters: Filter[] = [
-    /*{
-      DisplayText: 'Material Supplied By',
-      FieldName: 'msb_material_supplied_by',
-      placeholder: 'Select',
-      Active_Status: false,
-      Active_Status_Config_Filter: false,
-      DisplayCode: 'displayName',
-      FieldID: 4,
-      default: false
-    },*/
     {
       DisplayText: 'Inspection / Survey',
       FieldName: 'inspection',
@@ -173,7 +194,9 @@ export class SpecificationGridService {
       DisplayCode: 'displayName',
       type: 'multiselect',
       Active_Status: true,
-      Active_Status_Config_Filter: true
+      Active_Status_Config_Filter: true,
+      gridName: this.gridName,
+      sendFilterAs: 'gridFilters'
     },
     {
       DisplayText: 'Status',
@@ -184,34 +207,11 @@ export class SpecificationGridService {
       Active_Status_Config_Filter: true,
       ControlType: 'simple',
       Details: 'Status',
-      DisplayCode: 'label',
-      ValueCode: 'label',
+      DisplayCode: 'displayName',
+      ValueCode: 'status',
       FieldID: 2,
-      default: true
-    },
-    {
-      DisplayText: 'Due Date',
-      FieldName: 'due_date_from',
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      type: 'date',
-      placeholder: 'Select',
-      FieldID: 3,
       default: true,
-      CoupleID: 1,
-      CoupleLabel: 'Due Date Range'
-    },
-    {
-      DisplayText: 'Due Date',
-      FieldName: 'due_date_to',
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      type: 'date',
-      placeholder: 'Select',
-      FieldID: 3,
-      default: true,
-      CoupleID: 1,
-      CoupleLabel: 'Due Date Range'
+      gridName: this.gridName
     },
     {
       DisplayText: 'Done By',
@@ -220,44 +220,43 @@ export class SpecificationGridService {
       Active_Status_Config_Filter: true,
       DisplayCode: 'displayName',
       FieldID: 5,
-      default: false
+      default: false,
+      gridName: this.gridName
+    },
+    {
+      DisplayText: 'Item Source',
+      FieldName: 'item_source',
+      Active_Status: true,
+      Active_Status_Config_Filter: true,
+      DisplayCode: 'DisplayName',
+      FieldID: 6,
+      default: true,
+      gridName: this.gridName
     }
   ];
 
+  getStatusesRequest(): WebApiRequest {
+    return {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'specification-details/get-specifications-statuses',
+      crud: eCrud.Get
+    };
+  }
+
   private filtersLists: FilterListSet = {
     status: {
-      list: [
-        {
-          label: SpecificationStatus.APPROVED,
-          value: SpecificationStatus.APPROVED
-        },
-        {
-          label: SpecificationStatus.COMPLETED,
-          value: SpecificationStatus.COMPLETED
-        },
-        {
-          label: SpecificationStatus.RAISED,
-          value: SpecificationStatus.RAISED
-        },
-        {
-          label: SpecificationStatus.REJECTED,
-          value: SpecificationStatus.REJECTED
-        }
-      ],
+      webApiRequest: this.getStatusesRequest(),
+      listValueKey: 'status',
       type: eFieldControlType.MultiSelect,
       odataKey: 'status'
-    },
-    ic_item_category: {
-      webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.ItemCategory),
-      type: eFieldControlType.MultiSelect,
-      odataKey: 'item_category_uid',
-      listValueKey: 'uid'
     },
     inspection: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection),
       type: eFieldControlType.MultiSelect,
       odataKey: 'inspectionId',
-      listValueKey: 'uid'
+      listValueKey: 'uid',
+      includeFilter: true
     },
     msb_material_supplied_by: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.MaterialSuppliedBy),
@@ -271,22 +270,28 @@ export class SpecificationGridService {
       odataKey: 'done_by_uid',
       listValueKey: 'uid'
     },
-    due_date_to: {
-      type: eFieldControlType.Date,
-      odadaKey: 'due_date',
-      alterKey: 'due_date',
-      dateMethod: 'le'
-    },
-    due_date_from: {
-      type: eFieldControlType.Date,
-      odadaKey: 'due_date',
-      alterKey: 'due_date',
-      dateMethod: 'ge'
+    item_source: {
+      type: eFieldControlType.Dropdown,
+      webApiRequest: this.getItemSources(),
+      odataKey: 'item_source_uid',
+      listValueKey: 'uid'
     }
   };
 
+  private searchFields: string[] = ['item_number', 'code', 'subject'];
   private gridActions: GridRowActions[] = [
     { name: eGridAction.Edit, icon: 'icons8-edit' },
     { name: eGridAction.Delete, icon: 'icons8-delete' }
   ];
+
+  public getItemSources() {
+    const apiRequest: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'dictionaries/item-source',
+      crud: eCrud.Get
+    };
+
+    return apiRequest;
+  }
 }

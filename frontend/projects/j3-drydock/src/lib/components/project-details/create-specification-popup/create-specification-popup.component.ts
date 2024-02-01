@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { getSmallPopup } from '../../../models/constants/popup';
-import { FormModel, IJbDialog } from 'jibe-components';
+import { FormModel, IJbDialog, JmsService, eJMSWorkflowAction } from 'jibe-components';
 import { SpecificationFormComponent } from '../specification-form/specification-form.component';
 import { SpecificationCreateFormService } from '../specification-form/specification-create-form-service';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
@@ -17,27 +17,30 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
   @Input() isOpen: boolean;
   @Input() projectId: string;
   @Input() vesselUid: string;
+  @Input() vesselId: string;
 
   @Output() closeDialog = new EventEmitter<boolean>();
 
   @ViewChild(SpecificationFormComponent) popupForm: SpecificationFormComponent;
 
-  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false, dialogHeader: 'New Spec' };
+  readonly popupConfig: IJbDialog = {
+    ...getSmallPopup(),
+    dialogWidth: 1000,
+    closableIcon: false,
+    dialogHeader: 'New Technical Specification'
+  };
 
   isPopupValid = false;
 
   isSaving: boolean;
-
-  get jobFormValue() {
-    return this.popupForm?.formGroup.getRawValue()[this.formService.formId];
-  }
 
   formStructure: FormModel = this.formService.formStructure;
 
   constructor(
     private formService: SpecificationCreateFormService,
     private specificationService: SpecificationGridService,
-    private growlMessageService: GrowlMessageService
+    private growlMessageService: GrowlMessageService,
+    private jmsService: JmsService
   ) {
     super();
   }
@@ -61,12 +64,21 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
   }
 
   private save() {
-    const value = this.jobFormValue;
+    if (!this.isValidationsPassed()) {
+      return;
+    }
+    // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
+    this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
+
+    const rawValue = this.popupForm?.formGroup.getRawValue();
+
+    const value = rawValue[this.formService.formId];
+    const editors = rawValue[this.formService.editors];
 
     this.isSaving = true;
 
     this.specificationService
-      .createSpecification({ ...value, ProjectUid: this.projectId, VesselUid: this.vesselUid })
+      .createSpecification({ ...value, Description: editors.description, ProjectUid: this.projectId, VesselUid: this.vesselUid })
       .pipe(
         finalize(() => {
           this.isSaving = false;
@@ -74,15 +86,21 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
       )
       .subscribe(
         () => {
+          this.growlMessageService.setSuccessMessage('Specification has been successfully created');
           this.closePopup(true);
         },
+        // eslint-disable-next-line rxjs/no-implicit-any-catch
         (err) => {
-          if (err?.status === 422) {
-            this.growlMessageService.setErrorMessage(err.error);
-          } else {
-            this.growlMessageService.setErrorMessage('Server error occured');
-          }
+          this.growlMessageService.errorHandler(err);
         }
       );
+  }
+
+  private isValidationsPassed(): boolean {
+    if (!this.isPopupValid) {
+      this.growlMessageService.setErrorMessage('Please fill the required fields');
+      return false;
+    }
+    return true;
   }
 }

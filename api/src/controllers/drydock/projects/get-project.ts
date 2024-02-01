@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
+import { Body, Controller, Get } from 'tsoa';
 
 import { GetProjectQuery } from '../../../application-layer/drydock/projects/GetProjectQuery';
+import { IProjectsFromMainPageRecordDto } from '../../../application-layer/drydock/projects/projects-for-main-page/dtos/IProjectsFromMainPageRecordDto';
 import { MiddlewareHandler } from '../../../controllers/drydock/core/middleware/MiddlewareHandler';
 
 /**
@@ -14,12 +16,21 @@ async function getProject(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request) => {
-        const query = new GetProjectQuery();
+        const result = await new GetProjectController().getProject(request);
 
-        // Execute query
-        const projects = await query.ExecuteAsync(request);
-
-        return projects;
+        return result;
     });
 }
 exports.get = getProject;
+
+// @Route('drydock/projects/get-project')
+export class GetProjectController extends Controller {
+    @Get()
+    public async getProject(@Body() request: Request): Promise<IProjectsFromMainPageRecordDto> {
+        const query = new GetProjectQuery();
+
+        const result = await query.ExecuteAsync(request);
+
+        return result;
+    }
+}

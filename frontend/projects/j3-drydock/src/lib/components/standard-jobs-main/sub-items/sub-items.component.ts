@@ -18,6 +18,8 @@ import { filter, map } from 'rxjs/operators';
 export class SubItemsComponent extends UnsubscribeComponent implements OnChanges, OnInit {
   @Input() job: StandardJobResult;
 
+  @Input() newUid: string;
+
   @Input() functionUid: string;
 
   @Output() changed = new EventEmitter<SubItem[]>();
@@ -101,6 +103,10 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
 
   onConfirmDeleteCancel() {
     this.isConfirmDeleteVisible = false;
+  }
+
+  onCloseConfirmationDeletePopup() {
+    this.currentRow = undefined;
   }
 
   searchFn = (record: SubItem, term: string) => {

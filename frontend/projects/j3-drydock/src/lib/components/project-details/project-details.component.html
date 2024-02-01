@@ -1,91 +1,211 @@
-<jb-details-layout-figma>
-  <jb-project-header
-    alayout-header
-    *ngIf="projectId"
-    [projectId]="projectId"
-  ></jb-project-header>
-  <ng-container alayout-content>
-    <ng-container [ngSwitch]="currentSectionId">
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.General">
-        <div #general>TODO insert general component here</div>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.Specifications">
-        <div #specifications>
-          <div #technical_specification>
-            <jb-specifications
-              [projectId]="projectId"
-              [vesselUid]="vesselUid"
-            ></jb-specifications>
-          </div>
-
-          <div #requisition>
-            <!-- TODO insert requisition component here -->
-          </div>
-
-          <div #attachments>
-            <jb-layout-widget
-              *ngIf="attachmentConfig"
-              [size]="'auto'"
-              titleText="Attachments"
-            >
-              <ng-container awidget-header-buttons>
-                <jb-button
-                  [type]="attachmentButton.buttonType"
-                  (click)="onAddAttachment()"
-                  [label]="attachmentButton.buttonLabel"
-                ></jb-button>
-              </ng-container>
-              <jb-attachments
-                #attachmentsComponent
-                awidget-content
-                class="attachments"
-                [attachConfig]="attachmentConfig"
-                [onUploadBtn]="false"
-                [defaultActions]="true"
-              ></jb-attachments>
-            </jb-layout-widget>
-          </div>
-        </div>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.YardSelection">
-        <div #yard_selection>
-          <div #rfq>
-            <!-- TODO projectId from details -->
-            <jb-drydock-rfq [projectId]="projectId"></jb-drydock-rfq>
-          </div>
-          <div #comparison>TODO insert comparison component here</div>
-        </div>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.ProjectMonitoring">
-        <div #project_monitoring>
-          <div #statement_of_facts>
-            <jb-statement-of-facts [projectId]="projectId"></jb-statement-of-facts>
-          </div>
-        </div>
-      </ng-container>
-    </ng-container>
-  </ng-container>
-
-  <ng-container alayout-aside>
-    <jb-layout-widget
-      [size]="'auto'"
-      [hideHeader]="true"
-      class="discussion-feed"
-      *ngIf="isDiscussionFeedVisible && discussionFeedDetails"
-    >
-      <jb-discussion-feed
-        awidget-content
-        [detail]="discussionFeedDetails"
-        [canAdd]="true"
-        [function_code]="discussionFeedFunctionCode"
-        [module_code]="discussionFeedModuleCode"
-        [isCloseView]="true"
-      ></jb-discussion-feed>
-    </jb-layout-widget>
-  </ng-container>
-</jb-details-layout-figma>
-
 <jb-growl [content]="growlMessage$ | async"></jb-growl>
+
+<jb-export-report
+  [moduleCode]="moduleCode"
+  [functionCode]="functionCode"
+  [detail]="{
+    uid: projectUid,
+    Vessel_ID: tmDetails.Vessel_ID,
+    WL_TYPE: tmDetails.wl_type,
+    Worklist_Type_Display: tmDetails.Worklist_Type_Display,
+    Vessel_Name: projectDetails.VesselName,
+    Job_card_No: tmDetails.Job_Code
+  }"
+  *ngIf="exportEnable"
+></jb-export-report>
+<jb-task-manager-details
+  #detailsComponent
+  *ngIf="sectionsConfig"
+  [topSectionConfig]="topSectionConfig"
+  [customedThreeDotActions]="customThreeDotActions"
+  [threeDotsActionsShow]="threeDotsActionsShow"
+  [sectionsConfig]="sectionsConfig"
+  [tmDetails]="tmDetails"
+  [moduleCode]="moduleCode"
+  [functionCode]="functionCode"
+  [hideAuditTrail]="true"
+  [hideAttachments]="true"
+  [showExport]="false"
+  [isViewRight]="canView"
+  (onWorkflowActions)="onWorkflowAction($event)"
+  [templateRefObj]="{
+    general: generalTab,
+    specifications: specificationsTab,
+    yard_selection: yardSelectionTab,
+    project_monitoring: projectMonitoringTab,
+    technical_specification: technical_specification,
+    attachmentss: attachmentss,
+    rfq: rfq,
+    gantt_chart: gantt_chart,
+    statement_of_facts: statement_of_facts,
+    cost_updates: cost_updates,
+    reporting: reportingTab
+  }"
+  [sectionHeaderTemplateRef]="{ technical_specification: specificationsButtonsTmpl }"
+  [slideMenus]="menu"
+>
+  <ng-template
+    #generalTab
+    let-section
+  >
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div *ngSwitchCase="'tasks'">
+        <!-- TODO add tasks component here -->
+      </div>
+    </ng-container>
+  </ng-template>
+
+  <ng-template
+    #specificationsTab
+    let-section
+  >
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div
+        #technical_specification
+        *ngSwitchCase="eSideMenuId.TechnicalSpecification"
+      >
+        <jb-specifications
+          #specificationsComponent
+          [projectId]="projectUid"
+          [vesselUid]="vesselUid"
+          [vesselId]="tmDetails?.VesselId"
+          [vesselType]="vesselType"
+        ></jb-specifications>
+      </div>
+
+      <div
+        #attachmentss
+        *ngSwitchCase="eSideMenuId.Attachments"
+      >
+        <jb-attachments
+          *ngIf="attachmentConfig"
+          #attachmentsComponent
+          class="attachments"
+          [attachConfig]="attachmentConfig"
+          [onUploadBtn]="false"
+          [defaultActions]="true"
+        ></jb-attachments>
+      </div>
+    </ng-container>
+  </ng-template>
+
+  <ng-template
+    #yardSelectionTab
+    let-section
+  >
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div
+        #rfq
+        *ngSwitchCase="eSideMenuId.RFQ"
+      >
+        <jb-drydock-rfq
+          [projectId]="projectUid"
+          #rfqComponent
+        ></jb-drydock-rfq>
+      </div>
+    </ng-container>
+  </ng-template>
+
+  <ng-template
+    #projectMonitoringTab
+    let-section
+  >
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div
+        #gantt_chart
+        *ngSwitchCase="eSideMenuId.GanttChart"
+      >
+        <jb-project-gantt-chart
+          #ganttChartComponent
+          [projectId]="projectUid"
+          [project]="tmDetails"
+          [vesselId]="tmDetails?.VesselId"
+        ></jb-project-gantt-chart>
+      </div>
+      <div
+        #cost_updates
+        *ngSwitchCase="eSideMenuId.CostUpdates"
+      >
+        <jb-cost-updates
+          [projectId]="projectUid"
+          (updatesCostsData)="updatesCostsData($event)"
+        ></jb-cost-updates>
+      </div>
+      <div
+        #statement_of_facts
+        *ngSwitchCase="eSideMenuId.StatementOfFacts"
+      >
+        <jb-statement-of-facts
+          #statementOfFactsComponent
+          [projectId]="projectUid"
+        ></jb-statement-of-facts>
+      </div>
+    </ng-container>
+  </ng-template>
+</jb-task-manager-details>
+
+<ng-template
+  #reportingTab
+  let-section
+>
+  <ng-container [ngSwitch]="section.SectionCode">
+    <div
+      #daily_reports
+      *ngSwitchCase="eSideMenuId.DailyReports"
+    >
+      <jb-drydock-daily-reports
+        #dailyReportsComponent
+        [projectId]="projectUid"
+      ></jb-drydock-daily-reports>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #specificationsButtonsTmpl>
+  <!-- Return after export to PDF is done -->
+  <jb-button
+    type="NoButton"
+    icon="icons8-anchor"
+    label="Export"
+    (click)="exportEnable = !exportEnable"
+  ></jb-button>
+  <jb-split-button
+    type="NoButton"
+    label="Create new"
+    [model]="specificationsCreateNewItems"
+  ></jb-split-button>
+</ng-template>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>
+
+<jb-dialog
+  [dialogContent]="importDialogueProperties"
+  [(dialogVisible)]="isImportDialogVisible"
+  (closeDialog)="closeGuidanceDialog()"
+>
+  <ng-container jb-dialog-body>
+    <div>
+      <jb-uploads
+        class="jms-upload-ui"
+        #uploadRef
+        [uploads]="uploadConfig"
+        [syncTo]="syncTo"
+        [parentControl]="true"
+        (parentDispatch)="onSelectNewFile($event)"
+        (onSelect)="onSelectNewFile($event)"
+      ></jb-uploads>
+    </div>
+  </ng-container>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [okBtnLabel]="okBtnLabel"
+      (ok)="uploadInvoice()"
+      (cancel)="closeGuidanceDialog()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

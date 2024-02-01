@@ -1,0 +1,119 @@
+::ng-deep {
+  .status-field {
+    line-height: 7px;
+    display: inline-flex;
+    justify-content: center;
+
+    .m-1 {
+      margin-right: 4px;
+    }
+  }
+
+  .e-gantt .e-gantt-chart .e-event-markers {
+    border-left-color: #616aff;
+    border-left-width: 2px;
+    &.overdue-line {
+      border-left-color: #F75F82;
+    }
+  }
+
+  .e-none {
+    display: none !important;
+  }
+
+  .e-grid .e-headercell,
+  .e-grid .e-detailheadercell {
+    padding: 0 12px 0;
+  }
+
+  .e-grid .e-gridheader tr th:first-child {
+    padding-left: 12px;
+  }
+
+  .e-grid .e-rowcell {
+    padding: 8px 12px;
+  }
+
+  .e-grid .e-rowcell:first-child,
+  .e-grid .e-summarycell:first-child {
+    padding-left: 12px;
+  }
+
+  .e-grid .e-rowcell:last-child,
+  .e-grid .e-summarycell:last-child {
+    padding-right: 12px;
+  }
+
+  .e-grid .e-gridheader tr th:last-child {
+    padding-right: 12px;
+  }
+
+  .e-grid .e-rowcell:not(.e-editedbatchcell),
+  .e-grid .e-detailrowcollapse:not(.e-editedbatchcell),
+  .e-grid .e-detailrowexpand:not(.e-editedbatchcell),
+  .e-grid .e-gridcontent .e-rowdragdrop:not(.e-editedbatchcell),
+  .e-grid .e-emptyrow:not(.e-editedbatchcell) {
+    color: #0f1230;
+    opacity: 1;
+  }
+
+  .e-gantt .e-gantt-chart .e-gantt-child-taskbar-inner-div {
+    border-radius: 8px;
+  }
+
+  .e-splitter.e-splitter-horizontal,
+  .e-splitter.e-splitter-vertical {
+    border: none;
+  }
+
+  .e-grid .e-gridheader {
+    color: #7886a2;
+  }
+
+  .e-table {
+    border-color: #d8d8d8;
+  }
+
+  .e-gantt .e-gantt-chart .e-timeline-top-header-cell {
+    border-color: #d8d8d8;
+    .e-header-cell-label {
+      color: #757575;
+    }
+    .e-header-cell-label.e-gantt-top-cell-text {
+      color: #404040;
+    }
+  }
+
+  .e-gantt .e-gantt-chart .e-weekend-header-cell {
+    background: #fff;
+  }
+
+  .gantt-grid-link {
+    cursor: pointer;
+    color: var(--jbBrandBlue700) !important;
+    font-weight: 500;
+
+    &:focus,
+    &:hover {
+        text-decoration: underline;
+    }
+  }
+
+  .gantt-day-of-month{
+    color: var(--jbGreyBlue700);
+    font-weight: bold;
+    padding-right: 3px;
+  }
+
+  .gantt-day-of-week{
+    font-size: 9px;
+  }
+
+  th>.e-headercelldiv>.gantt-grid-header{
+    padding-top: 35px;
+  }
+
+  .e-gantt-chart-pane{
+    border-top: 1px solid #d8d8d8;
+  }
+}

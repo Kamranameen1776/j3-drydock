@@ -1,13 +1,16 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { LibVesselsEntity } from 'entity/drydock/dbo/LibVesselsEntity';
 import { SynchronizerService } from 'j2utils';
 
 import { CreateProjectDto } from '../../../../bll/drydock/projects/dtos/ICreateProjectDto';
 import { ProjectService } from '../../../../bll/drydock/projects/ProjectService';
+import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { ICreateNewProjectDto } from '../../../../dal/drydock/projects/dtos/ICreateNewProjectDto';
+import { IProjectsForMainPageRecordDto } from '../../../../dal/drydock/projects/dtos/IProjectsForMainPageRecordDto';
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
+import { LibVesselsEntity } from '../../../../entity/drydock/dbo/LibVesselsEntity';
+import { ProjectEntity } from '../../../../entity/drydock/ProjectEntity';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { CreateProjectDataDto } from './CreateProjectDataDto';
@@ -20,13 +23,13 @@ enum ProjectStates {
     Report = 3,
 }
 
-export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
+export class CreateProjectCommand extends Command<CreateProjectDataDto, IProjectsForMainPageRecordDto[]> {
     projectsRepository: ProjectsRepository;
     projectsService: ProjectService;
     vesselsRepository: VesselsRepository;
     uow: UnitOfWork;
 
-    tableName = 'dry_dock.project';
+    tableName = getTableName(ProjectEntity);
     constructor() {
         super();
 
@@ -53,7 +56,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
      * @param request Project data for creation of the new project
      * @returns New created project result
      */
-    protected async MainHandlerAsync(request: CreateProjectDataDto): Promise<void> {
+    protected async MainHandlerAsync(request: CreateProjectDataDto): Promise<IProjectsForMainPageRecordDto[]> {
         const token: string = request.Token;
         const createProjectDto: CreateProjectDto = request.ProjectDto;
 
@@ -68,6 +71,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
         createProjectDto.TaskManagerUid = taskManagerData.uid;
 
         const newProjectDto: ICreateNewProjectDto = {
+            uid: createProjectDto.uid,
             EndDate: createProjectDto.EndDate,
             StartDate: createProjectDto.StartDate,
             ProjectManagerUid: createProjectDto.ProjectManagerUid,
@@ -80,7 +84,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
             TaskManagerUid: createProjectDto.TaskManagerUid,
         };
 
-        await this.uow.ExecuteAsync(async (queryRunner) => {
+        const result = await this.uow.ExecuteAsync(async (queryRunner) => {
             const projectId = await this.projectsRepository.CreateProject(newProjectDto, queryRunner);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
@@ -91,5 +95,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
             );
             return projectId;
         });
+
+        return this.projectsRepository.GetProject(result);
     }
 }

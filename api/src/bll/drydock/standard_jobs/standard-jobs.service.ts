@@ -8,7 +8,6 @@ import {
     GetStandardJobSubItemsResultDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
 import { StandardJobs, StandardJobsSubItems } from '../../../entity/drydock';
-import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
 
 export class StandardJobsService {
     notSelectedValueLabel = '-';
@@ -23,6 +22,7 @@ export class StandardJobsService {
                 function: standardJob.function,
                 functionUid: standardJob.functionUid,
                 code: standardJob.code,
+                number: standardJob.number,
                 scope: standardJob.scope,
                 category: standardJob.category || this.notSelectedValueLabel,
                 categoryUid: standardJob.categoryUid,
@@ -43,7 +43,8 @@ export class StandardJobsService {
                 vesselTypeId: [],
                 vesselType: 'All',
                 subItems: [],
-                hasSubItems: QueryStrings.No,
+                hasSubItems: standardJob.hasSubItems,
+                hasInspection: standardJob.hasInspection,
             };
 
             if (standardJob.inspectionId) {
@@ -93,8 +94,6 @@ export class StandardJobsService {
                             standardJobUid: item.uid,
                         };
                     });
-
-                item.hasSubItems = item.subItems.length > 0 ? QueryStrings.Yes : QueryStrings.No;
             });
         }
 
@@ -112,12 +111,14 @@ export class StandardJobsService {
         standardJob.functionUid = data.functionUid;
         standardJob.vesselTypeSpecific = data.vesselTypeSpecific;
         standardJob.description = data.description;
-        if (data.doneByUid) {
+        standardJob.number = data.number;
+        standardJob.code = data.code;
+        if ('doneByUid' in data) {
             standardJob.doneBy = {
                 uid: data.doneByUid,
             };
         }
-        if (data.materialSuppliedByUid) {
+        if ('materialSuppliedByUid' in data) {
             standardJob.materialSuppliedBy = {
                 uid: data.materialSuppliedByUid,
             };

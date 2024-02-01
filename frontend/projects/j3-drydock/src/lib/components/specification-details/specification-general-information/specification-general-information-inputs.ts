@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormModel, FormValues, eFieldControlType } from 'jibe-components';
 import { FieldSetModel } from 'jibe-components/lib/interfaces/field.model';
-import { GetSpecificationDetailsDto } from '../../../models/dto/specification-details/GetSpecificationDetailsDto';
 import {
   eSpecificationDetailsGeneralInformationFields,
   eSpecificationDetailsGeneralInformationLabels
@@ -10,21 +9,25 @@ import { BehaviorSubject } from 'rxjs';
 import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
+import { SpecificationDetails } from '../../../models/interfaces/specification-details';
+import { EditorConfig } from '../../../models/interfaces/EditorConfig';
+import { eFunction } from '../../../models/enums/function.enum';
+import { eModule } from '../../../models/enums/module.enum';
 
 @Injectable()
 export class SpecificationGeneralInformationInputservice extends FormServiceBase {
-  public genralInformatonFormId = 'generalInformation';
+  public generalInformationFormId = 'generalInformation';
   public sectionId = 'generalInformation';
   functionsFlatTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
-  readonly formId = this.genralInformatonFormId;
+  readonly formId = this.generalInformationFormId;
   protected readonly _formStructure: FormModel = this.getFormModel();
   protected readonly _formValues: FormValues = this.getInitialFormValues(null);
 
-  constructor(private specificatioDetailService: SpecificationDetailsService) {
+  constructor(private specificationDetailService: SpecificationDetailsService) {
     super();
   }
 
-  public getFormModelAndInitialValues(specificationDetailsInfo: GetSpecificationDetailsDto) {
+  public getFormModelAndInitialValues(specificationDetailsInfo: SpecificationDetails) {
     const formModel: FormModel = this.getFormModel();
     const formValues: FormValues = this.getInitialFormValues(specificationDetailsInfo);
 
@@ -40,9 +43,9 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: false,
         validatorRequired: true,
         gridRowStart: 1,
-        gridRowEnd: 2,
+        gridRowEnd: 1,
         gridColStart: 1,
-        gridColEnd: 2
+        gridColEnd: 1
       },
       [eSpecificationDetailsGeneralInformationFields.AccountCode]: {
         type: eFieldControlType.Text,
@@ -51,9 +54,9 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: true,
         validatorRequired: false,
         gridRowStart: 1,
-        gridRowEnd: 2,
+        gridRowEnd: 1,
         gridColStart: 2,
-        gridColEnd: 3,
+        gridColEnd: 2,
         placeHolder: 'Account Code',
         maxTextLength: 200
       },
@@ -64,14 +67,14 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: false,
         validatorRequired: false,
         gridRowStart: 2,
-        gridRowEnd: 3,
+        gridRowEnd: 2,
         gridColStart: 1,
-        gridColEnd: 2,
+        gridColEnd: 1,
         placeHolder: 'Select Item Source',
         listRequest: {
           labelKey: 'display_name',
           valueKey: 'uid',
-          webApiRequest: this.specificatioDetailService.getItemSourceRequest()
+          webApiRequest: this.specificationDetailService.getItemSourceRequest()
         }
       },
       [eSpecificationDetailsGeneralInformationFields.ItemNumber]: {
@@ -79,11 +82,12 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         sectionID: this.sectionId,
         label: eSpecificationDetailsGeneralInformationLabels.ItemNumber,
         enabled: false,
+        show: 'hidden',
         validatorRequired: false,
-        gridRowStart: 2,
-        gridRowEnd: 3,
-        gridColStart: 2,
-        gridColEnd: 3,
+        gridRowStart: 0,
+        gridRowEnd: 0,
+        gridColStart: 0,
+        gridColEnd: 0,
         placeHolder: 'Item Number'
       },
       [eSpecificationDetailsGeneralInformationFields.DoneBy]: {
@@ -93,13 +97,13 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: true,
         validatorRequired: false,
         gridRowStart: 3,
-        gridRowEnd: 4,
+        gridRowEnd: 3,
         gridColStart: 1,
-        gridColEnd: 2,
+        gridColEnd: 1,
         listRequest: {
           labelKey: 'displayName',
           valueKey: 'uid',
-          webApiRequest: this.specificatioDetailService.getStandardJobsFiltersRequest(eSpecificationDetailsGeneralInformationFields.DoneBy)
+          webApiRequest: this.specificationDetailService.getStandardJobsFiltersRequest(eSpecificationDetailsGeneralInformationFields.DoneBy)
         }
       },
       [eSpecificationDetailsGeneralInformationFields.InspectionID]: {
@@ -108,15 +112,15 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         sectionID: this.sectionId,
         enabled: true,
         validatorRequired: false,
-        gridRowStart: 3,
-        gridRowEnd: 4,
+        gridRowStart: 2,
+        gridRowEnd: 2,
         gridColStart: 2,
-        gridColEnd: 3,
+        gridColEnd: 2,
         placeHolder: 'Select Inspection',
         listRequest: {
           labelKey: 'displayName',
           valueKey: 'uid',
-          webApiRequest: this.specificatioDetailService.getStandardJobsFiltersRequest(
+          webApiRequest: this.specificationDetailService.getStandardJobsFiltersRequest(
             eSpecificationDetailsGeneralInformationFields.Inspection
           )
         }
@@ -128,66 +132,53 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         enabled: false,
         validatorRequired: false,
         gridRowStart: 4,
-        gridRowEnd: 5,
+        gridRowEnd: 4,
         gridColStart: 1,
-        gridColEnd: 2,
+        gridColEnd: 1,
         placeHolder: 'Equipment Description',
         maxLength: 200
       },
-      [eSpecificationDetailsGeneralInformationFields.Periority]: {
+      [eSpecificationDetailsGeneralInformationFields.Priority]: {
         type: eFieldControlType.Dropdown,
         sectionID: this.sectionId,
-        label: eSpecificationDetailsGeneralInformationLabels.Periority,
+        label: eSpecificationDetailsGeneralInformationLabels.Priority,
         enabled: true,
         validatorRequired: false,
-        gridRowStart: 4,
-        gridRowEnd: 5,
+        gridRowStart: 3,
+        gridRowEnd: 3,
         gridColStart: 2,
-        gridColEnd: 3,
+        gridColEnd: 2,
         placeHolder: 'Select Priority',
         listRequest: {
           labelKey: 'display_name',
           valueKey: 'uid',
-          webApiRequest: this.specificatioDetailService.getPriorityRequest()
+          webApiRequest: this.specificationDetailService.getPriorityRequest()
         }
-      },
-      [eSpecificationDetailsGeneralInformationFields.Description]: {
-        type: eFieldControlType.TextAreaType,
-        sectionID: this.sectionId,
-        label: eSpecificationDetailsGeneralInformationLabels.Description,
-        enabled: true,
-        autoResize: true,
-        validatorRequired: true,
-        gridRowStart: 5,
-        gridRowEnd: 6,
-        gridColStart: 1,
-        gridColEnd: 3,
-        maxTextLength: 1000
       }
     };
 
     return formFields;
   }
 
-  getInitialFormValues(specificationDetailsInfo: GetSpecificationDetailsDto): FormValues {
+  getInitialFormValues(specificationDetailsInfo: SpecificationDetails): FormValues {
     if (specificationDetailsInfo == null) {
       return null;
     }
 
     const formValues: FormValues = {
-      keyID: this.genralInformatonFormId,
+      keyID: this.generalInformationFormId,
       values: {
-        [this.genralInformatonFormId]: {
+        [this.generalInformationFormId]: {
           [eSpecificationDetailsGeneralInformationFields.Function]: specificationDetailsInfo.Function,
           [eSpecificationDetailsGeneralInformationFields.AccountCode]: specificationDetailsInfo.AccountCode,
           [eSpecificationDetailsGeneralInformationFields.ItemSource]: specificationDetailsInfo.ItemSourceUid,
           [eSpecificationDetailsGeneralInformationFields.ItemNumber]: specificationDetailsInfo.ItemNumber,
           [eSpecificationDetailsGeneralInformationFields.DoneBy]: specificationDetailsInfo.DoneByUid,
           [eSpecificationDetailsGeneralInformationFields.InspectionID]: specificationDetailsInfo.Inspections.map(
-            (insection) => insection.InspectionId
+            (inspection) => inspection.InspectionId
           ),
           [eSpecificationDetailsGeneralInformationFields.EquipmentDescription]: specificationDetailsInfo.EquipmentDescription,
-          [eSpecificationDetailsGeneralInformationFields.Periority]: specificationDetailsInfo.PriorityUid,
+          [eSpecificationDetailsGeneralInformationFields.Priority]: specificationDetailsInfo.PriorityUid,
           [eSpecificationDetailsGeneralInformationFields.Description]: specificationDetailsInfo.Description
         }
       }
@@ -198,23 +189,54 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
 
   private getFormModel(): FormModel {
     const baseModel: FormModel = {
-      id: this.genralInformatonFormId,
+      id: this.generalInformationFormId,
       label: 'General Information',
       type: 'form',
       sections: {
         [this.sectionId]: {
           type: 'grid',
           label: '',
-          formID: this.genralInformatonFormId,
+          formID: this.generalInformationFormId,
           gridRowStart: 1,
-          gridRowEnd: 1,
+          gridRowEnd: 4,
           gridColStart: 1,
-          gridColEnd: 1,
+          gridColEnd: 2,
           fields: this.getFields()
         }
       }
     };
 
     return baseModel;
+  }
+
+  getDescriptionEditorConfig(): EditorConfig {
+    return {
+      id: 'description',
+      maxLength: 10000,
+      placeholder: '',
+      crtlName: 'description',
+      moduleCode: eModule.Project,
+      functionCode: eFunction.SpecificationDetails,
+      inlineMode: {
+        enable: false,
+        onSelection: true
+      },
+      tools: {
+        items: [
+          'Bold',
+          'Italic',
+          'Underline',
+          'StrikeThrough',
+          'FontName',
+          'FontSize',
+          'FontColor',
+          'Formats',
+          'Alignments',
+          'Image',
+          'ClearFormat',
+          'FullScreen'
+        ]
+      }
+    };
   }
 }

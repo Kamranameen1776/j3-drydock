@@ -16,11 +16,7 @@ export class CreateSpecificationDetailsDto {
     @MaxLength(100)
     Subject: string;
 
-    @IsUUID()
-    ItemSourceUid: string;
-
     @MinLength(1)
-    @MaxLength(1000)
     Description: string;
 
     @IsArray()

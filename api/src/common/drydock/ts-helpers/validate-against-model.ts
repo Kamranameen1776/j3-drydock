@@ -1,5 +1,5 @@
-import { ClassConstructor, type ClassTransformOptions as TransformParams, plainToInstance } from 'class-transformer';
-import { validate, type ValidatorOptions as ValidateParams } from 'class-validator';
+import { ClassConstructor, ClassTransformOptions as TransformParams, plainToInstance } from 'class-transformer';
+import { validate, ValidatorOptions as ValidateParams } from 'class-validator';
 
 /** @private */
 interface Params {

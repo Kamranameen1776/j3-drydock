@@ -1,0 +1,14 @@
+@import '../../../styles/mixins';
+
+:host {
+  .project-code {
+    @include grid-cell-link;
+
+    display: inline-flex;
+    gap: 6px;
+  }
+
+  ::ng-deep {
+    @include progress-spinner-fix;
+  }
+}

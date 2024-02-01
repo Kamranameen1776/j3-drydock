@@ -14,7 +14,6 @@ export enum eProjectDetailsSideMenuLabel {
   ProjectMonitoring = 'Project Monitoring',
   GanttChart = 'Gantt Chart',
   StatementOfFacts = 'Statement of Facts',
-  JobOrders = 'Job Orders',
   CostUpdates = 'Cost Updates',
 
   Reporting = 'Reporting',
@@ -30,7 +29,7 @@ export enum eProjectDetailsSideMenuId {
   TechnicalSpecification = 'technical_specification',
   Requisition = 'requisition',
   Contacts = 'contacts',
-  Attachments = 'attachments',
+  Attachments = 'attachmentss',
 
   YardSelection = 'yard_selection',
   RFQ = 'rfq',
@@ -39,7 +38,6 @@ export enum eProjectDetailsSideMenuId {
   ProjectMonitoring = 'project_monitoring',
   GanttChart = 'gantt_chart',
   StatementOfFacts = 'statement_of_facts',
-  JobOrders = 'job_orders',
   CostUpdates = 'cost_updates',
 
   Reporting = 'reporting',
@@ -48,13 +46,31 @@ export enum eProjectDetailsSideMenuId {
   Evaluations = 'evaluations'
 }
 
-export enum eProjectWorklowStatusAction {
-  Raise = 'Raise',
-  'In Progress' = 'In Progress',
-  Complete = 'Complete',
-  Verify = 'Verify',
-  Review = 'Review',
-  Approve = 'Approve',
-  Close = 'Close',
-  Unclose = 'Unclose'
+export enum eProjectWorkflowStatusAction {
+  Raise = 'RAISE',
+  'In Progress' = 'IN PROGRESS',
+  Complete = 'COMPLETE',
+  Verify = 'VERIFY',
+  Review = 'REVIEW',
+  Approve = 'APPROVE',
+  Close = 'CLOSE',
+  Unclose = 'UNCLOSE'
+}
+
+export enum eProjectDelete {
+  DeleteBtnLabel = 'Delete',
+  DeleteDialogueHeader = 'Delete Project',
+  ProjectDeleteText = 'Are you sure you want to delete this project?'
+}
+
+export enum eProjectCreate {
+  BtnLabel = 'Create',
+  DialogueHeader = 'Create New Project'
+}
+
+export enum eProjectStatus {
+  Planned = 'Planned',
+  Active = 'Active',
+  Completed = 'Completed',
+  Closed = 'Closed'
 }

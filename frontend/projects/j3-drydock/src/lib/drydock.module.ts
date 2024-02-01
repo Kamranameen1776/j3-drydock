@@ -13,7 +13,6 @@ import { StatusCodeColorPipe } from './shared/pipes/status-code-color.pipe';
 import { UpsertStandardJobPopupComponent } from './components/standard-jobs-main/upsert-standard-job-popup/upsert-standard-job-popup.component';
 import { UpsertStandardJobFormComponent } from './components/standard-jobs-main/upsert-standard-job-form/upsert-standard-job-form.component';
 import { FunctionsTreeSelectComponent } from './shared/components/functions-tree-select/functions-tree-select.component';
-import { ProjectHeaderComponent } from './components/project-details/project-header/project-header.component';
 import { SpecificationsComponent } from './components/project-details/specification/specifications.component';
 import { SubItemsComponent } from './components/standard-jobs-main/sub-items/sub-items.component';
 import { UpsertSubItemFormComponent } from './components/standard-jobs-main/sub-items/upsert-sub-item-form/upsert-sub-item-form.component';
@@ -21,7 +20,7 @@ import { UpsertSubItemPopupComponent } from './components/standard-jobs-main/sub
 import { StandardJobsStatusNamePipe } from './components/standard-jobs-main/pipes/status-name.pipe';
 import { StandardJobsStatusColorPipe } from './components/standard-jobs-main/pipes/status-color.pipe';
 import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
-import { ProjectsSpecificationsGridComponent } from './components/projects-main-page/projects-specifications-grid/projects-specifications-grid.component';
+import { ProjectsGridComponent } from './components/projects-main-page/projects-grid/projects-grid.component';
 import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
 import { CreateSpecificationPopupComponent } from './components/project-details/create-specification-popup/create-specification-popup.component';
 import { SpecificationFormComponent } from './components/project-details/specification-form/specification-form.component';
@@ -31,17 +30,19 @@ import { ProjectStatusFilterComponent } from './components/projects-main-page/pr
 import { LeftPanelFilterService } from './components/projects-main-page/services/LeftPanelFilterService';
 import { RfqComponent } from './components/project-details/yard/rfq/rfq.component';
 import { ComparisonComponent } from './components/project-details/yard/comparison/comparison.component';
-import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
 import { SelectLinkYardGridComponent } from './components/project-details/yard/rfq/select-link-yard-grid/select-link-yard-grid.component';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
-import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
 import { SpecificationGeneralInformationComponent } from './components/specification-details/specification-general-information/specification-general-information.component';
 import { SpecificationGeneralInformationInputservice } from './components/specification-details/specification-general-information/specification-general-information-inputs';
 import { SpecificationRequisitionsComponent } from './components/specification-details/specification-requisitions/specification-requisitions.component';
 import { SpecificationSubItemsComponent } from './components/specification-details/specification-sub-items/specification-sub-items.component';
 import { SpecificationDetailsSubItemsGridService } from './services/specification-details/specification-details-sub-item.service';
+import { SimpleConfirmationPopupComponent } from './shared/components/simple-confirmation-popup/simple-confirmation-popup.component';
 import { StatementOfFactsComponent } from './components/project-details/project-monitoring/statement-of-facts/statement-of-facts.component';
+import { ReworkPopupFormComponent } from './shared/components/rework-popup/rework-popup-form/rework-popup-form.component';
+import { ReworkPopupComponent } from './shared/components/rework-popup/rework-popup.component';
+import { AddSpecificationFromStandardJobPopupComponent } from './components/project-details/add-specification-from-standard-job-popup/add-specification-from-standard-job-popup.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -52,6 +53,24 @@ export function winEnv(): unknown {
   };
 }
 
+import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
+import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
+import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-celll-popover.component';
+import { DailyReportsComponent } from './components/project-details/reports/reports.component';
+import { EditSubItemPopupComponent } from './components/specification-details/edit-sub-item-popup/edit-sub-item-popup.component';
+import { JobOrdersFormComponent } from './components/project-details/project-monitoring/job-orders-form/job-orders-form.component';
+import { CreateReportPopupComponent } from './components/project-details/reports/create-report/create-report-popup.component';
+import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
+import { ItemCardComponent } from './shared/components/item-card/item-card.component';
+import { SelectJobOrderPopupComponent } from './components/project-details/reports/create-report/select-job-order-popup/select-job-order-popup.component';
+import { SelectJobOrderGridComponent } from './components/project-details/reports/create-report/select-job-order-grid/select-job-order-grid.component';
+
+import { GanttModule } from '@syncfusion/ej2-angular-gantt';
+import { GanttChartComponent } from './components/project-details/project-monitoring/gantt-chart/gantt-chart.component';
+import { LinkedPmsJobsAndFindingsComponent } from './components/specification-details/pms-jobs/linked-pms-jobs-and-findings.component';
+import { CostUpdatesComponent } from './components/project-details/project-monitoring/cost-updates/cost-updates.component';
+import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
+
 @NgModule({
   declarations: [
     SpecificationStatusPipe,
@@ -59,14 +78,13 @@ export function winEnv(): unknown {
     ProjectDetailsComponent,
     SpecificationsComponent,
     ProjectsMainPageComponent,
-    ProjectsSpecificationsGridComponent,
+    ProjectsGridComponent,
     StandardJobsMainComponent,
     UpsertStandardJobPopupComponent,
     UpsertStandardJobFormComponent,
     FunctionsTreeSelectComponent,
     ProjectTypesLeftPanelComponent,
     ProjectStatusFilterComponent,
-    ProjectHeaderComponent,
     SubItemsComponent,
     UpsertSubItemFormComponent,
     UpsertSubItemPopupComponent,
@@ -80,12 +98,28 @@ export function winEnv(): unknown {
     CreateSpecificationPopupComponent,
     SpecificationFormComponent,
     SpecificationDetailsComponent,
-    SpecificationDetailsHeaderComponent,
     SpecificationGeneralInformationComponent,
     SpecificationRequisitionsComponent,
     SpecificationSubItemsComponent,
+    SimpleConfirmationPopupComponent,
     StatementOfFactsComponent,
-    SpecificationRequisitionsComponent
+    ReworkPopupFormComponent,
+    ReworkPopupComponent,
+    AddSpecificationFromStandardJobPopupComponent,
+    SpecificationRequisitionsComponent,
+    EditSubItemPopupComponent,
+    UTCAsLocalPipe,
+    GridCellPopoverComponent,
+    DailyReportsComponent,
+    GanttChartComponent,
+    JobOrdersFormComponent,
+    JobOrdersFormComponent,
+    CreateReportPopupComponent,
+    ItemCardComponent,
+    SelectJobOrderPopupComponent,
+    SelectJobOrderGridComponent,
+    LinkedPmsJobsAndFindingsComponent,
+    CostUpdatesComponent
   ],
   imports: [
     CommonModule,
@@ -93,6 +127,7 @@ export function winEnv(): unknown {
       environment: winEnv,
       theme: JiBeTheme.Figma
     }),
+    J3TaskManagerNgModule,
     DryDockRoutingModule,
     ReactiveFormsModule,
     DropdownModule,
@@ -100,7 +135,9 @@ export function winEnv(): unknown {
     SidebarModule,
     FormsModule,
     PrimeNgModule,
-    MenuModule
+    MenuModule,
+    GanttModule,
+    SplitterModule
   ],
   providers: [
     DatePipe,

@@ -1,4 +1,6 @@
+import { eProjectWorkflowStatusAction } from '../../models/enums/project-details.enum';
+
 export interface IProjectStatusDto {
-  ProjectStatusId: string;
+  ProjectStatusId: eProjectWorkflowStatusAction;
   ProjectStatusName: string;
 }

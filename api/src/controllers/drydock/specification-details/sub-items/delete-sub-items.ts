@@ -1,4 +1,5 @@
 import { AccessRights } from 'j2utils';
+import { Body, Controller, Delete, Route } from 'tsoa';
 
 import { DeleteSubItemsCommand } from '../../../../application-layer/drydock/specification-details/sub-items/DeleteSubItemsCommand';
 import { type EntityExistenceMap } from '../../../../common/drydock/ts-helpers/calculate-entity-existence-map';
@@ -15,13 +16,25 @@ async function deleteSubItems(req: Req<ReqBody>, res: Res<EntityExistenceMap>): 
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
-        const command = new DeleteSubItemsCommand();
-
-        await command.ExecuteAsync({
+        const result = await new DeleteSubItemsController().deleteSubItems({
             ...req.body,
             deletedBy,
         });
+
+        return result;
     });
 }
 
 exports.delete = deleteSubItems;
+
+@Route('drydock/specification-details/sub-items/delete-sub-items')
+export class DeleteSubItemsController extends Controller {
+    @Delete()
+    public async deleteSubItems(@Body() request: DeleteManyParams): Promise<EntityExistenceMap> {
+        const query = new DeleteSubItemsCommand();
+
+        const result = await query.ExecuteAsync(request);
+
+        return result;
+    }
+}

@@ -1,0 +1,21 @@
+:host {
+    ::ng-deep {
+        .ui-treetable-scrollable-body {
+            height: 337px !important;
+        }
+    }
+}
+
+.total-row {
+    font-weight: bold;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.parent-row {
+    font-weight: normal;
+}

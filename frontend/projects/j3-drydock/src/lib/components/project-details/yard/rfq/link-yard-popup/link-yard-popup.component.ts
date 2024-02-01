@@ -1,6 +1,6 @@
-import { YardsService } from './../../../../../services/yards.service';
-import { YardLink, YardToLink } from './../../../../../models/interfaces/project-details';
-import { GrowlMessageService } from './../../../../../services/growl-message.service';
+import { YardsService } from '../../../../../services/yards.service';
+import { YardLink, YardToLink } from '../../../../../models/interfaces/project-details';
+import { GrowlMessageService } from '../../../../../services/growl-message.service';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { getSmallPopup } from '../../../../../models/constants/popup';
 import { IJbDialog } from 'jibe-components';
@@ -90,12 +90,9 @@ export class LinkYardPopupComponent extends UnsubscribeComponent implements OnIn
         () => {
           this.closePopup(true);
         },
+        // eslint-disable-next-line rxjs/no-implicit-any-catch
         (err) => {
-          if (err?.status === 422 && err?.error?.message) {
-            this.growlMessageService.setErrorMessage(err.error.message);
-          } else {
-            this.growlMessageService.setErrorMessage('Server error occured');
-          }
+          this.growlMessageService.errorHandler(err);
         }
       );
   }

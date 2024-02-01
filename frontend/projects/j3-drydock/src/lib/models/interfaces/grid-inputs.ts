@@ -24,6 +24,8 @@ export interface GridInputs {
   showSettings?: ShowSettings;
   sortField?: string;
   sortOrder?: number;
+  rows?: number;
+  paginator?: boolean;
 
   /**
    * Grid title, in the header

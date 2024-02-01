@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Body, Controller, Get } from 'tsoa';
 
 import {
     GetSpecificationPmsRequestDto,
@@ -17,18 +18,26 @@ export async function getPmsJobs(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        // Prepare query payload
+        const result = await new GetPmsJobsController().getPmsJobs(request);
+
+        return result;
+    });
+}
+
+exports.get = getPmsJobs;
+
+// @Route('drydock/specification-details/pms/get-pms-jobs')
+export class GetPmsJobsController extends Controller {
+    @Get()
+    public async getPmsJobs(@Body() request: Request): Promise<Array<string>> {
         const query = new GetSpecificationPmsQuery();
 
-        // Execute query
-        const projects = await query.ExecuteAsync(
+        const result = await query.ExecuteAsync(
             request as unknown as GetSpecificationPmsRequestDto,
             GetSpecificationQueryDto,
             'query',
         );
 
-        return projects;
-    });
+        return result;
+    }
 }
-
-exports.get = getPmsJobs;

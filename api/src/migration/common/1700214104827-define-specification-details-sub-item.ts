@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class DefineSpecificationDetailsSubItem1700214104827 implements MigrationInterface {
     public readonly name = this.constructor.name;
@@ -24,8 +25,7 @@ export class DefineSpecificationDetailsSubItem1700214104827 implements Migration
                             primary key
                             default newid(),
                         [specification_details_uid] [uniqueidentifier]
-                            not null
-                            references [dry_dock].[specification_details] ([uid]),
+                            not null,
                         [unit_type_uid] [uniqueidentifier]
                             not null
                             references [dbo].[lib_unit_type] ([uid]),
@@ -73,51 +73,10 @@ export class DefineSpecificationDetailsSubItem1700214104827 implements Migration
             `);
 
             await MigrationUtilsService.migrationLog(this.name, '', 'S', 'dry_dock', this.description);
-        } catch (caught) {
-            const error = JSON.stringify(caught);
-
-            await MigrationUtilsService.migrationLog(this.name, error, 'E', 'dry_dock', this.description, true);
+        } catch (error) {
+            await MigrationUtilsService.migrationLog(this.name, errorLikeToString(error), 'E', 'dry_dock', this.description, true);
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-                if exists (
-                    select top 1
-                        *
-                    from
-                        sys.indexes
-                    where
-                        name = 'idx_specification_details_sub_item_subject'
-                )
-                begin
-                    drop index [idx_specification_details_sub_item_subject]
-                    on [dry_dock].[specification_details_sub_item];
-                end;
-            `);
-
-            await queryRunner.query(`
-                if exists (
-                    select top 1
-                        *
-                    from
-                        information_schema.tables
-                    where
-                        table_schema = 'dry_dock'
-                        and
-                        table_name = 'specification_details_sub_item'
-                )
-                begin
-                    drop table [dry_dock].[specification_details_sub_item];
-                end;
-            `);
-
-            await MigrationUtilsService.migrationLog(this.name, '', 'S', 'dry_dock', this.description);
-        } catch (caught) {
-            const error = JSON.stringify(caught);
-
-            await MigrationUtilsService.migrationLog(this.name, error, 'E', 'dry_dock', this.description, true);
-        }
-    }
+    public async down(): Promise<void> {}
 }

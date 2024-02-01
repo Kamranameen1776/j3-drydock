@@ -2,7 +2,9 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('statement_of_facts', { schema: 'dry_dock' })
 export class StatementOfFactsEntity {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn('uuid', {
+        name: 'uid',
+    })
     uid: string;
 
     @Column('varchar', {
@@ -12,9 +14,10 @@ export class StatementOfFactsEntity {
     })
     Fact: string;
 
-    @Column('datetime2', {
-        nullable: true,
+    @Column('datetimeoffset', {
+        nullable: false,
         name: 'date',
+        default: () => 'getutcdate()()',
     })
     DateAndTime: Date;
 
@@ -24,14 +27,15 @@ export class StatementOfFactsEntity {
     })
     ProjectUid: string;
 
-    @Column('datetime2', {
-        nullable: true,
+    @Column('datetimeoffset', {
+        nullable: false,
         name: 'created_at',
+        default: () => 'getutcdate()()',
     })
-    CreatedAt: Date;
+    CreatedAt: Date | null;
 
     @Column('bit', {
-        nullable: true,
+        nullable: false,
         name: 'active_status',
     })
     ActiveStatus: boolean;

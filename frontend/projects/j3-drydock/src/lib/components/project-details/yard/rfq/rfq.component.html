@@ -1,29 +1,13 @@
-<jb-layout-widget
-  [size]="eLayoutWidgetSize.Auto"
-  titleIconClass="icons8-tree-structure"
-  titleText="RFQ"
->
-  <ng-container awidget-header-buttons>
-    <jb-button
-      [disabled]="!linked"
-      type="NoButton"
-      label="Link Yard"
-      (click)="onLinkYard()"
-    ></jb-button>
-  </ng-container>
-  <ng-container awidget-content>
-    <jb-grid
-      [gridName]="gridInputs.gridName"
-      [colData]="gridInputs.columns"
-      [tableData]="linked | staticGridSearch: (searchTerm$ | async) : searchFn"
-      [getStyleByContainer]="true"
-      [setActions]="gridRowActions"
-      [isDisplayAdvancedFilter]="false"
-      [isDisplayAdvancedSettings]="false"
-      (action)="onGridAction($any($event))"
-    ></jb-grid>
-  </ng-container>
-</jb-layout-widget>
+<jb-grid
+  [gridName]="gridInputs.gridName"
+  [colData]="gridInputs.columns"
+  [tableData]="linked | staticGridSearch: (searchTerm$ | async) : searchFn"
+  [getStyleByContainer]="true"
+  [setActions]="gridRowActions"
+  [isDisplayAdvancedFilter]="false"
+  [isDisplayAdvancedSettings]="false"
+  (action)="onGridAction($any($event))"
+></jb-grid>
 
 <ng-template
   #isSelectedTmpl
@@ -33,6 +17,13 @@
     [checked]="rowData.isSelected"
     class="a-readonly"
   ></jb-checkbox>
+</ng-template>
+
+<ng-template
+  #exportedDateTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.lastExportedDate | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
 </ng-template>
 
 <jb-drydock-link-yard-popup

@@ -1,6 +1,7 @@
 import { Request } from 'express';
 import { SynchronizerService } from 'j2utils';
 
+import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { SpecificationRequisitionsEntity } from '../../../../entity/drydock';
@@ -11,7 +12,7 @@ import { LinkSpecificationRequisitionsRequestDto } from '../dtos/LinkSpecificati
 export class LinkSpecificationRequisitionCommand extends Command<Request, SpecificationRequisitionsEntity[]> {
     specificationDetailsRepository = new SpecificationDetailsRepository();
     uow = new UnitOfWork();
-    tableName = 'dry_dock.specification_requisitions';
+    tableName = getTableName(SpecificationRequisitionsEntity);
     vesselsRepository: VesselsRepository = new VesselsRepository();
 
     protected async MainHandlerAsync(request: Request) {

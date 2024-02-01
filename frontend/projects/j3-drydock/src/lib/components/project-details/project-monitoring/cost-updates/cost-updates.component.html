@@ -1,0 +1,43 @@
+<jb-grid
+  #treeTable
+  class="cost-updates-grid"
+  gridName="gridInputs.gridName"
+  [colData]="gridInputs.columns"
+  [tableDataReq]="gridInputs.request"
+  [showTreeGrid]="true"
+  [disableFeature]="disableFeature"
+  (cellPlainTextClick)="cellPlainTextClick($event)"
+  [rows]="gridInputs.rows"
+  [paginator]="gridInputs.paginator"
+></jb-grid>
+
+<ng-template
+  #utilizedTemplate
+  let-rowData
+>
+  <ng-container [ngSwitch]="rowData.rowCssClass">
+    <span
+      class="parent-row"
+      *ngSwitchCase="'parent-row'"
+    >
+      {{ rowData.utilizedCost }}
+    </span>
+
+    <input
+      #textCrtl="ngModel"
+      *ngSwitchCase="'child-row'"
+      type="number"
+      class="gridCellInput ui-inputtext child-row"
+      [(ngModel)]="rowData.utilizedCost"
+      (click)="onCellChange(rowData)"
+      (input)="onCellChange(rowData)"
+      [jbDecimalPlace]="2"
+    />
+    <span
+      class="total-row"
+      *ngSwitchCase="'total-row'"
+    >
+      {{ rowData.utilizedCost.value }}
+    </span>
+  </ng-container>
+</ng-template>

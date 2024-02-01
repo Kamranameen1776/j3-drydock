@@ -27,4 +27,5 @@ export interface StandardJobResult {
   [eStandardJobsMainFields.VesselTypeID]: string;
   [eStandardJobsMainFields.VesselType]: string;
   [eStandardJobsMainFields.SubItems]: SubItem[];
+  [eStandardJobsMainFields.Scope]: string;
 }

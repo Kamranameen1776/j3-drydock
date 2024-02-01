@@ -7,29 +7,39 @@ import { GetRequisitionsResponseDto } from '../../../application-layer/drydock/s
 import { GetSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto';
 import { LinkSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/LinkSpecificationRequisitionsRequestDto';
 import { UpdateSpecificationPmsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationPMSRequestDto';
+import { SpecificationDetailsGridFiltersKeys } from '../../../application-layer/drydock/specification-details/SpecificationDetailsConstants';
 import { className } from '../../../common/drydock/ts-helpers/className';
+import { Req } from '../../../common/drydock/ts-helpers/req-res';
 import {
+    ItemName,
     J3PrcCompanyRegistryEntity,
     J3PrcPo,
     J3PrcRequisition,
     J3PrcRfqEntity,
+    JmsDtlWorkflowConfigDetailsEntity,
     LibItemSourceEntity,
     LibSurveyCertificateAuthority,
     LibUserEntity,
     LibVesselsEntity,
+    LibVesseltypes,
     PriorityEntity,
     ProjectEntity,
     SpecificationDetailsEntity,
     SpecificationInspectionEntity,
     SpecificationPmsEntity,
     SpecificationRequisitionsEntity,
+    StandardJobs,
     TecTaskManagerEntity,
     TmDdLibDoneBy,
-    TmDdLibItemCategory,
     TmDdLibMaterialSuppliedBy,
 } from '../../../entity/drydock';
+import { J3PmsLibFunction } from '../../../entity/drydock/dbo/J3PmsLibFunctionEntity';
+import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
+import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { ODataResult } from '../../../shared/interfaces';
+import { DictionariesRepository } from '../dictionaries/DictionariesRepository';
+import { RepoUtils } from '../utils/RepoUtils';
 import {
     CreateInspectionsDto,
     ICreateSpecificationDetailsDto,
@@ -38,8 +48,33 @@ import {
     PmsJobsData,
     SpecificationDetailsResultDto,
 } from './dtos';
+import { CreateSpecificationFromStandardJobDto } from './dtos/ICreateSpecificationFromStandardJobDto';
+import {
+    SpecificationCostUpdateQueryResult,
+    SpecificationCostUpdateRequestDto,
+} from './dtos/ISpecificationCostUpdateDto';
 
 export class SpecificationDetailsRepository {
+    public async getSpecificationStatuses(isOffice: number | undefined, queryRunner: QueryRunner) {
+        const repository = queryRunner.manager.getRepository(JmsDtlWorkflowConfigDetailsEntity);
+
+        let query = repository
+            .createQueryBuilder('wdetails')
+            .select(['wdetails.WorkflowTypeID as status', 'wdetails.StatusDisplayName as displayName'])
+            .innerJoin(
+                className(JmsDtlWorkflowConfigEntity),
+                'wc',
+                `wc.job_type = 'Specification' AND wdetails.ConfigId = wc.ID`,
+            )
+            .where('wdetails.ActiveStatus = 1');
+
+        if (isOffice !== undefined) {
+            query = query.andWhere('wdetails.Is_Office = :isOffice', { isOffice });
+        }
+
+        return query.execute();
+    }
+
     public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {
         const repository = queryRunner.manager.getRepository(SpecificationPmsEntity);
         await repository.update(
@@ -67,6 +102,16 @@ export class SpecificationDetailsRepository {
         });
     }
 
+    public getRawSpecificationByUid(uid: string): Promise<SpecificationDetailsEntity> {
+        const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
+        return specificationRepository.findOneOrFail({
+            where: {
+                uid,
+                ActiveStatus: true,
+            },
+        });
+    }
+
     public async findSpecInspections(uid: string): Promise<Array<InspectionsResultDto>> {
         const inspectionRepository = getManager().getRepository(SpecificationInspectionEntity);
 
@@ -88,29 +133,35 @@ export class SpecificationDetailsRepository {
                 'spec.uid as uid',
                 'spec.subject as Subject',
                 'tm.Code as SpecificationCode',
-                'tm.Status as Status',
+                'tm.Status as StatusId',
+                'wdetails.StatusDisplayName as StatusName',
                 'spec.FunctionUid as FunctionUid',
                 'spec.Function as "Function"',
                 'spec.AccountCode as AccountCode',
-
+                'spec.TecTaskManagerUid as TaskManagerUid',
                 'spec.ItemSourceUid as ItemSourceUid',
                 'its.DisplayName as ItemSourceText',
-
                 'spec.ItemNumber as ItemNumber',
-
                 'spec.DoneByUid as DoneByUid',
                 'db.displayName as DoneByDisplayName',
-
                 'spec.EquipmentDescription as EquipmentDescription',
                 'spec.Description as Description',
-
                 'spec.PriorityUid as PriorityUid',
                 `pr.DisplayName as PriorityName`,
-
                 'ves.VesselName AS VesselName',
+                'vesType.VesselTypes AS VesselType',
                 'ves.uid AS VesselUid',
+                'ves.VesselId AS VesselId',
+                'spec.ProjectUid AS ProjectUid',
                 `usr.FirstName + ' ' + usr.LastName AS ProjectManager`,
                 'usr.uid AS ProjectManagerUid',
+                //TODO: strange constants, but Specifications doesnt have type. probably should stay that way
+                `'dry_dock' as SpecificationTypeCode`,
+                `'Dry Dock' as SpecificationTypeName`,
+                'spec.EndDate AS EndDate',
+                'spec.StartDate AS StartDate',
+                'spec.Completion AS Completion',
+                'spec.Duration AS Duration',
             ])
             .leftJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
             .leftJoin(className(LibItemSourceEntity), 'its', 'spec.ItemSourceUid = its.uid')
@@ -118,67 +169,96 @@ export class SpecificationDetailsRepository {
             .leftJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
             .leftJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
             .leftJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
+            .leftJoin(className(LibVesseltypes), 'vesType', 'ves.VesselType = vesType.ID')
             .leftJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesnt have type. probably should stay that way
+            .innerJoin(
+                className(JmsDtlWorkflowConfigDetailsEntity),
+                'wdetails',
+                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+            )
             .where('spec.ActiveStatus = 1')
             .andWhere('spec.uid = :uid', { uid })
             .getRawOne();
     }
 
-    public async GetManySpecificationDetails(data: Request): Promise<{
-        records: SpecificationDetailsEntity[];
-        count?: number;
-    }> {
+    public async GetManySpecificationDetails(
+        data: Request,
+        filters: Record<SpecificationDetailsGridFiltersKeys, string[]>,
+    ): Promise<ODataResult<SpecificationDetailsEntity>> {
         try {
             const oDataService = new ODataService(data, getConnection);
 
             const query = getManager()
-                .createQueryBuilder('specification_details', 'sd')
-                .leftJoin(className(TmDdLibItemCategory), 'ic', 'sd.item_category_uid = ic.uid')
+                .createQueryBuilder(SpecificationDetailsEntity, 'sd')
                 .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.done_by_uid = db.uid')
                 .leftJoin(className(TmDdLibMaterialSuppliedBy), 'msb', 'sd.material_supplied_by_uid = msb.uid')
-                .leftJoin(className(SpecificationInspectionEntity), 'si', 'si.specification_details_uid = sd.uid')
-                .leftJoin(
-                    className(LibSurveyCertificateAuthority),
-                    'lsc',
-                    'lsc.ID = si.LIB_Survey_CertificateAuthority_ID and lsc.Active_Status = 1',
-                )
+                .leftJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid')
+                .leftJoin(className(SpecificationInspectionEntity), 'sie', `sie.specification_details_uid = sd.uid`)
                 .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
                 .select([
                     'sd.uid as uid',
                     'sd.function_uid',
                     'sd.component_uid',
                     'sd.item_number',
-                    'db.done_by',
-                    'ic.item_category',
+                    'db.displayName as db_done_by',
                     'sd.active_status',
                     'msb.materialSuppliedBy',
                     'tm.Code as code',
                     'tm.Status as status',
-                    'tm.title as subject',
+                    'wdetails.StatusDisplayName as statusName',
+                    'sd.subject as subject',
                     'sd.project_uid',
-                    "STRING_AGG(lsc.ID, ',') as inspectionId",
-                    "STRING_AGG(lsc.Authority, ',') as inspection",
+                    'sd.ItemSourceUid as item_source_uid',
+                    'its.DisplayName as item_source',
+                    RepoUtils.getStringAggJoin(
+                        LibSurveyCertificateAuthority,
+                        'Authority',
+                        'aliased.active_status = 1',
+                        'inspection',
+                        {
+                            entity: className(SpecificationInspectionEntity),
+                            alias: 'si',
+                            on: 'aliased.ID = si.LIB_Survey_CertificateAuthority_ID AND si.specification_details_uid = sd.uid',
+                        },
+                    ),
                 ])
+                .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesnt have type. probably should stay that way
+                .innerJoin(
+                    className(JmsDtlWorkflowConfigDetailsEntity),
+                    'wdetails',
+                    'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+                )
                 .groupBy(
                     [
                         'sd.uid',
                         'sd.function_uid',
                         'sd.component_uid',
                         'sd.item_number',
-                        'db.done_by',
-                        'ic.item_category',
+                        'db.displayName',
                         'sd.active_status',
                         'msb.materialSuppliedBy',
                         'tm.Code',
                         'tm.Status',
-                        'tm.title',
+                        'wdetails.StatusDisplayName',
+                        'sd.subject',
                         'sd.project_uid',
+                        'sd.item_source_uid',
+                        'its.display_name',
                     ].join(', '),
                 )
-                .where('sd.active_status = 1')
-                .getSql();
+                .where('sd.active_status = 1');
 
-            return oDataService.getJoinResult(query);
+            if (filters.inspectionId?.length) {
+                query.andWhere(`sie.LIB_Survey_CertificateAuthority_ID IN (:...inspectionId)`, {
+                    inspectionId: filters.inspectionId,
+                });
+            }
+
+            query.getSql();
+
+            const [sql, params] = query.getQueryAndParameters();
+            return oDataService.getJoinResult(sql, params);
         } catch (error) {
             throw new Error(
                 `Method: GetSpecificationDetails / Class: SpecificationDetailsRepository / Error: ${error}`,
@@ -186,14 +266,118 @@ export class SpecificationDetailsRepository {
         }
     }
 
+    public async findSpecificationsForProject(projectUid: string): Promise<SpecificationDetailsEntity[]> {
+        const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
+        return specificationRepository.find({
+            where: {
+                ProjectUid: projectUid,
+                ActiveStatus: true,
+            },
+        });
+    }
+
+    public async getSpecificationCostUpdates(
+        data: Req<SpecificationCostUpdateRequestDto>,
+    ): Promise<ODataResult<SpecificationCostUpdateQueryResult>> {
+        const oDataService = new ODataService(data, getConnection);
+
+        const query = getManager()
+            .createQueryBuilder(SpecificationDetailsEntity, 'sd')
+            .select([
+                'sd.uid as uid',
+                'sd.subject as subject',
+                'sd.item_number as itemNumber',
+                'sd.description as description',
+                'sdsi.uid as subItemUid',
+                'sdsi.subject as subItemSubject',
+                'sdsi.cost as subItemCost',
+                'sdsi.utilized as subItemUtilized',
+                'tm.Code as code',
+                'tm.Status as status',
+                'SUM(sdsi.cost) OVER (PARTITION BY sd.uid) as estimatedCost',
+                'SUM(sdsi.utilized) OVER (PARTITION BY sd.uid) as utilizedCost',
+                '(SUM(sdsi.cost) OVER (PARTITION BY sd.uid)) - (SUM(sdsi.utilized) OVER (PARTITION BY sd.uid)) as variance',
+            ])
+            .leftJoin(
+                className(SpecificationDetailsSubItemEntity),
+                'sdsi',
+                'sd.uid = sdsi.specification_details_uid and sdsi.active_status = 1',
+            )
+            .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
+            .innerJoin(className(ProjectEntity), 'proj', 'sd.project_uid = proj.uid')
+            .where('sd.active_status = 1')
+            .andWhere(`proj.uid = :projectUid`, { projectUid: data.body.projectUid });
+
+        const [sql, parameters] = query.getQueryAndParameters();
+
+        return oDataService.getJoinResult(sql, parameters);
+    }
+
     public async CreateSpecificationDetails(data: ICreateSpecificationDetailsDto, queryRunner: QueryRunner) {
         data.CreatedAt = new Date();
         data.ActiveStatus = true;
 
-        //TODO: think how to return uid from insert request, why it return undefined?
-        data.uid = new DataUtilService().newUid();
+        data.uid = data.uid ?? new DataUtilService().newUid();
         await queryRunner.manager.insert(SpecificationDetailsEntity, data);
-        return data.uid;
+        return data.uid as string;
+    }
+
+    public async createSpecificationFromStandardJob(
+        data: CreateSpecificationFromStandardJobDto,
+        createdBy: string,
+        queryRunner: QueryRunner,
+    ) {
+        const standardJobRepository = getManager().getRepository(StandardJobs);
+        const dictionariesRepository = new DictionariesRepository();
+
+        const standardJobs = await standardJobRepository.find({
+            where: {
+                uid: In(data.StandardJobUid),
+            },
+            select: ['functionUid', 'description', 'subject', 'function'],
+            relations: ['subItems', 'inspection', 'doneBy', 'materialSuppliedBy'],
+        });
+        const standardJobsItemSource = await dictionariesRepository.getItemSourceByName(ItemName.StandardJob);
+
+        const specifications = standardJobs.map((standardJob) => {
+            const specification = new SpecificationDetailsEntity();
+            specification.uid = new DataUtilService().newUid();
+            specification.FunctionUid = standardJob.functionUid;
+            specification.Function = standardJob.function;
+            specification.Description = standardJob.description;
+            specification.Subject = standardJob.subject;
+            specification.CreatedByUid = createdBy;
+            specification.CreatedAt = new Date();
+            specification.ActiveStatus = true;
+            specification.MaterialSuppliedByUid = standardJob.materialSuppliedBy?.uid!;
+            specification.DoneByUid = standardJob.doneBy?.uid!;
+            specification.ItemSourceUid = standardJobsItemSource.uid;
+            specification.ProjectUid = data.ProjectUid;
+            specification.inspections = standardJob.inspection.map((inspection) => {
+                const item = new LibSurveyCertificateAuthority();
+                item.ID = inspection.ID!;
+
+                return item;
+            }) as LibSurveyCertificateAuthority[];
+            specification.SubItems = standardJob.subItems.map((subItem) => {
+                const item = new SpecificationDetailsSubItemEntity();
+                item.uid = new DataUtilService().newUid();
+                item.subject = subItem.subject;
+
+                return item;
+            });
+            return specification;
+        });
+
+        await queryRunner.manager.insert(SpecificationDetailsEntity, specifications);
+
+        return specifications;
+    }
+
+    public async updateSpecificationTmUid(specificationUid: string, taskManagerUid: string, queryRunner: QueryRunner) {
+        const specification = new SpecificationDetailsEntity();
+        specification.TecTaskManagerUid = taskManagerUid;
+        return queryRunner.manager.update(SpecificationDetailsEntity, specificationUid, specification);
     }
 
     public async CreateSpecificationInspection(data: Array<CreateInspectionsDto>, queryRunner: QueryRunner) {
@@ -242,6 +426,13 @@ export class SpecificationDetailsRepository {
         return queryRunner.manager.update(SpecificationDetailsEntity, data.uid, data);
     }
 
+    public async UpdateSpecificationDetailsByEntity(
+        specificationDetails: SpecificationDetailsEntity,
+        queryRunner: QueryRunner,
+    ) {
+        return queryRunner.manager.update(SpecificationDetailsEntity, specificationDetails.uid, specificationDetails);
+    }
+
     public async DeleteSpecificationDetails(uid: string, queryRunner: QueryRunner) {
         const spec = new SpecificationDetailsEntity();
         spec.ActiveStatus = false;
@@ -279,7 +470,7 @@ export class SpecificationDetailsRepository {
             .innerJoin(J3PrcRfqEntity, 'rfq', 'rq.uid = rfq.requisition_uid')
             .innerJoin(J3PrcCompanyRegistryEntity, 'supplier', 'rfq.supplier_uid = supplier.uid')
             .innerJoin(J3PrcTaskStatusEntity, 'ts', 'rq.uid = ts.objectUid')
-            .where(`sd.uid = '${specificationUid}'`)
+            .where(`sd.uid = :specificationUid`, { specificationUid })
             .andWhere('rq.active_status = 1')
             .getSql();
 
@@ -296,8 +487,8 @@ export class SpecificationDetailsRepository {
         const existingEntities = await queryRunner.manager
             .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
             .select(['sr.specificationUid', 'sr.requisitionUid', 'sr.uid', 'sr.activeStatus'])
-            .where(`sr.specificationUid = '${specificationUid}'`)
-            .andWhere(`sr.requisitionUid IN ('${requisitionUid.join(`','`)}')`)
+            .where(`sr.specificationUid = :specificationUid`, { specificationUid })
+            .andWhere(`sr.requisitionUid IN (:...requisitionUid)`, { requisitionUid })
             .getMany();
 
         const existingRequisitionUid = existingEntities.map((entity) => entity.requisitionUid);
@@ -326,8 +517,76 @@ export class SpecificationDetailsRepository {
             .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
             .update()
             .set({ activeStatus: false })
-            .where(`specification_uid = '${specificationUid}'`)
-            .andWhere(`requisition_uid = '${requisitionUid}'`)
+            .where(`specification_uid = :specificationUid`, { specificationUid })
+            .andWhere(`requisition_uid = :requisitionUid`, { requisitionUid })
             .execute();
     }
+
+    public async TryGetSpecification(specificationUid: string): Promise<SpecificationDetailsEntity | undefined> {
+        const jobOrdersRepository = getManager().getRepository(SpecificationDetailsEntity);
+
+        return jobOrdersRepository.findOne({
+            where: {
+                uid: specificationUid,
+            },
+        });
+    }
+
+    public async findSpecificationsForProjectReport(projectUid: string): Promise<SpecificationForReport[]> {
+        const res = (await getManager()
+            .createQueryBuilder(SpecificationDetailsEntity, 'sd')
+            .where('sd.ProjectUid = :projectUid', { projectUid })
+            .andWhere('sd.active_status = 1')
+            .getMany()) as any[];
+
+        for (const specification of res) {
+            specification.functionTree = await this.getFunctionTree(specification.FunctionUid);
+        }
+        return res;
+    }
+
+    private async fetchFunctionByUID(uid: string): Promise<J3PmsLibFunction | undefined> {
+        return getManager().createQueryBuilder(J3PmsLibFunction, 'pms_fn').where('pms_fn.uid = :uid', { uid }).getOne();
+    }
+
+    private async getFunctionTree(functionUid: string): Promise<{ rootFunction: string; functionPath: string }> {
+        const getParentFunction = async (uid: string): Promise<J3PmsLibFunction | undefined> => {
+            return this.fetchFunctionByUID(uid);
+        };
+
+        let currentFunction = await this.fetchFunctionByUID(functionUid);
+        if (!currentFunction) {
+            throw new Error('Function with the given UID not found');
+        }
+
+        const functionPath = [];
+        let rootFunction = '';
+
+        while (currentFunction.parent_function_uid) {
+            const parentFunction = await getParentFunction(currentFunction.parent_function_uid);
+            if (parentFunction) {
+                functionPath.unshift(parentFunction.name);
+                currentFunction = parentFunction;
+            } else {
+                break;
+            }
+        }
+
+        // The root function is the last 'currentFunction' in the loop
+        rootFunction = currentFunction.name!;
+
+        // Remove the root function name from the path if it exists
+        if (functionPath[0] === rootFunction) {
+            functionPath.shift();
+        }
+
+        return {
+            rootFunction: rootFunction,
+            functionPath: functionPath.join(', '),
+        };
+    }
 }
+
+export type SpecificationForReport = SpecificationDetailsEntity & {
+    functionTree: { rootFunction: string; functionPath: string };
+};

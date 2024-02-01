@@ -43,23 +43,24 @@ export class ProjectEntity {
     })
     ProjectManagerUid: string;
 
-    @Column('datetime2', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'start_date',
     })
-    StartDate: Date;
+    StartDate: Date | null;
 
-    @Column('datetime2', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'end_date',
     })
-    EndDate: Date;
+    EndDate: Date | null;
 
-    @Column('datetime2', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'created_at',
+        default: () => 'getutcdate()()',
     })
-    CreatedAt: Date;
+    CreatedAt: Date | null;
 
     @Column('bit', {
         nullable: true,

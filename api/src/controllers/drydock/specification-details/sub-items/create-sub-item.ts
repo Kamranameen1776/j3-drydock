@@ -1,13 +1,14 @@
 import { AccessRights } from 'j2utils';
+import { Body, Controller, Post } from 'tsoa';
 
 import { CreateSubItemCommand } from '../../../../application-layer/drydock/specification-details/sub-items/CreateSubItemCommand';
 import { type Req, type Res } from '../../../../common/drydock/ts-helpers/req-res';
-import { type CreateOneParams } from '../../../../dal/drydock/specification-details/sub-items/dto/CreateOneParams';
+import { type CreateSubItemParams } from '../../../../dal/drydock/specification-details/sub-items/dto/CreateSubItemParams';
 import { type SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
 /** @private */
-type ReqBody = Omit<CreateOneParams, 'createdBy'>;
+type ReqBody = Omit<CreateSubItemParams, 'createdBy'>;
 
 async function createSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSubItemEntity>): Promise<void> {
     const { UserUID: createdBy }: { UserUID: string } = AccessRights.authorizationDecode(req);
@@ -15,13 +16,25 @@ async function createSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
-        const command = new CreateSubItemCommand();
-
-        await command.ExecuteAsync({
+        const result = await new CreateSubItemController().createSubItem({
             ...req.body,
             createdBy,
         });
+
+        return result;
     });
 }
 
 exports.post = createSubItem;
+
+// @Route('drydock/specification-details/sub-items/create-sub-item')
+export class CreateSubItemController extends Controller {
+    @Post()
+    public async createSubItem(@Body() request: CreateSubItemParams): Promise<SpecificationDetailsSubItemEntity> {
+        const query = new CreateSubItemCommand();
+
+        const result = await query.ExecuteAsync(request);
+
+        return result;
+    }
+}

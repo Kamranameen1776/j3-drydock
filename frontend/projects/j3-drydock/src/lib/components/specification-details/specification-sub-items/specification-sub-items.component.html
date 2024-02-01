@@ -1,23 +1,49 @@
-<jb-layout-widget
-  titleIconClass="icons8-more-details-2"
-  titleText="Sub items"
+<div
+  class="grid-container"
+  awidget-content
+>
+  <jb-grid
+    class="specification-sub-items-grid"
+    *ngIf="gridData"
+    [gridName]="gridData.gridName"
+    [colData]="gridData.columns"
+    [tableDataReq]="gridData.request"
+    [setActions]="gridData.actions"
+    [filterData]="gridData.filters"
+    [filterListsSet]="gridData.filtersLists"
+    [getStyleByContainer]="true"
+    [isDisplayAdvancedSettings]="false"
+    [isDisplayAdvancedFilter]="false"
+    [searchFields]="gridData.searchFields"
+    (action)="actionHandler($any($event))"
+  ></jb-grid>
+</div>
+
+<jb-edit-sub-item-popup
+  *ngIf="selectedSubItem"
+  [isOpen]="!!selectedSubItem"
+  [subItemDetails]="selectedSubItem"
+  [specificationUid]="specificationDetailsInfo.uid"
+  (closeDialog)="closeDialog($event)"
+></jb-edit-sub-item-popup>
+
+<jb-dialog
+  [dialogContent]="deleteSubItemPopupConfig"
+  [(dialogVisible)]="!!selectedDeleteSubItem"
+  *ngIf="selectedDeleteSubItem"
 >
   <div
-    class="grid-container"
-    awidget-content
+    jb-dialog-body
+    class="dialog-body"
   >
-    <jb-grid
-      *ngIf="gridData"
-      [gridName]="gridData.gridName"
-      [colData]="gridData.columns"
-      [tableDataReq]="gridData.request"
-      [setActions]="gridData.actions"
-      [filterData]="gridData.filters"
-      [filterListsSet]="gridData.filtersLists"
-      [getStyleByContainer]="true"
-      [isDisplayAdvancedSettings]="false"
-      [isDisplayAdvancedFilter]="false"
-      [isDisplaySearchField]="false"
-    ></jb-grid>
+    <div class="p-col-12 left">Are you sure want to delete this sub item?</div>
   </div>
-</jb-layout-widget>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      okBtnLabel="Confirm"
+      (ok)="confirmDelete()"
+      (cancel)="cancelDelete()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

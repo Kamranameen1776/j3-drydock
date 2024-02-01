@@ -1,63 +1,92 @@
-<jb-details-layout-figma>
-  <jb-specification-details-header
-    alayout-header
-    *ngIf="specificationDetailsInfo"
-    [specificationDetailsInfo]="specificationDetailsInfo"
-    (saveButtonClick)="save()"
-  ></jb-specification-details-header>
-
-  <ng-container alayout-content>
-    <ng-container [ngSwitch]="currentSectionId">
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.SpecificationDetails">
-        <div #specifications>
-          <div #generalInformation>
-            <jb-specification-general-information
-              *ngIf="specificationDetailsInfo"
-              [specificationDetailsInfo]="specificationDetailsInfo"
-            ></jb-specification-general-information>
-          </div>
-          <div #subItems>
-            <jb-specification-sub-items
-              *ngIf="specificationDetailsInfo"
-              [specificationDetailsInfo]="specificationDetailsInfo"
-            ></jb-specification-sub-items>
-          </div>
-          <div #requisition>
-            <jb-specification-requisitions [specificationUid]="specificationUid"></jb-specification-requisitions>
-          </div>
-        </div>
-      </ng-container>
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.Attachments">
-        <jb-layout-widget
-          *ngIf="currentSectionId === eProjectDetailsSideMenuId.Attachments && attachmentConfig"
-          #attachment
-          id="attachments-section"
-          titleText="Attachments"
-          titleIconClass="icons8-resume-template"
-        >
-          <jb-attachments
-            awidget-content
-            #attachments
-            [attachConfig]="attachmentConfig"
-            [defaultActions]="true"
-          ></jb-attachments>
-          <div awidget-header-buttons>
-            <jb-button
-              type="NoButton"
-              (click)="attachments.dialogOnDemand()"
-              label="Attach file"
-              [disabled]="false"
-            ></jb-button>
-          </div>
-        </jb-layout-widget>
-      </ng-container>
-    </ng-container>
-  </ng-container>
-  <ng-container
-    style="width: 400px"
-    alayout-aside
+<jb-task-manager-details
+  *ngIf="sectionsConfig"
+  [topSectionConfig]="topSectionConfig"
+  [sectionsConfig]="sectionsConfig"
+  [tmDetails]="tmDetails"
+  [moduleCode]="moduleCode"
+  [functionCode]="functionCode"
+  [hideAuditTrail]="true"
+  [hideAttachments]="false"
+  [attachmentRights]="accessRights.attachments"
+  [showExport]="false"
+  [isViewRight]="canView"
+  [templateRefObj]="{
+    specificationDetails: specificationsDetailsTab,
+    generalInformation: generalInformation,
+    subItems: subItems,
+    pmsJobs: pmsJobs,
+    findings: findings
+  }"
+  [slideMenus]="menu"
+  [ignoreAccessRights]="true"
+  (onWorkflowActions)="onWorkflowAction($event)"
+>
+  <ng-template
+    #specificationsDetailsTab
+    let-section
   >
-    <jb-discussion-feed></jb-discussion-feed>
-  </ng-container>
-</jb-details-layout-figma>
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div
+        #generalInformation
+        *ngSwitchCase="eSideMenuId.GeneralInformation"
+      >
+        <jb-specification-general-information
+          #SpecificationGeneralInformationComponent
+          *ngIf="specificationDetailsInfo && accessRights.generalInformation.view"
+          [specificationDetailsInfo]="specificationDetailsInfo"
+          (formValue)="dispatchGeneralInformationForm($event)"
+        ></jb-specification-general-information>
+      </div>
+      <div
+        #subItems
+        *ngSwitchCase="eSideMenuId.SubItems"
+      >
+        <jb-specification-sub-items
+          #SpecificationSubItemsComponent
+          *ngIf="specificationDetailsInfo && accessRights.subItems.view"
+          [specificationDetailsInfo]="specificationDetailsInfo"
+        ></jb-specification-sub-items>
+      </div>
+      <div
+        #pmsJobs
+        *ngSwitchCase="eSideMenuId.PMSJobs"
+      >
+        <jb-linked-pms-jobs-findings
+          #PmsJobsComponent
+          *ngIf="specificationDetailsInfo && accessRights.pmsJobs.view"
+          [validTaskType]="pmsWlType.PmsJob"
+          [specificationDetailsInfo]="specificationDetailsInfo"
+          (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.PMSJobs)"
+        ></jb-linked-pms-jobs-findings>
+      </div>
+      <div
+        #findings
+        *ngSwitchCase="eSideMenuId.Findings"
+      >
+        <jb-linked-pms-jobs-findings
+          #FindingsComponent
+          *ngIf="specificationDetailsInfo && accessRights.findings.view"
+          [validTaskType]="pmsWlType.Findings"
+          [specificationDetailsInfo]="specificationDetailsInfo"
+          (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.Findings)"
+        ></jb-linked-pms-jobs-findings>
+      </div>
+    </ng-container>
+  </ng-template>
+</jb-task-manager-details>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>
+
+<jb-edit-sub-item-popup
+  *ngIf="showEditSubItem"
+  [isOpen]="!!showEditSubItem"
+  [subItemDetails]="subItemDetails"
+  [specificationUid]="specificationDetailsInfo.uid"
+  (closeDialog)="closeDialog($event)"
+></jb-edit-sub-item-popup>
+
 <jb-growl [content]="growlMessage$ | async"></jb-growl>

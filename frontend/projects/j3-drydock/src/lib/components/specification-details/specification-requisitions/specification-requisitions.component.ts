@@ -4,6 +4,7 @@ import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import {
   Column,
   eCrud,
+  eEntities,
   eFieldControlType,
   eGridRefreshType,
   eGridRowActions,
@@ -15,10 +16,16 @@ import {
   ShowSettings,
   WebApiRequest
 } from 'jibe-components';
-import { SpecificationRequisitionsDisplayTexts, SpecificationRequisitionsFieldNames } from '../enum/specification-requisitions.enum';
+
 import { GridAction } from 'jibe-components/lib/grid/models/grid-action.model';
 import { SpecificationRequisition } from '../../../models/interfaces/specification-requisition';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
+import {
+  SpecificationRequisitionsDisplayTexts,
+  SpecificationRequisitionsFieldNames
+} from '../../../models/enums/specification-requisitions.enum';
+import { eSpecificationAccessActions } from '../../../models/enums/access-actions.enum';
+import { eApiBaseDryDockAPI } from '../../../models/constants/constants';
 
 @Component({
   selector: 'jb-specification-requisitions',
@@ -171,21 +178,22 @@ export class SpecificationRequisitionsComponent extends UnsubscribeComponent imp
   private getGridRowActions() {
     const actions: GridRowActions[] = [];
 
-    actions.push({
-      name: eGridRowActions.Delete,
-      gridName: this.gridData.gridName
-    });
+    if (this.specificationDetailsService.hasAccess(eSpecificationAccessActions.editRequisition)) {
+      actions.push({
+        name: eGridRowActions.Delete,
+        gridName: this.gridData.gridName
+      });
+    }
 
     return actions;
   }
 
   private getApiRequest(): WebApiRequest {
     return {
-      // apiBase: eApiBase.DryDockApi,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/get-specification-requisitions',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: { uid: this.specificationUid }
     };
   }

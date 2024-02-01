@@ -1,0 +1,17 @@
+.dialog-body {
+  display: flex;
+
+  .tree {
+    flex: 1;
+    jb-tree {
+      width: 260px;
+      min-width: 260px;
+      max-width: 260px;
+      display: block;
+    }
+  }
+
+  .grid {
+    flex: 3;
+  }
+}

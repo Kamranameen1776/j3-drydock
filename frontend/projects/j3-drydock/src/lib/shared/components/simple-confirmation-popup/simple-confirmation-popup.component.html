@@ -1,0 +1,16 @@
+<jb-dialog
+  [dialogContent]="popupConfig"
+  [(dialogVisible)]="isOpen"
+>
+  <div jb-dialog-body>
+    <ng-content></ng-content>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [okBtnLabel]="okLabel"
+      (ok)="onClosePopup(true)"
+      (cancel)="onClosePopup(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

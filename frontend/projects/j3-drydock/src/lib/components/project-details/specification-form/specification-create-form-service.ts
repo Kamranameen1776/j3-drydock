@@ -6,12 +6,18 @@ import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import { BehaviorSubject } from 'rxjs';
 import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
 import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-main.enum';
+import { SpecificationGridService } from '../../../services/project/specification.service';
+import { EditorConfig } from '../../../models/interfaces/EditorConfig';
+import { eFunction } from '../../../models/enums/function.enum';
+import { eModule } from '../../../models/enums/module.enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpecificationCreateFormService extends FormServiceBase {
   readonly formId = 'specificationFormId';
+
+  readonly editors = 'editors';
 
   functionsFlatTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
 
@@ -41,7 +47,7 @@ export class SpecificationCreateFormService extends FormServiceBase {
             gridColEnd: 1,
             inputWithDlgConfig: {
               inputLabelKey: 'jb_value_label',
-              dlgConfiguration: { appendTo: '' }
+              dlgConfiguration: { appendTo: '', dialogHeader: 'Functions' }
             }
           },
           Subject: {
@@ -58,12 +64,12 @@ export class SpecificationCreateFormService extends FormServiceBase {
           },
           Inspections: {
             type: eFieldControlType.MultiSelect,
-            label: 'Inspections',
+            label: 'Inspections/ Survey',
             sectionID: this.formId,
             enabled: true,
             validatorRequired: false,
-            gridRowStart: 3,
-            gridRowEnd: 4,
+            gridRowStart: 4,
+            gridRowEnd: 5,
             gridColStart: 1,
             gridColEnd: 1,
             listRequest: {
@@ -78,8 +84,8 @@ export class SpecificationCreateFormService extends FormServiceBase {
             sectionID: this.formId,
             enabled: true,
             validatorRequired: false,
-            gridRowStart: 4,
-            gridRowEnd: 5,
+            gridRowStart: 5,
+            gridRowEnd: 6,
             gridColStart: 1,
             gridColEnd: 1,
             listRequest: {
@@ -87,18 +93,6 @@ export class SpecificationCreateFormService extends FormServiceBase {
               valueKey: 'uid',
               webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.DoneBy)
             }
-          },
-          Description: {
-            type: eFieldControlType.TextAreaType,
-            label: 'Description',
-            sectionID: this.formId,
-            enabled: true,
-            validatorRequired: true,
-            maxTextLength: 1000,
-            gridRowStart: 1,
-            gridRowEnd: 5,
-            gridColStart: 2,
-            gridColEnd: 12
           }
         }
       }
@@ -119,7 +113,41 @@ export class SpecificationCreateFormService extends FormServiceBase {
     }
   };
 
-  constructor(private standardJobsService: StandardJobsService) {
+  constructor(
+    private standardJobsService: StandardJobsService,
+    private specifications: SpecificationGridService
+  ) {
     super();
+  }
+
+  getDescriptionEditorConfig(): EditorConfig {
+    return {
+      id: 'description',
+      maxLength: 10000,
+      placeholder: '',
+      crtlName: 'description',
+      moduleCode: eModule.Project,
+      functionCode: eFunction.SpecificationDetails,
+      inlineMode: {
+        enable: false,
+        onSelection: true
+      },
+      tools: {
+        items: [
+          'Bold',
+          'Italic',
+          'Underline',
+          'StrikeThrough',
+          'FontName',
+          'FontSize',
+          'FontColor',
+          'Formats',
+          'Alignments',
+          'Image',
+          'ClearFormat',
+          'FullScreen'
+        ]
+      }
+    };
   }
 }

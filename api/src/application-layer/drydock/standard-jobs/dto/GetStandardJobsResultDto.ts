@@ -1,5 +1,5 @@
 import { ODataResult } from '../../../../shared/interfaces';
-import { HtmlCell } from '../../../../shared/interfaces/html-cell.interface';
+import { HtmlCell } from '../../../../shared/interfaces';
 import { GetStandardJobSubItemsResultDto } from './GetStandardJobSubItemsResultDto';
 
 export interface GetStandardJobsQueryData {
@@ -8,6 +8,7 @@ export interface GetStandardJobsQueryData {
     function: string;
     functionUid: string;
     code: string;
+    number: number;
     scope: string;
     category?: string;
     categoryUid: string;
@@ -26,6 +27,8 @@ export interface GetStandardJobsQueryData {
     subItemCode: string;
     subItemSubject: string;
     subItemDescription: string;
+    hasInspection: string;
+    hasSubItems: string;
 }
 
 export interface GetStandardJobsResult
@@ -44,6 +47,7 @@ export interface GetStandardJobsResult
     vesselTypeId: number[];
     subItems: GetStandardJobSubItemsResultDto[];
     hasSubItems: string;
+    hasInspection: string;
 }
 
 export type GetStandardJobsQueryResult = ODataResult<GetStandardJobsQueryData>;

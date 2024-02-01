@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormModel, FormValues } from 'jibe-components';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { StandardJobUpsertFormService } from './standard-job-upsert-form.service';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { startWith, takeUntil } from 'rxjs/operators';
 import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-main.enum';
+import { EditorConfig } from '../../../models/interfaces/EditorConfig';
 
 @Component({
   selector: 'jb-upsert-standard-job-form',
@@ -20,6 +21,7 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
   @ViewChild('treeTemplate', { static: true }) treeTemplate: TemplateRef<unknown>;
 
   @Output() formValid = new EventEmitter<boolean>();
+
   // can be used from parent to get formvalue when submitting
   public formGroup: FormGroup;
 
@@ -33,6 +35,15 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
 
   functionsFlatTree$ = this.popupFormService.functionsFlatTree$;
 
+  editorsFormGroup: FormGroup = new FormGroup({
+    description: new FormControl('', Validators.required),
+    scope: new FormControl('')
+  });
+
+  descriptionEditorConfig: EditorConfig;
+
+  scopeEditorConfig: EditorConfig;
+
   constructor(private popupFormService: StandardJobUpsertFormService) {
     super();
   }
@@ -40,14 +51,27 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
   ngOnInit(): void {
     this.initFormValues();
     this.setFunctionConfig();
+
+    this.descriptionEditorConfig = this.popupFormService.getDescriptionEditorConfig();
+    this.scopeEditorConfig = this.popupFormService.getScopeEditorConfig();
   }
 
   dispatchForm(event: FormGroup) {
     this.formGroup = event;
 
+    this.setEditorsForm();
+
     this.initFormState();
     this.listenFormValid();
     this.listenVesselSpecificChanges();
+  }
+
+  updateDescriptionEditorCtrlValue(event) {
+    this.editorsFormGroup.get('description').setValue(event.value);
+  }
+
+  updateScopeEditorCtrlValue(event) {
+    this.editorsFormGroup.get('scope').setValue(event.value);
   }
 
   private initFormState() {
@@ -60,8 +84,8 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
   private initFormValues() {
     this.formValues = this.popupFormService.formValues;
 
+    const values = this.formValues.values[this.popupFormService.formId];
     if (this.isEditing) {
-      const values = this.formValues.values[this.popupFormService.formId];
       Object.assign(values, this.item, {
         subject: this.item.subject?.value ?? '',
         vesselTypeSpecific: this.item.vesselTypeSpecific ? 1 : 0,
@@ -103,5 +127,16 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
       .subscribe((value) => {
         this.setFieldEnabledAndRequired(eStandardJobsMainFields.VesselTypeID, !!value);
       });
+  }
+
+  private setEditorsForm() {
+    if (this.item) {
+      this.editorsFormGroup.setValue({
+        description: this.item.description,
+        scope: this.item.scope
+      });
+    }
+
+    this.formGroup.addControl(this.popupFormService.editors, this.editorsFormGroup);
   }
 }

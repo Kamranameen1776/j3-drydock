@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { eGridRowActions, FormModel, GridAction, GridComponent, IJbDialog } from 'jibe-components';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { eGridEvents, eGridRowActions, FormModel, FormValues, GridAction, GridComponent, GridService, IJbDialog } from 'jibe-components';
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { StatementOfFactsGridService } from './StatementOfFactsGridService';
 import { FormGroup } from '@angular/forms';
@@ -10,6 +10,10 @@ import { getSmallPopup } from '../../../../models/constants/popup';
 import { StatementOfFactsService } from '../../../../services/project-monitoring/statement-of-facts/StatementOfFactsService';
 import { StatementOfFactsGridOdataKeys } from '../../../../models/enums/StatementOfFactsGridOdataKeys';
 import { IDeleteStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/IDeleteStatementOfFactDto';
+import { ICreateStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/ICreateStatementOfFactDto';
+import { IUpdateStatementOfFactDto } from '../../../../services/project-monitoring/statement-of-facts/IUpdateStatementOfFactDto';
+import { UTCAsLocal, localAsUTCFromJbString } from '../../../../utils/date';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'jb-statement-of-facts',
@@ -17,29 +21,62 @@ import { IDeleteStatementOfFactDto } from '../../../../services/project-monitori
   styleUrls: ['./statement-of-facts.component.scss'],
   providers: [StatementOfFactsGridService]
 })
-export class StatementOfFactsComponent extends UnsubscribeComponent implements OnInit {
+export class StatementOfFactsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @Input() projectId: string;
 
-  @ViewChild('statementOfFactsGrid')
-  statementOfFactsGrid: GridComponent;
+  @ViewChild('dateAndTimeTemplate', { static: true }) dateAndTimeTemplate: TemplateRef<unknown>;
 
-  public gridInputs: GridInputsWithRequest;
+  @ViewChild('statementOfFactsGrid') statementOfFactsGrid: GridComponent;
 
-  public deleteBtnLabel = 'Delete';
+  gridInputs: GridInputsWithRequest;
 
-  public deleteDialogVisible = false;
+  readonly deleteBtnLabel = 'Delete';
+
+  readonly createBtnLabel = 'Create';
+
+  readonly updateBtnLabel = 'Update';
+
+  readonly dateTimeFormat = this.statementOfFactsGridService.dateTimeFormat;
+
+  deleteDialogVisible = false;
+
+  createDialogVisible = false;
+
+  updateDialogVisible = false;
 
   deleteStatementOfFactDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Delete Statement of Fact' };
 
+  createStatementOfFactDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Add Fact' };
+
+  updateStatementOfFactDialog: IJbDialog = { ...getSmallPopup(), dialogHeader: 'Update Fact' };
+
   deleteStatementOfFactForm: FormModel;
+
+  createStatementOfFactForm: FormModel;
+
+  updateStatementOfFactForm: FormModel;
+
+  updateStatementOfFactFormValues: FormValues;
 
   deleteStatementOfFactFormGroup: FormGroup;
 
+  createStatementOfFactFormGroup: FormGroup;
+
+  updateStatementOfFactFormGroup: FormGroup;
+
   deleteStatementOfFactButtonDisabled = false;
+
+  createStatementOfFactButtonDisabled = false;
+
+  updateStatementOfFactButtonDisabled = false;
+
+  private createFormChangesSub: Subscription;
+  private updateFormChangesSub: Subscription;
 
   constructor(
     private statementOfFactsGridService: StatementOfFactsGridService,
-    private statementOfFactsService: StatementOfFactsService
+    private statementOfFactsService: StatementOfFactsService,
+    private gridService: GridService
   ) {
     super();
   }
@@ -48,39 +85,88 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
     this.setGridInputs();
 
     this.deleteStatementOfFactForm = this.statementOfFactsGridService.getDeleteStatementOfFactForm();
+
+    this.createStatementOfFactForm = this.statementOfFactsGridService.getCreateStatementOfFactForm();
+
+    this.updateStatementOfFactForm = this.statementOfFactsGridService.getUpdateStatementOfFactForm();
   }
 
-  public onGridAction({ type }: GridAction<string, string>, statementOfFact: IStatementOfFactDto): void {
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.createFormChangesSub?.unsubscribe();
+    this.updateFormChangesSub?.unsubscribe();
+  }
+
+  onGridAction({ type }: GridAction<string, string>, statementOfFact: IStatementOfFactDto): void {
     if (type === eGridRowActions.Delete) {
+      if (!statementOfFact) {
+        throw new Error('StatementOfFact is null');
+      }
+
       this.showDeleteDialog();
       this.deleteStatementOfFactFormGroup.value.StatementOfFact = statementOfFact;
     } else if (type === eGridRowActions.Edit) {
       if (!statementOfFact) {
         throw new Error('StatementOfFact is null');
       }
-    } else if (type === this.gridInputs.gridButton.label) {
-      this.showCreateNewDialog();
+
+      this.updateStatementOfFactFormValues = {
+        keyID: this.statementOfFactsGridService.updateStatementOfFactFormId,
+        values: {
+          [this.statementOfFactsGridService.updateStatementOfFactFormId]: {
+            Fact: statementOfFact.Fact,
+            DateTime: UTCAsLocal(statementOfFact.DateAndTime),
+            StatementOfFactUid: statementOfFact.StatementOfFactsUid
+          }
+        }
+      };
+
+      this.showUpdateDialog();
     }
   }
-
-  public showCreateNewDialog() {
-    // TODO: implement
+  // public shows that it is used from parent of this component
+  public showCreateDialog(value = true) {
+    this.createDialogVisible = value;
   }
 
-  public showDeleteDialog(value = true) {
+  showUpdateDialog(value = true) {
+    this.updateDialogVisible = value;
+  }
+
+  showDeleteDialog(value = true) {
     this.deleteStatementOfFactFormGroup.reset();
     this.deleteDialogVisible = value;
   }
 
-  public onMatrixRequestChanged() {
+  onMatrixRequestChanged() {
     this.statementOfFactsGrid.odata.filter.eq(StatementOfFactsGridOdataKeys.ProjectUid, this.projectId);
   }
 
-  public initDeleteStatementOfFactFormGroup(action: FormGroup): void {
+  initDeleteStatementOfFactFormGroup(action: FormGroup): void {
     this.deleteStatementOfFactFormGroup = action;
   }
 
-  public deleteStatementOfFact() {
+  initCreateStatementOfFactFormGroup(action: FormGroup): void {
+    this.createStatementOfFactFormGroup = action;
+
+    this.createFormChangesSub?.unsubscribe();
+
+    this.createFormChangesSub = this.createStatementOfFactFormGroup.valueChanges.subscribe(() => {
+      this.createStatementOfFactButtonDisabled = !this.createStatementOfFactFormGroup.valid;
+    });
+  }
+
+  initUpdateStatementOfFactFormGroup(action: FormGroup): void {
+    this.updateStatementOfFactFormGroup = action;
+
+    this.updateFormChangesSub?.unsubscribe();
+
+    this.updateFormChangesSub = this.updateStatementOfFactFormGroup.valueChanges.subscribe(() => {
+      this.updateStatementOfFactButtonDisabled = !this.updateStatementOfFactFormGroup.valid;
+    });
+  }
+
+  deleteStatementOfFact() {
     this.deleteStatementOfFactButtonDisabled = true;
 
     const data: IDeleteStatementOfFactDto = {
@@ -93,13 +179,60 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
       .subscribe(() => {
         this.deleteStatementOfFactButtonDisabled = false;
         this.showDeleteDialog(false);
-        this.statementOfFactsGrid.fetchMatrixData();
+        this.gridService.refreshGrid(eGridEvents.Table, this.statementOfFactsGridService.gridName);
+      });
+  }
+
+  createStatementOfFact() {
+    this.createStatementOfFactButtonDisabled = true;
+
+    const dateTimeString = this.createStatementOfFactFormGroup.value.statementOfFactCreate.DateTime;
+
+    const dateTime = localAsUTCFromJbString(dateTimeString, this.dateTimeFormat);
+
+    const data: ICreateStatementOfFactDto = {
+      ProjectUid: this.projectId,
+      Fact: this.createStatementOfFactFormGroup.value.statementOfFactCreate.Fact,
+      DateTime: dateTime
+    };
+
+    this.statementOfFactsService
+      .createStatementOfFact(data)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.createStatementOfFactButtonDisabled = false;
+        this.showCreateDialog(false);
+        this.gridService.refreshGrid(eGridEvents.Table, this.statementOfFactsGridService.gridName);
+      });
+  }
+
+  updateStatementOfFact() {
+    this.updateStatementOfFactButtonDisabled = true;
+
+    const dateTimeString = this.updateStatementOfFactFormGroup.value.statementOfFactUpdate.DateTime;
+
+    const dateTime = localAsUTCFromJbString(dateTimeString, this.dateTimeFormat);
+
+    const data: IUpdateStatementOfFactDto = {
+      StatementOfFactUid: this.updateStatementOfFactFormGroup.value.statementOfFactUpdate.StatementOfFactUid,
+      Fact: this.updateStatementOfFactFormGroup.value.statementOfFactUpdate.Fact,
+      DateTime: dateTime
+    };
+
+    this.statementOfFactsService
+      .updateStatementOfFact(data)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.updateStatementOfFactButtonDisabled = false;
+        this.showUpdateDialog(false);
+        this.gridService.refreshGrid(eGridEvents.Table, this.statementOfFactsGridService.gridName);
       });
   }
 
   private setGridInputs() {
     this.gridInputs = this.statementOfFactsGridService.getGridInputs();
     this.setGridActions();
+    this.setCellTemplate(this.dateAndTimeTemplate, 'DateAndTime');
   }
 
   private setGridActions() {
@@ -114,5 +247,13 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
       name: eGridRowActions.Delete,
       label: 'Delete'
     });
+  }
+
+  private setCellTemplate(template: TemplateRef<unknown>, fieldName: string) {
+    const col = this.gridInputs.columns.find((col) => col.FieldName === fieldName);
+    if (!col) {
+      return;
+    }
+    col.cellTemplate = template;
   }
 }

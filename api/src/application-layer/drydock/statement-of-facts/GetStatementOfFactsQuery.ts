@@ -1,14 +1,12 @@
-import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Request } from 'express';
-import { ODataResult } from 'shared/interfaces';
 
 import { IStatementOfFactsDto } from '../../../dal/drydock/statement-of-facts/IStatementOfFactsDto';
 import { StatementOfFactsRepository } from '../../../dal/drydock/statement-of-facts/StatementOfFactsRepository';
+import { ODataResult } from '../../../shared/interfaces/odata-result.interface';
+import { OdataRequest } from '../core/cqrs/odata/OdataRequest';
 import { Query } from '../core/cqrs/Query';
-import { GetStatementOfFactsDto } from './dtos/GetStatementOfFactsDto';
 
-export class GetStatementOfFactsQuery extends Query<Request, ODataResult<IStatementOfFactsDto>> {
+export class GetStatementOfFactsQuery extends Query<OdataRequest, ODataResult<IStatementOfFactsDto>> {
     repository: StatementOfFactsRepository;
 
     constructor() {
@@ -20,12 +18,11 @@ export class GetStatementOfFactsQuery extends Query<Request, ODataResult<IStatem
         return;
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
+    protected async ValidationHandlerAsync(request: OdataRequest): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
         }
-        const createProjectDto: GetStatementOfFactsDto = plainToClass(GetStatementOfFactsDto, request.body);
-        const result = await validate(createProjectDto);
+        const result = await validate(request.odata);
         if (result.length) {
             throw result;
         }
@@ -34,8 +31,8 @@ export class GetStatementOfFactsQuery extends Query<Request, ODataResult<IStatem
     /**
      * @returns All specification details
      */
-    protected async MainHandlerAsync(request: Request): Promise<ODataResult<IStatementOfFactsDto>> {
-        const data = await this.repository.GetStatementOfFacts(request);
+    protected async MainHandlerAsync(request: OdataRequest): Promise<ODataResult<IStatementOfFactsDto>> {
+        const data = await this.repository.GetStatementOfFacts(request.request);
 
         return data;
     }

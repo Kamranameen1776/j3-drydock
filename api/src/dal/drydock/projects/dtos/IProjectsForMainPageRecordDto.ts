@@ -15,6 +15,11 @@ export interface IProjectsForMainPageRecordDto {
 
     Subject: string;
 
+    ShipYard: string;
+    ShipYardUid: string;
+
+    Specification: string;
+
     ProjectManager: string;
     ProjectManagerUid?: string;
 

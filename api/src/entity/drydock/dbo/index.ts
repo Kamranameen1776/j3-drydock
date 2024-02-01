@@ -9,5 +9,4 @@ export * from './PriorityEntity';
 export * from './TECLIBWorklistTypeEntity';
 export * from './TECTaskManagerEntity';
 export * from './TmDdLibDoneByEntity';
-export * from './TmDdLibItemCategoryEntity';
 export * from './TmDdLibMaterialSuppliedByEntity';
