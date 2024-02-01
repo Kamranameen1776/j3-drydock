@@ -12,7 +12,7 @@ async function deleteStandardJobs(req: express.Request, res: express.Response) {
     const middlewareHandler = new MiddlewareHandler('standard_jobs');
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: express.Request) => {
-        const result = await new DeleteStandardJobsController().createStandardJobs(
+        const result = await new DeleteStandardJobsController().deleteStandardJobs(
             request.query.uid as string,
             request,
         );
@@ -26,7 +26,7 @@ exports.put = deleteStandardJobs;
 @Route('drydock/standard-jobs/delete-standard-jobs')
 export class DeleteStandardJobsController extends Controller {
     @Put()
-    public async createStandardJobs(@Query() uid: string, @Request() request: express.Request): Promise<UpdateResult> {
+    public async deleteStandardJobs(@Query() uid: string, @Request() request: express.Request): Promise<UpdateResult> {
         const authUser = AccessRights.authorizationDecode(request) as UserFromToken;
 
         const dto: DeleteStandardJobsRequestDto = {
