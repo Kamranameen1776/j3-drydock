@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class updateLengthForVarchars1705547566103 implements MigrationInterface {
     schemaName = 'dry_dock';
@@ -28,7 +29,7 @@ export class updateLengthForVarchars1705547566103 implements MigrationInterface 
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.moduleName,
                 `Update length for varchars`,

@@ -163,10 +163,15 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   }
 
   public navigateToSpecificationDetails(specification: KeyValuePair<string, string>) {
-    this.newTabService.navigate(['../../specification-details', specification.Key], {
-      relativeTo: this.activatedRoute,
-      queryParams: { pageTitle: `Specification ${specification.Value}` }
-    });
+    const tab_title = `Specification ${specification.Value}`;
+    this.newTabService.navigate(
+      ['../../specification-details', specification.Key],
+      {
+        relativeTo: this.activatedRoute,
+        queryParams: { tab_title }
+      },
+      tab_title
+    );
   }
 
   private reset() {

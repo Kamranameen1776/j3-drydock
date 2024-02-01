@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from "j2utils";
 import { MigrationInterface, QueryRunner } from "typeorm";
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 /** @private */
 const enum Status {
@@ -80,7 +81,7 @@ export class CreateFunctionCodeForSpecificationDetails1701262696255 implements M
 
             await this.log(Status.Success, `Created function code '${this.functionCode}' in module '${this.moduleCode}'`);
         } catch (error) {
-            await this.log(Status.Error, JSON.stringify(error));
+            await this.log(Status.Error, errorLikeToString(error));
         }
     }
 

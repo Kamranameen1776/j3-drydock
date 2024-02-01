@@ -32,7 +32,7 @@ export interface SpecificationCostUpdate extends HtmlRow {
     utilizedCost?: string;
 }
 
-export interface SpecificationSubItemCostUpdate {
+export interface SpecificationSubItemCostUpdate extends HtmlRow {
     specificationUid?: string;
     subItemUid: string;
     subItemSubject: string;

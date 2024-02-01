@@ -1,0 +1,32 @@
+{
+    "basePath": "/v1",
+    "entryFile": "src/index.ts",
+    "controllerPathGlobs": ["src/controllers/**/*.ts"],
+    "uncomment-routes": {
+      "routesDir": "build"
+    },
+    "spec": {
+      "outputDirectory": "./build",
+      "specVersion": 3,
+      "rootSecurity": [
+        {
+          "GlobalToken": []
+        },
+        {
+          "X-Api-Key": []
+        }
+      ],
+      "securityDefinitions": {
+        "GlobalToken": {
+          "type": "apiKey",
+          "name": "Authorization",
+          "in": "header"
+        },
+        "X-Api-Key": {
+          "type": "apiKey",
+          "name": "session",
+          "in": "query"
+        }
+      }
+    }
+  }

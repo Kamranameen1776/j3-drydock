@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class DefineSpecificationDetailsSubItem1700214104827 implements MigrationInterface {
     public readonly name = this.constructor.name;
@@ -72,10 +73,8 @@ export class DefineSpecificationDetailsSubItem1700214104827 implements Migration
             `);
 
             await MigrationUtilsService.migrationLog(this.name, '', 'S', 'dry_dock', this.description);
-        } catch (caught) {
-            const error = JSON.stringify(caught);
-
-            await MigrationUtilsService.migrationLog(this.name, error, 'E', 'dry_dock', this.description, true);
+        } catch (error) {
+            await MigrationUtilsService.migrationLog(this.name, errorLikeToString(error), 'E', 'dry_dock', this.description, true);
         }
     }
 

@@ -12,6 +12,7 @@ import { getSmallPopup } from '../../../models/constants/popup';
 import { ActivatedRoute } from '@angular/router';
 import { NewTabService } from '../../../services/new-tab-service';
 import { statusProgressBarBackground } from '../../../shared/status-css.json';
+import { GrowlMessageService } from '../../../services/growl-message.service';
 
 @Component({
   selector: 'jb-specifications',
@@ -62,7 +63,8 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     private functionsService: FunctionsService,
     private gridService: GridService,
     private newTabService: NewTabService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private growlService: GrowlMessageService
   ) {
     super();
   }
@@ -99,6 +101,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
     if (hasSaved) {
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+      this.growlService.setSuccessMessage('Specification created successfully');
     }
   }
 
@@ -166,9 +169,14 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   }
 
   private openSpecificationPage(uid: string, code: string) {
-    this.newTabService.navigate(['../../specification-details', uid], {
-      relativeTo: this.activatedRoute,
-      queryParams: { pageTitle: `Specification ${code}` }
-    });
+    const tab_title = `Specification ${code}`;
+    this.newTabService.navigate(
+      ['../../specification-details', uid],
+      {
+        relativeTo: this.activatedRoute,
+        queryParams: { tab_title }
+      },
+      tab_title
+    );
   }
 }

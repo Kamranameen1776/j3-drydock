@@ -611,7 +611,9 @@ export class InvoiceGeneratorService {
         obj.requestedBy = data[0].ManagementCompany;
         obj.yard = data[0].YardName;
         obj.project = data[0].Subject;
-        obj.period = `${this.formatDateString(data[0].StartDate)} - ${this.formatDateString(data[0].EndDate)}`;
+        obj.period = `${data[0].StartDate ? this.formatDateString(data[0].StartDate) : 'N/A'} - ${
+            data[0].EndDate ? this.formatDateString(data[0].EndDate) : 'N/A'
+        }`;
         obj.functions = [];
         for (let i = 0; i < data.length; i++) {
             const row = data[i];

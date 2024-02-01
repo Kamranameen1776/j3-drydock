@@ -176,7 +176,7 @@ export class StandardJobsRepository {
 
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         standardJob.created_by = createdBy;
-        standardJob.uid = new DataUtilService().newUid();
+        standardJob.uid = data.uid ?? new DataUtilService().newUid();
 
         const entity: StandardJobs = queryRunner.manager.create(StandardJobs, standardJob);
 
@@ -234,7 +234,7 @@ export class StandardJobsRepository {
         delete standardJob.code;
 
         const entity: StandardJobs = queryRunner.manager.create(StandardJobs, updateStandardJobData);
-        entity.uid = uid;
+        entity.uid = uid as string;
 
         const result = await queryRunner.manager.save(StandardJobs, entity);
 

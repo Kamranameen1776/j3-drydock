@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class updatingAttachPrefixOfDryDockSpecAndStandardJobs1703248160022 implements MigrationInterface {
     public className = this.constructor.name;
@@ -15,11 +16,11 @@ export class updatingAttachPrefixOfDryDockSpecAndStandardJobs1703248160022 imple
             (N'9C79EF57-A1C6-40B4-A343-968976325150', 'projstandard')
             )
             AS SOURCE ([Function_UID], [attach_prefix])
-        
+
             ON TARGET.[Function_UID] = SOURCE.[Function_UID]
-        
-            WHEN MATCHED THEN 
-        
+
+            WHEN MATCHED THEN
+
             UPDATE SET [Modified_By] = 1, [Date_Of_Modification] = GETDATE(), TARGET.[attach_prefix] = SOURCE.[attach_prefix];
             `);
 
@@ -34,7 +35,7 @@ export class updatingAttachPrefixOfDryDockSpecAndStandardJobs1703248160022 imple
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'updating attach prefix',

@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class addSpecificationSubItemFindingTable1702982902772 implements MigrationInterface {
     public className = this.constructor.name;
@@ -41,7 +42,7 @@ export class addSpecificationSubItemFindingTable1702982902772 implements Migrati
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.schemaName,
                 this.description,
@@ -50,32 +51,5 @@ export class addSpecificationSubItemFindingTable1702982902772 implements Migrati
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF EXISTS (Select * from INFORMATION_SCHEMA.TABLES
-                where TABLE_NAME = '${this.tableName}' AND TABLE_SCHEMA = '${this.schemaName}')
-            BEGIN
-            DROP TABLE [${this.schemaName}].[${this.tableName}]
-            END
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                '',
-                'S',
-                'dry_dock',
-                `${this.description} (Down migration)`,
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                `${this.description} (Down migration)`,
-                true,
-            );
-        }
-    }
+    public async down(queryRunner: QueryRunner): Promise<void> {}
 }

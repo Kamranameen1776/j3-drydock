@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from "j2utils";
 import { MigrationInterface, QueryRunner } from "typeorm";
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 /** @private */
 const enum Location {
@@ -223,7 +224,7 @@ export class DefineSpecificationDetailsAccessRightGroups1702371560616 implements
 
             await this.log(Status.Success, 'Defined access right groups for Specification Details');
         } catch (error) {
-            await this.log(Status.Error, JSON.stringify(error));
+            await this.log(Status.Error, errorLikeToString(error));
         }
     }
 

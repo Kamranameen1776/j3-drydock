@@ -115,6 +115,10 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async getBySpecificationDetailsUid(specificationDetailsUid: string[]) {
+        if (specificationDetailsUid.length === 0) {
+            return [];
+        }
+
         return getManager().find(SpecificationDetailsSubItemEntity, {
             where: {
                 specificationDetails: {
@@ -378,7 +382,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     protected async assertAllUnitTypesExistByUids(unitTypeUids: string[], queryRunner: QueryRunner): Promise<void> {
-        unitTypeUids = unitTypeUids.filter((uid) => uid !== undefined);
+        unitTypeUids = unitTypeUids.filter((uid) => !!uid);
         if (unitTypeUids.length === 0) {
             return;
         }

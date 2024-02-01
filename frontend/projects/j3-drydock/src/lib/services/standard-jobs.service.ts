@@ -73,7 +73,6 @@ export class StandardJobsService {
       default: true,
       FieldID: 1,
       DisplayCode: 'displayName',
-      type: 'multiselect',
       Active_Status: true,
       Active_Status_Config_Filter: true,
       includeFilter: true,
@@ -86,7 +85,6 @@ export class StandardJobsService {
       default: true,
       FieldID: 2,
       DisplayCode: 'displayName',
-      type: 'multiselect',
       Active_Status: true,
       Active_Status_Config_Filter: true,
       includeFilter: true,
@@ -106,7 +104,7 @@ export class StandardJobsService {
           value: 'No'
         }
       ],
-      type: eFieldControlType.MultiSelect,
+      type: eFieldControlType.Dropdown,
       odataKey: 'hasSubItems',
       includeFilter: true
     },
@@ -121,7 +119,7 @@ export class StandardJobsService {
           value: 'No'
         }
       ],
-      type: eFieldControlType.MultiSelect,
+      type: eFieldControlType.Dropdown,
       odataKey: 'hasInspection',
       includeFilter: true
     }
@@ -167,7 +165,7 @@ export class StandardJobsService {
     };
   }
 
-  public getStandardJobsRequestWithFilters(vesselType: number, functionUIDs: string[]): WebApiRequest {
+  getStandardJobsRequestWithFilters(vesselType: number, functionUIDs: string[]): WebApiRequest {
     const filter = ODataFilterBuilder('and');
 
     if (vesselType) {
@@ -205,13 +203,13 @@ export class StandardJobsService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  upsertStandardJob(uid: string, formValue: any) {
+  upsertStandardJob(uid: string, formValue: any, isUpdating: boolean) {
     const body = this.getUpsertStandardJobBody(uid, formValue);
-    const action = uid ? 'standard-jobs/update-standard-jobs' : 'standard-jobs/create-standard-jobs';
+    const action = isUpdating ? 'standard-jobs/update-standard-jobs' : 'standard-jobs/create-standard-jobs';
     const apiReq: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
-      crud: uid ? eCrud.Put : eCrud.Post,
+      crud: isUpdating ? eCrud.Put : eCrud.Post,
       action: action,
       body: body
     };

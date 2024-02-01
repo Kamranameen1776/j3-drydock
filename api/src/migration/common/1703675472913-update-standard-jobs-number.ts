@@ -1,5 +1,6 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
-import { MigrationUtilsService } from "j2utils";
+import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationUtilsService } from 'j2utils';
+import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 export class updateStandardJobsNumber1703675472913 implements MigrationInterface {
     public readonly name = this.constructor.name;
@@ -20,17 +21,22 @@ export class updateStandardJobsNumber1703675472913 implements MigrationInterface
                 begin
                 ALTER TABLE [dry_dock].[standard_jobs]
                 DROP COLUMN [number];
-                
+
                 ALTER TABLE [dry_dock].[standard_jobs]
                 ADD [number] [int] NOT NULL DEFAULT 1000;
                 end;
             `);
 
             await MigrationUtilsService.migrationLog(this.name, '', 'S', 'dry_dock', this.description);
-        } catch (e) {
-            const error = JSON.stringify(e);
-
-            await MigrationUtilsService.migrationLog(this.name, error, 'E', 'dry_dock', this.description, true);
+        } catch (error) {
+            await MigrationUtilsService.migrationLog(
+                this.name,
+                errorLikeToString(error),
+                'E',
+                'dry_dock',
+                this.description,
+                true,
+            );
         }
     }
 

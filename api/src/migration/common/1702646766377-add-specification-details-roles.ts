@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from "j2utils";
 import { MigrationInterface, QueryRunner } from "typeorm";
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 /** @private */
 interface GroupRef {
@@ -213,7 +214,7 @@ export class AddSpecificationDetailsRoles1702646766377 implements MigrationInter
 
             await this.log(Status.Success);
         } catch (error) {
-            await this.log(Status.Error, JSON.stringify(error));
+            await this.log(Status.Error, errorLikeToString(error));
         }
     }
 

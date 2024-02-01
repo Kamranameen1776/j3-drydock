@@ -135,26 +135,19 @@ export class SpecificationDetailsRepository {
                 'tm.Code as SpecificationCode',
                 'tm.Status as StatusId',
                 'wdetails.StatusDisplayName as StatusName',
-
                 'spec.FunctionUid as FunctionUid',
                 'spec.Function as "Function"',
                 'spec.AccountCode as AccountCode',
                 'spec.TecTaskManagerUid as TaskManagerUid',
-
                 'spec.ItemSourceUid as ItemSourceUid',
                 'its.DisplayName as ItemSourceText',
-
                 'spec.ItemNumber as ItemNumber',
-
                 'spec.DoneByUid as DoneByUid',
                 'db.displayName as DoneByDisplayName',
-
                 'spec.EquipmentDescription as EquipmentDescription',
                 'spec.Description as Description',
-
                 'spec.PriorityUid as PriorityUid',
                 `pr.DisplayName as PriorityName`,
-
                 'ves.VesselName AS VesselName',
                 'vesType.VesselTypes AS VesselType',
                 'ves.uid AS VesselUid',
@@ -165,6 +158,10 @@ export class SpecificationDetailsRepository {
                 //TODO: strange constants, but Specifications doesnt have type. probably should stay that way
                 `'dry_dock' as SpecificationTypeCode`,
                 `'Dry Dock' as SpecificationTypeName`,
+                'spec.EndDate AS EndDate',
+                'spec.StartDate AS StartDate',
+                'spec.Completion AS Completion',
+                'spec.Duration AS Duration',
             ])
             .leftJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
             .leftJoin(className(LibItemSourceEntity), 'its', 'spec.ItemSourceUid = its.uid')
@@ -301,7 +298,11 @@ export class SpecificationDetailsRepository {
                 'SUM(sdsi.utilized) OVER (PARTITION BY sd.uid) as utilizedCost',
                 '(SUM(sdsi.cost) OVER (PARTITION BY sd.uid)) - (SUM(sdsi.utilized) OVER (PARTITION BY sd.uid)) as variance',
             ])
-            .leftJoin(className(SpecificationDetailsSubItemEntity), 'sdsi', 'sd.uid = sdsi.specification_details_uid')
+            .leftJoin(
+                className(SpecificationDetailsSubItemEntity),
+                'sdsi',
+                'sd.uid = sdsi.specification_details_uid and sdsi.active_status = 1',
+            )
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
             .innerJoin(className(ProjectEntity), 'proj', 'sd.project_uid = proj.uid')
             .where('sd.active_status = 1')
@@ -316,10 +317,9 @@ export class SpecificationDetailsRepository {
         data.CreatedAt = new Date();
         data.ActiveStatus = true;
 
-        //TODO: think how to return uid from insert request, why it return undefined?
-        data.uid = new DataUtilService().newUid();
+        data.uid = data.uid ?? new DataUtilService().newUid();
         await queryRunner.manager.insert(SpecificationDetailsEntity, data);
-        return data.uid;
+        return data.uid as string;
     }
 
     public async createSpecificationFromStandardJob(

@@ -11,6 +11,9 @@ import { GrowlMessageService } from '../../../services/growl-message.service';
 import { SubItem } from '../../../models/interfaces/sub-items';
 import { forkJoin, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
+import { eModule } from '../../../models/enums/module.enum';
+import { eFunction } from '../../../models/enums/function.enum';
+import * as uuid from 'uuid/v4';
 
 @Component({
   selector: 'jb-upsert-standard-job-popup',
@@ -46,8 +49,11 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     return this.popupForm?.formGroup.getRawValue()[this.formService.formId]?.function?.Child_ID;
   }
 
-  // TODO fixme to relevant values and use them from eModuleCode and eFunctionCode from jibe-components
-  attachmentConfig: IJbAttachment = { Module_Code: 'j3_drydock', Function_Code: 'standard_job' };
+  private get itemUid() {
+    return this.item?.uid || this.newItemUid;
+  }
+
+  attachmentConfig: IJbAttachment;
 
   attachmentButton = {
     buttonLabel: 'Add New',
@@ -55,6 +61,8 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   };
 
   formStructure: FormModel = this.popupFormService.formStructure;
+
+  newItemUid: string;
 
   private changedSubItems: SubItem[] = [];
 
@@ -69,7 +77,8 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.item) {
+    if (changes.isOpen && this.isOpen) {
+      this.setNewItemUid();
       this.setPopupHeader();
       this.setPopupFooter();
       this.setAttachmentConfig();
@@ -93,17 +102,16 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     this.changedSubItems = subItems;
   }
 
-  // TODO fixme to relevant values and use them from eModuleCode and eFunctionCode from jibe-components
   private setAttachmentConfig() {
     this.attachmentConfig = {
-      Module_Code: 'project',
-      Function_Code: 'standard_job',
-      Key1: this.item?.uid
+      Module_Code: eModule.Project,
+      Function_Code: eFunction.StandardJob,
+      Key1: this.itemUid
     };
   }
 
   private setPopupHeader() {
-    this.popupConfig.dialogHeader = !this.isEditing ? 'Create New Standard Job' : 'Edit Standard Job';
+    this.popupConfig.dialogHeader = this.isEditing ? 'Edit Standard Job' : 'Create New Standard Job';
   }
 
   private setPopupFooter() {
@@ -114,6 +122,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
     this.closeDialog.emit(isSaved);
     this.isPopupValid = false;
     this.changedSubItems = [];
+    this.newItemUid = null;
   }
 
   private save() {
@@ -127,11 +136,9 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
     this.isSaving = true;
 
-    const updateSubitemsRequest$ = this.item?.uid
-      ? this.standardJobsService.updateJobSubItems(this.item.uid, this.changedSubItems)
-      : of(null);
+    const updateSubitemsRequest$ = this.standardJobsService.updateJobSubItems(this.itemUid, this.changedSubItems);
 
-    forkJoin([this.standardJobsService.upsertStandardJob(this.item?.uid, value), updateSubitemsRequest$])
+    forkJoin([this.standardJobsService.upsertStandardJob(this.itemUid, value, this.isEditing), updateSubitemsRequest$])
       .pipe(
         finalize(() => {
           this.isSaving = false;
@@ -160,5 +167,11 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
       return false;
     }
     return true;
+  }
+
+  private setNewItemUid() {
+    if (!this.item) {
+      this.newItemUid = uuid();
+    }
   }
 }

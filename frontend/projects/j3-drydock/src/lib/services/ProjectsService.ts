@@ -161,7 +161,7 @@ export class ProjectsService {
     return this.apiRequestService.sendApiReq(apiRequest);
   }
 
-  public groupProjectStatuses(): Observable<IGroupProjectStatusesDto[]> {
+  public groupProjectStatuses(): Observable<{ [key: string]: IGroupProjectStatusesDto }> {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,

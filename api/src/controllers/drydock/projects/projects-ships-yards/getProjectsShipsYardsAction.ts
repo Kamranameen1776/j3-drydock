@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+import { Controller, Get, Route } from 'tsoa';
 
+import { IProjectsShipsYardsResultDto } from '../../../../application-layer/drydock/projects/projects-ships-yards/IProjectsShipsYardsResultDto';
 import { ProjectsShipsYardsQuery } from '../../../../application-layer/drydock/projects/projects-ships-yards/ProjectsShipsYardsQuery';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
@@ -14,11 +16,20 @@ export async function getProjectsShipsYardsAction(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
+        const result = await new GetProjectsShipsYardsActionController().getProjectsShipsYardsAction();
+
+        return result;
+    });
+}
+
+@Route('drydock/projects/projects-ships-yards')
+export class GetProjectsShipsYardsActionController extends Controller {
+    @Get()
+    public async getProjectsShipsYardsAction(): Promise<IProjectsShipsYardsResultDto[]> {
         const query = new ProjectsShipsYardsQuery();
 
-        // Execute query
-        const projects = await query.ExecuteAsync();
+        const result = await query.ExecuteAsync();
 
-        return projects;
-    });
+        return result;
+    }
 }

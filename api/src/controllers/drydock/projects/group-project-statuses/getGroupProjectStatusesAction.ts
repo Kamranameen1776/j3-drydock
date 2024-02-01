@@ -1,24 +1,30 @@
-import { Request, Response } from 'express';
+import * as express from 'express';
+import { Controller, Get, Request, Route } from 'tsoa';
 
+import { IGroupResponseDto } from '../../../../application-layer/drydock/projects/project-statuses/group-project-statuses/dtos/IGroupProjectStatusDto';
 import { GroupProjectStatusesQuery } from '../../../../application-layer/drydock/projects/project-statuses/group-project-statuses/GroupProjectStatusesQuery';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
-/**
- * This handler returns all available shipments
- * GET /drydock/example-projects
- * @exports
- * @param {Request} req Express request
- * @param {Response} res Express response
- */
-export async function getGroupProjectStatusesAction(req: Request, res: Response) {
+export async function getGroupProjectStatusesAction(req: express.Request, res: express.Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
+        const result = await new GetGroupProjectStatusesActionController().getGroupProjectStatusesAction(req);
+
+        return result;
+    });
+}
+
+@Route('drydock/projects/group-project-statuses')
+export class GetGroupProjectStatusesActionController extends Controller {
+    @Get()
+    public async getGroupProjectStatusesAction(@Request() request: express.Request): Promise<IGroupResponseDto> {
+        const token: string = request.headers.authorization as string;
+
         const query = new GroupProjectStatusesQuery();
 
-        // Execute query
-        const projects = await query.ExecuteAsync(req);
+        const result = await query.ExecuteAsync(token);
 
-        return projects;
-    });
+        return result;
+    }
 }

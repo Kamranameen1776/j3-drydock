@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class AddSoftDeleteForRelations1701368547549 implements MigrationInterface {
@@ -44,7 +45,7 @@ export class AddSoftDeleteForRelations1701368547549 implements MigrationInterfac
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.moduleName,
                 'AddSoftDeleteForRelations1701368547549',

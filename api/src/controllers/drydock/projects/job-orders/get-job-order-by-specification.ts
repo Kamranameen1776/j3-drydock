@@ -1,7 +1,9 @@
 import { plainToClass } from 'class-transformer';
 import { Request, Response } from 'express';
+import { Body, Controller, Post, Route } from 'tsoa';
 
 import { GetJobOrderBySpecificationDto } from '../../../../application-layer/drydock/projects/job-orders/dtos/GetJobOrderBySpecificationDto';
+import { JobOrderDto } from '../../../../application-layer/drydock/projects/job-orders/dtos/JobOrderDto';
 import { GetJobOrderBySpecificationQuery } from '../../../../application-layer/drydock/projects/job-orders/GetJobOrderBySpecificationQuery';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
@@ -16,13 +18,24 @@ async function getJobOrderBySpecification(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request) => {
-        const query = new GetJobOrderBySpecificationQuery();
+        const dto = plainToClass(GetJobOrderBySpecificationDto, request.body);
 
-        // Execute query
-        const projects = await query.ExecuteAsync(plainToClass(GetJobOrderBySpecificationDto, request.body));
+        const result = await new GetJobOrderBySpecificationController().getJobOrderBySpecification(dto);
 
-        return projects;
+        return result;
     });
 }
 
 exports.post = getJobOrderBySpecification;
+
+@Route('drydock/projects/job-orders/get-job-order-by-specification')
+export class GetJobOrderBySpecificationController extends Controller {
+    @Post()
+    public async getJobOrderBySpecification(@Body() dto: GetJobOrderBySpecificationDto): Promise<JobOrderDto | null> {
+        const query = new GetJobOrderBySpecificationQuery();
+
+        const result = await query.ExecuteAsync(dto);
+
+        return result;
+    }
+}

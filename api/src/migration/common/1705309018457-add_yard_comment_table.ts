@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class addYardCommentTable1705309018457 implements MigrationInterface {
     tableName = 'specification_details_sub_item';
@@ -31,7 +32,7 @@ export class addYardCommentTable1705309018457 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.moduleName,
                 `Edit table ${this.tableName}`,

@@ -46,7 +46,7 @@ export class DailyReportsRepository {
     }
 
     public async createDailyReport(data: ICreateDailyReportsDto, queryRunner: QueryRunner) {
-        const uid = new DataUtilService().newUid();
+        const uid = data.uid ?? new DataUtilService().newUid();
         await queryRunner.manager.insert(DailyReportsEntity, {
             ...data,
             active_status: true,

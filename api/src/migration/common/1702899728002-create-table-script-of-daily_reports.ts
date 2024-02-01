@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class createTableScriptOfDailyReports1702899728002 implements MigrationInterface {
     tableName = 'daily_reports';
@@ -23,17 +24,17 @@ export class createTableScriptOfDailyReports1702899728002 implements MigrationIn
                 [updated_at] [datetimeoffset](7) NULL,
                 [deleted_by] [uniqueidentifier] NULL,
                 [deleted_at] [datetimeoffset](7) NULL,
-            PRIMARY KEY CLUSTERED 
+            PRIMARY KEY CLUSTERED
                 (
                     [uid] ASC
                 )
-                ) ON [PRIMARY]            
-                ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (newid()) FOR [uid]            
-                ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT ((1)) FOR [active_status]            
+                ) ON [PRIMARY]
+                ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (newid()) FOR [uid]
+                ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT ((1)) FOR [active_status]
                 ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (getutcdate()) FOR [created_at]
                 END
             `);
-    
+
             await MigrationUtilsService.migrationLog(
                 this.className,
                 '',
@@ -44,7 +45,7 @@ export class createTableScriptOfDailyReports1702899728002 implements MigrationIn
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.moduleName,
                 'Create table daily_reports',
@@ -52,34 +53,8 @@ export class createTableScriptOfDailyReports1702899728002 implements MigrationIn
             );
         }
     }
-    
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF Exists(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[${this.schemaName}].[${this.tableName}]') AND type in (N'U'))
-            BEGIN
-                DROP TABLE [${this.schemaName}].[${this.tableName}];
-            END
-            `);
-    
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                '',
-                'S',
-                this.moduleName,
-                'Create table daily_reports (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                this.className,
-                error as string,
-                'E',
-                this.moduleName,
-                'Create table daily_reports (Down migration)',
-                true,
-            );
-        }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {}
     }
-    }
-    
-    
+
+

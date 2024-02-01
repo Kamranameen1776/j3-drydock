@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class createTableScriptOfDailyReports1701865343686 implements MigrationInterface {
 tableName = 'daily_reports';
@@ -24,13 +25,13 @@ public async up(queryRunner: QueryRunner): Promise<void> {
             [updated_at] [datetimeoffset](7) NULL,
             [deleted_by] [uniqueidentifier] NULL,
             [deleted_at] [datetimeoffset](7) NULL,
-        PRIMARY KEY CLUSTERED 
+        PRIMARY KEY CLUSTERED
             (
                 [uid] ASC
             )
-            ) ON [PRIMARY]            
-            ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (newid()) FOR [uid]            
-            ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT ((1)) FOR [active_status]            
+            ) ON [PRIMARY]
+            ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (newid()) FOR [uid]
+            ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT ((1)) FOR [active_status]
             ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (getutcdate()) FOR [created_at]
             END
         `);
@@ -45,7 +46,7 @@ public async up(queryRunner: QueryRunner): Promise<void> {
     } catch (error) {
         await MigrationUtilsService.migrationLog(
             this.className,
-            error as string,
+            errorLikeToString(error),
             'E',
             this.moduleName,
             'Create table daily_reports',

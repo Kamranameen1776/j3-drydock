@@ -1,5 +1,6 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { MigrationUtilsService } from 'j2utils';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class deletingIncorrectWorkflowAccessDetailsOfDryDock1703065001117 implements MigrationInterface {
     public className = this.constructor.name;
@@ -25,7 +26,7 @@ export class deletingIncorrectWorkflowAccessDetailsOfDryDock1703065001117 implem
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'deleting incorrect workflow of dry dock',

@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class deleteDailyReportUpdatesTables1704878346469 implements MigrationInterface {
     tableName = 'daily_report_updates';
@@ -26,7 +27,7 @@ export class deleteDailyReportUpdatesTables1704878346469 implements MigrationInt
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.moduleName,
                 `Drop table ${this.tableName}`,

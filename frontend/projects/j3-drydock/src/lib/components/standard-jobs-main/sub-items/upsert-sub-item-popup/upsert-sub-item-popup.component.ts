@@ -42,7 +42,7 @@ export class UpsertSubItemPopupComponent extends UnsubscribeComponent implements
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.item) {
+    if (changes.isOpen && this.isOpen) {
       this.setPopupHeader();
       this.setPopupFooter();
     }
