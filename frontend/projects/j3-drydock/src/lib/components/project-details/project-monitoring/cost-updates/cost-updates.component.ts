@@ -53,10 +53,15 @@ export class CostUpdatesComponent implements OnInit {
 
   cellPlainTextClick({ cellType, rowData, columnDetail }) {
     if (cellType === 'hyperlink' && columnDetail.FieldName === 'code') {
-      this.newTabService.navigate(['../../specification-details', rowData.specificationUid], {
-        relativeTo: this.activatedRoute,
-        queryParams: { pageTitle: `Specification ${rowData.code}` }
-      });
+      const tab_title = `Specification ${rowData.code}`;
+      this.newTabService.navigate(
+        ['../../specification-details', rowData.specificationUid],
+        {
+          relativeTo: this.activatedRoute,
+          queryParams: { tab_title }
+        },
+        tab_title
+      );
     }
   }
 

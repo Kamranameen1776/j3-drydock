@@ -12,6 +12,9 @@
   .e-gantt .e-gantt-chart .e-event-markers {
     border-left-color: #616aff;
     border-left-width: 2px;
+    &.overdue-line {
+      border-left-color: #F75F82;
+    }
   }
 
   .e-none {
