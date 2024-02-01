@@ -4,6 +4,7 @@ export enum eSpecificationDetailsPageMenuIds {
   SubItems = 'subItems',
   PMSJobs = 'pmsJobs',
   Findings = 'findings',
+  SpecificationUpdates = 'specificationUpdates',
   Requisitions = 'requisitions',
   Source = 'source',
   SpecificationAttachments = 'specificationAttachments',
@@ -17,6 +18,7 @@ export enum eSpecificationDetailsPageMenuLabels {
   SubItems = 'Sub Items',
   PMSJobs = 'PMS Jobs',
   Findings = 'Findings',
+  SpecificationUpdates = 'Updates',
   Requisitions = 'Requisitions',
   Source = 'Source',
   SpecificationAttachments = 'Attachments',
@@ -37,7 +39,8 @@ export const specificationDetailsMenuData = [
       },
       { label: eSpecificationDetailsPageMenuLabels.SubItems, id: eSpecificationDetailsPageMenuIds.SubItems },
       { label: eSpecificationDetailsPageMenuLabels.PMSJobs, id: eSpecificationDetailsPageMenuIds.PMSJobs },
-      { label: eSpecificationDetailsPageMenuLabels.Findings, id: eSpecificationDetailsPageMenuIds.Findings }
+      { label: eSpecificationDetailsPageMenuLabels.Findings, id: eSpecificationDetailsPageMenuIds.Findings },
+      { label: eSpecificationDetailsPageMenuLabels.SpecificationUpdates, id: eSpecificationDetailsPageMenuIds.SpecificationUpdates }
       // { label: eSpecificationDetailsPageMenuLabels.Requisitions, id: eSpecificationDetailsPageMenuIds.Requisitions },
       // { label: eSpecificationDetailsPageMenuLabels.Source, id: eSpecificationDetailsPageMenuIds.Source },
       // {
@@ -77,4 +80,18 @@ export enum TmJobTypes {
   NonPmsNcr = 'NON-PM-NCR',
   Recommendations = 'RECOMMENDATIONS',
   VettingObservation = 'VETTING OBSERVATION'
+}
+
+export enum eSpecificationUpdatesLabels {
+  Date = 'Date',
+  User = 'User',
+  Progress = 'Progress',
+  Subject = 'Subject'
+}
+
+export enum eSpecificationUpdatesFields {
+  Date = 'Date',
+  User = 'User',
+  Progress = 'Progress',
+  Subject = 'Subject'
 }

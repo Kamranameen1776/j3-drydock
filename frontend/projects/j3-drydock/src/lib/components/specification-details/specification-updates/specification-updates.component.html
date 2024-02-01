@@ -1,0 +1,24 @@
+<jb-grid
+  [gridName]="gridInputs.gridName"
+  [colData]="gridInputs.columns"
+  [tableDataReq]="gridInputs.request"
+  [getStyleByContainer]="true"
+  [setActions]="gridInputs.actions"
+  [isDisplayAdvancedFilter]="false"
+  [isDisplayAdvancedSettings]="false"
+  [isDisplaySearchField]="false"
+  (action)="onGridAction($any($event))"
+></jb-grid>
+
+<ng-template
+  #reportDateTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.DateAndTime | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
+</ng-template>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="isShowLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>

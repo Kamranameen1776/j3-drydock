@@ -282,6 +282,17 @@ export class SpecificationDetailsService {
             SectionLabel: eSpecificationDetailsPageMenuLabels.Findings,
             isAddNewButton: true,
             buttonLabel: 'Convert to sub item'
+          },
+          {
+            GridRowStart: 5,
+            GridRowEnd: 6,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
+            SectionCode: eSpecificationDetailsPageMenuIds.SpecificationUpdates,
+            SectionLabel: eSpecificationDetailsPageMenuLabels.SpecificationUpdates,
+            isAddNewButton: true,
+            buttonLabel: 'Add Update'
           }
         ]
       }
@@ -465,6 +476,16 @@ export class SpecificationDetailsService {
     };
 
     return this.apiRequestService.sendApiReq(request);
+  }
+
+  getSpecificationUpdatesRequest(specificationUid: string): WebApiRequest {
+    return {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'specification-details/get-specification-updates',
+      crud: eCrud.Post,
+      body: { uid: specificationUid }
+    };
   }
 
   private setAccessRights(rights: SpecificationDetailAccessRights) {

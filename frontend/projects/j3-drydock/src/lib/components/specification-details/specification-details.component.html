@@ -15,7 +15,8 @@
     generalInformation: generalInformation,
     subItems: subItems,
     pmsJobs: pmsJobs,
-    findings: findings
+    findings: findings,
+    specificationUpdates: specificationUpdates
   }"
   [slideMenus]="menu"
   [ignoreAccessRights]="true"
@@ -70,6 +71,16 @@
           [specificationDetailsInfo]="specificationDetailsInfo"
           (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.Findings)"
         ></jb-linked-pms-jobs-findings>
+      </div>
+      <div
+        #specificationUpdates
+        *ngSwitchCase="eSideMenuId.SpecificationUpdates"
+      >
+        <jb-drydock-specification-updates
+          #specificationUpdatesComponent
+          *ngIf="specificationDetailsInfo"
+          [specificationId]="specificationDetailsInfo.uid"
+        ></jb-drydock-specification-updates>
       </div>
     </ng-container>
   </ng-template>

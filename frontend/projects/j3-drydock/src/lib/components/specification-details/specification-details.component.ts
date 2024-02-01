@@ -35,6 +35,7 @@ import { TmLinkedRecords } from 'jibe-components/lib/interfaces/tm-linked-record
 import { Subscription } from 'rxjs';
 import { UTCAsLocal, localDateJbStringAsUTC } from '../../utils/date';
 import { DetailsService } from '../../services/details.service';
+import { SpecificationUpdatesComponent } from './specification-updates/specification-updates.component';
 
 @Component({
   selector: 'jb-specification-details',
@@ -43,6 +44,8 @@ import { DetailsService } from '../../services/details.service';
   providers: [JbDatePipe, GrowlMessageService]
 })
 export class SpecificationDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
+  @ViewChild('specificationUpdatesComponent') specificationUpdatesComponent: SpecificationUpdatesComponent;
+
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationDetails) [eSpecificationDetailsPageMenuIds.SpecificationDetails]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.GeneralInformation) [eSpecificationDetailsPageMenuIds.GeneralInformation]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.SubItems) [eSpecificationDetailsPageMenuIds.SubItems]: ElementRef;
@@ -52,6 +55,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationAttachments)
   [eSpecificationDetailsPageMenuIds.SpecificationAttachments]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.AuditTrail) [eSpecificationDetailsPageMenuIds.AuditTrail]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationUpdates) [eSpecificationDetailsPageMenuIds.SpecificationUpdates]: ElementRef;
 
   specificationDetailsInfo: SpecificationDetails;
   updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
@@ -418,6 +422,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       case eSpecificationDetailsPageMenuIds.SubItems:
         this.subItemDetails.dialogHeader = eSubItemsDialog.AddText;
         this.showEditSubItem = true;
+        break;
+      case eSpecificationDetailsPageMenuIds.SpecificationUpdates:
+        this.specificationUpdatesComponent.showDialog(true);
         break;
       default:
         break;
