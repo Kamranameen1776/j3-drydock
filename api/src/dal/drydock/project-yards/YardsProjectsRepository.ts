@@ -20,7 +20,7 @@ export class YardsProjectsRepository {
                 yp.project_uid as projectUid,
                 yp.yard_uid as yardUid,
                 cr.registeredName as yardName,
-                cr.country + ', ' + cr.city as yardLocation,
+                TRIM(CONCAT("cr"."country", ' ', "cr"."city")) as yardLocation,
                 cast(yp.last_exported_date as datetimeoffset) AS lastExportedDate,
                 yp.is_selected as isSelected`,
             )
@@ -78,7 +78,6 @@ export class YardsProjectsRepository {
             .update(YardsProjectsEntity)
             .set({
                 last_exported_date: data.lastExportedDate,
-                is_selected: data.isSelected,
                 updated_at: data.updatedAt,
                 updated_by: data.updatedBy,
             })

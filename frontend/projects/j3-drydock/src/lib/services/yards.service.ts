@@ -65,8 +65,7 @@ export class YardsService {
       action: 'projects/project-yards/update-project-yards',
       body: {
         uid: yard.uid,
-        lastExportedDate: yard.lastExportedDate,
-        isSelected: yard.isSelected
+        lastExportedDate: yard.lastExportedDate
       }
     };
     return this.apiRequestService.sendApiReq(apiReq);

@@ -32,13 +32,6 @@ export class RfqGridService {
           IsActive: true,
           IsMandatory: true,
           IsVisible: true
-        },
-        {
-          DisplayText: eRfqLabels.IsSelected,
-          FieldName: eRfqFields.IsSelected,
-          IsActive: true,
-          IsMandatory: true,
-          IsVisible: true
         }
       ],
       gridName: this.gridName

@@ -7,7 +7,6 @@ export interface YardLink {
   [eRfqFields.Uid]: string;
   [eRfqFields.YardUid]: string;
   [eRfqFields.ExportedDate]: string;
-  [eRfqFields.IsSelected]: boolean;
 }
 
 export interface YardToLink {
