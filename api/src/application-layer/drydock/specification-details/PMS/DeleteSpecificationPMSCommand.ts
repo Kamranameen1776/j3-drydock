@@ -1,13 +1,13 @@
 import { SynchronizerService } from 'j2utils';
 
 import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
+import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { SpecificationPmsEntity } from '../../../../entity/drydock';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { UpdateSpecificationPmsDto } from '../dtos/UpdateSpecificationPMSRequestDto';
-import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 
 export class DeleteSpecificationPmsCommand extends Command<UpdateSpecificationPmsDto, void> {
     specificationDetailsRepository = new SpecificationDetailsRepository();

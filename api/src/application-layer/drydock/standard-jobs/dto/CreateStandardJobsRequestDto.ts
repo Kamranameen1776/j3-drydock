@@ -15,4 +15,6 @@ export interface CreateStandardJobsRequestDto
     uid?: string;
     vesselTypeId: number[];
     inspectionId: number[];
+
+    UserId: string;
 }
