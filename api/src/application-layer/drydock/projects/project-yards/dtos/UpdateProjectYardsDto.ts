@@ -1,4 +1,4 @@
-import { IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
 export class UpdateProjectYardsDto {
     @IsNotEmpty()
@@ -8,9 +8,6 @@ export class UpdateProjectYardsDto {
     @IsOptional()
     @IsDateString()
     lastExportedDate?: Date;
-
-    @IsBoolean()
-    isSelected: boolean;
 
     @IsNotEmpty()
     updatedBy: string;

@@ -58,32 +58,5 @@ describe('UpdateProjectYardsCommand', () => {
 
             await expect(command['ValidationHandlerAsync'](mockRequestDto)).resolves.not.toThrow();
         });
-
-        it('should throw an error if other project is selected', async () => {
-            jest.spyOn(command.yardProjectsRepository, 'get').mockResolvedValue({
-                uid: '12963993-9397-4B5E-849E-0046FB90F564',
-                yardUid: '12963993-9397-4B5E-849E-0046FB90F564',
-                projectUid: '12963993-9397-4B5E-849E-0046FB90F564',
-                lastExportedDate: new Date(),
-                isSelected: true,
-                activeStatus: true,
-            });
-
-            jest.spyOn(command.yardProjectsRepository, 'getAllByProject').mockResolvedValue([
-                {
-                    uid: '27cec8c3-2b36-4222-a1b9-fd59258f51b2',
-                    yardUid: 'string',
-                    projectUid: 'string',
-                    lastExportedDate: new Date(),
-                    isSelected: true,
-                    yardName: 'string',
-                    yardLocation: 'string',
-                },
-            ]);
-
-            await expect(command['ValidationHandlerAsync'](mockRequestDto)).rejects.toThrow(
-                'Multiple yard selection for the same project 12963993-9397-4B5E-849E-0046FB90F564 is not allowed',
-            );
-        });
     });
 });

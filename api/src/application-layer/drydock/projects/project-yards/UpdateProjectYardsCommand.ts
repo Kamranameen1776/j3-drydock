@@ -42,17 +42,6 @@ export class UpdateProjectYardsCommand extends Command<UpdateProjectYardsDto, vo
             );
         }
 
-        if (request.isSelected) {
-            const yardsProjects = await this.yardProjectsRepository.getAllByProject(yardProject.projectUid);
-            if (
-                !yardsProjects ||
-                yardsProjects.some((yardProject) => yardProject.isSelected && yardProject.uid !== request.uid)
-            ) {
-                throw new BusinessException(
-                    `Multiple yard selection for the same project ${yardProject.projectUid} is not allowed.`,
-                );
-            }
-        }
         return;
     }
 
@@ -64,7 +53,6 @@ export class UpdateProjectYardsCommand extends Command<UpdateProjectYardsDto, vo
             await this.yardProjectsRepository.update(
                 {
                     updatedBy: request.updatedBy,
-                    isSelected: request.isSelected,
                     lastExportedDate: request.lastExportedDate,
                     uid: request.uid,
                     updatedAt: new Date(),
