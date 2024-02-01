@@ -8,9 +8,9 @@ export class officeAttachmentRuleSync1703162287279 implements MigrationInterface
             await MigrationUtilsService.createTableBackup('SYNC_DTL_Office_Import_Attachments_Rule');
 
             await queryRunner.query(`
-            DECLARE @applocation nvarchar(20);
-            SET @applocation = (SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location')
-            IF(@applocation = 'office')
+            DECLARE @app_location nvarchar(20);
+            SET @app_location = (SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location')
+            IF(@app_location = 'office')
             BEGIN
                 DECLARE @rule_id int
                 SELECT @rule_id=ISNULL(max(Rule_ID),0) FROM SYNC_DTL_Office_Import_Attachments_Rule 
