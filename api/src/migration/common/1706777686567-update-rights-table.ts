@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { MigrationUtilsService } from 'j2utils';
 
-export class updateGroupsStatusTable1706022198368 implements MigrationInterface {
+export class updateRightsTable1706777686567 implements MigrationInterface {
     schemaName = 'dbo';
     className = this.constructor.name;
     moduleName = 'dry_dock';
