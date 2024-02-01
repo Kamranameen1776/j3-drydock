@@ -5,6 +5,12 @@ export type StandardJobsFiltersAllowedKeys = keyof Pick<
     'inspection' | 'category' | 'doneBy' | 'materialSuppliedBy'
 >;
 
+export interface StandardJobsFiltersAllowedKeysRequestDto {
+    key: StandardJobsFiltersAllowedKeys;
+
+    token: string;
+}
+
 export const AllowedStandardJobsFiltersKeys: StandardJobsFiltersAllowedKeys[] = [
     'inspection',
     'category',
