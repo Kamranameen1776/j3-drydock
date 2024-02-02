@@ -1,8 +1,17 @@
 import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { GridService, IGridAction, eGridRefreshType, eGridRowActions } from 'jibe-components';
+import { GridService, IGridAction, IJbDialog, eGridRefreshType, eGridRowActions, JmsService, eJMSWorkflowAction } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SpecificationUpdatesService } from './specification-updates.service';
+import { IUpdateJobOrderDto } from '../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
+import { JobOrdersService } from '../../../services/project-monitoring/job-orders/JobOrdersService';
+import { GrowlMessageService } from '../../../services/growl-message.service';
+import { IJobOrdersFormComponent } from '../../project-details/project-monitoring/job-orders-form/IJobOrdersFormComponent';
+import { IJobOrderFormResultDto } from '../../project-details/project-monitoring/job-orders-form/dtos/IJobOrderFormResultDto';
+import { currentLocalAsUTC } from '../../../utils/date';
+import { takeUntil } from 'rxjs/operators';
+import { IJobOrderFormDto } from '../../project-details/project-monitoring/job-orders-form/dtos/IJobOrderFormDto';
+import { SpecificationDetails } from '../../../models/interfaces/specification-details';
 
 @Component({
   selector: 'jb-drydock-specification-updates',
@@ -11,9 +20,10 @@ import { SpecificationUpdatesService } from './specification-updates.service';
   providers: [SpecificationUpdatesService]
 })
 export class SpecificationUpdatesComponent extends UnsubscribeComponent implements OnInit {
-  @Input() specificationId: string;
+  @Input() specificationDetails: SpecificationDetails;
 
   @ViewChild('reportDateTemplate', { static: true }) reportDateTemplate: TemplateRef<unknown>;
+  @ViewChild('jobOrderForm') jobOrderForm: IJobOrdersFormComponent;
 
   gridInputs: GridInputsWithRequest;
 
@@ -21,20 +31,46 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
   isShowDialog = false;
 
+  isDialogOkButtonDisabled = false;
+
+  dialogContent: IJbDialog = { dialogHeader: 'Update Job Order' };
+
+  okBtnLabel = 'Update';
+
   row; // TODO fixme type
 
   readonly dateTimeFormat = this.specificationUpdatesService.dateTimeFormat;
 
   constructor(
     private gridService: GridService,
-    private specificationUpdatesService: SpecificationUpdatesService
+    private specificationUpdatesService: SpecificationUpdatesService,
+    private jobOrdersService: JobOrdersService,
+    private growlMessageService: GrowlMessageService,
+    private jmsService: JmsService
   ) {
     super();
   }
 
-  // public shows that it is used from parent of this component
-  public showDialog(value: boolean) {
-    this.isShowDialog = value;
+  // TODO fixme
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public showJobOrderForm(row?: any) {
+    const jobOrderForm: IJobOrderFormDto = {
+      SpecificationUid: this.specificationDetails.uid,
+      Code: this.specificationDetails.SpecificationCode
+    };
+
+    if (row) {
+      jobOrderForm.Remarks = row.Remarks;
+      jobOrderForm.Progress = row.Progress;
+      jobOrderForm.Subject = row.Subject;
+      jobOrderForm.Status = row.Status;
+      jobOrderForm.SpecificationStartDate = row.SpecificationStartDate;
+      jobOrderForm.SpecificationEndDate = row.SpecificationEndDate;
+    }
+
+    this.jobOrderForm.init(jobOrderForm);
+
+    this.showDialog(true);
   }
 
   ngOnInit(): void {
@@ -47,14 +83,14 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
     switch (type) {
       case eGridRowActions.Edit:
-        this.showDialog(true);
+        this.showJobOrderForm(this.row);
         break;
       default:
         return;
     }
   }
 
-  onCloseDialog(hasSaved?: boolean) {
+  closeDialog(hasSaved?: boolean) {
     this.showDialog(false);
     this.row = null;
 
@@ -63,8 +99,51 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
     }
   }
 
+  updateJobOrder() {
+    this.isDialogOkButtonDisabled = true;
+
+    const result = this.jobOrderForm.save();
+
+    if (result instanceof Error) {
+      this.growlMessageService.setErrorMessage(result.message);
+      return;
+    }
+
+    const jobOrder = result as IJobOrderFormResultDto;
+
+    const data: IUpdateJobOrderDto = {
+      SpecificationUid: jobOrder.SpecificationUid,
+      LastUpdated: currentLocalAsUTC(),
+      Progress: jobOrder.Progress,
+
+      SpecificationStartDate: jobOrder.SpecificationStartDate,
+      SpecificationEndDate: jobOrder.SpecificationEndDate,
+
+      Status: jobOrder.Status,
+      Subject: jobOrder.Subject,
+
+      Remarks: jobOrder.Remarks
+    };
+
+    // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
+    this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
+
+    this.jobOrdersService
+      .updateJobOrder(data)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.isDialogOkButtonDisabled = false;
+        this.closeDialog(true);
+      });
+  }
+
+  // public shows that it is used from parent of this component
+  showDialog(value: boolean) {
+    this.isShowDialog = value;
+  }
+
   private setGridData() {
-    this.gridInputs = this.specificationUpdatesService.getGridInputs(this.specificationId);
+    this.gridInputs = this.specificationUpdatesService.getGridInputs(this.specificationDetails.uid);
   }
 
   private setCellTemplate(template: TemplateRef<unknown>, fieldName: string) {

@@ -17,6 +17,32 @@
   <jb-drydock-grid-cell-popover [value]="rowData.DateAndTime | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
 </ng-template>
 
+<jb-dialog
+  (closeDialog)="closeDialog(false)"
+  [(dialogVisible)]="isShowDialog"
+  [dialogContent]="dialogContent"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-job-orders-form
+      [vesselId]="specificationDetails?.VesselId"
+      #jobOrderForm
+    ></jb-job-orders-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="isDialogOkButtonDisabled"
+      [okBtnLabel]="okBtnLabel"
+      (ok)="updateJobOrder()"
+      (cancel)="closeDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
 <jb-progress-spinner
   class="progress-spinner"
   *ngIf="isShowLoader"

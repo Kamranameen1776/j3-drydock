@@ -420,7 +420,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         this.showEditSubItem = true;
         break;
       case eSpecificationDetailsPageMenuIds.SpecificationUpdates:
-        this.specificationUpdatesComponent.showDialog(true);
+        this.specificationUpdatesComponent.showJobOrderForm();
         break;
       default:
         break;
