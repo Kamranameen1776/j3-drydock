@@ -1,13 +1,8 @@
 import * as express from 'express';
 import { AccessRights } from 'j2utils';
 import { Body, Controller, Put, Request, Route } from 'tsoa';
-import * as express from 'express';
-import { AccessRights } from 'j2utils';
-import { Body, Controller, Put, Request, Route } from 'tsoa';
 
-import { UserFromToken } from '../../../application-layer/drydock/core/cqrs/UserDto';
 import { UpdateStandardJobsCommand } from '../../../application-layer/drydock/standard-jobs';
-import { UpdateStandardJobsRequestDto } from '../../../application-layer/drydock/standard-jobs/dto';
 import { StandardJobs } from '../../../entity/drydock';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
