@@ -8,4 +8,7 @@ export class UpdateProjectYardsDto {
     @IsOptional()
     @IsDateString()
     lastExportedDate?: Date;
+
+    @IsNotEmpty()
+    updatedBy: string;
 }

@@ -1,5 +1,3 @@
-import { Request } from 'express';
-import { AccessRights } from 'j2utils';
 import { UpdateResult } from 'typeorm';
 
 import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
@@ -7,7 +5,7 @@ import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { DeleteStandardJobsRequestDto } from './dto';
 
-export class DeleteStandardJobsCommand extends Command<Request, UpdateResult> {
+export class DeleteStandardJobsCommand extends Command<DeleteStandardJobsRequestDto, UpdateResult> {
     standardJobsRepository: StandardJobsRepository;
     uow: UnitOfWork;
 
@@ -18,13 +16,9 @@ export class DeleteStandardJobsCommand extends Command<Request, UpdateResult> {
         this.uow = new UnitOfWork();
     }
 
-    protected async MainHandlerAsync(request: Request) {
-        const { UserUID: deletedBy } = AccessRights.authorizationDecode(request);
-        const body: DeleteStandardJobsRequestDto = request.body;
-        const uid = body.uid;
-
+    protected async MainHandlerAsync(request: DeleteStandardJobsRequestDto) {
         return this.uow.ExecuteAsync(async (queryRunner) => {
-            return this.standardJobsRepository.deleteStandardJob(uid, deletedBy, queryRunner);
+            return this.standardJobsRepository.deleteStandardJob(request.uid, request.UserId, queryRunner);
         });
     }
 }

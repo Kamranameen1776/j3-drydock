@@ -44,7 +44,6 @@ import {
     CreateInspectionsDto,
     ICreateSpecificationDetailsDto,
     InspectionsResultDto,
-    IUpdateSpecificationDetailsDto,
     PmsJobsData,
     SpecificationDetailsResultDto,
 } from './dtos';
@@ -419,11 +418,6 @@ export class SpecificationDetailsRepository {
             await this.CreateSpecificationInspection(create, queryRunner);
         }
         return;
-    }
-
-    public async UpdateSpecificationDetails(data: IUpdateSpecificationDetailsDto, queryRunner: QueryRunner) {
-        delete data.Inspections;
-        return queryRunner.manager.update(SpecificationDetailsEntity, data.uid, data);
     }
 
     public async UpdateSpecificationDetailsByEntity(

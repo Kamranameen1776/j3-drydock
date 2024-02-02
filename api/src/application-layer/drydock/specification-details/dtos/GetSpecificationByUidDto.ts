@@ -4,4 +4,6 @@ export class GetSpecificationByUidDto {
     @IsNotEmpty()
     @IsUUID()
     public uid: string;
+
+    public token: string;
 }

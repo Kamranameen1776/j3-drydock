@@ -27,10 +27,13 @@ async function updateSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
 
 exports.put = updateSubItem;
 
-// @Route('drydock/specification-details/sub-items/update-sub-item')
+@Route('drydock/specification-details/sub-items/update-sub-item')
 export class UpdateSubItemController extends Controller {
     @Put()
-    public async updateSubItem(@Body() request: UpdateSubItemParams): Promise<SpecificationDetailsSubItemEntity> {
+
+    // TODO: check if newer version of tsoa supports returning a specific type
+    // public async updateSubItem(@Body() request: UpdateSubItemParams): Promise<SpecificationDetailsSubItemEntity> {
+    public async updateSubItem(@Body() request: UpdateSubItemParams): Promise<unknown> {
         const query = new UpdateSubItemCommand();
 
         const result = await query.ExecuteAsync(request);

@@ -1,14 +1,16 @@
-import { Req } from '../../../../common/drydock/ts-helpers/req-res';
+import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 import { ValidateFindingDeleteDto } from '../../../../dal/drydock/specification-details/sub-items/dto/ValidateFindingDeleteDto';
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { Query } from '../../core/cqrs/Query';
 
-export class ValidateFindingDeleteQuery extends Query<Req<ValidateFindingDeleteDto>, boolean> {
+export class ValidateFindingDeleteQuery extends Query<ValidateFindingDeleteDto, boolean> {
     protected readonly subItemsRepo = new SpecificationDetailsSubItemsRepository();
 
-    public async MainHandlerAsync(req: Req<ValidateFindingDeleteDto>): Promise<boolean> {
-        const data = req.body;
+    protected async ValidationHandlerAsync(request: ValidateFindingDeleteDto): Promise<void> {
+        await validateAgainstModel(ValidateFindingDeleteDto, request);
+    }
 
-        return this.subItemsRepo.validateFindingDelete(data);
+    public async MainHandlerAsync(request: ValidateFindingDeleteDto): Promise<boolean> {
+        return this.subItemsRepo.validateFindingDelete(request);
     }
 }
