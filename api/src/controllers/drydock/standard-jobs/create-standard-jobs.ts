@@ -4,7 +4,6 @@ import { Body, Controller, Post, Request, Route } from 'tsoa';
 
 import { UserFromToken } from '../../../application-layer/drydock/core/cqrs/UserDto';
 import { CreateStandardJobsCommand } from '../../../application-layer/drydock/standard-jobs';
-import { CreateStandardJobsRequestDto } from '../../../application-layer/drydock/standard-jobs/dto';
 import { StandardJobs } from '../../../entity/drydock';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
@@ -31,9 +30,9 @@ export class CreateStandardJobsController extends Controller {
     ): Promise<StandardJobs> {
         const query = new CreateStandardJobsCommand();
 
-        const authUser = AccessRights.authorizationDecode(request) as UserFromToken;
+        const { UserUID: id } = AccessRights.authorizationDecode(request);
 
-        dto.UserId = authUser.UserID;
+        dto.UserId = id;
 
         const result = await query.ExecuteAsync(dto);
 
