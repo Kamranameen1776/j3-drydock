@@ -25,11 +25,11 @@ export class GetStatementsOfFactController extends Controller {
     @Post()
     public async getStatementsOfFact(
         @Request() request: express.Request,
-        @Body() odata: ODataBodyDto,
+        @Body() odataBody: ODataBodyDto,
     ): Promise<ODataResult<IStatementOfFactsDto>> {
         const query = new GetStatementOfFactsQuery();
 
-        const result = await query.ExecuteAsync(new OdataRequest(odata, request));
+        const result = await query.ExecuteAsync(new OdataRequest(odataBody, request));
 
         return result;
     }

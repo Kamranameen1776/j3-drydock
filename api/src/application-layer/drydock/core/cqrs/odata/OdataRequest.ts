@@ -4,20 +4,20 @@ import { ApplicationException } from '../../../../../bll/drydock/core/exceptions
 import { ODataBodyDto } from '../../../../../shared/dto';
 
 export class OdataRequest {
-    public odata: ODataBodyDto;
+    public odataBody: ODataBodyDto;
 
     public request: Request;
 
-    constructor(odata: ODataBodyDto, request: Request) {
+    constructor(odataBody: ODataBodyDto, request: Request) {
         if (!request) {
             throw new ApplicationException('Request is required');
         }
 
-        if (!odata) {
+        if (!odataBody) {
             throw new ApplicationException('Request odata is required');
         }
 
-        this.odata = odata;
+        this.odataBody = odataBody;
         this.request = request;
     }
 }

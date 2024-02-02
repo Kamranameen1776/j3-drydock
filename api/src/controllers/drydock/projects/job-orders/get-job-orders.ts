@@ -25,11 +25,11 @@ export class GetJobOrdersController extends Controller {
     @Post()
     public async getJobOrders(
         @Request() request: express.Request,
-        @Body() odata: ODataBodyDto,
+        @Body() odataBody: ODataBodyDto,
     ): Promise<ODataResult<IJobOrderDto>> {
         const query = new GetJobOrdersQuery();
 
-        const result = await query.ExecuteAsync(new OdataRequest(odata, request));
+        const result = await query.ExecuteAsync(new OdataRequest(odataBody, request));
         return result;
     }
 }

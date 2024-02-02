@@ -22,12 +22,12 @@ exports.post = getProjectDetailReport;
 export class GetProjectDetailReportController extends Controller {
     @Post()
     public async getProjectDetailReport(
-        @Body() odata: ODataBodyDto,
+        @Body() odataBody: ODataBodyDto,
         @Request() request: express.Request,
     ): Promise<unknown> {
         const query = new GetProjectDetailReportQuery();
 
-        const result = await query.ExecuteAsync(new OdataRequest(odata, request));
+        const result = await query.ExecuteAsync(new OdataRequest(odataBody, request));
 
         return result;
     }

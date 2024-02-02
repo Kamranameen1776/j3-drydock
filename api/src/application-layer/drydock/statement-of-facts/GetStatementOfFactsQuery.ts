@@ -22,7 +22,7 @@ export class GetStatementOfFactsQuery extends Query<OdataRequest, ODataResult<IS
         if (!request) {
             throw new Error('Request is null');
         }
-        const result = await validate(request.odata);
+        const result = await validate(request.odataBody);
         if (result.length) {
             throw result;
         }

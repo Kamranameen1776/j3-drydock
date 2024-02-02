@@ -26,11 +26,11 @@ export class GetProjectsForMainPageActionController extends Controller {
     @Post()
     public async getProjectsForMainPageAction(
         @Request() request: express.Request,
-        @Body() odata: ODataBodyDto,
+        @Body() odataBody: ODataBodyDto,
     ): Promise<ODataResult<IProjectsFromMainPageRecordDto>> {
         const query = new ProjectsFromMainPageQuery();
 
-        const result = await query.ExecuteAsync(new OdataRequest(odata, request));
+        const result = await query.ExecuteAsync(new OdataRequest(odataBody, request));
 
         return result;
     }
