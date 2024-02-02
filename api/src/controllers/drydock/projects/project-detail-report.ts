@@ -1,8 +1,8 @@
 import * as express from 'express';
 import { Body, Controller, Post, Request, Route } from 'tsoa';
 
-import { OdataRequest } from '../../../application-layer/drydock/core/cqrs/odata/OdataRequest';
 import { GetProjectDetailReportQuery } from '../../../application-layer/drydock/projects/GetProjectDetailReportQuery';
+import { Req } from '../../../common/drydock/ts-helpers/req-res';
 import { ODataBodyDto } from '../../../shared/dto';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
@@ -23,11 +23,11 @@ export class GetProjectDetailReportController extends Controller {
     @Post()
     public async getProjectDetailReport(
         @Body() odataBody: ODataBodyDto,
-        @Request() request: express.Request,
+        @Request() request: Req<ODataBodyDto>,
     ): Promise<unknown> {
         const query = new GetProjectDetailReportQuery();
 
-        const result = await query.ExecuteAsync(new OdataRequest(odataBody, request));
+        const result = await query.ExecuteAsync(request, ODataBodyDto);
 
         return result;
     }
