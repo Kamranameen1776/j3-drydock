@@ -14,7 +14,6 @@ import {
   eJMSActionTypes,
   eJMSSectionNames
 } from 'jibe-components';
-import { saveAs } from 'file-saver';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { concatMap, filter, finalize, map, takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
@@ -36,7 +35,6 @@ import { UTCAsLocal } from '../../utils/date';
 import { cloneDeep } from 'lodash';
 import { StatementOfFactsComponent } from './project-monitoring/statement-of-facts/statement-of-facts.component';
 import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
-import { getFileNameDate } from '../../shared/functions/file-name';
 import { forkJoin, of } from 'rxjs';
 import { UpdateCostsDto } from '../../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { DailyReportsComponent } from './reports/reports.component';
