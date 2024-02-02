@@ -3,7 +3,6 @@ import { SynchronizerService } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
-import { IUpdateSpecificationDetailsDto } from '../../../dal/drydock/specification-details/dtos';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { SpecificationDetailsEntity, SpecificationInspectionEntity } from '../../../entity/drydock';
@@ -44,16 +43,19 @@ export class UpdateSpecificationDetailsCommand extends Command<UpdateSpecificati
     protected async MainHandlerAsync(request: UpdateSpecificationDetailsDto): Promise<void> {
         const vessel = await this.vesselsRepository.GetVesselBySpecification(request.uid);
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const dto: IUpdateSpecificationDetailsDto = {
-                uid: request.uid,
-                Subject: request.Subject,
-                AccountCode: request.AccountCode,
-                DoneByUid: request.DoneByUid,
-                Description: request.Description,
-                PriorityUid: request.PriorityUid,
-            };
+            const entity = new SpecificationDetailsEntity();
+            entity.uid = request.uid;
+            entity.Subject = request.Subject ?? '';
+            entity.AccountCode = request.AccountCode;
+            entity.DoneByUid = request.DoneByUid;
+            entity.Description = request.Description ?? '';
+            entity.PriorityUid = request.PriorityUid;
+            entity.Duration = request.Duration ?? 0;
+            entity.StartDate = request.StartDate ?? null;
+            entity.EndDate = request.EndDate ?? null;
+            entity.Completion = request.Completion ?? 0;
 
-            await this.specificationDetailsRepository.UpdateSpecificationDetails(dto, queryRunner);
+            await this.specificationDetailsRepository.UpdateSpecificationDetailsByEntity(entity, queryRunner);
 
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
