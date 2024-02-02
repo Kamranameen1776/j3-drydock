@@ -529,9 +529,23 @@ export class SpecificationDetailsRepository {
     public async findSpecificationsForProjectReport(projectUid: string): Promise<SpecificationForReport[]> {
         const res = (await getManager()
             .createQueryBuilder(SpecificationDetailsEntity, 'sd')
+            .select([
+                'sd.uid as uid',
+                'sd.subject as Subject',
+                'sd.FunctionUid as FunctionUid',
+                'sd.AccountCode as AccountCode',
+                'sd.TecTaskManagerUid as TaskManagerUid',
+                'sd.ItemSourceUid as ItemSourceUid',
+                'sd.EquipmentDescription as EquipmentDescription',
+                'sd.Description as Description',
+                'sd.ProjectUid AS ProjectUid',
+
+                'tm.Code as SpecificationCode',
+            ])
             .where('sd.ProjectUid = :projectUid', { projectUid })
             .andWhere('sd.active_status = 1')
-            .getMany()) as any[];
+            .leftJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid')
+            .getRawMany()) as any[];
 
         for (const specification of res) {
             specification.functionTree = await this.getFunctionTree(specification.FunctionUid);
@@ -583,4 +597,5 @@ export class SpecificationDetailsRepository {
 
 export type SpecificationForReport = SpecificationDetailsEntity & {
     functionTree: { rootFunction: string; functionPath: string };
+    SpecificationCode: string;
 };
