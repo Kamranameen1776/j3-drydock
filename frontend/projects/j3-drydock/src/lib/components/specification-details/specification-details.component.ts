@@ -55,7 +55,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationAttachments)
   [eSpecificationDetailsPageMenuIds.SpecificationAttachments]: ElementRef;
   @ViewChild(eSpecificationDetailsPageMenuIds.AuditTrail) [eSpecificationDetailsPageMenuIds.AuditTrail]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationUpdates) [eSpecificationDetailsPageMenuIds.SpecificationUpdates]: ElementRef;
+  @ViewChild('specificationUpdates') specificationUpdates: ElementRef;
 
   specificationDetailsInfo: SpecificationDetails;
   updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
