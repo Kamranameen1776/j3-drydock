@@ -10,7 +10,10 @@ import {
   EditSettingsModel,
   TooltipSettingsModel,
   TimelineSettingsModel,
-  Gantt
+  Gantt,
+  ResizeService,
+  ColumnMenuService,
+  GanttComponent
 } from '@syncfusion/ej2-angular-gantt';
 import {
   statusBackground,
@@ -38,7 +41,7 @@ type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   selector: 'jb-project-gantt-chart',
   templateUrl: './gantt-chart.component.html',
   styleUrls: ['./gantt-chart.component.scss'],
-  providers: [GanttChartService, DayMarkersService, EditService]
+  providers: [GanttChartService, DayMarkersService, EditService, ResizeService, ColumnMenuService]
 })
 export class GanttChartComponent extends UnsubscribeComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
   @Input()
@@ -50,6 +53,9 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   @ViewChild('jobOrderForm')
   jobOrderForm: IJobOrdersFormComponent;
+
+  @ViewChild('gantt', { static: true })
+  gantt: GanttComponent;
 
   public updateBtnLabel = 'Update';
 
@@ -213,6 +219,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   ngOnInit(): void {
     this.initComponent();
     this.updateEventMarkers(this.project);
+    this.gantt.treeGrid.autoFitColumns([]);
+    this.gantt.treeGrid.grid.resizeSettings = { mode: 'Normal' };
   }
 
   ngOnChanges(changes: SimpleChanges): void {
