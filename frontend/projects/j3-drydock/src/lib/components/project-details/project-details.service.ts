@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { Injectable } from '@angular/core';
 import { ITopSectionFieldSet, JbButtonType, UserRightsService } from 'jibe-components';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ProjectsService } from '../../services/ProjectsService';
 import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/project-details';
 
@@ -17,6 +17,8 @@ import { eFunction } from '../../models/enums/function.enum';
 import { eProjectsDetailsAccessActions, eProjectsAccessActions } from '../../models/enums/access-actions.enum';
 import { currentLocalAsUTC, localDateJbStringAsUTC } from '../../utils/date';
 import { ProjectEdit } from '../../models/interfaces/projects';
+import { saveAs } from 'file-saver';
+import { concatMap } from 'rxjs/operators';
 
 export interface ProjectDetailsAccessRights extends BaseAccessRight {
   attachments: AttachmentsAccessRight;
@@ -386,8 +388,13 @@ export class ProjectDetailsService {
     return !!this.userRights.getUserRights(module, func, action);
   }
 
-  exportExcel(projectId: string, yardId: string) {
-    return this.projectsService.exportExcel(projectId, yardId);
+  exportExcel(projectId: string, yardId: string, fileName: string) {
+    return this.projectsService.exportExcel(projectId, yardId).pipe(
+      concatMap((data) => {
+        saveAs(data, fileName);
+        return of(data);
+      })
+    );
   }
 
   private setAccessRights(rights: ProjectDetailsAccessRights) {
