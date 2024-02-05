@@ -17,7 +17,7 @@ async function getManagers(req: Request, res: Response) {
 
 exports.get = getManagers;
 
-@Route('drydock/dictionaries/managers')
+// @Route('drydock/dictionaries/managers')
 export class GetManagersController extends Controller {
     @Get()
     public async getManagers(): Promise<LibUserEntity[]> {

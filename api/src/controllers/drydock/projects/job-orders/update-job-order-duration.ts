@@ -18,7 +18,7 @@ async function updateJobOrderDuration(req: Request, res: Response) {
 
 exports.post = updateJobOrderDuration;
 
-@Route('drydock/projects/job-orders/update-job-order-duration')
+// @Route('drydock/projects/job-orders/update-job-order-duration')
 export class UpdateJobOrderDurationController extends Controller {
     @Post()
     public async updateJobOrderDuration(@Body() dto: UpdateJobOrderStartEndDateDto): Promise<void> {

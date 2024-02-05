@@ -18,7 +18,7 @@ async function updateStandardJobs(req: express.Request, res: express.Response) {
 
 exports.put = updateStandardJobs;
 
-@Route('drydock/standard-jobs/update-standard-jobs')
+// @Route('drydock/standard-jobs/update-standard-jobs')
 export class UpdateStandardJobsController extends Controller {
     @Put()
     public async updateStandardJobs(

@@ -22,7 +22,7 @@ export async function getProjectsManagersAction(req: Request, res: Response) {
     });
 }
 
-@Route('drydock/projects/projects-managers')
+// @Route('drydock/projects/projects-managers')
 export class GetProjectsManagersActionController extends Controller {
     @Get()
     public async getProjectsManagersAction(): Promise<IProjectsManagersResultDto[]> {

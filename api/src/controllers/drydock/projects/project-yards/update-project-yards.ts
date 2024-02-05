@@ -18,7 +18,7 @@ async function updateProjectYards(req: express.Request, res: express.Response) {
 
 exports.put = updateProjectYards;
 
-@Route('drydock/projects/project-yards/update-project-yards')
+// @Route('drydock/projects/project-yards/update-project-yards')
 export class UpdateProjectYardsController extends Controller {
     @Put()
     public async updateProjectYards(

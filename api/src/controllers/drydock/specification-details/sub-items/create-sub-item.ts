@@ -27,7 +27,7 @@ async function createSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
 
 exports.post = createSubItem;
 
-@Route('drydock/specification-details/sub-items/create-sub-item')
+// @Route('drydock/specification-details/sub-items/create-sub-item')
 export class CreateSubItemController extends Controller {
     @Post()
 

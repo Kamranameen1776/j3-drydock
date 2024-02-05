@@ -22,7 +22,7 @@ async function updateSpecificationDetails(req: express.Request, res: express.Res
 
 exports.put = updateSpecificationDetails;
 
-@Route('drydock/specification-details/update-specification-details')
+// @Route('drydock/specification-details/update-specification-details')
 export class UpdateSpecificationDetailsController extends Controller {
     @Put()
     public async updateSpecificationDetails(

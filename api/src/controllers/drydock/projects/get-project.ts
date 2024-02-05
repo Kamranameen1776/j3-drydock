@@ -17,7 +17,7 @@ async function getProject(req: express.Request, res: express.Response) {
 }
 exports.get = getProject;
 
-@Route('drydock/projects/get-project')
+// @Route('drydock/projects/get-project')
 export class GetProjectController extends Controller {
     @Get()
     public async getProject(

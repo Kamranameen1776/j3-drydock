@@ -17,7 +17,7 @@ async function getStandardJobs(req: express.Request, res: express.Response) {
 
 exports.post = getStandardJobs;
 
-@Route('drydock/standard-jobs/get-standard-jobs')
+// @Route('drydock/standard-jobs/get-standard-jobs')
 export class GetStandardJobsController extends Controller {
     // TODO: specify @Body() strongly typed DTO
     @Post()

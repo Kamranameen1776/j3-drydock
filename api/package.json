@@ -74,7 +74,7 @@
     "test:integration": "npm run test -- --c jest.integration.config.js",
     "test:watch": "jest --watch",
     "build": "tsc -p ./tsconfig.build.json",
-    "swagger": "tsoa spec"
+    "swagger": "tsoa spec-and-routes"
   },
   "nodemonConfig": {
     "watch": [

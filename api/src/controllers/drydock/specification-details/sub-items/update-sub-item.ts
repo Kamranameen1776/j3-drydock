@@ -27,7 +27,7 @@ async function updateSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
 
 exports.put = updateSubItem;
 
-@Route('drydock/specification-details/sub-items/update-sub-item')
+// @Route('drydock/specification-details/sub-items/update-sub-item')
 export class UpdateSubItemController extends Controller {
     @Put()
 

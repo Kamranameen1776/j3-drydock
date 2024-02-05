@@ -24,7 +24,7 @@ export async function getYards(req: Request, res: Response) {
 
 exports.get = getYards;
 
-@Route('drydock/yards/get-yards')
+// @Route('drydock/yards/get-yards')
 export class GetYardsController extends Controller {
     @Get()
     public async getYards(@Query() uid: string): Promise<GetYardsDto[]> {

@@ -28,7 +28,7 @@ async function getJobOrderBySpecification(req: Request, res: Response) {
 
 exports.post = getJobOrderBySpecification;
 
-@Route('drydock/projects/job-orders/get-job-order-by-specification')
+// @Route('drydock/projects/job-orders/get-job-order-by-specification')
 export class GetJobOrderBySpecificationController extends Controller {
     @Post()
     public async getJobOrderBySpecification(@Body() dto: GetJobOrderBySpecificationDto): Promise<JobOrderDto | null> {

@@ -21,7 +21,7 @@ async function createProject(req: express.Request, res: express.Response) {
 
 exports.post = createProject;
 
-@Route('drydock/projects/create-project')
+// @Route('drydock/projects/create-project')
 export class CreateProjectController extends Controller {
     @Post()
     public async createProject(

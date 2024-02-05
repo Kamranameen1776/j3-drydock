@@ -24,7 +24,7 @@ export async function getOneDailyReport(req: Request, res: Response) {
 
 exports.get = getOneDailyReport;
 
-@Route('drydock/daily-reports/get-one-daily-report')
+// @Route('drydock/daily-reports/get-one-daily-report')
 export class GetOneDailyReportController extends Controller {
     @Get()
     public async getOneDailyReport(@Query() uid: string): Promise<GetOneDailyReportDto> {

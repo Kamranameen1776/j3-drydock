@@ -22,7 +22,7 @@ export async function getProjectsShipsYardsAction(req: Request, res: Response) {
     });
 }
 
-@Route('drydock/projects/projects-ships-yards')
+// @Route('drydock/projects/projects-ships-yards')
 export class GetProjectsShipsYardsActionController extends Controller {
     @Get()
     public async getProjectsShipsYardsAction(): Promise<IProjectsShipsYardsResultDto[]> {

@@ -19,7 +19,7 @@ async function deleteProject(req: Request, res: Response) {
 
 exports.post = deleteProject;
 
-@Route('drydock/projects/delete-project')
+// @Route('drydock/projects/delete-project')
 export class DeleteProjectController extends Controller {
     @Post()
     public async deleteProject(@Body() dto: IDeleteProjectDto): Promise<void> {

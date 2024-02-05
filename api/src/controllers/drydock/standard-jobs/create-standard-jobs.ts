@@ -19,7 +19,7 @@ async function createStandardJobs(req: express.Request, res: express.Response) {
 
 exports.post = createStandardJobs;
 
-@Route('drydock/standard-jobs/create-standard-jobs')
+// @Route('drydock/standard-jobs/create-standard-jobs')
 export class CreateStandardJobsController extends Controller {
     @Post()
     public async createStandardJobs(

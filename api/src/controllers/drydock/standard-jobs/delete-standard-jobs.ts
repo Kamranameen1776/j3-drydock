@@ -23,7 +23,7 @@ async function deleteStandardJobs(req: express.Request, res: express.Response) {
 
 exports.put = deleteStandardJobs;
 
-@Route('drydock/standard-jobs/delete-standard-jobs')
+// @Route('drydock/standard-jobs/delete-standard-jobs')
 export class DeleteStandardJobsController extends Controller {
     @Put()
     public async deleteStandardJobs(@Query() uid: string, @Request() request: express.Request): Promise<UpdateResult> {

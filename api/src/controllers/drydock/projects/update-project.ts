@@ -23,7 +23,7 @@ async function updateProject(req: Request, res: Response) {
 
 exports.put = updateProject;
 
-@Route('drydock/projects/update-project')
+// @Route('drydock/projects/update-project')
 export class UpdateProjectController extends Controller {
     @Put()
     public async updateProject(@Body() dto: UpdateProjectDto): Promise<void> {

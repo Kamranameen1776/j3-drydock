@@ -17,7 +17,7 @@ async function AddPmsJob(req: Request, res: Response) {
 
 exports.post = AddPmsJob;
 
-@Route('drydock/specification-details/pms/add-pms-jobs')
+// @Route('drydock/specification-details/pms/add-pms-jobs')
 export class AddPmsJobController extends Controller {
     @Post()
     public async AddPmsJob(@Body() dto: UpdateSpecificationPmsDto): Promise<void> {

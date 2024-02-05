@@ -27,7 +27,7 @@ async function createSubItems(req: Req<ReqBody>, res: Res<SpecificationDetailsSu
 
 exports.post = createSubItems;
 
-@Route('drydock/specification-details/sub-items/create-sub-items')
+// @Route('drydock/specification-details/sub-items/create-sub-items')
 export class CreateSubItemsController extends Controller {
     @Post()
     // TODO: check if newer version of tsoa supports async return types

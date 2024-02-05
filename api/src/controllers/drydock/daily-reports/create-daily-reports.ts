@@ -24,7 +24,7 @@ async function createDailyReports(req: Request, res: Response) {
 
 exports.post = createDailyReports;
 
-@Route('drydock/daily-reports/create-daily-reports')
+// @Route('drydock/daily-reports/create-daily-reports')
 export class CreateDailyReportsController extends Controller {
     @Post()
     public async createDailyReports(@Body() data: CreateDailyReportsDto): Promise<void> {

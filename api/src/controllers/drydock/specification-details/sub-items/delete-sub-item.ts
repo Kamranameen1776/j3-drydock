@@ -26,7 +26,7 @@ async function deleteSubItem(req: Req<ReqBody>, res: Res): Promise<void> {
 
 exports.put = deleteSubItem;
 
-@Route('drydock/specification-details/sub-items/delete-sub-item')
+// @Route('drydock/specification-details/sub-items/delete-sub-item')
 export class DeleteSubItemController extends Controller {
     @Put()
     public async deleteSubItem(@Body() request: DeleteSubItemParams): Promise<void> {

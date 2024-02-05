@@ -17,7 +17,7 @@ async function DeletePmsJob(req: Request, res: Response) {
 
 exports.delete = DeletePmsJob;
 
-@Route('drydock/specification-details/pms/delete-pms-jobs')
+// @Route('drydock/specification-details/pms/delete-pms-jobs')
 export class DeletePmsJobController extends Controller {
     @Delete()
     public async updateJobOrderDuration(@Body() dto: UpdateSpecificationPmsDto): Promise<void> {

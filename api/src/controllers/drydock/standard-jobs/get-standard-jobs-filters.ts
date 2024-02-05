@@ -18,7 +18,7 @@ async function getStandardJobsFilters(req: express.Request, res: express.Respons
 
 exports.post = getStandardJobsFilters;
 
-@Route('drydock/standard-jobs/get-standard-jobs-filters')
+// @Route('drydock/standard-jobs/get-standard-jobs-filters')
 export class GetStandardJobsFiltersController extends Controller {
     @Post()
     public async getStandardJobsFilters(

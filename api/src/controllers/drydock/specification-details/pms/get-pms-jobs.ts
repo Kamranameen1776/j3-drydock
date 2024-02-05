@@ -17,7 +17,7 @@ export async function getPmsJobs(req: Request, res: Response) {
 
 exports.get = getPmsJobs;
 
-@Route('drydock/specification-details/pms/get-pms-jobs')
+// @Route('drydock/specification-details/pms/get-pms-jobs')
 export class GetPmsJobsController extends Controller {
     @Get()
     public async getPmsJobs(@Query() uid: string): Promise<Array<string>> {

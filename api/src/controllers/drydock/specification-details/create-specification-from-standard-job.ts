@@ -21,7 +21,7 @@ async function createSpecificationFromStandardJobs(req: express.Request, res: ex
 
 exports.post = createSpecificationFromStandardJobs;
 
-@Route('drydock/specification-details/create-specification-from-standard-job')
+// @Route('drydock/specification-details/create-specification-from-standard-job')
 export class CreateSpecificationFromStandardJobsController extends Controller {
     @Post()
     public async createSpecificationFromStandardJobs(

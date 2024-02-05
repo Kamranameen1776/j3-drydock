@@ -18,7 +18,7 @@ async function deleteProjectYards(req: express.Request, res: express.Response) {
 
 exports.put = deleteProjectYards;
 
-@Route('drydock/projects/project-yards/delete-project-yards')
+// @Route('drydock/projects/project-yards/delete-project-yards')
 export class DeleteProjectYardsController extends Controller {
     @Put()
     public async deleteProjectYards(

@@ -15,7 +15,7 @@ export async function getGroupProjectStatusesAction(req: express.Request, res: e
     });
 }
 
-@Route('drydock/projects/group-project-statuses')
+// @Route('drydock/projects/group-project-statuses')
 export class GetGroupProjectStatusesActionController extends Controller {
     @Get()
     public async getGroupProjectStatusesAction(@Request() request: express.Request): Promise<IGroupResponseDto> {

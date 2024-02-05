@@ -20,7 +20,7 @@ async function deleteStatementOfFact(req: Request, res: Response) {
 
 exports.post = deleteStatementOfFact;
 
-@Route('drydock/statement-of-facts/delete-statement-of-fact')
+// @Route('drydock/statement-of-facts/delete-statement-of-fact')
 export class DeleteStatementsOfFactsController extends Controller {
     @Post()
     public async deleteStatementOfFact(@Body() dto: DeleteStatementOfFactDto): Promise<void> {

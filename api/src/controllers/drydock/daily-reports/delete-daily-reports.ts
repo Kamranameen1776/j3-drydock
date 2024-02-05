@@ -24,7 +24,7 @@ async function deleteDailyReports(req: Request, res: Response) {
 
 exports.put = deleteDailyReports;
 
-@Route('drydock/daily-reports/delete-daily-reports')
+// @Route('drydock/daily-reports/delete-daily-reports')
 export class DeleteDailyReportsController extends Controller {
     @Put()
     public async deleteDailyReports(@Body() deleteDailyReportsDto: DeleteDailyReportsDto): Promise<void> {

@@ -20,7 +20,7 @@ async function createCreateStatementsOfFacts(req: Request, res: Response) {
 
 exports.post = createCreateStatementsOfFacts;
 
-@Route('drydock/statement-of-facts/create-statement-of-fact')
+// @Route('drydock/statement-of-facts/create-statement-of-fact')
 export class CreateStatementsOfFactsController extends Controller {
     @Post()
     public async createCreateStatementsOfFacts(@Body() dto: CreateStatementsOfFactsDto): Promise<void> {

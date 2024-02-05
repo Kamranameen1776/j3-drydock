@@ -22,7 +22,7 @@ export async function getProjectStatusesAction(req: Request, res: Response) {
     });
 }
 
-@Route('drydock/projects/projects-statuses')
+// @Route('drydock/projects/projects-statuses')
 export class GetProjectStatusesActionController extends Controller {
     @Get()
     public async getProjectStatusesAction(): Promise<IProjectStatusResultDto[]> {

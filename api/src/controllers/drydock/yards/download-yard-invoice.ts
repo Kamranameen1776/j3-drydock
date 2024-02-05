@@ -21,7 +21,7 @@ export async function getYardReport(req: Request, res: Response) {
 exports.get = getYardReport;
 exports.post = getYardReport;
 
-@Route('drydock/yards/download-yard-invoice')
+// @Route('drydock/yards/download-yard-invoice')
 export class GetYardReportController extends Controller {
     // tsoa is not supporting Get with body
     @Post()

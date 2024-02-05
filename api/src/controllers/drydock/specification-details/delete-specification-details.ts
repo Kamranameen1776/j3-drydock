@@ -22,7 +22,7 @@ async function deleteSpecificationDetails(req: express.Request, res: express.Res
 
 exports.put = deleteSpecificationDetails;
 
-@Route('drydock/specification-details/delete-specification-details')
+// @Route('drydock/specification-details/delete-specification-details')
 export class DeleteSpecificationDetailsController extends Controller {
     @Put()
     public async deleteSpecificationDetails(

@@ -24,7 +24,7 @@ async function updateDailyReports(req: Request, res: Response) {
 
 exports.put = updateDailyReports;
 
-@Route('drydock/daily-reports/update-daily-reports')
+// @Route('drydock/daily-reports/update-daily-reports')
 export class UpdateDailyReportsController extends Controller {
     @Put()
     public async updateDailyReports(@Body() dto: UpdateDailyReportsDto): Promise<void> {

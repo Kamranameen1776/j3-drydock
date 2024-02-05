@@ -18,7 +18,7 @@ async function getProjectDetailReport(req: express.Request, res: express.Respons
 
 exports.post = getProjectDetailReport;
 
-@Route('drydock/projects/project-detail-report')
+// @Route('drydock/projects/project-detail-report')
 export class GetProjectDetailReportController extends Controller {
     @Post()
     public async getProjectDetailReport(

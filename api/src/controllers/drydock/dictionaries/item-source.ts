@@ -17,7 +17,7 @@ async function getItemSource(req: Request, res: Response) {
 
 exports.get = getItemSource;
 
-@Route('drydock/dictionaries/item-source')
+// @Route('drydock/dictionaries/item-source')
 export class GetItemSourceController extends Controller {
     @Get()
     public async getItemSource(): Promise<LibItemSourceEntity[]> {

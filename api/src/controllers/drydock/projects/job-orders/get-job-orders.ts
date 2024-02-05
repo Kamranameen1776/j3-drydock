@@ -20,7 +20,7 @@ async function getJobOrders(req: express.Request, res: express.Response) {
 
 exports.post = getJobOrders;
 
-@Route('drydock/projects/job-orders/get-job-orders')
+// @Route('drydock/projects/job-orders/get-job-orders')
 export class GetJobOrdersController extends Controller {
     @Post()
     public async getJobOrders(

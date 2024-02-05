@@ -21,7 +21,7 @@ export async function getManySpecificationDetails(req: express.Request, res: exp
 
 exports.post = getManySpecificationDetails;
 
-@Route('drydock/specification-details/get-many-specification-details')
+// @Route('drydock/specification-details/get-many-specification-details')
 export class GetManySpecificationDetailsController extends Controller {
     @Post()
     public async getManySpecificationDetails(

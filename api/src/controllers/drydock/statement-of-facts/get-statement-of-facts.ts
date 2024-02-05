@@ -20,7 +20,7 @@ async function getStatementsOfFact(req: express.Request, res: express.Response) 
 
 exports.post = getStatementsOfFact;
 
-@Route('drydock/statement-of-facts/get-statement-of-facts')
+// @Route('drydock/statement-of-facts/get-statement-of-facts')
 export class GetStatementsOfFactController extends Controller {
     @Post()
     public async getStatementsOfFact(

@@ -17,7 +17,7 @@ async function validateFindingDeletion(req: Request, res: Response): Promise<voi
 
 exports.post = validateFindingDeletion;
 
-@Route('drydock/specification-details/sub-items/validate-finding-deletion')
+// @Route('drydock/specification-details/sub-items/validate-finding-deletion')
 export class ValidateFindingDeletionController extends Controller {
     @Post()
     public async validateFindingDeletion(@Body() dto: ValidateFindingDeleteDto): Promise<boolean> {

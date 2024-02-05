@@ -23,7 +23,7 @@ async function findSubItems(
 
 exports.post = findSubItems;
 
-@Route('drydock/specification-details/sub-items/find-sub-items')
+// @Route('drydock/specification-details/sub-items/find-sub-items')
 export class FindSubItemsController extends Controller {
     @Post()
     public async findSubItems(@Body() request: FindManyParams): Promise<ODataResult<Record>> {

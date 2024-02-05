@@ -19,7 +19,7 @@ async function updateSubItemUtilized(req: express.Request, res: express.Response
 
 exports.put = updateSubItemUtilized;
 
-@Route('drydock/specification-details/sub-items/update-sub-item-utilized')
+// @Route('drydock/specification-details/sub-items/update-sub-item-utilized')
 export class UpdateSubItemUtilizedController extends Controller {
     @Put()
     public async updateSubItemUtilized(

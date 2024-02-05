@@ -22,7 +22,7 @@ export async function getProjectsVesselsAction(req: Request, res: Response) {
     });
 }
 
-@Route('drydock/projects/projects-vessels/getProjectsVesselsAction')
+// @Route('drydock/projects/projects-vessels/getProjectsVesselsAction')
 export class GetProjectsVesselsActionController extends Controller {
     @Get()
     public async getProjectsVesselsAction(): Promise<IProjectVesselsResultDto[]> {

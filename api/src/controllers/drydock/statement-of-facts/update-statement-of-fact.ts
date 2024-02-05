@@ -20,7 +20,7 @@ async function updateStatementOfFact(req: Request, res: Response) {
 
 exports.put = updateStatementOfFact;
 
-@Route('drydock/statement-of-facts/update-statement-of-fact')
+// @Route('drydock/statement-of-facts/update-statement-of-fact')
 export class UpdateStatementOfFactsController extends Controller {
     @Put()
     public async updateStatementOfFact(@Body() dto: UpdateStatementOfFactsDto): Promise<void> {

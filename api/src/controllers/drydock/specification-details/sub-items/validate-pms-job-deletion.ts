@@ -17,7 +17,7 @@ async function validatePmsJobDeletion(req: Req<ValidatePmsJobDeleteDto>, res: Re
 
 exports.post = validatePmsJobDeletion;
 
-@Route('drydock/specification-details/sub-items/validate-pms-job-deletion')
+// @Route('drydock/specification-details/sub-items/validate-pms-job-deletion')
 export class ValidatePmsJobDeletionController extends Controller {
     @Post()
     public async validatePmsJobDeletion(@Body() dto: ValidatePmsJobDeleteDto): Promise<boolean> {

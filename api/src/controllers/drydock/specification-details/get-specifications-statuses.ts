@@ -22,7 +22,7 @@ export async function getSpecificationStatuses(req: Request, res: Response) {
 
 exports.get = getSpecificationStatuses;
 
-@Route('drydock/specification-details/get-specifications-statuses')
+// @Route('drydock/specification-details/get-specifications-statuses')
 export class GetSpecificationStatusesController extends Controller {
     @Get()
     public async getSpecificationStatuses(): Promise<GetSpecificationsStatusesDto[]> {

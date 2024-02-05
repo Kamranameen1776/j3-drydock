@@ -22,7 +22,7 @@ export async function getProjectTypesAction(req: Request, res: Response) {
     });
 }
 
-@Route('drydock/projects/project-types')
+// @Route('drydock/projects/project-types')
 export class GetProjectTypesActionController extends Controller {
     @Get()
     public async getProjectTypesAction(): Promise<IProjectTypeResultDto[]> {

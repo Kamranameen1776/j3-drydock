@@ -27,7 +27,7 @@ async function deleteSubItems(req: Req<ReqBody>, res: Res<EntityExistenceMap>): 
 
 exports.delete = deleteSubItems;
 
-@Route('drydock/specification-details/sub-items/delete-sub-items')
+// @Route('drydock/specification-details/sub-items/delete-sub-items')
 export class DeleteSubItemsController extends Controller {
     @Delete()
     public async deleteSubItems(@Body() request: DeleteManyParams): Promise<EntityExistenceMap> {

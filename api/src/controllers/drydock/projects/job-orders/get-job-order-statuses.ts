@@ -15,7 +15,7 @@ async function getJobOrderStatuses(req: Request, res: Response) {
 
 exports.get = getJobOrderStatuses;
 
-@Route('drydock/projects/job-orders/get-job-order-statuses')
+// @Route('drydock/projects/job-orders/get-job-order-statuses')
 export class GetJobOrderStatusesController extends Controller {
     @Get()
     public async getJobOrderStatuses(): Promise<KeyValuePair<string, string>[]> {

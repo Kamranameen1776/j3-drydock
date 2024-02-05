@@ -19,7 +19,7 @@ async function deleteSpecificationRequisitions(req: Request, res: Response) {
 
 exports.post = deleteSpecificationRequisitions;
 
-@Route('drydock/specification-details/delete-specification-requisition')
+// @Route('drydock/specification-details/delete-specification-requisition')
 export class DeleteSpecificationRequisitionsController extends Controller {
     @Post()
     public async deleteSpecificationRequisitions(

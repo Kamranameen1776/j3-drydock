@@ -21,7 +21,7 @@ export async function getSpecificationCostUpdates(req: express.Request, res: exp
 
 exports.post = getSpecificationCostUpdates;
 
-@Route('drydock/specification-details/get-specification-cost-updates')
+// @Route('drydock/specification-details/get-specification-cost-updates')
 export class GetSpecificationCostUpdatesController extends Controller {
     @Post()
     public async getSpecificationCostUpdates(

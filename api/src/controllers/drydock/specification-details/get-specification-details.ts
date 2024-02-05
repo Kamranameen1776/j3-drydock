@@ -26,7 +26,7 @@ export async function getSpecificationDetails(req: express.Request, res: express
 
 exports.get = getSpecificationDetails;
 
-@Route('drydock/specification-details/get-specification-details')
+// @Route('drydock/specification-details/get-specification-details')
 export class GetSpecificationDetailsController extends Controller {
     @Get()
     public async getSpecificationDetails(

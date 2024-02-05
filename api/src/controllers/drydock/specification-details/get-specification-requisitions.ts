@@ -24,7 +24,7 @@ async function getSpecificationRequisitions(req: Request, res: Response) {
 
 exports.post = getSpecificationRequisitions;
 
-@Route('drydock/specification-details/get-specification-requisitions')
+// @Route('drydock/specification-details/get-specification-requisitions')
 export class GetSpecificationRequisitionsController extends Controller {
     @Post()
     public async getSpecificationRequisitions(

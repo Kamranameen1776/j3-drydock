@@ -23,7 +23,7 @@ export async function getDailyReportsQuery(req: express.Request, res: express.Re
 
 exports.post = getDailyReportsQuery;
 
-@Route('drydock/daily-reports/get-daily-reports')
+// @Route('drydock/daily-reports/get-daily-reports')
 export class GetDailyReportsQueryController extends Controller {
     @Post()
     public async getDailyReportsQuery(@Request() dto: RequestWithOData): Promise<ODataResult<IDailyReportsResultDto>> {
