@@ -17,6 +17,8 @@ import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
 import { TaskManagerConstants } from '../../../../shared/constants';
 import { ODataResult } from '../../../../shared/interfaces';
 import { IJobOrderDto } from './IJobOrderDto';
+import { Req } from '../../../../common/drydock/ts-helpers/req-res';
+import { GetJobOrdersDto } from '../../../../application-layer/drydock/projects/job-orders/dtos/GetJobOrdersDto';
 
 export class JobOrdersRepository {
     private statuses: Array<string> = [
@@ -92,10 +94,10 @@ export class JobOrdersRepository {
         return oDataService.getJoinResult(query.getQuery());
     }
 
-    public async GetUpdates(request: Request): Promise<ODataResult<IJobOrderDto>> {
+    public async GetUpdates(request: Req<GetJobOrdersDto>): Promise<ODataResult<IJobOrderDto>> {
         const SpecificationDetailsRepository = getManager().getRepository(JobOrderEntity);
 
-        const query: string = SpecificationDetailsRepository.createQueryBuilder('jo')
+        const [query, parameters] = SpecificationDetailsRepository.createQueryBuilder('jo')
             .select([
                 'sd.uid AS SpecificationUid',
                 'sd.ProjectUid AS ProjectUid',
@@ -115,7 +117,8 @@ export class JobOrdersRepository {
             .innerJoin(
                 className(SpecificationDetailsEntity),
                 'sd',
-                'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1',
+                'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1 and sd.ActiveStatus = 1',
+                { SpecificationUid: request.body.uid }
             )
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
@@ -129,12 +132,12 @@ export class JobOrdersRepository {
             )
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1')
-
-            .getQuery();
+            .where('jo.SpecificationUid = :SpecificationUid', { SpecificationUid: request.body.uid })
+            .getQueryAndParameters();
 
         const oDataService = new ODataService(request, getConnection);
 
-        return oDataService.getJoinResult(query);
+        return oDataService.getJoinResult(query, parameters);
     }
 
     public async TryGetJobOrderBySpecification(specificationUid: string): Promise<JobOrderEntity | undefined> {

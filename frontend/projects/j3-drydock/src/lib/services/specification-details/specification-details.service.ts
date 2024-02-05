@@ -482,7 +482,7 @@ export class SpecificationDetailsService {
     return {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
-      action: 'specification-details/get-specification-updates',
+      action: 'projects/job-orders/get-updates',
       crud: eCrud.Post,
       body: { uid: specificationUid }
     };
