@@ -1,5 +1,3 @@
-import { Request } from 'express';
-
 import * as tableName from '../../../../../common/drydock/ts-helpers/tableName';
 import { UpdateProjectYardsDto } from '../dtos/UpdateProjectYardsDto';
 import { UpdateProjectYardsCommand } from '../UpdateProjectYardsCommand';
@@ -8,16 +6,15 @@ jest.mock('../../../../../common/drydock/ts-helpers/tableName');
 
 describe('UpdateProjectYardsCommand', () => {
     let command: UpdateProjectYardsCommand;
-    let mockRequest: Partial<Request>;
+    let mockRequestDto: UpdateProjectYardsDto;
 
     beforeEach(() => {
         command = new UpdateProjectYardsCommand();
-        mockRequest = {
-            body: {
-                uid: '12963993-9397-4B5E-849E-0046FB90F564',
-                isSelected: true,
-            } as UpdateProjectYardsDto,
-        };
+        mockRequestDto = {
+            uid: '12963993-9397-4B5E-849E-0046FB90F564',
+            isSelected: true,
+            updatedBy: '12963993-9397-4B5E-849E-0046FB90F564',
+        } as UpdateProjectYardsDto;
         (tableName.getTableName as jest.Mock).mockImplementation(() => 'string');
     });
 
@@ -32,7 +29,7 @@ describe('UpdateProjectYardsCommand', () => {
                 activeStatus: false,
             });
 
-            await expect(command['ValidationHandlerAsync'](mockRequest as Request)).rejects.toThrow(
+            await expect(command['ValidationHandlerAsync'](mockRequestDto)).rejects.toThrow(
                 'The project yard identified by UID: 12963993-9397-4B5E-849E-0046FB90F564 could not be found or has been deleted.',
             );
         });
@@ -59,7 +56,7 @@ describe('UpdateProjectYardsCommand', () => {
                 },
             ]);
 
-            await expect(command['ValidationHandlerAsync'](mockRequest as Request)).resolves.not.toThrow();
+            await expect(command['ValidationHandlerAsync'](mockRequestDto)).resolves.not.toThrow();
         });
     });
 });

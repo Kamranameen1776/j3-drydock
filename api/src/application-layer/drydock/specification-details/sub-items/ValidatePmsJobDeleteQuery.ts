@@ -1,14 +1,16 @@
-import { Req } from '../../../../common/drydock/ts-helpers/req-res';
+import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 import { ValidatePmsJobDeleteDto } from '../../../../dal/drydock/specification-details/sub-items/dto/ValidatePmsJobDeleteDto';
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { Query } from '../../core/cqrs/Query';
 
-export class ValidatePmsJobDeleteQuery extends Query<Req<ValidatePmsJobDeleteDto>, boolean> {
+export class ValidatePmsJobDeleteQuery extends Query<ValidatePmsJobDeleteDto, boolean> {
     protected readonly subItemsRepo = new SpecificationDetailsSubItemsRepository();
 
-    public async MainHandlerAsync(req: Req<ValidatePmsJobDeleteDto>): Promise<boolean> {
-        const data = req.body;
+    protected async ValidationHandlerAsync(request: ValidatePmsJobDeleteDto): Promise<void> {
+        await validateAgainstModel(ValidatePmsJobDeleteDto, request);
+    }
 
-        return this.subItemsRepo.validatePmsJobDelete(data);
+    public async MainHandlerAsync(req: ValidatePmsJobDeleteDto): Promise<boolean> {
+        return this.subItemsRepo.validatePmsJobDelete(req);
     }
 }

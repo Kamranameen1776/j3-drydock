@@ -1,7 +1,5 @@
-import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Request } from 'express';
-import { AccessRights, SynchronizerService } from 'j2utils';
+import { SynchronizerService } from 'j2utils';
 
 import { BusinessException } from '../../../../bll/drydock/core/exceptions';
 import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
@@ -12,7 +10,7 @@ import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { UpdateProjectYardsDto } from './dtos/UpdateProjectYardsDto';
 
-export class UpdateProjectYardsCommand extends Command<Request, void> {
+export class UpdateProjectYardsCommand extends Command<UpdateProjectYardsDto, void> {
     yardProjectsRepository: YardsProjectsRepository;
     uow: UnitOfWork;
     vesselRepository: VesselsRepository;
@@ -30,35 +28,33 @@ export class UpdateProjectYardsCommand extends Command<Request, void> {
         return;
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
-        const body: UpdateProjectYardsDto = plainToClass(UpdateProjectYardsDto, request.body);
-        const result = await validate(body);
+    protected async ValidationHandlerAsync(request: UpdateProjectYardsDto): Promise<void> {
+        const result = await validate(request);
+
         if (result.length) {
             throw result;
         }
 
-        const yardProject = await this.yardProjectsRepository.get(body.uid);
+        const yardProject = await this.yardProjectsRepository.get(request.uid);
         if (!yardProject || yardProject.activeStatus === false) {
             throw new BusinessException(
-                `The project yard identified by UID: ${body.uid} could not be found or has been deleted.`,
+                `The project yard identified by UID: ${request.uid} could not be found or has been deleted.`,
             );
         }
 
         return;
     }
 
-    protected async MainHandlerAsync(request: Request): Promise<void> {
-        const { UserUID: updatedBy } = AccessRights.authorizationDecode(request);
-        const body: UpdateProjectYardsDto = request.body;
-        const yardProject = await this.yardProjectsRepository.get(body.uid);
+    protected async MainHandlerAsync(request: UpdateProjectYardsDto): Promise<void> {
+        const yardProject = await this.yardProjectsRepository.get(request.uid);
         const vessel = await this.vesselRepository.GetVesselByProjectUid(yardProject.projectUid);
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.yardProjectsRepository.update(
                 {
-                    updatedBy: updatedBy,
-                    lastExportedDate: body.lastExportedDate,
-                    uid: body.uid,
+                    updatedBy: request.updatedBy,
+                    lastExportedDate: request.lastExportedDate,
+                    uid: request.uid,
                     updatedAt: new Date(),
                 },
                 queryRunner,
@@ -67,7 +63,7 @@ export class UpdateProjectYardsCommand extends Command<Request, void> {
                 queryRunner.manager,
                 this.tableName,
                 'uid',
-                body.uid,
+                request.uid,
                 vessel.VesselId,
             );
         });
