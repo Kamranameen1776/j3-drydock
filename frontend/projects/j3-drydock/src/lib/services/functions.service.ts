@@ -38,7 +38,7 @@ export class FunctionsService {
   }
 
   public createFlatNode(
-    comp: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name'>,
+    comp: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name' | 'expanded'>,
     parentNodeUid = '0'
   ): FunctionsFlatTreeNode {
     return {
@@ -47,7 +47,8 @@ export class FunctionsService {
       DisplayText: comp.name,
       selectable: false,
       tag: 'function',
-      icon: 'icons8-cloud-function'
+      icon: 'icons8-cloud-function',
+      expanded: comp.expanded
     };
   }
 }

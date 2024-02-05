@@ -12,3 +12,9 @@
     }
   }
 }
+
+:host {
+  ::ng-deep {
+    @include progress-spinner-fix;
+  }
+}

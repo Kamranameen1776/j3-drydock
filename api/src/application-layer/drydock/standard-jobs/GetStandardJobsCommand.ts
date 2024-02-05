@@ -3,6 +3,7 @@ import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/Stand
 import { RequestWithOData } from '../../../shared/interfaces';
 import { Command } from '../core/cqrs/Command';
 import { GetStandardJobsResultDto } from './dto';
+import { StandardJobsGridFiltersKeys, standardJobsGridFiltersKeys } from './StandardJobsConstants';
 
 export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandardJobsResultDto> {
     standardJobsRepository = new StandardJobsRepository();
@@ -13,7 +14,20 @@ export class GetStandardJobsCommand extends Command<RequestWithOData, GetStandar
     }
 
     protected async MainHandlerAsync(request: RequestWithOData): Promise<GetStandardJobsResultDto> {
-        const data = await this.standardJobsRepository.getStandardJobs(request);
+        const filters = request.body.gridFilters.reduce(
+            (acc, { odataKey, selectedValues }) =>
+                standardJobsGridFiltersKeys.includes(odataKey as StandardJobsGridFiltersKeys) &&
+                Array.isArray(selectedValues) &&
+                selectedValues?.length
+                    ? {
+                          ...acc,
+                          [odataKey]: selectedValues,
+                      }
+                    : acc,
+            {} as Record<StandardJobsGridFiltersKeys, string[]>,
+        );
+
+        const data = await this.standardJobsRepository.getStandardJobs(request, filters);
 
         const uids = data.records.map((item) => item.uid);
 

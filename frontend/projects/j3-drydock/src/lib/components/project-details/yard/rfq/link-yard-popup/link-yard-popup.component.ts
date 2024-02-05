@@ -92,11 +92,7 @@ export class LinkYardPopupComponent extends UnsubscribeComponent implements OnIn
         },
         // eslint-disable-next-line rxjs/no-implicit-any-catch
         (err) => {
-          if (err?.status === 422 && err?.error?.message) {
-            this.growlMessageService.setErrorMessage(err.error.message);
-          } else {
-            this.growlMessageService.setErrorMessage('Server error occured');
-          }
+          this.growlMessageService.errorHandler(err);
         }
       );
   }

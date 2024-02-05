@@ -20,7 +20,7 @@ import { UpsertSubItemPopupComponent } from './components/standard-jobs-main/sub
 import { StandardJobsStatusNamePipe } from './components/standard-jobs-main/pipes/status-name.pipe';
 import { StandardJobsStatusColorPipe } from './components/standard-jobs-main/pipes/status-color.pipe';
 import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
-import { ProjectsSpecificationsGridComponent } from './components/projects-main-page/projects-specifications-grid/projects-specifications-grid.component';
+import { ProjectsGridComponent } from './components/projects-main-page/projects-grid/projects-grid.component';
 import { StaticGridSearchPipe } from './shared/pipes/static-grid-search.pipe';
 import { CreateSpecificationPopupComponent } from './components/project-details/create-specification-popup/create-specification-popup.component';
 import { SpecificationFormComponent } from './components/project-details/specification-form/specification-form.component';
@@ -30,11 +30,9 @@ import { ProjectStatusFilterComponent } from './components/projects-main-page/pr
 import { LeftPanelFilterService } from './components/projects-main-page/services/LeftPanelFilterService';
 import { RfqComponent } from './components/project-details/yard/rfq/rfq.component';
 import { ComparisonComponent } from './components/project-details/yard/comparison/comparison.component';
-import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
 import { SelectLinkYardGridComponent } from './components/project-details/yard/rfq/select-link-yard-grid/select-link-yard-grid.component';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
-import { SpecificationDetailsHeaderComponent } from './components/specification-details/specification-details-header/specification-details-header.component';
 import { SpecificationGeneralInformationComponent } from './components/specification-details/specification-general-information/specification-general-information.component';
 import { SpecificationGeneralInformationInputservice } from './components/specification-details/specification-general-information/specification-general-information-inputs';
 import { SpecificationRequisitionsComponent } from './components/specification-details/specification-requisitions/specification-requisitions.component';
@@ -44,7 +42,6 @@ import { SimpleConfirmationPopupComponent } from './shared/components/simple-con
 import { StatementOfFactsComponent } from './components/project-details/project-monitoring/statement-of-facts/statement-of-facts.component';
 import { ReworkPopupFormComponent } from './shared/components/rework-popup/rework-popup-form/rework-popup-form.component';
 import { ReworkPopupComponent } from './shared/components/rework-popup/rework-popup.component';
-import { JobOrdersComponent } from './components/project-details/project-monitoring/job-orders/job-orders.component';
 import { AddSpecificationFromStandardJobPopupComponent } from './components/project-details/add-specification-from-standard-job-popup/add-specification-from-standard-job-popup.component';
 
 export function winEnv(): unknown {
@@ -55,7 +52,25 @@ export function winEnv(): unknown {
     origin: window.location.origin + '/'
   };
 }
+
 import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
+import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
+import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-celll-popover.component';
+import { DailyReportsComponent } from './components/project-details/reports/reports.component';
+import { EditSubItemPopupComponent } from './components/specification-details/edit-sub-item-popup/edit-sub-item-popup.component';
+import { JobOrdersFormComponent } from './components/project-details/project-monitoring/job-orders-form/job-orders-form.component';
+import { CreateReportPopupComponent } from './components/project-details/reports/create-report/create-report-popup.component';
+import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
+import { ItemCardComponent } from './shared/components/item-card/item-card.component';
+import { SelectJobOrderPopupComponent } from './components/project-details/reports/create-report/select-job-order-popup/select-job-order-popup.component';
+import { SelectJobOrderGridComponent } from './components/project-details/reports/create-report/select-job-order-grid/select-job-order-grid.component';
+
+import { GanttModule } from '@syncfusion/ej2-angular-gantt';
+import { GanttChartComponent } from './components/project-details/project-monitoring/gantt-chart/gantt-chart.component';
+import { LinkedPmsJobsAndFindingsComponent } from './components/specification-details/pms-jobs/linked-pms-jobs-and-findings.component';
+import { CostUpdatesComponent } from './components/project-details/project-monitoring/cost-updates/cost-updates.component';
+import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
+
 @NgModule({
   declarations: [
     SpecificationStatusPipe,
@@ -63,7 +78,7 @@ import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
     ProjectDetailsComponent,
     SpecificationsComponent,
     ProjectsMainPageComponent,
-    ProjectsSpecificationsGridComponent,
+    ProjectsGridComponent,
     StandardJobsMainComponent,
     UpsertStandardJobPopupComponent,
     UpsertStandardJobFormComponent,
@@ -83,7 +98,6 @@ import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
     CreateSpecificationPopupComponent,
     SpecificationFormComponent,
     SpecificationDetailsComponent,
-    SpecificationDetailsHeaderComponent,
     SpecificationGeneralInformationComponent,
     SpecificationRequisitionsComponent,
     SpecificationSubItemsComponent,
@@ -92,8 +106,20 @@ import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
     ReworkPopupFormComponent,
     ReworkPopupComponent,
     AddSpecificationFromStandardJobPopupComponent,
-    JobOrdersComponent,
-    SpecificationRequisitionsComponent
+    SpecificationRequisitionsComponent,
+    EditSubItemPopupComponent,
+    UTCAsLocalPipe,
+    GridCellPopoverComponent,
+    DailyReportsComponent,
+    GanttChartComponent,
+    JobOrdersFormComponent,
+    JobOrdersFormComponent,
+    CreateReportPopupComponent,
+    ItemCardComponent,
+    SelectJobOrderPopupComponent,
+    SelectJobOrderGridComponent,
+    LinkedPmsJobsAndFindingsComponent,
+    CostUpdatesComponent
   ],
   imports: [
     CommonModule,
@@ -109,7 +135,9 @@ import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
     SidebarModule,
     FormsModule,
     PrimeNgModule,
-    MenuModule
+    MenuModule,
+    GanttModule,
+    SplitterModule
   ],
   providers: [
     DatePipe,

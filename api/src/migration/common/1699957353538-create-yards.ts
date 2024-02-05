@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 export class createYards1699957353538 implements MigrationInterface {
     tableName = 'yards';
@@ -25,7 +26,7 @@ export class createYards1699957353538 implements MigrationInterface {
                 [updated_at] [datetime] NULL,
                 [deleted_by] [uniqueidentifier] NULL,
                 [deleted_at] [datetime] NULL,
-            PRIMARY KEY CLUSTERED 
+            PRIMARY KEY CLUSTERED
             (
                 [uid] ASC
             )
@@ -45,7 +46,7 @@ export class createYards1699957353538 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createYards1699957353538',
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'Create yards table',
@@ -54,32 +55,5 @@ export class createYards1699957353538 implements MigrationInterface {
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF EXISTS (Select * from INFORMATION_SCHEMA.TABLES
-                where TABLE_NAME = '${this.tableName}' AND TABLE_SCHEMA = '${this.schemaName}')
-            BEGIN
-            DROP TABLE [${this.schemaName}].[${this.tableName}]
-            END
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                'createYards1699957353538',
-                '',
-                'S',
-                'dry_dock',
-                'Drop yards table (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                'createYards1699957353538',
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                'Drop yards table (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

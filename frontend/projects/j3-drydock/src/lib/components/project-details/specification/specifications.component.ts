@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { SpecificationGridService, SpecificationType } from '../../../services/project/specification.service';
 import { GridService, IGridAction, IJbDialog, eGridRefreshType, eGridRowActions, eJbTreeEvents } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
@@ -9,6 +9,11 @@ import { Observable } from 'rxjs';
 import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../../models/interfaces/functions-tree-node';
 import { map, takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../../models/constants/popup';
+import { ActivatedRoute } from '@angular/router';
+import { NewTabService } from '../../../services/new-tab-service';
+import { statusProgressBarBackground } from '../../../shared/status-css.json';
+import { GrowlMessageService } from '../../../services/growl-message.service';
+
 @Component({
   selector: 'jb-specifications',
   templateUrl: './specifications.component.html',
@@ -18,15 +23,22 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   @Input() projectId: string;
   @Input() vesselUid: string;
   @Input() vesselType: number;
+  @Input() vesselId: string;
+
+  @Output() exportExcel = new EventEmitter();
+
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
+
   treeData$: Observable<FunctionsFlatTreeNode[]>;
   gridData: GridInputsWithRequest;
-  eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.Select, eJbTreeEvents.UnSelect];
+  eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.UnSelect];
   activeIndex = 0;
-  functionUIDs: string[] = [];
+  private functionUIDs: string[] = [];
   types = [SpecificationType.ALL, SpecificationType.PMS, SpecificationType.FINDINGS, SpecificationType.STANDARD, SpecificationType.ADHOC];
   isCreatePopupVisible = false;
   addFromStandardJobPopupVisible = false;
+
+  statusCSS = { statusProgressBarBackground: statusProgressBarBackground };
 
   deleteSpecificationDialog: IJbDialog = {
     ...getSmallPopup(),
@@ -35,20 +47,24 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   deleteDialogVisible = false;
   deleteBtnLabel = 'Delete';
-  deleteDialogMessage = 'Are you sure you want to delete this specification?';
+  deleteDialogMessage = 'Are you sure want to delete the record?';
   specificationUid: string;
 
-  vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name'> = {
+  vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name' | 'expanded'> = {
     uid: 'vesselParent',
-    name: 'Vessel',
-    parent_function_uid: '0'
+    name: 'Functions',
+    parent_function_uid: '0',
+    expanded: true
   };
 
   constructor(
     private specsService: SpecificationGridService,
     private formService: SpecificationCreateFormService,
     private functionsService: FunctionsService,
-    private gridService: GridService
+    private gridService: GridService,
+    private newTabService: NewTabService,
+    private activatedRoute: ActivatedRoute,
+    private growlService: GrowlMessageService
   ) {
     super();
   }
@@ -85,6 +101,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
     if (hasSaved) {
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+      this.growlService.setSuccessMessage('Specification created successfully');
     }
   }
 
@@ -99,27 +116,26 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     this.gridData = this.getData();
   }
 
+  cellPlainTextClick({ cellType, rowData, columnDetail }) {
+    if (cellType === 'hyperlink' && columnDetail.FieldName === 'code') {
+      this.openSpecificationPage(rowData.uid, rowData.code);
+    }
+  }
+
   setNodeData(event) {
     if (event?.type === eJbTreeEvents.NodeSelect) {
-      this.functionUIDs = [...this.functionUIDs, event.payload.Child_ID];
+      this.functionUIDs = [event.payload.Child_ID];
       this.gridData = this.getData();
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
     } else if (event?.type === eJbTreeEvents.UnSelect) {
-      this.functionUIDs = this.functionUIDs.filter((uid) => uid !== event.payload.Child_ID);
+      this.functionUIDs = [];
       this.gridData = this.getData();
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
     }
   }
 
-  private getData(projectId?: string) {
-    const gridData = this.specsService.getGridData(projectId || this.projectId, this.functionUIDs);
-    const statusCol = gridData.columns.find((col) => col.FieldName === 'status');
-    statusCol.cellTemplate = this.statusTemplate;
-    return gridData;
-  }
-
   async onActionClick({ type, payload }: IGridAction) {
-    const { uid } = payload;
+    const { uid, code } = payload;
     this.specificationUid = uid;
 
     switch (type) {
@@ -127,7 +143,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
         this.showDeleteDialog(true);
         break;
       case eGridRowActions.Edit:
-        // Will to implemented later
+        this.openSpecificationPage(uid, code);
         break;
       default:
         return;
@@ -143,5 +159,24 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   public showDeleteDialog(value: boolean) {
     this.deleteDialogVisible = value;
+  }
+
+  private getData(projectId?: string) {
+    const gridData = this.specsService.getGridData(projectId || this.projectId, this.functionUIDs);
+    const statusCol = gridData.columns.find((col) => col.FieldName === 'status');
+    statusCol.cellTemplate = this.statusTemplate;
+    return gridData;
+  }
+
+  private openSpecificationPage(uid: string, code: string) {
+    const tab_title = `Specification ${code}`;
+    this.newTabService.navigate(
+      ['../../specification-details', uid],
+      {
+        relativeTo: this.activatedRoute,
+        queryParams: { tab_title }
+      },
+      tab_title
+    );
   }
 }

@@ -1,4 +1,6 @@
 export interface ICreateNewProjectDto {
+    uid?: string;
+
     ProjectCode?: string;
 
     CreatedAtOffice?: number;

@@ -5,16 +5,22 @@
     [colData]="gridInputs.columns"
     [tableDataReq]="gridInputs.request"
     [searchFields]="gridInputs.searchFields"
-    [button]="gridInputs.gridButton"
     [setActions]="gridInputs.actions"
     [sortField]="gridInputs.sortField"
     [sortOrder]="gridInputs.sortOrder"
     [getStyleByContainer]="true"
-    [name]="gridInputs.name"
+    [isDisplayAdvancedFilter]="false"
     (action)="onGridAction($any($event), $event?.payload)"
     (matrixRequestChanged)="onMatrixRequestChanged()"
   ></jb-grid>
 </section>
+
+<ng-template
+  #dateAndTimeTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.DateAndTime | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
+</ng-template>
 
 <jb-dialog
   (closeDialog)="showDeleteDialog(false)"
@@ -55,6 +61,7 @@
     jb-dialog-body
   >
     <jb-form
+      *ngIf="createDialogVisible"
       (jbFormGroup)="initCreateStatementOfFactFormGroup($any($event))"
       [formStructure]="createStatementOfFactForm"
       [isVerticalLabel]="true"
@@ -83,8 +90,10 @@
     jb-dialog-body
   >
     <jb-form
+      *ngIf="updateDialogVisible"
       (jbFormGroup)="initUpdateStatementOfFactFormGroup($any($event))"
       [formStructure]="updateStatementOfFactForm"
+      [formValues]="updateStatementOfFactFormValues"
       [isVerticalLabel]="true"
       class="form-generator-log"
     ></jb-form>

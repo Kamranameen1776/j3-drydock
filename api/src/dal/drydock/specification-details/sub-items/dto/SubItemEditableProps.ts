@@ -1,5 +1,16 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, IsUUID, Max, MaxLength, Min } from 'class-validator';
+import {
+    IsInt,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsPositive,
+    IsString,
+    IsUUID,
+    Max,
+    MaxLength,
+    Min,
+} from 'class-validator';
 
 import {
     DISCOUNT_MAX,
@@ -22,6 +33,7 @@ export class SubItemEditableProps {
     readonly subject: string;
 
     @IsUUID('4')
+    @IsOptional()
     readonly unitUid: string;
 
     @Type(() => Number)
@@ -32,11 +44,25 @@ export class SubItemEditableProps {
     @Type(() => Number)
     @IsNormalNumber()
     @IsPositive()
-    readonly unitPrice: number;
+    @IsOptional()
+    readonly unitPrice: string;
 
     @Type(() => Number)
     @IsNormalNumber()
     @Min(DISCOUNT_MIN)
     @Max(DISCOUNT_MAX)
-    readonly discount: number;
+    @IsOptional()
+    readonly discount: string;
+
+    @IsString()
+    @IsOptional()
+    readonly description: string;
+
+    @IsUUID('4', { each: true })
+    @IsOptional()
+    readonly pmsJobUid: string[];
+
+    @IsUUID('4', { each: true })
+    @IsOptional()
+    readonly findingUid: string[];
 }

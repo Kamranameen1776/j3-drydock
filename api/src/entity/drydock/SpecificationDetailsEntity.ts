@@ -1,6 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { J3PrcRequisition, LibSurveyCertificateAuthority } from './';
+import { LibSurveyCertificateAuthority } from './dbo';
+import { J3PrcRequisition } from './prc';
 import { SpecificationDetailsSubItemEntity } from './SpecificationDetailsSubItemEntity';
 
 @Entity('specification_details', { schema: 'dry_dock' })
@@ -32,7 +33,7 @@ export class SpecificationDetailsEntity {
         name: 'account_code',
         length: 200,
     })
-    AccountCode: string;
+    AccountCode?: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
@@ -51,13 +52,7 @@ export class SpecificationDetailsEntity {
         nullable: true,
         name: 'done_by_uid',
     })
-    DoneByUid: string;
-
-    @Column('uniqueidentifier', {
-        nullable: false,
-        name: 'item_category_uid',
-    })
-    ItemCategoryUid: string;
+    DoneByUid?: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
@@ -76,7 +71,7 @@ export class SpecificationDetailsEntity {
         nullable: true,
         name: 'priority_uid',
     })
-    PriorityUid: string;
+    PriorityUid?: string;
 
     @Column('varchar', {
         nullable: false,
@@ -92,11 +87,29 @@ export class SpecificationDetailsEntity {
     })
     Subject: string;
 
-    @Column('datetime', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'start_date',
     })
     StartDate: Date | null;
+
+    @Column('datetimeoffset', {
+        nullable: true,
+        name: 'end_date',
+    })
+    EndDate: Date | null;
+
+    @Column('int', {
+        nullable: true,
+        name: 'completion',
+    })
+    Completion: number;
+
+    @Column('int', {
+        nullable: true,
+        name: 'duration',
+    })
+    Duration: number;
 
     @Column('int', {
         nullable: true,
@@ -169,11 +182,12 @@ export class SpecificationDetailsEntity {
     })
     CreatedByUid: string;
 
-    @Column('datetime', {
+    @Column('datetimeoffset', {
         nullable: true,
         name: 'created_at',
+        default: () => 'getutcdate()()',
     })
-    CreatedAt: Date;
+    CreatedAt: Date | null;
 
     @ManyToMany(() => J3PrcRequisition)
     @JoinTable({

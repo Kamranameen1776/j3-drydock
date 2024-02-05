@@ -1,6 +1,8 @@
-import { Request, Response } from 'express';
+import * as express from 'express';
+import { Controller, Get, Query, Request, Route } from 'tsoa';
 
 import { GetSpecificationByUidDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationByUidDto';
+import { GetSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationDetailsDto';
 import { GetSpecificationDetailsQuery } from '../../../application-layer/drydock/specification-details/GetSpecificationDetailsQuery';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
@@ -9,16 +11,36 @@ import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
  * @param {Request} req Express request
  * @param {Response} res Express response
  */
-export async function getSpecificationDetails(req: Request, res: Response) {
+export async function getSpecificationDetails(req: express.Request, res: express.Response) {
     const middlewareHandler = new MiddlewareHandler();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        // Prepare query payload
-        const query = new GetSpecificationDetailsQuery();
+    await middlewareHandler.ExecuteAsync(req, res, async (request: express.Request) => {
+        const result = await new GetSpecificationDetailsController().getSpecificationDetails(
+            request.query.uid as string,
+            request,
+        );
 
-        // Execute query
-        return query.ExecuteAsync(request, GetSpecificationByUidDto, 'query');
+        return result;
     });
 }
 
 exports.get = getSpecificationDetails;
+
+@Route('drydock/specification-details/get-specification-details')
+export class GetSpecificationDetailsController extends Controller {
+    @Get()
+    public async getSpecificationDetails(
+        @Query() uid: string,
+        @Request() request: express.Request,
+    ): Promise<GetSpecificationDetailsDto> {
+        const query = new GetSpecificationDetailsQuery();
+
+        const dto = new GetSpecificationByUidDto();
+        dto.uid = uid;
+        dto.token = request.headers.authorization as string;
+
+        const result = await query.ExecuteAsync(dto);
+
+        return result;
+    }
+}

@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from "j2utils";
 import { MigrationInterface, QueryRunner } from "typeorm";
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 /** @private */
 const enum Location {
@@ -7,7 +8,7 @@ const enum Location {
     Vessel = 'v',
 }
 
-/** @private */
+/** @private @deprecated Values are environment-specific, avoid using exact values */
 const enum UserTypeUid {
     OfficeUser = '3C084885-783B-46B8-9635-B2F70CC49218',
     SeaStaff = '0F3613B9-9FB5-40E6-8763-FC4941136598',
@@ -593,48 +594,9 @@ export class CreateSpecificationDetailsAccessRights1701263296255 implements Migr
 
             await this.log(Status.Success, 'Added access rights for Specification Details');
         } catch (error) {
-            await this.log(Status.Error, JSON.stringify(error));
+            await this.log(Status.Error, errorLikeToString(error));
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-                delete from
-                    inf_lib_grouprights
-                where
-                    [GR_UID] in (${accessRights.map(({ groupRightUid }) => (
-                        `'${groupRightUid}'`
-                    ))});
-            `);
-
-            await queryRunner.query(`
-                delete from
-                    INF_lnk_right_user_type
-                where
-                    [uid] in (${accessRights.map(({ rightUserTypeUid }) => (
-                        `'${rightUserTypeUid}'`
-                    ))});
-            `);
-
-            await queryRunner.query(`
-                delete from
-                    INF_Lib_Right
-                where
-                    [Module_Code] = @0
-                    and
-                    [Function_Code] = @1
-                    and
-                    [Right_Code] in (${accessRights.map(({ code }) => (
-                        `'${code}'`
-                    ))});
-            `, [this.moduleCode, this.functionCode]);
-
-            await this.updateModuleAndFunctionModificationDate(queryRunner);
-
-            await this.log(Status.Success, 'Deleted access rights for Specification Details');
-        } catch (error) {
-            await this.log(Status.Error, JSON.stringify(error));
-        }
-    }
+    public async down(): Promise<void> {}
 }

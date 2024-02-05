@@ -5,15 +5,18 @@ export enum eSpecificationDetailsSubItemsLabels {
   Quantity = 'Quantity',
   UnitPrice = 'Unit Price',
   Discount = 'Discount (%)',
-  Cost = 'Cost'
+  Cost = 'Cost',
+  Description = 'Description'
 }
 
 export enum eSpecificationDetailsSubItemsFields {
   Number = 'number',
   Subject = 'subject',
-  Unit = 'unitTypeUid',
+  Unit = 'unitType',
+  UnitUid = 'unitTypeUid',
   Quantity = 'quantity',
   UnitPrice = 'unitPrice',
   Discount = 'discount',
-  Cost = 'cost'
+  Cost = 'cost',
+  Description = 'description'
 }

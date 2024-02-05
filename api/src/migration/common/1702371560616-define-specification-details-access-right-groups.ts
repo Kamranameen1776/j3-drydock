@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from "j2utils";
 import { MigrationInterface, QueryRunner } from "typeorm";
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 /** @private */
 const enum Location {
@@ -7,10 +8,7 @@ const enum Location {
     Vessel = 'v',
 }
 
-/**
- * @private
- * This table is static, its content persist across environments
- */
+/** @private @deprecated Values are environment-specific, avoid using exact values */
 const enum UserTypeUid {
     OfficeUser = '3C084885-783B-46B8-9635-B2F70CC49218',
     SeaStaff = '0F3613B9-9FB5-40E6-8763-FC4941136598',
@@ -22,10 +20,7 @@ const userTypeUidByLocation = {
     [Location.Vessel]: UserTypeUid.SeaStaff,
 } satisfies Record<Location, UserTypeUid>;
 
-/**
- * @private
- * This table is static, its content persist across environments
- */
+/** @private @deprecated Values are environment-specific, avoid using exact values */
 const enum RoleId {
     Master = 10181,
     CE = 10183,
@@ -229,35 +224,9 @@ export class DefineSpecificationDetailsAccessRightGroups1702371560616 implements
 
             await this.log(Status.Success, 'Defined access right groups for Specification Details');
         } catch (error) {
-            await this.log(Status.Error, JSON.stringify(error));
+            await this.log(Status.Error, errorLikeToString(error));
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-                delete from
-                    INF_Lib_RoleGroupsRights
-                where
-                    [RGR_UID] in (${accessRightGroups.flatMap((group) => group.roleRefs.map(({ uid }) => (
-                        `'${uid}'`
-                    )))};
-            `);
-
-            await queryRunner.query(`
-                delete from
-                    INF_Lib_Group
-                where
-                    [Group_Code] in (${accessRightGroups.map(({ code }) => (
-                        `'${code}'`
-                    ))});
-            `);
-
-            await this.updateModuleAndFunctionModificationDate(queryRunner);
-
-            await this.log(Status.Success, 'Deleted access right groups for Specification Details');
-        } catch (error) {
-            await this.log(Status.Error, JSON.stringify(error));
-        }
-    }
+    public async down(): Promise<void> {}
 }

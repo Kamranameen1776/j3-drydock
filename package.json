@@ -1,9 +1,11 @@
 {
     "name": "j3-drydock",
-    "version": "3.234.311",
+    "version": "3.241.231",
     "description": "DryDock",
     "scripts": {
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "bump-version": "ts-node ./tools/bump_version.ts",
+        "tail-logs": "ts-node ./tools/tail_logs.ts"
     },
     "repository": {
         "type": "git",
@@ -13,6 +15,13 @@
     "author": "JiBe",
     "license": "ISC",
     "devDependencies": {
-        "husky": "^8.0.2"
+        "@types/mssql": "9.1.4",
+        "@types/yargs": "17.0.32",
+        "dotenv": "16.3.1",
+        "husky": "^8.0.2",
+        "mssql": "9.3.2",
+        "ts-node": "10.9.2",
+        "typescript": "5.2.2",
+        "yargs": "17.7.2"
     }
 }

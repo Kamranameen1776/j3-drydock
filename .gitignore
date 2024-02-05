@@ -1,10 +1,8 @@
 */coverage/*
 */dist/*
 node_modules
-package_lock.json
 .cache/*
-/package-lock.json
-*/package-lock.json
 api/.cache/
 .idea/
 .vscode/launch.json
+.env

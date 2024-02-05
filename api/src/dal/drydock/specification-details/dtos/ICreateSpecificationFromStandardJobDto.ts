@@ -9,4 +9,8 @@ export class CreateSpecificationFromStandardJobDto {
     @IsUUID(4, { each: true })
     @ArrayNotEmpty()
     StandardJobUid: string[];
+
+    token: string;
+
+    createdBy: string;
 }

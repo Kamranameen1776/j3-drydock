@@ -1,8 +1,10 @@
+import Decimal from 'decimal.js';
+
 export interface HtmlCell {
-    value: string;
+    value: string | number | Decimal;
     cellStyle: string;
     cellClass?: string;
     iconPath?: string;
     iconMessage?: string;
-    innerHTML: string;
+    innerHTML: string | number | Decimal;
 }

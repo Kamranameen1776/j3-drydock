@@ -1,0 +1,23 @@
+<jb-dialog
+  [dialogContent]="popupConfig"
+  [(dialogVisible)]="isOpen"
+  (closeDialog)="onClosePopup()"
+>
+  <div jb-dialog-body>
+    <jb-select-job-order-grid
+      #selectJobOrderGrid
+      *ngIf="isOpen"
+      (selectedChanged)="onSelectedChanged($event)"
+      [projectId]="projectId"
+    ></jb-select-job-order-grid>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="!jobOrdersToLink?.length"
+      [okBtnLabel]="okLabel"
+      (ok)="onOkPopup()"
+      (cancel)="onClosePopup()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

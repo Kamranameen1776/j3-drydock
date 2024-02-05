@@ -10,11 +10,11 @@
       background: transparent !important;
     }
 
-    .ui-tabview.ui-tabview-top>.ui-tabview-nav {
+    .ui-tabview.ui-tabview-top > .ui-tabview-nav {
       border-bottom: 1px solid $jibe-grey-blue-200 !important;
     }
 
-    .ui-tabview.ui-tabview-top>.ui-tabview-nav>li {
+    .ui-tabview.ui-tabview-top > .ui-tabview-nav > li {
       border: none;
       background: transparent !important;
       border-bottom: 1px solid transparent !important;
@@ -61,5 +61,51 @@
       min-height: 3.2em;
     }
   }
+}
 
+@mixin grid-cell-text {
+  font-family: $jibe-font-family;
+  font-style: normal;
+  font-size: $jibe-font-small;
+  line-height: $jibe-font-line-height;
+}
+
+@mixin progress-spinner-fix {
+  .progress-spinner {
+    background-color: transparent;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50000;
+  }
+}
+
+@mixin grid-cell-link {
+  cursor: pointer;
+
+  &:focus,
+  &:hover {
+      text-decoration: underline;
+  }
+}
+
+@mixin form-label($required: false) {
+    font-weight: 700;
+    color: #7886a2;
+    text-align: left;
+    text-transform: capitalize;
+    margin-bottom: 5px;
+
+    @if $required {
+        &:after {
+            content: '*';
+            padding-left: 10px;
+            color:  var(--jbRegularRed);
+        }
+    }
 }

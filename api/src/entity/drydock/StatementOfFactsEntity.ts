@@ -14,9 +14,10 @@ export class StatementOfFactsEntity {
     })
     Fact: string;
 
-    @Column('varchar', {
+    @Column('datetimeoffset', {
         nullable: false,
         name: 'date',
+        default: () => 'getutcdate()()',
     })
     DateAndTime: Date;
 
@@ -26,11 +27,12 @@ export class StatementOfFactsEntity {
     })
     ProjectUid: string;
 
-    @Column('datetime2', {
+    @Column('datetimeoffset', {
         nullable: false,
         name: 'created_at',
+        default: () => 'getutcdate()()',
     })
-    CreatedAt: Date;
+    CreatedAt: Date | null;
 
     @Column('bit', {
         nullable: false,

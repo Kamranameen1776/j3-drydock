@@ -10,8 +10,3 @@ export class UpdateSpecificationPmsDto {
     @ArrayMinSize(1)
     PmsIds: Array<string>;
 }
-
-export class UpdateSpecificationPmsRequestDto {
-    @ValidateNested()
-    body: UpdateSpecificationPmsDto;
-}

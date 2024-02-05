@@ -1,24 +1,27 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
+  AdvancedSettings,
   IJbAttachment,
+  IJbDialog,
+  IJbMenuItem,
   ITopSectionFieldSet,
+  IUploads,
   JbAttachmentsComponent,
   JbDetailsTopSectionService,
-  UserService,
   eAttachmentButtonTypes,
-  eDateFormats,
+  eGridColors,
+  eGridIcons,
   eJMSActionTypes,
   eJMSSectionNames
 } from 'jibe-components';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
-import { concatMap, filter, map, takeUntil } from 'rxjs/operators';
+import { concatMap, filter, finalize, map, takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { eFunction } from '../../models/enums/function.enum';
 import { eModule } from '../../models/enums/module.enum';
-import { ITMDetailTabFields, JbTaskManagerDetailsService } from 'j3-task-manager-ng';
+import { ITMDetailTabFields, JbTaskManagerDetailsComponent, JbTaskManagerDetailsService } from 'j3-task-manager-ng';
 import { Title } from '@angular/platform-browser';
-import moment from 'moment';
 import { ProjectDetailsAccessRights, ProjectDetailsService } from './project-details.service';
 import { TaskManagerService } from '../../services/task-manager.service';
 import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/project-details';
@@ -28,6 +31,13 @@ import { SpecificationsComponent } from './specification/specifications.componen
 import { RfqComponent } from './yard/rfq/rfq.component';
 import { ProjectsService } from '../../services/ProjectsService';
 import { DetailsService } from '../../services/details.service';
+import { UTCAsLocal } from '../../utils/date';
+import { cloneDeep } from 'lodash';
+import { StatementOfFactsComponent } from './project-monitoring/statement-of-facts/statement-of-facts.component';
+import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
+import { forkJoin, of } from 'rxjs';
+import { UpdateCostsDto } from '../../models/dto/specification-details/ISpecificationCostUpdateDto';
+import { DailyReportsComponent } from './reports/reports.component';
 
 @Component({
   selector: 'jb-project-details',
@@ -36,24 +46,39 @@ import { DetailsService } from '../../services/details.service';
   providers: [GrowlMessageService, ProjectDetailsService]
 })
 export class ProjectDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
+  @ViewChild('detailsComponent') detailsComponent: JbTaskManagerDetailsComponent;
   @ViewChild('attachmentsComponent') attachmentsComponent: JbAttachmentsComponent;
   @ViewChild('specificationsComponent') specificationsComponent: SpecificationsComponent;
   @ViewChild('rfqComponent') rfqComponent: RfqComponent;
+  @ViewChild('statementOfFactsComponent') statementOfFactsComponent: StatementOfFactsComponent;
+  @ViewChild('dailyReportsComponent') dailyReportsComponent: DailyReportsComponent;
 
-  @ViewChild(eProjectDetailsSideMenuId.TechnicalSpecification) [eProjectDetailsSideMenuId.TechnicalSpecification]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.Attachments) [eProjectDetailsSideMenuId.Attachments]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.RFQ) [eProjectDetailsSideMenuId.RFQ]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.StatementOfFacts) [eProjectDetailsSideMenuId.StatementOfFacts]: ElementRef;
-  @ViewChild(eProjectDetailsSideMenuId.JobOrders) [eProjectDetailsSideMenuId.JobOrders]: ElementRef;
+  @ViewChild('technical_specification') technical_specification: ElementRef;
+  @ViewChild('attachmentss') attachmentss: ElementRef;
+  @ViewChild('rfq') rfq: ElementRef;
+  @ViewChild('statement_of_facts') statement_of_facts: ElementRef;
+  @ViewChild('cost_updates') cost_updates: ElementRef;
+  @ViewChild('daily_reports') daily_reports: ElementRef;
+  @ViewChild('gantt_chart') gantt_chart: ElementRef;
+
+  exportEnable = false;
 
   moduleCode = eModule.Project;
   functionCode = eFunction.DryDock;
   projectUid: string;
+  projectDetails: ProjectDetails;
 
   vesselType: number;
   tmDetails: ProjectDetailsFull;
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
+  customThreeDotActions: AdvancedSettings[] = [
+    { label: 'Import', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
+  ];
+  threeDotsActionsShow = {
+    Import: true,
+    showDefaultLables: false
+  };
 
   editingSection = '';
 
@@ -66,6 +91,11 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   accessRights: ProjectDetailsAccessRights;
 
+  specificationsCreateNewItems: { label: string; command: () => void }[];
+  isImportDialogVisible: boolean;
+
+  updateCostsPayload: UpdateCostsDto;
+  showLoader = false;
   get canView() {
     return this.accessRights?.view;
   }
@@ -74,27 +104,61 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     return this.accessRights?.edit;
   }
 
-  specificationsCreateNewItems = [
-    {
-      label: 'Standard Jobs',
-      command: () => {
-        this.openCreateFromStandardJobPopup();
-      }
-    },
-    {
-      label: 'Create Ad hoc',
-      command: () => {
-        this.openSpecificationsPopup();
-      }
-    }
-  ];
+  getSpecificationsCreateNewItems() {
+    const res = [];
 
-  readonly menu = projectDetailsMenuData;
+    if (this.projectsService.hasAccess(eProjectsAccessActions.addSpecFromStandardJobs)) {
+      res.push({
+        label: 'Standard Jobs',
+        command: () => {
+          this.openCreateFromStandardJobPopup();
+        }
+      });
+    }
+    if (this.projectsService.hasAccess(eProjectsAccessActions.addSpecFromAdHoc)) {
+      res.push({
+        label: 'Create Ad hoc',
+        command: () => {
+          this.openSpecificationsPopup();
+        }
+      });
+    }
+    return res;
+  }
+
+  menu = cloneDeep(projectDetailsMenuData);
+
   readonly eSideMenuId = eProjectDetailsSideMenuId;
 
   get vesselUid() {
     return this.tmDetails?.VesselUid;
   }
+
+  importDialogueProperties: IJbDialog = {
+    closableIcon: true,
+    resizableDialog: false,
+    dialogWidth: 470,
+    dialogHeader: 'Import',
+    appendTo: 'body',
+    styleClass: 'jb-dialog-header'
+  };
+
+  uploadConfig: IUploads = {
+    multiple: false,
+    ModuleCode: eModule.Project,
+    FunctionCode: eFunction.DryDock,
+    key1: 'invoice',
+    showUploadButton: true,
+    accept: '.xlsx'
+  };
+
+  okBtnLabel = 'Import';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  syncTo: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fileImportData: any;
+
+  growlMessage$ = this.growlMessageService.growlMessage$;
 
   constructor(
     private jbTMDtlSrv: JbTaskManagerDetailsService,
@@ -105,13 +169,18 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     private projectDetailsService: ProjectDetailsService,
     private taskManagerService: TaskManagerService,
     private projectsService: ProjectsService,
-    private detailsService: DetailsService
+    private detailsService: DetailsService,
+    private growlMessageService: GrowlMessageService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.jbTMDtlSrv.isFormValid = true;
+    const title = this.route.snapshot.queryParamMap.get('tab_title');
+    if (title) {
+      this.titleService.setTitle(title);
+    }
 
     this.route.paramMap
       .pipe(
@@ -119,8 +188,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         takeUntil(this.unsubscribe$)
       )
       .subscribe((projectId) => {
+        if (!projectId) {
+          return;
+        }
         this.projectUid = projectId;
-        this.titleService.setTitle('');
         this.getDetails();
       });
 
@@ -150,6 +221,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       .subscribe((res) => {
         this.sectionActions(res);
       });
+
+    this.specificationsCreateNewItems = this.getSpecificationsCreateNewItems();
   }
 
   private sectionActions(res: { type?: string; secName?: string; event?: unknown; checkValidation?: boolean }) {
@@ -169,10 +242,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   }
 
   private processWidgetNewBtn(secName: string) {
-    // TODO add check by access rights for each section and hide in configuration for details page instead of here
-    if (!this.canEdit) {
-      return;
-    }
     // eslint-disable-next-line default-case
     switch (secName) {
       case eProjectDetailsSideMenuId.RFQ: {
@@ -181,6 +250,14 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       }
       case eProjectDetailsSideMenuId.Attachments: {
         this.attachmentsComponent?.dialogOnDemand();
+        break;
+      }
+      case eProjectDetailsSideMenuId.StatementOfFacts: {
+        this.statementOfFactsComponent?.showCreateDialog();
+        break;
+      }
+      case eProjectDetailsSideMenuId.DailyReports: {
+        this.dailyReportsComponent?.showReportDialog(true);
         break;
       }
     }
@@ -197,25 +274,41 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       this.deleteRecord();
     } else if (wfEvent?.event?.type === 'resync') {
       this.resyncRecord();
-    } else if (wfEvent?.event?.type === 'dueDateChange') {
-      const body = {
-        vesselId: this.tmDetails.Vessel_ID,
-        uid: this.tmDetails.uid,
-        raised_location: this.tmDetails.raised_location,
-        wl_type: this.tmDetails.wl_type,
-        isJobEdit: true,
-        function_code: this.functionCode,
-        module_code: this.moduleCode,
-        vessel_uid: this.tmDetails.vessel_uid,
-        task_status: this.tmDetails.task_status,
-        expected_completion_date: moment(
-          wfEvent.event.payload?.update_due_date,
-          UserService.getUserDetails()?.Date_Format?.toLocaleUpperCase()
-        ).format(eDateFormats.DBDateTimeFormat),
-        isTmDueDateChanged: true
-      };
-      this.jbTMDtlSrv.saveUpdatedTMDueDate(body);
+    } else if (wfEvent?.event?.type === 'Import') {
+      this.importFile();
     }
+  }
+
+  importFile() {
+    this.isImportDialogVisible = true;
+  }
+
+  closeGuidanceDialog() {
+    this.isImportDialogVisible = false;
+  }
+
+  uploadInvoice() {
+    this.showLoader = true;
+    const res = this.projectsService.importFile(this.fileImportData, this.projectUid);
+    res
+      .pipe(
+        finalize(() => {
+          this.showLoader = false;
+          this.isImportDialogVisible = false;
+        })
+      )
+      .subscribe(
+        () => {
+          this.growlMessageService.setSuccessMessage('File has been imported successfully');
+        },
+        (error) => {
+          this.growlMessageService.errorHandler(error);
+        }
+      );
+  }
+
+  onSelectNewFile(event) {
+    this.fileImportData = event.uploadFiles[0];
   }
 
   private getDetails(refresh = false) {
@@ -226,8 +319,11 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       .pipe(
         concatMap((data) => {
           projectDetails = {
-            ...data
+            ...data,
+            StartDate: UTCAsLocal(data.StartDate as string),
+            EndDate: UTCAsLocal(data.EndDate as string)
           };
+          this.projectDetails = projectDetails;
 
           this.attachmentConfig = {
             Module_Code: this.moduleCode,
@@ -237,7 +333,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
           this.vesselType = data?.VesselType;
 
-          this.titleService.setTitle(`${projectDetails.ProjectTypeName} ${projectDetails.ProjectCode}`);
           return this.taskManagerService.getWorkflow(projectDetails.TaskManagerUid, projectDetails.ProjectTypeCode);
         }),
         takeUntil(this.unsubscribe$)
@@ -247,8 +342,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
         this.accessRights = this.projectDetailsService.setupAccessRights(this.tmDetails);
         this.topSectionConfig = this.projectDetailsService.getTopSecConfig(this.tmDetails);
-        this.sectionsConfig = this.projectDetailsService.getSectionsConfig(this.tmDetails.task_status);
+        this.sectionsConfig = this.projectDetailsService.getSectionsConfig();
 
+        this.setMenuByAccessRights();
         this.setAttachmentsActions();
         // TODO add here more to init view if needed
         if (refresh) {
@@ -257,24 +353,45 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       });
   }
 
+  updatesCostsData(data) {
+    this.jbTMDtlSrv.isUnsavedChanges.next(true);
+    this.updateCostsPayload = data;
+  }
+
   private saveRecord(event) {
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
     // TODO add validations here if needed
     if (event.type === eJMSActionTypes.Error) {
-      this.jbTMDtlSrv.showGrowlMassage.next({ severity: eJMSActionTypes.Error, detail: event.errorMsg });
+      this.growlMessageService.setErrorMessage(event.errorMsg);
+    }
+
+    const data = event.payload;
+
+    if (!this.checkValidStartEndDates(data)) {
+      this.growlMessageService.setErrorMessage('Start Date cannot be greater than End Date');
+      setTimeout(() => this.jbTMDtlSrv.closeDialog.next(true));
+      return;
     }
 
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
-
-    this.projectDetailsService
-      .save(this.projectUid, {
-        ...event.payload
+    this.showLoader = true;
+    forkJoin([
+      this.updateCostsPayload?.specificationDetailsUid ? this.projectDetailsService.saveCostUpdates(this.updateCostsPayload) : of(null),
+      this.projectDetailsService.save(this.projectUid, {
+        ...data
       })
-      .subscribe(() => {
+    ]).subscribe(
+      () => {
         // TODO reset here forms, etc if needed
         this.getDetails(true);
         this.jbTMDtlSrv.isUnsavedChanges.next(false);
-      });
+        this.showLoader = false;
+      },
+      (error) => {
+        this.showLoader = false;
+        this.growlMessageService.setErrorMessage(error.error.message);
+      }
+    );
   }
 
   private deleteRecord() {
@@ -309,6 +426,54 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   }
 
   private setAttachmentsActions() {
-    this.attachmentConfig.actions = this.detailsService.getAttachmnentActions(this.accessRights.attachments);
+    this.attachmentConfig.actions = this.detailsService.getAttachmentActions(this.accessRights.attachments);
+  }
+
+  private setMenuByAccessRights() {
+    this.menu = cloneDeep(projectDetailsMenuData);
+
+    if (this.projectDetailsService.isStatusBeforeComplete(this.tmDetails.ProjectStatusId)) {
+      this.menu = this.hideMenuItem(this.menu, eProjectDetailsSideMenuId.ProjectMonitoring);
+      this.menu = this.hideMenuItem(this.menu, eProjectDetailsSideMenuId.Reporting);
+
+      if (
+        this.detailsComponent?.selectedTab === eProjectDetailsSideMenuId.ProjectMonitoring ||
+        this.detailsComponent?.selectedTab === eProjectDetailsSideMenuId.Reporting
+      ) {
+        this.detailsComponent.selectedTab = '';
+        this.detailsComponent.onMenuTabChange(this.menu[0]);
+      }
+    }
+
+    const specificationSection = this.getMenuById(this.menu, eProjectDetailsSideMenuId.Specifications);
+    this.processSpecificationsMenuAccessRights(specificationSection);
+  }
+
+  private processSpecificationsMenuAccessRights(specificationSection: IJbMenuItem) {
+    if (!specificationSection) {
+      return;
+    }
+    if (!this.accessRights.attachments.view) {
+      this.hideSubMenuItem(specificationSection, eProjectDetailsSideMenuId.Attachments);
+    }
+    if (!this.accessRights.specificationDetails.view) {
+      this.hideSubMenuItem(specificationSection, eProjectDetailsSideMenuId.TechnicalSpecification);
+    }
+  }
+
+  private getMenuById(menus: IJbMenuItem[], id: eProjectDetailsSideMenuId) {
+    return this.detailsService.getMenuById(menus, id);
+  }
+
+  private hideSubMenuItem(parentMenu: IJbMenuItem, id: eProjectDetailsSideMenuId) {
+    this.detailsService.hideSubMenuItem(parentMenu, id);
+  }
+
+  private hideMenuItem(menu: IJbMenuItem[], id: eProjectDetailsSideMenuId) {
+    return this.detailsService.getMenuWithHiddenMenuItem(menu, id);
+  }
+
+  private checkValidStartEndDates(formValue) {
+    return this.detailsService.checkValidStartEndDates(formValue?.StartDate, formValue?.EndDate);
   }
 }

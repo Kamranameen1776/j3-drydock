@@ -1,7 +1,7 @@
 export enum JobOrderStatus {
-    Raised = 'Raised',
-
     InProgress = 'In Progress',
+
+    Cancelled = 'Cancelled',
 
     Completed = 'Completed',
 }

@@ -1,10 +1,45 @@
 import { BehaviorSubject } from 'rxjs';
 import { IProjectGroupStatusDto } from './IProjectGroupStatusDto';
+import { IProjectStatusDto } from '../../../services/dtos/IProjectStatusDto';
+import { eProjectStatus, eProjectWorkflowStatusAction } from '../../../models/enums/project-details.enum';
 
 export class LeftPanelFilterService {
+  public groupStatusSelected: IProjectGroupStatusDto;
+  public groupStatusChanged: BehaviorSubject<IProjectGroupStatusDto>;
+  public vesselsChanged: BehaviorSubject<number[]>;
+  public statusToFilterMap: { [key in eProjectStatus]: IProjectStatusDto[] } = {
+    [eProjectStatus.Planned]: [
+      {
+        ProjectStatusId: eProjectWorkflowStatusAction.Raise,
+        ProjectStatusName: 'Planned'
+      }
+    ],
+    [eProjectStatus.Active]: [
+      {
+        ProjectStatusId: eProjectWorkflowStatusAction['In Progress'],
+        ProjectStatusName: 'Yard Selection'
+      }
+    ],
+    [eProjectStatus.Completed]: [
+      {
+        ProjectStatusId: eProjectWorkflowStatusAction.Complete,
+        ProjectStatusName: 'Execution'
+      },
+      {
+        ProjectStatusId: eProjectWorkflowStatusAction.Verify,
+        ProjectStatusName: 'Reporting'
+      }
+    ],
+    [eProjectStatus.Closed]: [
+      {
+        ProjectStatusId: eProjectWorkflowStatusAction.Close,
+        ProjectStatusName: 'Closed'
+      }
+    ]
+  };
+
   constructor() {
     this.groupStatusSelected = {
-      GroupProjectStatusId: '',
       ProjectTypeId: ''
     };
 
@@ -12,12 +47,6 @@ export class LeftPanelFilterService {
 
     this.vesselsChanged = new BehaviorSubject<number[]>([]);
   }
-
-  public groupStatusSelected: IProjectGroupStatusDto;
-
-  public groupStatusChanged: BehaviorSubject<IProjectGroupStatusDto>;
-
-  public vesselsChanged: BehaviorSubject<number[]>;
 
   public setGroupStatusSelected(groupStatusSelected: IProjectGroupStatusDto): void {
     this.groupStatusSelected = groupStatusSelected;

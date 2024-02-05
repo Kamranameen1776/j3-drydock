@@ -1,6 +1,6 @@
 import { getManager } from 'typeorm';
 
-import { LibItemSourceEntity, LibUserEntity } from '../../../entity/drydock';
+import { ItemName, LibItemSourceEntity, LibUserEntity } from '../../../entity/drydock';
 
 export class DictionariesRepository {
     public async GetManagers(): Promise<LibUserEntity[]> {
@@ -10,6 +10,9 @@ export class DictionariesRepository {
             where: {
                 UserType: 'OFFICE USER',
                 ActiveStatus: true,
+            },
+            order: {
+                FirstName: 'ASC',
             },
         });
     }
@@ -22,5 +25,16 @@ export class DictionariesRepository {
                 ActiveStatus: true,
             },
         });
+    }
+
+    public async getItemSourceByName(name: ItemName): Promise<LibItemSourceEntity> {
+        return getManager()
+            .getRepository(LibItemSourceEntity)
+            .findOneOrFail({
+                where: {
+                    ActiveStatus: true,
+                    ItemName: name,
+                },
+            });
     }
 }

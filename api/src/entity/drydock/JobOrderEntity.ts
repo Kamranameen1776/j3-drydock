@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-import * as JobOrderStatus from '../../dal/drydock/projects/job-orders/JobOrderStatus';
+import { JobOrderStatus } from '../../dal/drydock/projects/job-orders/JobOrderStatus';
 
 @Entity('job_orders', { schema: 'dry_dock' })
 export class JobOrderEntity {
@@ -26,10 +26,10 @@ export class JobOrderEntity {
     })
     Subject: string;
 
-    @Column('varchar', {
+    @Column('nvarchar', {
         nullable: true,
         name: 'remarks',
-        length: 2000,
+        length: 'max',
     })
     Remarks: string;
 
@@ -38,7 +38,7 @@ export class JobOrderEntity {
         name: 'status',
         length: 50,
     })
-    Status: JobOrderStatus.JobOrderStatus;
+    Status: JobOrderStatus;
 
     @Column('int', {
         nullable: false,
@@ -55,8 +55,9 @@ export class JobOrderEntity {
     @Column('datetimeoffset', {
         nullable: false,
         name: 'created_at',
+        default: () => 'getutcdate()()',
     })
-    CreatedAt: Date;
+    CreatedAt: Date | null;
 
     @Column('bit', {
         nullable: false,

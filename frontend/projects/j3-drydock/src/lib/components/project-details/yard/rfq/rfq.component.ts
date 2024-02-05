@@ -1,14 +1,17 @@
 import { YardsService } from '../../../../services/yards.service';
-import { YardLink } from '../../../../models/interfaces/project-details';
+import { ProjectDetails, YardLink } from '../../../../models/interfaces/project-details';
 import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { RfqGridService } from './rfq-grid.service';
 import { GridInputsWithData } from '../../../../models/interfaces/grid-inputs';
-import { eRfqFields } from '../../../../models/enums/rfq.enum';
-import { DispatchAction, GridAction, GridRowActions, GridService, eGridEvents, eGridRowActions, eLayoutWidgetSize } from 'jibe-components';
-import { concatMap, filter, finalize, map, takeUntil } from 'rxjs/operators';
+import { eRfqActions, eRfqFields } from '../../../../models/enums/rfq.enum';
+import { DispatchAction, eGridEvents, eLayoutWidgetSize, GridAction, GridRowActions, GridService } from 'jibe-components';
+import { concatMap, filter, map, takeUntil } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { Subscription } from 'rxjs';
+import { ProjectDetailsService } from '../../project-details.service';
+import { getFileNameDate } from '../../../../shared/functions/file-name';
+import { currentLocalAsUTC } from '../../../../utils/date';
 
 @Component({
   selector: 'jb-drydock-rfq',
@@ -17,16 +20,16 @@ import { Subscription } from 'rxjs';
 })
 export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @Input() projectId: string;
+  @Input() projectDetails: ProjectDetails;
 
   @ViewChild('isSelectedTmpl', { static: true }) isSelectedTmpl: TemplateRef<unknown>;
+  @ViewChild('exportedDateTemplate', { static: true }) exportedDateTemplate: TemplateRef<HTMLElement>;
 
   gridInputs: GridInputsWithData<YardLink> = this.rfqGridService.getGridInputs();
 
   isLinkPopupVisible = false;
 
   gridRowActions: GridRowActions[] = [];
-
-  eRfqFields = eRfqFields;
 
   public linked: YardLink[];
 
@@ -42,7 +45,8 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
   constructor(
     private rfqGridService: RfqGridService,
     private gridService: GridService,
-    private yardsService: YardsService
+    private yardsService: YardsService,
+    private projectService: ProjectDetailsService
   ) {
     super();
   }
@@ -62,17 +66,13 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
     this.isLinkPopupVisible = true;
   }
 
-  onGridAction({ type, payload }: GridAction<string, YardLink>): void {
+  onGridAction({ type, payload }: GridAction<eRfqActions, YardLink>): void {
     switch (type) {
-      case 'Export':
+      case eRfqActions.Export:
         this.export(payload);
         break;
 
-      case eGridRowActions.Select:
-        this.select(payload);
-        break;
-
-      case eGridRowActions.Delete:
+      case eRfqActions.Delete:
         this.delete(payload);
         break;
 
@@ -104,32 +104,9 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
   private setGridRowActions(): void {
     this.gridRowActions.length = 0;
     // TODO Access rigths
-    this.gridRowActions.push({ name: 'Export' });
+    this.gridRowActions.push({ name: eRfqActions.Export });
     // TODO Access rigths
-    this.gridRowActions.push({ name: eGridRowActions.Select });
-    // TODO Access rigths
-    this.gridRowActions.push({ name: eGridRowActions.Delete });
-  }
-
-  private select(row: YardLink) {
-    const uid = row.uid;
-    const previousSelected: YardLink = this.linked.find((yard) => yard.isSelected);
-    const newSelected = this.linked.find((yard) => yard.uid === uid);
-
-    if (!newSelected) {
-      return;
-    }
-
-    this.unselectPreviousAndSelectNew(previousSelected, row)
-      .pipe(
-        finalize(() => {
-          this.linked = cloneDeep(this.linked);
-        }),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(() => {
-        row.isSelected = true;
-      });
+    this.gridRowActions.push({ name: eRfqActions.Delete });
   }
 
   private delete(row: YardLink) {
@@ -144,18 +121,31 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
   }
 
   private export(row: YardLink) {
-    const lastExportedDate = new Date().toISOString();
-    this.yardsService
-      .updateYardLink({ ...row, lastExportedDate })
-      .pipe(takeUntil(this.unsubscribe$))
+    const lastExportedDate = currentLocalAsUTC().toISOString();
+    this.projectService
+      .exportExcel(this.projectId, row.yardUid, this.getExcelFilename(row[eRfqFields.Yard]))
+      .pipe(
+        concatMap(() => this.updateLastExportedDate(row, lastExportedDate)),
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe(() => {
         row.lastExportedDate = lastExportedDate;
         this.linked = cloneDeep(this.linked);
       });
   }
 
+  private getExcelFilename(yard: string) {
+    return `${this.projectDetails.VesselName}-${yard}-${new Date(this.projectDetails.StartDate).getFullYear()}-${getFileNameDate()}.xlsx`;
+  }
+
+  private updateLastExportedDate(row: YardLink, lastExportedDate: string) {
+    const updatedRow = cloneDeep(row);
+    updatedRow.lastExportedDate = lastExportedDate;
+    return this.yardsService.updateYardLink(updatedRow);
+  }
+
   private setCellTemplates() {
-    this.setCellTemplate(this.isSelectedTmpl, eRfqFields.IsSelected);
+    this.setCellTemplate(this.exportedDateTemplate, eRfqFields.ExportedDate);
   }
 
   private setCellTemplate(template: TemplateRef<unknown>, fieldName: string) {
@@ -164,21 +154,5 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
       return;
     }
     col.cellTemplate = template;
-  }
-
-  private unselectPreviousAndSelectNew(previousSelected: YardLink, newSelected: YardLink) {
-    if (previousSelected) {
-      return this.sendSelect(previousSelected, false).pipe(
-        concatMap(() => {
-          previousSelected.isSelected = false;
-          return this.sendSelect(newSelected, true);
-        })
-      );
-    }
-    return this.sendSelect(newSelected, true);
-  }
-
-  private sendSelect(yard: YardLink, isSelected: boolean) {
-    return this.yardsService.updateYardLink({ ...yard, isSelected });
   }
 }

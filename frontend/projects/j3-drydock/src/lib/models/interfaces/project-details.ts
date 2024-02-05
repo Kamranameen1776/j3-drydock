@@ -7,7 +7,6 @@ export interface YardLink {
   [eRfqFields.Uid]: string;
   [eRfqFields.YardUid]: string;
   [eRfqFields.ExportedDate]: string;
-  [eRfqFields.IsSelected]: boolean;
 }
 
 export interface YardToLink {
@@ -33,12 +32,27 @@ export interface ProjectDetails {
   VesselName: string;
   VesselUid: string;
   VesselType: number;
+  ShipYardId?: string;
   Subject: string;
-  StartDate: string;
-  EndDate: string;
+  StartDate: string | Date;
+  EndDate: string | Date;
   TaskManagerUid: string;
   ProjectTypeCode: string;
   VesselId: number;
 }
 
 export interface ProjectDetailsFull extends ProjectDetails, ITMDetails {}
+
+export interface DailyReportCreate {
+  ProjectUid: string;
+  ReportName: string;
+  ReportDate: string;
+  Body: string;
+}
+
+export interface DailyReportUpdate {
+  DailyReportUid: string;
+  ProjectUid: string;
+  ReportName: string;
+  Body: string;
+}
