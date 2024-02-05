@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Body, Controller, Post } from 'tsoa';
+import { Body, Controller, Post, Route } from 'tsoa';
 
 import { LinkSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/LinkSpecificationRequisitionsRequestDto';
 import { LinkSpecificationRequisitionCommand } from '../../../application-layer/drydock/specification-details/requisitions/LinkSpecificationRequisitionCommand';
@@ -10,7 +10,7 @@ async function linkSpecificationRequisitions(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        const result = await new LinkSpecificationRequisitionsController().linkSpecificationRequisitions(request);
+        const result = await new LinkSpecificationRequisitionsController().linkSpecificationRequisitions(request.body);
 
         return result;
     });
@@ -18,13 +18,15 @@ async function linkSpecificationRequisitions(req: Request, res: Response) {
 
 exports.post = linkSpecificationRequisitions;
 
-// @Route('drydock/specification-details/link-specification-requisitions')
+@Route('drydock/specification-details/link-specification-requisitions')
 export class LinkSpecificationRequisitionsController extends Controller {
     @Post()
-    public async linkSpecificationRequisitions(@Body() request: Request): Promise<SpecificationRequisitionsEntity[]> {
+    public async linkSpecificationRequisitions(
+        @Body() dto: LinkSpecificationRequisitionsRequestDto,
+    ): Promise<SpecificationRequisitionsEntity[]> {
         const query = new LinkSpecificationRequisitionCommand();
 
-        const result = await query.ExecuteAsync(request, LinkSpecificationRequisitionsRequestDto);
+        const result = await query.ExecuteAsync(dto);
 
         return result;
     }

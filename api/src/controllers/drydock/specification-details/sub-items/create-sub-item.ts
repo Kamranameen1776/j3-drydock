@@ -1,5 +1,5 @@
 import { AccessRights } from 'j2utils';
-import { Body, Controller, Post } from 'tsoa';
+import { Body, Controller, Post, Route } from 'tsoa';
 
 import { CreateSubItemCommand } from '../../../../application-layer/drydock/specification-details/sub-items/CreateSubItemCommand';
 import { type Req, type Res } from '../../../../common/drydock/ts-helpers/req-res';
@@ -27,10 +27,13 @@ async function createSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
 
 exports.post = createSubItem;
 
-// @Route('drydock/specification-details/sub-items/create-sub-item')
+@Route('drydock/specification-details/sub-items/create-sub-item')
 export class CreateSubItemController extends Controller {
     @Post()
-    public async createSubItem(@Body() request: CreateSubItemParams): Promise<SpecificationDetailsSubItemEntity> {
+
+    // TODO: check if newer version of tsoa supports async return types
+    // public async createSubItem(@Body() request: CreateSubItemParams): Promise<SpecificationDetailsSubItemEntity> {
+    public async createSubItem(@Body() request: CreateSubItemParams): Promise<unknown> {
         const query = new CreateSubItemCommand();
 
         const result = await query.ExecuteAsync(request);

@@ -1,5 +1,4 @@
-import { Request } from 'express';
-import { Body, Controller, Post } from 'tsoa';
+import { Body, Controller, Post, Route } from 'tsoa';
 
 import { ValidatePmsJobDeleteQuery } from '../../../../application-layer/drydock/specification-details/sub-items/ValidatePmsJobDeleteQuery';
 import { Req, Res } from '../../../../common/drydock/ts-helpers/req-res';
@@ -10,7 +9,7 @@ async function validatePmsJobDeletion(req: Req<ValidatePmsJobDeleteDto>, res: Re
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
-        const result = await new ValidatePmsJobDeletionController().validatePmsJobDeletion(req);
+        const result = await new ValidatePmsJobDeletionController().validatePmsJobDeletion(req.body);
 
         return result;
     });
@@ -18,13 +17,13 @@ async function validatePmsJobDeletion(req: Req<ValidatePmsJobDeleteDto>, res: Re
 
 exports.post = validatePmsJobDeletion;
 
-// @Route('drydock/specification-details/sub-items/validate-pms-job-deletion')
+@Route('drydock/specification-details/sub-items/validate-pms-job-deletion')
 export class ValidatePmsJobDeletionController extends Controller {
     @Post()
-    public async validatePmsJobDeletion(@Body() request: Request): Promise<boolean> {
+    public async validatePmsJobDeletion(@Body() dto: ValidatePmsJobDeleteDto): Promise<boolean> {
         const query = new ValidatePmsJobDeleteQuery();
 
-        const result = await query.ExecuteAsync(request, ValidatePmsJobDeleteDto);
+        const result = await query.ExecuteAsync(dto);
 
         return result;
     }

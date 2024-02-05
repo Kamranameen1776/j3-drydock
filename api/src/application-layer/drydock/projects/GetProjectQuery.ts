@@ -1,6 +1,5 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Request } from 'express';
 
 import { AuthorizationException } from '../../../bll/drydock/core/exceptions';
 import { ProjectMapper } from '../../../bll/drydock/projects/ProjectMapper';
@@ -11,7 +10,7 @@ import { Query } from '../core/cqrs/Query';
 import { GetProjectByUidDto } from './dtos/GetProjectByUidDto';
 import { IProjectsFromMainPageRecordDto } from './projects-for-main-page/dtos/IProjectsFromMainPageRecordDto';
 
-export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordDto> {
+export class GetProjectQuery extends Query<GetProjectByUidDto, IProjectsFromMainPageRecordDto> {
     projectsRepository: ProjectsRepository;
     slfAccessor: SlfAccessor;
     vesselRepository: VesselsRepository;
@@ -24,11 +23,10 @@ export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordD
         this.vesselRepository = new VesselsRepository();
     }
 
-    protected async AuthorizationHandlerAsync(request: Request): Promise<void> {
-        const token: string = request.headers.authorization as string;
+    protected async AuthorizationHandlerAsync(request: GetProjectByUidDto): Promise<void> {
+        const vessel = await this.vesselRepository.GetVesselByProjectUid(request.uid);
 
-        const vessel = await this.vesselRepository.GetVesselByProjectUid(request.query.uid as string);
-        const assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(token);
+        const assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(request.token);
 
         if (!assignedVessels.includes(vessel.VesselId)) {
             throw new AuthorizationException(`You have no assignment on vessel: ${vessel.VesselName} `);
@@ -37,9 +35,11 @@ export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordD
         return;
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
-        const query: GetProjectByUidDto = plainToClass(GetProjectByUidDto, request.query);
+    protected async ValidationHandlerAsync(request: GetProjectByUidDto): Promise<void> {
+        const query: GetProjectByUidDto = plainToClass(GetProjectByUidDto, request);
+
         const result = await validate(query);
+
         if (result.length) {
             throw result;
         }
@@ -52,8 +52,9 @@ export class GetProjectQuery extends Query<Request, IProjectsFromMainPageRecordD
      * @param request Http request
      * @returns Projects from main page
      */
-    protected async MainHandlerAsync(request: Request): Promise<IProjectsFromMainPageRecordDto> {
-        const [record] = await this.projectsRepository.GetProject(request.query.uid as string);
+    protected async MainHandlerAsync(request: GetProjectByUidDto): Promise<IProjectsFromMainPageRecordDto> {
+        const [record] = await this.projectsRepository.GetProject(request.uid);
+
         return new ProjectMapper().map(record);
     }
 }

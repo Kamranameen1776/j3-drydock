@@ -23,7 +23,7 @@ export class YardsRepository {
             .select(
                 `yd.uid as uid,
                 yd.registeredName as yardName,
-                yd.country + ', ' + yd.city as yardLocation
+                TRIM(CONCAT("yd"."country", ' ', "yd"."city")) as yardLocation
                 `,
             )
             .where(`yd.active_status = 1 AND yd.type = 'Yard'`)

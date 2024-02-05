@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Body, Controller, Get } from 'tsoa';
+import { Controller, Get, Route } from 'tsoa';
 
 import { GetSpecificationsStatusesDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationStatusesDto';
 import { GetSpecificationStatusesQuery } from '../../../application-layer/drydock/specification-details/GetSpecificationStatusesQuery';
@@ -13,8 +13,8 @@ import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 export async function getSpecificationStatuses(req: Request, res: Response) {
     const middlewareHandler = new MiddlewareHandler();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        const result = await new GetSpecificationStatusesController().getSpecificationStatuses(request);
+    await middlewareHandler.ExecuteAsync(req, res, async () => {
+        const result = await new GetSpecificationStatusesController().getSpecificationStatuses();
 
         return result;
     });
@@ -22,13 +22,13 @@ export async function getSpecificationStatuses(req: Request, res: Response) {
 
 exports.get = getSpecificationStatuses;
 
-// @Route('drydock/specification-details/get-specifications-statuses')
+@Route('drydock/specification-details/get-specifications-statuses')
 export class GetSpecificationStatusesController extends Controller {
     @Get()
-    public async getSpecificationStatuses(@Body() request: Request): Promise<GetSpecificationsStatusesDto[]> {
+    public async getSpecificationStatuses(): Promise<GetSpecificationsStatusesDto[]> {
         const query = new GetSpecificationStatusesQuery();
 
-        const result = await query.ExecuteAsync(request);
+        const result = await query.ExecuteAsync();
 
         return result;
     }

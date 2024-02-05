@@ -43,15 +43,11 @@ import { DetailsService } from '../../services/details.service';
   providers: [JbDatePipe, GrowlMessageService]
 })
 export class SpecificationDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
-  @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationDetails) [eSpecificationDetailsPageMenuIds.SpecificationDetails]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.GeneralInformation) [eSpecificationDetailsPageMenuIds.GeneralInformation]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.SubItems) [eSpecificationDetailsPageMenuIds.SubItems]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.PMSJobs) [eSpecificationDetailsPageMenuIds.PMSJobs]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.Findings) [eSpecificationDetailsPageMenuIds.Findings]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.Source) [eSpecificationDetailsPageMenuIds.Source]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationAttachments)
-  [eSpecificationDetailsPageMenuIds.SpecificationAttachments]: ElementRef;
-  @ViewChild(eSpecificationDetailsPageMenuIds.AuditTrail) [eSpecificationDetailsPageMenuIds.AuditTrail]: ElementRef;
+  @ViewChild('specificationDetails') specificationDetails: ElementRef;
+  @ViewChild('generalInformation') generalInformation: ElementRef;
+  @ViewChild('subItems') subItems: ElementRef;
+  @ViewChild('pmsJobs') pmsJobs: ElementRef;
+  @ViewChild('findings') findings: ElementRef;
 
   specificationDetailsInfo: SpecificationDetails;
   updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;

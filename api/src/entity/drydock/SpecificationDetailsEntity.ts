@@ -33,7 +33,7 @@ export class SpecificationDetailsEntity {
         name: 'account_code',
         length: 200,
     })
-    AccountCode: string;
+    AccountCode?: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
@@ -52,7 +52,7 @@ export class SpecificationDetailsEntity {
         nullable: true,
         name: 'done_by_uid',
     })
-    DoneByUid: string;
+    DoneByUid?: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
@@ -71,7 +71,7 @@ export class SpecificationDetailsEntity {
         nullable: true,
         name: 'priority_uid',
     })
-    PriorityUid: string;
+    PriorityUid?: string;
 
     @Column('varchar', {
         nullable: false,

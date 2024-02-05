@@ -14,7 +14,6 @@ import {
   eJMSActionTypes,
   eJMSSectionNames
 } from 'jibe-components';
-import { saveAs } from 'file-saver';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { concatMap, filter, finalize, map, takeUntil } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
@@ -36,7 +35,6 @@ import { UTCAsLocal } from '../../utils/date';
 import { cloneDeep } from 'lodash';
 import { StatementOfFactsComponent } from './project-monitoring/statement-of-facts/statement-of-facts.component';
 import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
-import { getFileNameDate } from '../../shared/functions/file-name';
 import { forkJoin, of } from 'rxjs';
 import { UpdateCostsDto } from '../../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { DailyReportsComponent } from './reports/reports.component';
@@ -75,11 +73,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
   customThreeDotActions: AdvancedSettings[] = [
-    { label: 'Export Excel', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true },
     { label: 'Import', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
   ];
   threeDotsActionsShow = {
-    'Export Excel': true,
     Import: true,
     showDefaultLables: false
   };
@@ -278,8 +274,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       this.deleteRecord();
     } else if (wfEvent?.event?.type === 'resync') {
       this.resyncRecord();
-    } else if (wfEvent?.event?.type === 'Export Excel') {
-      this.exportExcel();
     } else if (wfEvent?.event?.type === 'Import') {
       this.importFile();
     }
@@ -477,23 +471,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   private hideMenuItem(menu: IJbMenuItem[], id: eProjectDetailsSideMenuId) {
     return this.detailsService.getMenuWithHiddenMenuItem(menu, id);
-  }
-
-  exportExcel() {
-    if (!this.projectDetails.ShipYardId) {
-      this.growlMessageService.setErrorMessage('Yard is not selected');
-      return;
-    }
-    const res = this.projectDetailsService.exportExcel(this.projectUid, this.projectDetails.ShipYardId);
-    res.subscribe((data) => {
-      saveAs(data, this.getExcelFilename());
-    });
-  }
-
-  private getExcelFilename() {
-    return `${this.projectDetails.VesselName}-${this.projectDetails.ShipYard}-${new Date(
-      this.projectDetails.StartDate
-    ).getFullYear()}-${getFileNameDate()}.xlsx`;
   }
 
   private checkValidStartEndDates(formValue) {
