@@ -8,6 +8,8 @@ import { AccessRights } from 'j2utils';
 import path from 'path';
 import * as swaggerUi from 'swagger-ui-express';
 
+import { RegisterRoutes } from '../build/routes';
+
 /**
  * Extends the Express Request interface to include the 'user' object
  * -> provided by AccessRights.accessRightsMiddleware middleware
@@ -46,6 +48,8 @@ app.use(AccessRights.accessRightsMiddleware);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const autoRoutes = require('j3-express-auto-routes')(app);
 autoRoutes(path.join(__dirname, './controllers'));
+
+RegisterRoutes(app);
 
 app.get('/ping', (req, res) => {
     res.send('pong');
