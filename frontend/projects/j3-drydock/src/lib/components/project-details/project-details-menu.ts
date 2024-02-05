@@ -25,8 +25,8 @@ export const projectDetailsMenuData: IJbMenuItem[] = [
     id: eProjectDetailsSideMenuId.YardSelection,
     icon: 'icons8-water-transportation',
     items: [
-      { label: eProjectDetailsSideMenuLabel.RFQ, id: eProjectDetailsSideMenuId.RFQ },
-      { label: eProjectDetailsSideMenuLabel.Comparison, id: eProjectDetailsSideMenuId.Comparison }
+      { label: eProjectDetailsSideMenuLabel.RFQ, id: eProjectDetailsSideMenuId.RFQ }
+      // { label: eProjectDetailsSideMenuLabel.Comparison, id: eProjectDetailsSideMenuId.Comparison }
     ]
   },
   {
