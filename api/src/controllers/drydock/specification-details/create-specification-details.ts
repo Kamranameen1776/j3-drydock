@@ -21,7 +21,7 @@ async function CreateSpecificationDetails(req: express.Request, res: express.Res
 
 exports.post = CreateSpecificationDetails;
 
-// @Route('drydock/specification-details/create-specification-details')
+@Route('drydock/specification-details/create-specification-details')
 export class CreateSpecificationDetailsController extends Controller {
     @Post()
     public async CreateSpecificationDetails(@Request() request: CommandRequest): Promise<string> {

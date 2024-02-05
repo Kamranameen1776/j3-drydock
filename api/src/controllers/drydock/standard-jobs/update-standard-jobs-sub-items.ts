@@ -21,7 +21,7 @@ async function updateStandardJobsSubItems(req: express.Request, res: express.Res
 
 exports.put = updateStandardJobsSubItems;
 
-// @Route('drydock/standard-jobs/update-standard-jobs-sub-items')
+@Route('drydock/standard-jobs/update-standard-jobs-sub-items')
 export class UpdateStandardJobsSubItemsController extends Controller {
     @Put()
     public async updateStandardJobsSubItems(

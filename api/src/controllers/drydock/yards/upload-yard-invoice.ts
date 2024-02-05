@@ -27,7 +27,7 @@ export async function uploadYardInvoice(req: express.Request, res: express.Respo
 
 exports.post = uploadYardInvoice;
 
-// @Route('drydock/yards/upload-yard-invoice')
+@Route('drydock/yards/upload-yard-invoice')
 export class UploadYardsController extends Controller {
     @Post()
     public async uploadYardInvoice(@Request() request: express.Request): Promise<void> {
