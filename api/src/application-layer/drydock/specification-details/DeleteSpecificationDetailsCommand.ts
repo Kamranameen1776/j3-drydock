@@ -8,10 +8,10 @@ import { SpecificationDetailsEntity } from '../../../entity/drydock';
 import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
 import { TaskManagerService } from '../../../external-services/drydock/TaskManager';
 import { Command } from '../core/cqrs/Command';
-import { CommandRequest } from '../core/cqrs/CommandRequestDto';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
+import { DeleteSpecificationDetailsDto } from './dtos/DeleteSpecificationDetailsDto';
 
-export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, void> {
+export class DeleteSpecificationDetailsCommand extends Command<DeleteSpecificationDetailsDto, void> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     uow: UnitOfWork;
     specificationDetailsAudit: SpecificationDetailsAuditService;
@@ -34,38 +34,35 @@ export class DeleteSpecificationDetailsCommand extends Command<CommandRequest, v
         return;
     }
 
-    protected async ValidationHandlerAsync({ request }: CommandRequest): Promise<void> {
-        if (!request.body) {
+    protected async ValidationHandlerAsync(request: DeleteSpecificationDetailsDto): Promise<void> {
+        if (!request) {
             throw new Error('Request is null');
         }
     }
 
-    protected async MainHandlerAsync({ request, user }: CommandRequest) {
-        const specificationDetail = await this.specificationDetailsRepository.getRawSpecificationByUid(
-            request.body.uid,
-        );
+    protected async MainHandlerAsync(request: DeleteSpecificationDetailsDto) {
+        const specificationDetail = await this.specificationDetailsRepository.getRawSpecificationByUid(request.uid);
         await this.taskManagerService.DeleteTaskManagerIntegration(
             specificationDetail.TecTaskManagerUid,
-            request.headers.authorization as string,
+            request.token,
         );
         await this.uow.ExecuteAsync(async (queryRunner) => {
-            const vessel = await this.vesselsRepository.GetVesselBySpecification(request.body.uid, queryRunner);
+            const vessel = await this.vesselsRepository.GetVesselBySpecification(request.uid, queryRunner);
 
-            const { uid } = request.body;
             const updatedSpecData = await this.specificationDetailsRepository.DeleteSpecificationDetails(
-                uid,
+                request.uid,
                 queryRunner,
             );
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
                 this.tableName,
                 'uid',
-                uid,
+                request.uid,
                 vessel.VesselId,
             );
             const id = await this.specificationDetailsAudit.auditDeletedSpecificationDetails(
-                uid,
-                user.UserID,
+                request.uid,
+                request.UserId,
                 queryRunner,
             );
             await SynchronizerService.dataSynchronizeManager(

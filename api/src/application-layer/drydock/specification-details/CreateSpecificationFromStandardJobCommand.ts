@@ -1,9 +1,9 @@
-import { Request } from 'express';
 import { AccessRights, DataUtilService, SynchronizerService } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
 import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
+import { validateAgainstModel } from '../../../common/drydock/ts-helpers/validate-against-model';
 import { ProjectsRepository } from '../../../dal/drydock/projects/ProjectsRepository';
 import { CreateInspectionsDto } from '../../../dal/drydock/specification-details/dtos';
 import { CreateSpecificationFromStandardJobDto } from '../../../dal/drydock/specification-details/dtos/ICreateSpecificationFromStandardJobDto';
@@ -17,7 +17,10 @@ import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateSpecificationDetailsDto } from './dtos/UpdateSpecificationDetailsDto';
 
-export class CreateSpecificationFromStandardJobsCommand extends Command<Request, SpecificationDetailsEntity[]> {
+export class CreateSpecificationFromStandardJobsCommand extends Command<
+    CreateSpecificationFromStandardJobDto,
+    SpecificationDetailsEntity[]
+> {
     specificationRepository = new SpecificationDetailsRepository();
     uow = new UnitOfWork();
     specificationDetailsService = new SpecificationService();
@@ -31,18 +34,18 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<Request,
     tableNameSubItems = getTableName(SpecificationDetailsSubItemEntity);
     tableNameAudit = getTableName(J2FieldsHistoryEntity);
 
-    protected async MainHandlerAsync(request: Request) {
-        const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
-        const body: CreateSpecificationFromStandardJobDto = request.body;
-        const token: string = request.headers.authorization as string;
+    protected async ValidationHandlerAsync(request: CreateSpecificationFromStandardJobDto): Promise<void> {
+        await validateAgainstModel(CreateSpecificationFromStandardJobDto, request);
+    }
 
-        const [project] = await this.projectRepository.GetProject(request.body.ProjectUid);
+    protected async MainHandlerAsync(request: CreateSpecificationFromStandardJobDto) {
+        const [project] = await this.projectRepository.GetProject(request.ProjectUid);
         const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(project.VesselUid);
 
         return this.uow.ExecuteAsync(async (queryRunner) => {
             const specifications = await this.specificationRepository.createSpecificationFromStandardJob(
-                body,
-                createdBy,
+                request,
+                request.createdBy,
                 queryRunner,
             );
 
@@ -51,7 +54,7 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<Request,
                     const tmResult = await this.specificationDetailsService.TaskManagerIntegration(
                         { Subject: specification.Subject },
                         vessel,
-                        token,
+                        request.token,
                     );
 
                     await this.specificationRepository.updateSpecificationTmUid(
@@ -120,6 +123,7 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<Request,
                     Duration: specification.Duration,
                     StartDate: specification.StartDate ?? undefined,
                     EndDate: specification.EndDate ?? undefined,
+                    UserId: '',
                 };
 
                 specificationAuditData.push(auditData);
@@ -154,7 +158,7 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<Request,
             // AUDIT
             const auditUids = await this.specificationDetailsAudit.auditManyCreatedSpecificationDetails(
                 specificationAuditData,
-                createdBy,
+                request.createdBy,
                 queryRunner,
             );
 

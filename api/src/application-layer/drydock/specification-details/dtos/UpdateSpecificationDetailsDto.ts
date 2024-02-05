@@ -72,4 +72,6 @@ export class UpdateSpecificationDetailsDto {
     @IsInt()
     @Min(0)
     Duration?: number;
+
+    UserId: string;
 }

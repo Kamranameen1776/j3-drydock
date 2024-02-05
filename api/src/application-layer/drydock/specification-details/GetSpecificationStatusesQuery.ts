@@ -1,12 +1,10 @@
-import { Request } from 'express';
-
 import { ProjectService } from '../../../bll/drydock/projects/ProjectService';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Query } from '../core/cqrs/Query';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { GetSpecificationsStatusesDto } from './dtos/GetSpecificationStatusesDto';
 
-export class GetSpecificationStatusesQuery extends Query<Request, GetSpecificationsStatusesDto[]> {
+export class GetSpecificationStatusesQuery extends Query<void, GetSpecificationsStatusesDto[]> {
     specificationDetailsRepository: SpecificationDetailsRepository;
     projectService: ProjectService;
     uow: UnitOfWork;

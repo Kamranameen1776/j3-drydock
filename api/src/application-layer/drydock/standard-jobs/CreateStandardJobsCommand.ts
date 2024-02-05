@@ -1,13 +1,10 @@
-import { Request } from 'express';
-import { AccessRights } from 'j2utils';
-
 import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
 import { StandardJobs } from '../../../entity/drydock';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { CreateStandardJobsRequestDto } from './dto';
 
-export class CreateStandardJobsCommand extends Command<Request, StandardJobs> {
+export class CreateStandardJobsCommand extends Command<CreateStandardJobsRequestDto, StandardJobs> {
     standardJobsRepository: StandardJobsRepository;
     uow: UnitOfWork;
 
@@ -18,12 +15,9 @@ export class CreateStandardJobsCommand extends Command<Request, StandardJobs> {
         this.uow = new UnitOfWork();
     }
 
-    protected async MainHandlerAsync(request: Request) {
-        const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
-        const body: CreateStandardJobsRequestDto = request.body;
-
+    protected async MainHandlerAsync(request: CreateStandardJobsRequestDto) {
         return this.uow.ExecuteAsync(async (queryRunner) => {
-            return this.standardJobsRepository.createStandardJob(body, createdBy, queryRunner);
+            return this.standardJobsRepository.createStandardJob(request, request.UserId, queryRunner);
         });
     }
 }
