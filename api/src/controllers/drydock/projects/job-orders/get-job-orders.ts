@@ -1,8 +1,8 @@
 import * as express from 'express';
 import { Body, Controller, Post, Request, Route } from 'tsoa';
 
-import { OdataRequest } from '../../../../application-layer/drydock/core/cqrs/odata/OdataRequest';
 import { GetJobOrdersQuery } from '../../../../application-layer/drydock/projects/job-orders/GetJobOrdersQuery';
+import { Req } from '../../../../common/drydock/ts-helpers/req-res';
 import { MiddlewareHandler } from '../../../../controllers/drydock/core/middleware/MiddlewareHandler';
 import { IJobOrderDto } from '../../../../dal/drydock/projects/job-orders/IJobOrderDto';
 import { ODataBodyDto } from '../../../../shared/dto';
@@ -24,12 +24,12 @@ exports.post = getJobOrders;
 export class GetJobOrdersController extends Controller {
     @Post()
     public async getJobOrders(
-        @Request() request: express.Request,
-        @Body() odata: ODataBodyDto,
+        @Request() request: Req<ODataBodyDto>,
+        @Body() odataBody: ODataBodyDto,
     ): Promise<ODataResult<IJobOrderDto>> {
         const query = new GetJobOrdersQuery();
 
-        const result = await query.ExecuteAsync(new OdataRequest(odata, request));
+        const result = await query.ExecuteAsync(request, ODataBodyDto);
         return result;
     }
 }
