@@ -108,12 +108,9 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
   }
 
   updateJobOrder() {
-    this.isDialogOkButtonDisabled = true;
-
     const result = this.jobOrderForm.save();
 
     if (result instanceof Error) {
-      this.isDialogOkButtonDisabled = false;
       this.growlMessageService.setErrorMessage(result.message);
       return;
     }
@@ -136,6 +133,8 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
     // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
     this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
+
+    this.isDialogOkButtonDisabled = true;
 
     this.jobOrdersService
       .updateJobOrder(data)
