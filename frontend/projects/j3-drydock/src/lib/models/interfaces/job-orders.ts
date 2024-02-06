@@ -12,4 +12,6 @@ export interface JobOrder {
   JobOrderSubject: string;
   SpecificationStartDate: string;
   SpecificationEndDate: string;
+  User: string;
+  uid?: string;
 }

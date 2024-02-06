@@ -39,7 +39,7 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
   okBtnLabel = 'Update';
 
-  row: JobOrder; // TODO fixme type
+  private row: JobOrder;
 
   readonly dateTimeFormat = this.specificationUpdatesService.dateTimeFormat;
 
@@ -55,11 +55,13 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
   // TODO fixme
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public showJobOrderForm(row?: any) {
+  public showJobOrderForm(row?: JobOrder) {
     const jobOrderForm: IJobOrderFormDto = {
       SpecificationUid: this.specificationDetails.uid,
       Code: this.specificationDetails.SpecificationCode
     };
+
+    this.row = row;
 
     if (row) {
       jobOrderForm.Remarks = row.JobOrderRemarks;
@@ -87,11 +89,9 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
   }
 
   onGridAction({ type, payload }: IGridAction) {
-    this.row = payload;
-
     switch (type) {
       case 'Edit Job Update':
-        this.showJobOrderForm(this.row);
+        this.showJobOrderForm(payload);
         break;
       default:
         return;
@@ -130,6 +130,10 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
       Remarks: jobOrder.Remarks
     };
+
+    if (this.row) {
+      data.uid = this.row.uid;
+    }
 
     // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
     this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
