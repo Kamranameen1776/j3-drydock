@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
@@ -10,6 +11,7 @@ import { ePmsWlType, eSpecificationDetailsPageMenuIds, specificationDetailsMenuD
 import {
   GridService,
   IJbAttachment,
+  IJbMenuItem,
   ITopSectionFieldSet,
   JbDatePipe,
   JbDetailsTopSectionService,
@@ -77,9 +79,11 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     quantity: 0
   } as CreateSpecificationSubItemData;
 
+  private isExecutionPhase = false;
+
   pmsWlType = ePmsWlType;
 
-  readonly menu = specificationDetailsMenuData;
+  menu = cloneDeep(specificationDetailsMenuData);
   readonly eSideMenuId = eSpecificationDetailsPageMenuIds;
 
   eSpecificationDetailsPageMenuIds = eSpecificationDetailsPageMenuIds;
@@ -327,6 +331,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
             EndDate: UTCAsLocal(data.EndDate as string)
           };
 
+          this.isExecutionPhase = this.specificationDetailService.isInExecutionPhase(data.ProjectStatusId);
+
           this.attachmentConfig = {
             Module_Code: this.moduleCode,
             Function_Code: this.functionCode,
@@ -345,7 +351,10 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
         this.accessRights = this.specificationDetailService.setupAccessRights(this.tmDetails);
         this.topSectionConfig = this.specificationDetailService.getTopSecConfig(this.tmDetails);
-        this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig();
+        this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig(this.tmDetails);
+
+        this.setMenu();
+
         // TODO add here more to init view if needed
         if (refresh) {
           this.jbTMDtlSrv.refreshTaskManager.next({
@@ -429,5 +438,21 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   private checkValidStartEndDates(formValue) {
     return this.detailsService.checkValidStartEndDates(formValue?.StartDate, formValue?.EndDate);
+  }
+
+  private getMenuById(menus: IJbMenuItem[], id: eSpecificationDetailsPageMenuIds) {
+    return this.detailsService.getMenuById(menus, id);
+  }
+
+  private hideSubMenuItem(parentMenu: IJbMenuItem, id: eSpecificationDetailsPageMenuIds) {
+    this.detailsService.hideSubMenuItem(parentMenu, id);
+  }
+
+  private setMenu() {
+    this.menu = cloneDeep(specificationDetailsMenuData);
+    if (!this.isExecutionPhase) {
+      const mainSection = this.getMenuById(this.menu, eSpecificationDetailsPageMenuIds.SpecificationDetails);
+      this.hideSubMenuItem(mainSection, eSpecificationDetailsPageMenuIds.SpecificationUpdates);
+    }
   }
 }

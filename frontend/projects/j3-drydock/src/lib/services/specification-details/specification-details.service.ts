@@ -27,6 +27,7 @@ import { ITMDetailTabFields } from 'j3-task-manager-ng';
 import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
 import { eSubItemsDialog } from '../../models/enums/sub-items.enum';
 import { eApiBaseDryDockAPI } from '../../models/constants/constants';
+import { eProjectWorkflowStatusAction } from '../../models/enums/project-details.enum';
 
 export interface SpecificationDetailAccessRights extends BaseAccessRight {
   generalInformation: { view: boolean };
@@ -228,7 +229,7 @@ export class SpecificationDetailsService {
     };
   }
 
-  getSpecificationStepSectionsConfig(): ITMDetailTabFields {
+  getSpecificationStepSectionsConfig(details: SpecificationDetailsFull): ITMDetailTabFields {
     return {
       [eSpecificationDetailsPageMenuIds.SpecificationDetails]: {
         id: eSpecificationDetailsPageMenuIds.SpecificationDetails,
@@ -283,17 +284,21 @@ export class SpecificationDetailsService {
             isAddNewButton: true,
             buttonLabel: 'Convert to sub item'
           },
-          {
-            GridRowStart: 5,
-            GridRowEnd: 6,
-            GridColStart: 1,
-            GridColEnd: 3,
-            active_status: true,
-            SectionCode: eSpecificationDetailsPageMenuIds.SpecificationUpdates,
-            SectionLabel: eSpecificationDetailsPageMenuLabels.SpecificationUpdates,
-            isAddNewButton: true,
-            buttonLabel: 'Add Update'
-          }
+          ...(this.isInExecutionPhase(details.ProjectStatusId)
+            ? [
+                {
+                  GridRowStart: 5,
+                  GridRowEnd: 6,
+                  GridColStart: 1,
+                  GridColEnd: 3,
+                  active_status: true,
+                  SectionCode: eSpecificationDetailsPageMenuIds.SpecificationUpdates,
+                  SectionLabel: eSpecificationDetailsPageMenuLabels.SpecificationUpdates,
+                  isAddNewButton: true,
+                  buttonLabel: 'Add Update'
+                }
+              ]
+            : [])
         ]
       }
     };
@@ -433,6 +438,13 @@ export class SpecificationDetailsService {
     return this.apiRequestService.sendApiReq(request);
   }
 
+  isInExecutionPhase(status: string) {
+    return (
+      !this.areStatusesSame(status, eProjectWorkflowStatusAction.Raise) &&
+      !this.areStatusesSame(status, eProjectWorkflowStatusAction['In Progress'])
+    );
+  }
+
   isStatusBeforeComplete(status: string) {
     return (
       this.areStatusesSame(status, eSpecificationWorkflowStatusAction.Raise) ||
@@ -441,7 +453,7 @@ export class SpecificationDetailsService {
   }
 
   areStatusesSame(status: string, statusToCompare: string): boolean {
-    return status.toLowerCase() === statusToCompare.toLowerCase();
+    return (status ?? '').toLowerCase() === statusToCompare.toLowerCase();
   }
 
   hasAccess(action: string, module = eModule.Project, func = eFunction.SpecificationDetails) {
