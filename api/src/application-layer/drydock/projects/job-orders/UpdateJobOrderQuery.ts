@@ -34,10 +34,6 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
         this.vesselRepository = new VesselsRepository();
     }
 
-    protected async AuthorizationHandlerAsync(): Promise<void> {
-        return;
-    }
-
     protected async ValidationHandlerAsync(request: UpdateJobOrderDto): Promise<void> {
         if (!request) {
             throw new Error('Request is null');
@@ -62,7 +58,10 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
 
         const vessel = await this.vesselRepository.GetVesselBySpecification(request.SpecificationUid);
 
-        let jobOrder = await this.jobOrderRepository.TryGetJobOrderBySpecification(specification.uid);
+        let jobOrder: JobOrderEntity | undefined;
+        if (request.uid) {
+            jobOrder = await this.jobOrderRepository.getJobOrderByUid(request.uid);
+        }
 
         specification.StartDate = request.SpecificationStartDate;
         specification.EndDate = request.SpecificationEndDate;
@@ -83,6 +82,7 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
                 jobOrder.SpecificationUid = specification.uid;
                 jobOrder.uid = request.uid ?? new DataUtilService().newUid();
                 jobOrder.ProjectUid = specification.ProjectUid;
+                jobOrder.CreatedBy = request.CreatedBy;
             }
 
             jobOrder.LastUpdated = request.LastUpdated;

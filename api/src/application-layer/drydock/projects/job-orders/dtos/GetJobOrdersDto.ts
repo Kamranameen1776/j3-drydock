@@ -1,5 +1,6 @@
-import { ODataBodyDto } from '../../../../../shared/dto';
 import { IsString } from 'class-validator';
+
+import { ODataBodyDto } from '../../../../../shared/dto';
 
 export class GetJobOrdersDto extends ODataBodyDto {
     @IsString()

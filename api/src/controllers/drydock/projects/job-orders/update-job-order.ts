@@ -1,5 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { Request, Response } from 'express';
+import { AccessRights } from 'j2utils';
 import { Body, Controller, Post, Route } from 'tsoa';
 
 import { UpdateJobOrderQuery } from '../../../../application-layer/drydock/projects/job-orders/UpdateJobOrderQuery';
@@ -18,10 +19,11 @@ async function updateJobOrder(req: Request, res: Response) {
 
     await middlewareHandler.ExecuteAsync(req, res, async (request) => {
         const dto = plainToClass(UpdateJobOrderDto, request.body);
+        const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
 
-        const result = await new UpdateJobOrderController().updateJobOrder(dto);
+        dto.CreatedBy = createdBy;
 
-        return result;
+        return new UpdateJobOrderController().updateJobOrder(dto);
     });
 }
 
@@ -33,8 +35,6 @@ export class UpdateJobOrderController extends Controller {
     public async updateJobOrder(@Body() dto: UpdateJobOrderDto): Promise<void> {
         const query = new UpdateJobOrderQuery();
 
-        const result = await query.ExecuteAsync(dto);
-
-        return result;
+        return query.ExecuteAsync(dto);
     }
 }

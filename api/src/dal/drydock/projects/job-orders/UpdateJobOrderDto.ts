@@ -1,4 +1,14 @@
-import { IsDateString, IsNotEmpty, IsOptional, IsUUID, Max, MaxLength, Min, MinLength } from 'class-validator';
+import {
+    IsDateString,
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    IsUUID,
+    Max,
+    MaxLength,
+    Min,
+    MinLength,
+} from 'class-validator';
 
 import { JobOrderStatus } from './JobOrderStatus';
 
@@ -36,5 +46,10 @@ export class UpdateJobOrderDto {
     @IsNotEmpty()
     LastUpdated: Date;
 
+    @IsUUID('4')
+    CreatedBy: string;
+
+    @IsString()
+    @IsOptional()
     Remarks: string;
 }
