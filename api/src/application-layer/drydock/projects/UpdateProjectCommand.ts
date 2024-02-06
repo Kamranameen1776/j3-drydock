@@ -44,8 +44,10 @@ export class UpdateProjectCommand extends Command<UpdateProjectDto, void> {
             throw result;
         }
 
-        if (request.EndDate < request.StartDate) {
-            throw new BusinessException('Project start date must be earlier than or equal to project end date');
+        if (request.EndDate && request.StartDate) {
+            if (request.EndDate < request.StartDate) {
+                throw new BusinessException('Project start date must be earlier than or equal to project end date');
+            }
         }
     }
 
