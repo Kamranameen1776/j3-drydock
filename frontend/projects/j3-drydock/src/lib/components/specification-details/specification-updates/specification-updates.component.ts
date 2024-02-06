@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { GridService, IGridAction, IJbDialog, eGridRefreshType, eGridRowActions, JmsService, eJMSWorkflowAction } from 'jibe-components';
+import { AfterViewInit, Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { GridService, IGridAction, IJbDialog, eGridRefreshType, JmsService, eJMSWorkflowAction } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SpecificationUpdatesService } from './specification-updates.service';
@@ -9,9 +9,11 @@ import { GrowlMessageService } from '../../../services/growl-message.service';
 import { IJobOrdersFormComponent } from '../../project-details/project-monitoring/job-orders-form/IJobOrdersFormComponent';
 import { IJobOrderFormResultDto } from '../../project-details/project-monitoring/job-orders-form/dtos/IJobOrderFormResultDto';
 import { currentLocalAsUTC } from '../../../utils/date';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { IJobOrderFormDto } from '../../project-details/project-monitoring/job-orders-form/dtos/IJobOrderFormDto';
 import { SpecificationDetails } from '../../../models/interfaces/specification-details';
+import { JobOrder } from '../../../models/interfaces/job-orders';
+import { eSpecificationUpdatesFields } from '../../../models/enums/specification-details.enum';
 
 @Component({
   selector: 'jb-drydock-specification-updates',
@@ -19,7 +21,7 @@ import { SpecificationDetails } from '../../../models/interfaces/specification-d
   styleUrls: ['./specification-updates.component.scss'],
   providers: [SpecificationUpdatesService]
 })
-export class SpecificationUpdatesComponent extends UnsubscribeComponent implements OnInit {
+export class SpecificationUpdatesComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
   @Input() specificationDetails: SpecificationDetails;
 
   @ViewChild('reportDateTemplate', { static: true }) reportDateTemplate: TemplateRef<unknown>;
@@ -37,7 +39,7 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
   okBtnLabel = 'Update';
 
-  row; // TODO fixme type
+  row: JobOrder; // TODO fixme type
 
   readonly dateTimeFormat = this.specificationUpdatesService.dateTimeFormat;
 
@@ -60,10 +62,10 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
     };
 
     if (row) {
-      jobOrderForm.Remarks = row.Remarks;
+      jobOrderForm.Remarks = row.JobOrderRemarks;
       jobOrderForm.Progress = row.Progress;
-      jobOrderForm.Subject = row.Subject;
-      jobOrderForm.Status = row.Status;
+      jobOrderForm.Subject = row.JobOrderSubject;
+      jobOrderForm.Status = row.JobOrderStatus;
       jobOrderForm.SpecificationStartDate = row.SpecificationStartDate;
       jobOrderForm.SpecificationEndDate = row.SpecificationEndDate;
     }
@@ -75,14 +77,20 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
   ngOnInit(): void {
     this.setGridData();
-    this.setCellTemplate(this.reportDateTemplate, 'reportDate');
+    this.setCellTemplate(this.reportDateTemplate, eSpecificationUpdatesFields.Date);
+  }
+
+  ngAfterViewInit(): void {
+    this.jobOrderForm.onValueChangesIsFormValid.pipe(takeUntil(this.unsubscribe$)).subscribe((isValid) => {
+      this.isDialogOkButtonDisabled = !isValid;
+    });
   }
 
   onGridAction({ type, payload }: IGridAction) {
     this.row = payload;
 
     switch (type) {
-      case eGridRowActions.Edit:
+      case 'Edit Job Update':
         this.showJobOrderForm(this.row);
         break;
       default:
@@ -105,6 +113,7 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
     const result = this.jobOrderForm.save();
 
     if (result instanceof Error) {
+      this.isDialogOkButtonDisabled = false;
       this.growlMessageService.setErrorMessage(result.message);
       return;
     }
@@ -130,15 +139,18 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
     this.jobOrdersService
       .updateJobOrder(data)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        finalize(() => {
+          this.isDialogOkButtonDisabled = false;
+        })
+      )
       .subscribe(() => {
-        this.isDialogOkButtonDisabled = false;
         this.closeDialog(true);
       });
   }
 
-  // public shows that it is used from parent of this component
-  showDialog(value: boolean) {
+  private showDialog(value: boolean) {
     this.isShowDialog = value;
   }
 

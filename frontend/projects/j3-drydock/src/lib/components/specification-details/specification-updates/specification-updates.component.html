@@ -14,7 +14,7 @@
   #reportDateTemplate
   let-rowData
 >
-  <jb-drydock-grid-cell-popover [value]="rowData.DateAndTime | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
+  <jb-drydock-grid-cell-popover [value]="rowData.LastUpdated | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
 </ng-template>
 
 <jb-dialog

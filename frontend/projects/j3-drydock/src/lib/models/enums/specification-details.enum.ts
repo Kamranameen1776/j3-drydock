@@ -90,8 +90,8 @@ export enum eSpecificationUpdatesLabels {
 }
 
 export enum eSpecificationUpdatesFields {
-  Date = 'Date',
+  Date = 'LastUpdated',
   User = 'User',
   Progress = 'Progress',
-  Subject = 'Subject'
+  Subject = 'JobOrderSubject'
 }

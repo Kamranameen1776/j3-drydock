@@ -1,9 +1,9 @@
+import { JobOrder } from './../../../../../models/interfaces/job-orders';
 import { Column, GridRowActions, UserService, eGridColumnsWidth } from 'jibe-components';
 import { nameOf } from '../../../../../utils/nameOf';
 import { JobOrdersService } from '../../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { GridInputsWithRequest } from '../../../../../models/interfaces/grid-inputs';
 import { Injectable } from '@angular/core';
-import { IJobOrderDto } from './IJobOrderDto';
 
 @Injectable()
 export class SelectJobOrdersGridService {
@@ -16,7 +16,7 @@ export class SelectJobOrdersGridService {
   private readonly columns: Column[] = [
     {
       DisplayText: 'SpecificationUid',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.SpecificationUid),
+      FieldName: nameOf<JobOrder>((prop) => prop.SpecificationUid),
       IsActive: true,
       IsMandatory: true,
       IsVisible: false,
@@ -24,7 +24,7 @@ export class SelectJobOrdersGridService {
     },
     {
       DisplayText: 'Specification Code',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.Code),
+      FieldName: nameOf<JobOrder>((prop) => prop.Code),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -34,7 +34,7 @@ export class SelectJobOrdersGridService {
     },
     {
       DisplayText: 'Responsible',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.Responsible),
+      FieldName: nameOf<JobOrder>((prop) => prop.Responsible),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -43,7 +43,7 @@ export class SelectJobOrdersGridService {
     },
     {
       DisplayText: 'Status',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.JobOrderStatus),
+      FieldName: nameOf<JobOrder>((prop) => prop.JobOrderStatus),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -52,7 +52,7 @@ export class SelectJobOrdersGridService {
     },
     {
       DisplayText: 'Update Date',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.LastUpdated),
+      FieldName: nameOf<JobOrder>((prop) => prop.LastUpdated),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -61,7 +61,7 @@ export class SelectJobOrdersGridService {
     }
   ];
 
-  private searchFields: string[] = [nameOf<IJobOrderDto>((prop) => prop.SpecificationSubject)];
+  private searchFields: string[] = [nameOf<JobOrder>((prop) => prop.SpecificationSubject)];
   private gridActions: GridRowActions[] = [];
 
   constructor(
@@ -76,7 +76,7 @@ export class SelectJobOrdersGridService {
       searchFields: this.searchFields,
       request: this.jobOrdersService.getJobOrdersUpdatesRequest(),
       actions: this.gridActions,
-      sortField: nameOf<IJobOrderDto>((prop) => prop.LastUpdated),
+      sortField: nameOf<JobOrder>((prop) => prop.LastUpdated),
       sortOrder: -1
     };
   }
