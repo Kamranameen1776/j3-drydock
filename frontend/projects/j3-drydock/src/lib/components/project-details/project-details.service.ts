@@ -270,17 +270,17 @@ export class ProjectDetailsService {
             isAddNewButton: true,
             buttonLabel: 'Link Yard',
             addNewButtonType: JbButtonType.NoButton
-          },
-          {
-            GridRowStart: 2,
-            GridRowEnd: 3,
-            GridColStart: 1,
-            GridColEnd: 3,
-            active_status: true,
-            SectionCode: eProjectDetailsSideMenuId.Comparison,
-            SectionLabel: eProjectDetailsSideMenuLabel.Comparison,
-            isAddNewButton: false
           }
+          // {
+          //   GridRowStart: 2,
+          //   GridRowEnd: 3,
+          //   GridColStart: 1,
+          //   GridColEnd: 3,
+          //   active_status: true,
+          //   SectionCode: eProjectDetailsSideMenuId.Comparison,
+          //   SectionLabel: eProjectDetailsSideMenuLabel.Comparison,
+          //   isAddNewButton: false
+          // }
         ]
       },
       [eProjectDetailsSideMenuId.ProjectMonitoring]: {

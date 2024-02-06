@@ -1,8 +1,8 @@
 import * as express from 'express';
 import { Body, Controller, Post, Request, Route } from 'tsoa';
 
-import { OdataRequest } from '../../../application-layer/drydock/core/cqrs/odata/OdataRequest';
 import { GetStatementOfFactsQuery } from '../../../application-layer/drydock/statement-of-facts';
+import { Req } from '../../../common/drydock/ts-helpers/req-res';
 import { MiddlewareHandler } from '../../../controllers/drydock/core/middleware/MiddlewareHandler';
 import { IStatementOfFactsDto } from '../../../dal/drydock/statement-of-facts/IStatementOfFactsDto';
 import { ODataBodyDto } from '../../../shared/dto';
@@ -24,12 +24,12 @@ exports.post = getStatementsOfFact;
 export class GetStatementsOfFactController extends Controller {
     @Post()
     public async getStatementsOfFact(
-        @Request() request: express.Request,
-        @Body() odata: ODataBodyDto,
+        @Request() request: Req<ODataBodyDto>,
+        @Body() odataBody: ODataBodyDto,
     ): Promise<ODataResult<IStatementOfFactsDto>> {
         const query = new GetStatementOfFactsQuery();
 
-        const result = await query.ExecuteAsync(new OdataRequest(odata, request));
+        const result = await query.ExecuteAsync(request, ODataBodyDto);
 
         return result;
     }
