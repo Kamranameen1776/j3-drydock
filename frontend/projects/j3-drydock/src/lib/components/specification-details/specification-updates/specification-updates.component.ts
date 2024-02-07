@@ -53,8 +53,6 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
     super();
   }
 
-  // TODO fixme
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public showJobOrderForm(row?: JobOrder) {
     const jobOrderForm: IJobOrderFormDto = {
       SpecificationUid: this.specificationDetails.uid,
