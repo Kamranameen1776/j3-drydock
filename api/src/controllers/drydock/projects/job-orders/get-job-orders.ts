@@ -8,18 +8,6 @@ import { IJobOrderDto } from '../../../../dal/drydock/projects/job-orders/IJobOr
 import { ODataBodyDto } from '../../../../shared/dto';
 import { ODataResult } from '../../../../shared/interfaces';
 
-async function getJobOrders(req: express.Request, res: express.Response) {
-    const middlewareHandler = new MiddlewareHandler();
-
-    await middlewareHandler.ExecuteAsync(req, res, async (request) => {
-        const result = await new GetJobOrdersController().getJobOrders(request, req.body.odata);
-
-        return result;
-    });
-}
-
-exports.post = getJobOrders;
-
 @Route('drydock/projects/job-orders/get-job-orders')
 export class GetJobOrdersController extends Controller {
     @Post()
@@ -33,3 +21,7 @@ export class GetJobOrdersController extends Controller {
         return result;
     }
 }
+
+exports.post = new MiddlewareHandler().ExecuteHandlerAsync(async (request: express.Request) => {
+    return new GetJobOrdersController().getJobOrders(request, request.body);
+});

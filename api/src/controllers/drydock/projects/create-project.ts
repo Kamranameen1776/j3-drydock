@@ -7,26 +7,12 @@ import { CreateProjectDto } from '../../../bll/drydock/projects/dtos/ICreateProj
 import { IProjectsForMainPageRecordDto } from '../../../dal/drydock/projects/dtos/IProjectsForMainPageRecordDto';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
-async function createProject(req: express.Request, res: express.Response) {
-    const middlewareHandler = new MiddlewareHandler();
-
-    await middlewareHandler.ExecuteAsync(req, res, async (request: express.Request) => {
-        const createProjectDto: CreateProjectDto = request.body as CreateProjectDto;
-
-        const result = await new CreateProjectController().createProject(createProjectDto, request);
-
-        return result;
-    });
-}
-
-exports.post = createProject;
-
 @Route('drydock/projects/create-project')
 export class CreateProjectController extends Controller {
     @Post()
     public async createProject(
-        @Body() createProjectDto: CreateProjectDto,
         @Request() request: express.Request,
+        @Body() createProjectDto: CreateProjectDto,
     ): Promise<IProjectsForMainPageRecordDto[]> {
         const token: string = request.headers.authorization as string;
 
@@ -42,3 +28,7 @@ export class CreateProjectController extends Controller {
         return result;
     }
 }
+
+exports.post = new MiddlewareHandler().ExecuteHandlerAsync(async (request: express.Request) => {
+    return new CreateProjectController().createProject(request, request.body);
+});

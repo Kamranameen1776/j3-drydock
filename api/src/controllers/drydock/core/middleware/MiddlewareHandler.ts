@@ -10,11 +10,24 @@ import { ProblemDetails, ProblemDetailsType } from '../ProblemDetails';
 import { ExceptionLogDataDto } from './ExceptionLogDataDto';
 
 type ResultGetterRequestHandler<TResult> = (req: Request, res: Response, user: UserFromToken) => Promise<TResult>;
+
+type ControllerHandler = (request: Request) => Promise<unknown>;
+
 export class MiddlewareHandler {
     functionCode?: string;
 
     constructor(functionCode?: string) {
         this.functionCode = functionCode;
+    }
+
+    public ExecuteHandlerAsync(fn: ControllerHandler) {
+        return async (req: Request, res: Response) => {
+            this.ExecuteAsync(req, res, async () => {
+                const result = await fn(req);
+
+                return result;
+            });
+        };
     }
 
     public async ExecuteAsync<TResult>(req: Request, res: Response, getResult: ResultGetterRequestHandler<TResult>) {

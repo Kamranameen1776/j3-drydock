@@ -5,16 +5,6 @@ import { GetJobOrderStatusesQuery } from '../../../../application-layer/drydock/
 import { KeyValuePair } from '../../../../common/drydock/ts-helpers/KeyValuePair';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
-async function getJobOrderStatuses(req: Request, res: Response) {
-    const middlewareHandler = new MiddlewareHandler();
-
-    await middlewareHandler.ExecuteAsync(req, res, async () => {
-        return new GetJobOrderStatusesController().getJobOrderStatuses();
-    });
-}
-
-exports.get = getJobOrderStatuses;
-
 @Route('drydock/projects/job-orders/get-job-order-statuses')
 export class GetJobOrderStatusesController extends Controller {
     @Get()
@@ -26,3 +16,5 @@ export class GetJobOrderStatusesController extends Controller {
         return result;
     }
 }
+
+exports.get = new MiddlewareHandler().ExecuteHandlerAsync(new GetJobOrderStatusesController().getJobOrderStatuses);
