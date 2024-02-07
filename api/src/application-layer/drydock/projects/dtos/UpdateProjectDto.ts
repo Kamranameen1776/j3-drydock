@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsUUID, MaxLength } from 'class-validator';
+import { IsDate, IsOptional, IsUUID, MaxLength } from 'class-validator';
 
 export const startDateInvalidMessage = 'Invalid project start date';
 
@@ -14,17 +14,19 @@ export class UpdateProjectDto {
 
     public ProjectManagerUid: string;
 
+    @IsOptional()
     @Type(() => Date)
     @IsDate({
         message: startDateInvalidMessage,
     })
-    public StartDate: Date;
+    public StartDate?: Date;
 
+    @IsOptional()
     @Type(() => Date)
     @IsDate({
         message: endDateInvalidMessage,
     })
-    public EndDate: Date;
+    public EndDate?: Date;
 
     public ShipYardId: string;
 
