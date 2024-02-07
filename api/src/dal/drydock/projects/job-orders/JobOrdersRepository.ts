@@ -2,7 +2,9 @@ import { Request } from 'express';
 import { ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
+import { GetJobOrdersDto } from '../../../../application-layer/drydock/projects/job-orders/dtos/GetJobOrdersDto';
 import { className } from '../../../../common/drydock/ts-helpers/className';
+import { Req } from '../../../../common/drydock/ts-helpers/req-res';
 import {
     JmsDtlWorkflowConfigDetailsEntity,
     LibItemSourceEntity,
@@ -19,14 +21,21 @@ import { ODataResult } from '../../../../shared/interfaces';
 import { IJobOrderDto } from './IJobOrderDto';
 
 export class JobOrdersRepository {
-    private statuses: Array<string> = [
+    private jobOrderStatuses: Array<string> = [
+        TaskManagerConstants.specification.status.Planned,
+        TaskManagerConstants.specification.status.Closed,
+    ];
+
+    private updatesStatuses: Array<string> = [
+        TaskManagerConstants.specification.status.Raised,
+        TaskManagerConstants.specification.status.InProgress,
         TaskManagerConstants.specification.status.Planned,
         TaskManagerConstants.specification.status.Closed,
     ];
 
     public async GetJobOrders(
         request: Request,
-        statuses: string[] | null = this.statuses,
+        statuses: string[] | null = this.jobOrderStatuses,
     ): Promise<ODataResult<IJobOrderDto>> {
         const SpecificationDetailsRepository = getManager().getRepository(SpecificationDetailsEntity);
 
@@ -58,7 +67,7 @@ export class JobOrdersRepository {
             query = query.innerJoin(
                 className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
-                `wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status AND tm.Status IN ('${this.statuses.join(
+                `wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status AND tm.Status IN ('${statuses.join(
                     `','`,
                 )}')`,
             );
@@ -92,11 +101,12 @@ export class JobOrdersRepository {
         return oDataService.getJoinResult(query.getQuery());
     }
 
-    public async GetUpdates(request: Request): Promise<ODataResult<IJobOrderDto>> {
+    public async GetUpdates(request: Req<GetJobOrdersDto>): Promise<ODataResult<IJobOrderDto>> {
         const SpecificationDetailsRepository = getManager().getRepository(JobOrderEntity);
 
-        const query: string = SpecificationDetailsRepository.createQueryBuilder('jo')
+        const [query, parameters] = SpecificationDetailsRepository.createQueryBuilder('jo')
             .select([
+                'jo.uid as uid',
                 'sd.uid AS SpecificationUid',
                 'sd.ProjectUid AS ProjectUid',
                 'tm.Code AS Code',
@@ -111,11 +121,13 @@ export class JobOrdersRepository {
                 'jo.Status as JobOrderStatus',
                 'jo.LastUpdated AS LastUpdated',
                 'jo.Progress AS Progress',
+                `CONCAT(createdByUsr.FirstName, ' ', createdByUsr.LastName) AS 'User'`,
             ])
             .innerJoin(
                 className(SpecificationDetailsEntity),
                 'sd',
-                'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1',
+                'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1 and sd.ActiveStatus = 1',
+                { SpecificationUid: request.body.uid },
             )
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
@@ -125,16 +137,23 @@ export class JobOrdersRepository {
                 className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
                 `wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status
-                AND tm.Status IN ('${this.statuses.join(`','`)}')`,
+                AND tm.Status IN (:...statuses)`,
+                { statuses: this.updatesStatuses },
             )
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1')
-
-            .getQuery();
+            .leftJoin(
+                className(LibUserEntity),
+                'createdByUsr',
+                'jo.CreatedBy = createdByUsr.uid and createdByUsr.ActiveStatus = 1',
+            )
+            .where('jo.SpecificationUid = :SpecificationUid', { SpecificationUid: request.body.uid })
+            .distinct()
+            .getQueryAndParameters();
 
         const oDataService = new ODataService(request, getConnection);
 
-        return oDataService.getJoinResult(query);
+        return oDataService.getJoinResult(query, parameters);
     }
 
     public async TryGetJobOrderBySpecification(specificationUid: string): Promise<JobOrderEntity | undefined> {
@@ -151,5 +170,15 @@ export class JobOrdersRepository {
 
     public async UpdateJobOrder(jobOrder: JobOrderEntity, queryRunner: QueryRunner): Promise<void> {
         await queryRunner.manager.save(jobOrder);
+    }
+
+    public getJobOrderByUid(uid: string): Promise<JobOrderEntity | undefined> {
+        const jobOrdersRepository = getManager().getRepository(JobOrderEntity);
+
+        return jobOrdersRepository.findOneOrFail({
+            where: {
+                uid,
+            },
+        });
     }
 }

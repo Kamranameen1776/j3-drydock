@@ -59,6 +59,12 @@ export class JobOrderEntity {
     })
     CreatedAt: Date | null;
 
+    @Column('uuid', {
+        nullable: false,
+        name: 'created_by',
+    })
+    CreatedBy: string;
+
     @Column('bit', {
         nullable: false,
         name: 'active_status',
