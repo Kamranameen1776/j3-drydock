@@ -8,7 +8,7 @@
     Vessel_ID: tmDetails.Vessel_ID,
     WL_TYPE: tmDetails.wl_type,
     Worklist_Type_Display: tmDetails.Worklist_Type_Display,
-    Vessel_Name: projectDetails.VesselName,
+    Vessel_Name: tmDetails.VesselName,
     Job_card_No: tmDetails.Job_Code
   }"
   *ngIf="exportEnable"
@@ -100,7 +100,7 @@
       >
         <jb-drydock-rfq
           [projectId]="projectUid"
-          [projectDetails]="projectDetails"
+          [projectDetails]="tmDetails"
           #rfqComponent
         ></jb-drydock-rfq>
       </div>

@@ -1,64 +1,12 @@
+import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
-import { MigrationUtilsService } from 'j2utils';
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class newSpecificationWorkflowChanges1703847178269 implements MigrationInterface {
+export class specificationWorkflowConfiguration1706679366066 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
-            await MigrationUtilsService.createTableBackup('INF_Lib_Right');
-            await MigrationUtilsService.createTableBackup('INF_lnk_right_user_type');
             await MigrationUtilsService.createTableBackup('jms_dtl_workflow_config_details');
-
-            await queryRunner.query(`
-            MERGE INTO INF_Lib_Right AS TARGET USING (
-            VALUES
-                (N'59D75561-4778-4AF1-826D-2C32854A437F', N'tm_specification_cancel_office', N'Cancel dry dock from office', N'o', 'project', 'specification_details', N'cancel', 1, GETDATE(), NULL, NULL, 1, N'Cancel Dry Dock from Office', NULL, 1),
-                (N'177C9392-EE1F-45AC-A6D9-ECD8805D7509', N'tm_specification_cancel_vessel', N'Cancel dry dock from vessel', N'v', 'project', 'specification_details', N'cancel', 1, GETDATE(), NULL, NULL, 1, N'Cancel Dry Dock from Vessel', NULL, 1)
-                )
-
-                AS SOURCE (Right_UID, Right_Code, Right_Description, Valid_On, Module_Code, Function_Code, Action, Created_By, Date_Of_Creation, Modified_By,
-                Date_Of_Modification, Active_Status, right_name, api_url, is_work_flow)
-                ON TARGET.Right_UID = SOURCE.Right_UID
-
-                WHEN MATCHED THEN
-                UPDATE SET
-                TARGET.Right_Code = SOURCE.Right_Code, TARGET.Right_Description = SOURCE.Right_Description,
-                TARGET.Valid_On = SOURCE.Valid_On, TARGET.Module_Code = SOURCE.Module_Code, TARGET.Function_Code = SOURCE.Function_Code, TARGET.Action = SOURCE.Action,
-                TARGET.Created_By = SOURCE.Created_By, TARGET.Date_Of_Creation = SOURCE.Date_Of_Creation, TARGET.Modified_By = 1, TARGET.Date_Of_Modification = getDate(),
-                TARGET.Active_Status = SOURCE.Active_Status, TARGET.right_name = SOURCE.right_name, TARGET.api_url = SOURCE.api_url, TARGET.is_work_flow = SOURCE.is_work_flow
-
-                WHEN NOT MATCHED BY TARGET THEN
-                INSERT (Right_UID, Right_Code, Right_Description, Valid_On, Module_Code, Function_Code, Action, Created_By, Date_Of_Creation, Modified_By, Date_Of_Modification, Active_Status, right_name, api_url, is_work_flow)
-                VALUES (
-                SOURCE.Right_UID, SOURCE.Right_Code, SOURCE.Right_Description, SOURCE.Valid_On, SOURCE.Module_Code, SOURCE.Function_Code, SOURCE.Action,
-                SOURCE.Created_By, SOURCE.Date_Of_Creation, SOURCE.Modified_By, SOURCE.Date_Of_Modification, SOURCE.Active_Status, SOURCE.right_name,
-                SOURCE.api_url, SOURCE.is_work_flow
-                );
-            `);
-
-            await queryRunner.query(`
-            MERGE INTO INF_lnk_right_user_type AS TARGET USING (
-            VALUES
-                (N'C43215D1-DF39-4D1C-87C4-B90478768A18', N'tm_specification_cancel_office', N'3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), NULL, NULL),
-                (N'62ABB746-197D-45D6-B0F8-77000A3A7E20', N'tm_specification_cancel_vessel', N'0F3613B9-9FB5-40E6-8763-FC4941136598', 1, 1, getdate(), NULL, NULL)
-                )
-
-                AS SOURCE (uid, right_code, user_type_uid, active_status, created_by, date_of_creation, modified_by, date_of_modification)
-                ON TARGET.uid = SOURCE.uid
-
-                WHEN MATCHED THEN
-                UPDATE SET TARGET.right_code = SOURCE.right_code,TARGET.user_type_uid = SOURCE.user_type_uid,
-                TARGET.active_status = SOURCE.active_status, TARGET.created_by = SOURCE.created_by, TARGET.date_of_creation = SOURCE.date_of_creation,
-                TARGET.modified_by = 1, TARGET.date_of_modification = GETDATE()
-
-                WHEN NOT MATCHED BY TARGET THEN
-                INSERT (uid, right_code, user_type_uid, active_status, created_by, date_of_creation, modified_by, date_of_modification)
-                VALUES (
-                SOURCE.uid, SOURCE.right_code, SOURCE.user_type_uid, SOURCE.active_status, SOURCE.created_by,
-                SOURCE.date_of_creation, SOURCE.modified_by, SOURCE.date_of_modification
-                );
-            `);
 
             await queryRunner.query(`
             IF Exists(SELECT 1 FROM JMS_DTL_Workflow_config_details WHERE config_id in ( select Id from JMS_DTL_Workflow_config where active_status = 1 and JOB_Type = 'Specification'))
@@ -86,9 +34,9 @@ export class newSpecificationWorkflowChanges1703847178269 implements MigrationIn
             `);
 
             await queryRunner.query(`
-            DECLARE @applocation nvarchar(20)
-            SET @applocation = ( SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location' )
-            IF( @applocation = 'office')
+            DECLARE @app_location nvarchar(20)
+            SET @app_location = ( SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location' )
+            IF( @app_location = 'office')
             BEGIN
 
             BEGIN
@@ -223,7 +171,7 @@ export class newSpecificationWorkflowChanges1703847178269 implements MigrationIn
                             (2, 'IN PROGRESS', 'In Progress', 'In Progress', 1, 0, 1,'tm_specification_in_progress_office'),
                             (3, 'COMPLETE', 'Add to Plan', 'Planned', 1, 0, 1,'tm_specification_complete_office'),
                             (4, 'CLOSE', 'Close', 'Closed', 1, 1, 1,'tm_specification_close_office'),
-                            (5, 'UNCLOSE', 'Cancel', 'Canceled', 1, 0, 1,'tm_specification_cancel_office')
+                            (5, 'CANCEL', 'Cancel', 'Canceled', 1, 0, 1,'tm_specification_cancel_office')
                         declare  @DefaultAppLocations table (Is_Office INT)
                         INSERT INTO @DefaultAppLocations (Is_Office)
                         VALUES (1), (0)
@@ -342,7 +290,7 @@ export class newSpecificationWorkflowChanges1703847178269 implements MigrationIn
                 '',
                 'S',
                 'specification',
-                'Update specification workflow',
+                'specification workflow configuration',
             );
         } catch (error) {
             await MigrationUtilsService.migrationLog(
@@ -350,10 +298,11 @@ export class newSpecificationWorkflowChanges1703847178269 implements MigrationIn
                 errorLikeToString(error),
                 'E',
                 'specification',
-                'Update specification workflow',
+                'specification workflow configuration',
                 true,
             );
         }
     }
     public async down(queryRunner: QueryRunner): Promise<void> {}
 }
+

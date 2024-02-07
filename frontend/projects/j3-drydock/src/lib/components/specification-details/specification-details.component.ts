@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
@@ -10,6 +11,7 @@ import { ePmsWlType, eSpecificationDetailsPageMenuIds, specificationDetailsMenuD
 import {
   GridService,
   IJbAttachment,
+  IJbMenuItem,
   ITopSectionFieldSet,
   JbDatePipe,
   JbDetailsTopSectionService,
@@ -35,6 +37,7 @@ import { TmLinkedRecords } from 'jibe-components/lib/interfaces/tm-linked-record
 import { Subscription } from 'rxjs';
 import { UTCAsLocal, localDateJbStringAsUTC } from '../../utils/date';
 import { DetailsService } from '../../services/details.service';
+import { SpecificationUpdatesComponent } from './specification-updates/specification-updates.component';
 
 @Component({
   selector: 'jb-specification-details',
@@ -43,11 +46,18 @@ import { DetailsService } from '../../services/details.service';
   providers: [JbDatePipe, GrowlMessageService]
 })
 export class SpecificationDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
-  @ViewChild('specificationDetails') specificationDetails: ElementRef;
-  @ViewChild('generalInformation') generalInformation: ElementRef;
-  @ViewChild('subItems') subItems: ElementRef;
-  @ViewChild('pmsJobs') pmsJobs: ElementRef;
-  @ViewChild('findings') findings: ElementRef;
+  @ViewChild('specificationUpdatesComponent') specificationUpdatesComponent: SpecificationUpdatesComponent;
+
+  @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationDetails) [eSpecificationDetailsPageMenuIds.SpecificationDetails]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.GeneralInformation) [eSpecificationDetailsPageMenuIds.GeneralInformation]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.SubItems) [eSpecificationDetailsPageMenuIds.SubItems]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.PMSJobs) [eSpecificationDetailsPageMenuIds.PMSJobs]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.Findings) [eSpecificationDetailsPageMenuIds.Findings]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.Source) [eSpecificationDetailsPageMenuIds.Source]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.SpecificationAttachments)
+  [eSpecificationDetailsPageMenuIds.SpecificationAttachments]: ElementRef;
+  @ViewChild(eSpecificationDetailsPageMenuIds.AuditTrail) [eSpecificationDetailsPageMenuIds.AuditTrail]: ElementRef;
+  @ViewChild('specificationUpdates') specificationUpdates: ElementRef;
 
   specificationDetailsInfo: SpecificationDetails;
   updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
@@ -73,9 +83,11 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     quantity: 0
   } as CreateSpecificationSubItemData;
 
+  private isExecutionPhase = false;
+
   pmsWlType = ePmsWlType;
 
-  readonly menu = specificationDetailsMenuData;
+  menu = cloneDeep(specificationDetailsMenuData);
   readonly eSideMenuId = eSpecificationDetailsPageMenuIds;
 
   eSpecificationDetailsPageMenuIds = eSpecificationDetailsPageMenuIds;
@@ -323,6 +335,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
             EndDate: UTCAsLocal(data.EndDate as string)
           };
 
+          this.isExecutionPhase = this.specificationDetailService.isInExecutionPhase(data.ProjectStatusId);
+
           this.attachmentConfig = {
             Module_Code: this.moduleCode,
             Function_Code: this.functionCode,
@@ -341,7 +355,10 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
         this.accessRights = this.specificationDetailService.setupAccessRights(this.tmDetails);
         this.topSectionConfig = this.specificationDetailService.getTopSecConfig(this.tmDetails);
-        this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig();
+        this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig(this.tmDetails);
+
+        this.setMenu();
+
         // TODO add here more to init view if needed
         if (refresh) {
           this.jbTMDtlSrv.refreshTaskManager.next({
@@ -415,6 +432,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         this.subItemDetails.dialogHeader = eSubItemsDialog.AddText;
         this.showEditSubItem = true;
         break;
+      case eSpecificationDetailsPageMenuIds.SpecificationUpdates:
+        this.specificationUpdatesComponent.showJobOrderForm();
+        break;
       default:
         break;
     }
@@ -422,5 +442,21 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
   private checkValidStartEndDates(formValue) {
     return this.detailsService.checkValidStartEndDates(formValue?.StartDate, formValue?.EndDate);
+  }
+
+  private getMenuById(menus: IJbMenuItem[], id: eSpecificationDetailsPageMenuIds) {
+    return this.detailsService.getMenuById(menus, id);
+  }
+
+  private hideSubMenuItem(parentMenu: IJbMenuItem, id: eSpecificationDetailsPageMenuIds) {
+    this.detailsService.hideSubMenuItem(parentMenu, id);
+  }
+
+  private setMenu() {
+    this.menu = cloneDeep(specificationDetailsMenuData);
+    if (!this.isExecutionPhase) {
+      const mainSection = this.getMenuById(this.menu, eSpecificationDetailsPageMenuIds.SpecificationDetails);
+      this.hideSubMenuItem(mainSection, eSpecificationDetailsPageMenuIds.SpecificationUpdates);
+    }
   }
 }

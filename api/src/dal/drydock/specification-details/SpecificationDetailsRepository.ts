@@ -161,12 +161,14 @@ export class SpecificationDetailsRepository {
                 'spec.StartDate AS StartDate',
                 'spec.Completion AS Completion',
                 'spec.Duration AS Duration',
+                'projTm.Status as ProjectStatusId',
             ])
             .leftJoin(className(TecTaskManagerEntity), 'tm', 'spec.TecTaskManagerUid = tm.uid')
             .leftJoin(className(LibItemSourceEntity), 'its', 'spec.ItemSourceUid = its.uid')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'spec.DoneByUid = db.uid')
             .leftJoin(className(PriorityEntity), 'pr', 'spec.PriorityUid = pr.uid')
             .leftJoin(className(ProjectEntity), 'proj', 'spec.ProjectUid = proj.uid')
+            .leftJoin(className(TecTaskManagerEntity), 'projTm', 'proj.TaskManagerUid = projTm.uid')
             .leftJoin(className(LibVesselsEntity), 'ves', 'proj.VesselUid = ves.uid')
             .leftJoin(className(LibVesseltypes), 'vesType', 'ves.VesselType = vesType.ID')
             .leftJoin(className(LibUserEntity), 'usr', 'proj.ProjectManagerUid = usr.uid')
@@ -178,6 +180,7 @@ export class SpecificationDetailsRepository {
             )
             .where('spec.ActiveStatus = 1')
             .andWhere('spec.uid = :uid', { uid })
+            .distinct()
             .getRawOne();
     }
 

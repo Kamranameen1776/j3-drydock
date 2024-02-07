@@ -2,18 +2,18 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class updatedSpecificationReworkWorkflow1705475545174 implements MigrationInterface {
+export class dryDockWorkflowConfiguration1706679298391 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
             await MigrationUtilsService.createTableBackup('jms_dtl_workflow_config_details');
 
             await queryRunner.query(`
-            IF Exists(SELECT 1 FROM JMS_DTL_Workflow_config_details WHERE config_id in ( select Id from JMS_DTL_Workflow_config where active_status = 1 and JOB_Type = 'Specification'))
+            IF Exists(SELECT 1 FROM JMS_DTL_Workflow_config_details WHERE config_id in ( select Id from JMS_DTL_Workflow_config where active_status = 1 and JOB_Type = 'dry_dock'))
             BEGIN
                DECLARE @id int
                DECLARE workflow_config_Details CURSOR FOR
-               select ID from JMS_DTL_Workflow_config_Details where config_id in (select id from JMS_DTL_Workflow_config where job_type = 'Specification' and active_status=1)
+               select ID from JMS_DTL_Workflow_config_Details where config_id in (select id from JMS_DTL_Workflow_config where job_type='dry_dock' and active_status=1)
                OPEN workflow_config_Details
                FETCH NEXT FROM workflow_config_Details
                INTO @id
@@ -34,9 +34,9 @@ export class updatedSpecificationReworkWorkflow1705475545174 implements Migratio
             `);
 
             await queryRunner.query(`
-            DECLARE @applocation nvarchar(20)
-            SET @applocation = ( SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location' )
-            IF( @applocation = 'office')
+            DECLARE @app_location nvarchar(20)
+            SET @app_location = ( SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location' )
+            IF( @app_location = 'office')
             BEGIN
 
             BEGIN
@@ -50,7 +50,7 @@ export class updatedSpecificationReworkWorkflow1705475545174 implements Migratio
 
                 MERGE INTO TEC_LIB_Worklist_Type AS TARGET USING (
                         VALUES
-                            (@WorkList_MAX_ID, N'Specification', N'Technical Specification', 1, GETDATE(), 1, 0, NULL, 0, 0, 'SPEC')
+                            (@WorkList_MAX_ID, N'dry_dock', N'Dry Dock', 1, GETDATE(), 1, 0, NULL, 0, 0, 'DD')
                     )
                 AS SOURCE ([ID],[Worklist_Type], [Worklist_Type_Display], [Created_By], [Date_Of_Creation], [Active_Status], [Is_Child_Task], [Is_SYNC], [Is_Inspection], [Is_Vetting], [job_card_prefix])
                 ON TARGET.[Worklist_Type] = SOURCE.[Worklist_Type] AND TARGET.[active_status] = 1
@@ -83,12 +83,12 @@ export class updatedSpecificationReworkWorkflow1705475545174 implements Migratio
 
             END
             END
-            ----------------------------------------------Insert 'Specification' details in jms_dtl_workflow_config table--------------------------------------
+            ----------------------------------------------Insert 'Dry Dock' details in jms_dtl_workflow_config table--------------------------------------
                     BEGIN
                     DECLARE @MaxID int = 0,
                     @PkCondition varchar(100),
 
-                    @JobType varchar(50) = 'Specification', --workflow set for which job type
+                    @JobType varchar(50) = 'dry_dock', --workflow set for which job type
                     @TotalDays int = 0 , -- total days until finalizing task
                     @VesselAssign int = 0, -- vessel assignment value
                     @SubTask int = 0,
@@ -97,10 +97,13 @@ export class updatedSpecificationReworkWorkflow1705475545174 implements Migratio
                     @Due_Date_Config varchar(600)='{"status":"CLOSE","days":"14","due_date":"Start Date"}',
                     @job_type_column_config varchar(1500) = '
                     {"status_config":[{"wfstatus":"Raise","mandatory":"Yes","rework":"No","delete":"Yes","save":"Yes"},
-                    {"wfstatus":"In Progress","mandatory":"Yes","rework": "Yes","delete":"No","save":"Yes"},
-                    {"wfstatus":"Complete","mandatory":"Yes","rework":"No","delete":"No","save":"Yes"},
+                    {"wfstatus":"In Progress","mandatory":"Yes","rework": "No","delete":"No","save":"Yes"},
+                    {"wfstatus":"Complete","mandatory":"Yes","rework":"Yes","delete":"No","save":"Yes"},
+                    {"wfstatus":"Verify","mandatory":"Yes","rework": null,"delete":"No","save":"Yes"},
+                    {"wfstatus":"Review","mandatory":"No","rework": null,"delete":"No","save":"Yes"},
+                    {"wfstatus":"Approve","mandatory":"No","rework":null,"delete":"No","save":"Yes"},
                     {"wfstatus":"Close","mandatory":"Yes","rework":"Yes","delete":"No","save":"No"},
-                    {"wfstatus":"Cancel","mandatory":"No","rework":"No","delete":"No","save":"No"}]}'
+                    {"wfstatus":"Unclose","mandatory":"No","rework":"No","delete":"No","save":"No"}]}'
                     SELECT @MaxID = ISNULL(MAX(ID),0)+1 FROM JMS_DTL_Workflow_config
                     IF(@MaxID > 0)
                     BEGIN
@@ -144,7 +147,7 @@ export class updatedSpecificationReworkWorkflow1705475545174 implements Migratio
                     END
                 END
 
-                -----------------------------------------Entry of 'Specification' in jms_dtl_workflow_config_details table--------------------
+                -----------------------------------------Entry of 'Dry Dock' in jms_dtl_workflow_config_details table--------------------
 
                 DECLARE @Wf_App_Location nvarchar(20),
                 @Default_Workflow_OrderID int,
@@ -162,22 +165,25 @@ export class updatedSpecificationReworkWorkflow1705475545174 implements Migratio
                 BEGIN
                     SET @Wf_App_Location = ( SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location' )
                     IF( @Wf_App_Location = 'office')
-                    IF Not Exists(SELECT 1 FROM JMS_DTL_Workflow_config_details WHERE config_id in ( select Id from JMS_DTL_Workflow_config where active_status = 1 and JOB_Type = 'Specification'))
+                    IF Not Exists(SELECT 1 FROM JMS_DTL_Workflow_config_details WHERE config_id in ( select Id from JMS_DTL_Workflow_config where active_status = 1 and JOB_Type = 'dry_dock'))
                     BEGIN
                         declare  @DefaultWfActions table (Workflow_OrderID INT, WorkflowType_ID VARCHAR(100), status_display_name VARCHAR(100), Workflow_Display VARCHAR(100), Active_Status int, Is_Rework int, Office_ID int, right_code varchar(1500))
                         INSERT INTO @DefaultWfActions (Workflow_OrderID, WorkflowType_ID, status_display_name, Workflow_Display, Active_Status, Is_Rework, Office_ID, right_code)
                         VALUES
-                            (1, 'RAISE', 'Draft', 'Create New', 1, 0, null,'tm_specification_raise_office'),
-                            (2, 'IN PROGRESS', 'In Progress', 'In Progress', 1, 1, 1,'tm_specification_in_progress_office'),
-                            (3, 'COMPLETE', 'Add to Plan', 'Planned', 1, 0, 1,'tm_specification_complete_office'),
-                            (4, 'CLOSE', 'Close', 'Closed', 1, 1, 1,'tm_specification_close_office'),
-                            (5, 'UNCLOSE', 'Cancel', 'Canceled', 1, 0, 1,'tm_specification_cancel_office')
+                            (1, 'RAISE', 'Planned', 'Create New', 0, 0, null,'tm_dry_dock_raise_office'),
+                            (2, 'IN PROGRESS', 'Yard Selection', 'Yard Selection', 1, 0, 1,'tm_dry_dock_in_progress_office'),
+                            (3, 'COMPLETE', 'Execution', 'Execution', 1, 1, 1,'tm_dry_dock_complete_office'),
+                            (4, 'VERIFY', 'Reporting', 'Reporting', 1, 0, 1,'tm_dry_dock_verify_office'),
+                            (5, 'REVIEW', NULL, NULL, 0, 0, 1,'tm_dry_dock_review_office'),
+                            (6, 'APPROVE', NULL, NULL, 0, 0, 1, 'tm_dry_dock_approve_office'),
+                            (7, 'CLOSE', 'Close', 'Closed', 1, 1, 1,'tm_dry_dock_close_office'),
+                            (8, 'UNCLOSE', 'Reopen', 'N/A', 1, 0, 1,'tm_dry_dock_unclose_office')
                         declare  @DefaultAppLocations table (Is_Office INT)
                         INSERT INTO @DefaultAppLocations (Is_Office)
                         VALUES (1), (0)
                         DECLARE @WlType varchar (100) = null, @Config_Id int;
                         DECLARE wl_type_cursor CURSOR LOCAL FOR
-                            select Id, JOB_Type from JMS_DTL_Workflow_config where active_status = 1 and JOB_Type = 'Specification'
+                            select Id, JOB_Type from JMS_DTL_Workflow_config where active_status = 1 and JOB_Type = 'dry_dock'
                         OPEN wl_type_cursor
                         FETCH NEXT FROM wl_type_cursor
                             INTO @Config_Id, @WlType
@@ -206,15 +212,15 @@ export class updatedSpecificationReworkWorkflow1705475545174 implements Migratio
                                                     IF (@Is_Office =1)
                                                     BEGIN
                                                     Set @Active_Status = 1
-                                                    SET @right_code='tm_specification_raise_office'
+                                                    SET @right_code='tm_dry_dock_raise_office'
                                                     END
                                                     ELSE IF (@Is_Office =0)
                                                     BEGIN
                                                     Set @Active_Status = 0
-                                                    SET @right_code='tm_specification_raise_vessel'
+                                                    SET @right_code='tm_dry_dock_raise_vessel'
                                                     END
                                                         insert into JMS_DTL_Workflow_config_details ([ID], [Config_ID], [Workflow_Display], [status_display_name], [WorkflowType_ID], [Workflow_OrderID], [Is_Office], [Active_Status], [Display_name_pass], [Display_name_action], [is_rework], [Created_By], [Date_Of_Creation], [right_code], [Is_Postpone])
-                                                            values (@Config_Details_Id, @Config_Id, @Workflow_Display, @status_display_name, @Default_WorkflowType_ID, @Default_Workflow_OrderID, @Is_Office, 1, @Workflow_Display, @Default_WorkflowType_ID, 0, 1, getDate(), @right_code, null)
+                                                            values (@Config_Details_Id, @Config_Id, @Workflow_Display, @status_display_name, @Default_WorkflowType_ID, @Default_Workflow_OrderID, @Is_Office, @Active_Status, @Workflow_Display, @Default_WorkflowType_ID, 0, 1, getDate(), @right_code, null)
                                                         -- To Maintain log entries
                                                         set @LogData = ( CONCAT('ID=', ISNULL(CAST(@Config_Details_Id as varchar(100)), 'null'), '#Config_ID=', ISNULL(CAST(@Config_Id as varchar(100)), 'null'), '#Workflow_OrderID=', ISNULL(CAST(@Default_Workflow_OrderID as varchar(100)), 'null'),
                                                             '#WorkflowType_ID=', ISNULL(CAST(@Default_WorkflowType_ID as varchar(100)), 'null'), '#Active_Status=', ISNULL(CAST(1 as varchar(50)), 'null'), '#Created_By=', ISNULL(CAST(1 as varchar(50)), 'null'), '#Workflow_Display=', ISNULL(CAST(@Workflow_Display as varchar(100)), 'null'),
@@ -289,20 +295,19 @@ export class updatedSpecificationReworkWorkflow1705475545174 implements Migratio
                 this.className,
                 '',
                 'S',
-                'specification',
-                'Specification rework changes',
+                'dry_dock',
+                'dry dock workflow configuration',
             );
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
                 errorLikeToString(error),
                 'E',
-                'specification',
-                'Specification rework changes',
+                'dry_dock',
+                'dry dock workflow configuration',
                 true,
             );
         }
     }
     public async down(queryRunner: QueryRunner): Promise<void> {}
 }
-

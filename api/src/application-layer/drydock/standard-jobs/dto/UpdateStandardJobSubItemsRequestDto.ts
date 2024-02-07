@@ -2,5 +2,8 @@ import { GetStandardJobSubItemsResultDto } from './GetStandardJobSubItemsResultD
 
 export interface UpdateStandardJobSubItemsRequestDto {
     uid: string;
+
     subItems: GetStandardJobSubItemsResultDto[];
+
+    UserUID: string;
 }

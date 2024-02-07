@@ -6,23 +6,12 @@ import { GetProjectQuery } from '../../../application-layer/drydock/projects/Get
 import { IProjectsFromMainPageRecordDto } from '../../../application-layer/drydock/projects/projects-for-main-page/dtos/IProjectsFromMainPageRecordDto';
 import { MiddlewareHandler } from '../../../controllers/drydock/core/middleware/MiddlewareHandler';
 
-async function getProject(req: express.Request, res: express.Response) {
-    const middlewareHandler = new MiddlewareHandler();
-
-    await middlewareHandler.ExecuteAsync(req, res, async (request) => {
-        const result = await new GetProjectController().getProject(request.query.uid as string, request);
-
-        return result;
-    });
-}
-exports.get = getProject;
-
 @Route('drydock/projects/get-project')
 export class GetProjectController extends Controller {
     @Get()
     public async getProject(
-        @Query() uid: string,
         @Request() request: express.Request,
+        @Query() uid: string,
     ): Promise<IProjectsFromMainPageRecordDto> {
         const query = new GetProjectQuery();
 
@@ -35,3 +24,7 @@ export class GetProjectController extends Controller {
         return result;
     }
 }
+
+exports.get = new MiddlewareHandler().ExecuteHandlerAsync(async (request: express.Request) => {
+    return new GetProjectController().getProject(request, request.query.uid as string);
+});

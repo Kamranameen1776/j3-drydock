@@ -14,4 +14,6 @@ export interface IUpdateJobOrderDto {
   LastUpdated: Date;
 
   Remarks: string;
+
+  uid?: string;
 }

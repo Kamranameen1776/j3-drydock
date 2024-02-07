@@ -66,7 +66,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   moduleCode = eModule.Project;
   functionCode = eFunction.DryDock;
   projectUid: string;
-  projectDetails: ProjectDetails;
 
   vesselType: number;
   tmDetails: ProjectDetailsFull;
@@ -323,7 +322,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
             StartDate: UTCAsLocal(data.StartDate as string),
             EndDate: UTCAsLocal(data.EndDate as string)
           };
-          this.projectDetails = projectDetails;
 
           this.attachmentConfig = {
             Module_Code: this.moduleCode,

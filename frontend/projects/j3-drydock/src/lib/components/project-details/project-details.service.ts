@@ -136,7 +136,7 @@ export class ProjectDetailsService {
         {
           id: 'StartDate',
           label: 'Start Date',
-          isRequired: true,
+          isRequired: false,
           isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'StartDate',
@@ -153,7 +153,7 @@ export class ProjectDetailsService {
         {
           id: 'EndDate',
           label: 'End Date',
-          isRequired: true,
+          isRequired: false,
           isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'EndDate',
@@ -270,17 +270,17 @@ export class ProjectDetailsService {
             isAddNewButton: true,
             buttonLabel: 'Link Yard',
             addNewButtonType: JbButtonType.NoButton
-          },
-          {
-            GridRowStart: 2,
-            GridRowEnd: 3,
-            GridColStart: 1,
-            GridColEnd: 3,
-            active_status: true,
-            SectionCode: eProjectDetailsSideMenuId.Comparison,
-            SectionLabel: eProjectDetailsSideMenuLabel.Comparison,
-            isAddNewButton: false
           }
+          // {
+          //   GridRowStart: 2,
+          //   GridRowEnd: 3,
+          //   GridColStart: 1,
+          //   GridColEnd: 3,
+          //   active_status: true,
+          //   SectionCode: eProjectDetailsSideMenuId.Comparison,
+          //   SectionLabel: eProjectDetailsSideMenuLabel.Comparison,
+          //   isAddNewButton: false
+          // }
         ]
       },
       [eProjectDetailsSideMenuId.ProjectMonitoring]: {

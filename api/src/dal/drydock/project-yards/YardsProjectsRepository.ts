@@ -20,7 +20,7 @@ export class YardsProjectsRepository {
                 yp.project_uid as projectUid,
                 yp.yard_uid as yardUid,
                 cr.registeredName as yardName,
-                TRIM(CONCAT("cr"."country", ' ', "cr"."city")) as yardLocation,
+                RTRIM(LTRIM(CONCAT("cr"."country", ' ', "cr"."city"))) as yardLocation,
                 cast(yp.last_exported_date as datetimeoffset) AS lastExportedDate,
                 yp.is_selected as isSelected`,
             )
