@@ -137,7 +137,8 @@ export class JobOrdersRepository {
                 className(JmsDtlWorkflowConfigDetailsEntity),
                 'wdetails',
                 `wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status
-                AND tm.Status IN ('${this.updatesStatuses.join(`','`)}')`,
+                AND tm.Status IN (:...statuses)`,
+                { statuses: this.updatesStatuses },
             )
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1')
