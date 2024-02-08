@@ -295,7 +295,8 @@ export class SpecificationDetailsRepository {
                 'sdsi.cost as subItemCost',
                 'sdsi.utilized as subItemUtilized',
                 'tm.Code as code',
-                'tm.Status as status',
+                'tm.Status as statusId',
+                'wdetails.StatusDisplayName as status',
                 'SUM(sdsi.cost) OVER (PARTITION BY sd.uid) as estimatedCost',
                 'SUM(sdsi.utilized) OVER (PARTITION BY sd.uid) as utilizedCost',
                 '(SUM(sdsi.cost) OVER (PARTITION BY sd.uid)) - (SUM(sdsi.utilized) OVER (PARTITION BY sd.uid)) as variance',
@@ -307,6 +308,12 @@ export class SpecificationDetailsRepository {
             )
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
             .innerJoin(className(ProjectEntity), 'proj', 'sd.project_uid = proj.uid')
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
+            .innerJoin(
+                className(JmsDtlWorkflowConfigDetailsEntity),
+                'wdetails',
+                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+            )
             .where('sd.active_status = 1')
             .andWhere(`proj.uid = :projectUid`, { projectUid: data.body.projectUid });
 
