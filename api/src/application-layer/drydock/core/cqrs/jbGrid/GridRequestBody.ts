@@ -1,8 +1,6 @@
 import { ODataBodyDto } from '../../../../../shared/dto';
 import { GridFilter } from '../../../../../shared/interfaces/GridFilter';
 
-export class GridRequestBody {
-    public odata: ODataBodyDto;
-
+export class GridRequestBody extends ODataBodyDto {
     public gridFilters: GridFilter[];
 }

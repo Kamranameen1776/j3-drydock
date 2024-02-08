@@ -1,5 +1,5 @@
 import { YardsService } from '../../../../services/yards.service';
-import { ProjectDetails, YardLink } from '../../../../models/interfaces/project-details';
+import { ProjectDetailsFull, YardLink } from '../../../../models/interfaces/project-details';
 import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { RfqGridService } from './rfq-grid.service';
 import { GridInputsWithData } from '../../../../models/interfaces/grid-inputs';
@@ -20,9 +20,9 @@ import { currentLocalAsUTC } from '../../../../utils/date';
 })
 export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @Input() projectId: string;
-  @Input() projectDetails: ProjectDetails;
+  @Input() projectDetails: ProjectDetailsFull;
 
-  @ViewChild('isSelectedTmpl', { static: true }) isSelectedTmpl: TemplateRef<unknown>;
+  @ViewChild('isSelectedTemplate', { static: true }) isSelectedTemplate: TemplateRef<unknown>;
   @ViewChild('exportedDateTemplate', { static: true }) exportedDateTemplate: TemplateRef<HTMLElement>;
 
   gridInputs: GridInputsWithData<YardLink> = this.rfqGridService.getGridInputs();
@@ -103,9 +103,9 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
 
   private setGridRowActions(): void {
     this.gridRowActions.length = 0;
-    // TODO Access rigths
+    // TODO Access rights
     this.gridRowActions.push({ name: eRfqActions.Export });
-    // TODO Access rigths
+    // TODO Access rights
     this.gridRowActions.push({ name: eRfqActions.Delete });
   }
 

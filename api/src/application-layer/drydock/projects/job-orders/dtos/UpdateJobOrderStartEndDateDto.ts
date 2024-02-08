@@ -1,4 +1,4 @@
-import { IsDateString, IsEmpty, IsNotEmpty, IsOptional, IsUUID, Max, Min, ValidateIf } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsUUID, Max, Min } from 'class-validator';
 
 export class UpdateJobOrderStartEndDateDto {
     @IsUUID()

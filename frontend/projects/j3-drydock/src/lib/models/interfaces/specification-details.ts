@@ -33,5 +33,6 @@ export interface SpecificationDetails {
   SpecificationTypeName: string;
   VesselId: number;
   ProjectUid: string;
+  ProjectStatusId?: string;
 }
 export interface SpecificationDetailsFull extends SpecificationDetails, ITMDetails {}

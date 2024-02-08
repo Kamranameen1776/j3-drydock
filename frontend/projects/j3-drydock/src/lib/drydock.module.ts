@@ -70,6 +70,7 @@ import { GanttChartComponent } from './components/project-details/project-monito
 import { LinkedPmsJobsAndFindingsComponent } from './components/specification-details/pms-jobs/linked-pms-jobs-and-findings.component';
 import { CostUpdatesComponent } from './components/project-details/project-monitoring/cost-updates/cost-updates.component';
 import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
+import { SpecificationUpdatesComponent } from './components/specification-details/specification-updates/specification-updates.component';
 
 @NgModule({
   declarations: [
@@ -119,7 +120,8 @@ import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
     SelectJobOrderPopupComponent,
     SelectJobOrderGridComponent,
     LinkedPmsJobsAndFindingsComponent,
-    CostUpdatesComponent
+    CostUpdatesComponent,
+    SpecificationUpdatesComponent
   ],
   imports: [
     CommonModule,

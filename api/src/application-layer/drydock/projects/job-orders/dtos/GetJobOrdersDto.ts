@@ -1,6 +1,8 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsString } from 'class-validator';
 
-export class GetJobOrdersDto {
-    @IsNotEmpty()
-    odata: object;
+import { ODataBodyDto } from '../../../../../shared/dto';
+
+export class GetJobOrdersDto extends ODataBodyDto {
+    @IsString()
+    uid: string;
 }
