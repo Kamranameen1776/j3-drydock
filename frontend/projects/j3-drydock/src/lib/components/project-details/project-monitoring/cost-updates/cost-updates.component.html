@@ -15,7 +15,7 @@
   #utilizedTemplate
   let-rowData
 >
-  <ng-container [ngSwitch]="rowData.rowCssClass">
+  <ng-container [ngSwitch]="rowData?.rowCssClass">
     <span
       class="parent-row"
       *ngSwitchCase="'parent-row'"

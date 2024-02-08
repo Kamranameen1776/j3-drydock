@@ -4,7 +4,7 @@ export enum eRfqLabels {
   Yard = 'Yard',
   Location = 'Location',
   ExportedDate = 'Last Exported Date',
-  YardName = 'Name'
+  YardName = 'Yard Name'
 }
 
 export enum eRfqFields {

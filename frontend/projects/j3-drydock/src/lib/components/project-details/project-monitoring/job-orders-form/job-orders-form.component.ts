@@ -148,8 +148,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
 
   public remarksEditorUpdateParentCtrlValue(remarks: string) {
     this.onRemarkValueChanges.next(remarks);
-    const controls = (this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup).controls;
-    controls.Remarks.setValue(remarks);
+    this.remarksEditorFormGroup.get('RemarksCtrl').setValue(remarks);
   }
 
   public initUpdateJobOrderFormGroup(action: FormGroup): void {

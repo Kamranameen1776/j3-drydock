@@ -32,7 +32,21 @@ export class SpecificationDetailsAuditService {
             fields.push(...this.generateFieldsData(specification, createdById));
         });
 
-        await this.fieldsHistoryRepository.insertMany(fields.flat() as CreateFieldsHistoryDto[], queryRunner);
+        const maxParamsPerRequest = 2100;
+
+        const flatFields = fields.flat();
+
+        const batchLength = maxParamsPerRequest / (Object.keys(flatFields[0]).length * 2);
+
+        if (flatFields.length >= batchLength) {
+            while (flatFields.length > 0) {
+                const batchedFields = flatFields.splice(0, Math.floor(batchLength));
+
+                await this.fieldsHistoryRepository.insertMany(batchedFields as CreateFieldsHistoryDto[], queryRunner);
+            }
+        } else {
+            await this.fieldsHistoryRepository.insertMany(flatFields as CreateFieldsHistoryDto[], queryRunner);
+        }
 
         return fields.map((i) => i.uid);
     }

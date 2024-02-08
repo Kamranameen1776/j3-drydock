@@ -1,4 +1,4 @@
-export interface IJobOrderDto {
+export interface JobOrder {
   SpecificationUid: string;
   Code: string;
   Progress: number;
@@ -12,4 +12,6 @@ export interface IJobOrderDto {
   JobOrderSubject: string;
   SpecificationStartDate: string;
   SpecificationEndDate: string;
+  User: string;
+  uid?: string;
 }

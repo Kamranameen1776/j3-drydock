@@ -1,10 +1,11 @@
 import { Query } from '../../../../application-layer/drydock/core/cqrs/Query';
+import { Req } from '../../../../common/drydock/ts-helpers/req-res';
 import { IJobOrderDto } from '../../../../dal/drydock/projects/job-orders/IJobOrderDto';
 import { JobOrdersRepository } from '../../../../dal/drydock/projects/job-orders/JobOrdersRepository';
+import { ODataBodyDto } from '../../../../shared/dto';
 import { ODataResult } from '../../../../shared/interfaces';
-import { OdataRequest } from '../../core/cqrs/odata/OdataRequest';
 
-export class GetJobOrdersQuery extends Query<OdataRequest, ODataResult<IJobOrderDto>> {
+export class GetJobOrdersQuery extends Query<Req<ODataBodyDto>, ODataResult<IJobOrderDto>> {
     repository: JobOrdersRepository;
 
     constructor() {
@@ -16,15 +17,11 @@ export class GetJobOrdersQuery extends Query<OdataRequest, ODataResult<IJobOrder
         return;
     }
 
-    protected async ValidationHandlerAsync(request: OdataRequest): Promise<void> {
-        return;
-    }
-
     /**
      * @returns All Job Orders(specifications) by project
      */
-    protected async MainHandlerAsync(request: OdataRequest): Promise<ODataResult<IJobOrderDto>> {
-        const data = await this.repository.GetJobOrders(request.request);
+    protected async MainHandlerAsync(request: Req<ODataBodyDto>): Promise<ODataResult<IJobOrderDto>> {
+        const data = await this.repository.GetJobOrders(request);
 
         return data;
     }

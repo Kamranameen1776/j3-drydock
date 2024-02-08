@@ -47,13 +47,13 @@ export class ProjectEntity {
         nullable: true,
         name: 'start_date',
     })
-    StartDate: Date | null;
+    StartDate?: Date | null;
 
     @Column('datetimeoffset', {
         nullable: true,
         name: 'end_date',
     })
-    EndDate: Date | null;
+    EndDate?: Date | null;
 
     @Column('datetimeoffset', {
         nullable: true,
