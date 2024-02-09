@@ -2,7 +2,9 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { ProjectTemplateStandardJobEntity } from './ProjectTemplateStandardJobEntity';
 
-@Entity('project_template', { schema: 'dry_dock' })
+export const ProjectTemplateEntityTableName = 'project_template';
+
+@Entity(ProjectTemplateEntityTableName, { schema: 'dry_dock' })
 export class ProjectTemplateEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
@@ -10,6 +12,7 @@ export class ProjectTemplateEntity {
     @Column('int', {
         nullable: false,
         name: 'template_code',
+        generated: 'increment',
     })
     TemplateCode: number;
 
@@ -23,7 +26,7 @@ export class ProjectTemplateEntity {
         nullable: true,
         name: 'vessel_type_uid',
     })
-    VesselTypeUid: string;
+    VesselTypeUid: string | null;
 
     @Column('nvarchar', {
         nullable: false,
@@ -37,7 +40,7 @@ export class ProjectTemplateEntity {
         name: 'description',
         length: 'max',
     })
-    Description: string;
+    Description: string | null;
 
     @Column('datetimeoffset', {
         nullable: false,

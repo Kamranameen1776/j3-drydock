@@ -15,4 +15,7 @@ export class CreateProjectTemplateModel {
     public ProjectTypeUid: string;
 
     public StandardJobs: string[];
+
+    @IsNotEmpty()
+    public CreatedAt: Date;
 }

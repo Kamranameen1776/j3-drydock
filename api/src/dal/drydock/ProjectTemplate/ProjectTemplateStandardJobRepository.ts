@@ -1,5 +1,5 @@
-import { ODataService } from 'j2utils';
-import { getConnection, getManager } from 'typeorm';
+import { DataUtilService, ODataService } from 'j2utils';
+import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { Req } from '../../../common/drydock/ts-helpers/req-res';
 import { ProjectTemplateStandardJobEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateStandardJobEntity';
@@ -8,6 +8,25 @@ import { ODataResult } from '../../../shared/interfaces';
 import { IGetProjectTemplateStandardJobsGridDto } from './IGetProjectTemplateStandardJobsGridDto';
 
 export class ProjectTemplateStandardJobRepository {
+    public async CreateProjectTemplateStandardJobs(
+        projectTemplateStandardJob: ProjectTemplateStandardJobEntity,
+        queryRunner: QueryRunner,
+    ): Promise<string> {
+        const uid = DataUtilService.newUid();
+        projectTemplateStandardJob.uid = uid;
+
+        await queryRunner.manager.save(projectTemplateStandardJob);
+
+        return uid;
+    }
+
+    public async UpdateProjectTemplateStandardJobs(
+        projectTemplateStandardJob: ProjectTemplateStandardJobEntity,
+        queryRunner: QueryRunner,
+    ): Promise<void> {
+        await queryRunner.manager.save(projectTemplateStandardJob);
+    }
+
     public async TryGetProjectTemplateStandardJobByUid(
         projectTemplateStandardJobUid: string,
     ): Promise<ProjectTemplateStandardJobEntity | undefined> {
@@ -47,8 +66,18 @@ export class ProjectTemplateStandardJobRepository {
 
         const repository = getManager().getRepository(ProjectTemplateStandardJobEntity);
 
-        // TODO: populate data
-        const query = repository.createQueryBuilder('prtsj').select(['prtsj.uid AS ProjectTemplateStandardJobUid']);
+        const query = repository.createQueryBuilder('prtsj').select(
+            `prtsj.uid AS ProjectTemplateStandardJobUid,
+
+            -- TODO: populate with real data
+            123 as ItemNumber,
+            123 as Subject,
+            123 as VesselType,
+            123 as InspectionSurvey,
+            123 as DoneBy,
+            123 MaterialSuppliedBy
+        `,
+        );
 
         const [sql, parameters] = query.getQueryAndParameters();
 
