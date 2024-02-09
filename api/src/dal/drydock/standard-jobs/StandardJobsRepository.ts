@@ -367,4 +367,17 @@ export class StandardJobsRepository {
             }
         }
     }
+
+    public async Exists(standardJobUid: string): Promise<boolean> {
+        const repository = getManager().getRepository(StandardJobs);
+
+        const query = repository
+            .createQueryBuilder('sj')
+            .where('sj.uid = :standardJobUid', { standardJobUid: standardJobUid })
+            .andWhere('sj.active_status = 1');
+
+        const result = await query.getCount();
+
+        return result === 1;
+    }
 }

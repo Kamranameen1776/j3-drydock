@@ -3,7 +3,7 @@ export interface IGetProjectTemplateResponse {
 
     Subject: string;
 
-    Description: string;
+    Description: string | null;
 
     VesselTypeUid: string | null;
 

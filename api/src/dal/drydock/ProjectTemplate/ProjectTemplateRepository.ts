@@ -1,5 +1,5 @@
-import { ODataService } from 'j2utils';
-import { getConnection, getManager } from 'typeorm';
+import { DataUtilService, ODataService } from 'j2utils';
+import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { Req } from '../../../common/drydock/ts-helpers/req-res';
 import { ProjectTemplateEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateEntity';
@@ -8,6 +8,25 @@ import { ODataResult } from '../../../shared/interfaces';
 import { IGetProjectTemplateGridDto } from './IGetProjectTemplateGridDto';
 
 export class ProjectTemplateRepository {
+    public async CreateProjectTemplate(
+        projectTemplate: ProjectTemplateEntity,
+        queryRunner: QueryRunner,
+    ): Promise<string> {
+        const uid = DataUtilService.newUid();
+        projectTemplate.uid = uid;
+
+        await queryRunner.manager.save(projectTemplate);
+
+        return uid;
+    }
+
+    public async UpdateProjectTemplate(
+        projectTemplate: ProjectTemplateEntity,
+        queryRunner: QueryRunner,
+    ): Promise<void> {
+        await queryRunner.manager.save(projectTemplate);
+    }
+
     public async TryGetProjectTemplateByUid(projectTemplateUid: string): Promise<ProjectTemplateEntity | undefined> {
         const repository = getManager().getRepository(ProjectTemplateEntity);
 
