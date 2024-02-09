@@ -2,13 +2,13 @@ import { ApplicationException } from '../../../../bll/drydock/core/exceptions';
 import { ProjectTemplateRepository } from '../../../../dal/drydock/ProjectTemplate/ProjectTemplateRepository';
 import { ProjectTemplateStandardJobRepository } from '../../../../dal/drydock/ProjectTemplate/ProjectTemplateStandardJobRepository';
 import { StandardJobsRepository } from '../../../../dal/drydock/standard-jobs/StandardJobsRepository';
-import { ProjectTemplateEntity } from '../../../../entity/drydock/ProjectTemplate/ProjectTemplateEntity';
 import { ProjectTemplateStandardJobEntity } from '../../../../entity/drydock/ProjectTemplate/ProjectTemplateStandardJobEntity';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
-import { CreateProjectTemplateModel } from './CreateProjectTemplateModel';
+import { IStandardJobsToUpdateDto } from './IStandardJobsToUpdateDto';
+import { UpdateProjectTemplateModel } from './UpdateProjectTemplateModel';
 
-export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateModel, void> {
+export class UpdateProjectTemplateCommand extends Command<UpdateProjectTemplateModel, void> {
     projectTemplateRepository: ProjectTemplateRepository;
     projectTemplateStandardJobRepository: ProjectTemplateStandardJobRepository;
     standardJobsRepository: StandardJobsRepository;
@@ -24,9 +24,17 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
     }
 
     /**
-     * Create project templates
+     * Update project templates
      */
-    protected async MainHandlerAsync(request: CreateProjectTemplateModel): Promise<void> {
+    protected async MainHandlerAsync(request: UpdateProjectTemplateModel): Promise<void> {
+        const projectTemplate = await this.projectTemplateRepository.TryGetProjectTemplateByUid(
+            request.ProjectTemplateUid,
+        );
+
+        if (!projectTemplate) {
+            throw new ApplicationException('Project template is not found: ' + request.ProjectTemplateUid);
+        }
+
         // TODO: 1. validate vessel type
 
         // var vesselType = await this.someRepo.GetVesselType(request.VesselTypeUid)
@@ -34,21 +42,26 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
 
         // TODO: 2. validate request.ProjectTypeUid
 
-        const projectTemplate = new ProjectTemplateEntity();
         projectTemplate.Subject = request.Subject;
         projectTemplate.Description = request.Description;
         projectTemplate.VesselTypeUid = request.VesselTypeUid;
         projectTemplate.ProjectTypeUid = request.ProjectTypeUid;
-        projectTemplate.LastUpdated = request.CreatedAt;
-        projectTemplate.CreatedAt = request.CreatedAt;
+        projectTemplate.LastUpdated = request.LastUpdated;
 
-        await this.uow.ExecuteAsync(async (queryRunner) => {
-            const projectTemplateUid = await this.projectTemplateRepository.CreateProjectTemplate(
-                projectTemplate,
-                queryRunner,
+        const projectTemplateStandardJobs =
+            await this.projectTemplateStandardJobRepository.GetProjectTemplateStandardJobsByProjectTemplateUid(
+                projectTemplate.uid,
             );
 
-            for (const standardJobUid of request.StandardJobs) {
+        await this.uow.ExecuteAsync(async (queryRunner) => {
+            await this.projectTemplateRepository.UpdateProjectTemplate(projectTemplate, queryRunner);
+
+            const { standardJobsToRemove, standardJobsUidsToAdd } = await this.getStandardJobsToUpdate(
+                request.StandardJobs,
+                projectTemplateStandardJobs,
+            );
+
+            for (const standardJobUid of standardJobsUidsToAdd) {
                 const isStandardJobExists = await this.standardJobsRepository.Exists(standardJobUid);
 
                 if (!isStandardJobExists) {
@@ -57,8 +70,8 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
 
                 const projectTemplateStandardJob = new ProjectTemplateStandardJobEntity();
                 projectTemplateStandardJob.StandardJobUid = standardJobUid;
-                projectTemplateStandardJob.ProjectTemplateUid = projectTemplateUid;
-                projectTemplateStandardJob.CreatedAt = request.CreatedAt;
+                projectTemplateStandardJob.ProjectTemplateUid = projectTemplate.uid;
+                projectTemplateStandardJob.CreatedAt = request.LastUpdated;
 
                 await this.projectTemplateStandardJobRepository.CreateProjectTemplateStandardJobs(
                     projectTemplateStandardJob,
@@ -66,7 +79,39 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
                 );
             }
 
+            for (const standardJobToRemove of standardJobsToRemove) {
+                standardJobToRemove.ActiveStatus = false;
+
+                await this.projectTemplateStandardJobRepository.UpdateProjectTemplateStandardJobs(
+                    standardJobToRemove,
+                    queryRunner,
+                );
+            }
+
             // TODO: add synchronization with vessel/office
         });
+    }
+
+    private async getStandardJobsToUpdate(
+        requestStandardJobUids: string[],
+        projectTemplateStandardJobs: ProjectTemplateStandardJobEntity[],
+    ): Promise<IStandardJobsToUpdateDto> {
+        const standardJobsToRemove = [];
+        const standardJobsUidsToAdd = requestStandardJobUids;
+
+        for (const standardJob of projectTemplateStandardJobs) {
+            const index = standardJobsUidsToAdd.indexOf(standardJob.StandardJobUid);
+
+            if (index < 0) {
+                standardJobsToRemove.push(standardJob);
+            } else {
+                standardJobsUidsToAdd.splice(index, 1);
+            }
+        }
+
+        return {
+            standardJobsToRemove,
+            standardJobsUidsToAdd,
+        };
     }
 }

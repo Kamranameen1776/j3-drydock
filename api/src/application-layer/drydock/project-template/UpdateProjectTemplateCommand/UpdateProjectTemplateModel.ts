@@ -2,7 +2,11 @@ import { IsNotEmpty, IsUUID } from 'class-validator';
 
 // TODO: add more validation attributes
 
-export class CreateProjectTemplateModel {
+export class UpdateProjectTemplateModel {
+    @IsNotEmpty()
+    @IsUUID()
+    public ProjectTemplateUid: string;
+
     @IsNotEmpty()
     public Subject: string;
 
@@ -18,5 +22,5 @@ export class CreateProjectTemplateModel {
     public StandardJobs: string[];
 
     @IsNotEmpty()
-    public CreatedAt: Date;
+    public LastUpdated: Date;
 }
