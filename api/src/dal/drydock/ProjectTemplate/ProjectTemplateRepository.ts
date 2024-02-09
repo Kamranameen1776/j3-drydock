@@ -1,7 +1,11 @@
-import { getManager } from 'typeorm';
+import { ODataService } from 'j2utils';
+import { getConnection, getManager } from 'typeorm';
 
+import { Req } from '../../../common/drydock/ts-helpers/req-res';
 import { ProjectTemplateEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateEntity';
-import { ProjectTemplateStandardJobEntityTableName } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateStandardJobEntity';
+import { ODataBodyDto } from '../../../shared/dto';
+import { ODataResult } from '../../../shared/interfaces';
+import { IGetProjectTemplateGridDto } from './IGetProjectTemplateGridDto';
 
 export class ProjectTemplateRepository {
     public async TryGetProjectTemplateByUid(projectTemplateUid: string): Promise<ProjectTemplateEntity | undefined> {
@@ -12,7 +16,23 @@ export class ProjectTemplateRepository {
                 uid: projectTemplateUid,
                 ActiveStatus: true,
             },
-            relations: [ProjectTemplateStandardJobEntityTableName],
         });
+    }
+
+    public async GetProjectTemplateGridData(
+        request: Req<ODataBodyDto>,
+    ): Promise<ODataResult<IGetProjectTemplateGridDto>> {
+        const oDataService = new ODataService(request, getConnection);
+
+        const repository = getManager().getRepository(ProjectTemplateEntity);
+
+        // TODO: populate data
+        const query = repository.createQueryBuilder('prt').select(['prt.uid AS ProjectTemplateUid']);
+
+        const [sql, parameters] = query.getQueryAndParameters();
+
+        const result = oDataService.getJoinResult(sql, parameters);
+
+        return result;
     }
 }
