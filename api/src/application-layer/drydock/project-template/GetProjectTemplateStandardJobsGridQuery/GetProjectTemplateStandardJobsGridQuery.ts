@@ -20,15 +20,6 @@ export class GetProjectTemplateStandardJobsGridQuery extends Query<
         this.projectTemplateStandardJobRepository = new ProjectTemplateStandardJobRepository();
     }
 
-    protected async AuthorizationHandlerAsync(request: Req<ODataBodyDto>): Promise<void> {
-        return;
-    }
-
-    protected async ValidationHandlerAsync(request: Req<ODataBodyDto>): Promise<void> {
-        // TODO: add model validation
-        return;
-    }
-
     /**
      * Get project templates standard jobs grid
      * @param request Http request

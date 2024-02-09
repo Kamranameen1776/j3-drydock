@@ -1,6 +1,7 @@
 import * as express from 'express';
 import { Controller, Get, Query, Route, Tags } from 'tsoa';
 
+import { GetProjectTemplateModel } from '../../../application-layer/drydock/project-template/GetProjectTemplateQuery/GetProjectTemplateModel';
 import { GetProjectTemplateQuery } from '../../../application-layer/drydock/project-template/GetProjectTemplateQuery/GetProjectTemplateQuery';
 import { IGetProjectTemplateResponse } from '../../../application-layer/drydock/project-template/GetProjectTemplateQuery/IGetProjectTemplateResponse';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
@@ -12,7 +13,10 @@ export class ProjectTemplateController extends Controller {
     public async getProject(@Query() projectTemplateUid: string): Promise<IGetProjectTemplateResponse> {
         const query = new GetProjectTemplateQuery();
 
-        const result = await query.ExecuteAsync(projectTemplateUid);
+        const model = new GetProjectTemplateModel();
+        model.ProjectTemplateUid = projectTemplateUid;
+
+        const result = await query.ExecuteRequestAsync(model, GetProjectTemplateModel);
 
         return result;
     }

@@ -26,8 +26,20 @@ export class ProjectTemplateRepository {
 
         const repository = getManager().getRepository(ProjectTemplateEntity);
 
-        // TODO: populate data
-        const query = repository.createQueryBuilder('prt').select(['prt.uid AS ProjectTemplateUid']);
+        const query = repository.createQueryBuilder('prt').select(
+            `prt.uid AS ProjectTemplateUid,
+            'PT-O-'+ FORMAT(prt.TemplateCode, '0000') AS TemplateCode,
+            prt.Subject AS Subject,
+
+            -- TODO: get real data
+            'Dry Dock' as ProjectType,
+            'All' as VesselType,
+            123 as NoOfSpecItems,
+
+
+            prt.LastUpdated as LastUpdated
+            `,
+        );
 
         const [sql, parameters] = query.getQueryAndParameters();
 

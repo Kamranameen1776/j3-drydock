@@ -1,6 +1,15 @@
 export interface IGetProjectTemplateGridDto {
     ProjectTemplateUid: string;
 
+    TemplateCode: string;
 
-    // TODO: populate the rest of the properties
+    Subject: string;
+
+    ProjectType: string;
+
+    VesselType: string;
+
+    NoOfSpecItems: number;
+
+    LastUpdated: Date;
 }
