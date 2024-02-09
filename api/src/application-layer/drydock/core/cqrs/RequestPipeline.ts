@@ -13,11 +13,11 @@ export abstract class RequestPipeline<TRequest extends object | void | string, T
      */
     public async ExecuteRequestAsync<Model extends object>(
         request: TRequest,
-        validationClass: ClassConstructor<Model>,
+        validationClass: ClassConstructor<Model> | void,
     ): Promise<TResponse> {
         await this.AuthorizationHandlerAsync(request);
 
-        if (typeof request === 'object') {
+        if (typeof request === 'object' && validationClass) {
             await validateAgainstModel(validationClass, request);
         }
 
