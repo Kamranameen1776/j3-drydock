@@ -1,8 +1,9 @@
 import { DailyReportsRepository } from '../../../dal/drydock/daily-reports/DailyReportsRepository';
 import { Query } from '../core/cqrs/Query';
+import { GetDailyReportByIdModel } from './dtos/GetDailyReportByIdModel';
 import { GetOneDailyReportDto } from './dtos/GetOneDailyReportDto';
 
-export class GetOneDailyReportQuery extends Query<string, GetOneDailyReportDto> {
+export class GetOneDailyReportQuery extends Query<GetDailyReportByIdModel, GetOneDailyReportDto> {
     dailyReportsRepository = new DailyReportsRepository();
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -13,7 +14,7 @@ export class GetOneDailyReportQuery extends Query<string, GetOneDailyReportDto> 
         return;
     }
 
-    protected async MainHandlerAsync(uid: string): Promise<GetOneDailyReportDto> {
-        return this.dailyReportsRepository.findOneByDailyReportUid(uid);
+    protected async MainHandlerAsync(request: GetDailyReportByIdModel): Promise<GetOneDailyReportDto> {
+        return this.dailyReportsRepository.findOneByDailyReportUid(request.DailyReportUid);
     }
 }

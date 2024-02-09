@@ -5,8 +5,7 @@ import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/vali
 /**
  * Request pipeline from Command Query Responsibility Segregation pattern
  */
-export abstract class RequestPipeline<TRequest, TResponse> {
-
+export abstract class RequestPipeline<TRequest extends object | void | string, TResponse> {
     /**
      * @param request Input data to handle
      * @param validationClass Model to validate against request
@@ -18,7 +17,9 @@ export abstract class RequestPipeline<TRequest, TResponse> {
     ): Promise<TResponse> {
         await this.AuthorizationHandlerAsync(request);
 
-        await validateAgainstModel(validationClass, request as object);
+        if (typeof request === 'object') {
+            await validateAgainstModel(validationClass, request);
+        }
 
         return this.MainHandlerAsync(request);
     }
