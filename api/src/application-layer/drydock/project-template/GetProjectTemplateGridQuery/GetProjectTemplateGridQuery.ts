@@ -17,15 +17,6 @@ export class GetProjectTemplateGridQuery extends Query<Req<ODataBodyDto>, ODataR
         this.projectTemplateStandardJobRepository = new ProjectTemplateStandardJobRepository();
     }
 
-    protected async AuthorizationHandlerAsync(request: Req<ODataBodyDto>): Promise<void> {
-        return;
-    }
-
-    protected async ValidationHandlerAsync(request: Req<ODataBodyDto>): Promise<void> {
-        // TODO: add model validation
-        return;
-    }
-
     /**
      * Get project templates grid
      * @param request Http request

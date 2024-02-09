@@ -2,9 +2,10 @@ import { ApplicationException } from '../../../../bll/drydock/core/exceptions';
 import { ProjectTemplateRepository } from '../../../../dal/drydock/ProjectTemplate/ProjectTemplateRepository';
 import { ProjectTemplateStandardJobRepository } from '../../../../dal/drydock/ProjectTemplate/ProjectTemplateStandardJobRepository';
 import { Query } from '../../core/cqrs/Query';
+import { GetProjectTemplateModel } from './GetProjectTemplateModel';
 import { IGetProjectTemplateResponse } from './IGetProjectTemplateResponse';
 
-export class GetProjectTemplateQuery extends Query<string, IGetProjectTemplateResponse> {
+export class GetProjectTemplateQuery extends Query<GetProjectTemplateModel, IGetProjectTemplateResponse> {
     projectTemplateRepository: ProjectTemplateRepository;
     projectTemplateStandardJobRepository: ProjectTemplateStandardJobRepository;
 
@@ -15,22 +16,15 @@ export class GetProjectTemplateQuery extends Query<string, IGetProjectTemplateRe
         this.projectTemplateStandardJobRepository = new ProjectTemplateStandardJobRepository();
     }
 
-    protected async AuthorizationHandlerAsync(request: string): Promise<void> {
-        return;
-    }
-
-    protected async ValidationHandlerAsync(request: string): Promise<void> {
-        // TODO: add model validation
-        return;
-    }
-
     /**
      * Get project templates
      * @param request Http request
      * @returns Projects templates
      */
-    protected async MainHandlerAsync(request: string): Promise<IGetProjectTemplateResponse> {
-        const projectTemplate = await this.projectTemplateRepository.TryGetProjectTemplateByUid(request);
+    protected async MainHandlerAsync(request: GetProjectTemplateModel): Promise<IGetProjectTemplateResponse> {
+        const projectTemplate = await this.projectTemplateRepository.TryGetProjectTemplateByUid(
+            request.ProjectTemplateUid,
+        );
 
         if (!projectTemplate) {
             throw new ApplicationException('Project template not found');

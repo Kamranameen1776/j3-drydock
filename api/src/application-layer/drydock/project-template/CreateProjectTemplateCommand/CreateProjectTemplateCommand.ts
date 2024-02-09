@@ -18,11 +18,6 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
         return;
     }
 
-    protected async ValidationHandlerAsync(request: CreateProjectTemplateModel): Promise<void> {
-        // TODO: add model validation
-        return;
-    }
-
     /**
      * Create project templates
      */

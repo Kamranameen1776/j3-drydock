@@ -12,7 +12,7 @@ import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 @Route('drydock/project-templates/project-template-standard-jobs-grid')
 export class ProjectTemplateStandardJobsGridController extends Controller {
     @Post()
-    public async GetGridData(
+    public async GetProjectTemplateStandardJobsGridData(
         @Request() request: Req<ODataBodyDto>,
         @Body() odataBody: ODataBodyDto,
     ): Promise<ODataResult<IGetProjectTemplateStandardJobsGridDto>> {
@@ -25,5 +25,8 @@ export class ProjectTemplateStandardJobsGridController extends Controller {
 }
 
 exports.post = new MiddlewareHandler().ExecuteHandlerAsync(async (request: express.Request) => {
-    return new ProjectTemplateStandardJobsGridController().GetGridData(request, request.body);
+    return new ProjectTemplateStandardJobsGridController().GetProjectTemplateStandardJobsGridData(
+        request,
+        request.body,
+    );
 });

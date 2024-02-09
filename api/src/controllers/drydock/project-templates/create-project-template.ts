@@ -12,7 +12,7 @@ export class CreateProjectTemplateController extends Controller {
     public async CreateProjectTemplate(@Body() model: CreateProjectTemplateModel): Promise<void> {
         const command = new CreateProjectTemplateCommand();
 
-        const result = await command.ExecuteAsync(model);
+        const result = await command.ExecuteRequestAsync(model, CreateProjectTemplateModel);
 
         return result;
     }
