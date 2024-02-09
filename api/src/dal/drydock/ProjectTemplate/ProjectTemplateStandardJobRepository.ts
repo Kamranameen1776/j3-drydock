@@ -8,6 +8,16 @@ import { ODataResult } from '../../../shared/interfaces';
 import { IGetProjectTemplateStandardJobsGridDto } from './IGetProjectTemplateStandardJobsGridDto';
 
 export class ProjectTemplateStandardJobRepository {
+    public async GetProjectTemplateStandardJobsByProjectTemplateUid(projectTemplateUid: string) {
+        const repository = getManager().getRepository(ProjectTemplateStandardJobEntity);
+
+        return repository.find({
+            where: {
+                ProjectTemplateUid: projectTemplateUid,
+                ActiveStatus: true,
+            },
+        });
+    }
     public async CreateProjectTemplateStandardJobs(
         projectTemplateStandardJob: ProjectTemplateStandardJobEntity,
         queryRunner: QueryRunner,
@@ -47,17 +57,6 @@ export class ProjectTemplateStandardJobRepository {
 
         repository.save(projectTemplateStandardJobEntity);
     }
-
-    // public async ListByProjectTemplateUid(projectTemplateUid: string): Promise<ProjectTemplateStandardJobEntity[]> {
-    //     const repository = getManager().getRepository(ProjectTemplateStandardJobEntity);
-
-    //     return repository.find({
-    //         where: {
-    //             ProjectTemplateUid: projectTemplateUid,
-    //             ActiveStatus: true,
-    //         },
-    //     });
-    // }
 
     public async GetProjectTemplateStandardJobsGridData(
         request: Req<ODataBodyDto>,
