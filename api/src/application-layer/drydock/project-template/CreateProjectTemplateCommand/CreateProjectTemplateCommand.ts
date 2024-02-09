@@ -22,7 +22,6 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
      * Create project templates
      */
     protected async MainHandlerAsync(request: CreateProjectTemplateModel): Promise<void> {
-
         // TODO: add implementation
         return;
     }
