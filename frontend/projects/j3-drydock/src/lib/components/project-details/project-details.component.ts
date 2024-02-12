@@ -361,6 +361,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     // TODO add validations here if needed
     if (event.type === eJMSActionTypes.Error) {
       this.growlMessageService.setErrorMessage(event.errorMsg);
+      return;
     }
 
     const data = event.payload;
