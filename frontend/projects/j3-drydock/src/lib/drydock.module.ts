@@ -73,6 +73,7 @@ import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
 import { SpecificationUpdatesComponent } from './components/specification-details/specification-updates/specification-updates.component';
 import { CostUpdatesTabComponent } from './shared/components/cost-updates-tab/cost-updates-tab.component';
 import { JobOrdersFormComponent } from './shared/components/job-orders-form/job-orders-form.component';
+import { ProjectTemplatesMainComponent } from './components/project-templates-main/project-templates-main.component';
 
 @NgModule({
   declarations: [
@@ -123,7 +124,8 @@ import { JobOrdersFormComponent } from './shared/components/job-orders-form/job-
     LinkedPmsJobsAndFindingsComponent,
     CostUpdatesComponent,
     SpecificationUpdatesComponent,
-    CostUpdatesTabComponent
+    CostUpdatesTabComponent,
+    ProjectTemplatesMainComponent
   ],
   imports: [
     CommonModule,
