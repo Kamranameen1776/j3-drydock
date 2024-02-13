@@ -1,0 +1,47 @@
+<jb-grid
+  *ngIf="canView"
+  [gridName]="gridInputs.gridName"
+  [colData]="gridInputs.columns"
+  [tableDataReq]="gridInputs.request"
+  [button]="gridInputs.gridButton"
+  [getStyleByContainer]="true"
+  [setActions]="gridRowActions"
+  [filterData]="gridInputs.filters"
+  [filterListsSet]="gridInputs.filtersLists"
+  [searchFields]="gridInputs.searchFields"
+  (action)="onGridAction($any($event))"
+  (cellPlainTextClick)="cellPlainTextClick($event)"
+></jb-grid>
+
+<!-- <jb-upsert-standard-job-popup
+  [item]="currentRow"
+  [isOpen]="isUpsertPopupVisible"
+  (closeDialog)="onCloseUpsertPopup($event)"
+></jb-upsert-standard-job-popup> -->
+
+<jb-dialog
+  [dialogContent]="confirmationPopUp"
+  [(dialogVisible)]="isConfirmDeleteVisible"
+>
+  <div
+    jb-dialog-body
+    class="dialog-body"
+  >
+    <span
+      class="popup-text"
+      *ngIf="isConfirmDeleteVisible"
+    >
+      Are you sure want to delete the project template?
+    </span>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      okBtnLabel="Confirm"
+      (ok)="onConfirmDeleteOk()"
+      (cancel)="onConfirmDeleteCancel()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<jb-growl [content]="growlMessage$ | async"></jb-growl>

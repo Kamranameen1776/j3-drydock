@@ -71,6 +71,7 @@ import { LinkedPmsJobsAndFindingsComponent } from './components/specification-de
 import { CostUpdatesComponent } from './components/project-details/project-monitoring/cost-updates/cost-updates.component';
 import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
 import { SpecificationUpdatesComponent } from './components/specification-details/specification-updates/specification-updates.component';
+import { ProjectTemplatesMainComponent } from './components/project-templates-main/project-templates-main.component';
 
 @NgModule({
   declarations: [
@@ -121,7 +122,8 @@ import { SpecificationUpdatesComponent } from './components/specification-detail
     SelectJobOrderGridComponent,
     LinkedPmsJobsAndFindingsComponent,
     CostUpdatesComponent,
-    SpecificationUpdatesComponent
+    SpecificationUpdatesComponent,
+    ProjectTemplatesMainComponent
   ],
   imports: [
     CommonModule,
