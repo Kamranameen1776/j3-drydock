@@ -161,7 +161,7 @@ export class SpecificationDetailsService {
         },
         {
           id: 'Duration',
-          label: 'Duration (Days)',
+          label: 'Estimated Duration (Days)',
           type: eFieldControlType.Text,
           isRequired: false,
           isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.StatusId),

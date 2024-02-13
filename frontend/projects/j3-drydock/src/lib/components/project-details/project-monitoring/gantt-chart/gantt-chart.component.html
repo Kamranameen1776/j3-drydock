@@ -8,11 +8,10 @@
   [columns]="columns"
   (queryTaskbarInfo)="queryTaskbarInfo($event)"
   height="421px"
-  [projectStartDate]="projectStartDate"
-  [projectEndDate]="projectEndDate"
   [editSettings]="editSettings"
   [tooltipSettings]="tooltipSettings"
   (taskbarEdited)="taskbarEdited($event)"
+  [dateFormat]="transformToEJ2DateFormat(dateFormat)"
 ></ejs-gantt>
 
 <jb-dialog

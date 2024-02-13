@@ -2,7 +2,7 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class specificationWorkflowConfiguration1706679366066 implements MigrationInterface {
+export class specificationWorkflowConfiguration1706679366067 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -34,9 +34,9 @@ export class specificationWorkflowConfiguration1706679366066 implements Migratio
             `);
 
             await queryRunner.query(`
-            DECLARE @app_location nvarchar(20)
-            SET @app_location = ( SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location' )
-            IF( @app_location = 'office')
+            DECLARE @applocation nvarchar(20)
+            SET @applocation = ( SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location' )
+            IF( @applocation = 'office')
             BEGIN
 
             BEGIN
@@ -171,7 +171,7 @@ export class specificationWorkflowConfiguration1706679366066 implements Migratio
                             (2, 'IN PROGRESS', 'In Progress', 'In Progress', 1, 0, 1,'tm_specification_in_progress_office'),
                             (3, 'COMPLETE', 'Add to Plan', 'Planned', 1, 0, 1,'tm_specification_complete_office'),
                             (4, 'CLOSE', 'Close', 'Closed', 1, 1, 1,'tm_specification_close_office'),
-                            (5, 'CANCEL', 'Cancel', 'Canceled', 1, 0, 1,'tm_specification_cancel_office')
+                            (5, 'UNCLOSE', 'Cancel', 'Canceled', 1, 0, 1,'tm_specification_cancel_office')
                         declare  @DefaultAppLocations table (Is_Office INT)
                         INSERT INTO @DefaultAppLocations (Is_Office)
                         VALUES (1), (0)

@@ -190,9 +190,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     allowTaskbarEditing: true
   };
 
-  projectStartDate: Date;
-  projectEndDate: Date;
-
   timelineSettings: TimelineSettingsModel;
 
   statusCSS = { statusBackground: statusBackground, statusIcon: statusIcon };
@@ -232,6 +229,10 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   ngOnDestroy(): void {
     super.ngOnDestroy();
     this.element.nativeElement.querySelector(`#${this.id}`).removeEventListener('click', this.linkClick);
+  }
+
+  transformToEJ2DateFormat(dateFormat: string) {
+    return dateFormat.replace('DD', 'dd').replace('YYYY', 'yyyy');
   }
 
   updateEventMarkers(project: ProjectDetailsFull) {
