@@ -91,16 +91,16 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       '<td colspan="3">${SpecificationSubject}</td>' +
       '</tr>' +
       '<tr>' +
-      '<td class="e-gantt-tooltip-label">Start Date</td><td>:</td>' +
+      '<td class="e-gantt-tooltip-label">Start Date</td><td>&nbsp;</td>' +
       '<td class="e-gantt-tooltip-value">&nbsp;${SpecificationStartDateFormatted}</td>' +
       '</tr>' +
-      '<tr><td class="e-gantt-tooltip-label">End Date</td><td>:</td>' +
+      '<tr><td class="e-gantt-tooltip-label">End Date</td><td>&nbsp;</td>' +
       '<td class="e-gantt-tooltip-value">&nbsp;${SpecificationEndDateFormatted}</td></tr>' +
-      '<td class="e-gantt-tooltip-label">Progress</td><td>:</td>' +
+      '<td class="e-gantt-tooltip-label">Progress</td><td>&nbsp;</td>' +
       '<td class="e-gantt-tooltip-value">&nbsp;${Progress}</td></tr>' +
-      '<tr><td class="e-gantt-tooltip-label">Duration</td><td>:</td>' +
+      '<tr><td class="e-gantt-tooltip-label">Duration</td><td>&nbsp;</td>' +
       '<td class="e-gantt-tooltip-value">&nbsp;${DurationInDays}</td></tr><tr>' +
-      '<td class="e-gantt-tooltip-label">Status</td><td>:</td>' +
+      '<td class="e-gantt-tooltip-label">Status</td><td>&nbsp;</td>' +
       '<td class="e-gantt-tooltip-value">&nbsp;${SpecificationStatus.statusName}</td></tr>' +
       '</tbody>' +
       '</table>',

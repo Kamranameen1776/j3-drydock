@@ -1,12 +1,38 @@
-::ng-deep {
-  .status-field {
-    line-height: 7px;
-    display: inline-flex;
-    justify-content: center;
+@import '../../../../styles/mixins';
 
-    .m-1 {
-      margin-right: 4px;
+:host {
+  ::ng-deep {
+    .status-field {
+      line-height: 7px;
+      display: inline-flex;
+      justify-content: center;
+
+      .m-1 {
+        margin-right: 4px;
+      }
     }
+    .gantt-grid-link {
+      cursor: pointer;
+      color: var(--jbBrandBlue700) !important;
+      font-weight: 500;
+
+      &:focus,
+      &:hover {
+          text-decoration: underline;
+      }
+    }
+  }
+}
+
+::ng-deep {
+
+  .gantt-day-of-month{
+    font-weight: bold;
+    padding-right: 3px;
+  }
+
+  .gantt-day-of-week{
+    font-size: 9px;
   }
 
   .e-gantt .e-gantt-chart .e-event-markers {
@@ -88,32 +114,22 @@
     background: #fff;
   }
 
-  .gantt-grid-link {
-    cursor: pointer;
-    color: var(--jbBrandBlue700) !important;
-    font-weight: 500;
-
-    &:focus,
-    &:hover {
-        text-decoration: underline;
-    }
-  }
-
-  .gantt-day-of-month{
-    color: var(--jbGreyBlue700);
-    font-weight: bold;
-    padding-right: 3px;
-  }
-
-  .gantt-day-of-week{
-    font-size: 9px;
-  }
-
   th>.e-headercelldiv>.gantt-grid-header{
     padding-top: 35px;
   }
 
   .e-gantt-chart-pane{
     border-top: 1px solid #d8d8d8;
+  }
+}
+
+::ng-deep {
+  .e-tooltip-wrap.e-popup.e-gantt-tooltip {
+      background-color: $jibe-grey-800;
+      border-color: $jibe-grey-800;
+
+      .e-tip-content {
+        padding: 10px 15px;
+      }
   }
 }
