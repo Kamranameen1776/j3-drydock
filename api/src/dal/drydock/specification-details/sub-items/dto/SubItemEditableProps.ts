@@ -49,6 +49,11 @@ export class SubItemEditableProps {
 
     @Type(() => Number)
     @IsNormalNumber()
+    @IsOptional()
+    readonly estimatedCost: number;
+
+    @Type(() => Number)
+    @IsNormalNumber()
     @Min(DISCOUNT_MIN)
     @Max(DISCOUNT_MAX)
     @IsOptional()
@@ -65,4 +70,10 @@ export class SubItemEditableProps {
     @IsUUID('4', { each: true })
     @IsOptional()
     readonly findingUid: string[];
+}
+
+export class SubItemEditDto extends SubItemEditableProps {
+    @IsOptional()
+    @IsUUID('4')
+    readonly uid?: string;
 }

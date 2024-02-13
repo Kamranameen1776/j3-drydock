@@ -2,17 +2,19 @@ import { AfterViewInit, Component, EventEmitter, Input, OnInit, ViewChild } from
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { FormModel, JbEditorComponent, UserService } from 'jibe-components';
 import { ToolbarModule } from 'primeng';
-import { EditorConfig } from '../../../../models/interfaces/EditorConfig';
+
 import { JobOrdersFormService } from './JobOrdersFormService';
 import { IJobOrderFormDto } from './dtos/IJobOrderFormDto';
-import { KeyValuePair } from '../../../../utils/KeyValuePair';
-import { NewTabService } from '../../../../services/new-tab-service';
 import { ActivatedRoute } from '@angular/router';
 import { IJobOrdersFormComponent } from './IJobOrdersFormComponent';
 import { IJobOrderFormResultDto } from './dtos/IJobOrderFormResultDto';
-import { UTCAsLocal, localDateJbStringAsUTC } from '../../../../utils/date';
-import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
+import { UnsubscribeComponent } from '../../classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
+import { EditorConfig } from '../../../models/interfaces/EditorConfig';
+import { KeyValuePair } from '../../../utils/KeyValuePair';
+import { NewTabService } from '../../../services/new-tab-service';
+import { UTCAsLocal, localDateJbStringAsUTC } from '../../../utils/date';
+import { CostUpdatesTabComponent } from '../cost-updates-tab/cost-updates-tab.component';
 
 @Component({
   selector: 'jb-job-orders-form',
@@ -26,8 +28,12 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
 
   @Input() vesselId: number;
 
+  @Input() isOpen: boolean;
+
   @ViewChild('remarksEditor')
   remarksEditor: JbEditorComponent;
+
+  @ViewChild('updatesTab') updatesTab: CostUpdatesTabComponent;
 
   updateJobOrderForm: FormModel;
 
@@ -70,6 +76,8 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
 
   selectedSpecification: KeyValuePair<string, string> = { Key: '', Value: '' };
 
+  uid: string;
+
   constructor(
     private jobOrdersFormService: JobOrdersFormService,
     private userService: UserService,
@@ -88,6 +96,8 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
 
   public init(jobOrderFormDto: IJobOrderFormDto) {
     this.reset();
+
+    this.uid = jobOrderFormDto.uid;
 
     const group = this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup;
     const controls = group.controls;
@@ -136,8 +146,17 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
       Status: jobOrder.Status,
       Subject: jobOrder.Subject,
 
-      Remarks: this.remarksEditorFormGroup.controls.RemarksCtrl.value ?? ''
+      Remarks: this.remarksEditorFormGroup.controls.RemarksCtrl.value ?? '',
+
+      UpdatesChanges: []
     };
+
+    const updatesChangesMap = this.updatesTab?.changedRowsMap;
+    if (updatesChangesMap?.size) {
+      updatesChangesMap.forEach((value) => {
+        result.UpdatesChanges.push(value);
+      });
+    }
 
     return result;
   }
@@ -174,6 +193,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   }
 
   private reset() {
+    this.uid = null;
     this.updateJobOrderFormGroup.reset();
     this.remarksEditorFormGroup.reset();
   }

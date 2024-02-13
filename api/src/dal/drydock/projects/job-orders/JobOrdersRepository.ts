@@ -61,7 +61,7 @@ export class JobOrdersRepository {
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(LibUserEntity), 'usr', 'p.project_manager_Uid = usr.uid and usr.ActiveStatus = 1')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1')
-            .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1');
+            .innerJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1');
 
         if (statuses) {
             query = query.innerJoin(
@@ -131,7 +131,7 @@ export class JobOrdersRepository {
             )
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
-            .innerJoin(className(LibUserEntity), 'usr', 'p.project_manager_Uid = usr.uid and usr.ActiveStatus = 1')
+            .leftJoin(className(LibUserEntity), 'usr', 'p.project_manager_Uid = usr.uid and usr.ActiveStatus = 1')
             .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
             .innerJoin(
                 className(JmsDtlWorkflowConfigDetailsEntity),
@@ -169,7 +169,7 @@ export class JobOrdersRepository {
     }
 
     public async UpdateJobOrder(jobOrder: JobOrderEntity, queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.manager.save(jobOrder);
+        await queryRunner.manager.save(JobOrderEntity, jobOrder);
     }
 
     public getJobOrderByUid(uid: string): Promise<JobOrderEntity | undefined> {

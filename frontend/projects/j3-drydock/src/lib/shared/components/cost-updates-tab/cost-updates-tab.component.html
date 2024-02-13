@@ -1,0 +1,74 @@
+<jb-grid
+  [gridName]="gridInputs.gridName"
+  [colData]="gridInputs.columns"
+  [tableData]="items"
+  [button]="gridInputs.gridButton"
+  [getStyleByContainer]="true"
+  [isDisplayAdvancedSettings]="false"
+  [isDisplayAdvancedFilter]="false"
+  [isDisplaySearchField]="false"
+></jb-grid>
+
+<ng-template
+  #quantityTemplate
+  let-rowData
+  let-idx="rowIndex"
+>
+  <p-inputNumber
+    [(ngModel)]="rowData.quantity"
+    locale="en-US"
+    [min]="0"
+    (ngModelChange)="onInputChange($event, 'quantity', rowData)"
+  ></p-inputNumber>
+</ng-template>
+
+<ng-template
+  #unitPriceTemplate
+  let-rowData
+  let-idx="rowIndex"
+>
+  <p-inputNumber
+    [(ngModel)]="rowData.unitPrice"
+    locale="en-US"
+    [minFractionDigits]="2"
+    [maxFractionDigits]="2"
+    (ngModelChange)="onInputChange($event, 'unitPrice', rowData)"
+  ></p-inputNumber>
+</ng-template>
+
+<ng-template
+  #discountPercentsTemplate
+  let-rowData
+  let-idx="rowIndex"
+>
+  <p-inputNumber
+    [(ngModel)]="rowData.discount"
+    locale="en-US"
+    [min]="0"
+    [max]="100"
+    [minFractionDigits]="2"
+    [maxFractionDigits]="2"
+    (ngModelChange)="onInputChange($event, 'discount', rowData)"
+  ></p-inputNumber>
+</ng-template>
+
+<ng-template
+  #estimatedCostTemplate
+  let-rowData
+  let-idx="rowIndex"
+>
+  <p-inputNumber
+    [(ngModel)]="rowData.estimatedCost"
+    locale="en-US"
+    [minFractionDigits]="2"
+    [maxFractionDigits]="2"
+    (ngModelChange)="onInputChange($event, 'estimatedCost', rowData)"
+  ></p-inputNumber>
+</ng-template>
+
+<ng-template
+  #costTemplate
+  let-rowData
+>
+  <span class="jb-grid-cell-rowdata-field cost-update-read-field">{{ rowData.cost }}</span>
+</ng-template>
