@@ -1,5 +1,17 @@
 @import '../../../../styles/mixins';
 
+.gantt-filters-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+  gap: 12px;
+  .gantt-filter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
 :host {
   ::ng-deep {
     .status-field {

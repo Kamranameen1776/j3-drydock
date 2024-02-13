@@ -1,3 +1,14 @@
+<div class="gantt-filters-container">
+  <div class="gantt-filter">
+    <label>Show Overdue</label>
+    <jb-single-select-dropdown
+      [content]="overdueDropdownContent"
+      placeholder="Show Overdue"
+      (selectedSubOperation)="handleSelectOverdueOption($event)"
+    ></jb-single-select-dropdown>
+  </div>
+</div>
+
 <ejs-gantt
   id="{{ id }}"
   [dataSource]="tasks"

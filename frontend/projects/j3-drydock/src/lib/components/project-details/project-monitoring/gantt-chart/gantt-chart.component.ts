@@ -2,7 +2,7 @@ import { JobOrdersFormComponent } from '../../../../shared/components/job-orders
 
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
-import { GanttChartService } from './gantt-chart.service';
+import { GanttChartService, OverdueStatus } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
 import { finalize, map, takeUntil } from 'rxjs/operators';
 import {
@@ -21,7 +21,7 @@ import {
   statusProgressBarBackgroundShaded
 } from '../../../../shared/status-css.json';
 
-import { IJbDialog, JmsService, UserService, eJMSWorkflowAction } from 'jibe-components';
+import { IJbDialog, ISingleSelectDropdown, JmsService, UserService, eJMSWorkflowAction } from 'jibe-components';
 import { UTCAsLocal, currentLocalAsUTC } from '../../../../utils/date';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
@@ -83,6 +83,20 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       label: ''
     }
   ];
+
+  // String values of boolean are used because of bug in Single Select Dropdown when false value are set it's treated as no value set
+  overdue: OverdueStatus | null = OverdueStatus.All;
+
+  overdueDropdownContent: ISingleSelectDropdown = {
+    id: 'overdueDropdown',
+    dataSource: [
+      { label: 'All', value: OverdueStatus.All },
+      { label: 'Yes', value: OverdueStatus.True },
+      { label: 'No', value: OverdueStatus.False }
+    ],
+    placeholder: 'Show Overdue',
+    selectedValue: this.overdue
+  };
 
   ganttChart: Gantt;
   tooltipSettings: TooltipSettingsModel = {
@@ -459,7 +473,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     this.showSpinner = true;
 
     this.ganttChartService
-      .getData(this.projectId)
+      .getData(this.projectId, this.overdue)
       .pipe(takeUntil(this.unsubscribe$))
       .pipe(
         map((data) =>
@@ -501,6 +515,13 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
         this.showSpinner = false;
         this.tasks = data;
       });
+  }
+
+  public handleSelectOverdueOption(option) {
+    if (option !== this.overdue) {
+      this.overdue = option;
+      this.initComponent();
+    }
   }
 
   private calculateCountOfDays(startDate: Date, endDate: Date): number {
