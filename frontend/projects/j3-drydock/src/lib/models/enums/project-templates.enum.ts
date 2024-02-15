@@ -6,7 +6,8 @@ export enum eProjectTemplatesLabels {
   ProjectType = 'Project Type',
   VesselType = 'Vessel Type',
   NoOfSpecItems = 'No of Spec Items',
-  LastUpdated = 'Last Updated'
+  LastUpdated = 'Last Updated',
+  VesselSpecific = 'Vessel Type Specific'
 }
 
 export enum eProjectTemplatesFields {
@@ -21,5 +22,6 @@ export enum eProjectTemplatesFields {
   Description = 'Description',
 
   VesselTypeID = 'vesselTypeID',
-  ProjectTypeId = 'projectTypeId'
+  ProjectTypeId = 'projectTypeId',
+  VesselSpecific = 'vesselTypeSpecific'
 }

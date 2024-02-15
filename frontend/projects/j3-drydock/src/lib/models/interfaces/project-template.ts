@@ -11,4 +11,5 @@ export interface ProjectTemplate {
   Description?: string;
   VesselTypeUid?: string;
   ProjectTypeUid?: string;
+  vesselTypeSpecific?: number;
 }

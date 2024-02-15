@@ -44,15 +44,6 @@ import { ReworkPopupFormComponent } from './shared/components/rework-popup/rewor
 import { ReworkPopupComponent } from './shared/components/rework-popup/rework-popup.component';
 import { AddSpecificationFromStandardJobPopupComponent } from './components/project-details/add-specification-from-standard-job-popup/add-specification-from-standard-job-popup.component';
 
-export function winEnv(): unknown {
-  const winEnv = 'environment';
-
-  return {
-    ...window[winEnv],
-    origin: window.location.origin + '/'
-  };
-}
-
 import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
 import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
 import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-cell-popover.component';
@@ -74,7 +65,17 @@ import { SpecificationUpdatesComponent } from './components/specification-detail
 import { ProjectTemplatesMainComponent } from './components/project-templates-main/project-templates-main.component';
 import { CostUpdatesTabComponent } from './shared/components/cost-updates-tab/cost-updates-tab.component';
 import { JobOrdersFormComponent } from './shared/components/job-orders-form/job-orders-form.component';
+import { UpsertProjectTemplatePopupComponent } from './components/project-templates-main/upsert-project-template-popup/upsert-project-template-popup.component';
+import { UpsertProjectTemplateFormComponent } from './components/project-templates-main/upsert-project-template-form/upsert-project-template-form.component';
 
+export function winEnv(): unknown {
+  const winEnv = 'environment';
+
+  return {
+    ...window[winEnv],
+    origin: window.location.origin + '/'
+  };
+}
 @NgModule({
   declarations: [
     SpecificationStatusPipe,
@@ -125,7 +126,9 @@ import { JobOrdersFormComponent } from './shared/components/job-orders-form/job-
     CostUpdatesComponent,
     SpecificationUpdatesComponent,
     ProjectTemplatesMainComponent,
-    CostUpdatesTabComponent
+    CostUpdatesTabComponent,
+    UpsertProjectTemplatePopupComponent,
+    UpsertProjectTemplateFormComponent
   ],
   imports: [
     CommonModule,

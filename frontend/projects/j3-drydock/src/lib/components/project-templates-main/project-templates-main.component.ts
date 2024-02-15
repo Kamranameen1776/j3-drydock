@@ -166,6 +166,6 @@ export class ProjectTemplatesMainComponent extends UnsubscribeComponent implemen
   }
 
   private setPageTitle() {
-    this.title.setTitle('Standard Jobs');
+    this.title.setTitle('Project Templates');
   }
 }
