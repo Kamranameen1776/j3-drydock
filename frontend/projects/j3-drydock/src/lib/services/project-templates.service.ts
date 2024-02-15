@@ -2,23 +2,22 @@ import { Injectable } from '@angular/core';
 import { ApiRequestService, WebApiRequest, eCrud, eEntities } from 'jibe-components';
 import { of } from 'rxjs';
 import { eApiBaseDryDockAPI } from '../models/constants/constants';
+import { localAsUTC } from '../utils/date';
 
-export interface ProjectTemplateCreate {
-  Subject: string;
-  Description: string;
-  VesselTypeUid: string;
-  ProjectTypeUid: string;
-  StandardJobs: string[];
-  CreatedAt: string;
-}
-
-export interface ProjectTemplateUpdate {
+export interface ProjectTemplatePayload {
   ProjectTemplateUid: string;
   Subject: string;
   Description: string;
   VesselTypeUid: string;
   ProjectTypeUid: string;
   StandardJobs: string[];
+}
+
+export interface ProjectTemplateCreate extends ProjectTemplatePayload {
+  CreatedAt: string;
+}
+
+export interface ProjectTemplateUpdate extends ProjectTemplatePayload {
   LastUpdated: string;
 }
 
@@ -33,9 +32,12 @@ export class ProjectTemplatesService {
     return of(null);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-  upsertProjectTemplate(uid: string, value: any, isEditing: boolean, jobsUids: string[]) {
-    return of(null);
+  upsertProjectTemplate(payload: ProjectTemplatePayload, isEditing: boolean) {
+    const nowIsoDate = localAsUTC(new Date());
+    if (isEditing) {
+      return this.update({ ...payload, LastUpdated: nowIsoDate });
+    }
+    return this.create({ ...payload, CreatedAt: nowIsoDate });
   }
 
   create(projectTemplate: ProjectTemplateCreate) {

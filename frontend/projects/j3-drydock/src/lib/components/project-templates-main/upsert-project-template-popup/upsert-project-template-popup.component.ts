@@ -1,4 +1,4 @@
-import { ProjectTemplatesService } from './../../../services/project-templates.service';
+import { ProjectTemplatePayload, ProjectTemplatesService } from './../../../services/project-templates.service';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { FormModel, IJbDialog, JmsService, eJMSWorkflowAction } from 'jibe-components';
@@ -112,16 +112,21 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
     this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
 
     const value = this.jobFormValue;
+    const formValue = value[this.popupFormService.formId];
 
     this.isSaving = true;
 
+    const payload: ProjectTemplatePayload = {
+      ProjectTemplateUid: this.itemUid,
+      Subject: formValue.Subject,
+      Description: value.editors.description,
+      VesselTypeUid: formValue.VesselTypeUid,
+      ProjectTypeUid: formValue.ProjectTypeUid,
+      StandardJobs: this.changedStandardJobs.map((x) => x.StandardJobUid)
+    };
+
     this.projectTemplatesService
-      .upsertProjectTemplate(
-        this.itemUid,
-        value,
-        this.isEditing,
-        this.changedStandardJobs.map((x) => x.ProjectTemplateStandardJobUid)
-      )
+      .upsertProjectTemplate(payload, this.isEditing)
       .pipe(
         finalize(() => {
           this.isSaving = false;
