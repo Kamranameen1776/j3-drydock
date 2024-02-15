@@ -44,7 +44,6 @@ export class UpdateProjectTemplateCommand extends Command<UpdateProjectTemplateM
 
         projectTemplate.Subject = request.Subject;
         projectTemplate.Description = request.Description;
-        projectTemplate.VesselTypeUid = request.VesselTypeUid;
         projectTemplate.ProjectTypeUid = request.ProjectTypeUid;
         projectTemplate.LastUpdated = request.LastUpdated;
 
@@ -55,6 +54,14 @@ export class UpdateProjectTemplateCommand extends Command<UpdateProjectTemplateM
 
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.projectTemplateRepository.UpdateProjectTemplate(projectTemplate, queryRunner);
+
+            if (request.VesselTypeUid?.length) {
+                await this.projectTemplateRepository.updateProjectTemplateVesselTypes(
+                    request.ProjectTemplateUid,
+                    request.VesselTypeUid,
+                    queryRunner,
+                );
+            }
 
             const { standardJobsToRemove, standardJobsUidsToAdd } = await this.getStandardJobsToUpdate(
                 request.StandardJobs,

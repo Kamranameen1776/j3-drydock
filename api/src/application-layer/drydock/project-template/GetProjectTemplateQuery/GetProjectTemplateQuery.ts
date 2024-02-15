@@ -34,7 +34,7 @@ export class GetProjectTemplateQuery extends Query<GetProjectTemplateModel, IGet
             ProjectTemplateUid: projectTemplate.uid,
             Description: projectTemplate.Description,
             Subject: projectTemplate.Subject,
-            VesselTypeUid: projectTemplate.VesselTypeUid,
+            VesselTypeID: projectTemplate.vesselType as unknown[] as number[],
             ProjectTypeUid: projectTemplate.ProjectTypeUid,
         };
 

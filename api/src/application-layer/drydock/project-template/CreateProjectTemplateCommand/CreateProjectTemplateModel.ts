@@ -8,7 +8,7 @@ export class CreateProjectTemplateModel {
 
     public Description: string;
 
-    public VesselTypeUid: string | null;
+    public VesselTypeUid: number[] | null;
 
     @IsNotEmpty()
     @IsUUID()

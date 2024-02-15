@@ -18,7 +18,6 @@ export class AppProjectTemplate1707296338722 implements MigrationInterface {
                 [uid] [uniqueidentifier] NOT NULL DEFAULT NEWSEQUENTIALID(),
                 [template_code] [int] IDENTITY(1,1) NOT NULL,
                 [project_type_uid] [uniqueidentifier] NOT NULL,
-                [vessel_type_uid] [uniqueidentifier] NULL,
                 [subject] [nvarchar](200) NOT NULL,
                 [description] [nvarchar](max) NULL,
                 [last_updated] [datetimeoffset](7) NOT NULL,
@@ -41,7 +40,12 @@ export class AppProjectTemplate1707296338722 implements MigrationInterface {
                 [uid] ASC
             ));
 
-
+            CREATE TABLE [dry_dock].[project_template_vessel_type]
+            (
+                [project_template_uid]              [uniqueidentifier] NOT NULL,
+                [vessel_type_id]                [int] NOT NULL,
+                PRIMARY KEY ([project_template_uid],[vessel_type_id])
+            ) ON [PRIMARY];
 
             `);
 

@@ -36,7 +36,7 @@ export class ProjectTemplateEntity {
             referencedColumnName: 'ID',
         },
     })
-    vesselType: Partial<LibVesseltypes>[];
+    vesselType: LibVesseltypes[];
 
     @Column('nvarchar', {
         nullable: false,

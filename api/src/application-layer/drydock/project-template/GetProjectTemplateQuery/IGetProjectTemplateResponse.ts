@@ -5,7 +5,7 @@ export interface IGetProjectTemplateResponse {
 
     Description: string | null;
 
-    VesselTypeUid: string | null;
+    VesselTypeID: number[] | null;
 
     ProjectTypeUid: string;
 }

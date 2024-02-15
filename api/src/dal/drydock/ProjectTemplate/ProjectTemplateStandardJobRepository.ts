@@ -81,6 +81,7 @@ export class ProjectTemplateStandardJobRepository {
             .createQueryBuilder('prtsj')
             .select(
                 `prtsj.uid AS ProjectTemplateStandardJobUid,
+                sj.uid AS StandardJobUid,
             prtsj.ProjectTemplateUid as ProjectTemplateUid,
             sj.code as ItemNumber,
             sj.subject as Subject,
@@ -88,7 +89,7 @@ export class ProjectTemplateStandardJobRepository {
                 entity: className(StandardJobsVesselTypeEntity),
                 alias: 'sjvt',
                 on: 'sjvt.standard_job_uid = sj.uid AND aliased.ID = sjvt.vessel_type_id',
-            })}
+            })},
             ${RepoUtils.getStringAggJoin(LibVesseltypes, 'VesselTypes', 'aliased.active_status = 1', 'VesselType', {
                 entity: className(StandardJobsVesselTypeEntity),
                 alias: 'sjvt',
@@ -122,7 +123,7 @@ export class ProjectTemplateStandardJobRepository {
             msb.display_name MaterialSuppliedBy
         `,
             )
-            .innerJoin(StandardJobs, 'sj', 'prtsj.StandardJobUid = sj.uid AND sj.ActiveStatus = 1')
+            .innerJoin(StandardJobs, 'sj', 'prtsj.StandardJobUid = sj.uid')
             .innerJoin(ProjectTemplateEntity, 'pt', 'pt.uid = prtsj.ProjectTemplateUid AND pt.ActiveStatus = 1')
             .leftJoin(StandardJobsVesselTypeEntity, 'sjvt', `sjvt.standard_job_uid = sj.uid`)
             .leftJoin(StandardJobsSurveyCertificateAuthorityEntity, 'sjsca', `sjsca.standard_job_uid = sj.uid`)
@@ -133,6 +134,19 @@ export class ProjectTemplateStandardJobRepository {
                 TmDdLibMaterialSuppliedBy,
                 'msb',
                 `msb.uid = sj.material_supplied_by_uid AND msb.active_status = 1`,
+            )
+            .groupBy(
+                [
+                    'prtsj.uid',
+                    'sj.uid',
+                    'prtsj.project_template_uid',
+                    'sj.code',
+                    'sj.subject',
+                    'sj.done_by_uid',
+                    'db.displayName',
+                    'msb.display_name',
+                    'sj.material_supplied_by_uid',
+                ].join(','),
             );
 
         const [sql, parameters] = query.getQueryAndParameters();
