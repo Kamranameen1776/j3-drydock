@@ -30,22 +30,23 @@ export class SubItemEditableProps {
     @IsString()
     @IsNotEmpty()
     @MaxLength(SUBJECT_MAX_LENGTH)
-    readonly subject: string;
+    readonly subject?: string;
 
     @IsUUID('4')
     @IsOptional()
-    readonly unitUid: string;
+    readonly unitUid?: string;
 
     @Type(() => Number)
+    @IsOptional()
     @IsInt()
     @Min(0)
-    readonly quantity: number;
+    readonly quantity?: number;
 
     @Type(() => Number)
     @IsNormalNumber()
     @IsPositive()
     @IsOptional()
-    readonly unitPrice: string;
+    readonly unitPrice?: string;
 
     @Type(() => Number)
     @IsNormalNumber()
@@ -57,19 +58,22 @@ export class SubItemEditableProps {
     @Min(DISCOUNT_MIN)
     @Max(DISCOUNT_MAX)
     @IsOptional()
-    readonly discount: string;
+    readonly discount?: string;
+
+    @IsOptional()
+    readonly utilized?: number;
 
     @IsString()
     @IsOptional()
-    readonly description: string;
+    readonly description?: string;
 
     @IsUUID('4', { each: true })
     @IsOptional()
-    readonly pmsJobUid: string[];
+    readonly pmsJobUid?: string[];
 
     @IsUUID('4', { each: true })
     @IsOptional()
-    readonly findingUid: string[];
+    readonly findingUid?: string[];
 }
 
 export class SubItemEditDto extends SubItemEditableProps {

@@ -9,5 +9,5 @@ export class GetSubItemParams extends SubItemActionParams {
 
     @IsUUID('4', { each: true })
     @IsOptional()
-    pmsJobUid: string[];
+    pmsJobUid?: string[];
 }
