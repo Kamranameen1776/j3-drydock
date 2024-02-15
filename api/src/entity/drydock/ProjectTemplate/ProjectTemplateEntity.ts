@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
+import { LibVesseltypes } from '../dbo/LibVesselTypeEntity';
 import { ProjectTemplateStandardJobEntity } from './ProjectTemplateStandardJobEntity';
 
 export const ProjectTemplateEntityTableName = 'project_template';
@@ -22,11 +23,20 @@ export class ProjectTemplateEntity {
     })
     ProjectTypeUid: string;
 
-    @Column('uuid', {
-        nullable: true,
-        name: 'vessel_type_uid',
+    @ManyToMany(() => LibVesseltypes, (LIB_VESSELTYPES: LibVesseltypes) => LIB_VESSELTYPES.project_templates)
+    @JoinTable({
+        name: 'project_template_vessel_type',
+        schema: 'dry_dock',
+        joinColumn: {
+            name: 'project_template_uid',
+            referencedColumnName: 'uid',
+        },
+        inverseJoinColumn: {
+            name: 'vessel_type_id',
+            referencedColumnName: 'ID',
+        },
     })
-    VesselTypeUid: string | null;
+    vesselType: LibVesseltypes[];
 
     @Column('nvarchar', {
         nullable: false,

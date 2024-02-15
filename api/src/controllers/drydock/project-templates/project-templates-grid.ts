@@ -4,7 +4,7 @@ import { Body, Controller, Post, Request, Route, Tags } from 'tsoa';
 import { GetProjectTemplateGridQuery } from '../../../application-layer/drydock/project-template/GetProjectTemplateGridQuery/GetProjectTemplateGridQuery';
 import { Req } from '../../../common/drydock/ts-helpers/req-res';
 import { IGetProjectTemplateGridDto } from '../../../dal/drydock/ProjectTemplate/IGetProjectTemplateGridDto';
-import { ODataBodyDto } from '../../../shared/dto';
+import { ODataBodyDtoWithFilters } from '../../../shared/dto';
 import { ODataResult } from '../../../shared/interfaces';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
@@ -13,12 +13,12 @@ import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 export class ProjectTemplatesGridController extends Controller {
     @Post()
     public async GetProjectTemplatesGridData(
-        @Request() request: Req<ODataBodyDto>,
-        @Body() odataBody: ODataBodyDto,
+        @Request() request: Req<ODataBodyDtoWithFilters>,
+        @Body() odataBody: ODataBodyDtoWithFilters,
     ): Promise<ODataResult<IGetProjectTemplateGridDto>> {
         const query = new GetProjectTemplateGridQuery();
 
-        const result = await query.ExecuteAsync(request, ODataBodyDto);
+        const result = await query.ExecuteAsync(request, ODataBodyDtoWithFilters);
 
         return result;
     }

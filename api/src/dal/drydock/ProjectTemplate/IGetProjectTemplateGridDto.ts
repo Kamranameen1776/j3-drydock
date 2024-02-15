@@ -6,8 +6,11 @@ export interface IGetProjectTemplateGridDto {
     Subject: string;
 
     ProjectType: string;
+    ProjectTypeUid: string;
+    ProjectTypeCode: string;
 
     VesselType: string;
+    VesselTypeId: string;
 
     NoOfSpecItems: number;
 

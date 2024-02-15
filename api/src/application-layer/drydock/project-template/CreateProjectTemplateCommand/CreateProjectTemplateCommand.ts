@@ -37,7 +37,6 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
         const projectTemplate = new ProjectTemplateEntity();
         projectTemplate.Subject = request.Subject;
         projectTemplate.Description = request.Description;
-        projectTemplate.VesselTypeUid = request.VesselTypeUid;
         projectTemplate.ProjectTypeUid = request.ProjectTypeUid;
         projectTemplate.LastUpdated = request.CreatedAt;
         projectTemplate.CreatedAt = request.CreatedAt;
@@ -47,6 +46,14 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
                 projectTemplate,
                 queryRunner,
             );
+
+            if (request.VesselTypeUid?.length) {
+                await this.projectTemplateRepository.updateProjectTemplateVesselTypes(
+                    projectTemplateUid,
+                    request.VesselTypeUid,
+                    queryRunner,
+                );
+            }
 
             for (const standardJobUid of request.StandardJobs) {
                 const isStandardJobExists = await this.standardJobsRepository.Exists(standardJobUid);
