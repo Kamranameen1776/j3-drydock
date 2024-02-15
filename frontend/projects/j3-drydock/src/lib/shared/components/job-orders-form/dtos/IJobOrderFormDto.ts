@@ -1,5 +1,5 @@
 export interface IJobOrderFormDto {
-  SpecificationUid: string;
+  SpecificationUid?: string;
 
   Code?: string;
 
@@ -14,4 +14,6 @@ export interface IJobOrderFormDto {
   SpecificationStartDate?: string;
 
   SpecificationEndDate?: string;
+
+  uid?: string;
 }

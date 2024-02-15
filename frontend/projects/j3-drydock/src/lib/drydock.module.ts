@@ -2,7 +2,7 @@ import { StandardJobsMainComponent } from './components/standard-jobs-main/stand
 import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { DryDockRoutingModule } from './drydock.routing';
-import { DropdownModule, MenuModule, SidebarModule, TieredMenuModule } from 'primeng';
+import { DropdownModule, InputNumberModule, MenuModule, SidebarModule, TieredMenuModule } from 'primeng';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule as PrimeNgModule } from 'primeng';
 import { JiBeTheme, JibeComponentsModule } from 'jibe-components';
@@ -55,10 +55,10 @@ export function winEnv(): unknown {
 
 import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
 import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
-import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-celll-popover.component';
+import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-cell-popover.component';
 import { DailyReportsComponent } from './components/project-details/reports/reports.component';
 import { EditSubItemPopupComponent } from './components/specification-details/edit-sub-item-popup/edit-sub-item-popup.component';
-import { JobOrdersFormComponent } from './components/project-details/project-monitoring/job-orders-form/job-orders-form.component';
+
 import { CreateReportPopupComponent } from './components/project-details/reports/create-report/create-report-popup.component';
 import { LinkYardPopupComponent } from './components/project-details/yard/rfq/link-yard-popup/link-yard-popup.component';
 import { ItemCardComponent } from './shared/components/item-card/item-card.component';
@@ -72,6 +72,8 @@ import { CostUpdatesComponent } from './components/project-details/project-monit
 import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
 import { SpecificationUpdatesComponent } from './components/specification-details/specification-updates/specification-updates.component';
 import { ProjectTemplatesMainComponent } from './components/project-templates-main/project-templates-main.component';
+import { CostUpdatesTabComponent } from './shared/components/cost-updates-tab/cost-updates-tab.component';
+import { JobOrdersFormComponent } from './shared/components/job-orders-form/job-orders-form.component';
 
 @NgModule({
   declarations: [
@@ -115,7 +117,6 @@ import { ProjectTemplatesMainComponent } from './components/project-templates-ma
     DailyReportsComponent,
     GanttChartComponent,
     JobOrdersFormComponent,
-    JobOrdersFormComponent,
     CreateReportPopupComponent,
     ItemCardComponent,
     SelectJobOrderPopupComponent,
@@ -123,7 +124,8 @@ import { ProjectTemplatesMainComponent } from './components/project-templates-ma
     LinkedPmsJobsAndFindingsComponent,
     CostUpdatesComponent,
     SpecificationUpdatesComponent,
-    ProjectTemplatesMainComponent
+    ProjectTemplatesMainComponent,
+    CostUpdatesTabComponent
   ],
   imports: [
     CommonModule,
@@ -141,7 +143,8 @@ import { ProjectTemplatesMainComponent } from './components/project-templates-ma
     PrimeNgModule,
     MenuModule,
     GanttModule,
-    SplitterModule
+    SplitterModule,
+    InputNumberModule
   ],
   providers: [
     DatePipe,

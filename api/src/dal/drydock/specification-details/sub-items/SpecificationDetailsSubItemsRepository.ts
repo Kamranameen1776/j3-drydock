@@ -22,7 +22,7 @@ import { CreateManyParams } from './dto/CreateManyParams';
 import { CreateSubItemParams } from './dto/CreateSubItemParams';
 import { DeleteManyParams } from './dto/DeleteManyParams';
 import { DeleteSubItemParams } from './dto/DeleteSubItemParams';
-import { FindManyParams } from './dto/FindManyParams';
+import { FindSpecificationSubItemsDto } from './dto/FindSpecificationSubItemsDto';
 import { GetManyParams } from './dto/GetManyParams';
 import { GetSubItemParams } from './dto/GetSubItemParams';
 import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
@@ -42,6 +42,7 @@ export type FindManyRecord = Pick<
     | 'unitTypeUid'
     | 'description'
     | 'unitType'
+    | 'estimatedCost'
 >;
 
 export class SpecificationDetailsSubItemsRepository {
@@ -64,6 +65,7 @@ export class SpecificationDetailsSubItemsRepository {
             return !!res;
         });
     }
+
     public async validateSubItemsAgainstProject(
         SubItemArray: Array<SpecificationDetailsSubItemEntity>,
         ProjectUid: string,
@@ -87,7 +89,8 @@ export class SpecificationDetailsSubItemsRepository {
             return !!res;
         });
     }
-    public async findMany(params: FindManyParams): Promise<ODataResult<FindManyRecord>> {
+
+    public async findMany(params: FindSpecificationSubItemsDto): Promise<ODataResult<FindManyRecord>> {
         const [script, substitutions] = getManager()
             .createQueryBuilder(SpecificationDetailsSubItemEntity, 'subItem')
             .select([
@@ -102,6 +105,7 @@ export class SpecificationDetailsSubItemsRepository {
                 'subItem.unit_type_uid as unitTypeUid',
                 'subItem.description as description',
                 'unitType.types as unitType',
+                'subItem.estimatedCost as estimatedCost',
             ])
             .leftJoin('lib_unit_type', 'unitType', 'unitType.uid = subItem.unit_type_uid')
             .where('specification_details_uid = :specificationDetailsUid', {
@@ -209,6 +213,7 @@ export class SpecificationDetailsSubItemsRepository {
         );
         return queryRunner.manager.save(newSubItems);
     }
+
     public async updateMultipleEntities(subItemsData: SpecificationDetailsSubItemEntity[], queryRunner: QueryRunner) {
         const repository = queryRunner.manager.getRepository(SpecificationDetailsSubItemEntity);
         const promises = subItemsData.map((entity) => {
@@ -416,6 +421,7 @@ export class SpecificationDetailsSubItemsRepository {
             quantity: subItemData.quantity ?? 0,
             unitPrice: subItemData.unitPrice ?? '0',
             discount: subItemData.discount ?? '0',
+            estimatedCost: subItemData.estimatedCost ?? 0,
         };
 
         const newSubItem: Partial<SpecificationDetailsSubItemEntity> = {

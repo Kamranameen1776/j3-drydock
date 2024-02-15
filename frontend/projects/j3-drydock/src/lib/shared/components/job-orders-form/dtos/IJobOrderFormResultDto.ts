@@ -1,3 +1,4 @@
+import { SpecificationSubItem } from './../../../../models/interfaces/specification-sub-item';
 export interface IJobOrderFormResultDto {
   SpecificationUid: string;
 
@@ -12,4 +13,6 @@ export interface IJobOrderFormResultDto {
   SpecificationStartDate: Date;
 
   SpecificationEndDate: Date;
+
+  UpdatesChanges: SpecificationSubItem[];
 }
