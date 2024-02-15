@@ -62,7 +62,7 @@ export class JobOrdersRepository {
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(LibUserEntity), 'usr', 'p.project_manager_Uid = usr.uid and usr.ActiveStatus = 1')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1')
-            .innerJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1');
+            .leftJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1');
 
         if (statuses) {
             query = query.innerJoin(
@@ -128,7 +128,6 @@ export class JobOrdersRepository {
                 className(SpecificationDetailsEntity),
                 'sd',
                 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1 and sd.ActiveStatus = 1',
-                { SpecificationUid: request.body.uid },
             )
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid and tm.ActiveStatus = 1')
@@ -148,7 +147,6 @@ export class JobOrdersRepository {
                 'createdByUsr',
                 'jo.CreatedBy = createdByUsr.uid and createdByUsr.ActiveStatus = 1',
             )
-            .where('jo.SpecificationUid = :SpecificationUid', { SpecificationUid: request.body.uid })
             .distinct()
             .getQueryAndParameters();
 
