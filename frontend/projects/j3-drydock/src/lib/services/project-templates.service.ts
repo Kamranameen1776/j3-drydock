@@ -17,9 +17,23 @@ export class ProjectTemplatesService {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
-      action: 'project-templates/project-template-standard-jobs-grid',
+      action: 'project-templates/project-templates-grid',
       crud: eCrud.Post
     };
     return apiRequest;
+  }
+
+  createSpecificationFromStandardJob(ProjectUid: string, StandardJobUid: string[]) {
+    const request: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'specification-details/create-specification-from-standard-job',
+      crud: eCrud.Post,
+      body: {
+        ProjectUid,
+        StandardJobUid
+      }
+    };
+    return this.apiRequestService.sendApiReq(request);
   }
 }

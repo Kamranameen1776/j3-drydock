@@ -74,6 +74,7 @@ import { SpecificationUpdatesComponent } from './components/specification-detail
 import { CostUpdatesTabComponent } from './shared/components/cost-updates-tab/cost-updates-tab.component';
 import { JobOrdersFormComponent } from './shared/components/job-orders-form/job-orders-form.component';
 import { ProjectTemplatesMainComponent } from './components/project-templates-main/project-templates-main.component';
+import { CreateFromProjectTemplatePopupComponent } from './components/project-details/create-from-project-template-popup/create-from-project-template-popup.component';
 
 @NgModule({
   declarations: [
@@ -125,7 +126,8 @@ import { ProjectTemplatesMainComponent } from './components/project-templates-ma
     CostUpdatesComponent,
     SpecificationUpdatesComponent,
     CostUpdatesTabComponent,
-    ProjectTemplatesMainComponent
+    ProjectTemplatesMainComponent,
+    CreateFromProjectTemplatePopupComponent
   ],
   imports: [
     CommonModule,

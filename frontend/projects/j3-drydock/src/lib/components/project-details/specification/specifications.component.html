@@ -65,6 +65,14 @@
   (closeDialog)="onCloseCreatePopup($event)"
 ></jb-create-specification-popup>
 
+<jb-create-from-project-template-popup
+  *ngIf="isCreateFromProjectTemplatePopupVisible"
+  [isOpen]="isCreateFromProjectTemplatePopupVisible"
+  [vesselType]="vesselType"
+  [projectUid]="projectId"
+  (closeDialog)="onCloseCreatePopup($event)"
+></jb-create-from-project-template-popup>
+
 <ng-template
   #statusTemplate
   let-rowData
