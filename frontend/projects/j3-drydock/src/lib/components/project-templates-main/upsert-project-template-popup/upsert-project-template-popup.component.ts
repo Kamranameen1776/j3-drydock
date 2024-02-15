@@ -3,7 +3,6 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewC
 import { getSmallPopup } from '../../../models/constants/popup';
 import { FormModel, IJbDialog, JmsService, eJMSWorkflowAction } from 'jibe-components';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
-import { StandardJobsService } from '../../../services/standard-jobs.service';
 import { finalize } from 'rxjs/operators';
 import { GrowlMessageService } from '../../../services/growl-message.service';
 import { SubItem } from '../../../models/interfaces/sub-items';
