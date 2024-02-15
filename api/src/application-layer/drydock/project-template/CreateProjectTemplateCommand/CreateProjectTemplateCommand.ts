@@ -41,6 +41,10 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
         projectTemplate.LastUpdated = request.CreatedAt;
         projectTemplate.CreatedAt = request.CreatedAt;
 
+        if (request.uid) {
+            projectTemplate.uid = request.uid;
+        }
+
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const projectTemplateUid = await this.projectTemplateRepository.CreateProjectTemplate(
                 projectTemplate,

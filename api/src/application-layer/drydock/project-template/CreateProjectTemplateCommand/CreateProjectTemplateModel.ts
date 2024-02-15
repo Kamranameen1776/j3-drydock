@@ -3,6 +3,9 @@ import { IsNotEmpty, IsUUID } from 'class-validator';
 // TODO: add more validation attributes
 
 export class CreateProjectTemplateModel {
+    @IsUUID()
+    public uid?: string;
+
     @IsNotEmpty()
     public Subject: string;
 

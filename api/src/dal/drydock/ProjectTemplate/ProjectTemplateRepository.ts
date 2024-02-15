@@ -18,7 +18,7 @@ export class ProjectTemplateRepository {
         projectTemplate: ProjectTemplateEntity,
         queryRunner: QueryRunner,
     ): Promise<string> {
-        const uid = DataUtilService.newUid();
+        const uid = projectTemplate.uid ?? DataUtilService.newUid();
         projectTemplate.uid = uid;
 
         await queryRunner.manager.save(projectTemplate);
