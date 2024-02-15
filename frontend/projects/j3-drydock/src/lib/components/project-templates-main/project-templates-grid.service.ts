@@ -74,7 +74,7 @@ export class ProjectTemplatesGridService {
       ValueCode: 'VesselTypes',
       FieldID: 1,
       gridName: this.gridName,
-      default: false,
+      default: true,
       sendFilterAs: 'gridFilters'
     },
     {
@@ -100,7 +100,7 @@ export class ProjectTemplatesGridService {
     [eProjectTemplatesFields.ProjectType]: {
       webApiRequest: this.projectsService.getProjectTypesRequest(),
       type: eFieldControlType.MultiSelect,
-      odataKey: eProjectTemplatesFields.ProjectTypeId,
+      odataKey: eProjectTemplatesFields.ProjectTypeUid,
       listValueKey: 'ProjectTypeUId'
     }
   };

@@ -1,3 +1,4 @@
+import { ProjectTemplatesService } from './../../../services/project-templates.service';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { FormModel, IJbDialog, JmsService, eJMSWorkflowAction } from 'jibe-components';
@@ -6,7 +7,6 @@ import { StandardJobsService } from '../../../services/standard-jobs.service';
 import { finalize } from 'rxjs/operators';
 import { GrowlMessageService } from '../../../services/growl-message.service';
 import { SubItem } from '../../../models/interfaces/sub-items';
-import { forkJoin, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import * as uuid from 'uuid/v4';
 import { ProjectTemplate } from '../../../models/interfaces/project-template';
@@ -52,11 +52,12 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
   formStructure: FormModel = this.popupFormService.formStructure;
 
   newItemUid: string;
-
-  private changedStandardJobs: SubItem[] = [];
+  // TODO - fixme type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private changedStandardJobs: any[] = [];
 
   constructor(
-    private standardJobsService: StandardJobsService,
+    private projectTemplatesService: ProjectTemplatesService,
     private growlMessageService: GrowlMessageService,
     private popupFormService: ProjectTemplateUpsertFormService,
     private jmsService: JmsService
@@ -115,9 +116,13 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
 
     this.isSaving = true;
 
-    const updateSubitemsRequest$ = this.standardJobsService.updateJobSubItems(this.itemUid, this.changedStandardJobs);
-
-    forkJoin([this.standardJobsService.upsertStandardJob(this.itemUid, value, this.isEditing), updateSubitemsRequest$])
+    this.projectTemplatesService
+      .upsertProjectTemplate(
+        this.itemUid,
+        value,
+        this.isEditing,
+        this.changedStandardJobs.map((x) => x.ProjectTemplateStandardJobUid)
+      )
       .pipe(
         finalize(() => {
           this.isSaving = false;
