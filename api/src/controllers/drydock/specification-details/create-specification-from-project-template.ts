@@ -2,7 +2,7 @@ import * as express from 'express';
 import { AccessRights } from 'j2utils';
 import { Body, Controller, Post, Request, Route } from 'tsoa';
 
-import { CreateSpecificationFromStandardJobsCommand } from '../../../application-layer/drydock/specification-details/CreateSpecificationFromStandardJobCommand';
+import { CreateSpecificationFromProjectTemplateCommand } from '../../../application-layer/drydock/specification-details/CreateSpecificationFromProjectTemplateCommand';
 import { CreateSpecificationFromProjectTemplateDto } from '../../../dal/drydock/specification-details/dtos/ICreateSpecificationFromProjectTemplateDto';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
@@ -37,7 +37,7 @@ export class CreateSpecificationFromProjectTemplateController extends Controller
         dto.createdBy = createdBy;
         dto.token = request.headers.authorization as string;
 
-        const query = new CreateSpecificationFromStandardJobsCommand();
+        const query = new CreateSpecificationFromProjectTemplateCommand();
 
         const result = await query.ExecuteAsync(dto);
 
