@@ -1,3 +1,5 @@
+<jb-growl [content]="growlMessage$ | async"></jb-growl>
+
 <jb-dialog
   [dialogContent]="popupConfig"
   [(dialogVisible)]="isOpen"
@@ -15,8 +17,7 @@
           [filterListsSet]="gridData.filtersLists"
           [searchFields]="gridData.searchFields"
           [getStyleByContainer]="true"
-          [selectionMode]="'multiple'"
-          [matrixSelectedValue]="selected"
+          [selectionMode]="'single'"
           (matrixSelection)="onSelect($event)"
         ></jb-grid>
       </div>
@@ -33,3 +34,9 @@
     ></jb-dialog-footer>
   </ng-container>
 </jb-dialog>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>

@@ -4,6 +4,8 @@ import { getSmallPopup } from '../../../models/constants/popup';
 import { BehaviorSubject } from 'rxjs';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { CreateProjectFromTemplateGridService } from './create-project-from-template-grid.service';
+import { ProjectTemplatesService } from '../../../services/project-templates.service';
+import { GrowlMessageService } from '../../../services/growl-message.service';
 
 @Component({
   selector: 'jb-create-from-project-template-popup',
@@ -24,9 +26,15 @@ export class CreateFromProjectTemplatePopupComponent implements OnInit {
 
   functionUIDs: string[] = [];
   gridData: GridInputsWithRequest;
-  selected = [];
+  selectedProjectTemplate;
+  showLoader = false;
+  growlMessage$ = this.growlMessageService.growlMessage$;
 
-  constructor(private createProjectFromTemplateGridService: CreateProjectFromTemplateGridService) {}
+  constructor(
+    private createProjectFromTemplateGridService: CreateProjectFromTemplateGridService,
+    private projectTemplatesService: ProjectTemplatesService,
+    private growlMessageService: GrowlMessageService
+  ) {}
 
   ngOnInit(): void {
     this.gridData = this.getData();
@@ -40,10 +48,9 @@ export class CreateFromProjectTemplatePopupComponent implements OnInit {
     this.save();
   }
 
-  onSelect(rows: []) {
-    this.selected = [];
-    this.selected = rows;
-    this.isPopupValid$.next(rows.length > 0);
+  onSelect(data) {
+    this.selectedProjectTemplate = data;
+    this.isPopupValid$.next(data);
   }
 
   private closePopup(isSaved = false) {
@@ -52,7 +59,22 @@ export class CreateFromProjectTemplatePopupComponent implements OnInit {
   }
 
   private save() {
-    //TODO: Implement save logic
+    this.showLoader = true;
+    const projectTemplateUid = this.selectedProjectTemplate.ProjectTemplateUid;
+    this.isSaving$.next(true);
+
+    this.projectTemplatesService.createSpecificationFromProjectTemplate(this.projectUid, projectTemplateUid).subscribe({
+      next: () => {
+        this.closePopup(true);
+        this.showLoader = false;
+        this.isSaving$.next(false);
+      },
+      error: (error) => {
+        this.growlMessageService.errorHandler(error);
+        this.showLoader = false;
+        this.isSaving$.next(false);
+      }
+    });
   }
 
   private getData() {
