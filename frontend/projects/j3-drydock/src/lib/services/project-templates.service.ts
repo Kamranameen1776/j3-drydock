@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ApiRequestService, UserService, WebApiRequest, eCrud, eEntities } from 'jibe-components';
-import { of } from 'rxjs';
 import { eApiBaseDryDockAPI } from '../models/constants/constants';
 import { localAsUTC } from '../utils/date';
-
+import f from 'odata-filter-builder';
 export interface ProjectTemplatePayload {
   ProjectTemplateUid: string;
   Subject: string;
@@ -20,6 +19,7 @@ export interface ProjectTemplateCreate extends ProjectTemplatePayload {
 export interface ProjectTemplateUpdate extends ProjectTemplatePayload {
   LastUpdated: string;
 }
+
 
 @Injectable({
   providedIn: 'root'
@@ -83,21 +83,22 @@ export class ProjectTemplatesService {
       action: 'project-templates/project-templates-grid',
       crud: eCrud.Post,
       odata: {
-        orderby: 'TemplateCode asc'
+        orderby: 'TemplateCode asc',
+        filter: f().eq('NoOfSpecItems', 0)
       }
     };
     return apiRequest;
   }
 
-  createSpecificationFromStandardJob(ProjectUid: string, StandardJobUid: string[]) {
+  createSpecificationFromProjectTemplate(ProjectUid: string, ProjectTemplateUid: string) {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
-      action: 'specification-details/create-specification-from-standard-job',
+      action: 'specification-details/create-specification-from-project-template',
       crud: eCrud.Post,
       body: {
         ProjectUid,
-        StandardJobUid
+        ProjectTemplateUid
       }
     };
     return this.apiRequestService.sendApiReq(request);

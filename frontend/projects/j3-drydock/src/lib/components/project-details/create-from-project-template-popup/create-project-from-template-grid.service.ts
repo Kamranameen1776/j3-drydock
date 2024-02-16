@@ -18,7 +18,7 @@ export class CreateProjectFromTemplateGridService {
     {
       DisplayText: eProjectTemplatesLabels.Code,
       FieldName: eProjectTemplatesFields.Code,
-      // hyperlink: true,
+      hyperlink: true,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -84,8 +84,7 @@ export class CreateProjectFromTemplateGridService {
       ValueCode: 'ProjectTypeUId',
       FieldID: 2,
       gridName: this.gridName,
-      default: true,
-      sendFilterAs: 'gridFilters'
+      default: true
     }
   ];
   // TODO check and fix
