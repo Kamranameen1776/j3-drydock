@@ -10,6 +10,7 @@ import f from 'odata-filter-builder';
 export class ProjectTemplatesService {
   constructor(private apiRequestService: ApiRequestService) {}
   // TODO add implementation
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   delete(uid: string) {
     return of(null);
   }
