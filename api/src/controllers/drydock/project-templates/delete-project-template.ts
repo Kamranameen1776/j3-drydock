@@ -33,7 +33,7 @@ export class DeleteProjectTemplateController extends Controller {
 
         const dto: DeleteProjectTemplateModel = {
             ProjectTemplateUid: body.ProjectTemplateUid,
-            DeletedBy: authUser.UserID,
+            DeletedBy: authUser.UserUID,
         };
 
         const query = new DeleteProjectTemplateCommand();

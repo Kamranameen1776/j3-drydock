@@ -39,7 +39,7 @@ export class ProjectTemplateRepository {
         return repository.findOne({
             where: {
                 uid: projectTemplateUid,
-                ActiveStatus: true,
+                active_status: true,
             },
             loadRelationIds: true,
         });
@@ -72,7 +72,7 @@ export class ProjectTemplateRepository {
                 alias: 'ptvt',
                 on: 'ptvt.project_template_uid = prt.uid AND aliased.ID = ptvt.vessel_type_id',
             })},
-            COUNT(DISTINCT sj.uid) as NoOfSpecItems,
+            COUNT(DISTINCT sj.standard_job_uid) as NoOfSpecItems,
             COALESCE(prt.updated_at, prt.created_at) as LastUpdated
             `,
             )
@@ -92,7 +92,7 @@ export class ProjectTemplateRepository {
                     'wt.worklist_type',
                 ].join(','),
             )
-            .where('prt.ActiveStatus = 1');
+            .where('prt.active_status = 1');
 
         if (filters.vesselTypeId?.length) {
             query = query.andWhere(`vt.ID IN (:...vesselTypeId)`, { vesselTypeId: filters.vesselTypeId });

@@ -1,1 +1,1 @@
-export type UserFromToken = { UserID: string };
+export type UserFromToken = { UserID: string; UserUID: string; };

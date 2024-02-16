@@ -15,12 +15,12 @@ export class CreateProjectTemplateController extends Controller {
     public async CreateProjectTemplate(
         @Body() model: CreateProjectTemplateModel,
         @Request() request: Req<CreateProjectTemplateModel>,
-    ): Promise<void> {
+    ): Promise<string> {
         const command = new CreateProjectTemplateCommand();
 
         const authUser = AccessRights.authorizationDecode(request) as UserFromToken;
 
-        model.CreatedBy = authUser.UserID;
+        model.CreatedBy = authUser.UserUID;
 
         const result = await command.ExecuteRequestAsync(model, CreateProjectTemplateModel);
 

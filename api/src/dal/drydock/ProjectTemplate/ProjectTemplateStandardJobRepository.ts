@@ -125,7 +125,7 @@ export class ProjectTemplateStandardJobRepository {
         `,
             )
             .innerJoin(StandardJobs, 'sj', 'prtsj.StandardJobUid = sj.uid AND sj.active_status = 1')
-            .innerJoin(ProjectTemplateEntity, 'pt', 'pt.uid = prtsj.ProjectTemplateUid AND pt.ActiveStatus = 1')
+            .innerJoin(ProjectTemplateEntity, 'pt', 'pt.uid = prtsj.ProjectTemplateUid AND pt.active_status = 1')
             .leftJoin(StandardJobsVesselTypeEntity, 'sjvt', `sjvt.standard_job_uid = sj.uid`)
             .leftJoin(StandardJobsSurveyCertificateAuthorityEntity, 'sjsca', `sjsca.standard_job_uid = sj.uid`)
             .leftJoin(LibSurveyCertificateAuthority, 'lsca', `lsca.ID = sjsca.survey_id and lsca.Active_Status = 1`)
@@ -138,7 +138,6 @@ export class ProjectTemplateStandardJobRepository {
             )
             .groupBy(
                 [
-                    'prtsj.uid',
                     'sj.uid',
                     'prtsj.project_template_uid',
                     'sj.code',
@@ -148,7 +147,8 @@ export class ProjectTemplateStandardJobRepository {
                     'msb.display_name',
                     'sj.material_supplied_by_uid',
                 ].join(','),
-            );
+            )
+            .where('prtsj.active_status = 1');
 
         const [sql, parameters] = query.getQueryAndParameters();
 

@@ -20,7 +20,7 @@ export class UpdateProjectTemplateController extends Controller {
 
         const authUser = AccessRights.authorizationDecode(request) as UserFromToken;
 
-        model.UpdatedBy = authUser.UserID;
+        model.UpdatedBy = authUser.UserUID;
 
         const result = await command.ExecuteRequestAsync(model, UpdateProjectTemplateModel);
 

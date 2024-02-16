@@ -8,7 +8,7 @@ import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { CreateProjectTemplateModel } from './CreateProjectTemplateModel';
 
-export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateModel, void> {
+export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateModel, string> {
     projectTemplateRepository: ProjectTemplateRepository;
     projectTemplateStandardJobRepository: ProjectTemplateStandardJobRepository;
     standardJobsRepository: StandardJobsRepository;
@@ -26,7 +26,7 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
     /**
      * Create project templates
      */
-    protected async MainHandlerAsync(request: CreateProjectTemplateModel): Promise<void> {
+    protected async MainHandlerAsync(request: CreateProjectTemplateModel): Promise<string> {
         // TODO: 1. validate vessel type
 
         // var vesselType = await this.someRepo.GetVesselType(request.VesselTypeUid)
@@ -45,7 +45,7 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
             projectTemplate.uid = request.ProjectTemplateUid;
         }
 
-        await this.uow.ExecuteAsync(async (queryRunner) => {
+        return this.uow.ExecuteAsync(async (queryRunner) => {
             const projectTemplateUid = await this.projectTemplateRepository.CreateProjectTemplate(
                 projectTemplate,
                 queryRunner,
@@ -77,7 +77,7 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
                 );
             }
 
-            // TODO: add synchronization with vessel/office
+            return projectTemplateUid;
         });
     }
 }
