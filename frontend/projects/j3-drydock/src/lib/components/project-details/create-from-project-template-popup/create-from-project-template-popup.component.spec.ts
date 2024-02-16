@@ -8,9 +8,8 @@ describe('CreateFromProjectTemplatePopupComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CreateFromProjectTemplatePopupComponent ]
-    })
-    .compileComponents();
+      declarations: [CreateFromProjectTemplatePopupComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
