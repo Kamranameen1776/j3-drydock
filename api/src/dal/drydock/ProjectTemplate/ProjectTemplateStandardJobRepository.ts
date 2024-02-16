@@ -1,4 +1,4 @@
-import { DataUtilService, ODataService } from 'j2utils';
+import { ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
@@ -27,19 +27,21 @@ export class ProjectTemplateStandardJobRepository {
             where: {
                 ProjectTemplateUid: projectTemplateUid,
                 ActiveStatus: true,
+                StandardJob: {
+                    active_status: true,
+                },
             },
+            relations: ['StandardJob'],
         });
     }
+
     public async CreateProjectTemplateStandardJobs(
         projectTemplateStandardJob: ProjectTemplateStandardJobEntity,
         queryRunner: QueryRunner,
     ): Promise<string> {
-        const uid = DataUtilService.newUid();
-        projectTemplateStandardJob.uid = uid;
-
         await queryRunner.manager.save(projectTemplateStandardJob);
 
-        return uid;
+        return projectTemplateStandardJob.StandardJobUid;
     }
 
     public async UpdateProjectTemplateStandardJobs(
@@ -80,8 +82,7 @@ export class ProjectTemplateStandardJobRepository {
         const query = repository
             .createQueryBuilder('prtsj')
             .select(
-                `prtsj.uid AS ProjectTemplateStandardJobUid,
-                sj.uid AS StandardJobUid,
+                `sj.uid AS StandardJobUid,
             prtsj.ProjectTemplateUid as ProjectTemplateUid,
             sj.code as ItemNumber,
             sj.subject as Subject,
@@ -123,7 +124,7 @@ export class ProjectTemplateStandardJobRepository {
             msb.display_name MaterialSuppliedBy
         `,
             )
-            .innerJoin(StandardJobs, 'sj', 'prtsj.StandardJobUid = sj.uid')
+            .innerJoin(StandardJobs, 'sj', 'prtsj.StandardJobUid = sj.uid AND sj.active_status = 1')
             .innerJoin(ProjectTemplateEntity, 'pt', 'pt.uid = prtsj.ProjectTemplateUid AND pt.ActiveStatus = 1')
             .leftJoin(StandardJobsVesselTypeEntity, 'sjvt', `sjvt.standard_job_uid = sj.uid`)
             .leftJoin(StandardJobsSurveyCertificateAuthorityEntity, 'sjsca', `sjsca.standard_job_uid = sj.uid`)

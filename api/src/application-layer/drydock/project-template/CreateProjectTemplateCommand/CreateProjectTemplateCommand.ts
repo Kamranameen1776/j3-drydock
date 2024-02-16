@@ -38,11 +38,11 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
         projectTemplate.Subject = request.Subject;
         projectTemplate.Description = request.Description;
         projectTemplate.ProjectTypeUid = request.ProjectTypeUid;
-        projectTemplate.LastUpdated = request.CreatedAt;
-        projectTemplate.CreatedAt = request.CreatedAt;
+        projectTemplate.created_at = request.CreatedAt;
+        projectTemplate.created_by = request.CreatedBy;
 
-        if (request.uid) {
-            projectTemplate.uid = request.uid;
+        if (request.ProjectTemplateUid) {
+            projectTemplate.uid = request.ProjectTemplateUid;
         }
 
         await this.uow.ExecuteAsync(async (queryRunner) => {

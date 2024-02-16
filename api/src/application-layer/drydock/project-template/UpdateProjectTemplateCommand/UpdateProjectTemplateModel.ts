@@ -23,4 +23,7 @@ export class UpdateProjectTemplateModel {
 
     @IsNotEmpty()
     public LastUpdated: Date;
+
+    @IsNotEmpty()
+    public UpdatedBy: string;
 }

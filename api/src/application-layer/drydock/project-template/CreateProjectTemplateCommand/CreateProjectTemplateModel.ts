@@ -4,7 +4,7 @@ import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateProjectTemplateModel {
     @IsUUID()
-    public uid?: string;
+    public ProjectTemplateUid?: string;
 
     @IsNotEmpty()
     public Subject: string;
@@ -22,4 +22,7 @@ export class CreateProjectTemplateModel {
 
     @IsNotEmpty()
     public CreatedAt: Date;
+
+    @IsNotEmpty()
+    public CreatedBy: string;
 }

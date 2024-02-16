@@ -1,5 +1,5 @@
 import { DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, In, QueryRunner } from 'typeorm';
+import { getConnection, getManager, In, QueryRunner, UpdateResult } from 'typeorm';
 
 import { ProjectTemplateGridFiltersKeys } from '../../../application-layer/drydock/project-template/ProjectTemplateConstants';
 import { className } from '../../../common/drydock/ts-helpers/className';
@@ -73,7 +73,7 @@ export class ProjectTemplateRepository {
                 on: 'ptvt.project_template_uid = prt.uid AND aliased.ID = ptvt.vessel_type_id',
             })},
             COUNT(DISTINCT sj.uid) as NoOfSpecItems,
-            prt.LastUpdated as LastUpdated
+            COALESCE(prt.updated_at, prt.created_at) as LastUpdated
             `,
             )
             .innerJoin(ProjectTypeEntity, 'pt', 'prt.ProjectTypeUid = pt.uid')
@@ -87,11 +87,12 @@ export class ProjectTemplateRepository {
                     'prt.template_code',
                     'prt.subject',
                     'pt.uid',
-                    'prt.last_updated',
+                    'COALESCE(prt.updated_at, prt.created_at)',
                     'wt.worklist_type_display',
                     'wt.worklist_type',
                 ].join(','),
-            );
+            )
+            .where('prt.ActiveStatus = 1');
 
         if (filters.vesselTypeId?.length) {
             query = query.andWhere(`vt.ID IN (:...vesselTypeId)`, { vesselTypeId: filters.vesselTypeId });
@@ -138,5 +139,21 @@ export class ProjectTemplateRepository {
                 await queryRunner.manager.save(ProjectTemplateVesselTypeEntity, vesselTypes);
             }
         }
+    }
+
+    public async deleteProjectTemplate(
+        uid: string,
+        deletedBy: string,
+        queryRunner: QueryRunner,
+    ): Promise<UpdateResult> {
+        return queryRunner.manager.update(
+            ProjectTemplateEntity,
+            { uid, active_status: true },
+            {
+                deleted_at: new Date(),
+                deleted_by: deletedBy,
+                active_status: false,
+            },
+        );
     }
 }

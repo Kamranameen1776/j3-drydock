@@ -45,7 +45,8 @@ export class UpdateProjectTemplateCommand extends Command<UpdateProjectTemplateM
         projectTemplate.Subject = request.Subject;
         projectTemplate.Description = request.Description;
         projectTemplate.ProjectTypeUid = request.ProjectTypeUid;
-        projectTemplate.LastUpdated = request.LastUpdated;
+        projectTemplate.updated_at = request.LastUpdated;
+        projectTemplate.updated_by = request.UpdatedBy;
 
         const projectTemplateStandardJobs =
             await this.projectTemplateStandardJobRepository.GetProjectTemplateStandardJobsByProjectTemplateUid(
