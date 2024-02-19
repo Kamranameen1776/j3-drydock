@@ -6,21 +6,22 @@ import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { JobOrdersRepository } from '../../../../dal/drydock/projects/job-orders/JobOrdersRepository';
 import { UpdateJobOrderDto } from '../../../../dal/drydock/projects/job-orders/UpdateJobOrderDto';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
+import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
+import { SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { Query } from '../../core/cqrs/Query';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 
 export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
+    specificationSubItemRepository = new SpecificationDetailsSubItemsRepository();
+
     jobOrderRepository: JobOrdersRepository;
-
     vesselRepository: VesselsRepository;
-
     specificationDetailsRepository: SpecificationDetailsRepository;
 
     jobOrderTableName = getTableName(JobOrderEntity);
-
     specificationDetailsTableName = getTableName(SpecificationDetailsEntity);
 
     uow: UnitOfWork;
@@ -92,6 +93,22 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
             jobOrder.Remarks = request.Remarks;
 
             await this.jobOrderRepository.UpdateJobOrder(jobOrder, queryRunner);
+
+            if (request.UpdatesChanges && request.UpdatesChanges.length > 0) {
+                await Promise.all(
+                    request.UpdatesChanges.map((subItem) => {
+                        const subItemUpdate: Partial<SpecificationDetailsSubItemEntity> = {
+                            discount: subItem.discount,
+                            unitPrice: subItem.unitPrice,
+                            quantity: subItem.quantity,
+                            estimatedCost: subItem.estimatedCost,
+                            uid: subItem.uid,
+                        };
+
+                        return this.specificationSubItemRepository.updateRawSubItem(subItemUpdate, queryRunner);
+                    }),
+                );
+            }
 
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,

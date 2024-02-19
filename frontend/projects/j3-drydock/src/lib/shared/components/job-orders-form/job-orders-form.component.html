@@ -1,0 +1,60 @@
+<p-tabView class="jb-tabview">
+  <p-tabPanel header="General Details">
+    <div class="specification-code-link jb-top-section-container">
+      <div class="jb-top-section-rows">
+        <div class="jb-top-section-row3">
+          <div>
+            <label>Code:&nbsp;</label>
+            <a (click)="navigateToSpecificationDetails(selectedSpecification)">
+              {{ selectedSpecification.Value }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+    <jb-form
+      (jbFormGroup)="initUpdateJobOrderFormGroup($any($event))"
+      [formStructure]="updateJobOrderForm"
+      [isVerticalLabel]="true"
+      class="form-generator-log"
+    ></jb-form>
+
+    <div class="remarks jb-top-section-container">
+      <div class="jb-top-section-rows">
+        <div class="jb-top-section-row3">
+          <div>
+            <label>Remarks</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="jb-editor-remarks">
+      <form [formGroup]="remarksEditorFormGroup">
+        <jb-editor
+          #remarksEditor
+          [id]="remarksEditorConfig.id"
+          [maxLength]="remarksEditorConfig.maxLength"
+          [placeholder]="remarksEditorConfig.placeholder"
+          [crtlName]="remarksEditorConfig.crtlName"
+          [moduleCode]="remarksEditorConfig.moduleCode"
+          [functionCode]="remarksEditorConfig.functionCode"
+          [inlineMode]="remarksEditorConfig.inlineMode"
+          [key1]="remarksEditorConfig.key1"
+          [vesselId]="remarksEditorConfig.vesselId"
+          [tools]="tools"
+          (updateParentCtrlValue)="remarksEditorUpdateParentCtrlValue($event.value)"
+        ></jb-editor>
+      </form>
+    </div>
+  </p-tabPanel>
+  <p-tabPanel header="Cost Update">
+    <jb-drydock-cost-updates-tab
+      [specificationUid]="selectedSpecification?.Key"
+      *ngIf="isOpen"
+      #updatesTab
+    ></jb-drydock-cost-updates-tab>
+  </p-tabPanel>
+</p-tabView>

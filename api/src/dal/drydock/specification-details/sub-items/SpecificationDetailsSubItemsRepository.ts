@@ -22,7 +22,7 @@ import { CreateManyParams } from './dto/CreateManyParams';
 import { CreateSubItemParams } from './dto/CreateSubItemParams';
 import { DeleteManyParams } from './dto/DeleteManyParams';
 import { DeleteSubItemParams } from './dto/DeleteSubItemParams';
-import { FindManyParams } from './dto/FindManyParams';
+import { FindSpecificationSubItemsDto } from './dto/FindSpecificationSubItemsDto';
 import { GetManyParams } from './dto/GetManyParams';
 import { GetSubItemParams } from './dto/GetSubItemParams';
 import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
@@ -42,6 +42,7 @@ export type FindManyRecord = Pick<
     | 'unitTypeUid'
     | 'description'
     | 'unitType'
+    | 'estimatedCost'
 >;
 
 export class SpecificationDetailsSubItemsRepository {
@@ -64,6 +65,7 @@ export class SpecificationDetailsSubItemsRepository {
             return !!res;
         });
     }
+
     public async validateSubItemsAgainstProject(
         SubItemArray: Array<SpecificationDetailsSubItemEntity>,
         ProjectUid: string,
@@ -87,7 +89,8 @@ export class SpecificationDetailsSubItemsRepository {
             return !!res;
         });
     }
-    public async findMany(params: FindManyParams): Promise<ODataResult<FindManyRecord>> {
+
+    public async findMany(params: FindSpecificationSubItemsDto): Promise<ODataResult<FindManyRecord>> {
         const [script, substitutions] = getManager()
             .createQueryBuilder(SpecificationDetailsSubItemEntity, 'subItem')
             .select([
@@ -102,6 +105,7 @@ export class SpecificationDetailsSubItemsRepository {
                 'subItem.unit_type_uid as unitTypeUid',
                 'subItem.description as description',
                 'unitType.types as unitType',
+                'subItem.estimatedCost as estimatedCost',
             ])
             .leftJoin('lib_unit_type', 'unitType', 'unitType.uid = subItem.unit_type_uid')
             .where('specification_details_uid = :specificationDetailsUid', {
@@ -130,7 +134,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async getOneByUid(
-        params: GetSubItemParams,
+        params: Pick<GetSubItemParams, 'uid' | 'specificationDetailsUid'>,
         queryRunner: QueryRunner,
     ): Promise<SpecificationDetailsSubItemEntity | null> {
         const subItem = await queryRunner.manager.findOne(SpecificationDetailsSubItemEntity, {
@@ -147,7 +151,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async getOneExistingByUid(
-        params: GetSubItemParams,
+        params: Pick<GetSubItemParams, 'uid' | 'specificationDetailsUid'>,
         queryRunner: QueryRunner,
     ): Promise<SpecificationDetailsSubItemEntity> {
         const subItem = await this.getOneByUid(params, queryRunner);
@@ -209,6 +213,7 @@ export class SpecificationDetailsSubItemsRepository {
         );
         return queryRunner.manager.save(newSubItems);
     }
+
     public async updateMultipleEntities(subItemsData: SpecificationDetailsSubItemEntity[], queryRunner: QueryRunner) {
         const repository = queryRunner.manager.getRepository(SpecificationDetailsSubItemEntity);
         const promises = subItemsData.map((entity) => {
@@ -224,7 +229,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async updateRawSubItem(subItemData: Partial<SpecificationDetailsSubItemEntity>, queryRunner: QueryRunner) {
-        return queryRunner.manager.update(SpecificationDetailsSubItemEntity, { uid: subItemData.uid }, subItemData);
+        return queryRunner.manager.save(SpecificationDetailsSubItemEntity, subItemData);
     }
 
     public async updateOneExistingByUid(
@@ -233,7 +238,7 @@ export class SpecificationDetailsSubItemsRepository {
     ): Promise<SpecificationDetailsSubItemEntity> {
         const existingSubItem = await this.getOneExistingByUid(params, queryRunner);
 
-        if (params.props.unitUid != null) {
+        if (params.props?.unitUid != null) {
             await this.assertAllUnitTypesExistByUids([params.props.unitUid], queryRunner);
         }
 
@@ -381,19 +386,22 @@ export class SpecificationDetailsSubItemsRepository {
         });
     }
 
-    protected async assertAllUnitTypesExistByUids(unitTypeUids: string[], queryRunner: QueryRunner): Promise<void> {
-        unitTypeUids = unitTypeUids.filter((uid) => !!uid);
-        if (unitTypeUids.length === 0) {
+    protected async assertAllUnitTypesExistByUids(
+        unitTypeUids: (string | undefined)[],
+        queryRunner: QueryRunner,
+    ): Promise<void> {
+        const uids = unitTypeUids.filter((uid) => !!uid) as string[];
+        if (uids.length === 0) {
             return;
         }
         const unitTypes = await queryRunner.manager.find(UnitTypeEntity, {
             where: {
-                uid: In(unitTypeUids),
+                uid: In(uids),
                 activeStatus: true,
             },
         });
 
-        const unitTypeExistenceMap = calculateEntityExistenceMap(unitTypes, unitTypeUids);
+        const unitTypeExistenceMap = calculateEntityExistenceMap(unitTypes, uids);
 
         for (const [unitTypeUid, exists] of entriesOf(unitTypeExistenceMap)) {
             if (!exists) {
@@ -416,6 +424,7 @@ export class SpecificationDetailsSubItemsRepository {
             quantity: subItemData.quantity ?? 0,
             unitPrice: subItemData.unitPrice ?? '0',
             discount: subItemData.discount ?? '0',
+            estimatedCost: subItemData.estimatedCost ?? 0,
         };
 
         const newSubItem: Partial<SpecificationDetailsSubItemEntity> = {

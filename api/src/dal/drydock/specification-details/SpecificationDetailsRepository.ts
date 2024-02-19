@@ -285,6 +285,7 @@ export class SpecificationDetailsRepository {
 
         const query = getManager()
             .createQueryBuilder(SpecificationDetailsEntity, 'sd')
+            .distinct()
             .select([
                 'sd.uid as uid',
                 'sd.subject as subject',

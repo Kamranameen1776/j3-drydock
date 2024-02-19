@@ -31,13 +31,14 @@ type RecordFormatted = WithDiscountFormatted<FindManyRecord>;
 export type Record = RecordFormatted | TotalRow;
 
 export class SpecificationSubItemService {
-    public mapQueryResult(subItems: FindManyRecord[]): Record[] {
-        const recordsFormatted = this.formatSubItems(subItems);
-        const totalRow = this.calculateTotalRow(subItems);
-        const records: Record[] = recordsFormatted;
+    public mapQueryResult(subItems: FindManyRecord[], hideTotal = false): Record[] {
+        const records: Record[] = this.formatSubItems(subItems);
 
-        if (totalRow != null) {
-            records.push(totalRow);
+        if (!hideTotal) {
+            const totalRow = this.calculateTotalRow(subItems);
+            if (totalRow != null) {
+                records.push(totalRow);
+            }
         }
 
         return records;
@@ -88,6 +89,7 @@ export class SpecificationSubItemService {
                     rowCssClass: 'no-actions',
                 };
                 const subItem: SpecificationSubItemCostUpdate = {
+                    specificationUid: curr.uid,
                     subItemUid: curr.subItemUid,
                     subItemSubject: curr.subItemSubject,
                     estimatedCost: new Decimal(curr.subItemCost || 0).toFixed(2),
@@ -145,8 +147,6 @@ export class SpecificationSubItemService {
             const subItemFormatted: RecordFormatted = {
                 ...subItem,
                 discount: new Decimal(subItem.discount || 0).times(100).toNumber(),
-                // TODO: for some reason the cost returned from the database is a number, not a string, we should fix
-                // that and then we can remove this "toFixed()"
                 cost: new Decimal(subItem.cost || 0).toFixed(2),
             };
 
