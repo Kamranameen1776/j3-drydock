@@ -3,7 +3,7 @@ import { ApiRequestService, WebApiRequest, eCrud, eEntities } from 'jibe-compone
 import { Observable } from 'rxjs';
 import { IUpdateJobOrderDto } from './IUpdateJobOrderDto';
 import { KeyValuePair } from '../../../utils/KeyValuePair';
-import { GetJobOrderBySpecificationDto } from './GetJobOrderBySpecificationDto';
+import { GetJobOrderByUidDto } from './GetJobOrderByUidDto';
 import { JobOrderDto } from './JobOrderDto';
 import { IUpdateJobOrderDurationDto } from './IUpdateJobOrderDurationDto';
 import { eApiBaseDryDockAPI } from '../../../models/constants/constants';
@@ -35,11 +35,11 @@ export class JobOrdersService {
     return request;
   }
 
-  getJobOrderBySpecificationRequest(getJobOrderBySpecificationDto: GetJobOrderBySpecificationDto): WebApiRequest {
+  getJobOrderByUidRequest(getJobOrderBySpecificationDto: GetJobOrderByUidDto): WebApiRequest {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
-      action: 'projects/job-orders/get-job-order-by-specification',
+      action: 'projects/job-orders/get-job-order-by-uid',
       crud: eCrud.Post,
       body: getJobOrderBySpecificationDto
     };
@@ -47,8 +47,8 @@ export class JobOrdersService {
     return request;
   }
 
-  getJobOrderBySpecification(getJobOrderBySpecificationDto: GetJobOrderBySpecificationDto): Observable<JobOrderDto> {
-    return this.apiRequestService.sendApiReq(this.getJobOrderBySpecificationRequest(getJobOrderBySpecificationDto));
+  getJobOrderByUid(getJobOrderByUidDto: GetJobOrderByUidDto): Observable<JobOrderDto> {
+    return this.apiRequestService.sendApiReq(this.getJobOrderByUidRequest(getJobOrderByUidDto));
   }
 
   getJobOrderStatusesRequest(): WebApiRequest {

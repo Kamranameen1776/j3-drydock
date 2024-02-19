@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
     IsDateString,
     IsNotEmpty,
@@ -8,8 +9,10 @@ import {
     MaxLength,
     Min,
     MinLength,
+    ValidateNested,
 } from 'class-validator';
 
+import { SubItemEditDto } from '../../specification-details/sub-items/dto/SubItemEditableProps';
 import { JobOrderStatus } from './JobOrderStatus';
 
 export class UpdateJobOrderDto {
@@ -52,4 +55,9 @@ export class UpdateJobOrderDto {
     @IsString()
     @IsOptional()
     Remarks: string;
+
+    @Type(() => SubItemEditDto)
+    @ValidateNested({ each: true })
+    @IsOptional()
+    UpdatesChanges: SubItemEditDto[];
 }

@@ -6,14 +6,14 @@ import { SpecificationUpdatesService } from './specification-updates.service';
 import { IUpdateJobOrderDto } from '../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
 import { JobOrdersService } from '../../../services/project-monitoring/job-orders/JobOrdersService';
 import { GrowlMessageService } from '../../../services/growl-message.service';
-import { IJobOrdersFormComponent } from '../../project-details/project-monitoring/job-orders-form/IJobOrdersFormComponent';
-import { IJobOrderFormResultDto } from '../../project-details/project-monitoring/job-orders-form/dtos/IJobOrderFormResultDto';
 import { currentLocalAsUTC } from '../../../utils/date';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { IJobOrderFormDto } from '../../project-details/project-monitoring/job-orders-form/dtos/IJobOrderFormDto';
 import { SpecificationDetails } from '../../../models/interfaces/specification-details';
 import { JobOrder } from '../../../models/interfaces/job-orders';
 import { eSpecificationUpdatesFields } from '../../../models/enums/specification-details.enum';
+import { IJobOrderFormDto } from '../../../shared/components/job-orders-form/dtos/IJobOrderFormDto';
+import { IJobOrderFormResultDto } from '../../../shared/components/job-orders-form/dtos/IJobOrderFormResultDto';
+import { JobOrdersFormComponent } from '../../../shared/components/job-orders-form/job-orders-form.component';
 
 @Component({
   selector: 'jb-drydock-specification-updates',
@@ -25,7 +25,7 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
   @Input() specificationDetails: SpecificationDetails;
 
   @ViewChild('reportDateTemplate', { static: true }) reportDateTemplate: TemplateRef<unknown>;
-  @ViewChild('jobOrderForm') jobOrderForm: IJobOrdersFormComponent;
+  @ViewChild('jobOrderForm') jobOrderForm: JobOrdersFormComponent;
 
   gridInputs: GridInputsWithRequest;
 
@@ -131,6 +131,15 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
     if (this.row) {
       data.uid = this.row.uid;
+    }
+
+    if (jobOrder.UpdatesChanges?.length) {
+      data.UpdatesChanges = jobOrder.UpdatesChanges.map((subItem) => {
+        return {
+          ...subItem,
+          discount: subItem.discount / 100
+        };
+      });
     }
 
     // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images

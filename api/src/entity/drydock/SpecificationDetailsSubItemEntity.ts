@@ -13,7 +13,7 @@ export const DISCOUNT_DEFAULT = DISCOUNT_MIN;
 /** Depends on {@link SUBJECT_MAX_LENGTH} */
 const SUBJECT_COLUMN_LENGTH = 512; // next power of 2
 
-export const costFactorsKeys = ['quantity', 'unitPrice', 'discount'] satisfies Array<
+export const costFactorsKeys = ['quantity', 'unitPrice', 'discount', 'estimatedCost'] satisfies Array<
     keyof SpecificationDetailsSubItemEntity
 >;
 
@@ -115,6 +115,16 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         nullable: true,
     })
     cost: string | null;
+
+    @Column({
+        name: 'estimated_cost',
+        type: 'decimal',
+        precision: 10,
+        scale: 4,
+        nullable: false,
+        default: 0,
+    })
+    estimatedCost: number | null;
 
     @Column({
         name: 'yard_comments',

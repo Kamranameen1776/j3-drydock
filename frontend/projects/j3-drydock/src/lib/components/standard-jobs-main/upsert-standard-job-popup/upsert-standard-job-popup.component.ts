@@ -9,7 +9,7 @@ import { StandardJobsService } from '../../../services/standard-jobs.service';
 import { finalize } from 'rxjs/operators';
 import { GrowlMessageService } from '../../../services/growl-message.service';
 import { SubItem } from '../../../models/interfaces/sub-items';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import { eModule } from '../../../models/enums/module.enum';
 import { eFunction } from '../../../models/enums/function.enum';

@@ -1,10 +1,10 @@
 import { FormModel, UserService, eFieldControlType } from 'jibe-components';
-import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { Injectable } from '@angular/core';
-import { eJobOrderUpdateDisplayNames, eJobOrderUpdateFieldNames } from '../../../../models/enums/job-order-update.enum';
-import { EditorConfig } from '../../../../models/interfaces/EditorConfig';
-import { eFunction } from '../../../../models/enums/function.enum';
-import { eModule } from '../../../../models/enums/module.enum';
+import { eJobOrderUpdateDisplayNames, eJobOrderUpdateFieldNames } from '../../../models/enums/job-order-update.enum';
+import { EditorConfig } from '../../../models/interfaces/EditorConfig';
+import { eModule } from '../../../models/enums/module.enum';
+import { eFunction } from '../../../models/enums/function.enum';
+import { JobOrdersService } from '../../../services/project-monitoring/job-orders/JobOrdersService';
 
 @Injectable()
 export class JobOrdersFormService {
