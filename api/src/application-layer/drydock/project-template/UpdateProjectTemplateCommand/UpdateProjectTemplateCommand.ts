@@ -77,7 +77,7 @@ export class UpdateProjectTemplateCommand extends Command<UpdateProjectTemplateM
                     const projectTemplateStandardJob = new ProjectTemplateStandardJobEntity();
                     projectTemplateStandardJob.StandardJobUid = uid;
                     projectTemplateStandardJob.ProjectTemplateUid = projectTemplate.uid;
-                    projectTemplateStandardJob.timestamp = new Date();
+                    projectTemplateStandardJob.modified_at = new Date();
                     projectTemplateStandardJob.modified_by = request.UpdatedBy;
 
                     return projectTemplateStandardJob;
@@ -86,7 +86,7 @@ export class UpdateProjectTemplateCommand extends Command<UpdateProjectTemplateM
                     standardJobsToRemove.map((standardJobToRemove) => {
                         standardJobToRemove.active_status = false;
                         standardJobToRemove.modified_by = request.UpdatedBy;
-                        standardJobToRemove.timestamp = new Date();
+                        standardJobToRemove.modified_at = new Date();
 
                         return standardJobToRemove;
                     }),

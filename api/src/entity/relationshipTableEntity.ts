@@ -15,9 +15,9 @@ export abstract class RelationshipTableEntity {
     modified_by: string;
 
     @Column('datetimeoffset', {
-        name: 'timestamp',
+        name: 'modified_at',
         nullable: true,
         default: () => 'getutcdate()()',
     })
-    timestamp: Date | null;
+    modified_at: Date | null;
 }

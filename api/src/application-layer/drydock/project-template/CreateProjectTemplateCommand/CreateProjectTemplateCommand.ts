@@ -66,7 +66,7 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
                 const projectTemplateStandardJob = new ProjectTemplateStandardJobEntity();
                 projectTemplateStandardJob.StandardJobUid = uid;
                 projectTemplateStandardJob.ProjectTemplateUid = projectTemplate.uid;
-                projectTemplateStandardJob.timestamp = new Date();
+                projectTemplateStandardJob.modified_at = new Date();
                 projectTemplateStandardJob.modified_by = request.CreatedBy;
 
                 return projectTemplateStandardJob;

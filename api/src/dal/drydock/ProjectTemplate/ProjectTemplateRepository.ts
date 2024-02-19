@@ -81,7 +81,11 @@ export class ProjectTemplateRepository {
             .innerJoin(ProjectTypeEntity, 'pt', 'prt.ProjectTypeUid = pt.uid')
             .innerJoin(TecLibWorklistTypeEntity, 'wt', 'pt.WorklistType = wt.WorklistType')
             .innerJoin(ProjectTemplateVesselTypeEntity, 'ptvt', 'prt.uid = ptvt.project_template_uid')
-            .leftJoin(ProjectTemplateStandardJobEntity, 'sj', 'prt.uid = sj.ProjectTemplateUid AND sj.ActiveStatus = 1')
+            .leftJoin(
+                ProjectTemplateStandardJobEntity,
+                'sj',
+                'prt.uid = sj.ProjectTemplateUid AND sj.active_status = 1',
+            )
             .leftJoin(LibVesseltypes, 'vt', `vt.ID = ptvt.vessel_type_id and vt.Active_Status = 1`)
             .groupBy(
                 [
@@ -132,7 +136,7 @@ export class ProjectTemplateRepository {
                 vesselType.project_template_uid = uid;
                 vesselType.active_status = vesselTypesToDelete.includes(id) ? false : true;
                 vesselType.modified_by = modifiedBy;
-                vesselType.timestamp = new Date();
+                vesselType.modified_at = new Date();
 
                 return vesselType;
             });
