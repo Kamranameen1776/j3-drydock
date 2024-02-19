@@ -11,6 +11,7 @@ export interface SpecificationSubItem {
   discount: number;
   description: string;
   dialogHeader: string;
+  cost?: string | number;
 }
 
 export interface CreateSpecificationSubItemData extends SpecificationSubItem {

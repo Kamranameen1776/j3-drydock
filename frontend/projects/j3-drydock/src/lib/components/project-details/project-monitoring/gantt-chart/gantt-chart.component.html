@@ -1,3 +1,14 @@
+<div class="gantt-filters-container">
+  <div class="gantt-filter">
+    <label>Show Overdue</label>
+    <jb-single-select-dropdown
+      [content]="overdueDropdownContent"
+      placeholder="Show Overdue"
+      (selectedSubOperation)="handleSelectOverdueOption($event)"
+    ></jb-single-select-dropdown>
+  </div>
+</div>
+
 <ejs-gantt
   id="{{ id }}"
   [dataSource]="tasks"
@@ -8,11 +19,10 @@
   [columns]="columns"
   (queryTaskbarInfo)="queryTaskbarInfo($event)"
   height="421px"
-  [projectStartDate]="projectStartDate"
-  [projectEndDate]="projectEndDate"
   [editSettings]="editSettings"
   [tooltipSettings]="tooltipSettings"
   (taskbarEdited)="taskbarEdited($event)"
+  [dateFormat]="transformToEJ2DateFormat(dateFormat)"
 ></ejs-gantt>
 
 <jb-dialog
@@ -26,6 +36,7 @@
     jb-dialog-body
   >
     <jb-job-orders-form
+      [isOpen]="updateDialogVisible"
       [vesselId]="vesselId"
       #jobOrderForm
     ></jb-job-orders-form>

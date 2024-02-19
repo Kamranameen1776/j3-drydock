@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
-import { type SubItemActionParams } from './SubItemActionParams';
+import { SubItemActionParams } from './SubItemActionParams';
 import { SubItemEditableProps } from './SubItemEditableProps';
 
 // unsupported multiple inheritance is required in order

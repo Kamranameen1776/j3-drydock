@@ -2,7 +2,7 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class specificationWorkflowConfiguration1706679366066 implements MigrationInterface {
+export class specificationWorkflowConfiguration1706679366068 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -34,9 +34,9 @@ export class specificationWorkflowConfiguration1706679366066 implements Migratio
             `);
 
             await queryRunner.query(`
-            DECLARE @app_location nvarchar(20)
-            SET @app_location = ( SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location' )
-            IF( @app_location = 'office')
+            DECLARE @applocation nvarchar(20)
+            SET @applocation = ( SELECT [value] FROM inf_lib_configuration WHERE [key] = 'location' )
+            IF( @applocation = 'office')
             BEGIN
 
             BEGIN
@@ -98,9 +98,9 @@ export class specificationWorkflowConfiguration1706679366066 implements Migratio
                     @job_type_column_config varchar(1500) = '
                     {"status_config":[{"wfstatus":"Raise","mandatory":"Yes","rework":"No","delete":"Yes","save":"Yes"},
                     {"wfstatus":"In Progress","mandatory":"Yes","rework": "No","delete":"No","save":"Yes"},
-                    {"wfstatus":"Complete","mandatory":"Yes","rework":"No","delete":"No","save":"Yes"},
-                    {"wfstatus":"Close","mandatory":"Yes","rework":"Yes","delete":"No","save":"No"},
-                    {"wfstatus":"Cancel","mandatory":"No","rework":"No","delete":"No","save":"No"}]}'
+                    {"wfstatus":"Complete","mandatory":"Yes","rework":"Yes","delete":"No","save":"Yes"},
+                    {"wfstatus":"Close","mandatory":"Yes","rework":"No","delete":"No","save":"No"},
+                    {"wfstatus":"Cancel","mandatory":"No","rework":"Yes","delete":"No","save":"No"}]}'
                     SELECT @MaxID = ISNULL(MAX(ID),0)+1 FROM JMS_DTL_Workflow_config
                     IF(@MaxID > 0)
                     BEGIN
@@ -169,9 +169,9 @@ export class specificationWorkflowConfiguration1706679366066 implements Migratio
                         VALUES
                             (1, 'RAISE', 'Draft', 'Create New', 1, 0, null,'tm_specification_raise_office'),
                             (2, 'IN PROGRESS', 'In Progress', 'In Progress', 1, 0, 1,'tm_specification_in_progress_office'),
-                            (3, 'COMPLETE', 'Add to Plan', 'Planned', 1, 0, 1,'tm_specification_complete_office'),
-                            (4, 'CLOSE', 'Close', 'Closed', 1, 1, 1,'tm_specification_close_office'),
-                            (5, 'CANCEL', 'Cancel', 'Canceled', 1, 0, 1,'tm_specification_cancel_office')
+                            (3, 'COMPLETE', 'Add to Plan', 'Planned', 1, 1, 1,'tm_specification_complete_office'),
+                            (4, 'CLOSE', 'Close', 'Closed', 1, 0, 1,'tm_specification_close_office'),
+                            (5, 'UNCLOSE', 'Cancel', 'Canceled', 1, 1, 1,'tm_specification_cancel_office')
                         declare  @DefaultAppLocations table (Is_Office INT)
                         INSERT INTO @DefaultAppLocations (Is_Office)
                         VALUES (1), (0)

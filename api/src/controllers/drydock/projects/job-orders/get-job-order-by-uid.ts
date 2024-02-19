@@ -1,16 +1,16 @@
 import { Request } from 'express';
 import { Body, Controller, Post, Route } from 'tsoa';
 
-import { GetJobOrderBySpecificationDto } from '../../../../application-layer/drydock/projects/job-orders/dtos/GetJobOrderBySpecificationDto';
+import { GetJobOrderByUidDto } from '../../../../application-layer/drydock/projects/job-orders/dtos/GetJobOrderByUidDto';
 import { JobOrderDto } from '../../../../application-layer/drydock/projects/job-orders/dtos/JobOrderDto';
-import { GetJobOrderBySpecificationQuery } from '../../../../application-layer/drydock/projects/job-orders/GetJobOrderBySpecificationQuery';
+import { GetJobOrderByUidQuery } from '../../../../application-layer/drydock/projects/job-orders/GetJobOrderByUidQuery';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
-@Route('drydock/projects/job-orders/get-job-order-by-specification')
+@Route('drydock/projects/job-orders/get-job-order-by-uid')
 export class GetJobOrderBySpecificationController extends Controller {
     @Post()
-    public async getJobOrderBySpecification(@Body() dto: GetJobOrderBySpecificationDto): Promise<JobOrderDto | null> {
-        const query = new GetJobOrderBySpecificationQuery();
+    public async getJobOrderBySpecification(@Body() dto: GetJobOrderByUidDto): Promise<JobOrderDto | null> {
+        const query = new GetJobOrderByUidQuery();
 
         const result = await query.ExecuteAsync(dto);
 
