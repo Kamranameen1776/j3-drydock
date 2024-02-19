@@ -89,6 +89,7 @@ export class UploadInvoiceService {
                     quantity: entity.quantity ?? 0,
                     unitPrice: entity.unitPrice ?? '0',
                     discount: entity.discount ?? '0',
+                    estimatedCost: entity.estimatedCost ?? 0,
                 };
                 entity.cost = calculateCost(newSubItemCostFactorsExcerpt).toFixed(2);
                 dataToUpdate.push(entity);
@@ -121,6 +122,7 @@ export class UploadInvoiceService {
                 quantity: entity.quantity ?? 0,
                 unitPrice: entity.unitPrice ?? '0',
                 discount: entity.discount ?? '0',
+                estimatedCost: entity.estimatedCost ?? 0,
             };
             entity.cost = calculateCost(newSubItemCostFactorsExcerpt).toFixed(2);
             if (ut) {

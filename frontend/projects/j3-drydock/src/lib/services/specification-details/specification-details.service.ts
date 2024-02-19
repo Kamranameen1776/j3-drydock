@@ -314,6 +314,25 @@ export class SpecificationDetailsService {
     return apiRequest;
   }
 
+  public getCostUpdates(specificationUid: string) {
+    const apiRequest: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'specification-details/sub-items/find-sub-items',
+      crud: eCrud.Post,
+      body: {
+        specificationDetailsUid: specificationUid,
+        hideTotal: true
+      },
+      odata: {
+        skip: '0',
+        top: '10000000'
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
   getSpecificationDetails(specificationUid: string): Observable<SpecificationDetails> {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
@@ -438,10 +457,10 @@ export class SpecificationDetailsService {
     return this.apiRequestService.sendApiReq(request);
   }
 
-  isInExecutionPhase(status: string) {
+  isInExecutionPhase(projectStatus: string) {
     return (
-      !this.areStatusesSame(status, eProjectWorkflowStatusAction.Raise) &&
-      !this.areStatusesSame(status, eProjectWorkflowStatusAction['In Progress'])
+      !this.areStatusesSame(projectStatus, eProjectWorkflowStatusAction.Raise) &&
+      !this.areStatusesSame(projectStatus, eProjectWorkflowStatusAction['In Progress'])
     );
   }
 

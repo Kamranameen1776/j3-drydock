@@ -27,7 +27,7 @@ export class UpdateSubItemUtilizedController extends Controller {
         @Request() request: express.Request,
     ): Promise<void> {
         const authUser = AccessRights.authorizationDecode(request) as UserFromToken;
-        dto.UserId = authUser.UserID;
+        dto.userUid = authUser.UserUID;
 
         const query = new UpdateSubItemUtilizedCommand();
 

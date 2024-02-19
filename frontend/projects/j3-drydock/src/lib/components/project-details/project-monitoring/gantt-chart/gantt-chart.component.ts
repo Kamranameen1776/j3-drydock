@@ -1,6 +1,8 @@
+import { JobOrdersFormComponent } from '../../../../shared/components/job-orders-form/job-orders-form.component';
+
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
-import { GanttChartService } from './gantt-chart.service';
+import { GanttChartService, OverdueStatus } from './gantt-chart.service';
 import { JobOrderDto } from '../../../../services/project-monitoring/job-orders/JobOrderDto';
 import { finalize, map, takeUntil } from 'rxjs/operators';
 import {
@@ -19,21 +21,21 @@ import {
   statusProgressBarBackgroundShaded
 } from '../../../../shared/status-css.json';
 
-import { IJbDialog, JmsService, UserService, eJMSWorkflowAction } from 'jibe-components';
+import { IJbDialog, ISingleSelectDropdown, JmsService, UserService, eJMSWorkflowAction } from 'jibe-components';
 import { UTCAsLocal, currentLocalAsUTC } from '../../../../utils/date';
-import { IJobOrderFormDto } from '../job-orders-form/dtos/IJobOrderFormDto';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
-import { IJobOrdersFormComponent } from '../job-orders-form/IJobOrdersFormComponent';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
-import { IJobOrderFormResultDto } from '../job-orders-form/dtos/IJobOrderFormResultDto';
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
 import moment from 'moment';
 import { IUpdateJobOrderDurationDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDurationDto';
 import { ProjectDetailsFull } from '../../../../models/interfaces/project-details';
+import { IJobOrderFormDto } from '../../../../shared/components/job-orders-form/dtos/IJobOrderFormDto';
+import { IJobOrderFormResultDto } from '../../../../shared/components/job-orders-form/dtos/IJobOrderFormResultDto';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
 };
+
 @Component({
   selector: 'jb-project-gantt-chart',
   templateUrl: './gantt-chart.component.html',
@@ -49,7 +51,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   @Input() project: ProjectDetailsFull;
 
   @ViewChild('jobOrderForm')
-  jobOrderForm: IJobOrdersFormComponent;
+  jobOrderForm: JobOrdersFormComponent;
 
   public updateBtnLabel = 'Update';
 
@@ -82,6 +84,20 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     }
   ];
 
+  // String values of boolean are used because of bug in Single Select Dropdown when false value are set it's treated as no value set
+  overdue: OverdueStatus | null = OverdueStatus.All;
+
+  overdueDropdownContent: ISingleSelectDropdown = {
+    id: 'overdueDropdown',
+    dataSource: [
+      { label: 'All', value: OverdueStatus.All },
+      { label: 'Yes', value: OverdueStatus.True },
+      { label: 'No', value: OverdueStatus.False }
+    ],
+    placeholder: 'Show Overdue',
+    selectedValue: this.overdue
+  };
+
   ganttChart: Gantt;
   tooltipSettings: TooltipSettingsModel = {
     taskbar:
@@ -91,16 +107,16 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       '<td colspan="3">${SpecificationSubject}</td>' +
       '</tr>' +
       '<tr>' +
-      '<td class="e-gantt-tooltip-label">Start Date</td><td>:</td>' +
+      '<td class="e-gantt-tooltip-label">Start Date</td><td>&nbsp;</td>' +
       '<td class="e-gantt-tooltip-value">&nbsp;${SpecificationStartDateFormatted}</td>' +
       '</tr>' +
-      '<tr><td class="e-gantt-tooltip-label">End Date</td><td>:</td>' +
+      '<tr><td class="e-gantt-tooltip-label">End Date</td><td>&nbsp;</td>' +
       '<td class="e-gantt-tooltip-value">&nbsp;${SpecificationEndDateFormatted}</td></tr>' +
-      '<td class="e-gantt-tooltip-label">Progress</td><td>:</td>' +
+      '<td class="e-gantt-tooltip-label">Progress</td><td>&nbsp;</td>' +
       '<td class="e-gantt-tooltip-value">&nbsp;${Progress}</td></tr>' +
-      '<tr><td class="e-gantt-tooltip-label">Duration</td><td>:</td>' +
+      '<tr><td class="e-gantt-tooltip-label">Duration</td><td>&nbsp;</td>' +
       '<td class="e-gantt-tooltip-value">&nbsp;${DurationInDays}</td></tr><tr>' +
-      '<td class="e-gantt-tooltip-label">Status</td><td>:</td>' +
+      '<td class="e-gantt-tooltip-label">Status</td><td>&nbsp;</td>' +
       '<td class="e-gantt-tooltip-value">&nbsp;${SpecificationStatus.statusName}</td></tr>' +
       '</tbody>' +
       '</table>',
@@ -131,7 +147,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       minWidth: '80',
       maxWidth: '80',
       template:
-        '<span data-name="gantt-grid-specification-code" data-specification-code="${SpecificationCode.Code}"  data-specification-uid="${SpecificationCode.SpecificationUid}" target="_blank" class="gantt-grid-link jb_grid_topCellValue">${SpecificationCode.Code}</span>'
+        '<span data-name="gantt-grid-specification-code" data-specification-code="${SpecificationCode.Code}"  data-uid="${SpecificationCode.JobOrderUid}" target="_blank" class="gantt-grid-link jb_grid_topCellValue">${SpecificationCode.Code}</span>'
     },
     {
       field: 'SpecificationSubject',
@@ -364,6 +380,15 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       Remarks: jobOrder.Remarks
     };
 
+    if (jobOrder.UpdatesChanges?.length) {
+      data.UpdatesChanges = jobOrder.UpdatesChanges;
+    }
+
+    const uid = this.jobOrderForm?.uid;
+    if (uid) {
+      data.uid = uid;
+    }
+
     // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
     this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
 
@@ -384,25 +409,26 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   private linkClick = (e) => {
     if (e.target.attributes['data-name']?.value === 'gantt-grid-specification-code') {
-      const specificationUid = e.target.attributes['data-specification-uid'].value;
+      const uid = e.target.attributes['data-uid'].value;
       const code = e.target.attributes['data-specification-code'].value;
-      this.showJobOrderForm(specificationUid, code);
+      this.showJobOrderForm(uid, code);
     }
   };
 
-  private showJobOrderForm(specificationUid: string, code: string) {
+  private showJobOrderForm(uid: string, code: string) {
     this.jobOrdersService
-      .getJobOrderBySpecification({
-        SpecificationUid: specificationUid
+      .getJobOrderByUid({
+        uid
       })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((jobOrder) => {
         const jobOrderForm: IJobOrderFormDto = {
-          SpecificationUid: specificationUid,
+          uid,
           Code: code
         };
 
         if (jobOrder) {
+          jobOrderForm.SpecificationUid = jobOrder.SpecificationUid;
           jobOrderForm.Remarks = jobOrder.Remarks;
           jobOrderForm.Progress = jobOrder.Progress;
           jobOrderForm.Subject = jobOrder.Subject;
@@ -447,7 +473,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     this.showSpinner = true;
 
     this.ganttChartService
-      .getData(this.projectId)
+      .getData(this.projectId, this.overdue)
       .pipe(takeUntil(this.unsubscribe$))
       .pipe(
         map((data) =>
@@ -457,7 +483,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
             const obj = {
               ...jobOrder,
               JobOrderUid: jobOrder.JobOrderUid,
-              SpecificationCode: { Code: jobOrder.Code, SpecificationUid: jobOrder.SpecificationUid },
+              SpecificationCode: { Code: jobOrder.Code, SpecificationUid: jobOrder.SpecificationUid, JobOrderUid: jobOrder.JobOrderUid },
               Responsible: jobOrder.Responsible,
 
               SpecificationStartDateFormatted: moment(specificationStartDate).format(this.dateFormat),
@@ -466,7 +492,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
               SpecificationStartDate: specificationStartDate,
               SpecificationEndDate: specificationEndDate,
 
-              DurationInDays: this.calculateCountOfDays(specificationEndDate, specificationStartDate),
+              DurationInDays: this.calculateCountOfDays(specificationStartDate, specificationEndDate),
 
               Progress: jobOrder.Progress || 0,
               SpecificationStatus: {
@@ -491,8 +517,19 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       });
   }
 
+  public handleSelectOverdueOption(option) {
+    if (option !== this.overdue) {
+      this.overdue = option;
+      this.initComponent();
+    }
+  }
+
   private calculateCountOfDays(startDate: Date, endDate: Date): number {
     const msInOneDay = 1000 * 60 * 60 * 24;
+
+    if (!startDate || !endDate) {
+      return 0;
+    }
 
     return Math.abs(Math.ceil((endDate.getTime() - startDate.getTime()) / msInOneDay));
   }

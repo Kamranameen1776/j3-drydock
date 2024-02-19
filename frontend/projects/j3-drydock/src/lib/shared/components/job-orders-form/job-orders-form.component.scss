@@ -1,3 +1,18 @@
+@import '../../../styles/mixins';
+
+
+:host {
+  ::ng-deep {
+    @include jb-tabview;
+    @include progress-spinner-fix;
+
+    .ui-table-scrollable-body {
+      height: 250px !important;
+    }
+  }
+}
+
+
 .specification-code-link {
   margin-bottom: 20px;
   padding: 0;
