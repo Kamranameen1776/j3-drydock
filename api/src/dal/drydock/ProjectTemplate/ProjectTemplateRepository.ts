@@ -1,5 +1,5 @@
 import { DataUtilService, ODataService } from 'j2utils';
-import { getConnection, getManager, In, QueryRunner, UpdateResult } from 'typeorm';
+import { getConnection, getManager, QueryRunner, UpdateResult } from 'typeorm';
 
 import { ProjectTemplateGridFiltersKeys } from '../../../application-layer/drydock/project-template/ProjectTemplateConstants';
 import { className } from '../../../common/drydock/ts-helpers/className';
@@ -10,6 +10,7 @@ import { ProjectTemplateStandardJobEntity } from '../../../entity/drydock/Projec
 import { ProjectTemplateVesselTypeEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateVesselTypeEntity';
 import { ODataBodyDto } from '../../../shared/dto';
 import { ODataResult } from '../../../shared/interfaces';
+import { getChunkSize } from '../../../shared/utils/get-chunk-size';
 import { RepoUtils } from '../utils/RepoUtils';
 import { IGetProjectTemplateGridDto } from './IGetProjectTemplateGridDto';
 
@@ -58,6 +59,7 @@ export class ProjectTemplateRepository {
             .select(
                 `prt.uid AS ProjectTemplateUid,
             'PT-O-'+FORMAT(prt.TemplateCode, '0000') AS TemplateCode,
+            prt.TemplateCode as TemplateCodeRaw,
             prt.Subject AS Subject,
             wt.WorklistTypeDisplay as ProjectType,
             wt.WorklistType as ProjectTypeCode,
@@ -105,7 +107,12 @@ export class ProjectTemplateRepository {
         return result;
     }
 
-    public async updateProjectTemplateVesselTypes(uid: string, vesselTypeIds: number[], queryRunner: QueryRunner) {
+    public async updateProjectTemplateVesselTypes(
+        uid: string,
+        vesselTypeIds: number[],
+        modifiedBy: string,
+        queryRunner: QueryRunner,
+    ) {
         const relations = await queryRunner.manager.findOne(ProjectTemplateEntity, {
             where: {
                 uid,
@@ -113,31 +120,26 @@ export class ProjectTemplateRepository {
             relations: ['vesselType'],
         });
 
-        if (vesselTypeIds && vesselTypeIds.length) {
-            const vesselTypesToDelete =
-                relations?.vesselType.filter((item) => !vesselTypeIds.includes(item.ID as number)).map((i) => i.ID) ||
-                [];
-            const vesselTypesToAdd = vesselTypeIds.filter(
-                (item) => !relations?.vesselType.map((i) => i.ID).includes(item),
-            );
+        const relationIds: number[] = relations?.vesselType.map((i) => i.ID) || [];
+        const vesselTypes = Array.from(new Set([...relationIds, ...vesselTypeIds]));
 
-            if (vesselTypesToDelete.length) {
-                await queryRunner.manager.delete(ProjectTemplateVesselTypeEntity, {
-                    project_template_uid: uid,
-                    vessel_type_id: In(vesselTypesToDelete),
-                });
-            }
-            if (vesselTypesToAdd.length) {
-                const vesselTypes = vesselTypesToAdd.map((id) => {
-                    const vesselType = new ProjectTemplateVesselTypeEntity();
-                    vesselType.vessel_type_id = id;
-                    vesselType.project_template_uid = uid;
+        if (vesselTypes && vesselTypes.length) {
+            const vesselTypesToDelete = relationIds.filter((item) => !vesselTypeIds.includes(item)) || [];
 
-                    return vesselType;
-                });
+            const vesselTypesEntities = vesselTypes.map((id) => {
+                const vesselType = new ProjectTemplateVesselTypeEntity();
+                vesselType.vessel_type_id = id;
+                vesselType.project_template_uid = uid;
+                vesselType.active_status = vesselTypesToDelete.includes(id) ? false : true;
+                vesselType.modified_by = modifiedBy;
+                vesselType.timestamp = new Date();
 
-                await queryRunner.manager.save(ProjectTemplateVesselTypeEntity, vesselTypes);
-            }
+                return vesselType;
+            });
+
+            await queryRunner.manager.save(ProjectTemplateVesselTypeEntity, vesselTypesEntities, {
+                chunk: getChunkSize(5),
+            });
         }
     }
 

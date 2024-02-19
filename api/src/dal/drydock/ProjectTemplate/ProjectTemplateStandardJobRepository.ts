@@ -16,6 +16,7 @@ import { ProjectTemplateEntity } from '../../../entity/drydock/ProjectTemplate/P
 import { ProjectTemplateStandardJobEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateStandardJobEntity';
 import { ODataBodyDto } from '../../../shared/dto';
 import { ODataResult } from '../../../shared/interfaces';
+import { getChunkSize } from '../../../shared/utils/get-chunk-size';
 import { RepoUtils } from '../utils/RepoUtils';
 import { IGetProjectTemplateStandardJobsGridDto } from './IGetProjectTemplateStandardJobsGridDto';
 
@@ -26,7 +27,7 @@ export class ProjectTemplateStandardJobRepository {
         return repository.find({
             where: {
                 ProjectTemplateUid: projectTemplateUid,
-                ActiveStatus: true,
+                active_status: true,
                 StandardJob: {
                     active_status: true,
                 },
@@ -35,20 +36,21 @@ export class ProjectTemplateStandardJobRepository {
         });
     }
 
-    public async CreateProjectTemplateStandardJobs(
-        projectTemplateStandardJob: ProjectTemplateStandardJobEntity,
+    public async CreateOrUpdateProjectTemplateStandardJobs(
+        projectTemplateStandardJob: ProjectTemplateStandardJobEntity | ProjectTemplateStandardJobEntity[],
         queryRunner: QueryRunner,
-    ): Promise<string> {
-        await queryRunner.manager.save(projectTemplateStandardJob);
+    ): Promise<string | string[]> {
+        await queryRunner.manager.save(projectTemplateStandardJob, {
+            chunk: getChunkSize(5),
+            /* Since we don't have limit to amount of standard jobs to be changed in one transaction
+            and driver has limit on 2100 parameters (5 is amount of parameters per one relation) we need to split it into chunks */
+        });
 
-        return projectTemplateStandardJob.StandardJobUid;
-    }
-
-    public async UpdateProjectTemplateStandardJobs(
-        projectTemplateStandardJob: ProjectTemplateStandardJobEntity,
-        queryRunner: QueryRunner,
-    ): Promise<void> {
-        await queryRunner.manager.save(projectTemplateStandardJob);
+        if (Array.isArray(projectTemplateStandardJob)) {
+            return projectTemplateStandardJob.map((entity) => entity.StandardJobUid);
+        } else {
+            return projectTemplateStandardJob.StandardJobUid;
+        }
     }
 
     public async TryGetProjectTemplateStandardJobByUid(
@@ -59,7 +61,7 @@ export class ProjectTemplateStandardJobRepository {
         return repository.findOne({
             where: {
                 uid: projectTemplateStandardJobUid,
-                ActiveStatus: true,
+                active_status: true,
             },
         });
     }
@@ -126,10 +128,6 @@ export class ProjectTemplateStandardJobRepository {
             )
             .innerJoin(StandardJobs, 'sj', 'prtsj.StandardJobUid = sj.uid AND sj.active_status = 1')
             .innerJoin(ProjectTemplateEntity, 'pt', 'pt.uid = prtsj.ProjectTemplateUid AND pt.active_status = 1')
-            .leftJoin(StandardJobsVesselTypeEntity, 'sjvt', `sjvt.standard_job_uid = sj.uid`)
-            .leftJoin(StandardJobsSurveyCertificateAuthorityEntity, 'sjsca', `sjsca.standard_job_uid = sj.uid`)
-            .leftJoin(LibSurveyCertificateAuthority, 'lsca', `lsca.ID = sjsca.survey_id and lsca.Active_Status = 1`)
-            .leftJoin(LibVesseltypes, 'vt', `vt.ID = sjvt.vessel_type_id and vt.Active_Status = 1`)
             .leftJoin(TmDdLibDoneBy, 'db', `db.uid = sj.done_by_uid AND db.active_status = 1`)
             .leftJoin(
                 TmDdLibMaterialSuppliedBy,

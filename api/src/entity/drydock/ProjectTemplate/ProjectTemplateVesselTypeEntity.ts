@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Entity, PrimaryColumn } from 'typeorm';
 
+import { RelationshipTableEntity } from '../../relationshipTableEntity';
+
 @Entity('project_template_vessel_type', { schema: 'dry_dock' })
-export class ProjectTemplateVesselTypeEntity {
+export class ProjectTemplateVesselTypeEntity extends RelationshipTableEntity {
     @PrimaryColumn('uniqueidentifier', {
         nullable: false,
         name: 'project_template_uid',

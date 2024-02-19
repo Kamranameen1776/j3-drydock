@@ -3,6 +3,7 @@ import { ProjectTemplateRepository } from '../../../../dal/drydock/ProjectTempla
 import { ProjectTemplateStandardJobRepository } from '../../../../dal/drydock/ProjectTemplate/ProjectTemplateStandardJobRepository';
 import { StandardJobsRepository } from '../../../../dal/drydock/standard-jobs/StandardJobsRepository';
 import { ProjectTemplateStandardJobEntity } from '../../../../entity/drydock/ProjectTemplate/ProjectTemplateStandardJobEntity';
+import { diffArray } from '../../../../shared/utils/diff';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { IStandardJobsToUpdateDto } from './IStandardJobsToUpdateDto';
@@ -32,15 +33,8 @@ export class UpdateProjectTemplateCommand extends Command<UpdateProjectTemplateM
         );
 
         if (!projectTemplate) {
-            throw new ApplicationException('Project template is not found: ' + request.ProjectTemplateUid);
+            throw new ApplicationException(`Project template is not found: ${request.ProjectTemplateUid}`);
         }
-
-        // TODO: 1. validate vessel type
-
-        // var vesselType = await this.someRepo.GetVesselType(request.VesselTypeUid)
-        //     ?? throw new ApplicationException("Vessel type not found: " + request.VesselTypeUid);
-
-        // TODO: 2. validate request.ProjectTypeUid
 
         projectTemplate.Subject = request.Subject;
         projectTemplate.Description = request.Description;
@@ -56,10 +50,11 @@ export class UpdateProjectTemplateCommand extends Command<UpdateProjectTemplateM
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.projectTemplateRepository.UpdateProjectTemplate(projectTemplate, queryRunner);
 
-            if (request.VesselTypeUid?.length) {
+            if (request.VesselTypeUid) {
                 await this.projectTemplateRepository.updateProjectTemplateVesselTypes(
                     request.ProjectTemplateUid,
                     request.VesselTypeUid,
+                    request.UpdatedBy,
                     queryRunner,
                 );
             }
@@ -69,34 +64,38 @@ export class UpdateProjectTemplateCommand extends Command<UpdateProjectTemplateM
                 projectTemplateStandardJobs,
             );
 
-            for (const standardJobUid of standardJobsUidsToAdd) {
-                const isStandardJobExists = await this.standardJobsRepository.Exists(standardJobUid);
+            const StandardJobsIds = await this.standardJobsRepository.exists(standardJobsUidsToAdd);
 
-                if (!isStandardJobExists) {
-                    throw new ApplicationException(`Standard job is not found: ${standardJobUid}`);
-                }
-
-                const projectTemplateStandardJob = new ProjectTemplateStandardJobEntity();
-                projectTemplateStandardJob.StandardJobUid = standardJobUid;
-                projectTemplateStandardJob.ProjectTemplateUid = projectTemplate.uid;
-                projectTemplateStandardJob.CreatedAt = request.LastUpdated;
-
-                await this.projectTemplateStandardJobRepository.CreateProjectTemplateStandardJobs(
-                    projectTemplateStandardJob,
-                    queryRunner,
+            if (StandardJobsIds.length < standardJobsUidsToAdd.length) {
+                throw new ApplicationException(
+                    `Standard jobs is not found: ${diffArray(standardJobsUidsToAdd, StandardJobsIds)}`,
                 );
             }
 
-            for (const standardJobToRemove of standardJobsToRemove) {
-                standardJobToRemove.ActiveStatus = false;
+            const standardJobsOps = standardJobsUidsToAdd
+                .map((uid) => {
+                    const projectTemplateStandardJob = new ProjectTemplateStandardJobEntity();
+                    projectTemplateStandardJob.StandardJobUid = uid;
+                    projectTemplateStandardJob.ProjectTemplateUid = projectTemplate.uid;
+                    projectTemplateStandardJob.timestamp = new Date();
+                    projectTemplateStandardJob.modified_by = request.UpdatedBy;
 
-                await this.projectTemplateStandardJobRepository.UpdateProjectTemplateStandardJobs(
-                    standardJobToRemove,
-                    queryRunner,
+                    return projectTemplateStandardJob;
+                })
+                .concat(
+                    standardJobsToRemove.map((standardJobToRemove) => {
+                        standardJobToRemove.active_status = false;
+                        standardJobToRemove.modified_by = request.UpdatedBy;
+                        standardJobToRemove.timestamp = new Date();
+
+                        return standardJobToRemove;
+                    }),
                 );
-            }
 
-            // TODO: add synchronization with vessel/office
+            await this.projectTemplateStandardJobRepository.CreateOrUpdateProjectTemplateStandardJobs(
+                standardJobsOps,
+                queryRunner,
+            );
         });
     }
 

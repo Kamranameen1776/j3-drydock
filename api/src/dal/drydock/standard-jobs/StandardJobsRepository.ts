@@ -368,16 +368,19 @@ export class StandardJobsRepository {
         }
     }
 
-    public async Exists(standardJobUid: string): Promise<boolean> {
+    public async exists(standardJobUid: string | string[]): Promise<string[]> {
         const repository = getManager().getRepository(StandardJobs);
 
-        const query = repository
-            .createQueryBuilder('sj')
-            .where('sj.uid = :standardJobUid', { standardJobUid: standardJobUid })
-            .andWhere('sj.active_status = 1');
+        let query = repository.createQueryBuilder('sj').select('sj.uid');
 
-        const result = await query.getCount();
+        if (Array.isArray(standardJobUid)) {
+            query = query.where('sj.uid IN (:...standardJobUid)', { standardJobUid: standardJobUid });
+        } else {
+            query = query.where('sj.uid = :standardJobUid', { standardJobUid: standardJobUid });
+        }
 
-        return result === 1;
+        query = query.andWhere('sj.active_status = 1').groupBy('sj.uid');
+
+        return query.execute();
     }
 }

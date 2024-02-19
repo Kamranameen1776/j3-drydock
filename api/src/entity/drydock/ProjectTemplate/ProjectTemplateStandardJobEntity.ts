@@ -1,12 +1,13 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
+import { RelationshipTableEntity } from '../../relationshipTableEntity';
 import { StandardJobs } from '../StandardJobsEntity';
 import { ProjectTemplateEntity } from './ProjectTemplateEntity';
 
 export const ProjectTemplateStandardJobEntityTableName = 'project_template_standard_job';
 
 @Entity(ProjectTemplateStandardJobEntityTableName, { schema: 'dry_dock' })
-export class ProjectTemplateStandardJobEntity {
+export class ProjectTemplateStandardJobEntity extends RelationshipTableEntity {
     @PrimaryColumn('uuid', {
         nullable: false,
         name: 'project_template_uid',
@@ -18,18 +19,6 @@ export class ProjectTemplateStandardJobEntity {
         name: 'standard_job_uid',
     })
     StandardJobUid: string;
-
-    @Column('datetimeoffset', {
-        nullable: false,
-        name: 'created_at',
-    })
-    CreatedAt: Date | null;
-
-    @Column('bit', {
-        nullable: false,
-        name: 'active_status',
-    })
-    ActiveStatus: boolean;
 
     @ManyToOne(() => ProjectTemplateEntity, (entity) => entity.ProjectTemplateStandardJobs)
     @JoinColumn({
