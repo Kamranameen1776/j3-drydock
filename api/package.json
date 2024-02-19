@@ -49,7 +49,7 @@
     "exceljs": "4.4.0",
     "express": "4.18.2",
     "http-status-codes": "1.4.0",
-    "j2utils": "3.2309.205",
+    "j2utils": "3.2309.220-Node20",
     "j3-express-auto-routes": "22.12.1",
     "lodash": "4.17.21",
     "moment": "2.29.4",
