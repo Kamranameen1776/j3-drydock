@@ -1,5 +1,4 @@
-// removing for now because it breaks lint in releasing to dev
-//import "./tracer"; // must come before importing any instrumented module.
+import './tracer'; // must come before importing any instrumented module.
 
 import { Server } from 'http';
 import { MssqlDBConnection } from 'j2utils';
