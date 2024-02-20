@@ -20,7 +20,6 @@ export interface ProjectTemplateUpdate extends ProjectTemplatePayload {
   LastUpdated: string;
 }
 
-
 @Injectable({
   providedIn: 'root'
 })
