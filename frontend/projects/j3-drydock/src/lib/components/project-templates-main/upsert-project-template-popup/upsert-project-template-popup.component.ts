@@ -120,7 +120,7 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
       ProjectTemplateUid: this.itemUid,
       Subject: formValue.Subject,
       Description: value.editors.description,
-      VesselTypeUid: formValue.VesselTypeUid,
+      VesselTypeID: formValue.VesselTypeID,
       ProjectTypeUid: formValue.ProjectTypeUid,
       StandardJobs: this.changedStandardJobs.map((x) => x.StandardJobUid)
     };

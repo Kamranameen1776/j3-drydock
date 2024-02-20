@@ -7,7 +7,7 @@ export interface ProjectTemplatePayload {
   ProjectTemplateUid: string;
   Subject: string;
   Description: string;
-  VesselTypeUid: string;
+  VesselTypeID: string;
   ProjectTypeUid: string;
   StandardJobs: string[];
 }

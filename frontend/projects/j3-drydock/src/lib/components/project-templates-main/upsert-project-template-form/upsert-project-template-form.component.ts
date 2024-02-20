@@ -93,7 +93,7 @@ export class UpsertProjectTemplateFormComponent extends UnsubscribeComponent imp
         takeUntil(this.unsubscribe$)
       )
       .subscribe((value) => {
-        this.setFieldEnabledAndRequired(eProjectTemplatesFields.VesselTypeUid, !!value);
+        this.setFieldEnabledAndRequired(eProjectTemplatesFields.VesselTypeID, !!value);
       });
   }
 

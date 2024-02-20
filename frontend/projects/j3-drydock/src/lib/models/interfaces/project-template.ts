@@ -9,7 +9,7 @@ export interface ProjectTemplate {
   LastUpdated: string;
 
   Description?: string;
-  VesselTypeUid?: string;
+  VesselTypeID?: string;
   ProjectTypeUid?: string;
   vesselTypeSpecific?: number;
 }

@@ -63,7 +63,7 @@ export class ProjectTemplateUpsertFormService extends FormServiceBase {
             list: this.standardJobsService.getVesselSpecificList()
           },
 
-          [eProjectTemplatesFields.VesselTypeUid]: {
+          [eProjectTemplatesFields.VesselTypeID]: {
             type: eFieldControlType.MultiSelect,
             label: eProjectTemplatesLabels.VesselType,
             sectionID: this.formId,
@@ -105,7 +105,7 @@ export class ProjectTemplateUpsertFormService extends FormServiceBase {
     values: {
       [this.formId]: {
         [eProjectTemplatesFields.Subject]: null,
-        [eProjectTemplatesFields.VesselTypeUid]: null,
+        [eProjectTemplatesFields.VesselTypeID]: null,
         [eProjectTemplatesFields.ProjectTypeUid]: null,
         [eProjectTemplatesFields.Description]: null,
         [eProjectTemplatesFields.VesselSpecific]: 0
