@@ -34,6 +34,7 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
         projectTemplate.ProjectTypeUid = request.ProjectTypeUid;
         projectTemplate.created_at = request.CreatedAt;
         projectTemplate.created_by = request.CreatedBy;
+        projectTemplate.vesselTypeSpecific = request.VesselTypeSpecific;
 
         if (request.ProjectTemplateUid) {
             projectTemplate.uid = request.ProjectTemplateUid;

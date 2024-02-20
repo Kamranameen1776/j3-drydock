@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 
 // TODO: add more validation attributes
 
@@ -14,6 +14,9 @@ export class UpdateProjectTemplateModel {
 
     @IsNumber({}, { each: true })
     public VesselTypeId: number[] | null;
+
+    @IsBoolean()
+    public VesselTypeSpecific: boolean;
 
     @IsNotEmpty()
     @IsUUID()
