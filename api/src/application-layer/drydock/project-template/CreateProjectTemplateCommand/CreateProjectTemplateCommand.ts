@@ -45,10 +45,10 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
                 queryRunner,
             );
 
-            if (request.VesselTypeUid?.length) {
+            if (request.VesselTypeId?.length) {
                 await this.projectTemplateRepository.updateProjectTemplateVesselTypes(
                     projectTemplateUid,
-                    request.VesselTypeUid,
+                    request.VesselTypeId,
                     request.CreatedBy,
                     queryRunner,
                 );

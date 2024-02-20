@@ -24,6 +24,12 @@ export class ProjectTemplateEntity extends BaseDatesEntity {
     })
     ProjectTypeUid: string;
 
+    @Column('bit', {
+        nullable: true,
+        name: 'vessel_type_specific',
+    })
+    vesselTypeSpecific: boolean;
+
     @ManyToMany(() => LibVesseltypes, (LIB_VESSELTYPES: LibVesseltypes) => LIB_VESSELTYPES.project_templates)
     @JoinTable({
         name: 'project_template_vessel_type',

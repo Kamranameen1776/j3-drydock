@@ -12,6 +12,7 @@ export interface IGetProjectTemplateGridDto {
 
     VesselType: string;
     VesselTypeId: string;
+    VesselTypeSpecific: boolean;
 
     NoOfSpecItems: number;
 

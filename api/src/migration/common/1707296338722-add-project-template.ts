@@ -16,6 +16,7 @@ export class AppProjectTemplate1707296338722 implements MigrationInterface {
                 [uid]                      [uniqueidentifier]  NOT NULL DEFAULT NEWSEQUENTIALID(),
                 [template_code]            [int] IDENTITY(1,1) NOT NULL,
                 [project_type_uid]         [uniqueidentifier]  NOT NULL,
+                [vessel_type_specific]     [bit]               NULL DEFAULT 0,
                 [subject]                  [nvarchar](200)     NOT NULL,
                 [description]              [nvarchar](max)     NULL,
                 [active_status]            [bit]               NULL DEFAULT 1,
@@ -28,7 +29,7 @@ export class AppProjectTemplate1707296338722 implements MigrationInterface {
                 CONSTRAINT [PK_project_template] PRIMARY KEY CLUSTERED (
                     [uid] ASC
                 )
-            )
+            );
 
             CREATE TABLE [dry_dock].[project_template_standard_job](
                 [project_template_uid]      [uniqueidentifier]  NOT NULL,

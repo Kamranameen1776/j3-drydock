@@ -13,7 +13,7 @@ export class CreateProjectTemplateModel {
     public Description: string;
 
     @IsNumber({}, { each: true })
-    public VesselTypeUid: number[] | null;
+    public VesselTypeId: number[] | null;
 
     @IsNotEmpty()
     @IsUUID()

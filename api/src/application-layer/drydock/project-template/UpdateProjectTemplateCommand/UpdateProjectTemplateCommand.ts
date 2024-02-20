@@ -50,10 +50,10 @@ export class UpdateProjectTemplateCommand extends Command<UpdateProjectTemplateM
         await this.uow.ExecuteAsync(async (queryRunner) => {
             await this.projectTemplateRepository.UpdateProjectTemplate(projectTemplate, queryRunner);
 
-            if (request.VesselTypeUid) {
+            if (request.VesselTypeId) {
                 await this.projectTemplateRepository.updateProjectTemplateVesselTypes(
                     request.ProjectTemplateUid,
-                    request.VesselTypeUid,
+                    request.VesselTypeId,
                     request.UpdatedBy,
                     queryRunner,
                 );
