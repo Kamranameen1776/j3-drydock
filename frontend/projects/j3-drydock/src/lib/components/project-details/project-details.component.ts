@@ -122,6 +122,14 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         }
       });
     }
+    // if (this.projectsService.hasAccess(eProjectsAccessActions.addFromProjectTemplate)) {
+    res.push({
+      label: 'Create from Project Template',
+      command: () => {
+        this.openCreateFromProjectTemplatePopup();
+      }
+    });
+    // }
     return res;
   }
 
@@ -422,6 +430,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   private openCreateFromStandardJobPopup() {
     this.specificationsComponent?.addFromStandardJob();
+  }
+
+  private openCreateFromProjectTemplatePopup() {
+    this.specificationsComponent?.createFromProjectTemplate();
   }
 
   private setAttachmentsActions() {

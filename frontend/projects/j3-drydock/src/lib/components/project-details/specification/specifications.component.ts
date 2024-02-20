@@ -37,6 +37,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   types = [SpecificationType.ALL, SpecificationType.PMS, SpecificationType.FINDINGS, SpecificationType.STANDARD, SpecificationType.ADHOC];
   isCreatePopupVisible = false;
   addFromStandardJobPopupVisible = false;
+  isCreateFromProjectTemplatePopupVisible = false;
 
   statusCSS = { statusProgressBarBackground: statusProgressBarBackground };
 
@@ -77,6 +78,10 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     this.addFromStandardJobPopupVisible = true;
   }
 
+  createFromProjectTemplate() {
+    this.isCreateFromProjectTemplatePopupVisible = true;
+  }
+
   ngOnInit(): void {
     this.treeData$ = this.functionsService.getFunctions(this.vesselNode.uid).pipe(
       map((functions) => {
@@ -98,6 +103,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   onCloseCreatePopup(hasSaved: boolean) {
     this.isCreatePopupVisible = false;
     this.addFromStandardJobPopupVisible = false;
+    this.isCreateFromProjectTemplatePopupVisible = false;
 
     if (hasSaved) {
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);

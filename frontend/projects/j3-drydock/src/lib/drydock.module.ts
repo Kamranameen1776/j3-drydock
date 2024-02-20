@@ -67,6 +67,7 @@ import { CostUpdatesTabComponent } from './shared/components/cost-updates-tab/co
 import { JobOrdersFormComponent } from './shared/components/job-orders-form/job-orders-form.component';
 import { UpsertProjectTemplatePopupComponent } from './components/project-templates-main/upsert-project-template-popup/upsert-project-template-popup.component';
 import { UpsertProjectTemplateFormComponent } from './components/project-templates-main/upsert-project-template-form/upsert-project-template-form.component';
+import { CreateFromProjectTemplatePopupComponent } from './components/project-details/create-from-project-template-popup/create-from-project-template-popup.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -128,7 +129,8 @@ export function winEnv(): unknown {
     ProjectTemplatesMainComponent,
     CostUpdatesTabComponent,
     UpsertProjectTemplatePopupComponent,
-    UpsertProjectTemplateFormComponent
+    UpsertProjectTemplateFormComponent,
+    CreateFromProjectTemplatePopupComponent
   ],
   imports: [
     CommonModule,

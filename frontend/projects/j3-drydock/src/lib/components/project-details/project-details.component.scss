@@ -13,6 +13,10 @@
     .jb-section-feed-discussion {
       z-index: 50 !important;
     }
+
+    .widget-header-buttons jb-split-button button.ui-button-text-only {
+      width: 140px;
+    }
   }
 }
 
