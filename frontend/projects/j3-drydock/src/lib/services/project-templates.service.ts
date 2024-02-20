@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, WebApiRequest, eCrud, eEntities } from 'jibe-components';
+import { ApiRequestService, UserService, WebApiRequest, eCrud, eEntities } from 'jibe-components';
 import { of } from 'rxjs';
 import { eApiBaseDryDockAPI } from '../models/constants/constants';
 import { localAsUTC } from '../utils/date';
@@ -26,10 +26,20 @@ export interface ProjectTemplateUpdate extends ProjectTemplatePayload {
 })
 export class ProjectTemplatesService {
   constructor(private apiRequestService: ApiRequestService) {}
-  // TODO add implementation
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // TODO why need DeletedBy?
   delete(uid: string) {
-    return of(null);
+    const userDetails = UserService.getUserDetails();
+    const apiRequest: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'project-templates/delete-project-template',
+      crud: eCrud.Put,
+      body: {
+        ProjectTemplateUid: uid,
+        DeletedBy: userDetails?.UserID
+      }
+    };
+    return this.apiRequestService.sendApiReq(apiRequest);
   }
 
   upsertProjectTemplate(payload: ProjectTemplatePayload, isEditing: boolean) {
