@@ -1,5 +1,5 @@
 import { plainToClass } from 'class-transformer';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { AccessRights } from 'j2utils';
 import { Body, Controller, Post, Route } from 'tsoa';
 

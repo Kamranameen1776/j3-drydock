@@ -60,9 +60,6 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
         const vessel = await this.vesselRepository.GetVesselBySpecification(request.SpecificationUid);
 
         let jobOrder: JobOrderEntity | undefined;
-        if (request.uid) {
-            jobOrder = await this.jobOrderRepository.getJobOrderByUid(request.uid);
-        }
 
         specification.StartDate = request.SpecificationStartDate;
         specification.EndDate = request.SpecificationEndDate;

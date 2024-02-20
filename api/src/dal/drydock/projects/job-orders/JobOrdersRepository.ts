@@ -39,7 +39,14 @@ export class JobOrdersRepository {
     ): Promise<ODataResult<IJobOrderDto>> {
         const SpecificationDetailsRepository = getManager().getRepository(SpecificationDetailsEntity);
 
+        const latestJobOrderQuery = `SELECT TOP 1 uid
+                                     FROM "dry_dock"."job_orders" job_order
+                                     WHERE sd.uid = job_order.specification_uid
+                                       and job_order.active_status = 1
+                                     ORDER BY jo.last_updated DESC`;
+
         let query = SpecificationDetailsRepository.createQueryBuilder('sd')
+            .distinct()
             .select([
                 'sd.uid AS SpecificationUid',
                 'sd.ProjectUid AS ProjectUid',
@@ -58,11 +65,11 @@ export class JobOrdersRepository {
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid')
-            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesn't have type. probably should stay that way
+            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) // TODO: strange merge, but Specifications doesn't have type. probably should stay that way
             .innerJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid and its.ActiveStatus = 1')
             .leftJoin(className(LibUserEntity), 'usr', 'p.project_manager_Uid = usr.uid and usr.ActiveStatus = 1')
             .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.DoneByUid = db.uid and sd.ActiveStatus = 1')
-            .innerJoin(className(JobOrderEntity), 'jo', 'sd.uid = jo.SpecificationUid and jo.ActiveStatus = 1');
+            .leftJoin(className(JobOrderEntity), 'jo', `jo.uid = (${latestJobOrderQuery})`);
 
         if (statuses) {
             query = query.innerJoin(
@@ -103,9 +110,9 @@ export class JobOrdersRepository {
     }
 
     public async GetUpdates(request: Req<GetJobOrdersDto>): Promise<ODataResult<IJobOrderDto>> {
-        const SpecificationDetailsRepository = getManager().getRepository(JobOrderEntity);
+        const JobOrderRepository = getManager().getRepository(JobOrderEntity);
 
-        const [query, parameters] = SpecificationDetailsRepository.createQueryBuilder('jo')
+        const queryBuilder = JobOrderRepository.createQueryBuilder('jo')
             .select([
                 'jo.uid as uid',
                 'sd.uid AS SpecificationUid',
@@ -122,6 +129,7 @@ export class JobOrdersRepository {
                 'jo.Status as JobOrderStatus',
                 'jo.LastUpdated AS LastUpdated',
                 'jo.Progress AS Progress',
+                'jo.CreatedAt as CreatedAt',
                 `CONCAT(createdByUsr.FirstName, ' ', createdByUsr.LastName) AS 'User'`,
             ])
             .innerJoin(
@@ -148,9 +156,13 @@ export class JobOrdersRepository {
                 'createdByUsr',
                 'jo.CreatedBy = createdByUsr.uid and createdByUsr.ActiveStatus = 1',
             )
-            .where('jo.SpecificationUid = :SpecificationUid', { SpecificationUid: request.body.uid })
-            .distinct()
-            .getQueryAndParameters();
+            .distinct();
+
+        if (request.body.uid) {
+            queryBuilder.where('jo.SpecificationUid = :SpecificationUid', { SpecificationUid: request.body.uid });
+        }
+
+        const [query, parameters] = queryBuilder.getQueryAndParameters();
 
         const oDataService = new ODataService(request, getConnection);
 
@@ -173,12 +185,15 @@ export class JobOrdersRepository {
         await queryRunner.manager.save(JobOrderEntity, jobOrder);
     }
 
-    public getJobOrderByUid(uid: string): Promise<JobOrderEntity | undefined> {
+    public getLatestJobOrderBySpecificationUid(specificationUid: string): Promise<JobOrderEntity | undefined> {
         const jobOrdersRepository = getManager().getRepository(JobOrderEntity);
 
-        return jobOrdersRepository.findOneOrFail({
+        return jobOrdersRepository.findOne({
             where: {
-                uid,
+                SpecificationUid: specificationUid,
+            },
+            order: {
+                LastUpdated: 'DESC',
             },
         });
     }

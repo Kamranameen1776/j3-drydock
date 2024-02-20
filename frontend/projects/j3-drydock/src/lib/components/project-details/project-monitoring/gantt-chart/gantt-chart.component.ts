@@ -147,7 +147,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       minWidth: '80',
       maxWidth: '80',
       template:
-        '<span data-name="gantt-grid-specification-code" data-specification-code="${SpecificationCode.Code}"  data-uid="${SpecificationCode.JobOrderUid}" target="_blank" class="gantt-grid-link jb_grid_topCellValue">${SpecificationCode.Code}</span>'
+        '<span data-name="gantt-grid-specification-code" data-specification-code="${SpecificationCode.Code}" data-specification-uid="${SpecificationCode.SpecificationUid}" data-uid="${SpecificationCode.JobOrderUid}" target="_blank" class="gantt-grid-link jb_grid_topCellValue">${SpecificationCode.Code}</span>'
     },
     {
       field: 'SpecificationSubject',
@@ -384,11 +384,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       data.UpdatesChanges = jobOrder.UpdatesChanges;
     }
 
-    const uid = this.jobOrderForm?.uid;
-    if (uid) {
-      data.uid = uid;
-    }
-
     // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
     this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
 
@@ -403,32 +398,38 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       });
   }
 
+  public handleSelectOverdueOption(option) {
+    if (option !== this.overdue) {
+      this.overdue = option;
+      this.initComponent();
+    }
+  }
+
   private listenGanttClicks() {
     this.element.nativeElement.querySelector(`#${this.id}`).addEventListener('click', this.linkClick);
   }
 
   private linkClick = (e) => {
     if (e.target.attributes['data-name']?.value === 'gantt-grid-specification-code') {
-      const uid = e.target.attributes['data-uid'].value;
+      const uid = e.target.attributes['data-specification-uid'].value;
       const code = e.target.attributes['data-specification-code'].value;
       this.showJobOrderForm(uid, code);
     }
   };
 
-  private showJobOrderForm(uid: string, code: string) {
+  private showJobOrderForm(specificationUid: string, code: string) {
     this.jobOrdersService
-      .getJobOrderByUid({
-        uid
+      .getJobOrderBySpecificationUid({
+        specificationUid
       })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((jobOrder) => {
         const jobOrderForm: IJobOrderFormDto = {
-          uid,
+          SpecificationUid: specificationUid,
           Code: code
         };
 
         if (jobOrder) {
-          jobOrderForm.SpecificationUid = jobOrder.SpecificationUid;
           jobOrderForm.Remarks = jobOrder.Remarks;
           jobOrderForm.Progress = jobOrder.Progress;
           jobOrderForm.Subject = jobOrder.Subject;
@@ -483,7 +484,11 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
             const obj = {
               ...jobOrder,
               JobOrderUid: jobOrder.JobOrderUid,
-              SpecificationCode: { Code: jobOrder.Code, SpecificationUid: jobOrder.SpecificationUid, JobOrderUid: jobOrder.JobOrderUid },
+              SpecificationCode: {
+                Code: jobOrder.Code,
+                SpecificationUid: jobOrder.SpecificationUid,
+                JobOrderUid: jobOrder.JobOrderUid
+              },
               Responsible: jobOrder.Responsible,
 
               SpecificationStartDateFormatted: moment(specificationStartDate).format(this.dateFormat),
@@ -515,13 +520,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
         this.showSpinner = false;
         this.tasks = data;
       });
-  }
-
-  public handleSelectOverdueOption(option) {
-    if (option !== this.overdue) {
-      this.overdue = option;
-      this.initComponent();
-    }
   }
 
   private calculateCountOfDays(startDate: Date, endDate: Date): number {
