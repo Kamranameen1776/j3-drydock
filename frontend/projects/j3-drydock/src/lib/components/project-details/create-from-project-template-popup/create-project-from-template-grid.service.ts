@@ -98,7 +98,7 @@ export class CreateProjectFromTemplateGridService {
     [eProjectTemplatesFields.ProjectType]: {
       webApiRequest: this.projectsService.getProjectTypesRequest(),
       type: eFieldControlType.MultiSelect,
-      odataKey: eProjectTemplatesFields.ProjectTypeId,
+      odataKey: eProjectTemplatesFields.ProjectTypeUid,
       listValueKey: 'ProjectTypeUId'
     }
   };
