@@ -19,8 +19,7 @@ export class ProjectTemplatesGridService {
       hyperlink: true,
       IsActive: true,
       IsMandatory: true,
-      IsVisible: true,
-      width: '100px'
+      IsVisible: true
     },
     {
       DisplayText: eProjectTemplatesLabels.Subject,

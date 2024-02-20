@@ -1,5 +1,4 @@
-import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { eGridRefreshType, eGridRowActions, GridAction, GridRowActions, GridService } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
@@ -20,6 +19,8 @@ import { finalize } from 'rxjs/operators';
   providers: [ProjectTemplatesGridService, GrowlMessageService]
 })
 export class ProjectTemplatesMainComponent extends UnsubscribeComponent implements OnInit {
+  @ViewChild('lastUpdatedTemplate', { static: true }) lastUpdatedTemplate: TemplateRef<unknown>;
+
   gridInputs: GridInputsWithRequest;
 
   isUpsertPopupVisible = false;
@@ -36,8 +37,6 @@ export class ProjectTemplatesMainComponent extends UnsubscribeComponent implemen
   };
 
   growlMessage$ = this.growlMessageService.growlMessage$;
-
-  eStandardJobsMainFields = eStandardJobsMainFields;
 
   canView = false;
 
@@ -141,6 +140,8 @@ export class ProjectTemplatesMainComponent extends UnsubscribeComponent implemen
   private setGridInputs() {
     this.gridInputs = this.mainGridService.getGridInputs();
     this.gridInputs.gridButton.show = this.canCreate;
+
+    this.setCellTemplate(this.lastUpdatedTemplate, eProjectTemplatesFields.LastUpdated);
   }
   // TODO remove true condition once US for access rights is done
   private setAccessRights() {
@@ -167,5 +168,13 @@ export class ProjectTemplatesMainComponent extends UnsubscribeComponent implemen
 
   private setPageTitle() {
     this.title.setTitle('Project Templates');
+  }
+
+  private setCellTemplate(template: TemplateRef<unknown>, fieldName: eProjectTemplatesFields) {
+    const col = this.gridInputs.columns.find((col) => col.FieldName === fieldName);
+    if (!col) {
+      return;
+    }
+    col.cellTemplate = template;
   }
 }

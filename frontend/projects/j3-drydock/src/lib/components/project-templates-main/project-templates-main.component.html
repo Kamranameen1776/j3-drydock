@@ -44,4 +44,11 @@
   </ng-container>
 </jb-dialog>
 
+<ng-template
+  #lastUpdatedTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.LastUpdated | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
+</ng-template>
+
 <jb-growl [content]="growlMessage$ | async"></jb-growl>
