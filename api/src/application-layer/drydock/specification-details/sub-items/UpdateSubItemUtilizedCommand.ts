@@ -31,7 +31,7 @@ export class UpdateSubItemUtilizedCommand extends Command<UpdateSubItemUtilizedD
                     const subItemData: Partial<SpecificationDetailsSubItemEntity> = {
                         uid: subItem.uid,
                         utilized: subItem.utilized,
-                        updated_by: request.UserId,
+                        updated_by: request.userUid,
                     };
 
                     return this.subItemRepo.updateRawSubItem(subItemData, queryRunner);

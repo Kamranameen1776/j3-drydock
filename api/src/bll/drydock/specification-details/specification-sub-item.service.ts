@@ -89,6 +89,7 @@ export class SpecificationSubItemService {
                     rowCssClass: 'no-actions',
                 };
                 const subItem: SpecificationSubItemCostUpdate = {
+                    specificationUid: curr.uid,
                     subItemUid: curr.subItemUid,
                     subItemSubject: curr.subItemSubject,
                     estimatedCost: new Decimal(curr.subItemCost || 0).toFixed(2),

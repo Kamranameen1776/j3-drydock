@@ -134,7 +134,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async getOneByUid(
-        params: GetSubItemParams,
+        params: Pick<GetSubItemParams, 'uid' | 'specificationDetailsUid'>,
         queryRunner: QueryRunner,
     ): Promise<SpecificationDetailsSubItemEntity | null> {
         const subItem = await queryRunner.manager.findOne(SpecificationDetailsSubItemEntity, {
@@ -151,7 +151,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async getOneExistingByUid(
-        params: GetSubItemParams,
+        params: Pick<GetSubItemParams, 'uid' | 'specificationDetailsUid'>,
         queryRunner: QueryRunner,
     ): Promise<SpecificationDetailsSubItemEntity> {
         const subItem = await this.getOneByUid(params, queryRunner);
@@ -229,7 +229,7 @@ export class SpecificationDetailsSubItemsRepository {
     }
 
     public async updateRawSubItem(subItemData: Partial<SpecificationDetailsSubItemEntity>, queryRunner: QueryRunner) {
-        return queryRunner.manager.update(SpecificationDetailsSubItemEntity, { uid: subItemData.uid }, subItemData);
+        return queryRunner.manager.save(SpecificationDetailsSubItemEntity, subItemData);
     }
 
     public async updateOneExistingByUid(
@@ -238,7 +238,7 @@ export class SpecificationDetailsSubItemsRepository {
     ): Promise<SpecificationDetailsSubItemEntity> {
         const existingSubItem = await this.getOneExistingByUid(params, queryRunner);
 
-        if (params.props.unitUid != null) {
+        if (params.props?.unitUid != null) {
             await this.assertAllUnitTypesExistByUids([params.props.unitUid], queryRunner);
         }
 
@@ -386,19 +386,22 @@ export class SpecificationDetailsSubItemsRepository {
         });
     }
 
-    protected async assertAllUnitTypesExistByUids(unitTypeUids: string[], queryRunner: QueryRunner): Promise<void> {
-        unitTypeUids = unitTypeUids.filter((uid) => !!uid);
-        if (unitTypeUids.length === 0) {
+    protected async assertAllUnitTypesExistByUids(
+        unitTypeUids: (string | undefined)[],
+        queryRunner: QueryRunner,
+    ): Promise<void> {
+        const uids = unitTypeUids.filter((uid) => !!uid) as string[];
+        if (uids.length === 0) {
             return;
         }
         const unitTypes = await queryRunner.manager.find(UnitTypeEntity, {
             where: {
-                uid: In(unitTypeUids),
+                uid: In(uids),
                 activeStatus: true,
             },
         });
 
-        const unitTypeExistenceMap = calculateEntityExistenceMap(unitTypes, unitTypeUids);
+        const unitTypeExistenceMap = calculateEntityExistenceMap(unitTypes, uids);
 
         for (const [unitTypeUid, exists] of entriesOf(unitTypeExistenceMap)) {
             if (!exists) {

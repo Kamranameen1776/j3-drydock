@@ -430,7 +430,7 @@ const accessRights: AccessRightRecordInput[] = [
         uid: '52BE32D8-C661-4D58-8A29-5A0EBDEE6068',
         code: 'delete_specification_detail',
         name: 'Delete Specification Detail',
-        action: 'delete_spec',
+        action: 'delete',
         description: 'Delete specification detail',
         groupRightUid: '1D71286D-874C-4812-BF45-30A9C562711F',
         rightUserTypeUid: '7FD30454-11E6-4559-9419-69D822389A7E',
@@ -450,7 +450,7 @@ const accessRights: AccessRightRecordInput[] = [
         uid: '6C692C98-26B4-4627-8603-87F69FFE3DDA',
         code: 'resync_record',
         name: 'Re-Sync Record for Specification',
-        action: 'resync_record',
+        action: 'resync',
         description: 'Re-Sync the record to other side in Specification',
         groupRightUid: '6A18F493-B0B1-405F-A328-DBE50342F7C0',
         rightUserTypeUid: 'EC287E07-A64E-462A-96F1-1FC6BF7AE284',
@@ -473,7 +473,7 @@ const enum Status {
     Error = 'E',
 }
 
-export class CreateSpecificationDetailsAccessRights1701263296255 implements MigrationInterface {
+export class CreateSpecificationDetailsAccessRights1701263296256 implements MigrationInterface {
     public readonly name = this.constructor.name;
     protected readonly moduleCode = 'project';
     protected readonly functionCode = 'specification_details';
