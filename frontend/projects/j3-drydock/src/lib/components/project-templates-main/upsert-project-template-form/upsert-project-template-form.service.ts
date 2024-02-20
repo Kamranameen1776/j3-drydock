@@ -63,7 +63,7 @@ export class ProjectTemplateUpsertFormService extends FormServiceBase {
             list: this.standardJobsService.getVesselSpecificList()
           },
 
-          [eProjectTemplatesFields.VesselTypeID]: {
+          [eProjectTemplatesFields.VesselTypeId]: {
             type: eFieldControlType.MultiSelect,
             label: eProjectTemplatesLabels.VesselType,
             sectionID: this.formId,
@@ -75,7 +75,7 @@ export class ProjectTemplateUpsertFormService extends FormServiceBase {
             gridColEnd: 2,
             listRequest: {
               labelKey: 'VesselTypes',
-              valueKey: 'uid',
+              valueKey: 'ID',
               webApiRequest: this.standardJobsService.getVesselTypesRequest()
             }
           },
@@ -99,13 +99,13 @@ export class ProjectTemplateUpsertFormService extends FormServiceBase {
       }
     }
   };
-  // TODO vesselspecific add
+
   protected readonly _formValues: FormValues = {
     keyID: this.formId,
     values: {
       [this.formId]: {
         [eProjectTemplatesFields.Subject]: null,
-        [eProjectTemplatesFields.VesselTypeID]: null,
+        [eProjectTemplatesFields.VesselTypeId]: [],
         [eProjectTemplatesFields.ProjectTypeUid]: null,
         [eProjectTemplatesFields.Description]: null,
         [eProjectTemplatesFields.VesselSpecific]: 0

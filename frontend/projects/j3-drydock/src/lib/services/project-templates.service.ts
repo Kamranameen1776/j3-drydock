@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiRequestService, UserService, WebApiRequest, eCrud, eEntities } from 'jibe-components';
+import { ApiRequestService, WebApiRequest, eCrud, eEntities } from 'jibe-components';
 import { eApiBaseDryDockAPI } from '../models/constants/constants';
 import { localAsUTC } from '../utils/date';
 import f from 'odata-filter-builder';
@@ -7,7 +7,8 @@ export interface ProjectTemplatePayload {
   ProjectTemplateUid: string;
   Subject: string;
   Description: string;
-  VesselTypeID: string;
+  VesselTypeSpecific: 0 | 1;
+  VesselTypeId: string;
   ProjectTypeUid: string;
   StandardJobs: string[];
 }
@@ -27,15 +28,13 @@ export class ProjectTemplatesService {
   constructor(private apiRequestService: ApiRequestService) {}
   // TODO why need DeletedBy?
   delete(uid: string) {
-    const userDetails = UserService.getUserDetails();
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
       action: 'project-templates/delete-project-template',
       crud: eCrud.Put,
       body: {
-        ProjectTemplateUid: uid,
-        DeletedBy: userDetails?.UserID
+        ProjectTemplateUid: uid
       }
     };
     return this.apiRequestService.sendApiReq(apiRequest);

@@ -92,7 +92,7 @@ export class CreateProjectFromTemplateGridService {
     [eProjectTemplatesFields.VesselType]: {
       webApiRequest: this.standardJobsService.getVesselTypesRequest(),
       type: eFieldControlType.MultiSelect,
-      odataKey: eProjectTemplatesFields.VesselTypeID,
+      odataKey: eProjectTemplatesFields.VesselTypeId,
       listValueKey: 'ID'
     },
     [eProjectTemplatesFields.ProjectType]: {

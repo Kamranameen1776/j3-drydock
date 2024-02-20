@@ -20,6 +20,6 @@ export enum eProjectTemplatesFields {
   ProjectTypeUid = 'ProjectTypeUid',
   Description = 'Description',
 
-  VesselTypeID = 'VesselTypeId',
+  VesselTypeId = 'VesselTypeId',
   VesselSpecific = 'VesselTypeSpecific'
 }
