@@ -64,6 +64,7 @@ export class ProjectTemplateRepository {
             wt.WorklistTypeDisplay as ProjectType,
             wt.WorklistType as ProjectTypeCode,
             pt.uid as ProjectTypeUid,
+            prt.vessel_type_specific as VesselTypeSpecific,
             ${RepoUtils.getStringAggJoin(LibVesseltypes, 'ID', 'aliased.active_status = 1', 'VesselTypeId', {
                 entity: className(ProjectTemplateVesselTypeEntity),
                 alias: 'ptvt',
@@ -92,6 +93,7 @@ export class ProjectTemplateRepository {
                     'prt.uid',
                     'prt.template_code',
                     'prt.subject',
+                    'prt.vessel_type_specific',
                     'pt.uid',
                     'COALESCE(prt.updated_at, prt.created_at)',
                     'wt.worklist_type_display',
