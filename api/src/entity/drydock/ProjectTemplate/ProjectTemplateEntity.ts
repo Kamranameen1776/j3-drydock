@@ -1,12 +1,13 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
+import { BaseDatesEntity } from '../../baseDatesEntity';
 import { LibVesseltypes } from '../dbo/LibVesselTypeEntity';
 import { ProjectTemplateStandardJobEntity } from './ProjectTemplateStandardJobEntity';
 
 export const ProjectTemplateEntityTableName = 'project_template';
 
 @Entity(ProjectTemplateEntityTableName, { schema: 'dry_dock' })
-export class ProjectTemplateEntity {
+export class ProjectTemplateEntity extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
     uid: string;
 
@@ -51,24 +52,6 @@ export class ProjectTemplateEntity {
         length: 'max',
     })
     Description: string | null;
-
-    @Column('datetimeoffset', {
-        nullable: false,
-        name: 'last_updated',
-    })
-    LastUpdated: Date;
-
-    @Column('datetimeoffset', {
-        nullable: false,
-        name: 'created_at',
-    })
-    CreatedAt: Date | null;
-
-    @Column('bit', {
-        nullable: false,
-        name: 'active_status',
-    })
-    ActiveStatus: boolean;
 
     @OneToMany(() => ProjectTemplateStandardJobEntity, (entity) => entity.ProjectTemplate)
     ProjectTemplateStandardJobs: ProjectTemplateStandardJobEntity[];

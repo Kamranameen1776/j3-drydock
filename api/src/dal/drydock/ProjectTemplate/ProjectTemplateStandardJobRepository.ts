@@ -1,4 +1,4 @@
-import { DataUtilService, ODataService } from 'j2utils';
+import { ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
@@ -16,6 +16,7 @@ import { ProjectTemplateEntity } from '../../../entity/drydock/ProjectTemplate/P
 import { ProjectTemplateStandardJobEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateStandardJobEntity';
 import { ODataBodyDto } from '../../../shared/dto';
 import { ODataResult } from '../../../shared/interfaces';
+import { getChunkSize } from '../../../shared/utils/get-chunk-size';
 import { RepoUtils } from '../utils/RepoUtils';
 import { IGetProjectTemplateStandardJobsGridDto } from './IGetProjectTemplateStandardJobsGridDto';
 
@@ -26,27 +27,30 @@ export class ProjectTemplateStandardJobRepository {
         return repository.find({
             where: {
                 ProjectTemplateUid: projectTemplateUid,
-                ActiveStatus: true,
+                active_status: true,
+                StandardJob: {
+                    active_status: true,
+                },
             },
+            relations: ['StandardJob'],
         });
     }
-    public async CreateProjectTemplateStandardJobs(
-        projectTemplateStandardJob: ProjectTemplateStandardJobEntity,
+
+    public async CreateOrUpdateProjectTemplateStandardJobs(
+        projectTemplateStandardJob: ProjectTemplateStandardJobEntity | ProjectTemplateStandardJobEntity[],
         queryRunner: QueryRunner,
-    ): Promise<string> {
-        const uid = DataUtilService.newUid();
-        projectTemplateStandardJob.uid = uid;
+    ): Promise<string | string[]> {
+        await queryRunner.manager.save(projectTemplateStandardJob, {
+            chunk: getChunkSize(5),
+            /* Since we don't have limit to amount of standard jobs to be changed in one transaction
+            and driver has limit on 2100 parameters (5 is amount of parameters per one relation) we need to split it into chunks */
+        });
 
-        await queryRunner.manager.save(projectTemplateStandardJob);
-
-        return uid;
-    }
-
-    public async UpdateProjectTemplateStandardJobs(
-        projectTemplateStandardJob: ProjectTemplateStandardJobEntity,
-        queryRunner: QueryRunner,
-    ): Promise<void> {
-        await queryRunner.manager.save(projectTemplateStandardJob);
+        if (Array.isArray(projectTemplateStandardJob)) {
+            return projectTemplateStandardJob.map((entity) => entity.StandardJobUid);
+        } else {
+            return projectTemplateStandardJob.StandardJobUid;
+        }
     }
 
     public async TryGetProjectTemplateStandardJobByUid(
@@ -57,7 +61,7 @@ export class ProjectTemplateStandardJobRepository {
         return repository.findOne({
             where: {
                 uid: projectTemplateStandardJobUid,
-                ActiveStatus: true,
+                active_status: true,
             },
         });
     }
@@ -80,8 +84,7 @@ export class ProjectTemplateStandardJobRepository {
         const query = repository
             .createQueryBuilder('prtsj')
             .select(
-                `prtsj.uid AS ProjectTemplateStandardJobUid,
-                sj.uid AS StandardJobUid,
+                `sj.uid AS StandardJobUid,
             prtsj.ProjectTemplateUid as ProjectTemplateUid,
             sj.code as ItemNumber,
             sj.subject as Subject,
@@ -123,12 +126,8 @@ export class ProjectTemplateStandardJobRepository {
             msb.display_name MaterialSuppliedBy
         `,
             )
-            .innerJoin(StandardJobs, 'sj', 'prtsj.StandardJobUid = sj.uid')
-            .innerJoin(ProjectTemplateEntity, 'pt', 'pt.uid = prtsj.ProjectTemplateUid AND pt.ActiveStatus = 1')
-            .leftJoin(StandardJobsVesselTypeEntity, 'sjvt', `sjvt.standard_job_uid = sj.uid`)
-            .leftJoin(StandardJobsSurveyCertificateAuthorityEntity, 'sjsca', `sjsca.standard_job_uid = sj.uid`)
-            .leftJoin(LibSurveyCertificateAuthority, 'lsca', `lsca.ID = sjsca.survey_id and lsca.Active_Status = 1`)
-            .leftJoin(LibVesseltypes, 'vt', `vt.ID = sjvt.vessel_type_id and vt.Active_Status = 1`)
+            .innerJoin(StandardJobs, 'sj', 'prtsj.StandardJobUid = sj.uid AND sj.active_status = 1')
+            .innerJoin(ProjectTemplateEntity, 'pt', 'pt.uid = prtsj.ProjectTemplateUid AND pt.active_status = 1')
             .leftJoin(TmDdLibDoneBy, 'db', `db.uid = sj.done_by_uid AND db.active_status = 1`)
             .leftJoin(
                 TmDdLibMaterialSuppliedBy,
@@ -137,7 +136,6 @@ export class ProjectTemplateStandardJobRepository {
             )
             .groupBy(
                 [
-                    'prtsj.uid',
                     'sj.uid',
                     'prtsj.project_template_uid',
                     'sj.code',
@@ -147,7 +145,8 @@ export class ProjectTemplateStandardJobRepository {
                     'msb.display_name',
                     'sj.material_supplied_by_uid',
                 ].join(','),
-            );
+            )
+            .where('prtsj.active_status = 1');
 
         const [sql, parameters] = query.getQueryAndParameters();
 

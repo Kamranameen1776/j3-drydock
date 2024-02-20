@@ -1,6 +1,6 @@
 export interface IGetProjectTemplateStandardJobsGridDto {
-    ProjectTemplateStandardJobUid: string;
     ProjectTemplateUid: string;
+    StandardJobUid: string;
 
     ItemNumber: string;
 

@@ -1,25 +1,31 @@
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsUUID } from 'class-validator';
 
 // TODO: add more validation attributes
 
 export class CreateProjectTemplateModel {
     @IsUUID()
-    public uid?: string;
+    @IsOptional()
+    public ProjectTemplateUid?: string;
 
     @IsNotEmpty()
     public Subject: string;
 
     public Description: string;
 
+    @IsNumber({}, { each: true })
     public VesselTypeUid: number[] | null;
 
     @IsNotEmpty()
     @IsUUID()
     public ProjectTypeUid: string;
 
-    // TODO: validate it is an array of UUIDs
+    @IsUUID(4, { each: true })
     public StandardJobs: string[];
 
     @IsNotEmpty()
     public CreatedAt: Date;
+
+    @IsNotEmpty()
+    @IsUUID()
+    public CreatedBy: string;
 }

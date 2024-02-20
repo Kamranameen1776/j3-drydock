@@ -2,6 +2,7 @@ export interface IGetProjectTemplateGridDto {
     ProjectTemplateUid: string;
 
     TemplateCode: string;
+    TemplateCodeRaw: string;
 
     Subject: string;
 

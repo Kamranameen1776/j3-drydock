@@ -4,11 +4,12 @@ import { ProjectTemplateStandardJobRepository } from '../../../../dal/drydock/Pr
 import { StandardJobsRepository } from '../../../../dal/drydock/standard-jobs/StandardJobsRepository';
 import { ProjectTemplateEntity } from '../../../../entity/drydock/ProjectTemplate/ProjectTemplateEntity';
 import { ProjectTemplateStandardJobEntity } from '../../../../entity/drydock/ProjectTemplate/ProjectTemplateStandardJobEntity';
+import { diffArray } from '../../../../shared/utils/diff';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { CreateProjectTemplateModel } from './CreateProjectTemplateModel';
 
-export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateModel, void> {
+export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateModel, string> {
     projectTemplateRepository: ProjectTemplateRepository;
     projectTemplateStandardJobRepository: ProjectTemplateStandardJobRepository;
     standardJobsRepository: StandardJobsRepository;
@@ -26,26 +27,19 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
     /**
      * Create project templates
      */
-    protected async MainHandlerAsync(request: CreateProjectTemplateModel): Promise<void> {
-        // TODO: 1. validate vessel type
-
-        // var vesselType = await this.someRepo.GetVesselType(request.VesselTypeUid)
-        //     ?? throw new ApplicationException("Vessel type not found: " + request.VesselTypeUid);
-
-        // TODO: 2. validate request.ProjectTypeUid
-
+    protected async MainHandlerAsync(request: CreateProjectTemplateModel): Promise<string> {
         const projectTemplate = new ProjectTemplateEntity();
         projectTemplate.Subject = request.Subject;
         projectTemplate.Description = request.Description;
         projectTemplate.ProjectTypeUid = request.ProjectTypeUid;
-        projectTemplate.LastUpdated = request.CreatedAt;
-        projectTemplate.CreatedAt = request.CreatedAt;
+        projectTemplate.created_at = request.CreatedAt;
+        projectTemplate.created_by = request.CreatedBy;
 
-        if (request.uid) {
-            projectTemplate.uid = request.uid;
+        if (request.ProjectTemplateUid) {
+            projectTemplate.uid = request.ProjectTemplateUid;
         }
 
-        await this.uow.ExecuteAsync(async (queryRunner) => {
+        return this.uow.ExecuteAsync(async (queryRunner) => {
             const projectTemplateUid = await this.projectTemplateRepository.CreateProjectTemplate(
                 projectTemplate,
                 queryRunner,
@@ -55,29 +49,35 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
                 await this.projectTemplateRepository.updateProjectTemplateVesselTypes(
                     projectTemplateUid,
                     request.VesselTypeUid,
+                    request.CreatedBy,
                     queryRunner,
                 );
             }
 
-            for (const standardJobUid of request.StandardJobs) {
-                const isStandardJobExists = await this.standardJobsRepository.Exists(standardJobUid);
+            const StandardJobsIds = await this.standardJobsRepository.exists(request.StandardJobs);
 
-                if (!isStandardJobExists) {
-                    throw new ApplicationException(`Standard job is not found: ${standardJobUid}`);
-                }
+            if (StandardJobsIds.length < request.StandardJobs.length) {
+                throw new ApplicationException(
+                    `Standard jobs is not found: ${diffArray(request.StandardJobs, StandardJobsIds)}`,
+                );
+            }
 
+            const standardJobsOps = request.StandardJobs.map((uid) => {
                 const projectTemplateStandardJob = new ProjectTemplateStandardJobEntity();
-                projectTemplateStandardJob.StandardJobUid = standardJobUid;
-                projectTemplateStandardJob.ProjectTemplateUid = projectTemplateUid;
-                projectTemplateStandardJob.CreatedAt = request.CreatedAt;
+                projectTemplateStandardJob.StandardJobUid = uid;
+                projectTemplateStandardJob.ProjectTemplateUid = projectTemplate.uid;
+                projectTemplateStandardJob.modified_at = new Date();
+                projectTemplateStandardJob.modified_by = request.CreatedBy;
 
-                await this.projectTemplateStandardJobRepository.CreateProjectTemplateStandardJobs(
-                    projectTemplateStandardJob,
-                    queryRunner,
-                );
-            }
+                return projectTemplateStandardJob;
+            });
 
-            // TODO: add synchronization with vessel/office
+            await this.projectTemplateStandardJobRepository.CreateOrUpdateProjectTemplateStandardJobs(
+                standardJobsOps,
+                queryRunner,
+            );
+
+            return projectTemplateUid;
         });
     }
 }
