@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start20": "node --openssl-legacy-provider --max_old_space_size=5120 node_modules/@angular/cli/bin/ng serve",
     "build": "ng build --project j3-drydock",
     "build:watch": "ng build --project j3-drydock --watch",
     "prettier": "prettier --write projects/j3-drydock/src/lib/**/*.{js,ts,json,html,css,scss}",

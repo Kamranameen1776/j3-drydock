@@ -67,7 +67,7 @@
     "migrations": "node -r dotenv/config build/cli/migration_run.js",
     "migration:create": "typeorm migration:create -n",
     "start": "ts-node src/index.ts",
-    "start20": "tsc && node --openssl-legacy-provider  -r ts-node/register build/index.js",
+    "start20": "tsc && node --openssl-legacy-provider -r ts-node/register build/index.js",
     "start:build": "node -r dotenv/config build/index.js",
     "local": "nodemon -r dotenv/config src/index.ts",
     "localpm2": "pm2 start . -n %npm_package_name% --watch && concurrently --kill-others \"tsc -w\" \"pm2 logs\"",
