@@ -55,12 +55,6 @@ export class SpecificationDetailsEntity {
     DoneByUid: string;
 
     @Column('uniqueidentifier', {
-        nullable: false,
-        name: 'item_category_uid',
-    })
-    ItemCategoryUid: string;
-
-    @Column('uniqueidentifier', {
         nullable: true,
         name: 'project_uid',
     })

@@ -39,6 +39,7 @@ export class GetJobOrderBySpecificationQuery extends Query<GetJobOrderBySpecific
             JobOrderUid: jobOrder.uid,
             SpecificationUid: jobOrder.SpecificationUid,
             Remarks: jobOrder.Remarks,
+            Progress: jobOrder.Progress,
             Status: jobOrder.Status,
             Subject: jobOrder.Subject,
             SpecificationEndDate: specification.EndDate,

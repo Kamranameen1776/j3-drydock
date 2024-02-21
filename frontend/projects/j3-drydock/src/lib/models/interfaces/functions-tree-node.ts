@@ -9,6 +9,7 @@ export interface ShellFunctionTreeResponseNode {
   active_status: string;
   parent_function_uid: string;
   utilized: string;
+  expanded?: boolean;
 }
 
 export interface FunctionsFlatTreeNode {
@@ -18,6 +19,7 @@ export interface FunctionsFlatTreeNode {
   selectable: boolean;
   icon?: string;
   tag?: string;
+  expanded?: boolean;
 
   jb_value_label?: string;
 }

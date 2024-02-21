@@ -4,5 +4,5 @@ export class UpdateDailyReportsDto {
     ReportName: string;
     UserUid: string;
     UpdatedAt: Date;
-    JobOrdersUpdate: [];
+    Body: string;
 }

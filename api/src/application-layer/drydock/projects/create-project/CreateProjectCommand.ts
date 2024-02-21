@@ -22,7 +22,7 @@ enum ProjectStates {
     Report = 3,
 }
 
-export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
+export class CreateProjectCommand extends Command<CreateProjectDataDto, string> {
     projectsRepository: ProjectsRepository;
     projectsService: ProjectService;
     vesselsRepository: VesselsRepository;
@@ -55,7 +55,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
      * @param request Project data for creation of the new project
      * @returns New created project result
      */
-    protected async MainHandlerAsync(request: CreateProjectDataDto): Promise<void> {
+    protected async MainHandlerAsync(request: CreateProjectDataDto): Promise<string> {
         const token: string = request.Token;
         const createProjectDto: CreateProjectDto = request.ProjectDto;
 
@@ -82,7 +82,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
             TaskManagerUid: createProjectDto.TaskManagerUid,
         };
 
-        await this.uow.ExecuteAsync(async (queryRunner) => {
+        const result = await this.uow.ExecuteAsync(async (queryRunner) => {
             const projectId = await this.projectsRepository.CreateProject(newProjectDto, queryRunner);
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,
@@ -93,5 +93,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, void> {
             );
             return projectId;
         });
+
+        return result;
     }
 }

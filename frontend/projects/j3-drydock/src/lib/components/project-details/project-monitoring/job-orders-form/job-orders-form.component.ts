@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { FormModel, JbEditorComponent, UserService } from 'jibe-components';
 import { ToolbarModule } from 'primeng';
@@ -20,9 +20,12 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./job-orders-form.component.scss'],
   providers: [JobOrdersFormService]
 })
-export class JobOrdersFormComponent extends UnsubscribeComponent implements OnInit, IJobOrdersFormComponent {
+export class JobOrdersFormComponent extends UnsubscribeComponent implements OnInit, IJobOrdersFormComponent, AfterViewInit {
   @Input()
   specificationUid: string;
+
+  @Input()
+  hideSpecificationStartEndDate = false;
 
   @ViewChild('remarksEditor')
   remarksEditor: JbEditorComponent;
@@ -76,17 +79,19 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   ) {
     super();
   }
+  ngAfterViewInit(): void {
+    this.updateJobOrderForm = this.jobOrdersFormService.getUpdateJobOrderForm(this.hideSpecificationStartEndDate);
+  }
 
   ngOnInit(): void {
-    this.updateJobOrderForm = this.jobOrdersFormService.getUpdateJobOrderForm();
-
     this.remarksEditorConfig = this.jobOrdersFormService.getRemarksEditorConfig();
   }
 
   public init(jobOrderFormDto: IJobOrderFormDto) {
     this.reset();
 
-    const controls = (this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup).controls;
+    const group = this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup;
+    const controls = group.controls;
 
     controls.SpecificationUid.setValue(jobOrderFormDto.SpecificationUid);
     controls.Progress.setValue(jobOrderFormDto.Progress);
@@ -101,18 +106,25 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
     controls.Subject.setValue(jobOrderFormDto.Subject);
     controls.Status.setValue(jobOrderFormDto.Status);
 
-    controls.SpecificationStartDate.setValue(UTCAsLocal(jobOrderFormDto.SpecificationStartDate));
-    controls.SpecificationEndDate.setValue(UTCAsLocal(jobOrderFormDto.SpecificationEndDate));
+    if (!this.hideSpecificationStartEndDate) {
+      controls.SpecificationStartDate.setValue(UTCAsLocal(jobOrderFormDto.SpecificationStartDate));
+      controls.SpecificationEndDate.setValue(UTCAsLocal(jobOrderFormDto.SpecificationEndDate));
+    }
   }
 
   save(): IJobOrderFormResultDto | Error {
     const jobOrder = this.updateJobOrderFormGroup.value.jobOrderUpdate;
 
-    const startDate: Date = localDateJbStringAsUTC(jobOrder.SpecificationStartDate, this.jobOrdersFormService.dateTimeFormat);
-    const endDate: Date = localDateJbStringAsUTC(jobOrder.SpecificationEndDate, this.jobOrdersFormService.dateTimeFormat);
+    let startDate: Date;
+    let endDate: Date;
 
-    if (startDate.getTime() >= endDate.getTime()) {
-      return new Error('Start date cannot be greater or equal End date');
+    if (!this.hideSpecificationStartEndDate) {
+      startDate = localDateJbStringAsUTC(jobOrder.SpecificationStartDate, this.jobOrdersFormService.dateTimeFormat);
+      endDate = localDateJbStringAsUTC(jobOrder.SpecificationEndDate, this.jobOrdersFormService.dateTimeFormat);
+
+      if (startDate.getTime() >= endDate.getTime()) {
+        return new Error('Start date cannot be greater or equal End date');
+      }
     }
 
     const result: IJobOrderFormResultDto = {
@@ -132,8 +144,11 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   }
 
   public onValueChangesIsFormValid: EventEmitter<boolean> = new EventEmitter<boolean>();
+  public onValueChangesIsForm: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
+  public onRemarkValueChanges: EventEmitter<string> = new EventEmitter<string>();
 
   public remarksEditorUpdateParentCtrlValue(remarks: string) {
+    this.onRemarkValueChanges.next(remarks);
     const controls = (this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup).controls;
     controls.Remarks.setValue(remarks);
   }
@@ -143,6 +158,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
 
     this.updateJobOrderFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       this.onValueChangesIsFormValid.next(this.updateJobOrderFormGroup.valid);
+      this.onValueChangesIsForm.next(action);
       return this.updateJobOrderFormGroup.valid;
     });
   }

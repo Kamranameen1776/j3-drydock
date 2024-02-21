@@ -1,14 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ApiRequestService,
-  ITopSectionFieldSet,
-  JbButtonType,
-  UserRightsService,
-  WebApiRequest,
-  eApiBase,
-  eCrud,
-  eEntities
-} from 'jibe-components';
+import { ApiRequestService, ITopSectionFieldSet, UserRightsService, WebApiRequest, eApiBase, eCrud, eEntities } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
 import { eSpecificationDetailsGeneralInformationFields } from '../../models/enums/specification-details-general-information.enum';
@@ -25,7 +16,10 @@ import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { ITMDetailTabFields } from 'j3-task-manager-ng';
 import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
+import { eSubItemsDialog } from '../../models/enums/sub-items.enum';
+
 export interface SpecificationDetailAccessRights extends BaseAccessRight {
+  generalInformation: { view: boolean };
   attachments: BaseAccessRight & { add: boolean };
   subItems: BaseAccessRight;
   requisitions: { view: boolean; edit: boolean };
@@ -37,6 +31,9 @@ export const DEFAULT_PROJECT_DETAILS_ACCESS_RIGHTS: SpecificationDetailAccessRig
   view: false,
   edit: false,
   delete: false,
+  generalInformation: {
+    view: false
+  },
   attachments: {
     view: false,
     edit: false,
@@ -81,7 +78,7 @@ export class SpecificationDetailsService {
     const canView = this.hasAccess(eSpecificationAccessActions.viewSpecificationDetail);
     const canEdit = this.hasAccess(eSpecificationAccessActions.editGeneralInformation);
     const canDelete = this.hasAccess(eSpecificationAccessActions.deleteSpecificationDetail);
-    const canViewAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.viewAttachmentsSection);
+    const canViewAttachments = this.hasAccess(eSpecificationAccessActions.viewAttachmentsSection);
     const canEditAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.editAttachments);
     const canDeleteAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.deleteAttachments);
     const canAddAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.addAttachments);
@@ -90,6 +87,9 @@ export class SpecificationDetailsService {
       view: canView,
       edit: canEdit,
       delete: canDelete,
+      generalInformation: {
+        view: this.hasAccess(eSpecificationAccessActions.viewGeneralInformationSection)
+      },
       attachments: {
         view: canViewAttachments,
         edit: canEditAttachments,
@@ -182,7 +182,8 @@ export class SpecificationDetailsService {
             active_status: true,
             SectionCode: eSpecificationDetailsPageMenuIds.SubItems,
             SectionLabel: eSpecificationDetailsPageMenuLabels.SubItems,
-            isAddNewButton: false
+            isAddNewButton: true,
+            buttonLabel: eSubItemsDialog.AddText
           },
           {
             GridRowStart: 3,
@@ -190,11 +191,21 @@ export class SpecificationDetailsService {
             GridColStart: 1,
             GridColEnd: 3,
             active_status: true,
-            SectionCode: eSpecificationDetailsPageMenuIds.Requisitions,
-            SectionLabel: eSpecificationDetailsPageMenuLabels.Requisitions,
-            isAddNewButton: this.accessRights.requisitions.edit,
-            buttonLabel: 'Link Requisitions',
-            addNewButtonType: JbButtonType.NoButton
+            SectionCode: eSpecificationDetailsPageMenuIds.PMSJobs,
+            SectionLabel: eSpecificationDetailsPageMenuLabels.PMSJobs,
+            isAddNewButton: true,
+            buttonLabel: 'Convert to sub item'
+          },
+          {
+            GridRowStart: 4,
+            GridRowEnd: 5,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
+            SectionCode: eSpecificationDetailsPageMenuIds.Findings,
+            SectionLabel: eSpecificationDetailsPageMenuLabels.Findings,
+            isAddNewButton: true,
+            buttonLabel: 'Convert to sub item'
           }
         ]
       }

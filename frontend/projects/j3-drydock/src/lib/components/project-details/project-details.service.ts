@@ -8,7 +8,7 @@ import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/proj
 import {
   eProjectDetailsSideMenuId,
   eProjectDetailsSideMenuLabel,
-  eProjectWorklowStatusAction
+  eProjectWorkflowStatusAction
 } from '../../models/enums/project-details.enum';
 import { ITMDetailTabFields } from 'j3-task-manager-ng';
 import { AttachmentsAccessRight, BaseAccessRight } from '../../models/interfaces/access-rights';
@@ -20,6 +20,9 @@ import { ProjectEdit } from '../../models/interfaces/projects';
 
 export interface ProjectDetailsAccessRights extends BaseAccessRight {
   attachments: AttachmentsAccessRight;
+  specificationDetails: {
+    view: boolean;
+  };
 }
 
 export const DEFAULT_PROJECT_DETAILS_ACCESS_RIGHTS: ProjectDetailsAccessRights = {
@@ -31,6 +34,9 @@ export const DEFAULT_PROJECT_DETAILS_ACCESS_RIGHTS: ProjectDetailsAccessRights =
     edit: false,
     delete: false,
     add: false
+  },
+  specificationDetails: {
+    view: false
   }
 };
 
@@ -57,9 +63,7 @@ export class ProjectDetailsService {
       this.hasAccess(eProjectsDetailsAccessActions.editHeader) || this.hasAccess(eProjectsDetailsAccessActions.editHeaderVessel);
     const canDelete = this.hasAccess(eProjectsAccessActions.deleteProject);
     const canViewAttachments =
-      isEditableStatus &&
-      (this.hasAccess(eProjectsDetailsAccessActions.viewAttachments) ||
-        this.hasAccess(eProjectsDetailsAccessActions.viewAttachmentsVessel));
+      this.hasAccess(eProjectsDetailsAccessActions.viewAttachments) || this.hasAccess(eProjectsDetailsAccessActions.viewAttachmentsVessel);
     const canEditAttachments =
       isEditableStatus &&
       (this.hasAccess(eProjectsDetailsAccessActions.editAttachments) ||
@@ -81,6 +85,9 @@ export class ProjectDetailsService {
         edit: canEditAttachments,
         delete: canDeleteAttachments,
         add: canAddAttachments
+      },
+      specificationDetails: {
+        view: this.hasAccess(eProjectsAccessActions.viewTechSpec)
       }
     });
 
@@ -177,35 +184,29 @@ export class ProjectDetailsService {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getSectionsConfig(status: string) {
-    // TODO return sections config depending on status
-    return this.getSpecificationStepSectionsConfig();
-  }
-
-  getSpecificationStepSectionsConfig(): ITMDetailTabFields {
+  getSectionsConfig(): ITMDetailTabFields {
     return {
-      [eProjectDetailsSideMenuId.General]: {
-        id: eProjectDetailsSideMenuId.General,
-        menuDisplayName: eProjectDetailsSideMenuLabel.General,
-        menuIcon: '',
-        showDiscussion: true,
-        isClosedDiscussion: true,
-        activeStatus: true,
-        index: 1,
-        sections: [
-          {
-            GridRowStart: 1,
-            GridRowEnd: 2,
-            GridColStart: 1,
-            GridColEnd: 3,
-            active_status: true,
-            SectionCode: 'tasks',
-            SectionLabel: 'Tasks',
-            isAddNewButton: false
-          }
-        ]
-      },
+      // [eProjectDetailsSideMenuId.General]: {
+      //   id: eProjectDetailsSideMenuId.General,
+      //   menuDisplayName: eProjectDetailsSideMenuLabel.General,
+      //   menuIcon: '',
+      //   showDiscussion: true,
+      //   isClosedDiscussion: true,
+      //   activeStatus: true,
+      //   index: 1,
+      //   sections: [
+      //     {
+      //       GridRowStart: 1,
+      //       GridRowEnd: 2,
+      //       GridColStart: 1,
+      //       GridColEnd: 3,
+      //       active_status: true,
+      //       SectionCode: 'tasks',
+      //       SectionLabel: 'Tasks',
+      //       isAddNewButton: false
+      //     }
+      //   ]
+      // },
       [eProjectDetailsSideMenuId.Specifications]: {
         id: eProjectDetailsSideMenuId.Specifications,
         menuDisplayName: eProjectDetailsSideMenuLabel.Specifications,
@@ -215,7 +216,7 @@ export class ProjectDetailsService {
         activeStatus: true,
         index: 2,
         sections: [
-          ...(this.hasAccess(eProjectsAccessActions.viewTechSpec)
+          ...(this.accessRights.specificationDetails.view
             ? [
                 {
                   GridRowStart: 1,
@@ -365,8 +366,8 @@ export class ProjectDetailsService {
 
   isStatusBeforeComplete(status: string) {
     return (
-      this.areStatusesSame(status, eProjectWorklowStatusAction.Raise) ||
-      this.areStatusesSame(status, eProjectWorklowStatusAction['In Progress'])
+      this.areStatusesSame(status, eProjectWorkflowStatusAction.Raise) ||
+      this.areStatusesSame(status, eProjectWorkflowStatusAction['In Progress'])
     );
   }
 
@@ -376,6 +377,10 @@ export class ProjectDetailsService {
 
   hasAccess(action: string, module = eModule.Project, func = eFunction.DryDock) {
     return !!this.userRights.getUserRights(module, func, action);
+  }
+
+  exportExcel(projectId: string, yardId: string) {
+    return this.projectsService.exportExcel(projectId, yardId);
   }
 
   private setAccessRights(rights: ProjectDetailsAccessRights) {

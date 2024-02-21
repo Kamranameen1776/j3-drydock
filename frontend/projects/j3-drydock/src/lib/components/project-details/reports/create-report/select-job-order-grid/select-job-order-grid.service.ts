@@ -43,7 +43,7 @@ export class SelectJobOrdersGridService {
     },
     {
       DisplayText: 'Status',
-      FieldName: nameOf<IJobOrderDto>((prop) => prop.SpecificationStatus),
+      FieldName: nameOf<IJobOrderDto>((prop) => prop.JobOrderStatus),
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -74,7 +74,7 @@ export class SelectJobOrdersGridService {
       columns: this.columns,
       gridName: this.gridName,
       searchFields: this.searchFields,
-      request: this.jobOrdersService.getJobOrdersRequest(),
+      request: this.jobOrdersService.getJobOrdersUpdatesRequest(),
       actions: this.gridActions,
       sortField: nameOf<IJobOrderDto>((prop) => prop.LastUpdated),
       sortOrder: -1

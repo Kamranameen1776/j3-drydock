@@ -100,7 +100,22 @@
 >
   <jb-drydock-grid-cell-popover [value]="rowData.EndDate | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
 </ng-template>
+
+<ng-template
+  #codeTemplate
+  let-rowData
+>
+  <span
+    class="project-code jb_grid_topCellValue"
+    (click)="onCodeClick(rowData)"
+  >
+    <i class="icons8-document-4"></i>
+    <span>{{ rowData.ProjectCode }}</span>
+  </span>
+</ng-template>
+
 <jb-growl [content]="growlMessage$ | async"></jb-growl>
+
 <jb-progress-spinner
   class="progress-spinner"
   *ngIf="showLoader"

@@ -48,6 +48,26 @@ import {
 import { CreateSpecificationFromStandardJobDto } from './dtos/ICreateSpecificationFromStandardJobDto';
 
 export class SpecificationDetailsRepository {
+    public async getSpecificationStatuses(isOffice: number | undefined, queryRunner: QueryRunner) {
+        const repository = queryRunner.manager.getRepository(JmsDtlWorkflowConfigDetailsEntity);
+
+        let query = repository
+            .createQueryBuilder('wdetails')
+            .select(['wdetails.WorkflowTypeID as status', 'wdetails.StatusDisplayName as displayName'])
+            .innerJoin(
+                className(JmsDtlWorkflowConfigEntity),
+                'wc',
+                `wc.job_type = 'Specification' AND wdetails.ConfigId = wc.ID`,
+            )
+            .where('wdetails.ActiveStatus = 1');
+
+        if (isOffice !== undefined) {
+            query = query.andWhere('wdetails.Is_Office = :isOffice', { isOffice });
+        }
+
+        return query.execute();
+    }
+
     public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {
         const repository = queryRunner.manager.getRepository(SpecificationPmsEntity);
         await repository.update(
@@ -107,7 +127,7 @@ export class SpecificationDetailsRepository {
                 'spec.subject as Subject',
                 'tm.Code as SpecificationCode',
                 'tm.Status as StatusId',
-                'wdetails.DisplayNameAction as StatusName',
+                'wdetails.StatusDisplayName as StatusName',
 
                 'spec.FunctionUid as FunctionUid',
                 'spec.Function as "Function"',
@@ -175,11 +195,12 @@ export class SpecificationDetailsRepository {
                     'sd.function_uid',
                     'sd.component_uid',
                     'sd.item_number',
-                    'db.done_by',
+                    'db.displayName as db_done_by',
                     'sd.active_status',
                     'msb.materialSuppliedBy',
                     'tm.Code as code',
                     'tm.Status as status',
+                    'wdetails.StatusDisplayName as statusName',
                     'tm.title as subject',
                     'sd.project_uid',
                     'sd.ItemSourceUid as item_source_uid',
@@ -196,17 +217,24 @@ export class SpecificationDetailsRepository {
                         },
                     ),
                 ])
+                .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`) //TODO: strange merge, but Specifications doesnt have type. probably should stay that way
+                .innerJoin(
+                    className(JmsDtlWorkflowConfigDetailsEntity),
+                    'wdetails',
+                    'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+                )
                 .groupBy(
                     [
                         'sd.uid',
                         'sd.function_uid',
                         'sd.component_uid',
                         'sd.item_number',
-                        'db.done_by',
+                        'db.displayName',
                         'sd.active_status',
                         'msb.materialSuppliedBy',
                         'tm.Code',
                         'tm.Status',
+                        'wdetails.StatusDisplayName',
                         'tm.title',
                         'sd.project_uid',
                         'sd.item_source_uid',
@@ -254,8 +282,8 @@ export class SpecificationDetailsRepository {
             where: {
                 uid: In(data.StandardJobUid),
             },
-            select: ['functionUid', 'description', 'subject'],
-            relations: ['subItems', 'inspection', 'doneBy', 'category', 'materialSuppliedBy'],
+            select: ['functionUid', 'description', 'subject', 'function'],
+            relations: ['subItems', 'inspection', 'doneBy', 'materialSuppliedBy'],
         });
         const standardJobsItemSource = await dictionariesRepository.getItemSourceByName(ItemName.StandardJob);
 
@@ -263,6 +291,7 @@ export class SpecificationDetailsRepository {
             const specification = new SpecificationDetailsEntity();
             specification.uid = new DataUtilService().newUid();
             specification.FunctionUid = standardJob.functionUid;
+            specification.Function = standardJob.function;
             specification.Description = standardJob.description;
             specification.Subject = standardJob.subject;
             specification.CreatedByUid = createdBy;
@@ -270,7 +299,6 @@ export class SpecificationDetailsRepository {
             specification.ActiveStatus = true;
             specification.MaterialSuppliedByUid = standardJob.materialSuppliedBy?.uid!;
             specification.DoneByUid = standardJob.doneBy?.uid!;
-            specification.ItemCategoryUid = standardJob.category?.uid!;
             specification.ItemSourceUid = standardJobsItemSource.uid;
             specification.ProjectUid = data.ProjectUid;
             specification.inspections = standardJob.inspection.map((inspection) => {
@@ -390,7 +418,7 @@ export class SpecificationDetailsRepository {
             .innerJoin(J3PrcRfqEntity, 'rfq', 'rq.uid = rfq.requisition_uid')
             .innerJoin(J3PrcCompanyRegistryEntity, 'supplier', 'rfq.supplier_uid = supplier.uid')
             .innerJoin(J3PrcTaskStatusEntity, 'ts', 'rq.uid = ts.objectUid')
-            .where(`sd.uid = '${specificationUid}'`)
+            .where(`sd.uid = :specificationUid`, { specificationUid })
             .andWhere('rq.active_status = 1')
             .getSql();
 
@@ -407,8 +435,8 @@ export class SpecificationDetailsRepository {
         const existingEntities = await queryRunner.manager
             .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
             .select(['sr.specificationUid', 'sr.requisitionUid', 'sr.uid', 'sr.activeStatus'])
-            .where(`sr.specificationUid = '${specificationUid}'`)
-            .andWhere(`sr.requisitionUid IN ('${requisitionUid.join(`','`)}')`)
+            .where(`sr.specificationUid = :specificationUid`, { specificationUid })
+            .andWhere(`sr.requisitionUid IN (:...requisitionUid)`, { requisitionUid })
             .getMany();
 
         const existingRequisitionUid = existingEntities.map((entity) => entity.requisitionUid);
@@ -437,8 +465,8 @@ export class SpecificationDetailsRepository {
             .createQueryBuilder(SpecificationRequisitionsEntity, 'sr')
             .update()
             .set({ activeStatus: false })
-            .where(`specification_uid = '${specificationUid}'`)
-            .andWhere(`requisition_uid = '${requisitionUid}'`)
+            .where(`specification_uid = :specificationUid`, { specificationUid })
+            .andWhere(`requisition_uid = :requisitionUid`, { requisitionUid })
             .execute();
     }
 

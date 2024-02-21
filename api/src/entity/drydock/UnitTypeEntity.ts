@@ -13,7 +13,7 @@ import { SpecificationDetailsSubItemEntity } from './SpecificationDetailsSubItem
 @Entity('lib_unit_type', { schema: 'dbo' })
 export class UnitTypeEntity {
     @PrimaryGeneratedColumn('uuid')
-    readonly uid: string;
+    uid: string;
 
     @Column({
         name: '_id',

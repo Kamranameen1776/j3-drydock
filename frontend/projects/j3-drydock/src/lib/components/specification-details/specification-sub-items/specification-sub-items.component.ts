@@ -9,6 +9,7 @@ import { getSmallPopup } from '../../../models/constants/popup';
 import { SpecificationSubItemEditService } from './specification-sub-item-edit.service';
 import { GrowlMessageService } from '../../../services/growl-message.service';
 import { BehaviorSubject } from 'rxjs';
+import { eSubItemsDialog } from '../../../models/enums/sub-items.enum';
 
 @Component({
   selector: 'jb-specification-sub-items',
@@ -44,6 +45,7 @@ export class SpecificationSubItemsComponent implements OnInit {
     switch (action.type) {
       case eGridRowActions.Edit:
         this.selectedSubItem = action.payload;
+        this.selectedSubItem.dialogHeader = eSubItemsDialog.EditText;
         break;
       case eGridRowActions.Delete:
         this.selectedDeleteSubItem = action.payload;

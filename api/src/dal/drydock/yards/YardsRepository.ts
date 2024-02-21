@@ -41,6 +41,7 @@ export class YardsRepository {
                 'vessel.VesselName as VesselName',
                 'vessel.ManagementCompany as ManagementCompany',
                 'yard.registeredName as YardName',
+                'yard.currencies as YardCurrencies',
                 `spec.[function] as 'Function'`,
                 'tm.Code as SpecificationCode',
                 'spec.Subject as SpecificationSubject',
@@ -57,7 +58,8 @@ export class YardsRepository {
             .innerJoin(
                 className(J3PrcCompanyRegistryEntity),
                 'yard',
-                `yp.yard_uid = yard.uid and yard.uid='${yardUid}'`,
+                `yp.yard_uid = yard.uid and yard.uid = :yardUid`,
+                { yardUid },
             )
             .leftJoin(
                 className(SpecificationDetailsEntity),
@@ -71,7 +73,7 @@ export class YardsRepository {
                 'item.specification_details_uid = spec.uid and item.active_status=1',
             )
             .leftJoin(className(UnitTypeEntity), 'ut', 'ut.uid = item.unit_type_uid')
-            .where(`pr.active_status = 1 AND pr.uid = '${projectUid}'`)
+            .where(`pr.active_status = 1 AND pr.uid = :projectUid`, { projectUid })
             .execute();
     }
 }

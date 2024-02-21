@@ -1,14 +1,7 @@
-@import '../../../styles/mixins';
-
-.specs-header-actions {
-  display: flex;
-  gap: 12px;
-}
-
 .specs-content {
   display: flex;
   gap: 12px;
-  max-height: 616px;
+  max-height: 440px;
 }
 
 jb-tree {
@@ -16,24 +9,27 @@ jb-tree {
   min-width: 260px;
   max-width: 260px;
   display: block;
-  max-height: 600px;
+  max-height: 422px;
 }
 
 :host ::ng-deep {
-  .ui-tabview-panels,
   .host-grid-container,
-  jb-grid,
-  .ui-tabview-panel,
-  p-tabpanel {
-    max-height: 582px;
+  jb-grid {
+    max-height: 422px;
     display: block;
   }
-  .widget-content {
-    max-height: 616px;
+
+  jb-tree {
+    .withoutBackground {
+      padding-top: 0px !important;
+    }
   }
-  @include jb-tabview;
+
+  .ui-tree-filter-container {
+    margin-top: 12px;
+  }
 }
 
-p-tabview {
+.grid-content {
   max-width: calc(100% - 270px);
 }

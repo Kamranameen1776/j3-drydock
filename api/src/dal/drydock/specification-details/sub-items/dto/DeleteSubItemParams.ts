@@ -1,8 +1,8 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { GetOneParams } from './GetOneParams';
+import { GetSubItemParams } from './GetSubItemParams';
 
-export class DeleteOneParams extends GetOneParams {
+export class DeleteSubItemParams extends GetSubItemParams {
     @IsString()
     @IsNotEmpty()
     readonly deletedBy: string;

@@ -8,7 +8,10 @@ import {
   WebApiRequest,
   eCrud,
   eFieldControlType,
-  eGridAction
+  eGridAction,
+  eGridColors,
+  eGridEvents,
+  eGridIcons
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';
@@ -88,7 +91,12 @@ export class SpecificationGridService {
       actions: this.gridActions,
       filters: this.filters,
       searchFields: this.searchFields,
-      filtersLists: this.filtersLists
+      filtersLists: this.filtersLists,
+      showSettings: {
+        showDefaultLables: false,
+        [eGridEvents.ClearFilters]: true
+      },
+      advancedSettings: [{ label: eGridEvents.ClearFilters, icon: eGridIcons.ClearFilters3, color: eGridColors.JbBlack, show: true }]
     };
   }
 
@@ -112,7 +120,7 @@ export class SpecificationGridService {
       FieldName: 'item_number',
       IsActive: true,
       IsMandatory: true,
-      IsVisible: true,
+      IsVisible: false,
       ReadOnly: true,
       width: '70px'
     },
@@ -196,42 +204,10 @@ export class SpecificationGridService {
       Active_Status_Config_Filter: true,
       ControlType: 'simple',
       Details: 'Status',
-      DisplayCode: 'label',
-      ValueCode: 'label',
+      DisplayCode: 'displayName',
+      ValueCode: 'status',
       FieldID: 2,
       default: true,
-      gridName: this.gridName
-    },
-    {
-      DisplayText: 'Due Date From',
-      FieldName: 'due_date_from',
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      type: 'date',
-      placeholder: 'Select',
-      FieldType: 'date',
-      Details: 'due_date_from',
-      addTimeLimit: true,
-      FieldID: 3,
-      default: true,
-      CoupleID: 1,
-      CoupleLabel: 'Due Date Range',
-      gridName: this.gridName
-    },
-    {
-      DisplayText: 'To',
-      FieldName: 'due_date_to',
-      Active_Status: true,
-      Active_Status_Config_Filter: true,
-      type: 'date',
-      placeholder: 'Select',
-      FieldType: 'date',
-      Details: 'due_date_to',
-      addTimeLimit: true,
-      FieldID: 4,
-      default: true,
-      CoupleID: 1,
-      CoupleLabel: 'Due Date Range',
       gridName: this.gridName
     },
     {
@@ -256,26 +232,21 @@ export class SpecificationGridService {
     }
   ];
 
+  getStatusesRequest(): WebApiRequest {
+    return {
+      // TODO:update jibe lib
+      // apiBase: eApiBase.DryDockAPI,
+      apiBase: 'dryDockAPI',
+      action: 'specification-details/get-specifications-statuses',
+      crud: eCrud.Get,
+      entity: 'drydock'
+    };
+  }
+
   private filtersLists: FilterListSet = {
     status: {
-      list: [
-        {
-          label: SpecificationStatus.APPROVED,
-          value: SpecificationStatus.APPROVED
-        },
-        {
-          label: SpecificationStatus.COMPLETED,
-          value: SpecificationStatus.COMPLETED
-        },
-        {
-          label: SpecificationStatus.RAISED,
-          value: SpecificationStatus.RAISED
-        },
-        {
-          label: SpecificationStatus.REJECTED,
-          value: SpecificationStatus.REJECTED
-        }
-      ],
+      webApiRequest: this.getStatusesRequest(),
+      listValueKey: 'status',
       type: eFieldControlType.MultiSelect,
       odataKey: 'status'
     },
@@ -297,18 +268,6 @@ export class SpecificationGridService {
       type: eFieldControlType.MultiSelect,
       odataKey: 'done_by_uid',
       listValueKey: 'uid'
-    },
-    due_date_to: {
-      type: eFieldControlType.Date,
-      odataKey: 'due_date',
-      alterKey: 'due_date',
-      dateMethod: 'le'
-    },
-    due_date_from: {
-      type: eFieldControlType.Date,
-      odataKey: 'due_date',
-      alterKey: 'due_date',
-      dateMethod: 'ge'
     },
     item_source: {
       type: eFieldControlType.Dropdown,

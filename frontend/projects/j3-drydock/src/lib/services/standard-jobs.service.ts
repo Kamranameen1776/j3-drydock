@@ -18,7 +18,6 @@ import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../models/enum
 import { SubItem } from '../models/interfaces/sub-items';
 import { eModule } from '../models/enums/module.enum';
 import { eFunction } from '../models/enums/function.enum';
-import { FunctionsService } from './functions.service';
 import { GridInputsWithRequest } from '../models/interfaces/grid-inputs';
 
 @Injectable({ providedIn: 'root' })
@@ -140,8 +139,7 @@ export class StandardJobsService {
 
   constructor(
     private apiRequestService: ApiRequestService,
-    private userRights: UserRightsService,
-    private functionsService: FunctionsService
+    private userRights: UserRightsService
   ) {}
 
   getStandardJobsRequest(): WebApiRequest {
@@ -266,11 +264,7 @@ export class StandardJobsService {
     return this.apiRequestService.sendApiReq(apiRequest);
   }
 
-  getStandardJobFunctions() {
-    return this.functionsService.getFunctions();
-  }
-
-  getVesselSpevificList() {
+  getVesselSpecificList() {
     return [
       {
         label: 'Yes',
@@ -288,12 +282,16 @@ export class StandardJobsService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private getUpsertStandardJobBody(uid: string, formValue: any) {
+  private getUpsertStandardJobBody(uid: string, formValue: { editors: any; standardJobsUpsertFormId: any }) {
+    const { editors, standardJobsUpsertFormId } = formValue;
+
     return {
-      ...formValue,
+      ...standardJobsUpsertFormId,
       [eStandardJobsMainFields.UID]: uid || '',
-      [eStandardJobsMainFields.Function]: formValue.function.jb_value_label || '',
-      [eStandardJobsMainFields.FunctionUid]: formValue.function.Child_ID || ''
+      [eStandardJobsMainFields.Function]: standardJobsUpsertFormId.function.jb_value_label || '',
+      [eStandardJobsMainFields.FunctionUid]: standardJobsUpsertFormId.function.Child_ID || '',
+      [eStandardJobsMainFields.Description]: editors.description,
+      [eStandardJobsMainFields.Scope]: editors.scope
     };
   }
 }

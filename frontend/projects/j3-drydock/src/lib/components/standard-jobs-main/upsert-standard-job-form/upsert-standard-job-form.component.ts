@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { FormModel, FormValues } from 'jibe-components';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormModel, FormValues, UserService } from 'jibe-components';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { StandardJobUpsertFormService } from './standard-job-upsert-form.service';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { startWith, takeUntil } from 'rxjs/operators';
 import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-main.enum';
+import { EditorConfig } from '../../../models/interfaces/EditorConfig';
 
 @Component({
   selector: 'jb-upsert-standard-job-form',
@@ -33,17 +34,37 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
 
   functionsFlatTree$ = this.popupFormService.functionsFlatTree$;
 
-  constructor(private popupFormService: StandardJobUpsertFormService) {
+  editorsFormGroup: FormGroup = new FormGroup({
+    description: new FormControl('', Validators.required),
+    scope: new FormControl('')
+  });
+
+  descriptionEditorConfig: EditorConfig;
+
+  scopeEditorConfig: EditorConfig;
+
+  constructor(
+    private popupFormService: StandardJobUpsertFormService,
+    private userService: UserService
+  ) {
     super();
   }
 
   ngOnInit(): void {
     this.initFormValues();
     this.setFunctionConfig();
+
+    const key1 = this.userService.getUserDetails().user_uid;
+    const vesselId = this.userService.getUserDetails().VesselId;
+
+    this.descriptionEditorConfig = this.popupFormService.getDescriptionEditorConfig(key1, vesselId);
+    this.scopeEditorConfig = this.popupFormService.getScopeEditorConfig(key1, vesselId);
   }
 
   dispatchForm(event: FormGroup) {
     this.formGroup = event;
+
+    this.setEditorsForm();
 
     this.initFormState();
     this.listenFormValid();
@@ -103,5 +124,16 @@ export class UpsertStandardJobFormComponent extends UnsubscribeComponent impleme
       .subscribe((value) => {
         this.setFieldEnabledAndRequired(eStandardJobsMainFields.VesselTypeID, !!value);
       });
+  }
+
+  private setEditorsForm() {
+    if (this.item) {
+      this.editorsFormGroup.setValue({
+        description: this.item.description,
+        scope: this.item.scope
+      });
+    }
+
+    this.formGroup.addControl(this.popupFormService.editors, this.editorsFormGroup);
   }
 }

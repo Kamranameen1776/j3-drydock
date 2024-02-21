@@ -8,4 +8,5 @@ export interface IDailyReportsResultDto {
   reportName: string;
   reportDate: Date;
   jobOrdersUpdate: Array<JobOrdersUpdatesDto>;
+  body: string;
 }
