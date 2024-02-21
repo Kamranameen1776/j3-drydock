@@ -3,6 +3,7 @@ import { ApiRequestService, WebApiRequest, eCrud, eEntities } from 'jibe-compone
 import { eApiBaseDryDockAPI } from '../models/constants/constants';
 import { localAsUTC } from '../utils/date';
 import f from 'odata-filter-builder';
+import { map } from 'rxjs/operators';
 export interface ProjectTemplatePayload {
   ProjectTemplateUid: string;
   Subject: string;
@@ -26,7 +27,7 @@ export interface ProjectTemplateUpdate extends ProjectTemplatePayload {
 })
 export class ProjectTemplatesService {
   constructor(private apiRequestService: ApiRequestService) {}
-  // TODO why need DeletedBy?
+
   delete(uid: string) {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
@@ -100,5 +101,24 @@ export class ProjectTemplatesService {
       }
     };
     return this.apiRequestService.sendApiReq(request);
+  }
+
+  getProjectTemplateStandardJobs(projectTemplateUid: string) {
+    const request: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'project-templates/project-template-standard-jobs-grid',
+      crud: eCrud.Post,
+      odata: {
+        skip: '0',
+        top: '10000000',
+        filter: f().eq('ProjectTemplateUid', projectTemplateUid)
+      }
+    };
+    return this.apiRequestService.sendApiReq(request).pipe(
+      map((resp) => {
+        return resp?.records;
+      })
+    );
   }
 }

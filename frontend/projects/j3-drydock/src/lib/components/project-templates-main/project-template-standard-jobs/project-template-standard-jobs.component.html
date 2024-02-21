@@ -1,0 +1,42 @@
+<jb-grid
+  [gridName]="gridInputs.gridName"
+  [colData]="gridInputs.columns"
+  [tableData]="linked | staticGridSearch: (searchTerm$ | async) : searchFn"
+  [button]="gridInputs.gridButton"
+  [getStyleByContainer]="true"
+  [setActions]="gridRowActions"
+  [isDisplayAdvancedFilter]="false"
+  (action)="onGridAction($any($event))"
+></jb-grid>
+
+<!-- <jb-upsert-sub-item-popup
+  [item]="currentRow"
+  [isOpen]="isAddPopupVisible"
+  (closeDialog)="onCloseUpsertPopup($event)"
+></jb-upsert-sub-item-popup> -->
+
+<jb-dialog
+  [dialogContent]="confirmationPopUp"
+  [(dialogVisible)]="isConfirmDeleteVisible"
+  (closeDialog)="onCloseConfirmationDeletePopup()"
+>
+  <div
+    jb-dialog-body
+    class="dialog-body"
+  >
+    <span
+      class="popup-text"
+      *ngIf="isConfirmDeleteVisible"
+    >
+      Are you sure you want to delete the sub item?
+    </span>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      okBtnLabel="Confirm"
+      (ok)="onConfirmDeleteOk()"
+      (cancel)="onConfirmDeleteCancel()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

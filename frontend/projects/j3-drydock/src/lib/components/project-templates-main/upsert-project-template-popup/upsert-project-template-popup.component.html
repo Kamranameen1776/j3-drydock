@@ -16,6 +16,12 @@
         ></jb-upsert-project-template-form>
       </p-tabPanel>
       <p-tabPanel header="Standard Jobs">
+        <jb-drydock-project-template-standard-jobs
+          *ngIf="!isLoadingStandardJobs"
+          [linked]="linkedStandardJobs"
+          (changed)="onLinkedStandardJobsChanged($event)"
+        ></jb-drydock-project-template-standard-jobs>
+        <
         <!-- <jb-drydock-sub-items
           [job]="item"
           [newUid]="newItemUid"

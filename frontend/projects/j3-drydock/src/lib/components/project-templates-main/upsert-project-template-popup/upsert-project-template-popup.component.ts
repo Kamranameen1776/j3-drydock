@@ -5,12 +5,12 @@ import { FormModel, IJbDialog, JmsService, eJMSWorkflowAction } from 'jibe-compo
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { finalize } from 'rxjs/operators';
 import { GrowlMessageService } from '../../../services/growl-message.service';
-import { SubItem } from '../../../models/interfaces/sub-items';
 import { cloneDeep } from 'lodash';
 import * as uuid from 'uuid/v4';
 import { ProjectTemplate } from '../../../models/interfaces/project-template';
 import { ProjectTemplateUpsertFormService } from '../upsert-project-template-form/upsert-project-template-form.service';
 import { UpsertProjectTemplateFormComponent } from '../upsert-project-template-form/upsert-project-template-form.component';
+import { ProjectTemplateStandardJob } from '../project-template-standard-jobs/project-template-standard-jobs-grid.service';
 
 @Component({
   selector: 'jb-upsert-project-template-popup',
@@ -34,7 +34,7 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
 
   isSaving: boolean;
 
-  isLoadingStandardJobs: boolean;
+  isLoadingStandardJobs = false;
 
   get isEditing() {
     return !!this.item;
@@ -51,9 +51,8 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
   formStructure: FormModel = this.popupFormService.formStructure;
 
   newItemUid: string;
-  // TODO - fixme type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private changedStandardJobs: any[] = [];
+
+  linkedStandardJobs: ProjectTemplateStandardJob[] = [];
 
   constructor(
     private projectTemplatesService: ProjectTemplatesService,
@@ -69,7 +68,7 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
       this.setNewItemUid();
       this.setPopupHeader();
       this.setPopupFooter();
-      this.initChangedStandardJobs();
+      this.loadLinkedStandardJobs();
     }
   }
 
@@ -85,8 +84,8 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
     this.isPopupValid = isValid;
   }
 
-  onSubItemsChanged(subItems: SubItem[]) {
-    this.changedStandardJobs = subItems;
+  onLinkedStandardJobsChanged(items: ProjectTemplateStandardJob[]) {
+    this.linkedStandardJobs = items;
   }
 
   private setPopupHeader() {
@@ -100,7 +99,7 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
   private closePopup(isSaved = false) {
     this.closeDialog.emit(isSaved);
     this.isPopupValid = false;
-    this.changedStandardJobs = [];
+    this.linkedStandardJobs = [];
     this.newItemUid = null;
   }
 
@@ -123,7 +122,7 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
       VesselTypeId: formValue.VesselTypeId || [],
       VesselTypeSpecific: formValue.VesselTypeSpecific,
       ProjectTypeUid: formValue.ProjectTypeUid,
-      StandardJobs: this.changedStandardJobs.map((x) => x.StandardJobUid)
+      StandardJobs: this.linkedStandardJobs.map((x) => x.StandardJobUid)
     };
 
     this.projectTemplatesService
@@ -145,12 +144,6 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
       );
   }
 
-  private initChangedStandardJobs() {
-    // TODO standardJobs must be loaded from the server
-    const standardJobs = [];
-    this.changedStandardJobs = cloneDeep(standardJobs);
-  }
-
   private isValidationsPassed(): boolean {
     if (!this.isPopupValid) {
       this.growlMessageService.setErrorMessage('Please fill the required fields');
@@ -163,5 +156,30 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
     if (!this.item) {
       this.newItemUid = uuid();
     }
+  }
+
+  private loadLinkedStandardJobs() {
+    if (!this.isEditing) {
+      this.linkedStandardJobs = [];
+      return;
+    }
+
+    this.isLoadingStandardJobs = true;
+
+    this.projectTemplatesService
+      .getProjectTemplateStandardJobs(this.itemUid)
+      .pipe(
+        finalize(() => {
+          this.isLoadingStandardJobs = false;
+        })
+      )
+      .subscribe(
+        (response) => {
+          this.linkedStandardJobs = cloneDeep(response);
+        },
+        () => {
+          this.linkedStandardJobs = [];
+        }
+      );
   }
 }

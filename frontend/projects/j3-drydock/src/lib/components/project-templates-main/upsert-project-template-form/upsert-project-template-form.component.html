@@ -7,7 +7,7 @@
 ></jb-form>
 
 <form [formGroup]="editorsFormGroup">
-  <ng-container *ngIf="formGroup">
+  <ng-container *ngIf="!!formGroup">
     <label class="job-description-label">Description</label>
     <jb-editor
       class="drydock-editor"
