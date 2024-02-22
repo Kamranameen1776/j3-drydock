@@ -19,15 +19,9 @@
         <jb-drydock-project-template-standard-jobs
           *ngIf="!isLoadingStandardJobs"
           [linked]="linkedStandardJobs"
+          [templateUid]="newItemUid"
           (changed)="onLinkedStandardJobsChanged($event)"
         ></jb-drydock-project-template-standard-jobs>
-        <
-        <!-- <jb-drydock-sub-items
-          [job]="item"
-          [newUid]="newItemUid"
-          [functionUid]="functionUid"
-          (changed)="onSubItemsChanged($event)"
-        ></jb-drydock-sub-items> -->
       </p-tabPanel>
     </p-tabView>
   </div>

@@ -20,12 +20,15 @@ export interface StandardJobResult {
   [eStandardJobsMainFields.DoneByID]: string;
   [eStandardJobsMainFields.DoneBy]: string;
   [eStandardJobsMainFields.Inspection]: string;
+  [eStandardJobsMainFields.InspectionID]: number[];
   [eStandardJobsMainFields.MaterialSuppliedByID]: string;
   [eStandardJobsMainFields.MaterialSuppliedBy]: string;
   [eStandardJobsMainFields.VesselSpecific]: number;
   [eStandardJobsMainFields.Description]: string;
-  [eStandardJobsMainFields.VesselTypeID]: string;
+  [eStandardJobsMainFields.VesselTypeID]: number[];
   [eStandardJobsMainFields.VesselType]: string;
   [eStandardJobsMainFields.SubItems]: SubItem[];
   [eStandardJobsMainFields.Scope]: string;
+  [eStandardJobsMainFields.HasInspection]: string;
+  [eStandardJobsMainFields.HasSubItems]: string;
 }

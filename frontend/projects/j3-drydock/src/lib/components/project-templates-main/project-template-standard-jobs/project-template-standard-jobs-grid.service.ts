@@ -21,18 +21,18 @@ export enum eProjectTemplateStandardJobsLabels {
 }
 
 export interface ProjectTemplateStandardJob {
-  ProjectTemplateUid: 'string';
-  StandardJobUid: 'string';
-  ItemNumber: 'string';
-  Subject: 'string';
-  VesselType: 'string';
-  VesselTypeId: 'string';
-  InspectionSurvey: 'string';
-  InspectionSurveyId: 'string';
-  DoneBy: 'string';
-  DoneByUid: 'string';
-  MaterialSuppliedBy: 'string';
-  MaterialSuppliedByUid: 'string';
+  ProjectTemplateUid: string;
+  StandardJobUid: string;
+  ItemNumber: string;
+  Subject: string;
+  VesselType: string;
+  VesselTypeId: number[];
+  InspectionSurvey: string;
+  InspectionSurveyId: number[];
+  DoneBy: string;
+  DoneByUid: string;
+  MaterialSuppliedBy: string;
+  MaterialSuppliedByUid: string;
 }
 
 @Injectable()

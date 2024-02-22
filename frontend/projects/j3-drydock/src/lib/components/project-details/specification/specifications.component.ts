@@ -13,6 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NewTabService } from '../../../services/new-tab-service';
 import { statusProgressBarBackground } from '../../../shared/status-css.json';
 import { GrowlMessageService } from '../../../services/growl-message.service';
+import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 
 @Component({
   selector: 'jb-specifications',
@@ -100,7 +101,9 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     }
   }
 
-  onCloseCreatePopup(hasSaved: boolean) {
+  onCloseCreatePopup(selected: StandardJobResult[]) {
+    const hasSaved = selected.length > 0;
+
     this.isCreatePopupVisible = false;
     this.addFromStandardJobPopupVisible = false;
     this.isCreateFromProjectTemplatePopupVisible = false;

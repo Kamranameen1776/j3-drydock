@@ -154,18 +154,18 @@ export class StandardJobsService {
     return apiRequest;
   }
 
-  getStandardJobPopupGridData(vesselType: number, functionUIDs: string[]): GridInputsWithRequest {
+  getStandardJobPopupGridData(vesselType: number, functionUIDs: string[], excludeUids?: string[]): GridInputsWithRequest {
     return {
       columns: this.columns,
       gridName: this.popupGridName,
-      request: this.getStandardJobsRequestWithFilters(vesselType, functionUIDs),
+      request: this.getStandardJobsRequestWithFilters(vesselType, functionUIDs, excludeUids),
       filters: this.filters,
       filtersLists: this.filtersLists,
       searchFields: this.searchFields
     };
   }
 
-  getStandardJobsRequestWithFilters(vesselType: number, functionUIDs: string[]): WebApiRequest {
+  getStandardJobsRequestWithFilters(vesselType: number, functionUIDs: string[], excludeUids: string[]): WebApiRequest {
     const filter = ODataFilterBuilder('and');
 
     if (vesselType) {
@@ -186,6 +186,12 @@ export class StandardJobsService {
         orderby: 'code asc'
       }
     };
+
+    if (excludeUids?.length > 0) {
+      const body = apiRequest.body || {};
+      apiRequest.body = { ...body, uidsNin: excludeUids };
+    }
+
     return apiRequest;
   }
 

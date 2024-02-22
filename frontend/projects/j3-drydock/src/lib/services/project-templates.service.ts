@@ -82,8 +82,7 @@ export class ProjectTemplatesService {
       action: 'project-templates/project-templates-grid',
       crud: eCrud.Post,
       odata: {
-        orderby: 'TemplateCode asc',
-        filter: f().eq('NoOfSpecItems', 0)
+        orderby: 'TemplateCode asc'
       }
     };
     return apiRequest;
