@@ -234,23 +234,17 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     }
 
     if (headerFormValue.Job_Short_Description.length > 200) {
-      this.jbTMDtlSrv.showGrowlMassage.next({
-        severity: eJMSActionTypes.Error,
-        detail: 'Subject/Title cannot be more than 200 characters'
-      });
+      this.growlMessageService.setErrorMessage('Subject/Title cannot be more than 200 characters');
       return;
     }
 
     if (this.detailForm?.invalid) {
-      this.jbTMDtlSrv.showGrowlMassage.next({
-        severity: eJMSActionTypes.Error,
-        detail: 'Please fill all the required fields'
-      });
+      this.growlMessageService.setErrorMessage('Please fill all the required fields');
       return;
     }
 
     if (event.type === eJMSActionTypes.Error) {
-      this.jbTMDtlSrv.showGrowlMassage.next({ severity: eJMSActionTypes.Error, detail: event.errorMsg });
+      this.growlMessageService.setErrorMessage(event.errorMsg);
       return;
     }
 
@@ -291,19 +285,13 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         .updateSpecification(data)
         .toPromise()
         .then(() => {
-          this.jbTMDtlSrv.showGrowlMassage.next({
-            severity: eMessagesSeverityValues.Success,
-            detail: 'Specification has been updated successfully'
-          });
+          this.growlMessageService.setErrorMessage('Specification has been updated successfully');
           this.jbTMDtlSrv.isUnsavedChanges.next(false);
           this.getDetails(true);
         });
     } catch (err) {
       this.jbTMDtlSrv.isUnsavedChanges.next(false);
-      this.jbTMDtlSrv.showGrowlMassage.next({
-        severity: eMessagesSeverityValues.Error,
-        detail: err.error
-      });
+      this.growlMessageService.setErrorMessage(err.error);
       this.showLoader = false;
     }
   }
@@ -394,10 +382,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       }
       case eSpecificationDetailsPageMenuIds.PMSJobs:
         if (this.selectedItems[eSpecificationDetailsPageMenuIds.PMSJobs].length === 0) {
-          this.jbTMDtlSrv.showGrowlMassage.next({
-            severity: eMessagesSeverityValues.Error,
-            detail: 'No record selected to convert.'
-          });
+          this.growlMessageService.setErrorMessage('No PMS Job selected to convert.');
 
           break;
         }
@@ -410,10 +395,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         break;
       case eSpecificationDetailsPageMenuIds.Findings:
         if (this.selectedItems[eSpecificationDetailsPageMenuIds.Findings].length === 0) {
-          this.jbTMDtlSrv.showGrowlMassage.next({
-            severity: eMessagesSeverityValues.Error,
-            detail: 'No record selected to convert.'
-          });
+          this.growlMessageService.setErrorMessage('No Finding selected to convert.');
 
           break;
         }

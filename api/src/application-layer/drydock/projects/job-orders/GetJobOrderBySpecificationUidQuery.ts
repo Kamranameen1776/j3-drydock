@@ -3,10 +3,10 @@ import { JobOrdersRepository } from '../../../../dal/drydock/projects/job-orders
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { Query } from '../../core/cqrs/Query';
-import { GetJobOrderByUidDto } from './dtos/GetJobOrderByUidDto';
+import { GetLatestJobOrderBySpecificationDto } from './dtos/GetLatestJobOrderBySpecificationDto';
 import { JobOrderDto } from './dtos/JobOrderDto';
 
-export class GetJobOrderByUidQuery extends Query<GetJobOrderByUidDto, JobOrderDto | null> {
+export class GetJobOrderBySpecificationUidQuery extends Query<GetLatestJobOrderBySpecificationDto, JobOrderDto | null> {
     jobOrderRepository: JobOrdersRepository;
     specificationDetailsRepository: SpecificationDetailsRepository;
     projectsRepository: ProjectsRepository;
@@ -18,30 +18,26 @@ export class GetJobOrderByUidQuery extends Query<GetJobOrderByUidDto, JobOrderDt
         this.projectsRepository = new ProjectsRepository();
     }
 
-    protected async AuthorizationHandlerAsync(): Promise<void> {
-        return;
-    }
-
     /**
      * @returns Job Order data by specification
      */
-    protected async MainHandlerAsync(request: GetJobOrderByUidDto): Promise<JobOrderDto | null> {
-        const jobOrder = await this.jobOrderRepository.getJobOrderByUid(request.uid);
-
-        if (!jobOrder) {
-            return null;
-        }
-
-        const specification = await this.specificationDetailsRepository.TryGetSpecification(jobOrder.SpecificationUid);
+    protected async MainHandlerAsync(request: GetLatestJobOrderBySpecificationDto): Promise<JobOrderDto | null> {
+        const specification = await this.specificationDetailsRepository.TryGetSpecification(request.specificationUid);
 
         if (!specification) {
-            throw new ApplicationException(`Specification ${jobOrder.SpecificationUid} not found`);
+            throw new ApplicationException(`Specification ${request.specificationUid} not found`);
         }
 
         const project = await this.projectsRepository.TryGetProjectByUid(specification.ProjectUid);
 
         if (!project) {
             throw new ApplicationException(`Project ${specification.ProjectUid} not found`);
+        }
+
+        const jobOrder = await this.jobOrderRepository.getLatestJobOrderBySpecificationUid(request.specificationUid);
+
+        if (!jobOrder) {
+            return null;
         }
 
         return {

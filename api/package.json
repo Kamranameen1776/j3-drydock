@@ -1,6 +1,6 @@
 {
   "name": "@j3-drydock/api",
-  "version": "3.241.321",
+  "version": "3.241.322",
   "description": "DryDock API",
   "main": "src/index.ts",
   "engines": {

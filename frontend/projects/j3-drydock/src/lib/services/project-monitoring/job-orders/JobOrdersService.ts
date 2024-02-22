@@ -7,6 +7,9 @@ import { GetJobOrderByUidDto } from './GetJobOrderByUidDto';
 import { JobOrderDto } from './JobOrderDto';
 import { IUpdateJobOrderDurationDto } from './IUpdateJobOrderDurationDto';
 import { eApiBaseDryDockAPI } from '../../../models/constants/constants';
+import ODataFilterBuilder from 'odata-filter-builder';
+import moment from 'moment';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -25,21 +28,27 @@ export class JobOrdersService {
   }
 
   getJobOrdersUpdatesRequest(): WebApiRequest {
+    const startOfDay = moment().utcOffset(0, true).startOf('day').toISOString();
+    const endOfDay = moment().utcOffset(0, true).endOf('day').toISOString();
+    const filter = ODataFilterBuilder('and');
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
       action: 'projects/job-orders/get-updates',
-      crud: eCrud.Post
+      crud: eCrud.Post,
+      odata: {
+        filter: filter.ge('CreatedAt', startOfDay).le('CreatedAt', endOfDay)
+      }
     };
 
     return request;
   }
 
-  getJobOrderByUidRequest(getJobOrderBySpecificationDto: GetJobOrderByUidDto): WebApiRequest {
+  getJobOrderBySpecificationUidRequest(getJobOrderBySpecificationDto: GetJobOrderByUidDto): WebApiRequest {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
-      action: 'projects/job-orders/get-job-order-by-uid',
+      action: 'projects/job-orders/get-job-order-by-specification-uid',
       crud: eCrud.Post,
       body: getJobOrderBySpecificationDto
     };
@@ -47,8 +56,8 @@ export class JobOrdersService {
     return request;
   }
 
-  getJobOrderByUid(getJobOrderByUidDto: GetJobOrderByUidDto): Observable<JobOrderDto> {
-    return this.apiRequestService.sendApiReq(this.getJobOrderByUidRequest(getJobOrderByUidDto));
+  getJobOrderBySpecificationUid(getJobOrderByUidDto: GetJobOrderByUidDto): Observable<JobOrderDto> {
+    return this.apiRequestService.sendApiReq(this.getJobOrderBySpecificationUidRequest(getJobOrderByUidDto));
   }
 
   getJobOrderStatusesRequest(): WebApiRequest {

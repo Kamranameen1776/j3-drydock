@@ -2,7 +2,7 @@ import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
-export class dryDockAccessRights1707456255638 implements MigrationInterface {
+export class dryDockAccessRights1707456255639 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -69,9 +69,6 @@ export class dryDockAccessRights1707456255638 implements MigrationInterface {
                     ('a8318817-4c33-49c8-b516-a796ea305c95', 'dry_dock_project_attachment_delete_onboard', 'Delete attachment rights for project dry dock', 'v', 'project',
                     'dry_dock', 'delete_dd_project_att_onb', 1, getdate(), 1, NULL, 1, 'Delete Attachment in Project Dry Dock', NULL),
 
-                    ('CBD1B4EC-5DEE-4437-AE86-F367ED576EA0', 'dry_dock_project_delete', 'Delete dry dock project', 'o', 'project', 'project_index', 'delete', 1, GETDATE(),
-                    NULL, NULL, 1, 'Delete Dry Dock Project', NULL),
-
                     ('82111509-6B41-4DA6-8B81-1C52E2F599FA', 'dry_dock_project_resync', 'Re-Sync the record to other side in dry dock', N'b', 'project', 'dry_dock', 'resync',
                     1, GETDATE(), NULL, NULL, 1, 'Re-Sync Record for Dry Dock', NULL),
 
@@ -86,7 +83,7 @@ export class dryDockAccessRights1707456255638 implements MigrationInterface {
             ON TARGET.[Right_Code] = SOURCE.[Right_Code]
             WHEN MATCHED THEN
                 UPDATE
-                SET TARGET.[Right_UID]=SOURCE.[Right_UID],
+                SET
                     TARGET.[Right_Code]=SOURCE.[Right_Code],
                     TARGET.[Right_Description]=SOURCE.[Right_Description],
                     TARGET.[Valid_On]=SOURCE.[Valid_On],
@@ -205,27 +202,27 @@ export class dryDockAccessRights1707456255638 implements MigrationInterface {
             await queryRunner.query(`
             MERGE INTO INF_Lib_GroupRights AS TARGET
             USING (VALUES
-                (N'4cd31095-25c0-428c-9658-ca7c887016c2', N'view_project_main', N'projects_view_list', 1, N'1', getdate(), NULL, NULL),
-                (N'0c98027a-25f8-4f81-9e9c-d99f7a98de99', N'view_project_main_onboard', N'projects_view_list_onboard', 1, N'1', getdate(), NULL, NULL),
-                (N'508e5de0-0f23-4b67-9f43-85cc1b1616e2', N'create_projects', N'dry_dock_project_create', 1, N'1', getdate(), NULL, NULL),
-                (N'3df12c01-368d-4669-8eeb-2c220b084af0', N'delete_projects', N'dry_dock_project_delete', 1, N'1', getdate(), NULL, NULL),
-                (N'8ea2b381-195d-4611-8030-2d064fdbf16a', N'view_dry_dock_project_detail', N'dry_dock_project_view_details', 1, N'1', getdate(), NULL, NULL),
-                (N'3ed9b135-703c-42b9-9d6c-717967b3e7cf', N'view_dry_dock_project_detail', N'dry_dock_project_attachment_view', 1, N'1', getdate(), NULL, NULL),
-                (N'f7dd91f9-773d-40ba-9731-833d202481ef', N'view_dry_dock_project_detail_onboard', N'dry_dock_project_view_details_onboard', 1, N'1', getdate(), NULL, NULL),
-                (N'deaf7f86-3071-464f-a794-8d787977bffb', N'view_dry_dock_project_detail_onboard', N'dry_dock_project_attachment_view_onboard', 1, N'1', getdate(), NULL, NULL),
-                (N'c0ec7b7c-154a-4e26-9065-3a17ee74c095', N'edit_dry_dock_porject_detail', N'dry_dock_project_edit_header', 1, N'1', getdate(), NULL, NULL),
-                (N'89ba4c4d-e3a6-44f7-b1da-4c465de3685e', N'edit_dry_dock_porject_detail', N'dry_dock_project_edit_flow', 1, N'1', getdate(), NULL, NULL),
-                (N'c8670fd2-3241-43d4-a20d-a840b05f9cb2', N'edit_dry_dock_porject_detail', N'dry_dock_project_attachment_add', 1, N'1', getdate(), NULL, NULL),
-                (N'9839f24d-ae3c-4079-a9f1-593bfd99ae74', N'edit_dry_dock_porject_detail', N'dry_dock_project_attachment_edit', 1, N'1', getdate(), NULL, NULL),
-                (N'50d0c83c-c314-476a-861a-d31dd5d188d7', N'edit_dry_dock_porject_detail', N'dry_dock_project_attachment_delete', 1, N'1', getdate(), NULL, NULL),
-                (N'51ada4b1-5324-4e15-848a-698af1a3953b', N'edit_dry_dock_porject_detail_onboard', N'dry_dock_project_edit_header_onboard', 1, N'1', getdate(), NULL, NULL),
-                (N'1c1cbe30-a9fc-4298-b959-978ad3448d6a', N'edit_dry_dock_porject_detail_onboard', N'dry_dock_project_edit_flow_onboard', 1, N'1', getdate(), NULL, NULL),
-                (N'5f0bece0-d313-4aae-920a-db9f3d1f6f7f', N'edit_dry_dock_porject_detail_onboard', N'dry_dock_project_attachment_add_onboard', 1, N'1', getdate(), NULL, NULL),
-                (N'fa9c5344-ff7a-497f-b506-ab3791adcd7e', N'edit_dry_dock_porject_detail_onboard', N'dry_dock_project_attachment_edit_onboard', 1, N'1', getdate(), NULL, NULL),
-                (N'6f800cb9-8909-4e55-b9e8-8fa65c60f5d8', N'edit_dry_dock_porject_detail_onboard', N'dry_dock_project_attachment_delete_onboard', 1, N'1', getdate(), NULL, NULL),
-                (N'50757BFB-50D3-44FD-8322-BECCA2A9774D', N'view_dry_dock_project_detail', N'dry_dock_project_resync', 1, GETDATE(), NULL, NULL, 1 ),
-                (N'7189D08A-180D-45D8-BF25-F600F4F67EF5', N'view_dry_dock_project_detail_onboard', N'dry_dock_project_resync', 1, GETDATE(), NULL, NULL, 1 ),
-                (N'453DE82A-8B39-490A-A0CF-042B6E31B7B5', N'view_dry_dock_project_detail', N'dry_dock_project_immediate_closure', 1, GETDATE(), NULL, NULL, 1 )
+                (N'4cd31095-25c0-428c-9658-ca7c887016c2', N'view_project_main', N'projects_view_list', 1, 1, getdate(), NULL, NULL),
+                (N'0c98027a-25f8-4f81-9e9c-d99f7a98de99', N'view_project_main_onboard', N'projects_view_list_onboard', 1, 1, getdate(), NULL, NULL),
+                (N'508e5de0-0f23-4b67-9f43-85cc1b1616e2', N'create_projects', N'dry_dock_project_create', 1, 1, getdate(), NULL, NULL),
+                (N'3df12c01-368d-4669-8eeb-2c220b084af0', N'delete_projects', N'dry_dock_project_delete', 1, 1, getdate(), NULL, NULL),
+                (N'8ea2b381-195d-4611-8030-2d064fdbf16a', N'view_dry_dock_project_detail', N'dry_dock_project_view_details', 1, 1, getdate(), NULL, NULL),
+                (N'3ed9b135-703c-42b9-9d6c-717967b3e7cf', N'view_dry_dock_project_detail', N'dry_dock_project_attachment_view', 1, 1, getdate(), NULL, NULL),
+                (N'f7dd91f9-773d-40ba-9731-833d202481ef', N'view_dry_dock_project_detail_onboard', N'dry_dock_project_view_details_onboard', 1, 1, getdate(), NULL, NULL),
+                (N'deaf7f86-3071-464f-a794-8d787977bffb', N'view_dry_dock_project_detail_onboard', N'dry_dock_project_attachment_view_onboard', 1, 1, getdate(), NULL, NULL),
+                (N'c0ec7b7c-154a-4e26-9065-3a17ee74c095', N'edit_dry_dock_porject_detail', N'dry_dock_project_edit_header', 1, 1, getdate(), NULL, NULL),
+                (N'89ba4c4d-e3a6-44f7-b1da-4c465de3685e', N'edit_dry_dock_porject_detail', N'dry_dock_project_edit_flow', 1, 1, getdate(), NULL, NULL),
+                (N'c8670fd2-3241-43d4-a20d-a840b05f9cb2', N'edit_dry_dock_porject_detail', N'dry_dock_project_attachment_add', 1, 1, getdate(), NULL, NULL),
+                (N'9839f24d-ae3c-4079-a9f1-593bfd99ae74', N'edit_dry_dock_porject_detail', N'dry_dock_project_attachment_edit', 1, 1, getdate(), NULL, NULL),
+                (N'50d0c83c-c314-476a-861a-d31dd5d188d7', N'edit_dry_dock_porject_detail', N'dry_dock_project_attachment_delete', 1, 1, getdate(), NULL, NULL),
+                (N'51ada4b1-5324-4e15-848a-698af1a3953b', N'edit_dry_dock_porject_detail_onboard', N'dry_dock_project_edit_header_onboard', 1, 1, getdate(), NULL, NULL),
+                (N'1c1cbe30-a9fc-4298-b959-978ad3448d6a', N'edit_dry_dock_porject_detail_onboard', N'dry_dock_project_edit_flow_onboard', 1, 1, getdate(), NULL, NULL),
+                (N'5f0bece0-d313-4aae-920a-db9f3d1f6f7f', N'edit_dry_dock_porject_detail_onboard', N'dry_dock_project_attachment_add_onboard', 1, 1, getdate(), NULL, NULL),
+                (N'fa9c5344-ff7a-497f-b506-ab3791adcd7e', N'edit_dry_dock_porject_detail_onboard', N'dry_dock_project_attachment_edit_onboard', 1, 1, getdate(), NULL, NULL),
+                (N'6f800cb9-8909-4e55-b9e8-8fa65c60f5d8', N'edit_dry_dock_porject_detail_onboard', N'dry_dock_project_attachment_delete_onboard', 1, 1, getdate(), NULL, NULL),
+                (N'50757BFB-50D3-44FD-8322-BECCA2A9774D', N'view_dry_dock_project_detail', N'dry_dock_project_resync', 1, 1, getdate(), NULL, NULL),
+                (N'7189D08A-180D-45D8-BF25-F600F4F67EF5', N'view_dry_dock_project_detail_onboard', N'dry_dock_project_resync', 1, 1, getdate(), NULL, NULL),
+                (N'453DE82A-8B39-490A-A0CF-042B6E31B7B5', N'view_dry_dock_project_detail', N'dry_dock_project_immediate_closure', 1, 1, getdate(), NULL, NULL)
                 )
 
             AS SOURCE ([GR_UID], [GR_Group_Code], [GR_Right_Code], [Active_Status], [created_by],
@@ -235,7 +232,7 @@ export class dryDockAccessRights1707456255638 implements MigrationInterface {
 
             WHEN MATCHED THEN
                 UPDATE
-                SET TARGET.[GR_UID]              = SOURCE.[GR_UID],
+                SET
                     TARGET.[GR_Group_Code]= SOURCE.[GR_Group_Code],
                     TARGET.[Active_Status]       = SOURCE.[Active_Status],
                     TARGET.[modified_by]         = 1,
@@ -269,7 +266,7 @@ export class dryDockAccessRights1707456255638 implements MigrationInterface {
                 ON TARGET.RGR_UID = SOURCE.RGR_UID
                 WHEN MATCHED THEN
                     UPDATE
-                    SET TARGET.[RGR_UID]             = SOURCE.[RGR_UID],
+                    SET
                         TARGET.[RGR_Role_ID]= SOURCE.[RGR_Role_ID],
                         TARGET.[RGR_Right_Code]      = SOURCE.[RGR_Right_Code],
                         TARGET.[RGR_Group_Code]= SOURCE.[RGR_Group_Code],
@@ -309,7 +306,7 @@ export class dryDockAccessRights1707456255638 implements MigrationInterface {
                 ON TARGET.RGR_UID = SOURCE.RGR_UID
                 WHEN MATCHED THEN
                     UPDATE
-                    SET TARGET.[RGR_UID]             = SOURCE.[RGR_UID],
+                    SET
                         TARGET.[RGR_Role_ID]= SOURCE.[RGR_Role_ID],
                         TARGET.[RGR_Right_Code]      = SOURCE.[RGR_Right_Code],
                         TARGET.[RGR_Group_Code]= SOURCE.[RGR_Group_Code],

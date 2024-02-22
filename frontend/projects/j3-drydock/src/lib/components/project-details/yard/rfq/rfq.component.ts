@@ -4,7 +4,7 @@ import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@an
 import { RfqGridService } from './rfq-grid.service';
 import { GridInputsWithData } from '../../../../models/interfaces/grid-inputs';
 import { eRfqActions, eRfqFields } from '../../../../models/enums/rfq.enum';
-import { DispatchAction, eGridEvents, eLayoutWidgetSize, GridAction, GridRowActions, GridService } from 'jibe-components';
+import { DispatchAction, eGridEvents, eLayoutWidgetSize, GridAction, GridRowActions, GridService, IJbDialog } from 'jibe-components';
 import { concatMap, filter, map, takeUntil } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { ProjectDetailsService } from '../../project-details.service';
 import { getFileNameDate } from '../../../../shared/functions/file-name';
 import { currentLocalAsUTC } from '../../../../utils/date';
+import { getSmallPopup } from '../../../../models/constants/popup';
 
 @Component({
   selector: 'jb-drydock-rfq',
@@ -28,8 +29,17 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
   gridInputs: GridInputsWithData<YardLink> = this.rfqGridService.getGridInputs();
 
   isLinkPopupVisible = false;
-
+  selectedRfqInfo: YardLink;
   gridRowActions: GridRowActions[] = [];
+  isShowDeleteDialog = false;
+  isShowLoader = false;
+
+  deleteRfqDialog: IJbDialog = {
+    ...getSmallPopup(),
+    dialogHeader: 'Delete RFQ'
+  };
+  deleteBtnLabel = 'Delete';
+  deleteDialogMessage = 'Are you sure you want to delete this RFQ record?';
 
   public linked: YardLink[];
 
@@ -67,13 +77,15 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
   }
 
   onGridAction({ type, payload }: GridAction<eRfqActions, YardLink>): void {
+    this.selectedRfqInfo = payload;
+
     switch (type) {
       case eRfqActions.Export:
         this.export(payload);
         break;
 
       case eRfqActions.Delete:
-        this.delete(payload);
+        this.showDeleteDialog(true);
         break;
 
       default:
@@ -104,19 +116,26 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
   private setGridRowActions(): void {
     this.gridRowActions.length = 0;
     // TODO Access rights
-    this.gridRowActions.push({ name: eRfqActions.Export });
+    this.gridRowActions.push({ name: eRfqActions.Export, icon: 'icons8-microsoft-excel-2' });
     // TODO Access rights
-    this.gridRowActions.push({ name: eRfqActions.Delete });
+    this.gridRowActions.push({ name: eRfqActions.Delete, icon: 'icons8-delete' });
   }
 
-  private delete(row: YardLink) {
-    const uid = row.uid;
+  showDeleteDialog(value: boolean) {
+    this.isShowDeleteDialog = value;
+  }
+
+  onDeleteRfq() {
+    this.isShowLoader = true;
+    const uid = this.selectedRfqInfo.uid;
 
     this.yardsService
       .removeYardLink(uid)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         this.linked = this.linked.filter((yard) => yard.uid !== uid);
+        this.isShowDeleteDialog = false;
+        this.isShowLoader = false;
       });
   }
 

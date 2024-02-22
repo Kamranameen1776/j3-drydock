@@ -172,7 +172,8 @@ export class SpecificationDetailsService {
             id: 'Duration',
             type: eFieldControlType.Text,
             pattern: /[0-9]/,
-            disabled: false
+            disabled: false,
+            maxTextLength: 3
           }
         },
         {

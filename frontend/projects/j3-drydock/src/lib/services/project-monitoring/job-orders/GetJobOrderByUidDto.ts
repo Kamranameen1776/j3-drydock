@@ -1,3 +1,3 @@
 export interface GetJobOrderByUidDto {
-  uid: string;
+  specificationUid: string;
 }
