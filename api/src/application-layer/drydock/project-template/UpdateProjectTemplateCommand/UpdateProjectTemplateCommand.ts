@@ -65,12 +65,14 @@ export class UpdateProjectTemplateCommand extends Command<UpdateProjectTemplateM
                 projectTemplateStandardJobs,
             );
 
-            const StandardJobsIds = await this.standardJobsRepository.exists(standardJobsUidsToAdd);
+            if (standardJobsUidsToAdd.length > 0) {
+                const StandardJobsIds = await this.standardJobsRepository.exists(standardJobsUidsToAdd);
 
-            if (StandardJobsIds.length < standardJobsUidsToAdd.length) {
-                throw new ApplicationException(
-                    `Standard jobs is not found: ${diffArray(standardJobsUidsToAdd, StandardJobsIds)}`,
-                );
+                if (StandardJobsIds.length < standardJobsUidsToAdd.length) {
+                    throw new ApplicationException(
+                        `Standard jobs is not found: ${diffArray(standardJobsUidsToAdd, StandardJobsIds)}`,
+                    );
+                }
             }
 
             const standardJobsOps = standardJobsUidsToAdd

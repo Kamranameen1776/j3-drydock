@@ -55,12 +55,14 @@ export class CreateProjectTemplateCommand extends Command<CreateProjectTemplateM
                 );
             }
 
-            const StandardJobsIds = await this.standardJobsRepository.exists(request.StandardJobs);
+            if (request.StandardJobs.length > 0) {
+                const StandardJobsIds = await this.standardJobsRepository.exists(request.StandardJobs);
 
-            if (StandardJobsIds.length < request.StandardJobs.length) {
-                throw new ApplicationException(
-                    `Standard jobs is not found: ${diffArray(request.StandardJobs, StandardJobsIds)}`,
-                );
+                if (StandardJobsIds.length < request.StandardJobs.length) {
+                    throw new ApplicationException(
+                        `Standard jobs is not found: ${diffArray(request.StandardJobs, StandardJobsIds)}`,
+                    );
+                }
             }
 
             const standardJobsOps = request.StandardJobs.map((uid) => {
