@@ -1,7 +1,7 @@
 <jb-grid
   [gridName]="gridInputs.gridName"
   [colData]="gridInputs.columns"
-  [tableData]="subItems | staticGridSearch: (searchTerm$ | async) : searchFn"
+  [tableData]="linked | staticGridSearch: (searchTerm$ | async) : searchFn"
   [button]="gridInputs.gridButton"
   [getStyleByContainer]="true"
   [setActions]="gridRowActions"
@@ -9,11 +9,14 @@
   (action)="onGridAction($any($event))"
 ></jb-grid>
 
-<jb-upsert-sub-item-popup
-  [item]="currentRow"
-  [isOpen]="isUpsertPopupVisible"
-  (closeDialog)="onCloseUpsertPopup($event)"
-></jb-upsert-sub-item-popup>
+<jb-add-specification-from-standard-job-popup
+  *ngIf="isAddPopupVisible"
+  [treeData]="treeData$ | async"
+  [isOpen]="isAddPopupVisible"
+  [excludeUids]="linkedUids"
+  [type]="addPopupType"
+  (closeDialog)="onCloseAddPopup($event)"
+></jb-add-specification-from-standard-job-popup>
 
 <jb-dialog
   [dialogContent]="confirmationPopUp"
@@ -28,7 +31,7 @@
       class="popup-text"
       *ngIf="isConfirmDeleteVisible"
     >
-      Are you sure you want to delete the sub item?
+      Are you sure you want to delete the standard job?
     </span>
   </div>
 

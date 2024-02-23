@@ -1,0 +1,26 @@
+<jb-form
+  [formStructure]="formStructure"
+  [formValues]="formValues"
+  [isVerticalLabel]="true"
+  [customErrorMessage]="{}"
+  (jbFormGroup)="dispatchForm($event)"
+></jb-form>
+
+<form [formGroup]="editorsFormGroup">
+  <ng-container *ngIf="!!formGroup">
+    <label class="job-description-label">Description</label>
+    <jb-editor
+      class="drydock-editor"
+      [id]="descriptionEditorConfig.id"
+      [maxLength]="descriptionEditorConfig.maxLength"
+      [placeholder]="descriptionEditorConfig.placeholder"
+      [crtlName]="descriptionEditorConfig.crtlName"
+      [moduleCode]="descriptionEditorConfig.moduleCode"
+      [functionCode]="descriptionEditorConfig.functionCode"
+      [key1]="item?.ProjectTemplateUid"
+      [inlineMode]="descriptionEditorConfig.inlineMode"
+      [tools]="descriptionEditorConfig.tools"
+      (updateParentCtrlValue)="updateDescriptionEditorCtrlValue($event)"
+    ></jb-editor>
+  </ng-container>
+</form>

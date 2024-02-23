@@ -5,6 +5,7 @@ import { ProjectDetailsComponent } from './components/project-details/project-de
 import { StandardJobsMainComponent } from './components/standard-jobs-main/standard-jobs-main.component';
 import { ProjectsMainPageComponent } from './components/projects-main-page/projects-main-page.component';
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
+import { ProjectTemplatesMainComponent } from './components/project-templates-main/project-templates-main.component';
 
 const routes: Routes = [
   {
@@ -28,6 +29,12 @@ const routes: Routes = [
   {
     path: 'standard-jobs-main',
     component: StandardJobsMainComponent,
+    canActivate: [AuthGuardService],
+    runGuardsAndResolvers: 'paramsOrQueryParamsChange'
+  },
+  {
+    path: 'project-templates-main',
+    component: ProjectTemplatesMainComponent,
     canActivate: [AuthGuardService],
     runGuardsAndResolvers: 'paramsOrQueryParamsChange'
   },

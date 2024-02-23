@@ -1,24 +1,27 @@
 <jb-grid
+  *ngIf="canView"
   [gridName]="gridInputs.gridName"
   [colData]="gridInputs.columns"
-  [tableData]="subItems | staticGridSearch: (searchTerm$ | async) : searchFn"
+  [tableDataReq]="gridInputs.request"
   [button]="gridInputs.gridButton"
   [getStyleByContainer]="true"
   [setActions]="gridRowActions"
-  [isDisplayAdvancedFilter]="false"
+  [filterData]="gridInputs.filters"
+  [filterListsSet]="gridInputs.filtersLists"
+  [searchFields]="gridInputs.searchFields"
   (action)="onGridAction($any($event))"
+  (cellPlainTextClick)="cellPlainTextClick($event)"
 ></jb-grid>
 
-<jb-upsert-sub-item-popup
+<jb-upsert-project-template-popup
   [item]="currentRow"
   [isOpen]="isUpsertPopupVisible"
   (closeDialog)="onCloseUpsertPopup($event)"
-></jb-upsert-sub-item-popup>
+></jb-upsert-project-template-popup>
 
 <jb-dialog
   [dialogContent]="confirmationPopUp"
   [(dialogVisible)]="isConfirmDeleteVisible"
-  (closeDialog)="onCloseConfirmationDeletePopup()"
 >
   <div
     jb-dialog-body
@@ -28,7 +31,7 @@
       class="popup-text"
       *ngIf="isConfirmDeleteVisible"
     >
-      Are you sure you want to delete the sub item?
+      Are you sure you want to delete the project template?
     </span>
   </div>
 
@@ -40,3 +43,12 @@
     ></jb-dialog-footer>
   </ng-container>
 </jb-dialog>
+
+<ng-template
+  #lastUpdatedTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.LastUpdated | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
+</ng-template>
+
+<jb-growl [content]="growlMessage$ | async"></jb-growl>
