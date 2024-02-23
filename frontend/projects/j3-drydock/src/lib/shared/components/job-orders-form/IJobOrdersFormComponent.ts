@@ -6,12 +6,6 @@ import { EventEmitter } from '@angular/core';
 
 export interface IJobOrdersFormComponent {
   /**
-   * Initialize the form with the given values
-   * @param jobOrderFormDto initial values for the form
-   */
-  init(jobOrderFormDto: IJobOrderFormDto): void;
-
-  /**
    * Save the form values
    */
   save(): IJobOrderFormResultDto | Error;

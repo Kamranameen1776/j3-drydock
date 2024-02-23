@@ -39,6 +39,8 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
   okBtnLabel = 'Update';
 
+  jobOrderFormValue: IJobOrderFormDto = {} as IJobOrderFormDto;
+
   private row: JobOrder;
 
   readonly dateTimeFormat = this.specificationUpdatesService.dateTimeFormat;
@@ -54,23 +56,20 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
   }
 
   public showJobOrderForm(row?: JobOrder) {
-    const jobOrderForm: IJobOrderFormDto = {
-      SpecificationUid: this.specificationDetails.uid,
-      Code: this.specificationDetails.SpecificationCode
-    };
+    this.jobOrderFormValue = {};
+    this.jobOrderFormValue.SpecificationUid = this.specificationDetails.uid;
+    this.jobOrderFormValue.Code = this.specificationDetails.SpecificationCode;
 
     this.row = row;
 
     if (row) {
-      jobOrderForm.Remarks = row.JobOrderRemarks;
-      jobOrderForm.Progress = row.Progress;
-      jobOrderForm.Subject = row.JobOrderSubject;
-      jobOrderForm.Status = row.JobOrderStatus;
-      jobOrderForm.SpecificationStartDate = row.SpecificationStartDate;
-      jobOrderForm.SpecificationEndDate = row.SpecificationEndDate;
+      this.jobOrderFormValue.Remarks = row.JobOrderRemarks;
+      this.jobOrderFormValue.Progress = row.Progress;
+      this.jobOrderFormValue.Subject = row.JobOrderSubject;
+      this.jobOrderFormValue.Status = row.JobOrderStatus;
+      this.jobOrderFormValue.SpecificationStartDate = row.SpecificationStartDate;
+      this.jobOrderFormValue.SpecificationEndDate = row.SpecificationEndDate;
     }
-
-    this.jobOrderForm.init(jobOrderForm);
 
     this.showDialog(true);
   }
@@ -81,7 +80,7 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
   }
 
   ngAfterViewInit(): void {
-    this.jobOrderForm.onValueChangesIsFormValid.pipe(takeUntil(this.unsubscribe$)).subscribe((isValid) => {
+    this.jobOrderForm?.onValueChangesIsFormValid.pipe(takeUntil(this.unsubscribe$)).subscribe((isValid) => {
       this.isDialogOkButtonDisabled = !isValid;
     });
   }
@@ -97,8 +96,9 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
   }
 
   closeDialog(hasSaved?: boolean) {
-    this.showDialog(false);
     this.row = null;
+    this.jobOrderFormValue = {};
+    this.showDialog(false);
 
     if (hasSaved) {
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);

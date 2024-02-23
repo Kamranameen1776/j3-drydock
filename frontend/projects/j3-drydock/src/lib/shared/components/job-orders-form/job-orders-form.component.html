@@ -34,6 +34,7 @@
     <div class="jb-editor-remarks">
       <form [formGroup]="remarksEditorFormGroup">
         <jb-editor
+          *ngIf="remarksEditorConfig"
           #remarksEditor
           [id]="remarksEditorConfig.id"
           [maxLength]="remarksEditorConfig.maxLength"

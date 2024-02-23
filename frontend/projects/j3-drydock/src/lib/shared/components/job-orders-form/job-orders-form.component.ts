@@ -29,6 +29,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   @Input() vesselId: number;
 
   @Input() isOpen: boolean;
+  @Input() jobOrderFormValue: IJobOrderFormDto;
 
   @ViewChild('remarksEditor')
   remarksEditor: JbEditorComponent;
@@ -91,39 +92,41 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   }
 
   ngOnInit(): void {
+    this.init(this.jobOrderFormValue);
     this.remarksEditorConfig = this.jobOrdersFormService.getRemarksEditorConfig();
   }
 
-  public init(jobOrderFormDto: IJobOrderFormDto) {
-    this.reset();
-
-    this.uid = jobOrderFormDto.uid;
-
-    const group = this.updateJobOrderFormGroup.controls.jobOrderUpdate as FormGroup;
-    const controls = group.controls;
-
-    controls.SpecificationUid.setValue(jobOrderFormDto.SpecificationUid);
-    controls.Progress.setValue(jobOrderFormDto.Progress);
-
+  private init(jobOrderFormDto: IJobOrderFormDto) {
     this.selectedSpecification.Key = jobOrderFormDto.SpecificationUid;
     this.selectedSpecification.Value = jobOrderFormDto.Code;
 
-    this.remarksEditor.key1 = jobOrderFormDto.SpecificationUid;
-    this.remarksEditor.vesselId = this.vesselId;
+    this.uid = jobOrderFormDto.uid;
 
-    this.remarksEditorFormGroup.controls.RemarksCtrl.setValue(jobOrderFormDto.Remarks ?? '');
-    controls.Subject.setValue(jobOrderFormDto.Subject);
-    controls.Status.setValue(jobOrderFormDto.Status);
+    if (this.remarksEditor) {
+      this.remarksEditor.key1 = jobOrderFormDto.SpecificationUid;
+      this.remarksEditor.vesselId = this.vesselId;
+    }
+
+    this.remarksEditorFormGroup?.controls.RemarksCtrl.setValue(jobOrderFormDto.Remarks ?? '');
+  }
+
+  private updateJobOrderFormValues() {
+    const group = this.updateJobOrderFormGroup?.controls.jobOrderUpdate as FormGroup;
+    const controls = group?.controls;
+
+    controls?.SpecificationUid.setValue(this.jobOrderFormValue.SpecificationUid);
+    controls?.Progress.setValue(this.jobOrderFormValue.Progress);
+    controls?.Subject.setValue(this.jobOrderFormValue.Subject);
+    controls?.Status.setValue(this.jobOrderFormValue.Status);
 
     if (!this.hideSpecificationStartEndDate) {
-      controls.SpecificationStartDate.setValue(UTCAsLocal(jobOrderFormDto.SpecificationStartDate));
-      controls.SpecificationEndDate.setValue(UTCAsLocal(jobOrderFormDto.SpecificationEndDate));
+      controls?.SpecificationStartDate.setValue(UTCAsLocal(this.jobOrderFormValue.SpecificationStartDate));
+      controls?.SpecificationEndDate.setValue(UTCAsLocal(this.jobOrderFormValue.SpecificationEndDate));
     }
   }
 
   save(): IJobOrderFormResultDto | Error {
-    const jobOrder = this.updateJobOrderFormGroup.value.jobOrderUpdate;
-
+    const jobOrder = this.updateJobOrderFormGroup?.value.jobOrderUpdate;
     let startDate: Date;
     let endDate: Date;
 
@@ -172,11 +175,11 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
 
   public initUpdateJobOrderFormGroup(action: FormGroup): void {
     this.updateJobOrderFormGroup = action;
-
-    this.updateJobOrderFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      this.onValueChangesIsFormValid.next(this.updateJobOrderFormGroup.valid);
+    this.updateJobOrderFormValues();
+    this.updateJobOrderFormGroup?.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+      this.onValueChangesIsFormValid.next(this.updateJobOrderFormGroup?.valid);
       this.onValueChangesIsForm.next(action);
-      return this.updateJobOrderFormGroup.valid;
+      return this.updateJobOrderFormGroup?.valid;
     });
   }
 
