@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 5
 const swaggerJsonPath = 'build/swagger.json';
 
 if (fs.existsSync(swaggerJsonPath)) {
-    // http://localhost:3020/api-docs/#/
+    // http://localhost:3034/api-docs/#/
     const swaggerDoc = JSON.parse(fs.readFileSync('build/swagger.json', 'utf8'));
     app.use(
         '/api-docs',
