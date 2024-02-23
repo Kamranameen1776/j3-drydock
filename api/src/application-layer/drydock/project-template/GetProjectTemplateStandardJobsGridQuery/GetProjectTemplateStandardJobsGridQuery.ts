@@ -1,23 +1,25 @@
+import { ProjectTemplatesService } from '../../../../bll/drydock/project-templates/project-templates.service';
 import { Req } from '../../../../common/drydock/ts-helpers/req-res';
-import { IGetProjectTemplateStandardJobsGridDto } from '../../../../dal/drydock/ProjectTemplate/IGetProjectTemplateStandardJobsGridDto';
+import { IGetProjectTemplateStandardJobsGridDtoResult } from '../../../../dal/drydock/ProjectTemplate/IGetProjectTemplateStandardJobsGridDto';
 import { ProjectTemplateRepository } from '../../../../dal/drydock/ProjectTemplate/ProjectTemplateRepository';
 import { ProjectTemplateStandardJobRepository } from '../../../../dal/drydock/ProjectTemplate/ProjectTemplateStandardJobRepository';
 import { ODataBodyDto } from '../../../../shared/dto';
-import { ODataResult } from '../../../../shared/interfaces';
 import { Query } from '../../core/cqrs/Query';
 
 export class GetProjectTemplateStandardJobsGridQuery extends Query<
     Req<ODataBodyDto>,
-    ODataResult<IGetProjectTemplateStandardJobsGridDto>
+    IGetProjectTemplateStandardJobsGridDtoResult
 > {
     projectTemplateRepository: ProjectTemplateRepository;
     projectTemplateStandardJobRepository: ProjectTemplateStandardJobRepository;
+    projectTemplatesService: ProjectTemplatesService;
 
     constructor() {
         super();
 
         this.projectTemplateRepository = new ProjectTemplateRepository();
         this.projectTemplateStandardJobRepository = new ProjectTemplateStandardJobRepository();
+        this.projectTemplatesService = new ProjectTemplatesService();
     }
 
     /**
@@ -27,9 +29,9 @@ export class GetProjectTemplateStandardJobsGridQuery extends Query<
      */
     protected async MainHandlerAsync(
         request: Req<ODataBodyDto>,
-    ): Promise<ODataResult<IGetProjectTemplateStandardJobsGridDto>> {
+    ): Promise<IGetProjectTemplateStandardJobsGridDtoResult> {
         const result = await this.projectTemplateStandardJobRepository.GetProjectTemplateStandardJobsGridData(request);
 
-        return result;
+        return this.projectTemplatesService.mapStandardJobsDataToDto(result);
     }
 }

@@ -33,6 +33,11 @@ export class StandardJobsRepository {
     public async getStandardJobs(
         data: RequestWithOData,
         filters: Record<StandardJobsGridFiltersKeys, string[]>,
+        additionalFilters:
+            | {
+                  uidsNin?: string[];
+              }
+            | undefined,
     ): Promise<GetStandardJobsQueryResult> {
         const oDataService = new ODataService(data, getConnection);
         const innerQuery = getManager()
@@ -132,6 +137,10 @@ export class StandardJobsRepository {
 
         if (filters.vesselTypeId?.length) {
             innerQuery.andWhere(`vt.ID IN (:...vesselTypeId)`, { vesselTypeId: filters.vesselTypeId });
+        }
+
+        if (additionalFilters?.uidsNin?.length) {
+            innerQuery.andWhere(`sj.uid NOT IN (:...uidsNin)`, { uidsNin: additionalFilters.uidsNin });
         }
 
         innerQuery.getSql();

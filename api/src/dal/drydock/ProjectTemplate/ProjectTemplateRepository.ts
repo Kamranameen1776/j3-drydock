@@ -9,10 +9,9 @@ import { ProjectTemplateEntity } from '../../../entity/drydock/ProjectTemplate/P
 import { ProjectTemplateStandardJobEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateStandardJobEntity';
 import { ProjectTemplateVesselTypeEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateVesselTypeEntity';
 import { ODataBodyDto } from '../../../shared/dto';
-import { ODataResult } from '../../../shared/interfaces';
 import { getChunkSize } from '../../../shared/utils/get-chunk-size';
 import { RepoUtils } from '../utils/RepoUtils';
-import { IGetProjectTemplateGridDto } from './IGetProjectTemplateGridDto';
+import { IGetProjectTemplateGridQueryResult } from './IGetProjectTemplateGridDto';
 
 export class ProjectTemplateRepository {
     public async CreateProjectTemplate(
@@ -49,7 +48,7 @@ export class ProjectTemplateRepository {
     public async GetProjectTemplateGridData(
         request: Req<ODataBodyDto>,
         filters: Record<ProjectTemplateGridFiltersKeys, string[]>,
-    ): Promise<ODataResult<IGetProjectTemplateGridDto>> {
+    ): Promise<IGetProjectTemplateGridQueryResult> {
         const oDataService = new ODataService(request, getConnection);
 
         const repository = getManager().getRepository(ProjectTemplateEntity);

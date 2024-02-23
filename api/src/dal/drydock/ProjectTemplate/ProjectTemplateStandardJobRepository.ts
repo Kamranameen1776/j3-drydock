@@ -15,10 +15,9 @@ import {
 import { ProjectTemplateEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateEntity';
 import { ProjectTemplateStandardJobEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateStandardJobEntity';
 import { ODataBodyDto } from '../../../shared/dto';
-import { ODataResult } from '../../../shared/interfaces';
 import { getChunkSize } from '../../../shared/utils/get-chunk-size';
 import { RepoUtils } from '../utils/RepoUtils';
-import { IGetProjectTemplateStandardJobsGridDto } from './IGetProjectTemplateStandardJobsGridDto';
+import { IGetProjectTemplateStandardJobsGridQueryResult } from './IGetProjectTemplateStandardJobsGridDto';
 
 export class ProjectTemplateStandardJobRepository {
     public async GetProjectTemplateStandardJobsByProjectTemplateUid(projectTemplateUid: string) {
@@ -76,7 +75,7 @@ export class ProjectTemplateStandardJobRepository {
 
     public async GetProjectTemplateStandardJobsGridData(
         request: Req<ODataBodyDto>,
-    ): Promise<ODataResult<IGetProjectTemplateStandardJobsGridDto>> {
+    ): Promise<IGetProjectTemplateStandardJobsGridQueryResult> {
         const oDataService = new ODataService(request, getConnection);
 
         const repository = getManager().getRepository(ProjectTemplateStandardJobEntity);
