@@ -40,3 +40,10 @@
   *ngIf="showLoader"
   [theme]="'figma'"
 ></jb-progress-spinner>
+
+<ng-template
+  #lastUpdatedTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.LastUpdated | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
+</ng-template>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { IJbDialog } from 'jibe-components';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { BehaviorSubject } from 'rxjs';
@@ -6,6 +6,7 @@ import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { CreateProjectFromTemplateGridService } from './create-project-from-template-grid.service';
 import { ProjectTemplatesService } from '../../../services/project-templates.service';
 import { GrowlMessageService } from '../../../services/growl-message.service';
+import { eProjectTemplatesFields } from '../../../models/enums/project-templates.enum';
 
 @Component({
   selector: 'jb-create-from-project-template-popup',
@@ -13,6 +14,8 @@ import { GrowlMessageService } from '../../../services/growl-message.service';
   styleUrls: ['./create-from-project-template-popup.component.scss']
 })
 export class CreateFromProjectTemplatePopupComponent implements OnInit {
+  @ViewChild('lastUpdatedTemplate', { static: true }) lastUpdatedTemplate: TemplateRef<unknown>;
+
   @Input() isOpen: boolean;
   @Input() vesselType: number;
   @Input() projectUid: string;
@@ -38,6 +41,7 @@ export class CreateFromProjectTemplatePopupComponent implements OnInit {
 
   ngOnInit(): void {
     this.gridData = this.getData();
+    this.setCellTemplate(this.lastUpdatedTemplate, eProjectTemplatesFields.LastUpdated);
   }
 
   onCancel() {
@@ -79,5 +83,13 @@ export class CreateFromProjectTemplatePopupComponent implements OnInit {
 
   private getData() {
     return this.createProjectFromTemplateGridService.getGridInputs();
+  }
+
+  private setCellTemplate(template: TemplateRef<unknown>, fieldName: eProjectTemplatesFields) {
+    const col = this.gridData.columns.find((col) => col.FieldName === fieldName);
+    if (!col) {
+      return;
+    }
+    col.cellTemplate = template;
   }
 }
