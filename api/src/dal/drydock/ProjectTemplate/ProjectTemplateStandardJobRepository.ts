@@ -23,16 +23,13 @@ export class ProjectTemplateStandardJobRepository {
     public async GetProjectTemplateStandardJobsByProjectTemplateUid(projectTemplateUid: string) {
         const repository = getManager().getRepository(ProjectTemplateStandardJobEntity);
 
-        return repository.find({
-            where: {
-                ProjectTemplateUid: projectTemplateUid,
-                active_status: true,
-                StandardJob: {
-                    active_status: true,
-                },
-            },
-            relations: ['StandardJob'],
-        });
+        return repository
+            .createQueryBuilder('prtsj')
+            .innerJoin(StandardJobs, 'sj', 'sj.uid = prtsj.StandardJobUid AND sj.active_status = 1')
+            .where('prtsj.ProjectTemplateUid = :projectTemplateUid AND prtsj.active_status = 1', {
+                projectTemplateUid,
+            })
+            .getMany();
     }
 
     public async CreateOrUpdateProjectTemplateStandardJobs(

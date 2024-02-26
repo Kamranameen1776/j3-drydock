@@ -111,8 +111,10 @@ export class ProjectTemplatesMainComponent extends UnsubscribeComponent implemen
   }
 
   private editRow(row: ProjectTemplate) {
-    this.currentRow = row;
-    this.isUpsertPopupVisible = true;
+    this.projectTemplatesService.getTemplate(row.ProjectTemplateUid).subscribe((res) => {
+      this.currentRow = { ...row, ...res, VesselTypeSpecific: +res.VesselTypeSpecific };
+      this.isUpsertPopupVisible = true;
+    });
   }
 
   private deleteRow(row: ProjectTemplate) {

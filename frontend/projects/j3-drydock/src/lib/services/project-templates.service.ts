@@ -41,6 +41,18 @@ export class ProjectTemplatesService {
     return this.apiRequestService.sendApiReq(apiRequest);
   }
 
+  getTemplate(uid: string) {
+    const apiRequest: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'project-templates/get-project-template',
+      crud: eCrud.Get,
+      params: `projectTemplateUid=${uid}`
+    };
+
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
   upsertProjectTemplate(payload: ProjectTemplatePayload, isEditing: boolean) {
     const nowIsoDate = localAsUTC(new Date());
     if (isEditing) {

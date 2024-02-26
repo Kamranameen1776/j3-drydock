@@ -189,7 +189,7 @@ export class StandardJobsService {
 
     if (excludeUids?.length > 0) {
       const body = apiRequest.body || {};
-      apiRequest.body = { ...body, uidsNin: excludeUids };
+      apiRequest.body = { ...body, additionalFilters: { uidsNin: excludeUids } };
     }
 
     return apiRequest;

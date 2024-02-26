@@ -80,7 +80,7 @@ export class ProjectTemplateRepository {
             )
             .innerJoin(ProjectTypeEntity, 'pt', 'prt.ProjectTypeUid = pt.uid')
             .innerJoin(TecLibWorklistTypeEntity, 'wt', 'pt.WorklistType = wt.WorklistType')
-            .innerJoin(ProjectTemplateVesselTypeEntity, 'ptvt', 'prt.uid = ptvt.project_template_uid')
+            .leftJoin(ProjectTemplateVesselTypeEntity, 'ptvt', 'prt.uid = ptvt.project_template_uid')
             .leftJoin(
                 ProjectTemplateStandardJobEntity,
                 'sj',
@@ -101,8 +101,8 @@ export class ProjectTemplateRepository {
             )
             .where('prt.active_status = 1');
 
-        if (filters.vesselTypeId?.length) {
-            query = query.andWhere(`vt.ID IN (:...vesselTypeId)`, { vesselTypeId: filters.vesselTypeId });
+        if (filters.VesselTypeId?.length) {
+            query = query.andWhere(`vt.ID IN (:...vesselTypeId)`, { vesselTypeId: filters.VesselTypeId });
         }
 
         const [sql, parameters] = query.getQueryAndParameters();
