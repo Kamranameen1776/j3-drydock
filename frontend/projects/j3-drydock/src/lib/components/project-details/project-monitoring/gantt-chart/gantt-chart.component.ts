@@ -67,6 +67,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   tasks: TransformedJobOrder[] = [];
 
+  jobOrderFormValue: IJobOrderFormDto = {} as IJobOrderFormDto;
+
   taskFields = {
     id: 'SpecificationUid',
     name: 'SpecificationSubject',
@@ -424,21 +426,18 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((jobOrder) => {
-        const jobOrderForm: IJobOrderFormDto = {
-          SpecificationUid: specificationUid,
-          Code: code
-        };
+        this.jobOrderFormValue = {};
+        this.jobOrderFormValue.SpecificationUid = specificationUid;
+        this.jobOrderFormValue.Code = code;
 
         if (jobOrder) {
-          jobOrderForm.Remarks = jobOrder.Remarks;
-          jobOrderForm.Progress = jobOrder.Progress;
-          jobOrderForm.Subject = jobOrder.Subject;
-          jobOrderForm.Status = jobOrder.Status;
-          jobOrderForm.SpecificationStartDate = jobOrder.SpecificationStartDate;
-          jobOrderForm.SpecificationEndDate = jobOrder.SpecificationEndDate;
+          this.jobOrderFormValue.Remarks = jobOrder.Remarks;
+          this.jobOrderFormValue.Progress = jobOrder.Progress;
+          this.jobOrderFormValue.Subject = jobOrder.Subject;
+          this.jobOrderFormValue.Status = jobOrder.Status;
+          this.jobOrderFormValue.SpecificationStartDate = jobOrder.SpecificationStartDate;
+          this.jobOrderFormValue.SpecificationEndDate = jobOrder.SpecificationEndDate;
         }
-
-        this.jobOrderForm.init(jobOrderForm);
 
         this.showUpdateDialog(true);
       });

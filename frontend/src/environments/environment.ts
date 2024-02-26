@@ -17,7 +17,7 @@ export const environment = (window['environment'] = {
   env: 'dev',
   jcdsAPI: 'https://jcds-test.jibe.solutions/api/',
   j3CrewAccountsAPI: `http://localhost:3003/`,
-  dryDockAPI: `http://localhost:3020/`, // If you working with new feature update on localhost
+  dryDockAPI: `http://localhost:3034/`, // If you working with new feature update on localhost
   j2: {
     baseURL: 'http://13.127.79.131/JiBe/'
   },

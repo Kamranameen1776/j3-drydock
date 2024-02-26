@@ -7,7 +7,7 @@ import { Connection, createConnection, getConnectionOptions } from 'typeorm';
 import app from './app';
 import { log } from './logger';
 
-const PORT = process.env.PORT || 3020;
+const PORT = process.env.PORT || 3034;
 console.log(PORT);
 process.env.basedir = __dirname;
 

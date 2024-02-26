@@ -39,6 +39,6 @@ $ npm run swagger
 
 ## healthcheck
 ```
-    http://localhost:3020/drydock/actuator/version
-    http://localhost:3020/drydock/actuator/health
+    http://localhost:3034/drydock/actuator/version
+    http://localhost:3034/drydock/actuator/health
 ```

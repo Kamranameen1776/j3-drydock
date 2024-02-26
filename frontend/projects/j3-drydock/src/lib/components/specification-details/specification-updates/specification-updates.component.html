@@ -30,8 +30,10 @@
     jb-dialog-body
   >
     <jb-job-orders-form
+      *ngIf="isShowDialog"
       [isOpen]="isShowDialog"
       [vesselId]="specificationDetails?.VesselId"
+      [jobOrderFormValue]="jobOrderFormValue"
       #jobOrderForm
     ></jb-job-orders-form>
   </div>
