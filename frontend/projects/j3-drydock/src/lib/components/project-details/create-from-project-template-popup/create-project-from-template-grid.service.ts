@@ -114,7 +114,7 @@ export class CreateProjectFromTemplateGridService {
     return {
       columns: this.columns,
       gridName: this.gridName,
-      request: this.projectTemplatesService.getGridRequest(),
+      request: this.projectTemplatesService.getPopupGridRequest(),
       filters: this.gridFilters,
       filtersLists: this.gridFilterLists,
       searchFields: [eProjectTemplatesFields.Code, eProjectTemplatesFields.Subject]

@@ -100,6 +100,20 @@ export class ProjectTemplatesService {
     return apiRequest;
   }
 
+  getPopupGridRequest() {
+    const apiRequest: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'project-templates/project-templates-grid',
+      crud: eCrud.Post,
+      odata: {
+        orderby: 'TemplateCode asc',
+        filter: f().ne('NoOfSpecItems', 0)
+      }
+    };
+    return apiRequest;
+  }
+
   createSpecificationFromProjectTemplate(ProjectUid: string, ProjectTemplateUid: string) {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
