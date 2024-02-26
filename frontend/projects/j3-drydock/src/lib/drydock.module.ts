@@ -44,15 +44,6 @@ import { ReworkPopupFormComponent } from './shared/components/rework-popup/rewor
 import { ReworkPopupComponent } from './shared/components/rework-popup/rework-popup.component';
 import { AddSpecificationFromStandardJobPopupComponent } from './components/project-details/add-specification-from-standard-job-popup/add-specification-from-standard-job-popup.component';
 
-export function winEnv(): unknown {
-  const winEnv = 'environment';
-
-  return {
-    ...window[winEnv],
-    origin: window.location.origin + '/'
-  };
-}
-
 import { J3TaskManagerNgModule } from 'j3-task-manager-ng';
 import { UTCAsLocalPipe } from './shared/pipes/utc-as-local.pipe';
 import { GridCellPopoverComponent } from './shared/components/grid-cell-popover/grid-cell-popover.component';
@@ -71,9 +62,22 @@ import { LinkedPmsJobsAndFindingsComponent } from './components/specification-de
 import { CostUpdatesComponent } from './components/project-details/project-monitoring/cost-updates/cost-updates.component';
 import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
 import { SpecificationUpdatesComponent } from './components/specification-details/specification-updates/specification-updates.component';
+import { ProjectTemplatesMainComponent } from './components/project-templates-main/project-templates-main.component';
 import { CostUpdatesTabComponent } from './shared/components/cost-updates-tab/cost-updates-tab.component';
 import { JobOrdersFormComponent } from './shared/components/job-orders-form/job-orders-form.component';
+import { UpsertProjectTemplatePopupComponent } from './components/project-templates-main/upsert-project-template-popup/upsert-project-template-popup.component';
+import { UpsertProjectTemplateFormComponent } from './components/project-templates-main/upsert-project-template-form/upsert-project-template-form.component';
+import { CreateFromProjectTemplatePopupComponent } from './components/project-details/create-from-project-template-popup/create-from-project-template-popup.component';
+import { ProjectTemplateStandardJobsComponent } from './components/project-templates-main/project-template-standard-jobs/project-template-standard-jobs.component';
 
+export function winEnv(): unknown {
+  const winEnv = 'environment';
+
+  return {
+    ...window[winEnv],
+    origin: window.location.origin + '/'
+  };
+}
 @NgModule({
   declarations: [
     SpecificationStatusPipe,
@@ -123,7 +127,12 @@ import { JobOrdersFormComponent } from './shared/components/job-orders-form/job-
     LinkedPmsJobsAndFindingsComponent,
     CostUpdatesComponent,
     SpecificationUpdatesComponent,
-    CostUpdatesTabComponent
+    ProjectTemplatesMainComponent,
+    CostUpdatesTabComponent,
+    UpsertProjectTemplatePopupComponent,
+    UpsertProjectTemplateFormComponent,
+    CreateFromProjectTemplatePopupComponent,
+    ProjectTemplateStandardJobsComponent
   ],
   imports: [
     CommonModule,

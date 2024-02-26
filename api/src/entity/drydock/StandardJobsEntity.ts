@@ -12,6 +12,7 @@ import {
 
 import { BaseDatesEntity } from '../baseDatesEntity';
 import { LibSurveyCertificateAuthority, LibVesseltypes, TmDdLibDoneBy, TmDdLibMaterialSuppliedBy } from './dbo';
+import { ProjectTemplateStandardJobEntity } from './ProjectTemplate/ProjectTemplateStandardJobEntity';
 import { StandardJobsSubItems } from './StandardJobsSubItemsEntity';
 
 @Entity('standard_jobs', { schema: 'dry_dock' })
@@ -123,4 +124,11 @@ export class StandardJobs extends BaseDatesEntity {
         length: 'max',
     })
     description: string;
+
+    @OneToMany(() => ProjectTemplateStandardJobEntity, (entity) => entity.StandardJob)
+    @JoinColumn({
+        name: 'uid',
+        referencedColumnName: 'standard_job_uid',
+    })
+    ProjectTemplateStandardJobs: ProjectTemplateStandardJobEntity[];
 }

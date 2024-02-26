@@ -10,7 +10,7 @@ export class GetItemSourceController extends Controller {
     public async getItemSource(): Promise<LibItemSourceEntity[]> {
         const query = new GetItemSourcesQuery();
 
-        const result = await query.ExecuteAsync();
+        const result = await query.ExecuteRequestAsync();
 
         return result;
     }

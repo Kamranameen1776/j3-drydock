@@ -2,6 +2,7 @@
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { StandardJobs } from '../';
+import { ProjectTemplateEntity } from '../ProjectTemplate/ProjectTemplateEntity';
 
 @Entity('LIB_VESSELTYPES', { schema: 'dbo' })
 export class LibVesseltypes {
@@ -41,4 +42,19 @@ export class LibVesseltypes {
         },
     })
     standard_jobs: StandardJobs[];
+
+    @ManyToMany(() => ProjectTemplateEntity, (projectTemplate: ProjectTemplateEntity) => projectTemplate.vesselType)
+    @JoinTable({
+        name: 'project_template_vessel_type',
+        schema: 'dry_dock',
+        inverseJoinColumn: {
+            name: 'project_template_uid',
+            referencedColumnName: 'uid',
+        },
+        joinColumn: {
+            name: 'vessel_type_id',
+            referencedColumnName: 'ID',
+        },
+    })
+    project_templates: ProjectTemplateEntity[];
 }

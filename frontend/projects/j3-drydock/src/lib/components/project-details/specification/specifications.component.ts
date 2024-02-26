@@ -13,6 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NewTabService } from '../../../services/new-tab-service';
 import { statusProgressBarBackground } from '../../../shared/status-css.json';
 import { GrowlMessageService } from '../../../services/growl-message.service';
+import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 
 @Component({
   selector: 'jb-specifications',
@@ -37,6 +38,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   types = [SpecificationType.ALL, SpecificationType.PMS, SpecificationType.FINDINGS, SpecificationType.STANDARD, SpecificationType.ADHOC];
   isCreatePopupVisible = false;
   addFromStandardJobPopupVisible = false;
+  isCreateFromProjectTemplatePopupVisible = false;
 
   statusCSS = { statusProgressBarBackground: statusProgressBarBackground };
 
@@ -47,7 +49,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
 
   deleteDialogVisible = false;
   deleteBtnLabel = 'Delete';
-  deleteDialogMessage = 'Are you sure want to delete the record?';
+  deleteDialogMessage = 'Are you sure you want to delete the record?';
   specificationUid: string;
 
   vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name' | 'expanded'> = {
@@ -77,6 +79,10 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     this.addFromStandardJobPopupVisible = true;
   }
 
+  createFromProjectTemplate() {
+    this.isCreateFromProjectTemplatePopupVisible = true;
+  }
+
   ngOnInit(): void {
     this.treeData$ = this.functionsService.getFunctions(this.vesselNode.uid).pipe(
       map((functions) => {
@@ -95,9 +101,12 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     }
   }
 
-  onCloseCreatePopup(hasSaved: boolean) {
+  onCloseCreatePopup(selected: StandardJobResult[]) {
+    const hasSaved = selected.length > 0;
+
     this.isCreatePopupVisible = false;
     this.addFromStandardJobPopupVisible = false;
+    this.isCreateFromProjectTemplatePopupVisible = false;
 
     if (hasSaved) {
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
