@@ -40,6 +40,7 @@
       [isOpen]="updateDialogVisible"
       [vesselId]="vesselId"
       [jobOrderFormValue]="jobOrderFormValue"
+      (isChanged)="jobOrdersChanged($event)"
       #jobOrderForm
     ></jb-job-orders-form>
   </div>
@@ -56,6 +57,6 @@
 
 <jb-progress-spinner
   class="progress-spinner"
-  *ngIf="showSpinner"
+  *ngIf="showSpinner || isSaving"
   [theme]="'figma'"
 ></jb-progress-spinner>
