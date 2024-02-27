@@ -285,7 +285,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         .updateSpecification(data)
         .toPromise()
         .then(() => {
-          this.growlMessageService.setErrorMessage('Specification has been updated successfully');
+          this.growlMessageService.setSuccessMessage('Specification has been updated successfully');
           this.jbTMDtlSrv.isUnsavedChanges.next(false);
           this.getDetails(true);
         });
