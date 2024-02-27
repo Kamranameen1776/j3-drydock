@@ -96,7 +96,7 @@ export class ProjectsRepository {
             .where('gps.ActiveStatus = 1')
             .groupBy(
                 `gps.GroupProjectStatusId, gps.ProjectTypeId,
-                gps.DisplayName, counter,
+                gps.DisplayName,
                 gps.StatusOrder, wt.WorklistTypeDisplay`,
             )
             .orderBy('gps.StatusOrder', 'ASC');
