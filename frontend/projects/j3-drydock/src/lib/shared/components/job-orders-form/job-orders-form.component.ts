@@ -154,9 +154,8 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   initUpdateJobOrderFormGroup(action: FormGroup): void {
     this.updateJobOrderFormGroup = action;
     this.updateJobOrderFormValues();
-    this.updateJobOrderFormGroup?.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+    this.updateJobOrderFormGroup?.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe((v) => {
       this.isChanged.next(true);
-      return this.updateJobOrderFormGroup?.valid;
     });
   }
 
