@@ -11,3 +11,15 @@ export interface IGroupProjectStatusesRawDataDto {
 
     StatusOrder: number;
 }
+
+export interface IGroupProjectStatusesAsyncRawDataDto {
+    GroupProjectStatusId: string;
+
+    ProjectTypeId: string;
+
+    GroupProjectDisplayName: string;
+
+    ProjectTypeName: string;
+
+    StatusOrder: number;
+}
