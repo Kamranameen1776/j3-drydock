@@ -102,25 +102,22 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   }
 
   onCloseStandardJobPopup(isSaved: StandardJobResult[]) {
-    const hasSaved = isSaved.length > 0;
-    if (hasSaved) {
+    if (isSaved.length > 0) {
       this.addFromStandardJobPopupVisible = false;
       this.onCloseCreatePopup();
     }
   }
 
-  onCloseCreateFromProjectTemplatePopup(isSaved) {
-    const hasSaved = isSaved;
-    if (hasSaved) {
-      this.isCreateFromProjectTemplatePopupVisible = false;
+  onCloseCreateFromProjectTemplatePopup(isSaved: boolean) {
+    this.isCreateFromProjectTemplatePopupVisible = false;
+    if (isSaved) {
       this.onCloseCreatePopup();
     }
   }
 
-  onCloseCreateSpecificationPopup(isSaved) {
-    const hasSaved = isSaved;
-    if (hasSaved) {
-      this.isCreatePopupVisible = false;
+  onCloseCreateSpecificationPopup(isSaved: boolean) {
+    this.isCreatePopupVisible = false;
+    if (isSaved) {
       this.onCloseCreatePopup();
     }
   }
