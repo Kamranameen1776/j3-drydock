@@ -99,10 +99,9 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
           .pipe(
             finalize(() => {
               this.isSaving$.next(false);
-              this.closePopup();
             })
           )
-          .subscribe();
+          .subscribe(() => this.closePopup());
         break;
 
       case eAddSpecificationFromStandardJobPopupType.ProjectTemplate:

@@ -101,9 +101,9 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     }
   }
 
-  onCloseStandardJobPopup(isSaved: StandardJobResult[]) {
+  onCloseStandardJobPopup(selected: StandardJobResult[]) {
     this.addFromStandardJobPopupVisible = false;
-    if (isSaved.length > 0) {
+    if (selected.length > 0) {
       this.onCloseCreatePopup();
     }
   }
