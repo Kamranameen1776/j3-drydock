@@ -54,7 +54,7 @@ export class CreateFromProjectTemplatePopupComponent implements OnInit {
 
   onSelect(data) {
     this.selectedProjectTemplate = data;
-    this.isPopupValid$.next(data);
+    this.isPopupValid$.next(data !== null);
   }
 
   private closePopup(isSaved = false) {

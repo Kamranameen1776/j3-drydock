@@ -101,17 +101,30 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     }
   }
 
-  onCloseCreatePopup(selected: StandardJobResult[]) {
-    const hasSaved = selected.length > 0;
-
-    this.isCreatePopupVisible = false;
+  onCloseStandardJobPopup(selected: StandardJobResult[]) {
     this.addFromStandardJobPopupVisible = false;
-    this.isCreateFromProjectTemplatePopupVisible = false;
-
-    if (hasSaved) {
-      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
-      this.growlService.setSuccessMessage('Specification created successfully');
+    if (selected.length > 0) {
+      this.onCloseCreatePopup();
     }
+  }
+
+  onCloseCreateFromProjectTemplatePopup(isSaved: boolean) {
+    this.isCreateFromProjectTemplatePopupVisible = false;
+    if (isSaved) {
+      this.onCloseCreatePopup();
+    }
+  }
+
+  onCloseCreateSpecificationPopup(isSaved: boolean) {
+    this.isCreatePopupVisible = false;
+    if (isSaved) {
+      this.onCloseCreatePopup();
+    }
+  }
+
+  private onCloseCreatePopup() {
+    this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+    this.growlService.setSuccessMessage('Specification created successfully');
   }
 
   loadFunctionsToForm(): void {

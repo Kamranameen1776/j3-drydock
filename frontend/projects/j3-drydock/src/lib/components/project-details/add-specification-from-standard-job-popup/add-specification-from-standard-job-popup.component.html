@@ -47,3 +47,9 @@
     ></jb-dialog-footer>
   </ng-container>
 </jb-dialog>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="isSaving$ | async"
+  [theme]="'figma'"
+></jb-progress-spinner>
