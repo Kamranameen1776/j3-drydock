@@ -105,7 +105,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     const hasSaved = isSaved.length > 0;
     if (hasSaved) {
       this.addFromStandardJobPopupVisible = false;
-      this.CloseCreatePopup();
+      this.onCloseCreatePopup();
     }
   }
 
@@ -113,7 +113,7 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     const hasSaved = isSaved;
     if (hasSaved) {
       this.isCreateFromProjectTemplatePopupVisible = false;
-      this.CloseCreatePopup();
+      this.onCloseCreatePopup();
     }
   }
 
@@ -121,11 +121,11 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
     const hasSaved = isSaved;
     if (hasSaved) {
       this.isCreatePopupVisible = false;
-      this.CloseCreatePopup();
+      this.onCloseCreatePopup();
     }
   }
 
-  CloseCreatePopup() {
+  private onCloseCreatePopup() {
     this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
     this.growlService.setSuccessMessage('Specification created successfully');
   }
