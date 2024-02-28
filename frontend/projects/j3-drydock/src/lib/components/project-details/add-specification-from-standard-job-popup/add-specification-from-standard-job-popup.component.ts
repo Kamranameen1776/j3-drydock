@@ -9,6 +9,7 @@ import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { StandardJobsService } from '../../../services/standard-jobs.service';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
+import { finalize } from 'rxjs/operators';
 
 export enum eAddSpecificationFromStandardJobPopupType {
   Specification = 'Specification',
@@ -43,7 +44,6 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   functionUIDs: string[] = [];
   gridData: GridInputsWithRequest;
   selected = [];
-  showLoader = false;
 
   constructor(
     private standardJobsService: StandardJobsService,
@@ -91,15 +91,18 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
 
   private save() {
     const selectedUids = this.selected.map((row) => row.uid);
-    this.showLoader = true;
     switch (this.type) {
       case eAddSpecificationFromStandardJobPopupType.Specification:
         this.isSaving$.next(true);
-        this.specificationService.createSpecificationFromStandardJob(this.projectUid, selectedUids).subscribe(() => {
-          this.isSaving$.next(false);
-          this.showLoader = false;
-          this.closePopup();
-        });
+        this.specificationService
+          .createSpecificationFromStandardJob(this.projectUid, selectedUids)
+          .pipe(
+            finalize(() => {
+              this.isSaving$.next(false);
+              this.closePopup();
+            })
+          )
+          .subscribe();
         break;
 
       case eAddSpecificationFromStandardJobPopupType.ProjectTemplate:

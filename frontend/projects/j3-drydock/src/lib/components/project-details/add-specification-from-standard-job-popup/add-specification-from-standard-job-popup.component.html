@@ -50,6 +50,6 @@
 
 <jb-progress-spinner
   class="progress-spinner"
-  *ngIf="showLoader"
+  *ngIf="isSaving$ | async"
   [theme]="'figma'"
 ></jb-progress-spinner>
