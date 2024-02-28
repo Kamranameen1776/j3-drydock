@@ -43,6 +43,7 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   functionUIDs: string[] = [];
   gridData: GridInputsWithRequest;
   selected = [];
+  showLoader = false;
 
   constructor(
     private standardJobsService: StandardJobsService,
@@ -90,11 +91,13 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
 
   private save() {
     const selectedUids = this.selected.map((row) => row.uid);
+    this.showLoader = true;
     switch (this.type) {
       case eAddSpecificationFromStandardJobPopupType.Specification:
         this.isSaving$.next(true);
         this.specificationService.createSpecificationFromStandardJob(this.projectUid, selectedUids).subscribe(() => {
           this.isSaving$.next(false);
+          this.showLoader = false;
           this.closePopup();
         });
         break;
