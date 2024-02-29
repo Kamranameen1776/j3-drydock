@@ -126,7 +126,7 @@ export class SpecificationDetailsRepository {
     public async findOneBySpecificationUid(uid: string): Promise<SpecificationDetailsResultDto> {
         const specificationRepository = getManager().getRepository(SpecificationDetailsEntity);
 
-        return specificationRepository
+        const result = specificationRepository
             .createQueryBuilder('spec')
             .select([
                 'spec.uid as uid',
@@ -182,6 +182,8 @@ export class SpecificationDetailsRepository {
             .andWhere('spec.uid = :uid', { uid })
             .distinct()
             .getRawOne();
+
+        return result;
     }
 
     public async GetManySpecificationDetails(
@@ -527,7 +529,7 @@ export class SpecificationDetailsRepository {
             .execute();
     }
 
-    public async TryGetSpecification(specificationUid: string): Promise<SpecificationDetailsEntity | undefined> {
+    public async TryGetSpecification(specificationUid: string): Promise<SpecificationDetailsEntity | null> {
         const jobOrdersRepository = getManager().getRepository(SpecificationDetailsEntity);
 
         return jobOrdersRepository.findOne({
@@ -564,12 +566,12 @@ export class SpecificationDetailsRepository {
         return res;
     }
 
-    private async fetchFunctionByUID(uid: string): Promise<J3PmsLibFunction | undefined> {
+    private async fetchFunctionByUID(uid: string): Promise<J3PmsLibFunction | null> {
         return getManager().createQueryBuilder(J3PmsLibFunction, 'pms_fn').where('pms_fn.uid = :uid', { uid }).getOne();
     }
 
     private async getFunctionTree(functionUid: string): Promise<{ rootFunction: string; functionPath: string }> {
-        const getParentFunction = async (uid: string): Promise<J3PmsLibFunction | undefined> => {
+        const getParentFunction = async (uid: string): Promise<J3PmsLibFunction | null> => {
             return this.fetchFunctionByUID(uid);
         };
 

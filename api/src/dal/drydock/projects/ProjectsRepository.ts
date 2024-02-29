@@ -332,7 +332,7 @@ export class ProjectsRepository {
         await queryRunner.manager.update(ProjectEntity, project.uid, project);
     }
 
-    public async TryGetProjectByUid(uid: string): Promise<ProjectEntity | undefined> {
+    public async TryGetProjectByUid(uid: string): Promise<ProjectEntity | null> {
         const projectRepository = getManager().getRepository(ProjectEntity);
 
         const project = await projectRepository.findOne({

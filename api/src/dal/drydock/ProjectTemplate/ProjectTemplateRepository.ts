@@ -33,7 +33,7 @@ export class ProjectTemplateRepository {
         await queryRunner.manager.save(projectTemplate);
     }
 
-    public async TryGetProjectTemplateByUid(projectTemplateUid: string): Promise<ProjectTemplateEntity | undefined> {
+    public async TryGetProjectTemplateByUid(projectTemplateUid: string): Promise<ProjectTemplateEntity | null> {
         const repository = getManager().getRepository(ProjectTemplateEntity);
 
         return repository.findOne({
