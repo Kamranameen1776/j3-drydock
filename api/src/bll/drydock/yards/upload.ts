@@ -67,14 +67,16 @@ export class UploadInvoiceService {
             create,
         };
     }
-    public async prepareUpdateData(
+    public prepareUpdateData(
         data: Array<IUploadInvoiceRawDataUpdateDto>,
         UnitTypes: Array<UnitTypeEntity>,
-    ): Promise<Array<SpecificationDetailsSubItemEntity>> {
+    ): SpecificationDetailsSubItemEntity[] {
         const dataToUpdate: Array<SpecificationDetailsSubItemEntity> = [];
         data.forEach((item: IUploadInvoiceRawDataUpdateDto) => {
             const obj = JSON.parse(item.technicalData);
             if (this.isUpdateRequired(item, obj)) {
+                this.ValidateDiscount(item.discount);
+
                 const ut = UnitTypes.find((unit) => unit.types === item.uom);
                 const entity = new SpecificationDetailsSubItemEntity();
                 entity.quantity = item.qty;
@@ -98,12 +100,14 @@ export class UploadInvoiceService {
         return dataToUpdate;
     }
 
-    public async prepareCreateData(
+    public prepareCreateData(
         data: Array<IUploadInvoiceRawDataCreateDto>,
         UnitTypes: Array<UnitTypeEntity>,
-    ): Promise<Array<SpecificationDetailsSubItemEntity>> {
+    ): Array<SpecificationDetailsSubItemEntity> {
         const dataToCreate: Array<SpecificationDetailsSubItemEntity> = [];
         data.forEach((item: IUploadInvoiceRawDataCreateDto) => {
+            this.ValidateDiscount(item.discount);
+
             const SpecificationUid = item.technicalData;
             const ut = UnitTypes.find((unit) => unit.types === item.uom);
             const entity = new SpecificationDetailsSubItemEntity();
@@ -132,6 +136,15 @@ export class UploadInvoiceService {
         });
         return dataToCreate;
     }
+
+    private ValidateDiscount(discount: string) {
+        const discountValue = parseFloat(discount);
+
+        if (discountValue < 0 || discountValue > 100) {
+            throw new BusinessException('Discount should be between 0 and 100');
+        }
+    }
+
     private isUpdateRequired(item: any, obj: any) {
         let flag = false;
         const keys = ['uom', 'qty', 'unitPrice', 'discount', 'comments'];

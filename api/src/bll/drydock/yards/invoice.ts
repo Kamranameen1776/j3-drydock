@@ -312,6 +312,19 @@ export class InvoiceGeneratorService {
             locked: false,
         };
 
+        worksheet.getCell(`G${this.cRow}`).dataValidation = {
+            type: 'decimal',
+            operator: 'between',
+            formulae: [0, 1],
+            allowBlank: true,
+            showInputMessage: true,
+            promptTitle: 'Discount',
+            prompt: 'The value must between 0 and 100',
+            showErrorMessage: true,
+            errorTitle: 'Invalid Value',
+            error: 'Please enter a value between 0 and 100',
+        };
+
         worksheet.getCell(`H${this.cRow}`).value = {
             formula: `IF(ISNUMBER(D${this.cRow}),(D${this.cRow}*F${this.cRow})-(D${this.cRow}*F${this.cRow}*G${this.cRow}),"")`,
         };
