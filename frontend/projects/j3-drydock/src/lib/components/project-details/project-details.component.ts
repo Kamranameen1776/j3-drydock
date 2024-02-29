@@ -98,7 +98,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   updateCostsPayload: UpdateCostsDto;
   showLoader = false;
 
-  detailsHeight: number;
+  get detailsHeight(): number {
+    return this.elementRef.nativeElement.offsetHeight;
+  }
 
   get canView() {
     return this.accessRights?.view;
@@ -366,10 +368,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         if (refresh) {
           this.jbTMDtlSrv.refreshTaskManager.next({ refresh: true, tmDetails: this.tmDetails, topSecConfig: this.topSectionConfig });
         }
-
-        setTimeout(() => {
-          this.detailsHeight = this.elementRef.nativeElement.offsetHeight;
-        }, 300);
       });
   }
 

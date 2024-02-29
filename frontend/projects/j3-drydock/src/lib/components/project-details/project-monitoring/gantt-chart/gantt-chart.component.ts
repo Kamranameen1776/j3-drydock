@@ -246,7 +246,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     if (changes.project) {
       this.updateEventMarkers(changes.project.currentValue);
     }
-    if (changes.detailsHeight) {
+    if (changes.detailsHeight && this.detailsHeight !== changes.detailsHeight.previousValue) {
       const diff = Math.abs(this.detailsHeight - 340);
       this.defaultHeight = `${diff}px`;
     }
