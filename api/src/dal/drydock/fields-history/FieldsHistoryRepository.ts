@@ -31,24 +31,26 @@ export class FieldsHistoryRepository {
 
     private async insertQuery(fieldsHistory: CreateFieldsHistoryDto, queryRunner: QueryRunner): Promise<void> {
         // Create the query builder for the insert operation
-        const queryBuilder = queryRunner.manager.createQueryBuilder().insert().into(J2FieldsHistoryEntity).values({
-            key1: fieldsHistory.key1,
-            key2: fieldsHistory.key2,
-            key3: fieldsHistory.key3,
-            moduleCode: fieldsHistory.moduleCode,
-            functionCode: fieldsHistory.functionCode,
-            isCurrent: fieldsHistory.isCurrent,
-            versionNumber: fieldsHistory.versionNumber,
-            tableName: fieldsHistory.tableName,
-            section: fieldsHistory.section,
-            displayText: fieldsHistory.displayText,
-            // TODO: in some cases, value is an array at 'dev' environment
-            // check if it is broken in 'dev' environment
-            value: fieldsHistory.value?.toString(),
-            actionName: fieldsHistory.actionName,
-            createdDate: fieldsHistory.createdDate,
-            createdBy: fieldsHistory.createdBy,
-        });
+        const queryBuilder = queryRunner.manager
+            .createQueryBuilder()
+            .insert()
+            .into(J2FieldsHistoryEntity)
+            .values({
+                key1: fieldsHistory.key1,
+                key2: fieldsHistory.key2,
+                key3: fieldsHistory.key3,
+                moduleCode: fieldsHistory.moduleCode,
+                functionCode: fieldsHistory.functionCode,
+                isCurrent: fieldsHistory.isCurrent,
+                versionNumber: fieldsHistory.versionNumber,
+                tableName: fieldsHistory.tableName,
+                section: fieldsHistory.section,
+                displayText: fieldsHistory.displayText,
+                value: Array.isArray(fieldsHistory.value) ? fieldsHistory.value.join(',') : fieldsHistory.value,
+                actionName: fieldsHistory.actionName,
+                createdDate: fieldsHistory.createdDate,
+                createdBy: fieldsHistory.createdBy,
+            });
 
         // Get the SQL and parameters from the query builder
         const [sql, parameters] = queryBuilder.getQueryAndParameters();
