@@ -42,7 +42,9 @@ export class FieldsHistoryRepository {
             tableName: fieldsHistory.tableName,
             section: fieldsHistory.section,
             displayText: fieldsHistory.displayText,
-            value: fieldsHistory.value,
+            // TODO: in some cases, value is an array at 'dev' environment
+            // check if it is broken in 'dev' environment
+            value: fieldsHistory.value?.toString(),
             actionName: fieldsHistory.actionName,
             createdDate: fieldsHistory.createdDate,
             createdBy: fieldsHistory.createdBy,
@@ -73,7 +75,7 @@ export class FieldsHistoryRepository {
                     tableName: history.tableName,
                     section: history.section,
                     displayText: history.displayText,
-                    value: history.value,
+                    value: Array.isArray(history.value) ? history.value.join(',') : history.value,
                     actionName: history.actionName,
                     createdDate: history.createdDate,
                     createdBy: history.createdBy,
