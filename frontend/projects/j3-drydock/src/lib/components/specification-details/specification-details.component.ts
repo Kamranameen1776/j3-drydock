@@ -17,11 +17,10 @@ import {
   JbDetailsTopSectionService,
   eGridRefreshType,
   eJMSActionTypes,
-  eJMSSectionNames,
-  eMessagesSeverityValues
+  eJMSSectionNames
 } from 'jibe-components';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
-import { concatMap, filter, map, takeUntil } from 'rxjs/operators';
+import { concatMap, filter, map, takeUntil, finalize } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
 import { eModule } from '../../models/enums/module.enum';
@@ -280,20 +279,27 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       data.Duration = +headerFormValue.Duration;
     }
 
-    try {
-      this.specificationDetailService
-        .updateSpecification(data)
-        .toPromise()
-        .then(() => {
-          this.growlMessageService.setSuccessMessage('Specification has been updated successfully');
+    this.specificationDetailService
+      .updateSpecification(data)
+      .pipe(
+        finalize(() => {
           this.jbTMDtlSrv.isUnsavedChanges.next(false);
+        })
+      )
+      .subscribe(
+        () => {
+          this.growlMessageService.setSuccessMessage('Specification has been updated successfully');
           this.getDetails(true);
-        });
-    } catch (err) {
-      this.jbTMDtlSrv.isUnsavedChanges.next(false);
-      this.growlMessageService.setErrorMessage(err.error);
-      this.showLoader = false;
-    }
+        },
+        (err) => {
+          this.showLoader = false;
+          if (err?.status === 422 && err?.error?.message) {
+            this.growlMessageService.setErrorMessage(err.error.message);
+          } else {
+            this.growlMessageService.setErrorMessage('Server error occurred');
+          }
+        }
+      );
   }
 
   updateSelectedAmount(items: TmLinkedRecords[], type: eSpecificationDetailsPageMenuIds) {

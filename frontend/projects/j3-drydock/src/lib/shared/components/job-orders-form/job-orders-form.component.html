@@ -54,6 +54,7 @@
   <p-tabPanel header="Cost Update">
     <jb-drydock-cost-updates-tab
       [specificationUid]="selectedSpecification?.Key"
+      (wasChanged)="onCostUpdatesChanged($event)"
       *ngIf="isOpen"
       #updatesTab
     ></jb-drydock-cost-updates-tab>
