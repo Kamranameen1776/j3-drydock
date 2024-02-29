@@ -1,6 +1,6 @@
 {
     "name": "j3-drydock",
-    "version": "3.241.331",
+    "version": "3.241.332",
     "description": "DryDock",
     "scripts": {
         "prepare": "husky install",

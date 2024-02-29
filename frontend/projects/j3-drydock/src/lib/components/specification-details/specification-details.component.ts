@@ -288,7 +288,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       )
       .subscribe(
         () => {
-          this.growlMessageService.setErrorMessage('Specification has been updated successfully');
+          this.growlMessageService.setSuccessMessage('Specification has been updated successfully');
           this.getDetails(true);
         },
         (err) => {
