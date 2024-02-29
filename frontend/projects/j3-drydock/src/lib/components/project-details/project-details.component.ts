@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostBinding, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   AdvancedSettings,
   IJbAttachment,
@@ -61,6 +61,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild('daily_reports') daily_reports: ElementRef;
   @ViewChild('gantt_chart') gantt_chart: ElementRef;
 
+  @HostBinding('class.expanded-gantt') isGanttExpanded = false;
+
   exportEnable = false;
 
   moduleCode = eModule.Project;
@@ -95,6 +97,11 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   updateCostsPayload: UpdateCostsDto;
   showLoader = false;
+
+  get detailsHeight(): number {
+    return this.elementRef.nativeElement.offsetHeight;
+  }
+
   get canView() {
     return this.accessRights?.view;
   }
@@ -177,7 +184,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     private taskManagerService: TaskManagerService,
     private projectsService: ProjectsService,
     private detailsService: DetailsService,
-    private growlMessageService: GrowlMessageService
+    private growlMessageService: GrowlMessageService,
+    private elementRef: ElementRef
   ) {
     super();
   }
@@ -230,6 +238,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       });
 
     this.specificationsCreateNewItems = this.getSpecificationsCreateNewItems();
+  }
+
+  onToggleExpandGantt() {
+    this.isGanttExpanded = !this.isGanttExpanded;
   }
 
   private sectionActions(res: { type?: string; secName?: string; event?: unknown; checkValidation?: boolean }) {

@@ -5,6 +5,7 @@
   justify-content: flex-end;
   margin-bottom: 12px;
   gap: 12px;
+
   .gantt-filter {
     display: flex;
     align-items: center;
@@ -14,6 +15,10 @@
 
 :host {
   ::ng-deep {
+    .e-rowcell {
+      font-size: 10px !important;
+    }
+
     .status-field {
       line-height: 7px;
       display: inline-flex;
@@ -23,6 +28,7 @@
         margin-right: 4px;
       }
     }
+
     .gantt-grid-link {
       cursor: pointer;
       color: var(--jbBrandBlue700) !important;
@@ -50,6 +56,7 @@
   .e-gantt .e-gantt-chart .e-event-markers {
     border-left-color: #616aff;
     border-left-width: 2px;
+
     &.overdue-line {
       border-left-color: #F75F82;
     }
@@ -69,7 +76,7 @@
   }
 
   .e-grid .e-rowcell {
-    padding: 8px 12px;
+    padding: 0 12px;
   }
 
   .e-grid .e-rowcell:first-child,
