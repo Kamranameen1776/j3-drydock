@@ -50,8 +50,13 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   @Input() project: ProjectDetailsFull;
 
-  @ViewChild('jobOrderForm')
-  jobOrderForm: JobOrdersFormComponent;
+  @Input() isExpanded: boolean;
+
+  @Input() detailsHeight: number;
+
+  @ViewChild('jobOrderForm') jobOrderForm: JobOrdersFormComponent;
+
+  @ViewChild('ganttChart') ganttChart: Gantt;
 
   public updateBtnLabel = 'Update';
 
@@ -66,6 +71,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   get updateJobOrderButtonDisabled() {
     return !this.isJobOrdersChanged || this.isSaving;
   }
+
+  defaultHeight: string;
 
   dateFormat: string;
 
@@ -106,7 +113,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     selectedValue: this.overdue
   };
 
-  ganttChart: Gantt;
   tooltipSettings: TooltipSettingsModel = {
     taskbar:
       '<table class="e-gantt-tooltiptable">' +
@@ -239,6 +245,13 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.project) {
       this.updateEventMarkers(changes.project.currentValue);
+    }
+    if (changes.detailsHeight) {
+      const diff = Math.abs(this.detailsHeight - 340);
+      this.defaultHeight = `${diff}px`;
+    }
+    if (changes.isExpanded) {
+      this.ganttChart?.refresh();
     }
   }
 

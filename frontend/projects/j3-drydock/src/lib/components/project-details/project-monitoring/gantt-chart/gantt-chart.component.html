@@ -10,6 +10,7 @@
 </div>
 
 <ejs-gantt
+  #ganttChart
   id="{{ id }}"
   [dataSource]="tasks"
   [taskFields]="taskFields"
@@ -18,7 +19,8 @@
   [eventMarkers]="eventMarkers"
   [columns]="columns"
   (queryTaskbarInfo)="queryTaskbarInfo($event)"
-  height="421px"
+  [height]="isExpanded ? 'calc(100% - 44px)' : defaultHeight"
+  [rowHeight]="20"
   [editSettings]="editSettings"
   [tooltipSettings]="tooltipSettings"
   (taskbarEdited)="taskbarEdited($event)"
