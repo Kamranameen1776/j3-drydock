@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export class createOfficeMenu1699715068745 implements MigrationInterface {
+export class createOfficeMenu1699715068746 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const appLocation = await MigrationUtilsService.getApplicationLocation();
         if (appLocation !== eApplicationLocation.Office) {
@@ -60,6 +60,20 @@ export class createOfficeMenu1699715068745 implements MigrationInterface {
                         ( SELECT ISNULL(Max(Sequence_Order), 0) + 1 FROM Lib_Menu WHERE Menu_Type IS NOT NULL AND Active_Status = 1 ), 1, 'standard_job_view_grid')
             END
 
+            --Project Templates
+            IF NOT EXISTS ( SELECT 1 FROM Lib_Menu WHERE Menu_Short_Discription = 'Project Templates' AND Active_Status = 1 and [Menu_Link] = 'dry-dock/standard-jobs-main' )
+            BEGIN
+                SELECT TOP 1 @Mod_Code = Mod_Code, @Menu_Type = Menu_Code FROM Lib_Menu WHERE
+                    menu_short_discription = 'Projects'
+                   AND [menu_discription] = 'Projects'
+                   AND [menu_link] IS NULL
+                   AND active_status = 1
+
+                INSERT INTO Lib_Menu ( [Menu_Code], [Mod_Code], [Menu_Type], [Menu_Short_Discription], [Menu_Link], [Menu_Discription],
+                                    [Created_By], [Date_Of_Created], [Active_Status], [Priority_Sequence], [Sequence_Order], [Menu_Enable], [Right_Code] )
+                VALUES ( ( SELECT MAX(Menu_Code)+ 1 FROM Lib_Menu ), @Mod_Code, @Menu_Type, 'Project Templates' , 'dry-dock/project-templates-main', 'Project Templates' , 1, GETDATE(), 1, 0,
+                        ( SELECT ISNULL(Max(Sequence_Order), 0) + 1 FROM Lib_Menu WHERE Menu_Type IS NOT NULL AND Active_Status = 1 ), 1, 'project_template_view_list')
+            END
             `);
 
             await MigrationUtilsService.migrationLog(
