@@ -10,6 +10,7 @@
 </div>
 
 <ejs-gantt
+  #ganttChart
   id="{{ id }}"
   [dataSource]="tasks"
   [taskFields]="taskFields"
@@ -18,7 +19,8 @@
   [eventMarkers]="eventMarkers"
   [columns]="columns"
   (queryTaskbarInfo)="queryTaskbarInfo($event)"
-  height="421px"
+  [height]="isExpanded ? 'calc(100% - 44px)' : defaultHeight"
+  [rowHeight]="20"
   [editSettings]="editSettings"
   [tooltipSettings]="tooltipSettings"
   (taskbarEdited)="taskbarEdited($event)"
@@ -40,6 +42,7 @@
       [isOpen]="updateDialogVisible"
       [vesselId]="vesselId"
       [jobOrderFormValue]="jobOrderFormValue"
+      (isChanged)="jobOrdersChanged($event)"
       #jobOrderForm
     ></jb-job-orders-form>
   </div>
@@ -56,6 +59,6 @@
 
 <jb-progress-spinner
   class="progress-spinner"
-  *ngIf="showSpinner"
+  *ngIf="showSpinner || isSaving"
   [theme]="'figma'"
 ></jb-progress-spinner>
