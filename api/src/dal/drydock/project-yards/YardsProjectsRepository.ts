@@ -30,7 +30,8 @@ export class YardsProjectsRepository {
 
     public async get(uid: string): Promise<IProjectYardsValidationDto> {
         const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
-        return yardProjectsRepository
+
+        const result = yardProjectsRepository
             .createQueryBuilder('yp')
             .select(
                 `yp.uid as uid,
@@ -42,6 +43,8 @@ export class YardsProjectsRepository {
             )
             .where('yp.uid = :uid', { uid })
             .getRawOne();
+
+        return result;
     }
 
     public async create(data: ICreateProjectYardsDto, queryRunner: QueryRunner): Promise<string[]> {
@@ -100,7 +103,7 @@ export class YardsProjectsRepository {
             .execute();
     }
 
-    public async FindProjectYardByProjectUid(projectUid: string): Promise<YardsProjectsEntity | undefined> {
+    public async FindProjectYardByProjectUid(projectUid: string): Promise<YardsProjectsEntity | null> {
         const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
         return yardProjectsRepository.findOne({
             where: {

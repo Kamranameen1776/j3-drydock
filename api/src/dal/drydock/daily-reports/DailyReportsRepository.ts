@@ -13,7 +13,7 @@ import { IUpdateDailyReportsDto } from './dtos/IUpdateDailyReportsDto';
 export class DailyReportsRepository {
     public async findOneByDailyReportUid(uid: string): Promise<IOneDailyReportsResultDto> {
         const dailyReportsRepository = getManager().getRepository(DailyReportsEntity);
-        return dailyReportsRepository
+        const result = dailyReportsRepository
             .createQueryBuilder('dr')
             .select([
                 'dr.uid as uid',
@@ -26,6 +26,8 @@ export class DailyReportsRepository {
             ])
             .where('dr.active_status = 1 and dr.uid = :uid', { uid })
             .getRawOne();
+
+        return result;
     }
 
     public async getDailyReports(data: Request): Promise<ODataResult<IDailyReportsResultDto>> {

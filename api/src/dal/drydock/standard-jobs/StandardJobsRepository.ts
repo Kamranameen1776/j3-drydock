@@ -157,7 +157,7 @@ export class StandardJobsRepository {
             .where('function_uid = :functionUid', { functionUid })
             .getRawOne<{ readonly maxNumber?: number }>();
 
-        if (result.maxNumber == null) {
+        if (result == null || result.maxNumber == null) {
             return this.startingNumber;
         }
 

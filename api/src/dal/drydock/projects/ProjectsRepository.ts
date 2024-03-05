@@ -182,8 +182,8 @@ export class ProjectsRepository {
                 'ydp.project_uid = pr.uid and ydp.is_selected = 1 and ydp.active_status = 1',
             )
             .leftJoin(className(J3PrcCompanyRegistryEntity), 'yd', 'yd.uid = ydp.yard_uid')
-            .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .leftJoin(className(LibUserEntity), 'usr', 'pr.ProjectManagerUid = usr.uid')
+            .innerJoin(className(LibVesselsEntity), 'vessel', 'pr.VesselUid = vessel.uid')
             .innerJoin(className(ProjectTypeEntity), 'pt', 'pt.uid = pr.ProjectTypeUid')
             .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'pt.WorklistType = wt.WorklistType')
             .innerJoin(className(ProjectStateEntity), 'ps', 'ps.id = pr.ProjectStateId and pt.uid = ps.ProjectTypeUid')
@@ -197,9 +197,7 @@ export class ProjectsRepository {
             .innerJoin(
                 className(GroupProjectStatusEntity),
                 'gps',
-                `gps.ProjectTypeId = pt.WorklistType
-                    and gps.ProjectStatusId = tm.Status
-                    `,
+                'gps.ProjectTypeId = pt.WorklistType AND gps.ProjectStatusId = tm.Status',
             )
             .where('pr.ActiveStatus = 1')
             .groupBy(
@@ -332,7 +330,7 @@ export class ProjectsRepository {
         await queryRunner.manager.update(ProjectEntity, project.uid, project);
     }
 
-    public async TryGetProjectByUid(uid: string): Promise<ProjectEntity | undefined> {
+    public async TryGetProjectByUid(uid: string): Promise<ProjectEntity | null> {
         const projectRepository = getManager().getRepository(ProjectEntity);
 
         const project = await projectRepository.findOne({

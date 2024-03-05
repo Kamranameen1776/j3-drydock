@@ -51,12 +51,12 @@ export class ProjectTemplateStandardJobRepository {
 
     public async TryGetProjectTemplateStandardJobByUid(
         projectTemplateStandardJobUid: string,
-    ): Promise<ProjectTemplateStandardJobEntity | undefined> {
+    ): Promise<ProjectTemplateStandardJobEntity | null> {
         const repository = getManager().getRepository(ProjectTemplateStandardJobEntity);
 
         return repository.findOne({
             where: {
-                uid: projectTemplateStandardJobUid,
+                ProjectTemplateUid: projectTemplateStandardJobUid,
                 active_status: true,
             },
         });

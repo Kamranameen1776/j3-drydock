@@ -169,7 +169,7 @@ export class JobOrdersRepository {
         return oDataService.getJoinResult(query, parameters);
     }
 
-    public async TryGetJobOrderBySpecification(specificationUid: string): Promise<JobOrderEntity | undefined> {
+    public async TryGetJobOrderBySpecification(specificationUid: string): Promise<JobOrderEntity | null> {
         const jobOrdersRepository = getManager().getRepository(JobOrderEntity);
 
         const jobOrder = await jobOrdersRepository.findOne({
@@ -185,7 +185,7 @@ export class JobOrdersRepository {
         await queryRunner.manager.save(JobOrderEntity, jobOrder);
     }
 
-    public getLatestJobOrderBySpecificationUid(specificationUid: string): Promise<JobOrderEntity | undefined> {
+    public getLatestJobOrderBySpecificationUid(specificationUid: string): Promise<JobOrderEntity | null> {
         const jobOrdersRepository = getManager().getRepository(JobOrderEntity);
 
         return jobOrdersRepository.findOne({

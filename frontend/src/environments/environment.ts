@@ -2,7 +2,7 @@
 export const environment = (window['environment'] = {
   production: false,
   masterAPI: `https://j3-dev.jibe.solutions/api/master/`,
-  infraAPI: `https://j3-dev.jibe.solutions/api/infra/`,
+  infraAPI: `https://dev-hf-j3.jibe.solutions/api/infra/`,
   operationsAPI: `https://j3-dev.jibe.solutions/api/operation/`,
   crewAPI: `https://j3-dev.jibe.solutions/api/crew/`,
   technicalAPI: `https://j3-dev.jibe.solutions/api/technical/`,
