@@ -149,13 +149,16 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   remarksEditorUpdateParentCtrlValue(remarks: string) {
     this.isChanged.next(true);
     this.remarksEditorFormGroup.get('RemarksCtrl').setValue(remarks);
+    this.remarksEditorFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe((v) => {
+      this.isChanged.next(this.updateJobOrderFormGroup.valid);
+    });
   }
 
   initUpdateJobOrderFormGroup(action: FormGroup): void {
     this.updateJobOrderFormGroup = action;
     this.updateJobOrderFormValues();
     this.updateJobOrderFormGroup?.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe((v) => {
-      this.isChanged.next(true);
+      this.isChanged.next(this.updateJobOrderFormGroup.valid);
     });
   }
 

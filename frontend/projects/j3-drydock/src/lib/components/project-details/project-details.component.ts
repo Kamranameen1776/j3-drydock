@@ -408,7 +408,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       },
       (error) => {
         this.showLoader = false;
-        this.growlMessageService.setErrorMessage(error.error.message);
+        this.growlMessageService.errorHandler(error);
       }
     );
   }
