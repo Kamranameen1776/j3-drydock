@@ -1,5 +1,4 @@
 import { cloneDeep } from 'lodash';
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
@@ -53,6 +52,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   @ViewChild('pmsJobs') pmsJobs: ElementRef;
   @ViewChild('findings') findings: ElementRef;
   @ViewChild('specificationUpdates') specificationUpdates: ElementRef;
+
+  isForceDisableClose = false;
+  isSavingAction = false;
 
   specificationDetailsInfo: SpecificationDetails;
   updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
@@ -159,6 +161,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         takeUntil(this.unsubscribe$)
       )
       .subscribe((res) => {
+        this.isSavingAction = res?.action === 'save';
         this.sectionActions(res);
       });
   }
@@ -247,11 +250,19 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       return;
     }
 
+    //  to open dialog after workflow button is clicked
+    this.jbTMDtlSrv.restrictWorkflowDialog = this.isForceDisableClose;
+
+    if (this.isForceDisableClose && !this.isSavingAction) {
+      this.growlMessageService.setErrorMessage('Specification cannot be "Closed" until project is in execution phase');
+      return;
+    }
+
+    this.jbTMDtlSrv.isAllSectionsValid.next(true);
+
     this.showLoader = true;
 
     const detailForm = this.detailForm?.value.generalInformation;
-
-    this.jbTMDtlSrv.isAllSectionsValid.next(true);
 
     const data: UpdateSpecificationDetailsDto = {
       uid: this.specificationDetailsInfo.uid,
@@ -348,6 +359,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig(this.tmDetails);
 
         this.setMenu();
+        this.setIsForceDisableClose(this.tmDetails.StatusId);
 
         // TODO add here more to init view if needed
         if (refresh) {
@@ -442,5 +454,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       const mainSection = this.getMenuById(this.menu, eSpecificationDetailsPageMenuIds.SpecificationDetails);
       this.hideSubMenuItem(mainSection, eSpecificationDetailsPageMenuIds.SpecificationUpdates);
     }
+  }
+
+  private setIsForceDisableClose(currentStatus: string) {
+    this.isForceDisableClose = !this.isExecutionPhase && this.specificationDetailService.isStatusComplete(currentStatus);
   }
 }
