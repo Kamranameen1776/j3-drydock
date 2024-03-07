@@ -26,7 +26,7 @@ import { FiltersDataResponse, RequestWithOData } from '../../../shared/interface
 import { RepoUtils } from '../utils/RepoUtils';
 
 export class StandardJobsRepository {
-    protected readonly startingNumber: number = 1000;
+    protected readonly startingNumber: number = 10000;
     protected readonly codePrefix: string = 'SJ';
     protected readonly standardJobsService = new StandardJobsService();
 
@@ -149,12 +149,11 @@ export class StandardJobsRepository {
         return oDataService.getJoinResult(sql, params);
     }
 
-    private async getNextStandardJobNumber(functionUid: string): Promise<number> {
+    private async getNextStandardJobNumber(): Promise<number> {
         // we consider inactive records too
         const result = await getManager()
             .createQueryBuilder(StandardJobs, 'sj')
             .select('max(sj.number) as maxNumber')
-            .where('function_uid = :functionUid', { functionUid })
             .getRawOne<{ readonly maxNumber?: number }>();
 
         if (result.maxNumber == null) {
@@ -164,11 +163,9 @@ export class StandardJobsRepository {
         return result.maxNumber + 1;
     }
 
-    protected async getNextStandardJobNumberAndCode(
-        functionUid: string,
-    ): Promise<Pick<StandardJobs, 'number' | 'code'>> {
-        const number = await this.getNextStandardJobNumber(functionUid);
-        const code = `${this.codePrefix} - ${number}`;
+    protected async getNextStandardJobNumberAndCode(): Promise<Pick<StandardJobs, 'number' | 'code'>> {
+        const number = await this.getNextStandardJobNumber();
+        const code = `${this.codePrefix}-${number}`;
 
         return { number, code };
     }
@@ -178,7 +175,7 @@ export class StandardJobsRepository {
         createdBy: string,
         queryRunner: QueryRunner,
     ): Promise<StandardJobs> {
-        const { number, code } = await this.getNextStandardJobNumberAndCode(data.functionUid);
+        const { number, code } = await this.getNextStandardJobNumberAndCode();
 
         data.number = number;
         data.code = code;
