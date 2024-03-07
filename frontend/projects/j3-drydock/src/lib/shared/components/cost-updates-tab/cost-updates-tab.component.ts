@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { CostUpdatesTabService, eCostUpdatesTabFields } from './cost-updates-tab.service';
 import { GridInputsWithData } from '../../../models/interfaces/grid-inputs';
 import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
@@ -16,6 +16,8 @@ import { MoneyService } from '../../../services/money.service';
 export class CostUpdatesTabComponent extends UnsubscribeComponent implements OnInit {
   @Input() specificationUid: string;
   @Input() specificationName: string;
+
+  @Output() wasChanged = new EventEmitter<boolean>();
 
   @ViewChild('quantityTemplate', { static: true }) quantityTemplate: TemplateRef<unknown>;
   @ViewChild('unitPriceTemplate', { static: true }) unitPriceTemplate: TemplateRef<unknown>;
@@ -40,6 +42,7 @@ export class CostUpdatesTabComponent extends UnsubscribeComponent implements OnI
   ngOnInit(): void {
     this.loadGridItems();
     this.setGridInputs();
+    this.wasChanged.emit(false);
   }
 
   private setGridInputs() {
@@ -69,6 +72,8 @@ export class CostUpdatesTabComponent extends UnsubscribeComponent implements OnI
 
   onInputChange(value: number, fieldName: string, row: SpecificationSubItem) {
     this.changedRowsMap.set(row.uid, row);
+    this.wasChanged.emit(true);
+
     // TODO uncomment if need to calculate on the Front-End and check different scenarios of calculation
     // if (
     //   fieldName === eCostUpdatesTabFields.Quantity ||

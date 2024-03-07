@@ -29,6 +29,7 @@
         "TECLIB",
         "tsoa",
         "typeorm",
+        "Uids",
         "uniqueidentifier",
         "wdetails",
         "Worklist"

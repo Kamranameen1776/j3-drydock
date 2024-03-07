@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LeftPanelFilterService } from '../../services/LeftPanelFilterService';
-import { IGroupProjectStatusesDto } from '../../../../services/dtos/IGroupProjectStatusesDto';
 import { eProjectStatus } from '../../../../models/enums/project-details.enum';
+import { IGroupProjectStatusesDto } from '../../../../services/dtos/IGroupProjectStatusesDto';
 
 @Component({
   selector: 'jb-project-status-filter',

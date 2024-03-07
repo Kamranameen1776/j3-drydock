@@ -472,6 +472,14 @@ export class SpecificationDetailsService {
     );
   }
 
+  isStatusClosed(status: string) {
+    return this.areStatusesSame(status, eSpecificationWorkflowStatusAction.Close);
+  }
+
+  isStatusComplete(status: string) {
+    return this.areStatusesSame(status, eSpecificationWorkflowStatusAction.Complete);
+  }
+
   areStatusesSame(status: string, statusToCompare: string): boolean {
     return (status ?? '').toLowerCase() === statusToCompare.toLowerCase();
   }

@@ -10,9 +10,18 @@
   [class.active]="isActive(projectStatusFilter.ProjectTypeId, projectStatus.GroupProjectStatusId)"
   (click)="onGroupStatusClicked(projectStatusFilter.ProjectTypeId, projectStatus.GroupProjectStatusId)"
 >
-  <div>
-    <div class="col-md-8 filter-btn-label">{{ projectStatus.GroupProjectDisplayName }}</div>
-    <div class="col-md-4 filter-btn-info">{{ projectStatus.ProjectWithStatusCount }}</div>
+  <div class="button-list">
+    <span class="col-md-8 filter-btn-label">{{ projectStatus.GroupProjectDisplayName }}</span>
+    <span
+      *ngIf="projectStatus.ProjectWithStatusCount; else loader"
+      class="col-md-4 filter-btn-info"
+    >
+      {{ projectStatus.ProjectWithStatusCount }}
+    </span>
   </div>
 </button>
 <hr class="delimiter" />
+
+<ng-template #loader>
+  <p-progressSpinner class="record-count-loader"></p-progressSpinner>
+</ng-template>

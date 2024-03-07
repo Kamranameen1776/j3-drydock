@@ -1,5 +1,4 @@
 import { cloneDeep } from 'lodash';
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
@@ -17,11 +16,10 @@ import {
   JbDetailsTopSectionService,
   eGridRefreshType,
   eJMSActionTypes,
-  eJMSSectionNames,
-  eMessagesSeverityValues
+  eJMSSectionNames
 } from 'jibe-components';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
-import { concatMap, filter, map, takeUntil } from 'rxjs/operators';
+import { concatMap, filter, map, takeUntil, finalize } from 'rxjs/operators';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
 import { eModule } from '../../models/enums/module.enum';
@@ -54,6 +52,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   @ViewChild('pmsJobs') pmsJobs: ElementRef;
   @ViewChild('findings') findings: ElementRef;
   @ViewChild('specificationUpdates') specificationUpdates: ElementRef;
+
+  isForceDisableClose = false;
+  isSavingAction = false;
 
   specificationDetailsInfo: SpecificationDetails;
   updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
@@ -160,6 +161,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         takeUntil(this.unsubscribe$)
       )
       .subscribe((res) => {
+        this.isSavingAction = res?.action === 'save';
         this.sectionActions(res);
       });
   }
@@ -248,11 +250,19 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       return;
     }
 
+    //  to open dialog after workflow button is clicked
+    this.jbTMDtlSrv.restrictWorkflowDialog = this.isForceDisableClose;
+
+    if (this.isForceDisableClose && !this.isSavingAction) {
+      this.growlMessageService.setErrorMessage('Specification cannot be "Closed" until project is in execution phase');
+      return;
+    }
+
+    this.jbTMDtlSrv.isAllSectionsValid.next(true);
+
     this.showLoader = true;
 
     const detailForm = this.detailForm?.value.generalInformation;
-
-    this.jbTMDtlSrv.isAllSectionsValid.next(true);
 
     const data: UpdateSpecificationDetailsDto = {
       uid: this.specificationDetailsInfo.uid,
@@ -280,20 +290,27 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       data.Duration = +headerFormValue.Duration;
     }
 
-    try {
-      this.specificationDetailService
-        .updateSpecification(data)
-        .toPromise()
-        .then(() => {
-          this.growlMessageService.setErrorMessage('Specification has been updated successfully');
+    this.specificationDetailService
+      .updateSpecification(data)
+      .pipe(
+        finalize(() => {
           this.jbTMDtlSrv.isUnsavedChanges.next(false);
+        })
+      )
+      .subscribe(
+        () => {
+          this.growlMessageService.setSuccessMessage('Specification has been updated successfully');
           this.getDetails(true);
-        });
-    } catch (err) {
-      this.jbTMDtlSrv.isUnsavedChanges.next(false);
-      this.growlMessageService.setErrorMessage(err.error);
-      this.showLoader = false;
-    }
+        },
+        (err) => {
+          this.showLoader = false;
+          if (err?.status === 422 && err?.error?.message) {
+            this.growlMessageService.setErrorMessage(err.error.message);
+          } else {
+            this.growlMessageService.setErrorMessage('Server error occurred');
+          }
+        }
+      );
   }
 
   updateSelectedAmount(items: TmLinkedRecords[], type: eSpecificationDetailsPageMenuIds) {
@@ -342,6 +359,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig(this.tmDetails);
 
         this.setMenu();
+        this.setIsForceDisableClose(this.tmDetails.StatusId);
 
         // TODO add here more to init view if needed
         if (refresh) {
@@ -436,5 +454,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       const mainSection = this.getMenuById(this.menu, eSpecificationDetailsPageMenuIds.SpecificationDetails);
       this.hideSubMenuItem(mainSection, eSpecificationDetailsPageMenuIds.SpecificationUpdates);
     }
+  }
+
+  private setIsForceDisableClose(currentStatus: string) {
+    this.isForceDisableClose = !this.isExecutionPhase && this.specificationDetailService.isStatusComplete(currentStatus);
   }
 }

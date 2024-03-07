@@ -2,7 +2,7 @@ import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
-export class dryDockAccessRights1707456255639 implements MigrationInterface {
+export class dryDockAccessRights1707456255631 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -16,19 +16,19 @@ export class dryDockAccessRights1707456255639 implements MigrationInterface {
             MERGE INTO INF_LIB_Right AS TARGET
             USING (VALUES
                     ('218da033-cff4-4600-92e6-4e7e958d7004', 'projects_view_list', 'View project records in main page', 'o', 'project',
-                    'project_index', 'view_projects_list', 1, getdate(), 1, NULL, 1, 'View Project Records Main', NULL),
+                    'project_index', 'view_projects_list', 1, getdate(), 1, NULL, 1, 'View Project Records Main', '/drydock/projects/get-projects-for-main-page'),
 
                     ('ba88a0df-854b-4f07-b879-c2577e3777bd', 'projects_view_list_onboard', 'View project records in main page', 'v', 'project',
                     'project_index', 'view_projects_list_onboard', 1, getdate(), 1, NULL, 1, 'View Project Records Main', NULL),
 
                     ('6648945d-5b7c-4557-aa32-af85ccbfb14a', 'dry_dock_project_create', 'Create dry dock project', 'o', 'project',
-                    'project_index', 'create_dry_dock_project', 1, getdate(), 1, NULL, 1, 'Create Dry Dock Project', NULL),
+                    'project_index', 'create_dry_dock_project', 1, getdate(), 1, NULL, 1, 'Create Dry Dock Project', '/drydock/projects/create-project'),
 
                     ('cbd1b4ec-5dee-4437-ae86-f367ed576ea0', 'dry_dock_project_delete', 'Delete dry dock project', 'o', 'project',
-                    'project_index', 'delete', 1, getdate(), 1, NULL, 1, 'Delete Dry Dock Project', NULL),
+                    'project_index', 'delete', 1, getdate(), 1, NULL, 1, 'Delete Dry Dock Project', '/drydock/projects/delete-project'),
 
                     ('d39cf0f9-5386-4506-a130-2b621707e757', 'dry_dock_project_view_details', 'View dry dock project detail page', 'o', 'project',
-                    'dry_dock', 'view_details_dry_dock_project', 1, getdate(), 1, NULL, 1, 'View Dry Dock Project Detail', NULL),
+                    'dry_dock', 'view_details_dry_dock_project', 1, getdate(), 1, NULL, 1, 'View Dry Dock Project Detail', '/drydock/projects/get-projects-for-main-page'),
 
                     ('70b68d32-63b8-4ff7-8695-aec5a9e899f1', 'dry_dock_project_attachment_view', 'View attachment rights for project dry dock', 'o', 'project',
                     'dry_dock', 'view_dry_dock_project_att', 1, getdate(), 1, NULL, 1, 'View Attachment in Project Dry Dock', NULL),
@@ -40,19 +40,19 @@ export class dryDockAccessRights1707456255639 implements MigrationInterface {
                     'dry_dock', 'view_dd_project_att_onb', 1, getdate(), 1, NULL, 1, 'View Attachment in Project Dry Dock', NULL),
 
                     ('8d0cbdfb-0f49-4b6f-85e3-040fd392813a', 'dry_dock_project_edit_header', 'Edit header section in project dry dock', 'o', 'project',
-                    'dry_dock', 'edit_dd_project_header', 1, getdate(), 1, NULL, 1, 'Edit Header Section of Project Dry Dock', NULL),
+                    'dry_dock', 'edit_dd_project_header', 1, getdate(), 1, NULL, 1, 'Edit Header Section of Project Dry Dock', '/drydock/projects/update-project'),
 
                     ('98d8cf6b-72bf-43f4-ba4c-8792adfe1f3e', 'dry_dock_project_edit_flow', 'Add or Edit Workflow and Follow up in project Dry Dock', 'o', 'project',
                     'dry_dock', 'edit_dd_project_flow', 1, getdate(), 1, NULL, 1, 'Add or Edit Workflow and Follow up in Project Dry Dock', NULL),
 
                     ('e871b32a-8b37-4e81-95a0-227037d2e512', 'dry_dock_project_attachment_add', 'Add attachment rights for project dry dock', 'o', 'project',
-                    'dry_dock', 'add_dd_project_att', 1, getdate(), 1, NULL, 1, 'Add Attachment in Project Dry Dock', NULL),
+                    'dry_dock', 'add_dd_project_att', 1, getdate(), 1, NULL, 1, 'Add Attachment in Project Dry Dock', '/infra/file/upload'),
 
                     ('d1aa0d3d-bb13-48d7-9d17-4e3b3901b51c', 'dry_dock_project_attachment_edit', 'Edit attachment rights for project dry dock', 'o', 'project',
-                    'dry_dock', 'edit_dd_project_att', 1, getdate(), 1, NULL, 1, 'Edit Attachment in Project Dry Dock', NULL),
+                    'dry_dock', 'edit_dd_project_att', 1, getdate(), 1, NULL, 1, 'Edit Attachment in Project Dry Dock', '/infra/file/updateFileDetail'),
 
                     ('ce04db58-161a-4a1e-b89b-7d3acdd4aea5', 'dry_dock_project_attachment_delete', 'Delete attachment rights for project dry dock', 'o', 'project',
-                    'dry_dock', 'delete_dd_project_att', 1, getdate(), 1, NULL, 1, 'Delete Attachment in Project Dry Dock', NULL),
+                    'dry_dock', 'delete_dd_project_att', 1, getdate(), 1, NULL, 1, 'Delete Attachment in Project Dry Dock', '/infra/file/updateFileDetail'),
 
                     ('860c2446-c5d0-4880-84f4-268dfc8ae4d1', 'dry_dock_project_edit_header_onboard', 'Edit header section in project dry dock', 'v', 'project',
                     'dry_dock', 'edit_dd_project_header_onb', 1, getdate(), 1, NULL, 1, 'Edit Header Section in Project Dry Dock', NULL),
@@ -69,11 +69,11 @@ export class dryDockAccessRights1707456255639 implements MigrationInterface {
                     ('a8318817-4c33-49c8-b516-a796ea305c95', 'dry_dock_project_attachment_delete_onboard', 'Delete attachment rights for project dry dock', 'v', 'project',
                     'dry_dock', 'delete_dd_project_att_onb', 1, getdate(), 1, NULL, 1, 'Delete Attachment in Project Dry Dock', NULL),
 
-                    ('82111509-6B41-4DA6-8B81-1C52E2F599FA', 'dry_dock_project_resync', 'Re-Sync the record to other side in dry dock', N'b', 'project', 'dry_dock', 'resync',
+                    ('82111509-6B41-4DA6-8B81-1C52E2F599FA', 'dry_dock_project_resync', 'ReSync the record to other side in dry dock', N'b', 'project', 'dry_dock', 'resync',
                     1, GETDATE(), NULL, NULL, 1, 'Re-Sync Record for Dry Dock', NULL),
 
                     ('A609F4E7-3688-4376-B629-E3B4B9B24649', 'dry_dock_project_immediate_closure', 'To close the record immediately by skipping the intermediate statuses in dry dock',
-                    'o', 'project', 'dry_dock', 'immediate_closure', 1, GETDATE(), NULL, NULL, 1, 'Immediate Closure for Dry Dock', NULL)
+                    'o', 'project', 'dry_dock', 'immediate_closure', 1, GETDATE(), NULL, NULL, 1, 'Immediate Closure for Dry Dock', '/drydock/projects/update-project')
                     )
 
             AS SOURCE ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],

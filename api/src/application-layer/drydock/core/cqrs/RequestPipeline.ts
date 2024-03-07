@@ -1,9 +1,32 @@
+import { ClassConstructor } from 'class-transformer';
+
 import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 
 /**
  * Request pipeline from Command Query Responsibility Segregation pattern
  */
-export abstract class RequestPipeline<TRequest, TResponse> {
+export abstract class RequestPipeline<TRequest extends object | void | string, TResponse> {
+    /**
+     * @param request Input data to handle
+     * @param validationClass Model to validate against request
+     * @returns Response from handling the request
+     */
+    public async ExecuteRequestAsync<Model extends object>(
+        request: TRequest,
+        validationClass: ClassConstructor<Model> | void,
+    ): Promise<TResponse> {
+        await this.AuthorizationHandlerAsync(request);
+
+        if (typeof request === 'object' && validationClass) {
+            await validateAgainstModel(validationClass, request);
+        }
+
+        return this.MainHandlerAsync(request);
+    }
+
+    /**
+     * @obsolete USE ExecuteRequestAsync
+     */
     public async ExecuteAsync(request: TRequest, validationClass?: any, validationKey = 'body'): Promise<TResponse> {
         await this.AuthorizationHandlerAsync(request);
 

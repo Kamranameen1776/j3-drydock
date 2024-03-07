@@ -161,7 +161,18 @@ export class ProjectsService {
     return this.apiRequestService.sendApiReq(apiRequest);
   }
 
-  public groupProjectStatuses(): Observable<{ [key: string]: IGroupProjectStatusesDto }> {
+  public groupProjectStatusesLabels(): Observable<{ [key: string]: IGroupProjectStatusesDto }> {
+    const apiRequest: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'projects/group-project-statuses-async',
+      crud: eCrud.Get
+    };
+
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
+  public groupProjectStatusesCounts(): Observable<{ [key: string]: IGroupProjectStatusesDto }> {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,

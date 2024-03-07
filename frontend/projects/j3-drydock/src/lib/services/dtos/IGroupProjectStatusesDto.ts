@@ -6,4 +6,6 @@ export interface IGroupProjectStatusesDto {
   ProjectTypeName: string;
 
   GroupProjectStatuses: IGroupProjectStatusDto[];
+
+  ProjectWithStatusCount?: number;
 }

@@ -93,11 +93,6 @@ export class SpecificationGridService {
       filters: this.filters,
       searchFields: this.searchFields,
       filtersLists: this.filtersLists,
-      showSettings: {
-        showDefaultLables: false,
-        [eGridEvents.ClearFilters]: true
-      },
-      advancedSettings: [{ label: eGridEvents.ClearFilters, icon: eGridIcons.ClearFilters3, color: eGridColors.JbBlack, show: true }],
       sortField: 'code',
       sortOrder: eSortOrder.Descending
     };
