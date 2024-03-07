@@ -122,8 +122,8 @@ export class ProjectTemplatesGridService {
       searchFields: [eProjectTemplatesFields.Subject]
     };
   }
-  // TODO fix to correct keys once US for access rights is done
-  hasAccess(action: string) {
-    return !!this.userRights.getUserRights(eModule.Project, eFunction.ProjectTemplates, action);
+
+  hasAccess(action: string, functionCode = eFunction.ProjectTemplates) {
+    return !!this.userRights.getUserRights(eModule.Project, functionCode, action);
   }
 }

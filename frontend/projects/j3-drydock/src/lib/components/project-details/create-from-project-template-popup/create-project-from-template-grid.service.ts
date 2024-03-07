@@ -61,7 +61,6 @@ export class CreateProjectFromTemplateGridService {
     }
   ];
 
-  // TODO check and fix
   private gridFilters: Filter[] = [
     {
       DisplayText: eProjectTemplatesLabels.VesselType,
@@ -120,7 +119,7 @@ export class CreateProjectFromTemplateGridService {
       searchFields: [eProjectTemplatesFields.Code, eProjectTemplatesFields.Subject]
     };
   }
-  // TODO fix to correct keys once US for access rights is done
+
   hasAccess(action: string) {
     return !!this.userRights.getUserRights(eModule.Project, eFunction.ProjectTemplates, action);
   }
