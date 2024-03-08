@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export class createStandardJobsAccessRights1698829536837 implements MigrationInterface {
+export class createStandardJobsAccessRights1698829536838 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const className = this.constructor.name;
         try {
@@ -66,53 +66,53 @@ WHEN NOT MATCHED BY TARGET THEN
 			`);
 
                 await queryRunner.query(`
-            MERGE INTO INF_LIB_Right AS TARGET
-USING (VALUES ('BA21E7BB-F456-4419-AF36-6977F3CC694F', 'standard_job_view_grid',
-               'View data on the standard job main grid', 'o', 'project',
-               'standard_job', 'view_standard_job_grid', 1, getdate(), 1, NULL, 1,
-               'View Standard Job Grid', NULL),
-              ('B3A74BE1-B679-42D9-9409-ACF9834F714D', 'standard_job_view_details',
-               'View data on the standard job details page', 'o', 'project',
-               'standard_job', 'view_standard_job_detail', 1, getdate(), 1, NULL, 1,
-               'View Standard Job Details', NULL),
-              ('1670FB06-ED7A-4167-8E54-BF0E839849B0', 'standard_job_create',
-               'Create standard job', 'o', 'project',
-               'standard_job', 'create_standard_job', 1, getdate(), 1, NULL, 1,
-               'Create Standard Job', NULL),
-              ('B5BE23E3-F844-4C48-8950-68D5A8E71896', 'standard_job_edit',
-               'Edit standard job', 'o', 'project',
-               'standard_job', 'edit_standard_job', 1, getdate(), 1, NULL, 1,
-               'Edit Standard Job', NULL),
-              ('50E06555-62E3-4445-A2F5-1A9E67DE3207', 'standard_job_delete',
-               'Delete standard job', 'o', 'project',
-               'standard_job', 'delete_standard_job', 1, getdate(), 1, NULL, 1,
-               'Delete Standard Job', NULL))
-    AS SOURCE ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],
-               [Function_Code], [Action], [Created_By], [Date_Of_Creation], [Modified_By], [Date_Of_Modification],
-               [Active_Status], [right_name], [api_url])
-ON TARGET.[Right_Code] = SOURCE.[Right_Code]
-WHEN MATCHED THEN
-    UPDATE
-    SET TARGET.[Right_UID]=SOURCE.[Right_UID],
-        TARGET.[Right_Code]=SOURCE.[Right_Code],
-        TARGET.[Right_Description]=SOURCE.[Right_Description],
-        TARGET.[Valid_On]=SOURCE.[Valid_On],
-        TARGET.[Module_Code]=SOURCE.[Module_Code],
-        TARGET.[Function_Code]=SOURCE.[Function_Code],
-        TARGET.[Action]=SOURCE.[Action],
-        TARGET.[Modified_By]=1,
-        TARGET.[Date_Of_Modification]=getdate(),
-        TARGET.[Active_Status]=1,
-        TARGET.[right_name]=SOURCE.[right_name],
-        TARGET.[api_url] = SOURCE.[api_url]
-WHEN NOT MATCHED BY TARGET THEN
-    INSERT ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],
-            [Function_Code], [Action], [Created_By], [Date_Of_Creation], [Modified_By],
-            [Date_Of_Modification], [Active_Status], [right_name], [api_url])
-    VALUES (SOURCE.[Right_UID], SOURCE.[Right_Code], SOURCE.[Right_Description],
-            SOURCE.[Valid_On], SOURCE.[Module_Code], SOURCE.[Function_Code],
-            SOURCE.[Action], SOURCE.[Created_By], SOURCE.[Date_Of_Creation], SOURCE.[Modified_By],
-            SOURCE.[Date_Of_Modification], SOURCE.[Active_Status], SOURCE.[right_name], SOURCE.[api_url]);
+                MERGE INTO INF_LIB_Right AS TARGET
+                USING (VALUES ('BA21E7BB-F456-4419-AF36-6977F3CC694F', 'standard_job_view_grid',
+                               'View data on the standard job main grid', 'o', 'project',
+                               'standard_job', 'view_standard_job_grid', 1, getdate(), 1, NULL, 1,
+                               'View Standard Job Grid', '/drydock/standard-jobs/get-standard-jobs'),
+                              ('B3A74BE1-B679-42D9-9409-ACF9834F714D', 'standard_job_view_details',
+                               'View data on the standard job details page', 'o', 'project',
+                               'standard_job', 'view_standard_job_detail', 1, getdate(), 1, NULL, 1,
+                               'View Standard Job Details', NULL),
+                              ('1670FB06-ED7A-4167-8E54-BF0E839849B0', 'standard_job_create',
+                               'Create standard job', 'o', 'project',
+                               'standard_job', 'create_standard_job', 1, getdate(), 1, NULL, 1,
+                               'Create Standard Job', '/drydock/standard-jobs/create-standard-jobs'),
+                              ('B5BE23E3-F844-4C48-8950-68D5A8E71896', 'standard_job_edit',
+                               'Edit standard job', 'o', 'project',
+                               'standard_job', 'edit_standard_job', 1, getdate(), 1, NULL, 1,
+                               'Edit Standard Job', '/drydock/standard-jobs/update-standard-jobs'),
+                              ('50E06555-62E3-4445-A2F5-1A9E67DE3207', 'standard_job_delete',
+                               'Delete standard job', 'o', 'project',
+                               'standard_job', 'delete_standard_job', 1, getdate(), 1, NULL, 1,
+                               'Delete Standard Job', '/drydock/standard-jobs/delete-standard-jobs'))
+                    AS SOURCE ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],
+                               [Function_Code], [Action], [Created_By], [Date_Of_Creation], [Modified_By], [Date_Of_Modification],
+                               [Active_Status], [right_name], [api_url])
+                ON TARGET.[Right_Code] = SOURCE.[Right_Code]
+                WHEN MATCHED THEN
+                    UPDATE
+                    SET TARGET.[Right_UID]=SOURCE.[Right_UID],
+                        TARGET.[Right_Code]=SOURCE.[Right_Code],
+                        TARGET.[Right_Description]=SOURCE.[Right_Description],
+                        TARGET.[Valid_On]=SOURCE.[Valid_On],
+                        TARGET.[Module_Code]=SOURCE.[Module_Code],
+                        TARGET.[Function_Code]=SOURCE.[Function_Code],
+                        TARGET.[Action]=SOURCE.[Action],
+                        TARGET.[Modified_By]=1,
+                        TARGET.[Date_Of_Modification]=getdate(),
+                        TARGET.[Active_Status]=1,
+                        TARGET.[right_name]=SOURCE.[right_name],
+                        TARGET.[api_url] = SOURCE.[api_url]
+                WHEN NOT MATCHED BY TARGET THEN
+                    INSERT ([Right_UID], [Right_Code], [Right_Description], [Valid_On], [Module_Code],
+                            [Function_Code], [Action], [Created_By], [Date_Of_Creation], [Modified_By],
+                            [Date_Of_Modification], [Active_Status], [right_name], [api_url])
+                    VALUES (SOURCE.[Right_UID], SOURCE.[Right_Code], SOURCE.[Right_Description],
+                            SOURCE.[Valid_On], SOURCE.[Module_Code], SOURCE.[Function_Code],
+                            SOURCE.[Action], SOURCE.[Created_By], SOURCE.[Date_Of_Creation], SOURCE.[Modified_By],
+                            SOURCE.[Date_Of_Modification], SOURCE.[Active_Status], SOURCE.[right_name], SOURCE.[api_url]);
 			`);
 
                 await queryRunner.query(`

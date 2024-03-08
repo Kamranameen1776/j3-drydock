@@ -3,5 +3,5 @@ export enum eFunction {
   DryDock = 'dry_dock',
   Project = 'project_index',
   SpecificationDetails = 'specification_details',
-  ProjectTemplates = 'project_templates_index'
+  ProjectTemplates = 'project_template_index'
 }

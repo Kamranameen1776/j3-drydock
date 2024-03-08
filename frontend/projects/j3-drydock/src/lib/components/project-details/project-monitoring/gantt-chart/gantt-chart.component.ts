@@ -50,8 +50,13 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   @Input() project: ProjectDetailsFull;
 
-  @ViewChild('jobOrderForm')
-  jobOrderForm: JobOrdersFormComponent;
+  @Input() isExpanded: boolean;
+
+  @Input() detailsHeight: number;
+
+  @ViewChild('jobOrderForm') jobOrderForm: JobOrdersFormComponent;
+
+  @ViewChild('ganttChart') ganttChart: Gantt;
 
   public updateBtnLabel = 'Update';
 
@@ -59,7 +64,15 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Job Order' };
 
-  updateJobOrderButtonDisabled = false;
+  private isJobOrdersChanged: boolean;
+
+  isSaving = false;
+
+  get updateJobOrderButtonDisabled() {
+    return !this.isJobOrdersChanged || this.isSaving;
+  }
+
+  defaultHeight: string;
 
   dateFormat: string;
 
@@ -100,7 +113,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     selectedValue: this.overdue
   };
 
-  ganttChart: Gantt;
   tooltipSettings: TooltipSettingsModel = {
     taskbar:
       '<table class="e-gantt-tooltiptable">' +
@@ -234,19 +246,26 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     if (changes.project) {
       this.updateEventMarkers(changes.project.currentValue);
     }
+    if (changes.detailsHeight && this.detailsHeight !== changes.detailsHeight.previousValue) {
+      const diff = Math.abs(this.detailsHeight - 340);
+      this.defaultHeight = `${diff}px`;
+    }
+    if (changes.isExpanded) {
+      this.ganttChart?.refresh();
+    }
   }
 
   ngAfterViewInit(): void {
     this.listenGanttClicks();
-
-    this.jobOrderForm.onValueChangesIsFormValid.pipe(takeUntil(this.unsubscribe$)).subscribe((isValid) => {
-      this.updateJobOrderButtonDisabled = !isValid;
-    });
   }
 
   ngOnDestroy(): void {
     super.ngOnDestroy();
     this.element.nativeElement.querySelector(`#${this.id}`).removeEventListener('click', this.linkClick);
+  }
+
+  jobOrdersChanged(value: boolean) {
+    this.isJobOrdersChanged = value;
   }
 
   transformToEJ2DateFormat(dateFormat: string) {
@@ -357,14 +376,14 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   }
 
   public updateJobOrder() {
-    this.updateJobOrderButtonDisabled = true;
-
     const result = this.jobOrderForm.save();
 
     if (result instanceof Error) {
       this.growlMessageService.setErrorMessage(result.message);
       return;
     }
+
+    this.isSaving = true;
 
     const jobOrder = result as IJobOrderFormResultDto;
 
@@ -391,9 +410,12 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
     this.jobOrdersService
       .updateJobOrder(data)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        finalize(() => {
+          this.isSaving = false;
+        })
+      )
       .subscribe(() => {
-        this.updateJobOrderButtonDisabled = false;
         this.showUpdateDialog(false);
 
         this.initComponent();

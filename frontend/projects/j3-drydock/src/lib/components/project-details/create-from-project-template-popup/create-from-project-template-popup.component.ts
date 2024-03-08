@@ -22,7 +22,7 @@ export class CreateFromProjectTemplatePopupComponent implements OnInit {
 
   @Output() closeDialog = new EventEmitter<boolean>();
 
-  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false, dialogHeader: 'Project Templates' };
+  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, dialogHeader: 'Project Templates' };
 
   isPopupValid$ = new BehaviorSubject<boolean>(false);
   isSaving$ = new BehaviorSubject<boolean>(false);
@@ -54,7 +54,7 @@ export class CreateFromProjectTemplatePopupComponent implements OnInit {
 
   onSelect(data) {
     this.selectedProjectTemplate = data;
-    this.isPopupValid$.next(data);
+    this.isPopupValid$.next(data !== null);
   }
 
   private closePopup(isSaved = false) {

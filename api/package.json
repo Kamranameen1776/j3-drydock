@@ -1,6 +1,6 @@
 {
   "name": "@j3-drydock/api",
-  "version": "3.241.331",
+  "version": "3.241.412",
   "description": "DryDock API",
   "main": "src/index.ts",
   "engines": {
@@ -44,10 +44,15 @@
     "class-transformer": "0.5.1",
     "class-validator": "0.14.0",
     "cors": "2.8.5",
+    "css-select": "5.1.0",
     "dd-trace": "4.26.0",
     "decimal.js": "10.4.3",
+    "dom-serializer": "2.0.0",
+    "domhandler": "5.0.3",
+    "domutils": "3.1.0",
     "exceljs": "4.4.0",
     "express": "4.18.2",
+    "htmlparser2": "9.1.0",
     "http-status-codes": "1.4.0",
     "j2utils": "3.2309.205",
     "j3-express-auto-routes": "22.12.1",

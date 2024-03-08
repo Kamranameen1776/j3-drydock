@@ -2,7 +2,7 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class moduleAndFunctionCodes1707456237052 implements MigrationInterface {
+export class moduleAndFunctionCodes1707456237054 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -46,7 +46,8 @@ export class moduleAndFunctionCodes1707456237052 implements MigrationInterface {
                 (@maxfunction_id+2, N'02F858F1-0064-4F20-A3E4-E87FB8E0FE02', N'project', N'project_index', N'Project Main', 1, getdate(), NULL, NULL, 1, 'project', N'project_main', N'proj_main'),
                 (@maxfunction_id+3, N'F808DA39-BA82-482B-90D8-912ECB41BC04', N'project', N'dry_dock', N'Dry Dock', 1, getdate(), NULL, NULL, 1, N'project', N'project_main', N'projdrydock'),
                 (@maxfunction_id+4, N'9C79EF57-A1C6-40B4-A343-968976325150', N'project', N'standard_job', N'Standard Job', 1, getdate(), NULL, NULL, 1, N'project', N'project_main', N'projstandard'),
-				(@maxfunction_id+5, N'660941D8-B00B-4C58-AD32-1F0A144B1C88', N'project', N'specification_details', N'Specification Details', 1, getdate(), NULL, NULL, 1, N'specification', N'project_main', N'projspec')
+				(@maxfunction_id+5, N'660941D8-B00B-4C58-AD32-1F0A144B1C88', N'project', N'specification_details', N'Specification Details', 1, getdate(), NULL, NULL, 1, N'specification', N'project_main', N'projspec'),
+                (@maxfunction_id+6, N'EA4184D7-8E4B-4898-873B-F4FE9800E499', N'project', N'project_template_index', N'Project Template', 1, getdate(), NULL, NULL, 1, N'project', N'project_main', N'projtemplate')
                 )
 
             AS SOURCE ([FunctionId], [Function_UID], [Module_Code], [Function_Code], [Function_Name], [Created_By], [Date_Of_Creation], [Modified_By], [Date_Of_Modification], [Active_Status], [parent_function_code], [parent_module_code], [attach_prefix])

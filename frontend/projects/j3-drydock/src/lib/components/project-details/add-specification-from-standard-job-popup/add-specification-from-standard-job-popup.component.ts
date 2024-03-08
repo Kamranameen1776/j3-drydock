@@ -9,6 +9,7 @@ import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { StandardJobsService } from '../../../services/standard-jobs.service';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
+import { finalize } from 'rxjs/operators';
 
 export enum eAddSpecificationFromStandardJobPopupType {
   Specification = 'Specification',
@@ -33,7 +34,7 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
 
   @ViewChild(SpecificationFormComponent) popupForm: SpecificationFormComponent;
 
-  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false, dialogHeader: 'Standard Jobs' };
+  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, dialogHeader: 'Standard Jobs' };
 
   eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.Select, eJbTreeEvents.UnSelect];
 
@@ -93,10 +94,14 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
     switch (this.type) {
       case eAddSpecificationFromStandardJobPopupType.Specification:
         this.isSaving$.next(true);
-        this.specificationService.createSpecificationFromStandardJob(this.projectUid, selectedUids).subscribe(() => {
-          this.isSaving$.next(false);
-          this.closePopup();
-        });
+        this.specificationService
+          .createSpecificationFromStandardJob(this.projectUid, selectedUids)
+          .pipe(
+            finalize(() => {
+              this.isSaving$.next(false);
+            })
+          )
+          .subscribe(() => this.closePopup());
         break;
 
       case eAddSpecificationFromStandardJobPopupType.ProjectTemplate:

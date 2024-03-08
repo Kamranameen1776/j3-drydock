@@ -41,7 +41,7 @@
     cost_updates: cost_updates,
     reporting: reportingTab
   }"
-  [sectionHeaderTemplateRef]="{ technical_specification: specificationsButtonsTmpl }"
+  [sectionHeaderTemplateRef]="{ technical_specification: specificationsButtonsTmpl, gantt_chart: ganttButtonsTmpl }"
   [slideMenus]="menu"
 >
   <ng-template
@@ -117,7 +117,9 @@
         *ngSwitchCase="eSideMenuId.GanttChart"
       >
         <jb-project-gantt-chart
-          #ganttChartComponent
+          *ngIf="detailsHeight"
+          [detailsHeight]="detailsHeight"
+          [isExpanded]="isGanttExpanded"
           [projectId]="projectUid"
           [project]="tmDetails"
           [vesselId]="tmDetails?.VesselId"
@@ -175,6 +177,16 @@
     label="Create new"
     [model]="specificationsCreateNewItems"
   ></jb-split-button>
+</ng-template>
+
+<ng-template #ganttButtonsTmpl>
+  <span
+    class="expand-button"
+    (click)="onToggleExpandGantt()"
+  >
+    <i class="icons8-enlarge hide-when-expanded"></i>
+    <i class="icons8-compress show-when-expanded"></i>
+  </span>
 </ng-template>
 
 <jb-progress-spinner

@@ -568,6 +568,14 @@ export class SpecificationDetailsRepository {
         return getManager().createQueryBuilder(J3PmsLibFunction, 'pms_fn').where('pms_fn.uid = :uid', { uid }).getOne();
     }
 
+    // with Node 20.x.x and latest typeorm we could rewrite it using withRecursive CTE
+    // Now usage of this method leads to a lot of queries to the database
+    // To be exact: N * M
+    // N - number of specifications
+    // M - number of functions in the tree
+    // So for some product cases it could be even 1000 queries
+    // And it can be a performance bottleneck and lead to timeouts in some cases
+    // So we need to rewrite it to be just 1 query
     private async getFunctionTree(functionUid: string): Promise<{ rootFunction: string; functionPath: string }> {
         const getParentFunction = async (uid: string): Promise<J3PmsLibFunction | undefined> => {
             return this.fetchFunctionByUID(uid);

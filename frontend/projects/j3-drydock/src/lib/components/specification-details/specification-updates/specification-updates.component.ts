@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { GridService, IGridAction, IJbDialog, eGridRefreshType, JmsService, eJMSWorkflowAction } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
@@ -21,7 +21,7 @@ import { JobOrdersFormComponent } from '../../../shared/components/job-orders-fo
   styleUrls: ['./specification-updates.component.scss'],
   providers: [SpecificationUpdatesService]
 })
-export class SpecificationUpdatesComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
+export class SpecificationUpdatesComponent extends UnsubscribeComponent implements OnInit {
   @Input() specificationDetails: SpecificationDetails;
 
   @ViewChild('reportDateTemplate', { static: true }) reportDateTemplate: TemplateRef<unknown>;
@@ -29,17 +29,21 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
   gridInputs: GridInputsWithRequest;
 
-  isShowLoader = false;
-
   isShowDialog = false;
-
-  isDialogOkButtonDisabled = false;
 
   dialogContent: IJbDialog = { dialogHeader: 'Update Job Order' };
 
   okBtnLabel = 'Update';
 
   jobOrderFormValue: IJobOrderFormDto = {} as IJobOrderFormDto;
+
+  isJobOrdersChanged = false;
+
+  isSaving = false;
+
+  get isDialogOkButtonDisabled() {
+    return this.isSaving || !this.isJobOrdersChanged;
+  }
 
   private row: JobOrder;
 
@@ -77,12 +81,6 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
   ngOnInit(): void {
     this.setGridData();
     this.setCellTemplate(this.reportDateTemplate, eSpecificationUpdatesFields.Date);
-  }
-
-  ngAfterViewInit(): void {
-    this.jobOrderForm?.onValueChangesIsFormValid.pipe(takeUntil(this.unsubscribe$)).subscribe((isValid) => {
-      this.isDialogOkButtonDisabled = !isValid;
-    });
   }
 
   onGridAction({ type, payload }: IGridAction) {
@@ -145,19 +143,23 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
     // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
     this.jmsService.jmsEvents.next({ type: eJMSWorkflowAction.AddClassFlag });
 
-    this.isDialogOkButtonDisabled = true;
+    this.isSaving = true;
 
     this.jobOrdersService
       .updateJobOrder(data)
       .pipe(
         takeUntil(this.unsubscribe$),
         finalize(() => {
-          this.isDialogOkButtonDisabled = false;
+          this.isSaving = false;
         })
       )
       .subscribe(() => {
         this.closeDialog(true);
       });
+  }
+
+  jobOrdersChanged(value: boolean) {
+    this.isJobOrdersChanged = value;
   }
 
   private showDialog(value: boolean) {

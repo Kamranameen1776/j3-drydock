@@ -5,7 +5,7 @@ import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { getSmallPopup } from '../../models/constants/popup';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { Title } from '@angular/platform-browser';
-import { eStandardJobsAccessActions } from '../../models/enums/access-actions.enum';
+import { eProjectTemplatesAccessActions } from '../../models/enums/access-actions.enum';
 import { ProjectTemplatesGridService } from './project-templates-grid.service';
 import { ProjectTemplatesService } from '../../services/project-templates.service';
 import { eProjectTemplatesFields } from '../../models/enums/project-templates.enum';
@@ -111,6 +111,9 @@ export class ProjectTemplatesMainComponent extends UnsubscribeComponent implemen
   }
 
   private editRow(row: ProjectTemplate) {
+    if (!this.canEdit) {
+      return;
+    }
     this.projectTemplatesService.getTemplate(row.ProjectTemplateUid).subscribe((res) => {
       this.currentRow = { ...row, ...res, VesselTypeSpecific: +res.VesselTypeSpecific };
       this.isUpsertPopupVisible = true;
@@ -145,13 +148,12 @@ export class ProjectTemplatesMainComponent extends UnsubscribeComponent implemen
 
     this.setCellTemplate(this.lastUpdatedTemplate, eProjectTemplatesFields.LastUpdated);
   }
-  // TODO remove true condition once US for access rights is done
-  private setAccessRights() {
-    this.canView = true || this.mainGridService.hasAccess(eStandardJobsAccessActions.viewGrid);
 
-    this.canCreate = true || this.mainGridService.hasAccess(eStandardJobsAccessActions.createJob);
-    this.canEdit = true || this.mainGridService.hasAccess(eStandardJobsAccessActions.editJob);
-    this.canDelete = true || this.mainGridService.hasAccess(eStandardJobsAccessActions.deleteJob);
+  private setAccessRights() {
+    this.canView = this.mainGridService.hasAccess(eProjectTemplatesAccessActions.viewGrid);
+    this.canDelete = this.mainGridService.hasAccess(eProjectTemplatesAccessActions.delete);
+    this.canCreate = this.mainGridService.hasAccess(eProjectTemplatesAccessActions.edit);
+    this.canEdit = this.mainGridService.hasAccess(eProjectTemplatesAccessActions.edit);
   }
 
   private delete() {

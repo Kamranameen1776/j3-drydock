@@ -35,8 +35,6 @@
           [searchFields]="gridData.searchFields"
           [includeSearch]="true"
           [getStyleByContainer]="true"
-          [showSettings]="gridData.showSettings"
-          [advancedSettings]="gridData.advancedSettings"
           [isDisplayAdvancedFilter]="false"
           (action)="onActionClick($event)"
           (cellPlainTextClick)="cellPlainTextClick($event)"
@@ -54,7 +52,7 @@
   [isOpen]="addFromStandardJobPopupVisible"
   [vesselType]="vesselType"
   [projectUid]="projectId"
-  (closeDialog)="onCloseCreatePopup($event)"
+  (closeDialog)="onCloseStandardJobPopup($event)"
 ></jb-add-specification-from-standard-job-popup>
 
 <jb-create-specification-popup
@@ -62,7 +60,7 @@
   [projectId]="projectId"
   [vesselUid]="vesselUid"
   [vesselId]="vesselId"
-  (closeDialog)="onCloseCreatePopup($event)"
+  (closeDialog)="onCloseCreateSpecificationPopup($event)"
 ></jb-create-specification-popup>
 
 <jb-create-from-project-template-popup
@@ -70,7 +68,7 @@
   [isOpen]="isCreateFromProjectTemplatePopupVisible"
   [vesselType]="vesselType"
   [projectUid]="projectId"
-  (closeDialog)="onCloseCreatePopup($event)"
+  (closeDialog)="onCloseCreateFromProjectTemplatePopup($event)"
 ></jb-create-from-project-template-popup>
 
 <ng-template

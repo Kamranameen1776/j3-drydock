@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { FormModel, JbEditorComponent, UserService } from 'jibe-components';
 import { ToolbarModule } from 'primeng';
@@ -6,7 +6,6 @@ import { ToolbarModule } from 'primeng';
 import { JobOrdersFormService } from './JobOrdersFormService';
 import { IJobOrderFormDto } from './dtos/IJobOrderFormDto';
 import { ActivatedRoute } from '@angular/router';
-import { IJobOrdersFormComponent } from './IJobOrdersFormComponent';
 import { IJobOrderFormResultDto } from './dtos/IJobOrderFormResultDto';
 import { UnsubscribeComponent } from '../../classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
@@ -22,7 +21,7 @@ import { CostUpdatesTabComponent } from '../cost-updates-tab/cost-updates-tab.co
   styleUrls: ['./job-orders-form.component.scss'],
   providers: [JobOrdersFormService]
 })
-export class JobOrdersFormComponent extends UnsubscribeComponent implements OnInit, IJobOrdersFormComponent, AfterViewInit {
+export class JobOrdersFormComponent extends UnsubscribeComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input()
   hideSpecificationStartEndDate = false;
 
@@ -30,6 +29,8 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
 
   @Input() isOpen: boolean;
   @Input() jobOrderFormValue: IJobOrderFormDto;
+
+  @Output() isChanged = new EventEmitter<boolean>();
 
   @ViewChild('remarksEditor')
   remarksEditor: JbEditorComponent;
@@ -87,6 +88,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   ) {
     super();
   }
+
   ngAfterViewInit(): void {
     this.updateJobOrderForm = this.jobOrdersFormService.getUpdateJobOrderForm(this.hideSpecificationStartEndDate);
   }
@@ -96,39 +98,19 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
     this.remarksEditorConfig = this.jobOrdersFormService.getRemarksEditorConfig();
   }
 
-  private init(jobOrderFormDto: IJobOrderFormDto) {
-    this.selectedSpecification.Key = jobOrderFormDto.SpecificationUid;
-    this.selectedSpecification.Value = jobOrderFormDto.Code;
-
-    this.uid = jobOrderFormDto.uid;
-
-    if (this.remarksEditor) {
-      this.remarksEditor.key1 = jobOrderFormDto.SpecificationUid;
-      this.remarksEditor.vesselId = this.vesselId;
-    }
-
-    this.remarksEditorFormGroup?.controls.RemarksCtrl.setValue(jobOrderFormDto.Remarks ?? '');
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.isChanged.next(false);
   }
 
-  private updateJobOrderFormValues() {
-    const group = this.updateJobOrderFormGroup?.controls.jobOrderUpdate as FormGroup;
-    const controls = group?.controls;
-
-    controls?.SpecificationUid.setValue(this.jobOrderFormValue.SpecificationUid);
-    controls?.Progress.setValue(this.jobOrderFormValue.Progress);
-    controls?.Subject.setValue(this.jobOrderFormValue.Subject);
-    controls?.Status.setValue(this.jobOrderFormValue.Status);
-
-    if (!this.hideSpecificationStartEndDate) {
-      controls?.SpecificationStartDate.setValue(UTCAsLocal(this.jobOrderFormValue.SpecificationStartDate));
-      controls?.SpecificationEndDate.setValue(UTCAsLocal(this.jobOrderFormValue.SpecificationEndDate));
-    }
-  }
-
-  save(): IJobOrderFormResultDto | Error {
+  public save(): IJobOrderFormResultDto | Error {
     const jobOrder = this.updateJobOrderFormGroup?.value.jobOrderUpdate;
     let startDate: Date;
     let endDate: Date;
+
+    if (!this.updateJobOrderFormGroup?.valid) {
+      return new Error('Please fill the required fields');
+    }
 
     if (!this.hideSpecificationStartEndDate) {
       startDate = localDateJbStringAsUTC(jobOrder.SpecificationStartDate, this.jobOrdersFormService.dateTimeFormat);
@@ -164,26 +146,23 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
     return result;
   }
 
-  public onValueChangesIsFormValid: EventEmitter<boolean> = new EventEmitter<boolean>();
-  public onValueChangesIsForm: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
-  public onRemarkValueChanges: EventEmitter<string> = new EventEmitter<string>();
-
-  public remarksEditorUpdateParentCtrlValue(remarks: string) {
-    this.onRemarkValueChanges.next(remarks);
+  remarksEditorUpdateParentCtrlValue(remarks: string) {
+    this.isChanged.next(true);
     this.remarksEditorFormGroup.get('RemarksCtrl').setValue(remarks);
-  }
-
-  public initUpdateJobOrderFormGroup(action: FormGroup): void {
-    this.updateJobOrderFormGroup = action;
-    this.updateJobOrderFormValues();
-    this.updateJobOrderFormGroup?.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      this.onValueChangesIsFormValid.next(this.updateJobOrderFormGroup?.valid);
-      this.onValueChangesIsForm.next(action);
-      return this.updateJobOrderFormGroup?.valid;
+    this.remarksEditorFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe((v) => {
+      this.isChanged.next(this.updateJobOrderFormGroup.valid);
     });
   }
 
-  public navigateToSpecificationDetails(specification: KeyValuePair<string, string>) {
+  initUpdateJobOrderFormGroup(action: FormGroup): void {
+    this.updateJobOrderFormGroup = action;
+    this.updateJobOrderFormValues();
+    this.updateJobOrderFormGroup?.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe((v) => {
+      this.isChanged.next(this.updateJobOrderFormGroup.valid);
+    });
+  }
+
+  navigateToSpecificationDetails(specification: KeyValuePair<string, string>) {
     const tab_title = `Specification ${specification.Value}`;
     this.newTabService.navigate(
       ['../../specification-details', specification.Key],
@@ -195,9 +174,38 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
     );
   }
 
-  private reset() {
-    this.uid = null;
-    this.updateJobOrderFormGroup.reset();
-    this.remarksEditorFormGroup.reset();
+  onCostUpdatesChanged(value: boolean) {
+    if (value) {
+      this.isChanged.next(true);
+    }
+  }
+
+  private init(jobOrderFormDto: IJobOrderFormDto) {
+    this.selectedSpecification.Key = jobOrderFormDto.SpecificationUid;
+    this.selectedSpecification.Value = jobOrderFormDto.Code;
+
+    this.uid = jobOrderFormDto.uid;
+
+    if (this.remarksEditor) {
+      this.remarksEditor.key1 = jobOrderFormDto.SpecificationUid;
+      this.remarksEditor.vesselId = this.vesselId;
+    }
+
+    this.remarksEditorFormGroup?.controls.RemarksCtrl.setValue(jobOrderFormDto.Remarks ?? '');
+  }
+
+  private updateJobOrderFormValues() {
+    const group = this.updateJobOrderFormGroup?.controls.jobOrderUpdate as FormGroup;
+    const controls = group?.controls;
+
+    controls?.SpecificationUid.setValue(this.jobOrderFormValue.SpecificationUid);
+    controls?.Progress.setValue(this.jobOrderFormValue.Progress);
+    controls?.Subject.setValue(this.jobOrderFormValue.Subject);
+    controls?.Status.setValue(this.jobOrderFormValue.Status);
+
+    if (!this.hideSpecificationStartEndDate) {
+      controls?.SpecificationStartDate.setValue(UTCAsLocal(this.jobOrderFormValue.SpecificationStartDate));
+      controls?.SpecificationEndDate.setValue(UTCAsLocal(this.jobOrderFormValue.SpecificationEndDate));
+    }
   }
 }

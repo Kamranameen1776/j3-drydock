@@ -26,7 +26,6 @@ export class CreateSpecificationPopupComponent extends UnsubscribeComponent {
   readonly popupConfig: IJbDialog = {
     ...getSmallPopup(),
     dialogWidth: 1000,
-    closableIcon: false,
     dialogHeader: 'New Technical Specification'
   };
 

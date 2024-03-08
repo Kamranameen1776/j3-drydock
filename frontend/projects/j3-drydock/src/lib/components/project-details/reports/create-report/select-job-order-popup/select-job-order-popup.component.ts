@@ -15,7 +15,7 @@ export class SelectJobOrderPopupComponent {
 
   @Output() closeDialog = new EventEmitter<JobOrdersUpdatesDto[]>();
 
-  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 800, dialogHeader: 'Updates' };
+  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 800, dialogHeader: 'Add Update' };
 
   okLabel = 'Add';
 
