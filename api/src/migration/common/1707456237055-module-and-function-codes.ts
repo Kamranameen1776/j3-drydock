@@ -2,7 +2,7 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class moduleAndFunctionCodes1707456237054 implements MigrationInterface {
+export class moduleAndFunctionCodes1707456237055 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -16,7 +16,7 @@ export class moduleAndFunctionCodes1707456237054 implements MigrationInterface {
             MERGE INTO inf_lib_module AS TARGET USING (
             VALUES
                 (@MaxModuleId+1, 'E6F5B7C8-8F8D-47ED-BCBC-486317349373', 'project_main', 'Project', 1, getdate(), NULL, NULL, 1, NULL, NULL, NULL),
-                (@MaxModuleId+2, '93A7855B-0445-4F29-978E-53D11DAFA767', 'project', 'Project', 1, getdate(), NULL, NULL, 1, 'project_main', NULL, NULL)
+                (@MaxModuleId+2, '677D0F79-281F-4A23-A226-C61D84222A26', 'project', 'Project', 1, getdate(), NULL, NULL, 1, 'project_main', NULL, NULL)
                 )
 
             AS SOURCE (ModuleId, Module_UID, Module_Code, Module_Name, Created_By, Date_Of_Creation, Modified_By, Date_Of_Modification,
