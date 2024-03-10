@@ -75,3 +75,9 @@ export enum eProjectsDetailsAccessActions {
   editAttachmentsVessel = 'edit_dd_project_att_onb',
   deleteAttachmentsVessel = 'delete_dd_project_att_onb'
 }
+
+export enum eProjectTemplatesAccessActions {
+  viewGrid = 'view_project_templates',
+  edit = 'edit_project_template',
+  delete = 'delete_project_template'
+}

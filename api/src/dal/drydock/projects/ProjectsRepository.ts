@@ -79,6 +79,31 @@ export class ProjectsRepository {
         const result = await secondQuery.execute();
         return result;
     }
+
+    public async GetGroupStatusesAsyncRawData(): Promise<IGroupProjectStatusesRawDataDto[]> {
+        const groupProjectStatusRepository = getManager().getRepository(GroupProjectStatusEntity);
+
+        const query = groupProjectStatusRepository
+            .createQueryBuilder('gps')
+            .select([
+                'gps.GroupProjectStatusId as GroupProjectStatusId',
+                'gps.ProjectTypeId as ProjectTypeId',
+                'gps.DisplayName as GroupProjectDisplayName',
+                'wt.WorklistTypeDisplay as ProjectTypeName',
+                'gps.StatusOrder as StatusOrder',
+            ])
+            .innerJoin(className(TecLibWorklistTypeEntity), 'wt', 'gps.ProjectTypeId = wt.WorklistType')
+            .where('gps.ActiveStatus = 1')
+            .groupBy(
+                `gps.GroupProjectStatusId, gps.ProjectTypeId,
+                gps.DisplayName,
+                gps.StatusOrder, wt.WorklistTypeDisplay`,
+            )
+            .orderBy('gps.StatusOrder', 'ASC');
+
+        const result = await query.execute();
+        return result;
+    }
     /**
      * Loads project statuses, that are configured in the Workflow Configurations page
      * @example In Progress, Completed, Cancelled
