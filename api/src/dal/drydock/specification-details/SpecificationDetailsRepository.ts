@@ -196,7 +196,11 @@ export class SpecificationDetailsRepository {
                 .leftJoin(className(TmDdLibDoneBy), 'db', 'sd.done_by_uid = db.uid')
                 .leftJoin(className(TmDdLibMaterialSuppliedBy), 'msb', 'sd.material_supplied_by_uid = msb.uid')
                 .leftJoin(className(LibItemSourceEntity), 'its', 'sd.ItemSourceUid = its.uid')
-                .leftJoin(className(SpecificationInspectionEntity), 'sie', `sie.specification_details_uid = sd.uid`)
+                .leftJoin(
+                    className(SpecificationInspectionEntity),
+                    'sie',
+                    `sie.specification_details_uid = sd.uid and sie.active_status = 1`,
+                )
                 .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
                 .select([
                     'sd.uid as uid',
@@ -221,7 +225,7 @@ export class SpecificationDetailsRepository {
                         {
                             entity: className(SpecificationInspectionEntity),
                             alias: 'si',
-                            on: 'aliased.ID = si.LIB_Survey_CertificateAuthority_ID AND si.specification_details_uid = sd.uid',
+                            on: 'aliased.ID = si.LIB_Survey_CertificateAuthority_ID AND si.specification_details_uid = sd.uid and si.active_status = 1',
                         },
                     ),
                 ])
