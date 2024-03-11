@@ -258,7 +258,7 @@ export class ProjectsGridService {
     },
 
     {
-      DisplayText: 'Start date',
+      DisplayText: 'Start Date',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.StartDate),
       IsActive: true,
       IsMandatory: true,
@@ -267,7 +267,7 @@ export class ProjectsGridService {
       width: eGridColumnsWidth.Date
     },
     {
-      DisplayText: 'End date',
+      DisplayText: 'End Date',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.EndDate),
       IsActive: true,
       IsMandatory: true,
