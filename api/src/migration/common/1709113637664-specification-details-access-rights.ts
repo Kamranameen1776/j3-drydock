@@ -2,7 +2,7 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class specificationDetailsAccessRights1709113637663 implements MigrationInterface {
+export class specificationDetailsAccessRights1709113637664 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -26,7 +26,7 @@ export class specificationDetailsAccessRights1709113637663 implements MigrationI
                        ('C9510BB1-8391-4268-BE9A-283E9DCAABA4', 'view_attachments_section_onboard', 'View attachments rights for project dry dock', 'v', 'project', 'specification_details', 'view_attachments_onboard', 1, getdate(), 1, NULL, 1, 'View Attachments in Specification', NULL),
                        ('F623ECB1-D71E-4BF8-BE20-30A617356CB6', 'add_attachments_onboard', 'Add attachments rights for specification', 'v', 'project', 'specification_details', 'add_attachments_onboard', 1, getdate(), 1, NULL, 1, 'Add Attachments in Specification', NULL),
                        ('6E042F4C-6590-41B5-8578-338FBED53F44', 'delete_sub_items_onboard', 'Delete sub items access rights for specification', 'v', 'project', 'specification_details', 'delete_sub_items_onboard', 1, getdate(), 1, NULL, 1, 'Delete Sub Items in Specification', NULL),
-                       ('3A6AF4D8-7E51-414F-91F8-37CEAFC7BA25', 'view_attachments_section', 'View attachments rights for project dry dock', 'o', 'project', 'specification_details', 'view_attachments_section', 1, getdate(), 1, NULL, 1, 'View Attachments in Specification', '/jms/jms_attachment/getJmsAttachmentDetails'),
+                       ('3A6AF4D8-7E51-414F-91F8-37CEAFC7BA25', 'view_attachments_section', 'View attachments rights for project dry dock', 'o', 'project', 'specification_details', 'view_attachments_section', 1, getdate(), 1, NULL, 1, 'View Attachments in Specification', NULL),
                        ('0F5B5B2E-369D-4C9B-9545-38C5A2B25213', 'edit_requisition', 'Edit Requisition access rights for specification', 'o', 'project', 'specification_details', 'edit_requisition', 1, getdate(), 1, NULL, 1, 'Edit Requisition in Specification', NULL),
                        ('20FDC417-FCDA-4869-BCF0-4119E03F82A4', 'edit_workflow', 'Edit Workflow in specification', 'o', 'project', 'specification_details', 'edit_general_information', 1, getdate(), 1, NULL, 1, 'Edit Workflow in Specification', NULL),
                        ('4A43BEE2-B4F6-40F1-B506-48F9660E9B92', 'edit_general_information', 'Edit general information access rights for specification', 'o', 'project', 'specification_details', 'edit_general_information', 1, getdate(), 1, NULL, 1, 'Edit General Information in Specification', '/drydock/specification-details/update-specification-details'),
