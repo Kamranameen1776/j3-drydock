@@ -2,7 +2,7 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class projectTemplateViewAccessRight1709553684741 implements MigrationInterface {
+export class projectTemplateViewAccessRight1709553684742 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -183,7 +183,7 @@ export class projectTemplateViewAccessRight1709553684741 implements MigrationInt
 				(VALUES
 					(N'34ED7321-3D13-4E49-A902-0F908DCD1275', @JibeImplementationRoleId, NULL, N'view_project_template_main', 1, getdate(), NULL, NULL, 1),
 					(N'E0E1CF02-9C1E-4578-9A2E-4876E24B884F', @JibeImplementationRoleId, NULL, N'delete_project_template', 1, getdate(), NULL, NULL, 1),
-					(N'46864708-3FF5-4291-91B3-7FD895CA263A', @AdminRoleId, NULL, N'edit_project_template', 1, getdate(), NULL, NULL, 1)
+					(N'46864708-3FF5-4291-91B3-7FD895CA263A', @JibeImplementationRoleId, NULL, N'edit_project_template', 1, getdate(), NULL, NULL, 1)
 					)
                     AS SOURCE ([RGR_UID], [RGR_Role_ID], [RGR_Right_Code], [RGR_Group_Code], [Created_By], [Date_Of_Creation],
                                 [Modified_By],
