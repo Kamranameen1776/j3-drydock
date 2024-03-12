@@ -26,7 +26,7 @@ export class UpsertProjectTemplatePopupComponent extends UnsubscribeComponent im
 
   @ViewChild(UpsertProjectTemplateFormComponent) popupForm: UpsertProjectTemplateFormComponent;
 
-  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false };
+  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000 };
 
   isPopupValid = false;
 
