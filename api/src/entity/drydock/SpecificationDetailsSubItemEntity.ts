@@ -19,7 +19,7 @@ export const costFactorsKeys = ['quantity', 'unitPrice', 'discount', 'estimatedC
 
 export type SubItemCostFactorsExcerpt = Pick<SpecificationDetailsSubItemEntity, (typeof costFactorsKeys)[number]>;
 
-export function calculateCost(subItem: SubItemCostFactorsExcerpt): Decimal {
+export function calculateCost(subItem: Partial<SubItemCostFactorsExcerpt>): Decimal {
     const quantity = new Decimal(subItem.quantity || 0);
     const unitPrice = new Decimal(subItem.unitPrice || 0);
     const discount = new Decimal(subItem.discount || 0);

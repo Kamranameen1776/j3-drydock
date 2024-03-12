@@ -10,7 +10,10 @@ import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import { JobOrderEntity } from '../../../../entity/drydock/JobOrderEntity';
-import { SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import {
+    calculateCost,
+    SpecificationDetailsSubItemEntity,
+} from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { Query } from '../../core/cqrs/Query';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 
@@ -100,6 +103,7 @@ export class UpdateJobOrderQuery extends Query<UpdateJobOrderDto, void> {
                             quantity: subItem.quantity,
                             estimatedCost: subItem.estimatedCost,
                             uid: subItem.uid,
+                            cost: calculateCost(subItem).toFixed(2),
                         };
 
                         return this.specificationSubItemRepository.updateRawSubItem(subItemUpdate, queryRunner);
