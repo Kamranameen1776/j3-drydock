@@ -2,12 +2,19 @@ import { BehaviorSubject } from 'rxjs';
 import { IProjectGroupStatusDto } from './IProjectGroupStatusDto';
 import { IProjectStatusDto } from '../../../services/dtos/IProjectStatusDto';
 import { eProjectStatus, eProjectWorkflowStatusAction } from '../../../models/enums/project-details.enum';
+import { Injectable } from '@angular/core';
 
+@Injectable({
+  providedIn: 'root'
+})
 export class LeftPanelFilterService {
-  public groupStatusSelected: IProjectGroupStatusDto;
-  public groupStatusChanged: BehaviorSubject<IProjectGroupStatusDto>;
-  public vesselsChanged: BehaviorSubject<number[]>;
-  public statusToFilterMap: { [key in eProjectStatus]: IProjectStatusDto[] } = {
+  groupStatusSelected: IProjectGroupStatusDto = {
+    ProjectTypeId: ''
+  };
+  groupStatusChanged = new BehaviorSubject<IProjectGroupStatusDto>(this.groupStatusSelected);
+  vesselsChanged = new BehaviorSubject<number[]>([]);
+
+  statusToFilterMap: { [key in eProjectStatus]: IProjectStatusDto[] } = {
     [eProjectStatus.Planned]: [
       {
         ProjectStatusId: eProjectWorkflowStatusAction.Raise,
@@ -38,27 +45,19 @@ export class LeftPanelFilterService {
     ]
   };
 
-  constructor() {
-    this.groupStatusSelected = {
-      ProjectTypeId: ''
-    };
+  constructor() {}
 
-    this.groupStatusChanged = new BehaviorSubject<IProjectGroupStatusDto>(this.groupStatusSelected);
-
-    this.vesselsChanged = new BehaviorSubject<number[]>([]);
-  }
-
-  public setGroupStatusSelected(groupStatusSelected: IProjectGroupStatusDto): void {
+  setGroupStatusSelected(groupStatusSelected: IProjectGroupStatusDto): void {
     this.groupStatusSelected = groupStatusSelected;
 
     this.groupStatusChanged.next(this.groupStatusSelected);
   }
 
-  public setVesselsSelected(vessels: number[]): void {
+  setVesselsSelected(vessels: number[]): void {
     this.vesselsChanged.next(vessels);
   }
 
-  public isGroupStatusSelected(groupStatusSelected: IProjectGroupStatusDto): boolean {
+  isGroupStatusSelected(groupStatusSelected: IProjectGroupStatusDto): boolean {
     return JSON.stringify(this.groupStatusSelected) === JSON.stringify(groupStatusSelected);
   }
 }

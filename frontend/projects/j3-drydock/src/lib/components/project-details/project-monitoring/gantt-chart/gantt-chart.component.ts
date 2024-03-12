@@ -63,25 +63,12 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   public updateDialogVisible = false;
 
   updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Job Order' };
-
-  private isJobOrdersChanged: boolean;
-
   isSaving = false;
-
-  get updateJobOrderButtonDisabled() {
-    return !this.isJobOrdersChanged || this.isSaving;
-  }
-
   defaultHeight: string;
-
   dateFormat: string;
-
   showSpinner: boolean;
-
   tasks: TransformedJobOrder[] = [];
-
   jobOrderFormValue: IJobOrderFormDto = {} as IJobOrderFormDto;
-
   taskFields = {
     id: 'SpecificationUid',
     name: 'SpecificationSubject',
@@ -98,10 +85,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       label: ''
     }
   ];
-
   // String values of boolean are used because of bug in Single Select Dropdown when false value are set it's treated as no value set
   overdue: OverdueStatus | null = OverdueStatus.All;
-
   overdueDropdownContent: ISingleSelectDropdown = {
     id: 'overdueDropdown',
     dataSource: [
@@ -112,7 +97,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     placeholder: 'Show Overdue',
     selectedValue: this.overdue
   };
-
   tooltipSettings: TooltipSettingsModel = {
     taskbar:
       '<table class="e-gantt-tooltiptable">' +
@@ -136,7 +120,6 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       '</table>',
     showTooltip: true
   };
-
   columns: ColumnModel[] = [
     {
       // This column with 'isPrimaryKey' is needed for the editing taskbar
@@ -214,17 +197,14 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       maxWidth: '180'
     }
   ];
-
   editSettings: EditSettingsModel = {
     allowEditing: true,
     allowTaskbarEditing: true
   };
-
   timelineSettings: TimelineSettingsModel;
-
   statusCSS = { statusBackground: statusBackground, statusIcon: statusIcon };
-
   id = 'project_gantt';
+  private isJobOrdersChanged: boolean;
 
   constructor(
     private ganttChartService: GanttChartService,
@@ -235,6 +215,10 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     private jmsService: JmsService
   ) {
     super();
+  }
+
+  get updateJobOrderButtonDisabled() {
+    return !this.isJobOrdersChanged || this.isSaving;
   }
 
   ngOnInit(): void {
@@ -402,7 +386,12 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     };
 
     if (jobOrder.UpdatesChanges?.length) {
-      data.UpdatesChanges = jobOrder.UpdatesChanges;
+      data.UpdatesChanges = jobOrder.UpdatesChanges.map((change) => {
+        return {
+          ...change,
+          discount: change.discount ? change.discount / 100 : 0
+        };
+      });
     }
 
     // TODO - temp workaround until normal event is provided by infra team: Event to upload editor images
@@ -485,7 +474,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
           const dayOfWeek = days[date.getDay()];
           const dayOfMonth = date.getDate();
-          const str = `<span id='gantt-day-of-year-${date.getDay()}' class='gantt-day-of-month'>${dayOfMonth}</span><span class='gantt-day-of-week'>${dayOfWeek}</span>`;
+          const str = `<span id="gantt-day-of-year-${date.getDay()}" class="gantt-day-of-month">${dayOfMonth}</span><span class="gantt-day-of-week">${dayOfWeek}</span>`;
 
           return str;
         }

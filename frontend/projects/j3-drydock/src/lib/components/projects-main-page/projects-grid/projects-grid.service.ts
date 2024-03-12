@@ -29,7 +29,9 @@ export class ProjectsGridService {
 
   readonly gridName: string = 'projectsGrid';
 
-  readonly ProjectStatusesFilterName = 'ProjectStatuses';
+  readonly projectStatusesFilterName = 'ProjectStatuses';
+
+  readonly vesselsFilterName = 'VesselName';
 
   readonly dateFormat = this.userService.getUserDetails().Date_Format;
 
@@ -53,7 +55,7 @@ export class ProjectsGridService {
       Active_Status_Config_Filter: true,
       DisplayText: 'Vessel',
       Active_Status: true,
-      FieldName: 'VesselName',
+      FieldName: this.vesselsFilterName,
       DisplayCode: 'Vessel_Name',
       ValueCode: 'Vessel_ID',
       FieldID: 1,
@@ -86,7 +88,7 @@ export class ProjectsGridService {
       Active_Status: true,
       Active_Status_Config_Filter: true,
       DisplayText: 'Status',
-      FieldName: this.ProjectStatusesFilterName,
+      FieldName: this.projectStatusesFilterName,
       DisplayCode: 'ProjectStatusName',
       ValueCode: 'ProjectStatusId',
       FieldID: 4,
@@ -258,7 +260,7 @@ export class ProjectsGridService {
     },
 
     {
-      DisplayText: 'Start date',
+      DisplayText: 'Start Date',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.StartDate),
       IsActive: true,
       IsMandatory: true,
@@ -267,7 +269,7 @@ export class ProjectsGridService {
       width: eGridColumnsWidth.Date
     },
     {
-      DisplayText: 'End date',
+      DisplayText: 'End Date',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.EndDate),
       IsActive: true,
       IsMandatory: true,

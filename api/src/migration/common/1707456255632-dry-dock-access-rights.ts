@@ -2,7 +2,7 @@ import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
-export class dryDockAccessRights1707456255631 implements MigrationInterface {
+export class dryDockAccessRights1707456255632 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -46,13 +46,13 @@ export class dryDockAccessRights1707456255631 implements MigrationInterface {
                     'dry_dock', 'edit_dd_project_flow', 1, getdate(), 1, NULL, 1, 'Add or Edit Workflow and Follow up in Project Dry Dock', NULL),
 
                     ('e871b32a-8b37-4e81-95a0-227037d2e512', 'dry_dock_project_attachment_add', 'Add attachment rights for project dry dock', 'o', 'project',
-                    'dry_dock', 'add_dd_project_att', 1, getdate(), 1, NULL, 1, 'Add Attachment in Project Dry Dock', '/infra/file/upload'),
+                    'dry_dock', 'add_dd_project_att', 1, getdate(), 1, NULL, 1, 'Add Attachment in Project Dry Dock', NULL),
 
                     ('d1aa0d3d-bb13-48d7-9d17-4e3b3901b51c', 'dry_dock_project_attachment_edit', 'Edit attachment rights for project dry dock', 'o', 'project',
-                    'dry_dock', 'edit_dd_project_att', 1, getdate(), 1, NULL, 1, 'Edit Attachment in Project Dry Dock', '/infra/file/updateFileDetail'),
+                    'dry_dock', 'edit_dd_project_att', 1, getdate(), 1, NULL, 1, 'Edit Attachment in Project Dry Dock', NULL),
 
                     ('ce04db58-161a-4a1e-b89b-7d3acdd4aea5', 'dry_dock_project_attachment_delete', 'Delete attachment rights for project dry dock', 'o', 'project',
-                    'dry_dock', 'delete_dd_project_att', 1, getdate(), 1, NULL, 1, 'Delete Attachment in Project Dry Dock', '/infra/file/updateFileDetail'),
+                    'dry_dock', 'delete_dd_project_att', 1, getdate(), 1, NULL, 1, 'Delete Attachment in Project Dry Dock', NULL),
 
                     ('860c2446-c5d0-4880-84f4-268dfc8ae4d1', 'dry_dock_project_edit_header_onboard', 'Edit header section in project dry dock', 'v', 'project',
                     'dry_dock', 'edit_dd_project_header_onb', 1, getdate(), 1, NULL, 1, 'Edit Header Section in Project Dry Dock', NULL),

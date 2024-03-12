@@ -27,7 +27,6 @@ import { SpecificationFormComponent } from './components/project-details/specifi
 import { SpecificationCreateFormService } from './components/project-details/specification-form/specification-create-form-service';
 import { ProjectTypesLeftPanelComponent } from './components/projects-main-page/project-types-left-panel/project-types-left-panel.component';
 import { ProjectStatusFilterComponent } from './components/projects-main-page/project-types-left-panel/project-status-filter/project-status-filter.component';
-import { LeftPanelFilterService } from './components/projects-main-page/services/LeftPanelFilterService';
 import { RfqComponent } from './components/project-details/yard/rfq/rfq.component';
 import { ComparisonComponent } from './components/project-details/yard/comparison/comparison.component';
 import { SelectLinkYardGridComponent } from './components/project-details/yard/rfq/select-link-yard-grid/select-link-yard-grid.component';
@@ -157,7 +156,6 @@ export function winEnv(): unknown {
     DatePipe,
     SpecificationGridService,
     SpecificationDetailsService,
-    LeftPanelFilterService,
     SpecificationCreateFormService,
     SpecificationGeneralInformationInputservice,
     SpecificationDetailsSubItemsGridService,
