@@ -9,10 +9,7 @@ import {
   eCrud,
   eEntities,
   eFieldControlType,
-  eGridAction,
-  eGridColors,
-  eGridEvents,
-  eGridIcons
+  eGridAction
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import ODataFilterBuilder from 'odata-filter-builder';

@@ -8,6 +8,7 @@ import {
   FormModel,
   GridAction,
   GridComponent,
+  GridShareDataService,
   IJbDialog,
   JmsService,
   VesselService
@@ -117,7 +118,8 @@ export class ProjectsGridComponent extends UnsubscribeComponent implements OnIni
     private growlMessageService: GrowlMessageService,
     private fleetService: FleetService,
     private vesselService: VesselService,
-    private jmsSvc: JmsService
+    private jmsSvc: JmsService,
+    private gridSharedService: GridShareDataService
   ) {
     super();
   }
@@ -135,14 +137,15 @@ export class ProjectsGridComponent extends UnsubscribeComponent implements OnIni
   ngAfterViewInit(): void {
     this.leftPanelFilterService.vesselsChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((filter: number[]) => {
       this.leftPanelVesselsFilter = filter;
-      this.projectsGrid?.fetchMatrixData();
+      this.setVesselFilter(filter);
+      this.gridSharedService.refreshGridSLoad();
     });
 
     this.leftPanelFilterService.groupStatusChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((filter: IProjectGroupStatusDto) => {
       this.leftPanelProjectGroupStatusFilter = filter;
-      this.projectsGrid?.fetchMatrixData();
       const newFilters = this.leftPanelFilterService.statusToFilterMap[filter.GroupProjectStatusId];
       this.selectGridDefaultStatuses(newFilters);
+      this.gridSharedService.refreshGridSLoad();
     });
   }
 
@@ -260,7 +263,7 @@ export class ProjectsGridComponent extends UnsubscribeComponent implements OnIni
 
   private selectGridDefaultStatuses(statuses: IProjectStatusDto[] = []) {
     this.projectsGridService.filters.find(
-      (filter) => filter.FieldName === this.projectsGridService.ProjectStatusesFilterName
+      (filter) => filter.FieldName === this.projectsGridService.projectStatusesFilterName
     ).selectedValues = statuses.map((status) => status.ProjectStatusId);
   }
 
@@ -440,5 +443,10 @@ export class ProjectsGridComponent extends UnsubscribeComponent implements OnIni
 
   private getProjectPageTitle(project: IProjectsForMainPageGridDto) {
     return `${project.ProjectTypeName} ${project.ProjectCode}`;
+  }
+
+  private setVesselFilter(vesselIds: number[]) {
+    this.projectsGridService.filters.find((filter) => filter.FieldName === this.projectsGridService.vesselsFilterName).selectedValues =
+      vesselIds || [];
   }
 }

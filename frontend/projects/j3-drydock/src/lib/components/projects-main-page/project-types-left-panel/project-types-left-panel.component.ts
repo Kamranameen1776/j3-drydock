@@ -12,8 +12,7 @@ import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
   styleUrls: ['./project-types-left-panel.component.scss']
 })
 export class ProjectTypesLeftPanelComponent extends UnsubscribeComponent implements OnInit {
-  @ViewChild('vesselsSelectDropdownList')
-  vesselsSelectDropdownList: JbMultiSelectDropdownComponent;
+  @ViewChild('vesselsSelectDropdownList') vesselsSelectDropdownList: JbMultiSelectDropdownComponent;
 
   projectsStatusFilters: IGroupProjectStatusesDto[] = null;
 
