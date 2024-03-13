@@ -2,6 +2,7 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { SynchronizerService } from 'j2utils';
 
+import { AuthorizationException } from '../../../../bll/drydock/core/exceptions';
 import { CreateProjectDto } from '../../../../bll/drydock/projects/dtos/ICreateProjectDto';
 import { ProjectService } from '../../../../bll/drydock/projects/ProjectService';
 import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
@@ -11,6 +12,7 @@ import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRep
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
 import { LibVesselsEntity } from '../../../../entity/drydock/dbo/LibVesselsEntity';
 import { ProjectEntity } from '../../../../entity/drydock/ProjectEntity';
+import { SlfAccessor } from '../../../../external-services/drydock/SlfAccessor';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
 import { CreateProjectDataDto } from './CreateProjectDataDto';
@@ -27,6 +29,7 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, IProject
     projectsRepository: ProjectsRepository;
     projectsService: ProjectService;
     vesselsRepository: VesselsRepository;
+    slfAccessor: SlfAccessor;
     uow: UnitOfWork;
 
     tableName = getTableName(ProjectEntity);
@@ -36,7 +39,16 @@ export class CreateProjectCommand extends Command<CreateProjectDataDto, IProject
         this.projectsRepository = new ProjectsRepository();
         this.vesselsRepository = new VesselsRepository();
         this.projectsService = new ProjectService();
+        this.slfAccessor = new SlfAccessor();
         this.uow = new UnitOfWork();
+    }
+
+    protected async AuthorizationHandlerAsync(request: CreateProjectDataDto): Promise<void> {
+        const assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(request.Token);
+
+        if (!assignedVessels.includes(request.ProjectDto.VesselId)) {
+            throw new AuthorizationException(`You have no assignment on vessel: ${request.ProjectDto.VesselId}.`);
+        }
     }
 
     protected async ValidationHandlerAsync(request: CreateProjectDataDto): Promise<void> {
