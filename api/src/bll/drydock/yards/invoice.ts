@@ -663,7 +663,7 @@ export class InvoiceGeneratorService {
                 };
                 obj.functions[functionIndex].jobs[jobIndex].subItems.push({
                     technicalData: JSON.stringify(itemObj),
-                    code: `${row.SpecificationNumber}.${row.ItemNumber}`,
+                    code: `${row.ItemNumber}`,
                     subject: row.ItemSubject,
                     qty: row.ItemQTY,
                     uom: row.ItemUOM,

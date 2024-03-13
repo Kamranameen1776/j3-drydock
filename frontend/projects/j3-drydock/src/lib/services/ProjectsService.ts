@@ -191,8 +191,7 @@ export class ProjectsService {
     return this.api.getFile('yards/download-yard-invoice', `ProjectUid=${projectId}&YardUid=${yardId}`, null, null, eApiBaseDryDockAPI);
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  public importFile(file, projectId: string): Observable<Object> {
+  public importFile(file: File, projectId: string): Observable<object> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('ProjectUid', projectId);

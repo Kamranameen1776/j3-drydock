@@ -11,7 +11,7 @@ import { YardsRepository } from '../../../dal/drydock/yards/YardsRepository';
 import { log } from '../../../logger';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
-import { UploadBody } from './dtos/InvoiceDto';
+import { UploadRequest } from './dtos/InvoiceDto';
 
 export class UploadYardsInvoiceCommand extends Command<Request, void> {
     yardsRepository = new YardsRepository();
@@ -24,11 +24,13 @@ export class UploadYardsInvoiceCommand extends Command<Request, void> {
      * @returns All yard details
      */
     protected async ValidationHandlerAsync(request: Request): Promise<void> {
-        const query: UploadBody = plainToClass(UploadBody, request.body);
+        const validationRequest: UploadRequest = { file: request.file, body: request.body };
+        const query: UploadRequest = plainToClass(UploadRequest, validationRequest);
         const result = await validate(query);
         if (result.length) {
             throw result;
         }
+
         return;
     }
     protected async MainHandlerAsync(request: Request): Promise<void> {
@@ -37,7 +39,7 @@ export class UploadYardsInvoiceCommand extends Command<Request, void> {
             const ProjectUid = request.body.ProjectUid as string;
             const rawData = await this.uploadService.getRawData(buffer, ProjectUid);
             const UnitTypes = await this.yardsRepository.getSubItemUnitTypes(queryRunner);
-            let createEntities = await this.uploadService.prepareCreateData(rawData.create, UnitTypes);
+            let createEntities = this.uploadService.prepareCreateData(rawData.create, UnitTypes);
             if (createEntities.length) {
                 createEntities = await this.subItemRepo.validateSubItemSpecAgainstProject(
                     createEntities,
@@ -46,7 +48,7 @@ export class UploadYardsInvoiceCommand extends Command<Request, void> {
                 );
                 await this.subItemRepo.createRawSubItems(createEntities, queryRunner);
             }
-            let updateEntities = await this.uploadService.prepareUpdateData(rawData.update, UnitTypes);
+            let updateEntities = this.uploadService.prepareUpdateData(rawData.update, UnitTypes);
             if (updateEntities.length) {
                 updateEntities = await this.subItemRepo.validateSubItemsAgainstProject(
                     updateEntities,

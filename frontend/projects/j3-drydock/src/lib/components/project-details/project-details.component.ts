@@ -38,6 +38,7 @@ import { eProjectsAccessActions } from '../../models/enums/access-actions.enum';
 import { forkJoin, of } from 'rxjs';
 import { UpdateCostsDto } from '../../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { DailyReportsComponent } from './reports/reports.component';
+import { FileUploadEvent } from '../../models/interfaces/file-upload';
 
 @Component({
   selector: 'jb-project-details',
@@ -97,6 +98,46 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   updateCostsPayload: UpdateCostsDto;
   showLoader = false;
+  menu = cloneDeep(projectDetailsMenuData);
+  readonly eSideMenuId = eProjectDetailsSideMenuId;
+  importDialogueProperties: IJbDialog = {
+    closableIcon: true,
+    resizableDialog: false,
+    dialogWidth: 470,
+    dialogHeader: 'Import',
+    appendTo: 'body',
+    styleClass: 'jb-dialog-header'
+  };
+  uploadConfig: IUploads = {
+    multiple: false,
+    ModuleCode: eModule.Project,
+    FunctionCode: eFunction.DryDock,
+    key1: 'invoice',
+    showUploadButton: true,
+    accept: '.xlsx'
+  };
+  okBtnLabel = 'Import';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  syncTo: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fileImportData: File;
+  growlMessage$ = this.growlMessageService.growlMessage$;
+
+  constructor(
+    private jbTMDtlSrv: JbTaskManagerDetailsService,
+    private jbTopSecSrv: JbDetailsTopSectionService,
+    private titleService: Title,
+    private router: Router,
+    private route: ActivatedRoute,
+    private projectDetailsService: ProjectDetailsService,
+    private taskManagerService: TaskManagerService,
+    private projectsService: ProjectsService,
+    private detailsService: DetailsService,
+    private growlMessageService: GrowlMessageService,
+    private elementRef: ElementRef
+  ) {
+    super();
+  }
 
   get detailsHeight(): number {
     return this.elementRef.nativeElement.offsetHeight;
@@ -105,9 +146,14 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   get canView() {
     return this.accessRights?.view;
   }
+
   // TODO wait clarification about it
   get canEdit() {
     return this.accessRights?.edit;
+  }
+
+  get vesselUid() {
+    return this.tmDetails?.VesselUid;
   }
 
   getSpecificationsCreateNewItems() {
@@ -138,56 +184,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     });
     // }
     return res;
-  }
-
-  menu = cloneDeep(projectDetailsMenuData);
-
-  readonly eSideMenuId = eProjectDetailsSideMenuId;
-
-  get vesselUid() {
-    return this.tmDetails?.VesselUid;
-  }
-
-  importDialogueProperties: IJbDialog = {
-    closableIcon: true,
-    resizableDialog: false,
-    dialogWidth: 470,
-    dialogHeader: 'Import',
-    appendTo: 'body',
-    styleClass: 'jb-dialog-header'
-  };
-
-  uploadConfig: IUploads = {
-    multiple: false,
-    ModuleCode: eModule.Project,
-    FunctionCode: eFunction.DryDock,
-    key1: 'invoice',
-    showUploadButton: true,
-    accept: '.xlsx'
-  };
-
-  okBtnLabel = 'Import';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  syncTo: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fileImportData: any;
-
-  growlMessage$ = this.growlMessageService.growlMessage$;
-
-  constructor(
-    private jbTMDtlSrv: JbTaskManagerDetailsService,
-    private jbTopSecSrv: JbDetailsTopSectionService,
-    private titleService: Title,
-    private router: Router,
-    private route: ActivatedRoute,
-    private projectDetailsService: ProjectDetailsService,
-    private taskManagerService: TaskManagerService,
-    private projectsService: ProjectsService,
-    private detailsService: DetailsService,
-    private growlMessageService: GrowlMessageService,
-    private elementRef: ElementRef
-  ) {
-    super();
   }
 
   ngOnInit(): void {
@@ -244,44 +240,6 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     this.isGanttExpanded = !this.isGanttExpanded;
   }
 
-  private sectionActions(res: { type?: string; secName?: string; event?: unknown; checkValidation?: boolean }) {
-    // eslint-disable-next-line default-case
-    switch (res.type) {
-      case eJMSActionTypes.Edit: {
-        // TODO add check by access rights for each section - can it be edited or not
-        this.editingSection = res.secName;
-        break;
-      }
-      case eJMSActionTypes.Add: {
-        const event = res.event as { secName: string; mode: string };
-        this.processWidgetNewBtn(event.secName);
-        break;
-      }
-    }
-  }
-
-  private processWidgetNewBtn(secName: string) {
-    // eslint-disable-next-line default-case
-    switch (secName) {
-      case eProjectDetailsSideMenuId.RFQ: {
-        this.rfqComponent?.onLinkYard();
-        break;
-      }
-      case eProjectDetailsSideMenuId.Attachments: {
-        this.attachmentsComponent?.dialogOnDemand();
-        break;
-      }
-      case eProjectDetailsSideMenuId.StatementOfFacts: {
-        this.statementOfFactsComponent?.showCreateDialog();
-        break;
-      }
-      case eProjectDetailsSideMenuId.DailyReports: {
-        this.dailyReportsComponent?.showReportDialog(true);
-        break;
-      }
-    }
-  }
-
   onValueChange(event) {
     if (event?.dirty) {
       this.jbTMDtlSrv.isUnsavedChanges.next(true);
@@ -326,8 +284,51 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       );
   }
 
-  onSelectNewFile(event) {
+  onSelectNewFile(event: FileUploadEvent) {
     this.fileImportData = event.uploadFiles[0];
+  }
+
+  updatesCostsData(data) {
+    this.jbTMDtlSrv.isUnsavedChanges.next(true);
+    this.updateCostsPayload = data;
+  }
+
+  private sectionActions(res: { type?: string; secName?: string; event?: unknown; checkValidation?: boolean }) {
+    // eslint-disable-next-line default-case
+    switch (res.type) {
+      case eJMSActionTypes.Edit: {
+        // TODO add check by access rights for each section - can it be edited or not
+        this.editingSection = res.secName;
+        break;
+      }
+      case eJMSActionTypes.Add: {
+        const event = res.event as { secName: string; mode: string };
+        this.processWidgetNewBtn(event.secName);
+        break;
+      }
+    }
+  }
+
+  private processWidgetNewBtn(secName: string) {
+    // eslint-disable-next-line default-case
+    switch (secName) {
+      case eProjectDetailsSideMenuId.RFQ: {
+        this.rfqComponent?.onLinkYard();
+        break;
+      }
+      case eProjectDetailsSideMenuId.Attachments: {
+        this.attachmentsComponent?.dialogOnDemand();
+        break;
+      }
+      case eProjectDetailsSideMenuId.StatementOfFacts: {
+        this.statementOfFactsComponent?.showCreateDialog();
+        break;
+      }
+      case eProjectDetailsSideMenuId.DailyReports: {
+        this.dailyReportsComponent?.showReportDialog(true);
+        break;
+      }
+    }
   }
 
   private getDetails(refresh = false) {
@@ -366,14 +367,13 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         this.setAttachmentsActions();
         // TODO add here more to init view if needed
         if (refresh) {
-          this.jbTMDtlSrv.refreshTaskManager.next({ refresh: true, tmDetails: this.tmDetails, topSecConfig: this.topSectionConfig });
+          this.jbTMDtlSrv.refreshTaskManager.next({
+            refresh: true,
+            tmDetails: this.tmDetails,
+            topSecConfig: this.topSectionConfig
+          });
         }
       });
-  }
-
-  updatesCostsData(data) {
-    this.jbTMDtlSrv.isUnsavedChanges.next(true);
-    this.updateCostsPayload = data;
   }
 
   private saveRecord(event) {

@@ -22,7 +22,10 @@ export class UploadInvoiceService {
         const worksheet = workbook.getWorksheet(1) as ExcelJS.Worksheet;
         const invoiceId = worksheet.getCell('A1').value?.toString() as string;
         if (invoiceId !== ProjectUid) {
-            throw new BusinessException('That invoice doesnt belong to this project');
+            throw new BusinessException({
+                description: 'Incorrect project',
+                message: 'The provided Excel file can not be imported',
+            });
         }
         let index = 16;
         const update: Array<IUploadInvoiceRawDataUpdateDto> = [];
