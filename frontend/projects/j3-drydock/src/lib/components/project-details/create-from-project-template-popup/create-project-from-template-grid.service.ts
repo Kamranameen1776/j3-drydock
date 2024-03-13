@@ -18,7 +18,6 @@ export class CreateProjectFromTemplateGridService {
     {
       DisplayText: eProjectTemplatesLabels.Code,
       FieldName: eProjectTemplatesFields.Code,
-      hyperlink: true,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
