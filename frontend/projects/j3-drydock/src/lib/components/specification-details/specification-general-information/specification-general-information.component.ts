@@ -12,6 +12,7 @@ import { EditorConfig } from '../../../models/interfaces/EditorConfig';
 })
 export class SpecificationGeneralInformationComponent implements OnInit {
   @Input() specificationDetailsInfo: SpecificationDetails;
+  @Input() isEditable: boolean;
   @Output() formValue = new EventEmitter<FormGroup>();
 
   public formGroup: FormGroup;
@@ -35,7 +36,10 @@ export class SpecificationGeneralInformationComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    const { formModel, formValues } = this.specificationInformationInputService.getFormModelAndInitialValues(this.specificationDetailsInfo);
+    const { formModel, formValues } = this.specificationInformationInputService.getFormModelAndInitialValues(
+      this.specificationDetailsInfo,
+      this.isEditable
+    );
     this.formStructure = formModel;
     this.formValues = formValues;
 

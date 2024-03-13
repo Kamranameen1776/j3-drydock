@@ -1,6 +1,7 @@
 <div
   class="grid-container"
   awidget-content
+  [ngClass]="{ 'not-editable': !isEditable }"
 >
   <jb-grid
     class="specification-sub-items-grid"

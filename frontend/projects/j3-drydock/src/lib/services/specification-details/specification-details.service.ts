@@ -230,7 +230,7 @@ export class SpecificationDetailsService {
     };
   }
 
-  getSpecificationStepSectionsConfig(details: SpecificationDetailsFull): ITMDetailTabFields {
+  getSpecificationStepSectionsConfig(details: SpecificationDetailsFull, isEditable: boolean): ITMDetailTabFields {
     return {
       [eSpecificationDetailsPageMenuIds.SpecificationDetails]: {
         id: eSpecificationDetailsPageMenuIds.SpecificationDetails,
@@ -260,7 +260,7 @@ export class SpecificationDetailsService {
             active_status: true,
             SectionCode: eSpecificationDetailsPageMenuIds.SubItems,
             SectionLabel: eSpecificationDetailsPageMenuLabels.SubItems,
-            isAddNewButton: true,
+            isAddNewButton: isEditable,
             buttonLabel: eSubItemsDialog.AddText
           },
           {
@@ -271,7 +271,7 @@ export class SpecificationDetailsService {
             active_status: true,
             SectionCode: eSpecificationDetailsPageMenuIds.PMSJobs,
             SectionLabel: eSpecificationDetailsPageMenuLabels.PMSJobs,
-            isAddNewButton: true,
+            isAddNewButton: isEditable,
             buttonLabel: 'Convert to sub item'
           },
           {
@@ -282,7 +282,7 @@ export class SpecificationDetailsService {
             active_status: true,
             SectionCode: eSpecificationDetailsPageMenuIds.Findings,
             SectionLabel: eSpecificationDetailsPageMenuLabels.Findings,
-            isAddNewButton: true,
+            isAddNewButton: isEditable,
             buttonLabel: 'Convert to sub item'
           },
           ...(this.isInExecutionPhase(details.ProjectStatusId)

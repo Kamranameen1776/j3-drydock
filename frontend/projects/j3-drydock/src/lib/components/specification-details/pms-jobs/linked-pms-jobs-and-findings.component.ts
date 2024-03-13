@@ -14,6 +14,7 @@ import { GrowlMessageService } from '../../../services/growl-message.service';
   styleUrls: ['./linked-pms-jobs-and-findings.component.scss']
 })
 export class LinkedPmsJobsAndFindingsComponent implements OnInit {
+  @Input() isEditable: boolean;
   @Input() specificationDetailsInfo: SpecificationDetails;
   @Input() validTaskType = '';
   @Output() updateSelectedAmount = new BehaviorSubject<TmLinkedRecords[]>([]);
