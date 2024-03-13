@@ -37,6 +37,7 @@ import { J3PmsLibFunction } from '../../../entity/drydock/dbo/J3PmsLibFunctionEn
 import { JmsDtlWorkflowConfigEntity } from '../../../entity/drydock/dbo/JMSDTLWorkflowConfigEntity';
 import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStatusEntity';
 import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { TaskManagerConstants } from '../../../shared/constants';
 import { ODataResult } from '../../../shared/interfaces';
 import { DictionariesRepository } from '../dictionaries/DictionariesRepository';
 import { RepoUtils } from '../utils/RepoUtils';
@@ -72,6 +73,26 @@ export class SpecificationDetailsRepository {
         }
 
         return query.execute();
+    }
+
+    public async isSpecificationIsCompleted(
+        uid: string,
+        queryRunner: QueryRunner = getConnection().createQueryRunner(),
+    ): Promise<boolean> {
+        const repository = queryRunner.manager.getRepository(SpecificationDetailsEntity);
+
+        // Planned is status for COMPLETE
+        const result = await repository
+            .createQueryBuilder('sd')
+            .select(['sd.uid as uid', 'tm.Status as status'])
+            .innerJoin(TecTaskManagerEntity, 'tm', 'sd.TecTaskManagerUid = tm.uid')
+            .where('sd.uid = :uid AND tm.Status = :status', {
+                uid,
+                status: TaskManagerConstants.specification.status.Planned,
+            })
+            .getRawOne();
+
+        return result !== undefined;
     }
 
     public async deleteSpecificationPms(data: UpdateSpecificationPmsDto, queryRunner: QueryRunner) {

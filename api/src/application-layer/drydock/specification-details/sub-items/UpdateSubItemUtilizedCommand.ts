@@ -1,7 +1,9 @@
 import { SynchronizerService } from 'j2utils';
 
+import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
 import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
+import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { UpdateSubItemUtilizedDto } from '../../../../dal/drydock/specification-details/sub-items/dto/UpdateSubItemUtilizedDto';
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
@@ -14,12 +16,17 @@ export class UpdateSubItemUtilizedCommand extends Command<UpdateSubItemUtilizedD
     protected readonly uow = new UnitOfWork();
     protected readonly tableName = getTableName(SpecificationDetailsSubItemEntity);
     protected readonly vesselsRepository = new VesselsRepository();
+    protected readonly specificationDetailsRepository = new SpecificationDetailsRepository();
 
     protected async ValidationHandlerAsync(request: UpdateSubItemUtilizedDto): Promise<void> {
         await validateAgainstModel(UpdateSubItemUtilizedDto, request);
     }
 
     protected async MainHandlerAsync(request: UpdateSubItemUtilizedDto): Promise<void> {
+        if (await this.specificationDetailsRepository.isSpecificationIsCompleted(request.specificationDetailsUid)) {
+            throw new ApplicationException('Specification is completed, cannot be updated');
+        }
+
         return this.uow.ExecuteAsync(async (queryRunner) => {
             const vessel = await this.vesselsRepository.GetVesselBySpecification(
                 request.specificationDetailsUid,
