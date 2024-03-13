@@ -96,16 +96,16 @@ export class MiddlewareHandler {
 
                 return;
             } else if (exception instanceof Array && exception.length && exception[0] instanceof ValidationError) {
-                //TODO: think how to refactor it;
                 const error = exception[0];
-                // let message = 'Validation request has failed';
-                // if (error.constraints && error.property) {
-                //     const keys = Object.keys(error.constraints);
-                //     if (keys.length) {
-                //         message = error.constraints[keys[0]];
-                //     }
-                // }
-                const message = error.toString();
+                let message: string;
+                const constraints = error.constraints || {};
+                const keys = Object.keys(constraints);
+                // If there is only one error message, return it
+                if (keys.length === 1) {
+                    message = constraints[keys[0]];
+                } else {
+                    message = error.toString();
+                }
 
                 //log to DB
                 const details = new ProblemDetails({

@@ -50,7 +50,6 @@ export class UpsertProjectTemplateFormComponent extends UnsubscribeComponent imp
 
   dispatchForm(event: FormGroup) {
     this.formGroup = event;
-
     this.setEditorsForm();
 
     this.listenFormValid();
@@ -67,8 +66,8 @@ export class UpsertProjectTemplateFormComponent extends UnsubscribeComponent imp
     const values = this.formValues.values[this.popupFormService.formId];
     if (this.isEditing) {
       Object.assign(values, this.item, {
-        subject: this.item.Subject ?? '',
-        vesselTypeSpecific: this.item.vesselTypeSpecific ? 1 : 0
+        Subject: this.item.Subject ?? '',
+        VesselTypeSpecific: this.item.VesselTypeSpecific ? 1 : 0
       });
     }
   }
@@ -76,6 +75,13 @@ export class UpsertProjectTemplateFormComponent extends UnsubscribeComponent imp
   private listenFormValid() {
     this.formGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       this.isFormValid = this.formGroup.valid;
+      // validator gets missed by some reason, so need this for now
+      const isVesselSpecific = this.popupFormService.getFormControlValue(this.formGroup, eProjectTemplatesFields.VesselSpecific);
+      const vesselTypeIds = this.popupFormService.getFormControlValue(this.formGroup, eProjectTemplatesFields.VesselTypeId);
+      if (this.isFormValid && isVesselSpecific && !vesselTypeIds?.length) {
+        this.isFormValid = false;
+      }
+
       this.formValid.emit(this.isFormValid);
     });
   }
@@ -100,10 +106,9 @@ export class UpsertProjectTemplateFormComponent extends UnsubscribeComponent imp
   private setEditorsForm() {
     if (this.item) {
       this.editorsFormGroup.setValue({
-        description: this.item.Description
+        description: this.item.Description || ''
       });
     }
-
     this.formGroup.addControl(this.popupFormService.editors, this.editorsFormGroup);
   }
 }

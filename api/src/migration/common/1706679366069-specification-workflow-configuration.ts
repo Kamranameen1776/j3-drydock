@@ -2,7 +2,7 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class specificationWorkflowConfiguration1706679366068 implements MigrationInterface {
+export class specificationWorkflowConfiguration1706679366069 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -99,8 +99,10 @@ export class specificationWorkflowConfiguration1706679366068 implements Migratio
                     {"status_config":[{"wfstatus":"Raise","mandatory":"Yes","rework":"No","delete":"Yes","save":"Yes"},
                     {"wfstatus":"In Progress","mandatory":"Yes","rework": "No","delete":"No","save":"Yes"},
                     {"wfstatus":"Complete","mandatory":"Yes","rework":"Yes","delete":"No","save":"Yes"},
-                    {"wfstatus":"Close","mandatory":"Yes","rework":"No","delete":"No","save":"No"},
-                    {"wfstatus":"Cancel","mandatory":"No","rework":"Yes","delete":"No","save":"No"}]}'
+                    {"wfstatus":"Close","mandatory":"Yes","rework":"Yes","delete":"No","save":"No"},
+                    {"wfstatus":"Unclose","mandatory":"No","rework":"No","delete":"No","save":"No"},
+					{"wfstatus":"Cancel","mandatory":"No","rework":"No","delete":"No","save":"No"}
+					]}'
                     SELECT @MaxID = ISNULL(MAX(ID),0)+1 FROM JMS_DTL_Workflow_config
                     IF(@MaxID > 0)
                     BEGIN
@@ -168,10 +170,11 @@ export class specificationWorkflowConfiguration1706679366068 implements Migratio
                         INSERT INTO @DefaultWfActions (Workflow_OrderID, WorkflowType_ID, status_display_name, Workflow_Display, Active_Status, Is_Rework, Office_ID, right_code)
                         VALUES
                             (1, 'RAISE', 'Draft', 'Create New', 1, 0, null,'tm_specification_raise_office'),
-                            (2, 'IN PROGRESS', 'In Progress', 'In Progress', 1, 0, 1,'tm_specification_in_progress_office'),
+                            (2, 'IN PROGRESS', 'Review Spec', 'Under Review', 1, 0, 1,'tm_specification_in_progress_office'),
                             (3, 'COMPLETE', 'Add to Plan', 'Planned', 1, 1, 1,'tm_specification_complete_office'),
-                            (4, 'CLOSE', 'Close', 'Closed', 1, 0, 1,'tm_specification_close_office'),
-                            (5, 'UNCLOSE', 'Cancel', 'Canceled', 1, 1, 1,'tm_specification_cancel_office')
+                            (4, 'CLOSE', 'Close', 'Closed', 1, 1, 1,'tm_specification_close_office'),
+                            (5, 'UNCLOSE', 'Unclose', 'Unclose', 1, 0, 1,'tm_specification_unclose_office'),
+							(6, 'CANCEL', 'Cancel', 'Cancelled', 1, 0, 1,'tm_specification_cancel_office')
                         declare  @DefaultAppLocations table (Is_Office INT)
                         INSERT INTO @DefaultAppLocations (Is_Office)
                         VALUES (1), (0)

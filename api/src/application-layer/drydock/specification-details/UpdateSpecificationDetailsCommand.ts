@@ -1,6 +1,7 @@
 import { validate } from 'class-validator';
 import { SynchronizerService } from 'j2utils';
 
+import { ApplicationException } from '../../../bll/drydock/core/exceptions';
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
@@ -41,6 +42,16 @@ export class UpdateSpecificationDetailsCommand extends Command<UpdateSpecificati
     }
 
     protected async MainHandlerAsync(request: UpdateSpecificationDetailsDto): Promise<void> {
+        // This requires strict logic on frontend to prevent this from happening
+        // Now on frontend we do saving of changes to specification and moving status to completed at the same time
+        // But with this change it's required to be done in two steps
+        // First save changes to specification and then move status to completed
+        // With moving to the closed status we should do it vice versa
+        // First move status to closed and then save changes to specification
+        if (await this.specificationDetailsRepository.isSpecificationIsCompleted(request.uid)) {
+            throw new ApplicationException('Specification is completed, cannot be updated');
+        }
+
         const vessel = await this.vesselsRepository.GetVesselBySpecification(request.uid);
         await this.uow.ExecuteAsync(async (queryRunner) => {
             const entity = new SpecificationDetailsEntity();

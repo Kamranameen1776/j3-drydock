@@ -4,4 +4,15 @@
     max-height: 422px;
     display: block;
   }
+
+  .not-editable {
+    .tm-grid .actions {
+      display: none;
+    }
+
+    .ui-table-tbody{
+      pointer-events: none;
+    }
+  }
+
 }

@@ -1,4 +1,4 @@
-import { AccessRights, DataUtilService, SynchronizerService } from 'j2utils';
+import { ApiRequestService, DataUtilService, SynchronizerService } from 'j2utils';
 
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
@@ -13,6 +13,7 @@ import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepositor
 import { LibVesselsEntity, SpecificationDetailsEntity, SpecificationInspectionEntity } from '../../../entity/drydock';
 import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
 import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
+import { InfraService } from '../../../external-services/drydock/InfraService';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateSpecificationDetailsDto } from './dtos/UpdateSpecificationDetailsDto';
@@ -28,6 +29,7 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
     projectRepository = new ProjectsRepository();
     subItemsRepository = new SpecificationDetailsSubItemsRepository();
     specificationDetailsAudit = new SpecificationDetailsAuditService();
+    infraService = new InfraService();
 
     tableName = getTableName(SpecificationDetailsEntity);
     tableNameInspections = getTableName(SpecificationInspectionEntity);
@@ -43,27 +45,38 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
         const vessel: LibVesselsEntity = await this.vesselsRepository.GetVesselByUID(project.VesselUid);
 
         return this.uow.ExecuteAsync(async (queryRunner) => {
-            const specifications = await this.specificationRepository.createSpecificationFromStandardJob(
+            const createdSpecifications = await this.specificationRepository.createSpecificationFromStandardJob(
                 request,
                 request.createdBy,
                 queryRunner,
             );
 
+            const specifications = createdSpecifications.map((specification) => specification.specification);
+
             await Promise.all(
-                specifications.map(async (specification) => {
+                createdSpecifications.map(async (specification) => {
                     const tmResult = await this.specificationDetailsService.TaskManagerIntegration(
-                        { Subject: specification.Subject },
+                        { Subject: specification.specification.Subject },
                         vessel,
                         request.token,
                     );
 
                     await this.specificationRepository.updateSpecificationTmUid(
-                        specification.uid,
+                        specification.specification.uid,
                         tmResult.uid,
                         queryRunner,
                     );
 
-                    specification.TecTaskManagerUid = tmResult.uid;
+                    specification.specification.TecTaskManagerUid = tmResult.uid;
+
+                    await this.infraService.CopyAttachmentsFromStandardJobToSpecification(
+                        request.token,
+                        specification.standardJob.uid,
+                        specification.specification.TecTaskManagerUid,
+                        '1',
+                        vessel.VesselId.toString(),
+                        vessel.VesselId,
+                    );
                 }),
             );
 

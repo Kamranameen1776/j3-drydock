@@ -20,21 +20,21 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
   public sectionId = 'generalInformation';
   functionsFlatTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
   readonly formId = this.generalInformationFormId;
-  protected readonly _formStructure: FormModel = this.getFormModel();
+  protected readonly _formStructure: FormModel = this.getFormModel(true);
   protected readonly _formValues: FormValues = this.getInitialFormValues(null);
 
   constructor(private specificationDetailService: SpecificationDetailsService) {
     super();
   }
 
-  public getFormModelAndInitialValues(specificationDetailsInfo: SpecificationDetails) {
-    const formModel: FormModel = this.getFormModel();
+  public getFormModelAndInitialValues(specificationDetailsInfo: SpecificationDetails, isEnabled: boolean) {
+    const formModel: FormModel = this.getFormModel(isEnabled);
     const formValues: FormValues = this.getInitialFormValues(specificationDetailsInfo);
 
     return { formModel, formValues };
   }
 
-  private getFields(): FieldSetModel {
+  private getFields(isEnabled: boolean): FieldSetModel {
     const formFields: FieldSetModel = {
       [eSpecificationDetailsGeneralInformationFields.Function]: {
         type: eFieldControlType.Text,
@@ -51,7 +51,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         type: eFieldControlType.Text,
         sectionID: this.sectionId,
         label: eSpecificationDetailsGeneralInformationLabels.AccountCode,
-        enabled: true,
+        enabled: isEnabled,
         validatorRequired: false,
         gridRowStart: 1,
         gridRowEnd: 1,
@@ -94,7 +94,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         type: eFieldControlType.Dropdown,
         sectionID: this.sectionId,
         label: eSpecificationDetailsGeneralInformationLabels.DoneBy,
-        enabled: true,
+        enabled: isEnabled,
         validatorRequired: false,
         gridRowStart: 3,
         gridRowEnd: 3,
@@ -110,7 +110,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         type: eFieldControlType.MultiSelect,
         label: eSpecificationDetailsGeneralInformationLabels.Inspection,
         sectionID: this.sectionId,
-        enabled: true,
+        enabled: isEnabled,
         validatorRequired: false,
         gridRowStart: 2,
         gridRowEnd: 2,
@@ -142,7 +142,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
         type: eFieldControlType.Dropdown,
         sectionID: this.sectionId,
         label: eSpecificationDetailsGeneralInformationLabels.Priority,
-        enabled: true,
+        enabled: isEnabled,
         validatorRequired: false,
         gridRowStart: 3,
         gridRowEnd: 3,
@@ -187,7 +187,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
     return formValues;
   }
 
-  private getFormModel(): FormModel {
+  private getFormModel(isEnabled: boolean): FormModel {
     const baseModel: FormModel = {
       id: this.generalInformationFormId,
       label: 'General Information',
@@ -201,7 +201,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
           gridRowEnd: 4,
           gridColStart: 1,
           gridColEnd: 2,
-          fields: this.getFields()
+          fields: this.getFields(isEnabled)
         }
       }
     };

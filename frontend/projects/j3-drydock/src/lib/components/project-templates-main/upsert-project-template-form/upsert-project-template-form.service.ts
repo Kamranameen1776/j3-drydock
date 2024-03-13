@@ -105,7 +105,7 @@ export class ProjectTemplateUpsertFormService extends FormServiceBase {
     values: {
       [this.formId]: {
         [eProjectTemplatesFields.Subject]: null,
-        [eProjectTemplatesFields.VesselTypeId]: [],
+        [eProjectTemplatesFields.VesselTypeId]: null,
         [eProjectTemplatesFields.ProjectTypeUid]: null,
         [eProjectTemplatesFields.Description]: null,
         [eProjectTemplatesFields.VesselSpecific]: 0

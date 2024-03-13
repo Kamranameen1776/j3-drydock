@@ -91,10 +91,10 @@ export class SpecificationDetailsSubItemsGridService {
     }
   ];
 
-  private getGridRowActions(): GridRowActions[] {
+  private getGridRowActions(enabled: boolean): GridRowActions[] {
     const res = [];
 
-    if (this.specificationDetailService.hasAccess(eSpecificationAccessActions.editSubItems)) {
+    if (this.specificationDetailService.hasAccess(eSpecificationAccessActions.editSubItems) && enabled) {
       res.push({
         name: eGridRowActions.Edit,
         label: eGridRowActions.Edit,
@@ -106,7 +106,7 @@ export class SpecificationDetailsSubItemsGridService {
         actionFalseValue: true
       });
     }
-    if (this.specificationDetailService.hasAccess(eSpecificationAccessActions.deleteSubItems)) {
+    if (this.specificationDetailService.hasAccess(eSpecificationAccessActions.deleteSubItems) && enabled) {
       res.push({
         name: eGridRowActions.Delete,
         label: eGridRowActions.Delete,
@@ -137,11 +137,11 @@ export class SpecificationDetailsSubItemsGridService {
     };
   }
 
-  getGridData(specificationUid): GridInputsWithRequest {
+  getGridData(specificationUid, enabled: boolean): GridInputsWithRequest {
     return {
       columns: this.columns,
       gridName: this.gridName,
-      actions: this.getGridRowActions(),
+      actions: this.getGridRowActions(enabled),
       filters: this.filters,
       filtersLists: this.filtersLists,
       request: this.getApiRequest(specificationUid),

@@ -27,6 +27,7 @@
         [inlineMode]="descriptionEditorConfig.inlineMode"
         [tools]="descriptionEditorConfig.tools"
         (updateParentCtrlValue)="updateEditorCtrlValue($event)"
+        [readonly]="!isEditable"
       ></jb-editor>
     </ng-container>
   </form>

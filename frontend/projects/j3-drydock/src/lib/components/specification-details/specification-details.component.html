@@ -34,6 +34,7 @@
           #SpecificationGeneralInformationComponent
           *ngIf="specificationDetailsInfo && accessRights.generalInformation.view"
           [specificationDetailsInfo]="specificationDetailsInfo"
+          [isEditable]="isSpecificationEditable"
           (formValue)="dispatchGeneralInformationForm($event)"
         ></jb-specification-general-information>
       </div>
@@ -44,6 +45,7 @@
         <jb-specification-sub-items
           #SpecificationSubItemsComponent
           *ngIf="specificationDetailsInfo && accessRights.subItems.view"
+          [isEditable]="isSpecificationEditable"
           [specificationDetailsInfo]="specificationDetailsInfo"
         ></jb-specification-sub-items>
       </div>
@@ -54,6 +56,7 @@
         <jb-linked-pms-jobs-findings
           #PmsJobsComponent
           *ngIf="specificationDetailsInfo && accessRights.pmsJobs.view"
+          [isEditable]="isSpecificationEditable"
           [validTaskType]="pmsWlType.PmsJob"
           [specificationDetailsInfo]="specificationDetailsInfo"
           (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.PMSJobs)"
@@ -66,6 +69,7 @@
         <jb-linked-pms-jobs-findings
           #FindingsComponent
           *ngIf="specificationDetailsInfo && accessRights.findings.view"
+          [isEditable]="isSpecificationEditable"
           [validTaskType]="pmsWlType.Findings"
           [specificationDetailsInfo]="specificationDetailsInfo"
           (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.Findings)"

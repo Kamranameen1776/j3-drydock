@@ -22,4 +22,8 @@ export const TaskManagerConstants = {
             Canceled: 'CANCEL',
         },
     },
+    standardJob: {
+        module_code: 'project',
+        function_code: 'standard_job',
+    },
 };

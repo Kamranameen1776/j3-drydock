@@ -10,9 +10,6 @@ export class GetYardsInvoiceQuery extends Query<DownloadQuery, InvoiceDto> {
     yardsRepository = new YardsRepository();
     yardInvoiceService = new InvoiceGeneratorService();
     uow: UnitOfWork = new UnitOfWork();
-    protected async AuthorizationHandlerAsync(): Promise<void> {
-        return;
-    }
 
     protected async ValidationHandlerAsync(request: DownloadQuery): Promise<void> {
         const result = await validate(request);

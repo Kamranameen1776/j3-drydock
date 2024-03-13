@@ -1,4 +1,5 @@
 <jb-tm-linked-records
+  [ngClass]="{ 'not-editable': !isEditable }"
   [taskManagerDetails]="details"
   [hiddenSegments]="hiddenSegments"
   [additionalEntityMenuOptions]="additionalEntityMenuOptions"

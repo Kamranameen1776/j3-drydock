@@ -61,6 +61,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   specificationUid: string;
   attachmentConfig: IJbAttachment;
   detailForm: FormGroup;
+  isSpecificationEditable = false;
 
   growlMessage$ = this.growlMessageService.growlMessage$;
   moduleCode = eModule.Project;
@@ -191,7 +192,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     this.formValuesSub?.unsubscribe();
 
     this.formValuesSub = this.detailForm.valueChanges.subscribe(() => {
-      this.jbTMDtlSrv.isUnsavedChanges.next(true);
+      this.jbTMDtlSrv.isUnsavedChanges.next(this.isSpecificationEditable);
     });
   }
 
@@ -337,6 +338,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
           };
 
           this.isExecutionPhase = this.specificationDetailService.isInExecutionPhase(data.ProjectStatusId);
+          this.isSpecificationEditable = !this.specificationDetailService.isStatusComplete(data.StatusId);
 
           this.attachmentConfig = {
             Module_Code: this.moduleCode,
@@ -356,7 +358,10 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
         this.accessRights = this.specificationDetailService.setupAccessRights(this.tmDetails);
         this.topSectionConfig = this.specificationDetailService.getTopSecConfig(this.tmDetails);
-        this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig(this.tmDetails);
+        this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig(
+          this.tmDetails,
+          this.isSpecificationEditable
+        );
 
         this.setMenu();
         this.setIsForceDisableClose(this.tmDetails.StatusId);
