@@ -115,7 +115,7 @@ export class ProjectTemplatesMainComponent extends UnsubscribeComponent implemen
       return;
     }
     this.projectTemplatesService.getTemplate(row.ProjectTemplateUid).subscribe((res) => {
-      this.currentRow = { ...row, ...res, VesselTypeSpecific: +res.VesselTypeSpecific };
+      this.currentRow = { ...row, VesselTypeSpecific: +res.VesselTypeSpecific, Description: res.Description };
       this.isUpsertPopupVisible = true;
     });
   }

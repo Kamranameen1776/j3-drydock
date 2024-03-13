@@ -8,8 +8,10 @@ export interface ProjectTemplate {
   NoOfSpecItems: number;
   LastUpdated: string;
 
+  VesselTypeId: number[];
+  ProjectTypeCode?: string;
+  TemplateCodeRaw?: number;
   Description?: string;
-  VesselTypeID?: string;
-  ProjectTypeUid?: string;
-  vesselTypeSpecific?: number;
+  ProjectTypeUid: string;
+  VesselTypeSpecific: number;
 }
