@@ -348,7 +348,7 @@ export class SpecificationDetailsRepository {
             where: {
                 uid: In(data.StandardJobUid),
             },
-            select: ['functionUid', 'description', 'subject', 'function'],
+            select: ['uid', 'functionUid', 'description', 'subject', 'function'],
             relations: ['subItems', 'inspection', 'doneBy', 'materialSuppliedBy'],
         });
         const standardJobsItemSource = await dictionariesRepository.getItemSourceByName(ItemName.StandardJob);
@@ -380,10 +380,13 @@ export class SpecificationDetailsRepository {
 
                 return item;
             });
-            return specification;
+            return { specification, standardJob };
         });
 
-        await queryRunner.manager.insert(SpecificationDetailsEntity, specifications);
+        await queryRunner.manager.insert(
+            SpecificationDetailsEntity,
+            specifications.map((s) => s.specification),
+        );
 
         return specifications;
     }
