@@ -73,10 +73,10 @@ export class SpecificationDetailsEntity {
     })
     PriorityUid?: string;
 
-    @Column('varchar', {
+    @Column('nvarchar', {
         nullable: false,
         name: 'description',
-        length: 1000,
+        length: 'MAX',
     })
     Description: string;
 
@@ -159,14 +159,14 @@ export class SpecificationDetailsEntity {
     @Column('varchar', {
         nullable: true,
         name: 'ppe',
-        length: 1000,
+        length: 'MAX',
     })
     Ppe: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'safety_instruction',
-        length: 1000,
+        length: 'MAX',
     })
     SafetyInstruction: string;
 

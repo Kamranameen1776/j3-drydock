@@ -140,5 +140,5 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         precision: 10,
         scale: 4,
     })
-    utilized: number;
+    utilized: string;
 }

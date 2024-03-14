@@ -5,7 +5,7 @@ export class SubItemUtilized {
     uid: string;
 
     @IsNumber()
-    utilized: number;
+    utilized: string;
 }
 
 export class UpdateSubItemUtilizedDto {

@@ -18,6 +18,7 @@ import { SpecificationSubItemFindingEntity } from '../../../../entity/drydock/Sp
 import { SpecificationSubItemPmsEntity } from '../../../../entity/drydock/SpecificationSubItemPmsJobEntity';
 import { UnitTypeEntity } from '../../../../entity/drydock/UnitTypeEntity';
 import { ODataResult } from '../../../../shared/interfaces';
+import { getChunkSize } from '../../../../shared/utils/get-chunk-size';
 import { CreateManyParams } from './dto/CreateManyParams';
 import { CreateSubItemParams } from './dto/CreateSubItemParams';
 import { DeleteManyParams } from './dto/DeleteManyParams';
@@ -42,6 +43,7 @@ export type FindManyRecord = Pick<
     | 'unitTypeUid'
     | 'description'
     | 'unitType'
+    | 'utilized'
     | 'estimatedCost'
 >;
 
@@ -99,6 +101,7 @@ export class SpecificationDetailsSubItemsRepository {
                 'subItem.subject as subject',
                 'subItem.quantity as quantity',
                 'subItem.unitPrice as unitPrice',
+                'subItem.utilized as utilizedCost',
                 'subItem.discount as discount',
                 'subItem.cost as cost',
                 'subItem.specification_details_uid as specificationDetailsUid',
@@ -194,12 +197,12 @@ export class SpecificationDetailsSubItemsRepository {
         await this.assertAllUnitTypesExistByUids(unitUids, queryRunner);
 
         const newSubItems = params.subItems.map((props): SpecificationDetailsSubItemEntity => {
-            return queryRunner.manager.create(SpecificationDetailsSubItemEntity, {
+            return queryRunner.manager.create(SpecificationDetailsSubItemEntity as unknown as string, {
                 ...props,
                 specificationDetailsUid: params.specificationDetailsUid,
                 created_by: params.createdBy,
                 created_at: new Date(),
-            });
+            }) as unknown as SpecificationDetailsSubItemEntity;
         });
 
         await queryRunner.manager.save(newSubItems);
@@ -211,7 +214,7 @@ export class SpecificationDetailsSubItemsRepository {
         const newSubItems = subItemsData.map((data) =>
             queryRunner.manager.create(SpecificationDetailsSubItemEntity, data),
         );
-        return queryRunner.manager.save(newSubItems);
+        return queryRunner.manager.save(newSubItems, { chunk: getChunkSize(14) });
     }
 
     public async updateMultipleEntities(subItemsData: SpecificationDetailsSubItemEntity[], queryRunner: QueryRunner) {
