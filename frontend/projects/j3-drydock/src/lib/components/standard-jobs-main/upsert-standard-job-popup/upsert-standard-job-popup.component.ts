@@ -29,7 +29,7 @@ export class UpsertStandardJobPopupComponent extends UnsubscribeComponent implem
 
   @ViewChild(UpsertStandardJobFormComponent) popupForm: UpsertStandardJobFormComponent;
 
-  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false };
+  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, dialogHeight: 620, closableIcon: false };
 
   isPopupValid = false;
 
