@@ -474,7 +474,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
           const dayOfWeek = days[date.getDay()];
           const dayOfMonth = date.getDate();
-          const str = `<span id="gantt-day-of-year-${date.getDay()}" class="gantt-day-of-month">${dayOfMonth}</span><span class="gantt-day-of-week">${dayOfWeek}</span>`;
+          // !!! DON'T CHANGE  ' to " - gantt chart doesn't work with " properly
+          const str = `<span id='gantt-day-of-year-${date.getDay()}' class='gantt-day-of-month'>${dayOfMonth}</span><span class='gantt-day-of-week'>${dayOfWeek}</span>`;
 
           return str;
         }

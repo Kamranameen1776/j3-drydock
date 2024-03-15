@@ -43,7 +43,7 @@ export const statusProgressBarBackground = {
   COMPLETE: '#349258',
   REVIEW: '#7000ff',
   APPROVE: '#a35bff',
-  RAISE: '#d356ff',
+  RAISE: '#103e7e',
   NEW: '#d356ff',
   'APPROVAL PENDING': '#d356ff',
   CLOSE: '#A1B2CC',
