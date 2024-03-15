@@ -96,16 +96,7 @@ export class MiddlewareHandler {
 
                 return;
             } else if (exception instanceof Array && exception.length && exception[0] instanceof ValidationError) {
-                const error = exception[0];
-                let message: string;
-                const constraints = error.constraints || {};
-                const keys = Object.keys(constraints);
-                // If there is only one error message, return it
-                if (keys.length === 1) {
-                    message = constraints[keys[0]];
-                } else {
-                    message = error.toString();
-                }
+                const message = this.getExceptionMessage(exception as ValidationError[]);
 
                 //log to DB
                 const details = new ProblemDetails({
@@ -128,6 +119,22 @@ export class MiddlewareHandler {
             logData.Details = details;
             log.error(logMessage, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
             res.status(httpStatus.INTERNAL_SERVER_ERROR).json(details.getJibeError());
+        }
+    }
+
+    private getExceptionMessage(errors: ValidationError[]): string {
+        const error = errors[0];
+        const constraints = error.constraints || {};
+        const keys = Object.keys(constraints);
+
+        if (!keys.length && error.children) {
+            return this.getExceptionMessage(error.children);
+        }
+
+        if (keys.length === 1) {
+            return constraints[keys[0]];
+        } else {
+            return error.toString();
         }
     }
 }
