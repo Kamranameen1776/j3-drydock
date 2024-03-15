@@ -329,7 +329,7 @@ export class SpecificationDetailsRepository {
                 'SUM(sdsi.utilized) OVER (PARTITION BY sd.uid) as utilizedCost',
                 '(SUM(sdsi.cost) OVER (PARTITION BY sd.uid)) - (SUM(sdsi.utilized) OVER (PARTITION BY sd.uid)) as variance',
             ])
-            .leftJoin(
+            .innerJoin(
                 className(SpecificationDetailsSubItemEntity),
                 'sdsi',
                 'sd.uid = sdsi.specification_details_uid and sdsi.active_status = 1',
