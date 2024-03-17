@@ -30,7 +30,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   @Input() isOpen: boolean;
   @Input() jobOrderFormValue: IJobOrderFormDto;
 
-  @Output() isChanged = new EventEmitter<boolean>();
+  @Output() isChangedAndValid = new EventEmitter<boolean>();
 
   @ViewChild('remarksEditor')
   remarksEditor: JbEditorComponent;
@@ -100,7 +100,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
 
   ngOnDestroy(): void {
     super.ngOnDestroy();
-    this.isChanged.next(false);
+    this.isChangedAndValid.next(false);
   }
 
   public save(): IJobOrderFormResultDto | Error {
@@ -147,18 +147,15 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   }
 
   remarksEditorUpdateParentCtrlValue(remarks: string) {
-    this.isChanged.next(true);
+    this.isChangedAndValid.next(this.updateJobOrderFormGroup.valid);
     this.remarksEditorFormGroup.get('RemarksCtrl').setValue(remarks);
-    this.remarksEditorFormGroup.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      this.isChanged.next(this.updateJobOrderFormGroup.valid);
-    });
   }
 
   initUpdateJobOrderFormGroup(action: FormGroup): void {
     this.updateJobOrderFormGroup = action;
     this.updateJobOrderFormValues();
     this.updateJobOrderFormGroup?.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      this.isChanged.next(this.updateJobOrderFormGroup.valid);
+      this.isChangedAndValid.next(this.updateJobOrderFormGroup.valid);
     });
   }
 
@@ -176,7 +173,7 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
 
   onCostUpdatesChanged(value: boolean) {
     if (value) {
-      this.isChanged.next(true);
+      this.isChangedAndValid.next(this.updateJobOrderFormGroup?.valid);
     }
   }
 

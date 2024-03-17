@@ -11,9 +11,7 @@ async function updateSubItemUtilized(req: express.Request, res: express.Response
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
-        const result = await new UpdateSubItemUtilizedController().updateSubItemUtilized(req.body, req);
-
-        return result;
+        return new UpdateSubItemUtilizedController().updateSubItemUtilized(req.body, req);
     });
 }
 
@@ -31,8 +29,6 @@ export class UpdateSubItemUtilizedController extends Controller {
 
         const query = new UpdateSubItemUtilizedCommand();
 
-        const result = await query.ExecuteAsync(dto);
-
-        return result;
+        return query.ExecuteAsync(dto);
     }
 }

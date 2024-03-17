@@ -110,7 +110,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     @Column({
         name: 'cost',
         type: 'decimal',
-        precision: 10,
+        precision: 20,
         scale: 4,
         nullable: true,
     })
@@ -119,7 +119,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     @Column({
         name: 'estimated_cost',
         type: 'decimal',
-        precision: 10,
+        precision: 20,
         scale: 4,
         nullable: false,
         default: 0,
@@ -137,8 +137,8 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     @Column({
         name: 'utilized',
         type: 'decimal',
-        precision: 10,
+        precision: 20,
         scale: 4,
     })
-    utilized: number;
+    utilized: string;
 }

@@ -34,7 +34,7 @@
       [isOpen]="isShowDialog"
       [vesselId]="specificationDetails?.VesselId"
       [jobOrderFormValue]="jobOrderFormValue"
-      (isChanged)="jobOrdersChanged($event)"
+      (isChangedAndValid)="jobOrdersChanged($event)"
       #jobOrderForm
     ></jb-job-orders-form>
   </div>

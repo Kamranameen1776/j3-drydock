@@ -17,6 +17,7 @@ interface TotalRow {
     readonly cost: HtmlCell;
     readonly hideActions: boolean;
     readonly rowCssClass: string;
+    readonly utilized?: HtmlCell;
 }
 
 type WithDiscountFormatted<Value extends object> = MergeOverride<
@@ -148,6 +149,7 @@ export class SpecificationSubItemService {
                 ...subItem,
                 discount: new Decimal(subItem.discount || 0).times(100).toNumber(),
                 cost: new Decimal(subItem.cost || 0).toFixed(2),
+                utilized: new Decimal(subItem.utilized || 0).toFixed(2),
             };
 
             subItemsFormatted.push(subItemFormatted);

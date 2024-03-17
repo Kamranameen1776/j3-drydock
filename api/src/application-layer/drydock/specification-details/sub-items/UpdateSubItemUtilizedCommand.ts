@@ -1,6 +1,6 @@
 import { SynchronizerService } from 'j2utils';
 
-import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
+import { ApplicationException } from '../../../../bll/drydock/core/exceptions';
 import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
@@ -18,8 +18,8 @@ export class UpdateSubItemUtilizedCommand extends Command<UpdateSubItemUtilizedD
     protected readonly vesselsRepository = new VesselsRepository();
     protected readonly specificationDetailsRepository = new SpecificationDetailsRepository();
 
-    protected async ValidationHandlerAsync(request: UpdateSubItemUtilizedDto): Promise<void> {
-        await validateAgainstModel(UpdateSubItemUtilizedDto, request);
+    protected async ValidationHandlerAsync(body: UpdateSubItemUtilizedDto): Promise<void> {
+        await validateAgainstModel(UpdateSubItemUtilizedDto, body);
     }
 
     protected async MainHandlerAsync(request: UpdateSubItemUtilizedDto): Promise<void> {

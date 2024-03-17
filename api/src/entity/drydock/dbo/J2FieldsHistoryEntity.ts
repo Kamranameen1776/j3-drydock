@@ -52,9 +52,9 @@ export class J2FieldsHistoryEntity {
     })
     functionCode: string | null;
 
-    @Column('varchar', {
+    @Column('nvarchar', {
         nullable: true,
-        length: 8000,
+        length: 'MAX',
         name: 'value',
     })
     value: string | null;

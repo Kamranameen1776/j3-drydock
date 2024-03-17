@@ -1,5 +1,6 @@
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
+import { chunk } from 'lodash';
 import { getConnection, getManager, In, QueryRunner } from 'typeorm';
 
 import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
@@ -39,6 +40,7 @@ import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStat
 import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { TaskManagerConstants } from '../../../shared/constants';
 import { ODataResult } from '../../../shared/interfaces';
+import { getChunkSize } from '../../../shared/utils/get-chunk-size';
 import { DictionariesRepository } from '../dictionaries/DictionariesRepository';
 import { RepoUtils } from '../utils/RepoUtils';
 import {
@@ -327,7 +329,7 @@ export class SpecificationDetailsRepository {
                 'SUM(sdsi.utilized) OVER (PARTITION BY sd.uid) as utilizedCost',
                 '(SUM(sdsi.cost) OVER (PARTITION BY sd.uid)) - (SUM(sdsi.utilized) OVER (PARTITION BY sd.uid)) as variance',
             ])
-            .leftJoin(
+            .innerJoin(
                 className(SpecificationDetailsSubItemEntity),
                 'sdsi',
                 'sd.uid = sdsi.specification_details_uid and sdsi.active_status = 1',
@@ -404,10 +406,13 @@ export class SpecificationDetailsRepository {
             return { specification, standardJob };
         });
 
-        await queryRunner.manager.insert(
-            SpecificationDetailsEntity,
-            specifications.map((s) => s.specification),
-        );
+        // using this instead of promise all to avoid losing of the context from the queryRunner
+        for await (const chunkItems of chunk(specifications, getChunkSize(15))) {
+            await queryRunner.manager.insert(
+                SpecificationDetailsEntity,
+                chunkItems.map((s) => s.specification),
+            );
+        }
 
         return specifications;
     }
@@ -419,7 +424,12 @@ export class SpecificationDetailsRepository {
     }
 
     public async CreateSpecificationInspection(data: Array<CreateInspectionsDto>, queryRunner: QueryRunner) {
-        return queryRunner.manager.insert(SpecificationInspectionEntity, data);
+        // Insert doesn't have chunk option, but it's a lot faster than save (6x faster in public benchmarks)
+        return Promise.all(
+            chunk(data, getChunkSize(5)).map((chunkItem) => {
+                return queryRunner.manager.insert(SpecificationInspectionEntity, chunkItem);
+            }),
+        );
     }
 
     public async UpdateSpecificationInspection(
