@@ -17,7 +17,6 @@ export interface SpecificationCostUpdateQueryResult {
     subItemCost: number;
     subItemUtilized: number;
     estimatedCost: number;
-    utilizedCost: number;
 }
 
 export type SpecificationCostUpdateDto = SpecificationCostUpdate | SpecificationSubItemCostUpdate;

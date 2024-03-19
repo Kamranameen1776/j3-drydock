@@ -326,9 +326,7 @@ export class SpecificationDetailsRepository {
                 'tm.Code as code',
                 'tm.Status as statusId',
                 'wdetails.StatusDisplayName as status',
-                'SUM(sdsi.cost) OVER (PARTITION BY sd.uid) as estimatedCost',
-                'SUM(sdsi.utilized) OVER (PARTITION BY sd.uid) as utilizedCost',
-                '(SUM(sdsi.cost) OVER (PARTITION BY sd.uid)) - (SUM(sdsi.utilized) OVER (PARTITION BY sd.uid)) as variance',
+                'sdsi.estimatedCost as estimatedCost',
             ])
             .innerJoin(
                 className(SpecificationDetailsSubItemEntity),

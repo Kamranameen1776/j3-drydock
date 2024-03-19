@@ -1,4 +1,5 @@
 import { Decimal } from 'decimal.js';
+import _, { Dictionary } from 'lodash';
 
 import { MergeOverride } from '../../../common/drydock/ts-helpers/merge-override';
 import {
@@ -48,69 +49,75 @@ export class SpecificationSubItemService {
     public mapCostUpdateQueryResult(
         data: ODataResult<SpecificationCostUpdateQueryResult>,
     ): ODataResult<FoldableGridData<SpecificationCostUpdateDto>> {
-        const records = data.records;
-        const zero = new Decimal(0);
+        const grid: FoldableGridData<SpecificationCostUpdateDto>[] = [];
 
-        const specifications = records.reduce((acc, curr) => {
-            const specification = acc.find(({ data }) => data.specificationUid === curr.uid);
+        let totalEstimated: Decimal = new Decimal(0);
+        let totalCost: Decimal = new Decimal(0);
+        let totalUtilized: Decimal = new Decimal(0);
 
-            if (specification) {
-                const variance = new Decimal(curr.subItemCost || 0).sub(curr.subItemUtilized || 0);
-                const subItem: SpecificationSubItemCostUpdate = {
-                    subItemUid: curr.subItemUid,
-                    subItemSubject: curr.subItemSubject,
-                    specificationUid: curr.uid,
-                    estimatedCost: new Decimal(curr.subItemCost || 0).toFixed(2),
-                    utilizedCost: new Decimal(curr.subItemUtilized || 0).toFixed(2),
+        const groupedBySpecification: Dictionary<SpecificationCostUpdateQueryResult[]> = _.groupBy(
+            data.records,
+            (record) => record.uid,
+        );
+
+        for (const specificationKey in groupedBySpecification) {
+            const subItems = groupedBySpecification[specificationKey];
+
+            let specificationEstimatedCost: Decimal = new Decimal(0);
+            let specificationUtilizedCost: Decimal = new Decimal(0);
+            let specificationTotalCost: Decimal = new Decimal(0);
+
+            const rowSubItems: FoldableGridData<SpecificationCostUpdateDto>[] = [];
+
+            for (const subItem of subItems) {
+                const estimatedCost = new Decimal(subItem.estimatedCost ?? 0);
+                const subItemUtilized = new Decimal(subItem.subItemUtilized ?? 0);
+                const subItemCost = new Decimal(subItem.subItemCost ?? 0);
+
+                totalEstimated = totalEstimated.add(estimatedCost);
+                totalUtilized = totalUtilized.add(subItemUtilized);
+                totalCost = totalCost.add(subItemCost);
+
+                specificationEstimatedCost = specificationEstimatedCost.add(estimatedCost);
+                specificationUtilizedCost = specificationUtilizedCost.add(subItemUtilized);
+                specificationTotalCost = specificationTotalCost.add(subItemCost);
+
+                const variance: Decimal = subItemCost.sub(subItemUtilized);
+
+                const rowSubItem: SpecificationSubItemCostUpdate = {
+                    specificationUid: specificationKey,
+                    subItemUid: subItem.subItemUid,
+                    subItemSubject: subItem.subItemSubject,
+                    estimatedCost: new Decimal(subItemCost).toFixed(2),
+                    utilizedCost: new Decimal(subItemUtilized).toFixed(2),
                     variance: this.mapCostUpdateVariance(variance),
                     rowCssClass: 'child-row',
                 };
 
-                if (!specification.children) {
-                    specification.children = [];
-                }
-
-                specification.data.variance = this.mapCostUpdateVariance(
-                    variance.add(specification.data.variance.value),
-                );
-
-                specification.children.push({
-                    data: subItem,
-                });
-            } else {
-                const variance = new Decimal(curr.subItemCost || 0).sub(curr.subItemUtilized || 0);
-                const item: SpecificationCostUpdate = {
-                    specificationUid: curr.uid,
-                    subject: curr.subject,
-                    code: curr.code,
-                    status: curr.status,
-                    estimatedCost: new Decimal(curr.estimatedCost || 0).toFixed(2),
-                    utilizedCost: new Decimal(curr.utilizedCost || 0).toFixed(2),
-                    variance: this.mapCostUpdateVariance(variance),
-                    rowCssClass: 'no-actions',
-                };
-                const subItem: SpecificationSubItemCostUpdate = {
-                    specificationUid: curr.uid,
-                    subItemUid: curr.subItemUid,
-                    subItemSubject: curr.subItemSubject,
-                    estimatedCost: new Decimal(curr.subItemCost || 0).toFixed(2),
-                    utilizedCost: new Decimal(curr.subItemUtilized || 0).toFixed(2),
-                    variance: this.mapCostUpdateVariance(variance),
-                    rowCssClass: 'child-row',
-                };
-
-                acc.push({ data: item, children: [{ data: subItem }] });
+                rowSubItems.push({ data: rowSubItem });
             }
 
-            return acc;
-        }, [] as FoldableGridData<SpecificationCostUpdateDto>[]);
+            const specificationVariance: Decimal = specificationTotalCost.sub(specificationUtilizedCost);
+
+            const rowSpecification: SpecificationCostUpdate = {
+                specificationUid: specificationKey,
+                subject: subItems[0].subject,
+                code: subItems[0].code,
+                status: subItems[0].status,
+                estimatedCost: specificationEstimatedCost.toFixed(2),
+                utilizedCost: specificationUtilizedCost.toFixed(2),
+                variance: this.mapCostUpdateVariance(specificationVariance),
+                rowCssClass: 'no-actions',
+            };
+
+            grid.push({ data: rowSpecification, children: rowSubItems });
+        }
+
+        const totalVariance: Decimal = totalCost.sub(totalUtilized);
 
         const varianceStyle = `.variance { font-weight: bold; padding-left: unset; }`;
         const varianceClass = 'variance';
 
-        const totalEstimated = specifications.reduce((acc, curr) => acc.add(curr.data.estimatedCost), zero);
-        const totalUtilized = specifications.reduce((acc, curr) => acc.add(curr.data.utilizedCost || 0), zero);
-        const totalVariance = specifications.reduce((acc, curr) => acc.add(curr.data.variance.value), zero);
         const totalRow: any = {
             status: {
                 innerHTML: `<span class="totalCost">Total</span><style>.totalCost { font-weight: bold }</style>`,
@@ -133,11 +140,11 @@ export class SpecificationSubItemService {
             rowCssClass: 'total-row',
         };
 
-        specifications.push({ data: totalRow });
+        grid.push({ data: totalRow });
 
         return {
             ...data,
-            records: specifications,
+            records: grid,
         };
     }
 
