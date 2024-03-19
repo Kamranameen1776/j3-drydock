@@ -16,7 +16,8 @@ import {
   JbDetailsTopSectionService,
   eGridRefreshType,
   eJMSActionTypes,
-  eJMSSectionNames
+  eJMSSectionNames,
+  JiBeTheme
 } from 'jibe-components';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { concatMap, filter, map, takeUntil, finalize } from 'rxjs/operators';
@@ -63,6 +64,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   detailForm: FormGroup;
   isSpecificationEditable = false;
 
+  JibeTheme = JiBeTheme;
   growlMessage$ = this.growlMessageService.growlMessage$;
   moduleCode = eModule.Project;
   functionCode = eFunction.SpecificationDetails;
@@ -80,16 +82,11 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   subItemDetails = {
     quantity: 0
   } as CreateSpecificationSubItemData;
-
-  private isExecutionPhase = false;
-
   pmsWlType = ePmsWlType;
-
   menu = cloneDeep(specificationDetailsMenuData);
   readonly eSideMenuId = eSpecificationDetailsPageMenuIds;
-
   eSpecificationDetailsPageMenuIds = eSpecificationDetailsPageMenuIds;
-
+  private isExecutionPhase = false;
   private formValuesSub: Subscription;
 
   constructor(
@@ -184,6 +181,10 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     } else if (wfEvent?.event?.type === 'resync') {
       this.resyncRecord();
     }
+  }
+
+  onJobOrderUpdate() {
+    this.refreshSubItems();
   }
 
   dispatchGeneralInformationForm(form: FormGroup) {
@@ -318,9 +319,12 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     this.selectedItems[type] = items;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  closeDialog(isSaved: boolean) {
+  closeDialog() {
     this.showEditSubItem = false;
+    this.refreshSubItems();
+  }
+
+  private refreshSubItems() {
     this.gridService.refreshGrid(eGridRefreshType.Table, this.subItemsGridService.gridName);
   }
 

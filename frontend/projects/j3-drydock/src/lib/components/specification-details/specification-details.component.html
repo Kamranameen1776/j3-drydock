@@ -83,6 +83,7 @@
           #specificationUpdatesComponent
           *ngIf="specificationDetailsInfo"
           [specificationDetails]="specificationDetailsInfo"
+          (jobOrderUpdate)="onJobOrderUpdate()"
         ></jb-drydock-specification-updates>
       </div>
     </ng-container>
@@ -92,7 +93,7 @@
 <jb-progress-spinner
   class="progress-spinner"
   *ngIf="showLoader"
-  [theme]="'figma'"
+  [theme]="JibeTheme.Figma"
 ></jb-progress-spinner>
 
 <jb-edit-sub-item-popup
@@ -100,7 +101,7 @@
   [isOpen]="!!showEditSubItem"
   [subItemDetails]="subItemDetails"
   [specificationUid]="specificationDetailsInfo.uid"
-  (closeDialog)="closeDialog($event)"
+  (closeDialog)="closeDialog()"
 ></jb-edit-sub-item-popup>
 
 <jb-growl [content]="growlMessage$ | async"></jb-growl>
