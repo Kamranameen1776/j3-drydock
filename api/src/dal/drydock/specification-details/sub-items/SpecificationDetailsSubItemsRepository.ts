@@ -18,7 +18,7 @@ import { SpecificationSubItemFindingEntity } from '../../../../entity/drydock/Sp
 import { SpecificationSubItemPmsEntity } from '../../../../entity/drydock/SpecificationSubItemPmsJobEntity';
 import { UnitTypeEntity } from '../../../../entity/drydock/UnitTypeEntity';
 import { ODataResult } from '../../../../shared/interfaces';
-import { getChunkSize } from '../../../../shared/utils/get-chunk-size';
+import { SimpleOperationsRepository } from '../../simple-operations/SimpleOperationsRepository';
 import { CreateManyParams } from './dto/CreateManyParams';
 import { CreateSubItemParams } from './dto/CreateSubItemParams';
 import { DeleteManyParams } from './dto/DeleteManyParams';
@@ -214,7 +214,16 @@ export class SpecificationDetailsSubItemsRepository {
         const newSubItems = subItemsData.map((data) =>
             queryRunner.manager.create(SpecificationDetailsSubItemEntity, data),
         );
-        return queryRunner.manager.save(newSubItems, { chunk: getChunkSize(14) });
+
+        return new SimpleOperationsRepository().insertMany(
+            SpecificationDetailsSubItemEntity,
+            newSubItems,
+            queryRunner,
+            {
+                chunk: 14,
+                reload: false,
+            },
+        );
     }
 
     public async updateMultipleEntities(subItemsData: SpecificationDetailsSubItemEntity[], queryRunner: QueryRunner) {
