@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export class createStandardJobsAccessRights1698829536838 implements MigrationInterface {
+export class createStandardJobsAccessRights1698829536839 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const className = this.constructor.name;
         try {
@@ -248,6 +248,45 @@ WHEN NOT MATCHED BY TARGET THEN
                     SOURCE.[Modified_By], SOURCE.[Date_Of_Modification], SOURCE.[Active_Status]);
     End
             `);
+
+            await queryRunner.query(`
+                if exists(select *
+                    from INF_Lib_Roles
+                    where Role = 'Jibe Admin'
+                      and Active_Status = 1)
+              Begin
+                  Declare @jibeAdminRoleId int
+                  select @jibeAdminRoleId = Role_ID from INF_Lib_Roles where Role = 'Jibe Admin' and Active_Status = 1
+                  MERGE INTO INF_Lib_RoleGroupsRights AS TARGET
+                  USING (VALUES (N'F3BF157C-313E-4C94-B430-E75639FD23F5', @jibeAdminRoleId, NULL,
+                                 N'view_standard_job', 1, getdate(), NULL, NULL, 1),
+                                (N'0D863238-5948-4338-BD1D-566AC06F3769', @jibeAdminRoleId, NULL,
+                                 N'create_or_edit_standard_job', 1, getdate(), NULL, NULL, 1),
+                                (N'3018773E-61EF-4D9B-BA46-7DA2DF7F0B09', @jibeAdminRoleId, NULL,
+                                 N'delete_standard_job', 1, getdate(), NULL, NULL, 1))
+                      AS SOURCE ([RGR_UID], [RGR_Role_ID], [RGR_Right_Code], [RGR_Group_Code], [Created_By], [Date_Of_Creation],
+                                 [Modified_By],
+                                 [Date_Of_Modification], [Active_Status])
+                  ON TARGET.RGR_UID = SOURCE.RGR_UID
+                  WHEN MATCHED THEN
+                      UPDATE
+                      SET TARGET.[RGR_UID]             = SOURCE.[RGR_UID],
+                          TARGET.[RGR_Role_ID]= SOURCE.[RGR_Role_ID],
+                          TARGET.[RGR_Right_Code]      = SOURCE.[RGR_Right_Code],
+                          TARGET.[RGR_Group_Code]= SOURCE.[RGR_Group_Code],
+                          TARGET.[Created_By]          = SOURCE.[Created_By],
+                          TARGET.[Date_Of_Creation]    = SOURCE.[Date_Of_Creation],
+                          TARGET.[Modified_By]         = 1,
+                          TARGET.[Date_Of_Modification]= getdate(),
+                          TARGET.[Active_Status]       = SOURCE.[Active_Status]
+                  WHEN NOT MATCHED BY TARGET THEN
+                      INSERT ([RGR_UID], [RGR_Role_ID], [RGR_Right_Code], [RGR_Group_Code], [Created_By],
+                              [Date_Of_Creation], [Modified_By], [Date_Of_Modification], [Active_Status])
+                      VALUES (SOURCE.[RGR_UID], SOURCE.[RGR_Role_ID], SOURCE.[RGR_Right_Code],
+                              SOURCE.[RGR_Group_Code], SOURCE.[Created_By], SOURCE.[Date_Of_Creation],
+                              SOURCE.[Modified_By], SOURCE.[Date_Of_Modification], SOURCE.[Active_Status]);
+              End
+        `);
 
                 await queryRunner.query(`
              if exists(select *

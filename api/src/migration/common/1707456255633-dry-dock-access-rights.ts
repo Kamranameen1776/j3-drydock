@@ -2,7 +2,7 @@ import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
-export class dryDockAccessRights1707456255632 implements MigrationInterface {
+export class dryDockAccessRights1707456255633 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -260,6 +260,44 @@ export class dryDockAccessRights1707456255632 implements MigrationInterface {
                                 (N'6bb72c7a-8a97-49f2-9208-170225f13e53', @AdminRoleId, NULL, N'view_dry_dock_project_detail_onboard', 1, getdate(), NULL, NULL, 1),
                                 (N'ede74daa-6a29-440c-a1f6-e0bfca07046e', @AdminRoleId, NULL, N'edit_dry_dock_porject_detail', 1, getdate(), NULL, NULL, 1),
                                 (N'2c3624a7-413a-4409-bfa2-00a9822aa3c6', @AdminRoleId, NULL, N'edit_dry_dock_porject_detail_onboard', 1, getdate(), NULL, NULL, 1))
+                    AS SOURCE ([RGR_UID], [RGR_Role_ID], [RGR_Right_Code], [RGR_Group_Code], [Created_By], [Date_Of_Creation],
+                                [Modified_By],
+                                [Date_Of_Modification], [Active_Status])
+                ON TARGET.RGR_UID = SOURCE.RGR_UID
+                WHEN MATCHED THEN
+                    UPDATE
+                    SET
+                        TARGET.[RGR_Role_ID]= SOURCE.[RGR_Role_ID],
+                        TARGET.[RGR_Right_Code]      = SOURCE.[RGR_Right_Code],
+                        TARGET.[RGR_Group_Code]= SOURCE.[RGR_Group_Code],
+                        TARGET.[Created_By]          = SOURCE.[Created_By],
+                        TARGET.[Date_Of_Creation]    = SOURCE.[Date_Of_Creation],
+                        TARGET.[Modified_By]         = 1,
+                        TARGET.[Date_Of_Modification]= getdate(),
+                        TARGET.[Active_Status]       = SOURCE.[Active_Status]
+                WHEN NOT MATCHED BY TARGET THEN
+                    INSERT ([RGR_UID], [RGR_Role_ID], [RGR_Right_Code], [RGR_Group_Code], [Created_By],
+                            [Date_Of_Creation], [Modified_By], [Date_Of_Modification], [Active_Status])
+                    VALUES (SOURCE.[RGR_UID], SOURCE.[RGR_Role_ID], SOURCE.[RGR_Right_Code],
+                            SOURCE.[RGR_Group_Code], SOURCE.[Created_By], SOURCE.[Date_Of_Creation],
+                            SOURCE.[Modified_By], SOURCE.[Date_Of_Modification], SOURCE.[Active_Status]);
+            End;
+            `);
+
+            await queryRunner.query(`
+            IF EXISTS(select * from INF_Lib_Roles where Role = 'Jibe Admin' and Active_Status = 1)
+            Begin
+                Declare @jibeAdminRoleId int
+                select @jibeAdminRoleId = Role_ID from INF_Lib_Roles where Role = 'Jibe Admin' and Active_Status = 1
+                MERGE INTO INF_Lib_RoleGroupsRights AS TARGET
+                USING (VALUES (N'd03b2122-1506-4f11-8f00-2bbd69906e33', @jibeAdminRoleId, NULL, N'view_project_main', 1, getdate(), NULL, NULL, 1),
+                                (N'161a6220-81af-40a8-8bf6-e83e4053562a', @jibeAdminRoleId, NULL, N'view_project_main_onboard', 1, getdate(), NULL, NULL, 1),
+                                (N'd7c22609-56fa-4db2-80f8-e29b6f3e21c4', @jibeAdminRoleId, NULL, N'create_projects', 1, getdate(), NULL, NULL, 1),
+                                (N'76c558c1-c437-485c-81a0-dbc7c60b6d1b', @jibeAdminRoleId, NULL, N'delete_projects', 1, getdate(), NULL, NULL, 1),
+                                (N'4bd02a0f-8e7a-4015-82d8-01d2bf62b41b', @jibeAdminRoleId, NULL, N'view_dry_dock_project_detail', 1, getdate(), NULL, NULL, 1),
+                                (N'6bb72c7a-8a97-49f2-9208-170225f13e53', @jibeAdminRoleId, NULL, N'view_dry_dock_project_detail_onboard', 1, getdate(), NULL, NULL, 1),
+                                (N'ede74daa-6a29-440c-a1f6-e0bfca07046e', @jibeAdminRoleId, NULL, N'edit_dry_dock_porject_detail', 1, getdate(), NULL, NULL, 1),
+                                (N'2c3624a7-413a-4409-bfa2-00a9822aa3c6', @jibeAdminRoleId, NULL, N'edit_dry_dock_porject_detail_onboard', 1, getdate(), NULL, NULL, 1))
                     AS SOURCE ([RGR_UID], [RGR_Role_ID], [RGR_Right_Code], [RGR_Group_Code], [Created_By], [Date_Of_Creation],
                                 [Modified_By],
                                 [Date_Of_Modification], [Active_Status])
