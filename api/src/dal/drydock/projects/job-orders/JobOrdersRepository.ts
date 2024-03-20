@@ -61,7 +61,7 @@ export class JobOrdersRepository {
                 'ISNULL(sd.EndDate, p.EndDate) as SpecificationEndDate',
                 "usr.FirstName + ' ' + usr.LastName AS Responsible",
                 'jo.uid AS JobOrderUid',
-                'CAST(CASE WHEN p.StartDate > ISNULL(sd.StartDate, p.StartDate) OR p.EndDate < ISNULL(sd.EndDate, p.EndDate) THEN 1 ELSE 0 END AS BIT) AS overdue',
+                'CAST(CASE WHEN ISNULL(sd.EndDate, p.EndDate) > p.EndDate THEN 1 ELSE 0 END AS BIT) AS overdue',
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid')
