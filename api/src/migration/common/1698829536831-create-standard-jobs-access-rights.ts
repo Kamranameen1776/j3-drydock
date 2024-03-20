@@ -3,68 +3,12 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export class createStandardJobsAccessRights1698829536839 implements MigrationInterface {
+export class createStandardJobsAccessRights1698829536831 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const className = this.constructor.name;
         try {
             const application = await MigrationUtilsService.getApplicationLocation();
             if (application === eApplicationLocation.Office) {
-                await queryRunner.query(`
-            MERGE INTO INF_Lib_Module AS TARGET
-USING (VALUES (196, '677D0F79-281F-4A23-A226-C61D84222A26', 'project', 'Project', 1, getdate(), NULL, NULL, 1,
-               'accounting'))
-    AS SOURCE ([ModuleId], [Module_UID], [Module_Code], [Module_Name], [Created_By], [Date_Of_Creation], [Modified_By],
-               [Date_Of_Modification], [Active_Status], [parent_module_code])
-ON TARGET.[Module_Code] = SOURCE.[Module_Code]
-WHEN MATCHED THEN
-    UPDATE
-    SET TARGET.ModuleId             = SOURCE.ModuleId,
-        TARGET.Module_UID           = SOURCE.Module_UID,
-        TARGET.Module_Name          = SOURCE.Module_Name,
-        TARGET.Created_By           = SOURCE.Created_By,
-        TARGET.Date_Of_Creation     = SOURCE.Date_Of_Creation,
-        TARGET.Modified_By          = 1,
-        TARGET.Date_Of_Modification = getdate(),
-        TARGET.Active_Status        = SOURCE.Active_Status,
-        TARGET.parent_module_code   = SOURCE.parent_module_code
-WHEN NOT MATCHED BY TARGET THEN
-    INSERT ([ModuleId], [Module_UID], [Module_Code], [Module_Name], [Created_By], [Date_Of_Creation], [Modified_By],
-            [Date_Of_Modification], [Active_Status], [parent_module_code])
-    VALUES (SOURCE.[ModuleId], SOURCE.[Module_UID], SOURCE.[Module_Code],
-            SOURCE.[Module_Name], SOURCE.[Created_By], SOURCE.[Date_Of_Creation],
-            SOURCE.[Modified_By], SOURCE.[Date_Of_Modification], SOURCE.[Active_Status], SOURCE.[parent_module_code]);
-			`);
-
-                await queryRunner.query(`
-                MERGE INTO inf_lib_function AS TARGET
-USING (VALUES (3160, '9C79EF57-A1C6-40B4-A343-968976325150', 'project', 'standard_job', 'Standard Job', 1, getdate(), 1,
-               NULL, 1, NULL, 'crew', 'standard_job_attachment'))
-    AS SOURCE ([FunctionId], [Function_UID], [Module_Code], [Function_Code], [Function_Name], [Created_By],
-               [Date_Of_Creation], [Modified_By], [Date_Of_Modification], [Active_Status], [parent_function_code],
-               [parent_module_code], [attach_prefix])
-ON TARGET.[Function_Code] = SOURCE.[Function_Code]
-WHEN MATCHED THEN
-    UPDATE
-    SET TARGET.[FunctionId]           = SOURCE.[FunctionId],
-        TARGET.[Function_UID]         = SOURCE.[Function_UID],
-        TARGET.[Module_Code]          = SOURCE.[Module_Code],
-        TARGET.[Function_Name]        = SOURCE.[Function_Name],
-        [Modified_By]                 = 1,
-        [Date_Of_Modification]        = getdate(),
-        TARGET.[Active_Status]        = SOURCE.[Active_Status],
-        TARGET.[parent_function_code] = SOURCE.[parent_function_code],
-        TARGET.[parent_module_code]   = SOURCE.[parent_module_code],
-        TARGET.[attach_prefix]        = SOURCE.[attach_prefix]
-WHEN NOT MATCHED BY TARGET THEN
-    INSERT ([FunctionId], [Function_UID], [Module_Code], [Function_Code], [Function_Name],
-            [Created_By], [Date_Of_Creation], [Modified_By], [Date_Of_Modification], [Active_Status],
-            [parent_function_code], [parent_module_code], [attach_prefix])
-    VALUES (SOURCE.[FunctionId], SOURCE.[Function_UID], SOURCE.[Module_Code],
-            SOURCE.[Function_Code], SOURCE.[Function_Name], SOURCE.[Created_By], SOURCE.[Date_Of_Creation],
-            SOURCE.[Modified_By], SOURCE.[Date_Of_Modification], SOURCE.[Active_Status],
-            SOURCE.[parent_function_code], SOURCE.[parent_module_code], SOURCE.[attach_prefix]);
-			`);
-
                 await queryRunner.query(`
                 MERGE INTO INF_LIB_Right AS TARGET
                 USING (VALUES ('BA21E7BB-F456-4419-AF36-6977F3CC694F', 'standard_job_view_grid',
