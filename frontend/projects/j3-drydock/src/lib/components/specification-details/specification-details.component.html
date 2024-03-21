@@ -82,6 +82,7 @@
         <jb-drydock-specification-updates
           #specificationUpdatesComponent
           *ngIf="specificationDetailsInfo"
+          [isEditable]="isUpdatesEditable"
           [specificationDetails]="specificationDetailsInfo"
           (jobOrderUpdate)="onJobOrderUpdate()"
         ></jb-drydock-specification-updates>

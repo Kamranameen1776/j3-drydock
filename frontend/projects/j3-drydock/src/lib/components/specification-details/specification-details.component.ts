@@ -86,6 +86,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   menu = cloneDeep(specificationDetailsMenuData);
   readonly eSideMenuId = eSpecificationDetailsPageMenuIds;
   eSpecificationDetailsPageMenuIds = eSpecificationDetailsPageMenuIds;
+  isUpdatesEditable = false;
   private isExecutionPhase = false;
   private formValuesSub: Subscription;
 
@@ -342,7 +343,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
           };
 
           this.isExecutionPhase = this.specificationDetailService.isInExecutionPhase(data.ProjectStatusId);
-          this.isSpecificationEditable = !this.specificationDetailService.isStatusComplete(data.StatusId);
+          this.isSpecificationEditable = this.specificationDetailService.isStatusBeforeComplete(data.StatusId);
+          this.isUpdatesEditable = !this.specificationDetailService.isStatusClosed(data.StatusId);
 
           this.attachmentConfig = {
             Module_Code: this.moduleCode,
@@ -364,7 +366,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         this.topSectionConfig = this.specificationDetailService.getTopSecConfig(this.tmDetails);
         this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig(
           this.tmDetails,
-          this.isSpecificationEditable
+          this.isSpecificationEditable,
+          this.isUpdatesEditable
         );
 
         this.setMenu();

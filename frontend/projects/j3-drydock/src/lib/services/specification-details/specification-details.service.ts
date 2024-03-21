@@ -230,7 +230,11 @@ export class SpecificationDetailsService {
     };
   }
 
-  getSpecificationStepSectionsConfig(details: SpecificationDetailsFull, isEditable: boolean): ITMDetailTabFields {
+  getSpecificationStepSectionsConfig(
+    details: SpecificationDetailsFull,
+    isEditable: boolean,
+    isUpdatesEditable: boolean
+  ): ITMDetailTabFields {
     return {
       [eSpecificationDetailsPageMenuIds.SpecificationDetails]: {
         id: eSpecificationDetailsPageMenuIds.SpecificationDetails,
@@ -295,7 +299,7 @@ export class SpecificationDetailsService {
                   active_status: true,
                   SectionCode: eSpecificationDetailsPageMenuIds.SpecificationUpdates,
                   SectionLabel: eSpecificationDetailsPageMenuLabels.SpecificationUpdates,
-                  isAddNewButton: true,
+                  isAddNewButton: isUpdatesEditable,
                   buttonLabel: 'Add Update'
                 }
               ]
@@ -305,7 +309,7 @@ export class SpecificationDetailsService {
     };
   }
 
-  public getProjectsManagersRequest(): WebApiRequest {
+  getProjectsManagersRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
@@ -315,7 +319,7 @@ export class SpecificationDetailsService {
     return apiRequest;
   }
 
-  public getCostUpdates(specificationUid: string) {
+  getCostUpdates(specificationUid: string) {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
@@ -360,7 +364,7 @@ export class SpecificationDetailsService {
     return this.apiRequestService.sendApiReq(request);
   }
 
-  public getPriorityRequest() {
+  getPriorityRequest() {
     const apiRequest: WebApiRequest = {
       apiBase: eApiBase.MasterAPI,
       entity: eEntities.Library,
@@ -375,7 +379,7 @@ export class SpecificationDetailsService {
     return apiRequest;
   }
 
-  public getItemSourceRequest() {
+  getItemSourceRequest() {
     const apiRequest: WebApiRequest = {
       apiBase: eApiBase.MasterAPI,
       entity: eEntities.Library,
@@ -390,7 +394,7 @@ export class SpecificationDetailsService {
     return apiRequest;
   }
 
-  public getLibraryDataRequest(libraryCode: string) {
+  getLibraryDataRequest(libraryCode: string) {
     const apiRequest: WebApiRequest = {
       apiBase: eApiBase.MasterAPI,
       entity: eEntities.Library,
@@ -405,7 +409,7 @@ export class SpecificationDetailsService {
     return apiRequest;
   }
 
-  public getStandardJobsFiltersRequest(fieldName: eSpecificationDetailsGeneralInformationFields) {
+  getStandardJobsFiltersRequest(fieldName: eSpecificationDetailsGeneralInformationFields) {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
@@ -465,6 +469,10 @@ export class SpecificationDetailsService {
     );
   }
 
+  isProjectInExecutionStatus(projectStatus: string) {
+    return this.areStatusesSame(projectStatus, eProjectWorkflowStatusAction.Complete);
+  }
+
   isStatusBeforeComplete(status: string) {
     return (
       this.areStatusesSame(status, eSpecificationWorkflowStatusAction.Raise) ||
@@ -488,7 +496,7 @@ export class SpecificationDetailsService {
     return !!this.userRights.getUserRights(module, func, action);
   }
 
-  public validatePmsJobDeletion(pmsJobUid: string, specificationUid: string): Observable<boolean> {
+  validatePmsJobDeletion(pmsJobUid: string, specificationUid: string): Observable<boolean> {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
@@ -503,7 +511,7 @@ export class SpecificationDetailsService {
     return this.apiRequestService.sendApiReq(request);
   }
 
-  public validateFindingDeletion(findingUid: string, specificationUid: string): Observable<boolean> {
+  validateFindingDeletion(findingUid: string, specificationUid: string): Observable<boolean> {
     const request: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,

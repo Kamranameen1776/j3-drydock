@@ -3,13 +3,11 @@
 :host {
   ::ng-deep {
     @include progress-spinner-fix;
-  }
-}
 
-:host ::ng-deep {
-  .host-grid-container,
-  jb-grid {
-    max-height: 422px;
-    display: block;
+    .host-grid-container,
+    jb-grid {
+      max-height: 422px;
+      display: block;
+    }
   }
 }
