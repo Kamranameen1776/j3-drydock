@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnChanges, Input, OnInit, Output, TemplateRef, ViewChild, SimpleChanges } from '@angular/core';
 import { GridService, IGridAction, IJbDialog, eGridRefreshType, JmsService, eJMSWorkflowAction } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
@@ -21,8 +21,11 @@ import { JobOrdersFormComponent } from '../../../shared/components/job-orders-fo
   styleUrls: ['./specification-updates.component.scss'],
   providers: [SpecificationUpdatesService]
 })
-export class SpecificationUpdatesComponent extends UnsubscribeComponent implements OnInit {
+export class SpecificationUpdatesComponent extends UnsubscribeComponent implements OnInit, OnChanges {
   @Input() specificationDetails: SpecificationDetails;
+  @Input() isEditable = true;
+
+  @Output() jobOrderUpdate = new EventEmitter();
 
   @ViewChild('reportDateTemplate', { static: true }) reportDateTemplate: TemplateRef<unknown>;
   @ViewChild('jobOrderForm') jobOrderForm: JobOrdersFormComponent;
@@ -40,14 +43,8 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
   isJobOrdersChanged = false;
 
   isSaving = false;
-
-  get isDialogOkButtonDisabled() {
-    return this.isSaving || !this.isJobOrdersChanged;
-  }
-
-  private row: JobOrder;
-
   readonly dateTimeFormat = this.specificationUpdatesService.dateTimeFormat;
+  private row: JobOrder;
 
   constructor(
     private gridService: GridService,
@@ -57,6 +54,10 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
     private jmsService: JmsService
   ) {
     super();
+  }
+
+  get isDialogOkButtonDisabled() {
+    return this.isSaving || !this.isJobOrdersChanged;
   }
 
   public showJobOrderForm(row?: JobOrder) {
@@ -76,6 +77,12 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
     }
 
     this.showDialog(true);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.isEditable) {
+      this.setGridData();
+    }
   }
 
   ngOnInit(): void {
@@ -100,6 +107,7 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
     if (hasSaved) {
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);
+      this.jobOrderUpdate.emit();
     }
   }
 
@@ -168,6 +176,9 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
   private setGridData() {
     this.gridInputs = this.specificationUpdatesService.getGridInputs(this.specificationDetails.uid);
+    if (!this.isEditable) {
+      this.gridInputs.actions = [];
+    }
   }
 
   private setCellTemplate(template: TemplateRef<unknown>, fieldName: string) {

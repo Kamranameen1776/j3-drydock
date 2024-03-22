@@ -61,6 +61,7 @@ export class FieldsHistoryRepository {
             .createQueryBuilder()
             .insert()
             .into(J2FieldsHistoryEntity)
+            .updateEntity(false)
             .values(
                 fieldsHistories.map((history) => ({
                     key1: history.key1,

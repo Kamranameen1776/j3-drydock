@@ -1,6 +1,5 @@
 import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
-import { chunk } from 'lodash';
 import { getConnection, getManager, In, QueryRunner } from 'typeorm';
 
 import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
@@ -40,8 +39,8 @@ import { J3PrcTaskStatusEntity } from '../../../entity/drydock/prc/J3PrcTaskStat
 import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { TaskManagerConstants } from '../../../shared/constants';
 import { ODataResult } from '../../../shared/interfaces';
-import { getChunkSize } from '../../../shared/utils/get-chunk-size';
 import { DictionariesRepository } from '../dictionaries/DictionariesRepository';
+import { SimpleOperationsRepository } from '../simple-operations/SimpleOperationsRepository';
 import { RepoUtils } from '../utils/RepoUtils';
 import {
     CreateInspectionsDto,
@@ -57,6 +56,8 @@ import {
 } from './dtos/ISpecificationCostUpdateDto';
 
 export class SpecificationDetailsRepository {
+    private simpleOperations = new SimpleOperationsRepository();
+
     public async getSpecificationStatuses(isOffice: number | undefined, queryRunner: QueryRunner) {
         const repository = queryRunner.manager.getRepository(JmsDtlWorkflowConfigDetailsEntity);
 
@@ -325,9 +326,7 @@ export class SpecificationDetailsRepository {
                 'tm.Code as code',
                 'tm.Status as statusId',
                 'wdetails.StatusDisplayName as status',
-                'SUM(sdsi.cost) OVER (PARTITION BY sd.uid) as estimatedCost',
-                'SUM(sdsi.utilized) OVER (PARTITION BY sd.uid) as utilizedCost',
-                '(SUM(sdsi.cost) OVER (PARTITION BY sd.uid)) - (SUM(sdsi.utilized) OVER (PARTITION BY sd.uid)) as variance',
+                'sdsi.estimatedCost as estimatedCost',
             ])
             .innerJoin(
                 className(SpecificationDetailsSubItemEntity),
@@ -359,22 +358,20 @@ export class SpecificationDetailsRepository {
         return data.uid as string;
     }
 
-    public async createSpecificationFromStandardJob(
-        data: CreateSpecificationFromStandardJobDto,
-        createdBy: string,
-        queryRunner: QueryRunner,
-    ) {
+    public async getSpecificationFromStandardJob(data: CreateSpecificationFromStandardJobDto, createdBy: string) {
         const standardJobRepository = getManager().getRepository(StandardJobs);
         const dictionariesRepository = new DictionariesRepository();
 
-        const standardJobs = await standardJobRepository.find({
-            where: {
-                uid: In(data.StandardJobUid),
-            },
-            select: ['uid', 'functionUid', 'description', 'subject', 'function'],
-            relations: ['subItems', 'inspection', 'doneBy', 'materialSuppliedBy'],
-        });
-        const standardJobsItemSource = await dictionariesRepository.getItemSourceByName(ItemName.StandardJob);
+        const [standardJobs, standardJobsItemSource] = await Promise.all([
+            standardJobRepository.find({
+                where: {
+                    uid: In(data.StandardJobUid),
+                },
+                select: ['uid', 'functionUid', 'description', 'subject', 'function'],
+                relations: ['subItems', 'inspection', 'doneBy', 'materialSuppliedBy'],
+            }),
+            dictionariesRepository.getItemSourceByName(ItemName.StandardJob),
+        ]);
 
         const specifications = standardJobs.map((standardJob) => {
             const specification = new SpecificationDetailsEntity();
@@ -406,15 +403,17 @@ export class SpecificationDetailsRepository {
             return { specification, standardJob };
         });
 
-        // using this instead of promise all to avoid losing of the context from the queryRunner
-        for await (const chunkItems of chunk(specifications, getChunkSize(15))) {
-            await queryRunner.manager.insert(
-                SpecificationDetailsEntity,
-                chunkItems.map((s) => s.specification),
-            );
-        }
-
         return specifications;
+    }
+
+    public async createSpecificationsFromStandardJob(
+        specifications: SpecificationDetailsEntity[],
+        queryRunner: QueryRunner,
+    ) {
+        return this.simpleOperations.insertMany(SpecificationDetailsEntity, specifications, queryRunner, {
+            chunk: 15,
+            reload: false,
+        });
     }
 
     public async updateSpecificationTmUid(specificationUid: string, taskManagerUid: string, queryRunner: QueryRunner) {
@@ -424,12 +423,10 @@ export class SpecificationDetailsRepository {
     }
 
     public async CreateSpecificationInspection(data: Array<CreateInspectionsDto>, queryRunner: QueryRunner) {
-        // Insert doesn't have chunk option, but it's a lot faster than save (6x faster in public benchmarks)
-        return Promise.all(
-            chunk(data, getChunkSize(5)).map((chunkItem) => {
-                return queryRunner.manager.insert(SpecificationInspectionEntity, chunkItem);
-            }),
-        );
+        return this.simpleOperations.insertMany(SpecificationInspectionEntity, data, queryRunner, {
+            chunk: 5,
+            reload: false,
+        });
     }
 
     public async UpdateSpecificationInspection(

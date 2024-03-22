@@ -2,7 +2,7 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class specificationDetailsAccessRights1709113637664 implements MigrationInterface {
+export class specificationDetailsAccessRights1709113637665 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -407,18 +407,18 @@ export class specificationDetailsAccessRights1709113637664 implements MigrationI
             End
 
            ----------************************************************************SCRIPT FOR JiBe Admin*******************************------------
-            Declare @jibe_crew_role int
+            Declare @jibe_admin_role int
             select top 1  @office_user_uid=uid from LIB_USER_TYPE where USER_TYPE='OFFICE USER' and active_status=1
-            select top 1 @jibe_crew_role=Role_ID from inf_lib_roles where role='JiBe Crew Implementation' and user_type_uid=@office_user_uid and active_status=1
+            select top 1 @jibe_admin_role=Role_ID from inf_lib_roles where role='Jibe Admin' and user_type_uid=@office_user_uid and active_status=1
 
-            IF @jibe_crew_role is not null
+            IF @jibe_admin_role is not null
             Begin
 
                 MERGE INTO inf_lib_rolegroupsrights AS TARGET USING (
                 VALUES
-                    ('73D22832-34E5-4C71-9B14-17E4D1F6ACEA', @jibe_crew_role, NULL, @view_spec_detail_groupcode,1,getdate(),NULL,NULL,1),
-                    ('48B70AF3-C75C-41AB-9BB5-65656F023A05', @jibe_crew_role, NULL, @edit_spec_detail_groupcode,1,getdate(),NULL,NULL,1),
-                    ('096FF4DC-DFF9-439C-B909-3D28AC1E4921', @jibe_crew_role, NULL, @delete_spec_groupcode,1,getdate(),NULL,NULL,1)
+                    ('73D22832-34E5-4C71-9B14-17E4D1F6ACEA', @jibe_admin_role, NULL, @view_spec_detail_groupcode,1,getdate(),NULL,NULL,1),
+                    ('48B70AF3-C75C-41AB-9BB5-65656F023A05', @jibe_admin_role, NULL, @edit_spec_detail_groupcode,1,getdate(),NULL,NULL,1),
+                    ('096FF4DC-DFF9-439C-B909-3D28AC1E4921', @jibe_admin_role, NULL, @delete_spec_groupcode,1,getdate(),NULL,NULL,1)
                 )
                 AS SOURCE (RGR_UID,RGR_Role_ID,RGR_Right_Code,RGR_Group_Code,Created_By,Date_Of_Creation,Modified_By,Date_Of_Modification,Active_Status)
                 ON TARGET.[RGR_UID] = SOURCE.[RGR_UID]

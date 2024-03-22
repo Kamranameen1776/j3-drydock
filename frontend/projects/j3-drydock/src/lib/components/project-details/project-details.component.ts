@@ -177,7 +177,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     }
     // if (this.projectsService.hasAccess(eProjectsAccessActions.addFromProjectTemplate)) {
     res.push({
-      label: 'Template',
+      label: 'Use Template',
       command: () => {
         this.openCreateFromProjectTemplatePopup();
       }
