@@ -1,10 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsNumber, IsUUID, Max, ValidateNested } from 'class-validator';
+import { IsNumber, IsOptional, IsUUID, Max, ValidateNested } from 'class-validator';
 
 export class SubItemUtilized {
     @IsUUID('4')
     uid: string;
 
+    @IsOptional()
     @IsNumber({
         maxDecimalPlaces: 4,
     })
