@@ -404,11 +404,20 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
           this.isSaving = false;
         })
       )
-      .subscribe(() => {
-        this.showUpdateDialog(false);
+      .subscribe(
+        () => {
+          this.showUpdateDialog(false);
 
-        this.initComponent();
-      });
+          this.initComponent();
+        },
+        (err) => {
+          if (err?.status === 422 && err?.error?.message) {
+            this.growlMessageService.setErrorMessage(err.error.message);
+          } else {
+            this.growlMessageService.setErrorMessage('Server error occurred');
+          }
+        }
+      );
   }
 
   public handleSelectOverdueOption(option) {

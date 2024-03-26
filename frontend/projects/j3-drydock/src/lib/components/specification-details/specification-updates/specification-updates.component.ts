@@ -161,9 +161,18 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
           this.isSaving = false;
         })
       )
-      .subscribe(() => {
-        this.closeDialog(true);
-      });
+      .subscribe(
+        () => {
+          this.closeDialog(true);
+        },
+        (err) => {
+          if (err?.status === 422 && err?.error?.message) {
+            this.growlMessageService.setErrorMessage(err.error.message);
+          } else {
+            this.growlMessageService.setErrorMessage('Server error occurred');
+          }
+        }
+      );
   }
 
   jobOrdersChanged(value: boolean) {
