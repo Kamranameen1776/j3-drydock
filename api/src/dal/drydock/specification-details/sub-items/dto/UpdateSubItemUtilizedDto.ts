@@ -6,6 +6,7 @@ export class SubItemUtilized {
     uid: string;
 
     @IsOptional()
+    @Type(() => Number)
     @IsNumber({
         maxDecimalPlaces: 4,
     })

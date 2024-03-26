@@ -64,6 +64,8 @@ export class SubItemEditableProps {
     readonly discount?: string;
 
     @IsOptional()
+    @Type(() => Number)
+    @IsNormalNumber()
     @Max(100000000000, {
         message: (args) => `${args.property} value is too big`,
     })
