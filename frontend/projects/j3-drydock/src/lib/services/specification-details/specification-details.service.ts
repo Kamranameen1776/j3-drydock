@@ -85,7 +85,7 @@ export class SpecificationDetailsService {
   }
 
   setupAccessRights(tmDetails: SpecificationDetailsFull) {
-    const isEditableStatus = this.isStatusBeforeComplete(tmDetails.task_status);
+    const isEditableStatus = this.isStatusBeforeComplete(tmDetails.task_status as eSpecificationWorkflowStatusAction);
     const canView = this.hasAccess(eSpecificationAccessActions.viewSpecificationDetail);
     const canEdit = this.hasAccess(eSpecificationAccessActions.editGeneralInformation);
     const canDelete = this.hasAccess(eSpecificationAccessActions.deleteSpecificationDetail);
@@ -473,7 +473,7 @@ export class SpecificationDetailsService {
     return this.areStatusesSame(projectStatus, eProjectWorkflowStatusAction.Complete);
   }
 
-  isStatusBeforeComplete(status: string) {
+  isStatusBeforeComplete(status: eSpecificationWorkflowStatusAction) {
     return (
       this.areStatusesSame(status, eSpecificationWorkflowStatusAction.Raise) ||
       this.areStatusesSame(status, eSpecificationWorkflowStatusAction['In Progress'])
