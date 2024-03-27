@@ -6,7 +6,12 @@ import {
   SpecificationDetailsService
 } from '../../services/specification-details/specification-details.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ePmsWlType, eSpecificationDetailsPageMenuIds, specificationDetailsMenuData } from '../../models/enums/specification-details.enum';
+import {
+  ePmsWlType,
+  eSpecificationDetailsPageMenuIds,
+  eSpecificationWorkflowStatusAction,
+  specificationDetailsMenuData
+} from '../../models/enums/specification-details.enum';
 import {
   GridService,
   IJbAttachment,
@@ -90,6 +95,8 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   private isExecutionPhase = false;
   private formValuesSub: Subscription;
 
+  private savePayload: any;
+
   constructor(
     private title: Title,
     private specificationDetailService: SpecificationDetailsService,
@@ -142,6 +149,11 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         takeUntil(this.unsubscribe$)
       )
       .subscribe((res) => {
+        // Save payload for saving the data after changing task manager status
+        if (this.specificationDetailsInfo.StatusId === eSpecificationWorkflowStatusAction.Complete) {
+          this.savePayload = res;
+          return;
+        }
         res.type === eJMSActionTypes.Save || res.type === eJMSActionTypes.Error ? this.save(res) : null;
       });
 
@@ -151,6 +163,10 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         takeUntil(this.unsubscribe$)
       )
       .subscribe(() => {
+        // If we are refreshing task manager while having savePayload it means we did update task manager details and need to update specification details
+        if (this.savePayload) {
+          this.save(this.savePayload);
+        }
         this.getDetails(true);
       });
 
@@ -304,6 +320,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         () => {
           this.growlMessageService.setSuccessMessage('Specification has been updated successfully');
           this.getDetails(true);
+          this.savePayload = null;
         },
         (err) => {
           this.showLoader = false;

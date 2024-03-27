@@ -1,5 +1,6 @@
 import { InspectionsDto } from '../dto/specification-details/IInspectionsResultDto';
 import { ITMDetails } from 'j3-task-manager-ng';
+import { eSpecificationWorkflowStatusAction } from '../enums/specification-details.enum';
 
 export interface SpecificationDetails {
   AccountCode: string;
@@ -21,7 +22,7 @@ export interface SpecificationDetails {
   ProjectManager: string;
   ProjectManagerUid: string;
   SpecificationCode: string;
-  StatusId: string;
+  StatusId: eSpecificationWorkflowStatusAction;
   StatusName: string;
   StartDate?: Date | string;
   Subject: string;

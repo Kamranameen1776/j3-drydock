@@ -88,7 +88,7 @@ export class SpecificationSubItemService {
                     specificationUid: specificationKey,
                     subItemUid: subItem.subItemUid,
                     subItemSubject: subItem.subItemSubject,
-                    estimatedCost: new Decimal(subItemCost).toFixed(2),
+                    estimatedCost: new Decimal(estimatedCost).toFixed(2),
                     utilizedCost: new Decimal(subItemUtilized).toFixed(2),
                     variance: this.mapCostUpdateVariance(variance),
                     rowCssClass: 'child-row',
