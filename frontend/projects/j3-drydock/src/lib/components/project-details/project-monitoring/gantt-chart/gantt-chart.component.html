@@ -1,11 +1,12 @@
 <div class="gantt-filters-container">
-  <div class="gantt-filter">
-    <label>Show Overdue</label>
-    <jb-single-select-dropdown
-      [content]="overdueDropdownContent"
-      placeholder="Show Overdue"
-      (selectedSubOperation)="handleSelectOverdueOption($event)"
-    ></jb-single-select-dropdown>
+  <div *ngFor="let filter of overDueFilters">
+    <jb-grid-filter
+      [allFilters]="overDueFilters"
+      [filter]="filter"
+      [appendTo]="'body'"
+      [header]="true"
+      (filterAction)="handleSelectOverdueOption($event)"
+    ></jb-grid-filter>
   </div>
 </div>
 

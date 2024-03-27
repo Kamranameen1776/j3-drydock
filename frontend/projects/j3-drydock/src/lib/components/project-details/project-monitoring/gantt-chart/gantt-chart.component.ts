@@ -21,7 +21,7 @@ import {
   statusProgressBarBackgroundShaded
 } from '../../../../shared/status-css.json';
 
-import { IJbDialog, ISingleSelectDropdown, JmsService, UserService, eJMSWorkflowAction } from 'jibe-components';
+import { Filter, IJbDialog, JmsService, UserService, eFieldControlType, eJMSWorkflowAction } from 'jibe-components';
 import { UTCAsLocal, currentLocalAsUTC } from '../../../../utils/date';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
@@ -31,6 +31,7 @@ import { IUpdateJobOrderDurationDto } from '../../../../services/project-monitor
 import { ProjectDetailsFull } from '../../../../models/interfaces/project-details';
 import { IJobOrderFormDto } from '../../../../shared/components/job-orders-form/dtos/IJobOrderFormDto';
 import { IJobOrderFormResultDto } from '../../../../shared/components/job-orders-form/dtos/IJobOrderFormResultDto';
+import { of } from 'rxjs';
 
 type TransformedJobOrder = Omit<JobOrderDto, 'SpecificationStatus'> & {
   SpecificationStatus: { StatusClass: string; IconClass: string; status: string };
@@ -87,16 +88,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   ];
   // String values of boolean are used because of bug in Single Select Dropdown when false value are set it's treated as no value set
   overdue: OverdueStatus | null = OverdueStatus.All;
-  overdueDropdownContent: ISingleSelectDropdown = {
-    id: 'overdueDropdown',
-    dataSource: [
-      { label: 'All', value: OverdueStatus.All },
-      { label: 'Yes', value: OverdueStatus.True },
-      { label: 'No', value: OverdueStatus.False }
-    ],
-    placeholder: 'Show Overdue',
-    selectedValue: this.overdue
-  };
+  overDueFilters: Filter[] = [];
+
   tooltipSettings: TooltipSettingsModel = {
     taskbar:
       '<table class="e-gantt-tooltiptable">' +
@@ -224,6 +217,21 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
   ngOnInit(): void {
     this.initComponent();
     this.updateEventMarkers(this.project);
+
+    this.overDueFilters = [
+      {
+        DisplayText: 'Show Jobs Exceeding Project Duration',
+        DisplayCode: 'label',
+        ValueCode: 'value',
+        type: eFieldControlType.Dropdown,
+        selectedValues: this.overdue,
+        list: of([
+          { label: 'All', value: OverdueStatus.All },
+          { label: 'Yes', value: OverdueStatus.True },
+          { label: 'No', value: OverdueStatus.False }
+        ])
+      }
+    ];
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -420,9 +428,9 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       );
   }
 
-  public handleSelectOverdueOption(option) {
-    if (option !== this.overdue) {
-      this.overdue = option;
+  public handleSelectOverdueOption(filter: Filter) {
+    if (filter.selectedValues !== this.overdue) {
+      this.overdue = filter.selectedValues;
       this.initComponent();
     }
   }
