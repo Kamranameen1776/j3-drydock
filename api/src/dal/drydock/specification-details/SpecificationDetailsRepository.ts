@@ -312,37 +312,61 @@ export class SpecificationDetailsRepository {
         const oDataService = new ODataService(data, getConnection);
 
         const query = getManager()
-            .createQueryBuilder(SpecificationDetailsEntity, 'sd')
-            .distinct()
+            .createQueryBuilder()
             .select([
-                'sd.uid as uid',
-                'sd.subject as subject',
-                'sd.item_number as itemNumber',
-                'sd.description as description',
-                'sdsi.uid as subItemUid',
-                'sdsi.subject as subItemSubject',
-                'sdsi.cost as subItemCost',
-                'sdsi.utilized as subItemUtilized',
-                'tm.Code as code',
-                'tm.Status as statusId',
-                'wdetails.StatusDisplayName as status',
-                'sdsi.estimatedCost as estimatedCost',
+                'sub.uid',
+                'sub.subject',
+                'sub.itemNumber',
+                'sub.description',
+                'sub.subItemUid',
+                'sub.subItemSubject',
+                'sub.subItemCost',
+                'sub.subItemUtilized',
+                'sub.code',
+                'sub.statusId',
+                'sub. status',
+                'sub.estimatedCost',
+
+                // For sorting
+                'sum(sub.subItemUtilized) over(partition by sub.uid) as utilizedCost',
+                'sum(sub.subItemCost - sub.subItemUtilized) over(partition by sub.uid) as variance',
             ])
-            .innerJoin(
-                className(SpecificationDetailsSubItemEntity),
-                'sdsi',
-                'sd.uid = sdsi.specification_details_uid and sdsi.active_status = 1',
-            )
-            .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
-            .innerJoin(className(ProjectEntity), 'proj', 'sd.project_uid = proj.uid')
-            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
-            .innerJoin(
-                className(JmsDtlWorkflowConfigDetailsEntity),
-                'wdetails',
-                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
-            )
-            .where('sd.active_status = 1')
-            .andWhere(`proj.uid = :projectUid`, { projectUid: data.body.projectUid });
+
+            .from((subQuery) => {
+                return subQuery
+
+                    .distinct()
+                    .select([
+                        'sd.uid as uid',
+                        'sd.subject as subject',
+                        'sd.item_number as itemNumber',
+                        'sd.description as description',
+                        'sdsi.uid as subItemUid',
+                        'sdsi.subject as subItemSubject',
+                        'sdsi.cost as subItemCost',
+                        'sdsi.utilized as subItemUtilized',
+                        'tm.Code as code',
+                        'tm.Status as statusId',
+                        'wdetails.StatusDisplayName as status',
+                        'sdsi.estimatedCost as estimatedCost',
+                    ])
+                    .from(SpecificationDetailsEntity, 'sd')
+                    .innerJoin(
+                        className(SpecificationDetailsSubItemEntity),
+                        'sdsi',
+                        'sd.uid = sdsi.specification_details_uid and sdsi.active_status = 1',
+                    )
+                    .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
+                    .innerJoin(className(ProjectEntity), 'proj', 'sd.project_uid = proj.uid')
+                    .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
+                    .innerJoin(
+                        className(JmsDtlWorkflowConfigDetailsEntity),
+                        'wdetails',
+                        'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+                    )
+                    .where('sd.active_status = 1')
+                    .andWhere(`proj.uid = :projectUid`, { projectUid: data.body.projectUid });
+            }, 'sub');
 
         const [sql, parameters] = query.getQueryAndParameters();
 
