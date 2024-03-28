@@ -198,7 +198,7 @@
 <jb-dialog
   [dialogContent]="importDialogueProperties"
   [(dialogVisible)]="isImportDialogVisible"
-  (closeDialog)="closeGuidanceDialog()"
+  (closeDialog)="closeImportDialog()"
 >
   <ng-container jb-dialog-body>
     <div>
@@ -218,7 +218,7 @@
     <jb-dialog-footer
       [okBtnLabel]="okBtnLabel"
       (ok)="uploadInvoice()"
-      (cancel)="closeGuidanceDialog()"
+      (cancel)="closeImportDialog()"
     ></jb-dialog-footer>
   </ng-container>
 </jb-dialog>
