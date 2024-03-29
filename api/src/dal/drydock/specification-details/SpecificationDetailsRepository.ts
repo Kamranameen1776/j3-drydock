@@ -29,6 +29,7 @@ import {
     SpecificationPmsEntity,
     SpecificationRequisitionsEntity,
     StandardJobs,
+    StandardJobsSubItems,
     TecTaskManagerEntity,
     TmDdLibDoneBy,
     TmDdLibMaterialSuppliedBy,
@@ -360,18 +361,43 @@ export class SpecificationDetailsRepository {
 
     public async getSpecificationFromStandardJob(data: CreateSpecificationFromStandardJobDto, createdBy: string) {
         const standardJobRepository = getManager().getRepository(StandardJobs);
+        const subItemsRepository = getManager().getRepository(StandardJobsSubItems);
         const dictionariesRepository = new DictionariesRepository();
 
-        const [standardJobs, standardJobsItemSource] = await Promise.all([
+        const inspectionsQuery = getManager()
+            .createQueryBuilder('standard_jobs_survey_certificate_authority', 'si')
+            .select(['si.survey_id as ID', 'si.standard_job_uid as standardJobUid'])
+            .where('si.standard_job_uid IN (:...StandardJobUid)', { StandardJobUid: data.StandardJobUid });
+
+        const [standardJobs, subItems, inspections, standardJobsItemSource] = await Promise.all([
             standardJobRepository.find({
                 where: {
                     uid: In(data.StandardJobUid),
                 },
                 select: ['uid', 'functionUid', 'description', 'subject', 'function'],
-                relations: ['subItems', 'inspection', 'doneBy', 'materialSuppliedBy'],
+                relations: ['doneBy', 'materialSuppliedBy'],
             }),
+            subItemsRepository
+                .createQueryBuilder('si')
+                .where('si.standard_job_uid IN (:...StandardJobUid)', { StandardJobUid: data.StandardJobUid })
+                .getMany(),
+            inspectionsQuery.execute(),
             dictionariesRepository.getItemSourceByName(ItemName.StandardJob),
         ]);
+
+        const subItemsHashmap = subItems.reduce((acc, subItem) => {
+            acc[subItem.standardJobUid] = acc[subItem.standardJobUid] || [];
+            acc[subItem.standardJobUid].push(subItem);
+            return acc;
+        }, {} as Record<string, StandardJobsSubItems[]>);
+        const inspectionsHashmap = inspections.reduce(
+            (acc: Record<string, LibSurveyCertificateAuthority[]>, inspection: any) => {
+                acc[inspection.standardJobUid] = acc[inspection.standardJobUid] || [];
+                acc[inspection.standardJobUid].push(inspection);
+                return acc;
+            },
+            {} as Record<string, LibSurveyCertificateAuthority[]>,
+        );
 
         const specifications = standardJobs.map((standardJob) => {
             const specification = new SpecificationDetailsEntity();
@@ -387,19 +413,21 @@ export class SpecificationDetailsRepository {
             specification.DoneByUid = standardJob.doneBy?.uid!;
             specification.ItemSourceUid = standardJobsItemSource.uid;
             specification.ProjectUid = data.ProjectUid;
-            specification.inspections = standardJob.inspection.map((inspection) => {
-                const item = new LibSurveyCertificateAuthority();
-                item.ID = inspection.ID!;
+            specification.inspections = (inspectionsHashmap[standardJob.uid]?.map(
+                (inspection: LibSurveyCertificateAuthority) => {
+                    const item = new LibSurveyCertificateAuthority();
+                    item.ID = inspection.ID!;
 
-                return item;
-            }) as LibSurveyCertificateAuthority[];
-            specification.SubItems = standardJob.subItems.map((subItem) => {
+                    return item;
+                },
+            ) || []) as LibSurveyCertificateAuthority[];
+            specification.SubItems = (subItemsHashmap[standardJob.uid]?.map((subItem) => {
                 const item = new SpecificationDetailsSubItemEntity();
                 item.uid = new DataUtilService().newUid();
                 item.subject = subItem.subject;
 
                 return item;
-            });
+            }) || []) as SpecificationDetailsSubItemEntity[];
             return { specification, standardJob };
         });
 
