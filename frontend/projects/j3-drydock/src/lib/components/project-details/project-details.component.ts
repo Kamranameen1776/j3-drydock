@@ -39,6 +39,7 @@ import { forkJoin, of } from 'rxjs';
 import { UpdateCostsDto } from '../../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { DailyReportsComponent } from './reports/reports.component';
 import { FileUploadEvent } from '../../models/interfaces/file-upload';
+import { getFileNameDate } from '../../shared/functions/file-name';
 
 @Component({
   selector: 'jb-project-details',
@@ -75,10 +76,12 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   sectionsConfig: ITMDetailTabFields;
   topSectionConfig: ITopSectionFieldSet;
   customThreeDotActions: AdvancedSettings[] = [
-    { label: 'Import', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
+    { label: 'Import', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true },
+    { label: 'Export', icon: eGridIcons.MicrosoftExcel2, color: eGridColors.JbBlack, show: true }
   ];
   threeDotsActionsShow = {
     Import: true,
+    Export: true,
     showDefaultLables: false
   };
 
@@ -119,9 +122,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   okBtnLabel = 'Import';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   syncTo: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fileImportData: File;
   growlMessage$ = this.growlMessageService.growlMessage$;
+
+  private isExportingEventSent = false;
 
   constructor(
     private jbTMDtlSrv: JbTaskManagerDetailsService,
@@ -252,15 +256,13 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     } else if (wfEvent?.event?.type === 'resync') {
       this.resyncRecord();
     } else if (wfEvent?.event?.type === 'Import') {
-      this.importFile();
+      this.openImportDialog();
+    } else if (wfEvent?.event?.type === 'Export') {
+      this.startExportExcel();
     }
   }
 
-  importFile() {
-    this.isImportDialogVisible = true;
-  }
-
-  closeGuidanceDialog() {
+  closeImportDialog() {
     this.isImportDialogVisible = false;
   }
 
@@ -291,6 +293,31 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   updatesCostsData(data) {
     this.jbTMDtlSrv.isUnsavedChanges.next(true);
     this.updateCostsPayload = data;
+  }
+
+  private startExportExcel() {
+    this.isExportingEventSent = true;
+
+    this.jbTMDtlSrv.sectionEvents.next({
+      type: 'saveAll',
+      action: 'export excel',
+      checkValidation: true,
+      isCloseOption: false,
+      payload: 'export excel'
+    });
+  }
+
+  private exportExcel() {
+    this.projectDetailsService
+      .exportExcel(this.projectUid, this.tmDetails.ShipYardId, this.getExcelFilename())
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe();
+  }
+
+  private getExcelFilename() {
+    return `${this.tmDetails.VesselName}-${this.tmDetails.ShipYard}-${new Date(
+      this.tmDetails.StartDate
+    ).getFullYear()}-${getFileNameDate()}.xlsx`;
   }
 
   private sectionActions(res: { type?: string; secName?: string; event?: unknown; checkValidation?: boolean }) {
@@ -331,7 +358,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     }
   }
 
-  private getDetails(refresh = false) {
+  private getDetails(refresh = false, isExporting = false) {
+    this.showLoader = true;
+
     let projectDetails: ProjectDetails;
 
     this.projectDetailsService
@@ -354,7 +383,12 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
           return this.taskManagerService.getWorkflow(projectDetails.TaskManagerUid, projectDetails.ProjectTypeCode);
         }),
-        takeUntil(this.unsubscribe$)
+        finalize(() => {
+          this.showLoader = false;
+          if (isExporting) {
+            this.isExportingEventSent = false;
+          }
+        })
       )
       .subscribe((workflow) => {
         this.tmDetails = { ...projectDetails, ...workflow, isTaskManagerJob: true };
@@ -365,6 +399,11 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
         this.setMenuByAccessRights();
         this.setAttachmentsActions();
+
+        if (isExporting) {
+          this.exportExcel();
+        }
+
         // TODO add here more to init view if needed
         if (refresh) {
           this.jbTMDtlSrv.refreshTaskManager.next({
@@ -377,6 +416,10 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   }
 
   private saveRecord(event) {
+    // clear isExportingEventSent in case validation errors
+    const isExportingToExcel = this.isExportingEventSent;
+    this.isExportingEventSent = false;
+
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
     // TODO add validations here if needed
     if (event.type === eJMSActionTypes.Error) {
@@ -392,8 +435,16 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
       return;
     }
 
+    if (isExportingToExcel && !data.ShipYardId) {
+      this.growlMessageService.setErrorMessage('Yard is not selected');
+      return;
+    }
+
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
     this.showLoader = true;
+    // restore isExportingEventSent if validation passes
+    this.isExportingEventSent = isExportingToExcel;
+
     forkJoin([
       this.updateCostsPayload?.specificationDetailsUid ? this.projectDetailsService.saveCostUpdates(this.updateCostsPayload) : of(null),
       this.projectDetailsService.save(this.projectUid, {
@@ -402,9 +453,8 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     ]).subscribe(
       () => {
         // TODO reset here forms, etc if needed
-        this.getDetails(true);
+        this.getDetails(true, isExportingToExcel);
         this.jbTMDtlSrv.isUnsavedChanges.next(false);
-        this.showLoader = false;
       },
       (error) => {
         this.showLoader = false;
@@ -498,5 +548,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
 
   private checkValidStartEndDates(formValue) {
     return this.detailsService.checkValidStartEndDates(formValue?.StartDate, formValue?.EndDate);
+  }
+
+  private openImportDialog() {
+    this.isImportDialogVisible = true;
   }
 }

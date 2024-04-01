@@ -29,6 +29,7 @@ import {
     SpecificationPmsEntity,
     SpecificationRequisitionsEntity,
     StandardJobs,
+    StandardJobsSubItems,
     TecTaskManagerEntity,
     TmDdLibDoneBy,
     TmDdLibMaterialSuppliedBy,
@@ -312,37 +313,61 @@ export class SpecificationDetailsRepository {
         const oDataService = new ODataService(data, getConnection);
 
         const query = getManager()
-            .createQueryBuilder(SpecificationDetailsEntity, 'sd')
-            .distinct()
+            .createQueryBuilder()
             .select([
-                'sd.uid as uid',
-                'sd.subject as subject',
-                'sd.item_number as itemNumber',
-                'sd.description as description',
-                'sdsi.uid as subItemUid',
-                'sdsi.subject as subItemSubject',
-                'sdsi.cost as subItemCost',
-                'sdsi.utilized as subItemUtilized',
-                'tm.Code as code',
-                'tm.Status as statusId',
-                'wdetails.StatusDisplayName as status',
-                'sdsi.estimatedCost as estimatedCost',
+                'sub.uid',
+                'sub.subject',
+                'sub.itemNumber',
+                'sub.description',
+                'sub.subItemUid',
+                'sub.subItemSubject',
+                'sub.subItemCost',
+                'sub.subItemUtilized',
+                'sub.code',
+                'sub.statusId',
+                'sub. status',
+                'sub.estimatedCost',
+
+                // For sorting
+                'sum(sub.subItemUtilized) over(partition by sub.uid) as utilizedCost',
+                'sum(sub.subItemCost - sub.subItemUtilized) over(partition by sub.uid) as variance',
             ])
-            .innerJoin(
-                className(SpecificationDetailsSubItemEntity),
-                'sdsi',
-                'sd.uid = sdsi.specification_details_uid and sdsi.active_status = 1',
-            )
-            .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
-            .innerJoin(className(ProjectEntity), 'proj', 'sd.project_uid = proj.uid')
-            .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
-            .innerJoin(
-                className(JmsDtlWorkflowConfigDetailsEntity),
-                'wdetails',
-                'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
-            )
-            .where('sd.active_status = 1')
-            .andWhere(`proj.uid = :projectUid`, { projectUid: data.body.projectUid });
+
+            .from((subQuery) => {
+                return subQuery
+
+                    .distinct()
+                    .select([
+                        'sd.uid as uid',
+                        'sd.subject as subject',
+                        'sd.item_number as itemNumber',
+                        'sd.description as description',
+                        'sdsi.uid as subItemUid',
+                        'sdsi.subject as subItemSubject',
+                        'sdsi.cost as subItemCost',
+                        'sdsi.utilized as subItemUtilized',
+                        'tm.Code as code',
+                        'tm.Status as statusId',
+                        'wdetails.StatusDisplayName as status',
+                        'sdsi.estimatedCost as estimatedCost',
+                    ])
+                    .from(SpecificationDetailsEntity, 'sd')
+                    .innerJoin(
+                        className(SpecificationDetailsSubItemEntity),
+                        'sdsi',
+                        'sd.uid = sdsi.specification_details_uid and sdsi.active_status = 1',
+                    )
+                    .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.tec_task_manager_uid = tm.uid')
+                    .innerJoin(className(ProjectEntity), 'proj', 'sd.project_uid = proj.uid')
+                    .innerJoin(className(JmsDtlWorkflowConfigEntity), 'wc', `wc.job_type = 'Specification'`)
+                    .innerJoin(
+                        className(JmsDtlWorkflowConfigDetailsEntity),
+                        'wdetails',
+                        'wdetails.ConfigId = wc.ID AND wdetails.WorkflowTypeID = tm.Status',
+                    )
+                    .where('sd.active_status = 1')
+                    .andWhere(`proj.uid = :projectUid`, { projectUid: data.body.projectUid });
+            }, 'sub');
 
         const [sql, parameters] = query.getQueryAndParameters();
 
@@ -360,18 +385,43 @@ export class SpecificationDetailsRepository {
 
     public async getSpecificationFromStandardJob(data: CreateSpecificationFromStandardJobDto, createdBy: string) {
         const standardJobRepository = getManager().getRepository(StandardJobs);
+        const subItemsRepository = getManager().getRepository(StandardJobsSubItems);
         const dictionariesRepository = new DictionariesRepository();
 
-        const [standardJobs, standardJobsItemSource] = await Promise.all([
+        const inspectionsQuery = getManager()
+            .createQueryBuilder('standard_jobs_survey_certificate_authority', 'si')
+            .select(['si.survey_id as ID', 'si.standard_job_uid as standardJobUid'])
+            .where('si.standard_job_uid IN (:...StandardJobUid)', { StandardJobUid: data.StandardJobUid });
+
+        const [standardJobs, subItems, inspections, standardJobsItemSource] = await Promise.all([
             standardJobRepository.find({
                 where: {
                     uid: In(data.StandardJobUid),
                 },
                 select: ['uid', 'functionUid', 'description', 'subject', 'function'],
-                relations: ['subItems', 'inspection', 'doneBy', 'materialSuppliedBy'],
+                relations: ['doneBy', 'materialSuppliedBy'],
             }),
+            subItemsRepository
+                .createQueryBuilder('si')
+                .where('si.standard_job_uid IN (:...StandardJobUid)', { StandardJobUid: data.StandardJobUid })
+                .getMany(),
+            inspectionsQuery.execute(),
             dictionariesRepository.getItemSourceByName(ItemName.StandardJob),
         ]);
+
+        const subItemsHashmap = subItems.reduce((acc, subItem) => {
+            acc[subItem.standardJobUid] = acc[subItem.standardJobUid] || [];
+            acc[subItem.standardJobUid].push(subItem);
+            return acc;
+        }, {} as Record<string, StandardJobsSubItems[]>);
+        const inspectionsHashmap = inspections.reduce(
+            (acc: Record<string, LibSurveyCertificateAuthority[]>, inspection: any) => {
+                acc[inspection.standardJobUid] = acc[inspection.standardJobUid] || [];
+                acc[inspection.standardJobUid].push(inspection);
+                return acc;
+            },
+            {} as Record<string, LibSurveyCertificateAuthority[]>,
+        );
 
         const specifications = standardJobs.map((standardJob) => {
             const specification = new SpecificationDetailsEntity();
@@ -387,19 +437,21 @@ export class SpecificationDetailsRepository {
             specification.DoneByUid = standardJob.doneBy?.uid!;
             specification.ItemSourceUid = standardJobsItemSource.uid;
             specification.ProjectUid = data.ProjectUid;
-            specification.inspections = standardJob.inspection.map((inspection) => {
-                const item = new LibSurveyCertificateAuthority();
-                item.ID = inspection.ID!;
+            specification.inspections = (inspectionsHashmap[standardJob.uid]?.map(
+                (inspection: LibSurveyCertificateAuthority) => {
+                    const item = new LibSurveyCertificateAuthority();
+                    item.ID = inspection.ID!;
 
-                return item;
-            }) as LibSurveyCertificateAuthority[];
-            specification.SubItems = standardJob.subItems.map((subItem) => {
+                    return item;
+                },
+            ) || []) as LibSurveyCertificateAuthority[];
+            specification.SubItems = (subItemsHashmap[standardJob.uid]?.map((subItem) => {
                 const item = new SpecificationDetailsSubItemEntity();
                 item.uid = new DataUtilService().newUid();
                 item.subject = subItem.subject;
 
                 return item;
-            });
+            }) || []) as SpecificationDetailsSubItemEntity[];
             return { specification, standardJob };
         });
 

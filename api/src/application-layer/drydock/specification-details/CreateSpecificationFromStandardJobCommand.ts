@@ -106,13 +106,16 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
     }
 
     private async createSpecifications(
-        specifications: SpecificationDetailsEntity[],
+        specifications: Promise<SpecificationDetailsEntity>[],
         vessel: Promise<LibVesselsEntity>,
         queryRunner: QueryRunner,
     ) {
-        await this.specificationRepository.createSpecificationsFromStandardJob(specifications, queryRunner);
+        await this.specificationRepository.createSpecificationsFromStandardJob(
+            await Promise.all(specifications),
+            queryRunner,
+        );
         await this.sync(
-            specifications.map((s) => s.uid),
+            (await Promise.all(specifications)).map((s) => s.uid),
             this.tableName,
             await vessel,
             queryRunner,
@@ -128,6 +131,8 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
                 request.createdBy,
             );
 
+            const attachmentsPromises: Promise<void>[] = [];
+
             const specificationsToCreate = specificationsData.map(async (specification) => {
                 const spec = specification.specification;
                 const vesselData = await vessel;
@@ -140,13 +145,15 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
 
                 spec.TecTaskManagerUid = tmResult.uid;
 
-                await this.infraService.CopyAttachmentsFromStandardJobToSpecification(
-                    request.token,
-                    specification.standardJob.uid,
-                    tmResult.uid,
-                    '1',
-                    vesselData.VesselId.toString(),
-                    vesselData.VesselId,
+                attachmentsPromises.push(
+                    this.infraService.CopyAttachmentsFromStandardJobToSpecification(
+                        request.token,
+                        specification.standardJob.uid,
+                        tmResult.uid,
+                        '1',
+                        vesselData.VesselId.toString(),
+                        vesselData.VesselId,
+                    ),
                 );
 
                 return spec;
@@ -208,12 +215,11 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
                 });
 
             await Promise.all([
-                Promise.all(specificationsToCreate).then((specs) =>
-                    this.createSpecifications(specs, vessel, queryRunner),
-                ),
+                this.createSpecifications(specificationsToCreate, vessel, queryRunner),
                 this.createInspections(specificationInspections, vessel, queryRunner),
                 this.createSubItems(specificationSubItems, vessel, queryRunner),
                 this.auditSpecificationDetails(specificationAuditData, vessel, request.createdBy, queryRunner),
+                Promise.all(attachmentsPromises),
             ]);
 
             return Promise.all(specificationsToCreate);
