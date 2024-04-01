@@ -18,9 +18,7 @@ export async function uploadYardInvoice(req: express.Request, res: express.Respo
         const middlewareHandler = new MiddlewareHandler();
 
         await middlewareHandler.ExecuteAsync(req, res, async () => {
-            const result = await new UploadYardsController().uploadYardInvoice(req);
-
-            return result;
+            return new UploadYardsController().uploadYardInvoice(req);
         });
     });
 }
@@ -30,11 +28,9 @@ exports.post = uploadYardInvoice;
 @Route('drydock/yards/upload-yard-invoice')
 export class UploadYardsController extends Controller {
     @Post()
-    public async uploadYardInvoice(@Request() request: express.Request): Promise<void> {
+    public async uploadYardInvoice(@Request() request: express.Request) {
         const query = new UploadYardsInvoiceCommand();
 
-        const result = await query.ExecuteAsync(request);
-
-        return result;
+        return query.ExecuteAsync(request);
     }
 }

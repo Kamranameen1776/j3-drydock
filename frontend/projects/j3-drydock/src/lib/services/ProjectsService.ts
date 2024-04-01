@@ -191,7 +191,7 @@ export class ProjectsService {
     return this.api.getFile('yards/download-yard-invoice', `ProjectUid=${projectId}&YardUid=${yardId}`, null, null, eApiBaseDryDockAPI);
   }
 
-  public importFile(file: File, projectId: string): Observable<object> {
+  public importFile(file: File, projectId: string) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('ProjectUid', projectId);

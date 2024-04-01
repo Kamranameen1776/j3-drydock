@@ -13,7 +13,7 @@ import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UploadRequest } from './dtos/InvoiceDto';
 
-export class UploadYardsInvoiceCommand extends Command<Request, void> {
+export class UploadYardsInvoiceCommand extends Command<Request, boolean> {
     yardsRepository = new YardsRepository();
     uploadService = new UploadInvoiceService();
     vesselRepository = new VesselsRepository();
@@ -33,7 +33,7 @@ export class UploadYardsInvoiceCommand extends Command<Request, void> {
 
         return;
     }
-    protected async MainHandlerAsync(request: Request): Promise<void> {
+    protected async MainHandlerAsync(request: Request): Promise<boolean> {
         return this.uow.ExecuteAsync(async (queryRunner) => {
             const buffer = request.file?.buffer as Buffer;
             const ProjectUid = request.body.ProjectUid as string;
@@ -83,6 +83,8 @@ export class UploadYardsInvoiceCommand extends Command<Request, void> {
                 const isClient = null;
                 await log.warn(logMessage, logData, method, null, moduleCode, functionCode, null, locationId, isClient);
             }
+
+            return !!rawData.hasErrors;
         });
     }
 }

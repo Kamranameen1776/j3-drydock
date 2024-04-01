@@ -277,8 +277,12 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
         })
       )
       .subscribe(
-        () => {
-          this.growlMessageService.setSuccessMessage('File has been imported successfully');
+        (hasErrors) => {
+          if (!hasErrors) {
+            this.growlMessageService.setSuccessMessage('File has been imported successfully');
+          } else {
+            this.growlMessageService.setWarnMessage('The provided Excel file had incorrect values which were truncated.');
+          }
         },
         (error) => {
           this.growlMessageService.errorHandler(error);
