@@ -1,6 +1,7 @@
 import { IsUUID } from 'class-validator';
 
 import { ODataBodyDto } from '../../../../shared/dto';
+import { TaskManagerStatus } from '../../../../shared/enum/task-manager-status.enum';
 import { HtmlCell } from '../../../../shared/interfaces';
 import { HtmlRow } from '../../../../shared/interfaces/html-row.interface';
 
@@ -8,6 +9,7 @@ export interface SpecificationCostUpdateQueryResult {
     uid: string;
     subject: string;
     status: string;
+    statusId: TaskManagerStatus;
     code: string;
     itemNumber: string;
     description: string;
@@ -38,6 +40,7 @@ export interface SpecificationSubItemCostUpdate extends HtmlRow {
     estimatedCost: string;
     utilizedCost: string;
     variance: HtmlCell;
+    editable: boolean;
 }
 
 export class SpecificationCostUpdateRequestDto extends ODataBodyDto {

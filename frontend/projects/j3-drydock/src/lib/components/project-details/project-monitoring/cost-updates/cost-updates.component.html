@@ -23,16 +23,26 @@
       {{ rowData.utilizedCost }}
     </span>
 
-    <input
-      #textCrtl="ngModel"
-      *ngSwitchCase="'child-row'"
-      type="number"
-      class="gridCellInput ui-inputtext child-row"
-      [(ngModel)]="rowData.utilizedCost"
-      (click)="onCellChange(rowData)"
-      (input)="onCellChange(rowData)"
-      [jbDecimalPlace]="2"
-    />
+    <ng-container *ngSwitchCase="'child-row'">
+      <ng-container [ngSwitch]="rowData.editable">
+        <input
+          #textCrtl="ngModel"
+          type="number"
+          *ngSwitchCase="true"
+          class="gridCellInput ui-inputtext child-row"
+          [(ngModel)]="rowData.utilizedCost"
+          (click)="onCellChange(rowData)"
+          (input)="onCellChange(rowData)"
+          [jbDecimalPlace]="'2'"
+        />
+        <span
+          class="child-row"
+          *ngSwitchCase="false"
+        >
+          {{ rowData.utilizedCost }}
+        </span>
+      </ng-container>
+    </ng-container>
     <span
       class="total-row"
       *ngSwitchCase="'total-row'"

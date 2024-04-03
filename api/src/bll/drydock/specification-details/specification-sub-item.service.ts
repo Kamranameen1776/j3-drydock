@@ -9,6 +9,8 @@ import {
     SpecificationSubItemCostUpdate,
 } from '../../../dal/drydock/specification-details/dtos/ISpecificationCostUpdateDto';
 import { FindManyRecord } from '../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
+import { DisabledSpecificationStatuses } from '../../../shared/constants/specifications';
+import { TaskManagerStatus } from '../../../shared/enum/task-manager-status.enum';
 import { ODataResult } from '../../../shared/interfaces';
 import { HtmlCell } from '../../../shared/interfaces';
 import { FoldableGridData } from '../../../shared/interfaces/foldable-grid-data.interface';
@@ -92,6 +94,7 @@ export class SpecificationSubItemService {
                     utilizedCost: new Decimal(subItemUtilized).toFixed(2),
                     variance: this.mapCostUpdateVariance(variance),
                     rowCssClass: 'child-row',
+                    editable: this.canEditSubItem(subItem.statusId),
                 };
 
                 rowSubItems.push({ data: rowSubItem });
@@ -204,5 +207,9 @@ export class SpecificationSubItemService {
             cellStyle: '',
             value: variance.toFixed(2),
         };
+    }
+
+    private canEditSubItem(specificationStatusId: TaskManagerStatus): boolean {
+        return !DisabledSpecificationStatuses.includes(specificationStatusId);
     }
 }

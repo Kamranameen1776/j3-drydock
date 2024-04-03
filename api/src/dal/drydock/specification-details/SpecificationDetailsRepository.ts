@@ -325,7 +325,7 @@ export class SpecificationDetailsRepository {
                 'sub.subItemUtilized',
                 'sub.code',
                 'sub.statusId',
-                'sub. status',
+                'sub.status',
                 'sub.estimatedCost',
 
                 // For sorting
