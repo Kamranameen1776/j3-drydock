@@ -414,6 +414,7 @@ export class SpecificationDetailsRepository {
             specification.DoneByUid = standardJob.doneBy?.uid!;
             specification.ItemSourceUid = standardJobsItemSource.uid;
             specification.ProjectUid = data.ProjectUid;
+            specification.TecTaskManagerUid = new DataUtilService().newUid();
             specification.inspections = (inspectionsHashmap[standardJob.uid]?.map(
                 (inspection: LibSurveyCertificateAuthority) => {
                     const item = new LibSurveyCertificateAuthority();

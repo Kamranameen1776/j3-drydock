@@ -16,12 +16,13 @@ export class SpecificationService {
         request: Pick<CreateSpecificationDetailsDto, 'Subject'>,
         vessel: LibVesselsEntity,
         token: string,
+        uid: string | null = null,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<any> {
         const office = await this.IsOffice();
 
         const saveTaskManagerDetails = {
-            uid: null,
+            uid,
             Office_ID: office,
             Vessel_ID: vessel.VesselId,
             Vessel_Name: vessel.VesselName,

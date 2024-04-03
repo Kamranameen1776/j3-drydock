@@ -105,7 +105,7 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
     }
 
     private async createSpecifications(
-        specifications: Promise<SpecificationDetailsEntity>[],
+        specifications: SpecificationDetailsEntity[],
         vessel: Promise<LibVesselsEntity>,
         queryRunner: QueryRunnerManager,
     ) {
@@ -114,109 +114,120 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
             queryRunner,
         );
         await Promise.all(tasks.map(async (task) => this.sync(task.uids, this.tableName, await vessel, task.runner)));
+        return specifications;
+    }
+
+    private async processTaskManagerIntegration(
+        subject: string,
+        vessel: Promise<LibVesselsEntity>,
+        token: string,
+        sj_uid: string,
+        uid: string,
+    ) {
+        const vesselData = await vessel;
+
+        await this.specificationDetailsService.TaskManagerIntegration(
+            { Subject: subject },
+            vesselData,
+            token,
+            new DataUtilService().newUid(),
+        );
+
+        await this.infraService.CopyAttachmentsFromStandardJobToSpecification(
+            token,
+            sj_uid,
+            uid,
+            '1',
+            vesselData.VesselId.toString(),
+            vesselData.VesselId,
+        );
     }
 
     protected async MainHandlerAsync(request: CreateSpecificationFromStandardJobDto) {
         const vessel = this.getProjectByVesselUid(request);
 
-        return this.uow.ExecuteAsync(async (queryRunner) => {
-            const specificationsData = await this.specificationRepository.getSpecificationFromStandardJob(
-                request,
-                request.createdBy,
+        const specificationsData = await this.specificationRepository.getSpecificationFromStandardJob(
+            request,
+            request.createdBy,
+        );
+
+        const attachmentsPromises: Promise<void>[] = specificationsData.map((specification) => {
+            return this.processTaskManagerIntegration(
+                specification.specification.Subject,
+                vessel,
+                request.token,
+                specification.standardJob.uid,
+                specification.specification.TecTaskManagerUid,
             );
+        });
 
-            const attachmentsPromises: Promise<void>[] = [];
+        const specificationInspections: CreateInspectionsDto[] = [];
+        const specificationSubItems: SpecificationDetailsSubItemEntity[] = [];
+        const specificationAuditData: UpdateSpecificationDetailsDto[] = [];
 
-            const specificationsToCreate = specificationsData.map(async (specification) => {
-                const spec = specification.specification;
-                const vesselData = await vessel;
+        specificationsData
+            .map((spec) => spec.specification)
+            .forEach((specification) => {
+                const inspections = specification.inspections;
+                const subItems = specification.SubItems;
 
-                const tmResult = await this.specificationDetailsService.TaskManagerIntegration(
-                    { Subject: specification.specification.Subject },
-                    vesselData,
-                    request.token,
-                );
+                if (inspections.length) {
+                    const data: CreateInspectionsDto[] = inspections.map((inspection) => {
+                        const item: CreateInspectionsDto = {
+                            uid: DataUtilService.newUid(),
+                            LIBSurveyCertificateAuthorityID: inspection.ID!,
+                            SpecificationDetailsUid: specification.uid,
+                        };
+                        return item;
+                    });
 
-                spec.TecTaskManagerUid = tmResult.uid;
+                    specificationInspections.push(...data);
+                }
 
-                attachmentsPromises.push(
-                    this.infraService.CopyAttachmentsFromStandardJobToSpecification(
-                        request.token,
-                        specification.standardJob.uid,
-                        tmResult.uid,
-                        '1',
-                        vesselData.VesselId.toString(),
-                        vesselData.VesselId,
-                    ),
-                );
+                if (subItems.length) {
+                    const newSubItems = subItems.map((subItem) => {
+                        return {
+                            uid: DataUtilService.newUid(),
+                            specificationDetails: {
+                                uid: specification.uid,
+                            } as SpecificationDetailsEntity,
+                            subject: subItem.subject,
+                            active_status: true,
+                            discount: '0',
+                        } as SpecificationDetailsSubItemEntity;
+                    });
 
-                return spec;
+                    specificationSubItems.push(...newSubItems);
+                }
+
+                const auditData: UpdateSpecificationDetailsDto = {
+                    uid: specification.uid,
+                    Subject: specification.Subject,
+                    Inspections: specification.inspections.map((inspection) => inspection.ID!),
+                    Description: specification.Description,
+                    DoneByUid: specification.DoneByUid,
+                    Completion: specification.Completion,
+                    Duration: specification.Duration,
+                    StartDate: specification.StartDate ?? undefined,
+                    EndDate: specification.EndDate ?? undefined,
+                    UserId: '',
+                };
+
+                specificationAuditData.push(auditData);
             });
 
-            const specificationInspections: CreateInspectionsDto[] = [];
-            const specificationSubItems: SpecificationDetailsSubItemEntity[] = [];
-            const specificationAuditData: UpdateSpecificationDetailsDto[] = [];
-
-            specificationsData
-                .map((spec) => spec.specification)
-                .forEach((specification) => {
-                    const inspections = specification.inspections;
-                    const subItems = specification.SubItems;
-
-                    if (inspections.length) {
-                        const data: CreateInspectionsDto[] = inspections.map((inspection) => {
-                            const item: CreateInspectionsDto = {
-                                uid: DataUtilService.newUid(),
-                                LIBSurveyCertificateAuthorityID: inspection.ID!,
-                                SpecificationDetailsUid: specification.uid,
-                            };
-                            return item;
-                        });
-
-                        specificationInspections.push(...data);
-                    }
-
-                    if (subItems.length) {
-                        const newSubItems = subItems.map((subItem) => {
-                            return {
-                                uid: DataUtilService.newUid(),
-                                specificationDetails: {
-                                    uid: specification.uid,
-                                } as SpecificationDetailsEntity,
-                                subject: subItem.subject,
-                                active_status: true,
-                                discount: '0',
-                            } as SpecificationDetailsSubItemEntity;
-                        });
-
-                        specificationSubItems.push(...newSubItems);
-                    }
-
-                    const auditData: UpdateSpecificationDetailsDto = {
-                        uid: specification.uid,
-                        Subject: specification.Subject,
-                        Inspections: specification.inspections.map((inspection) => inspection.ID!),
-                        Description: specification.Description,
-                        DoneByUid: specification.DoneByUid,
-                        Completion: specification.Completion,
-                        Duration: specification.Duration,
-                        StartDate: specification.StartDate ?? undefined,
-                        EndDate: specification.EndDate ?? undefined,
-                        UserId: '',
-                    };
-
-                    specificationAuditData.push(auditData);
-                });
-
-            await Promise.all([
-                this.createSpecifications(specificationsToCreate, vessel, queryRunner),
+        return this.uow.ExecuteAsync(async (queryRunner) => {
+            return Promise.all([
+                this.createSpecifications(
+                    specificationsData.map((spec) => spec.specification),
+                    vessel,
+                    queryRunner,
+                ),
                 this.createInspections(specificationInspections, vessel, queryRunner),
                 this.createSubItems(specificationSubItems, vessel, queryRunner),
                 this.auditSpecificationDetails(specificationAuditData, vessel, request.createdBy, queryRunner),
                 Promise.all(attachmentsPromises),
-            ]);
-
-            return Promise.all(specificationsToCreate);
-        }, Math.min(4 * (1 + Math.round(request.StandardJobUid.length / 20)), 8));
+            ]).then((result) => result[0]);
+        }, Math.min(4 * (1 + Math.round(specificationsData.length / 100)), 10));
     }
 }
