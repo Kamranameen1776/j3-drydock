@@ -217,6 +217,6 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
             ]);
 
             return Promise.all(specificationsToCreate);
-        }, 4 * (1 + Math.round(request.StandardJobUid.length / 20)));
+        }, Math.min(4 * (1 + Math.round(request.StandardJobUid.length / 20)), 8));
     }
 }
