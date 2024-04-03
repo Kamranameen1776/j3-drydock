@@ -61,7 +61,27 @@ export class JobOrdersRepository {
                 'ISNULL(sd.EndDate, p.EndDate) as SpecificationEndDate',
                 "usr.FirstName + ' ' + usr.LastName AS Responsible",
                 'jo.uid AS JobOrderUid',
-                'CAST(CASE WHEN ISNULL(sd.EndDate, p.EndDate) > p.EndDate THEN 1 ELSE 0 END AS BIT) AS overdue',
+                `CAST(
+                    CASE
+                        WHEN sd.EndDate IS NULL THEN 0
+
+                        -- Project covers the whole day in UTC, for ex.
+                        --
+                        -- project in local time: 2024-01-01 05:00:00.0000000 +00:00
+                        --   In UTC, DateTime is 2024-01-01 05:00:00;
+                        --   In UTC, Date is 2024-01-01;
+                        --
+                        -- spec in local time: 2024-01-02 01:00:00.0000000 +02:00
+                        --   In UTC, DateTime is 2024-01-01 23:00:00;
+                        --   In UTC, Date is 2024-01-01;
+                        --
+                        -- overdue: (2024-01-01 eq 2024-01-01): 0
+                        --
+                        WHEN convert(date, sd.EndDate AT TIME ZONE 'UTC')
+                            > convert(date, p.EndDate AT TIME ZONE 'UTC') THEN 1
+
+                        ELSE 0
+                    END AS BIT) AS overdue`,
             ])
             .innerJoin(className(ProjectEntity), 'p', 'p.uid = sd.ProjectUid and p.ActiveStatus = 1')
             .innerJoin(className(TecTaskManagerEntity), 'tm', 'sd.TecTaskManagerUid = tm.uid')
