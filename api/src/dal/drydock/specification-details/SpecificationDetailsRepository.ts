@@ -55,6 +55,7 @@ import {
     SpecificationCostUpdateQueryResult,
     SpecificationCostUpdateRequestDto,
 } from './dtos/ISpecificationCostUpdateDto';
+import { QueryRunnerManager } from '../../../application-layer/drydock/core/uof/ParallelUnitOfWork';
 
 export class SpecificationDetailsRepository {
     private simpleOperations = new SimpleOperationsRepository();
@@ -436,12 +437,18 @@ export class SpecificationDetailsRepository {
 
     public async createSpecificationsFromStandardJob(
         specifications: SpecificationDetailsEntity[],
-        queryRunner: QueryRunner,
+        queryRunner: QueryRunnerManager,
     ) {
-        return this.simpleOperations.insertMany(SpecificationDetailsEntity, specifications, queryRunner, {
-            chunk: 15,
-            reload: false,
-        });
+        return this.simpleOperations.insertManyTasks(
+            SpecificationDetailsEntity,
+            specifications,
+            queryRunner,
+            (entity) => entity.uid as string,
+            {
+                chunk: 15,
+                reload: false,
+            },
+        );
     }
 
     public async updateSpecificationTmUid(specificationUid: string, taskManagerUid: string, queryRunner: QueryRunner) {
@@ -455,6 +462,22 @@ export class SpecificationDetailsRepository {
             chunk: 5,
             reload: false,
         });
+    }
+
+    public async CreateSpecificationInspectionTasks(
+        data: Array<CreateInspectionsDto>,
+        queryRunner: QueryRunnerManager,
+    ) {
+        return this.simpleOperations.insertManyTasks(
+            SpecificationInspectionEntity,
+            data,
+            queryRunner,
+            (entity) => entity.uid as string,
+            {
+                chunk: 5,
+                reload: false,
+            },
+        );
     }
 
     public async UpdateSpecificationInspection(

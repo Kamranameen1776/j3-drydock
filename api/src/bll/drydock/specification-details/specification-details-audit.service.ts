@@ -9,6 +9,7 @@ import {
 } from '../../../dal/drydock/fields-history/FieldsHistoryRepository';
 import { TaskManagerConstants } from '../../../shared/constants';
 import { getChunkSize } from '../../../shared/utils/get-chunk-size';
+import { QueryRunnerManager } from '../../../application-layer/drydock/core/uof/ParallelUnitOfWork';
 
 export class SpecificationDetailsAuditService {
     private readonly fieldsHistoryRepository = new FieldsHistoryRepository();
@@ -27,7 +28,7 @@ export class SpecificationDetailsAuditService {
     public async auditManyCreatedSpecificationDetails(
         specificationDetail: UpdateSpecificationDetailsDto[],
         createdById: string,
-        queryRunner: QueryRunner,
+        queryRunner: QueryRunnerManager,
     ) {
         const fields: CreateFieldsHistoryDto[] = [];
         specificationDetail.forEach((specification) => {
@@ -36,16 +37,19 @@ export class SpecificationDetailsAuditService {
 
         const flatFields = fields.flat();
 
-        await Promise.all(
+        return Promise.all(
             chunk(
                 flatFields,
                 getChunkSize(Math.max(...flatFields.map((fields) => Object.keys(fields).length)) + 1),
-            ).map((batchedFields) => {
-                return this.fieldsHistoryRepository.insertMany(batchedFields as CreateFieldsHistoryDto[], queryRunner);
+            ).map(async (batchedFields) => {
+                const runner = queryRunner.runner;
+                await this.fieldsHistoryRepository.insertMany(batchedFields as CreateFieldsHistoryDto[], runner);
+                return {
+                    runner,
+                    uids: batchedFields.map((i) => i.uid),
+                };
             }),
         );
-
-        return fields.map((i) => i.uid);
     }
 
     public async auditDeletedSpecificationDetails(

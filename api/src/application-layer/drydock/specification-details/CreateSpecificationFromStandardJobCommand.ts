@@ -16,7 +16,7 @@ import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHisto
 import { SpecificationDetailsSubItemEntity } from '../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { InfraService } from '../../../external-services/drydock/InfraService';
 import { Command } from '../core/cqrs/Command';
-import { UnitOfWork } from '../core/uof/UnitOfWork';
+import { ParallelUnitOfWork, QueryRunnerManager } from '../core/uof/ParallelUnitOfWork';
 import { UpdateSpecificationDetailsDto } from './dtos/UpdateSpecificationDetailsDto';
 
 export class CreateSpecificationFromStandardJobsCommand extends Command<
@@ -24,7 +24,7 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
     SpecificationDetailsEntity[]
 > {
     specificationRepository = new SpecificationDetailsRepository();
-    uow = new UnitOfWork();
+    uow = new ParallelUnitOfWork();
     specificationDetailsService = new SpecificationService();
     vesselsRepository = new VesselsRepository();
     projectRepository = new ProjectsRepository();
@@ -61,15 +61,15 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
     private async createInspections(
         specificationInspections: CreateInspectionsDto[],
         vessel: Promise<LibVesselsEntity>,
-        queryRunner: QueryRunner,
+        queryRunner: QueryRunnerManager,
     ) {
         if (specificationInspections.length > 0) {
-            await this.specificationRepository.CreateSpecificationInspection(specificationInspections, queryRunner);
-            await this.sync(
-                specificationInspections.map((s) => s.uid).filter(Boolean) as string[],
-                this.tableNameInspections,
-                await vessel,
+            const tasks = await this.specificationRepository.CreateSpecificationInspectionTasks(
+                specificationInspections,
                 queryRunner,
+            );
+            await Promise.all(
+                tasks.map(async (task) => this.sync(task.uids, this.tableNameInspections, await vessel, task.runner)),
             );
         }
     }
@@ -77,15 +77,12 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
     private async createSubItems(
         specificationSubItems: SpecificationDetailsSubItemEntity[],
         vessel: Promise<LibVesselsEntity>,
-        queryRunner: QueryRunner,
+        queryRunner: QueryRunnerManager,
     ) {
         if (specificationSubItems.length > 0) {
-            await this.subItemsRepository.createRawSubItems(specificationSubItems, queryRunner);
-            await this.sync(
-                specificationSubItems.map((s) => s.uid),
-                this.tableNameSubItems,
-                await vessel,
-                queryRunner,
+            const tasks = await this.subItemsRepository.createRawSubItemsTasks(specificationSubItems, queryRunner);
+            await Promise.all(
+                tasks.map(async (task) => this.sync(task.uids, this.tableNameSubItems, await vessel, task.runner)),
             );
         }
     }
@@ -94,32 +91,29 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
         specificationAuditData: UpdateSpecificationDetailsDto[],
         vessel: Promise<LibVesselsEntity>,
         createdBy: string,
-        queryRunner: QueryRunner,
+        queryRunner: QueryRunnerManager,
     ) {
-        const auditUids = await this.specificationDetailsAudit.auditManyCreatedSpecificationDetails(
+        const auditTasks = await this.specificationDetailsAudit.auditManyCreatedSpecificationDetails(
             specificationAuditData,
             createdBy,
             queryRunner,
         );
 
-        await this.sync(auditUids, this.tableNameAudit, await vessel, queryRunner);
+        await Promise.all(
+            auditTasks.map(async (task) => this.sync(task.uids, this.tableNameAudit, await vessel, task.runner)),
+        );
     }
 
     private async createSpecifications(
         specifications: Promise<SpecificationDetailsEntity>[],
         vessel: Promise<LibVesselsEntity>,
-        queryRunner: QueryRunner,
+        queryRunner: QueryRunnerManager,
     ) {
-        await this.specificationRepository.createSpecificationsFromStandardJob(
+        const tasks = await this.specificationRepository.createSpecificationsFromStandardJob(
             await Promise.all(specifications),
             queryRunner,
         );
-        await this.sync(
-            (await Promise.all(specifications)).map((s) => s.uid),
-            this.tableName,
-            await vessel,
-            queryRunner,
-        );
+        await Promise.all(tasks.map(async (task) => this.sync(task.uids, this.tableName, await vessel, task.runner)));
     }
 
     protected async MainHandlerAsync(request: CreateSpecificationFromStandardJobDto) {
@@ -223,6 +217,6 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
             ]);
 
             return Promise.all(specificationsToCreate);
-        });
+        }, 4 * (1 + Math.round(request.StandardJobUid.length / 20)));
     }
 }
