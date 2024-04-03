@@ -60,7 +60,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   @ViewChild('specificationUpdates') specificationUpdates: ElementRef;
 
   isForceDisableClose = false;
-  isSavingAction = false;
 
   specificationDetailsInfo: SpecificationDetails;
   updateSpecificationDetailsInfo: UpdateSpecificationDetailsDto;
@@ -95,6 +94,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   private isExecutionPhase = false;
   private formValuesSub: Subscription;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private savePayload: any;
 
   constructor(
@@ -149,8 +149,13 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         takeUntil(this.unsubscribe$)
       )
       .subscribe((res) => {
-        // Save payload for saving the data after changing task manager status
+        // Save payload for saving the data after changing task manager status, supposing that Save button is disabled on complete status
         if (this.specificationDetailsInfo.StatusId === eSpecificationWorkflowStatusAction.Complete) {
+          this.jbTMDtlSrv.restrictWorkflowDialog = this.isForceDisableClose;
+          if (this.isForceDisableClose) {
+            this.growlMessageService.setErrorMessage('Specification cannot be "Closed" until project is in execution phase');
+            return;
+          }
           this.savePayload = res;
           return;
         }
@@ -176,7 +181,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         takeUntil(this.unsubscribe$)
       )
       .subscribe((res) => {
-        this.isSavingAction = res?.action === 'save';
         this.sectionActions(res);
       });
   }
@@ -269,19 +273,17 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       return;
     }
 
-    //  to open dialog after workflow button is clicked
-    this.jbTMDtlSrv.restrictWorkflowDialog = this.isForceDisableClose;
-
-    if (this.isForceDisableClose && !this.isSavingAction) {
-      this.growlMessageService.setErrorMessage('Specification cannot be "Closed" until project is in execution phase');
-      return;
-    }
-
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
 
     this.showLoader = true;
 
-    const detailForm = this.detailForm?.value.generalInformation;
+    // if user can't edit OR view - send values from specification model
+    const detailForm = this.detailForm?.value.generalInformation || {
+      accountCode: this.specificationDetailsInfo.AccountCode,
+      doneBy: this.specificationDetailsInfo.DoneByUid,
+      priorityUid: this.specificationDetailsInfo.PriorityUid,
+      inspectionId: this.specificationDetailsInfo.Inspections.map((inspection) => inspection.InspectionId)
+    };
 
     const data: UpdateSpecificationDetailsDto = {
       uid: this.specificationDetailsInfo.uid,
