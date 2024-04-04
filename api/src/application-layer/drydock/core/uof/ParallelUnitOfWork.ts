@@ -30,6 +30,12 @@ export class ParallelUnitOfWork {
 
             await Promise.all(queryRunnerManager.queryRunners.map((queryRunner) => queryRunner.commitTransaction()));
         } catch (exception) {
+            // Check if all queryRunners is not pending
+            await Promise.allSettled(
+                queryRunnerManager.queryRunners.map((queryRunner) =>
+                    queryRunner.manager.createQueryBuilder().select('1').execute(),
+                ),
+            );
             await Promise.all(queryRunnerManager.queryRunners.map((queryRunner) => queryRunner.rollbackTransaction()));
 
             // TODO: implement retry pattern

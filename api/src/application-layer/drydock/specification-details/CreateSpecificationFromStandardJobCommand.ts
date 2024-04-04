@@ -126,12 +126,7 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
     ) {
         const vesselData = await vessel;
 
-        await this.specificationDetailsService.TaskManagerIntegration(
-            { Subject: subject },
-            vesselData,
-            token,
-            new DataUtilService().newUid(),
-        );
+        await this.specificationDetailsService.TaskManagerIntegration({ Subject: subject }, vesselData, token, uid);
 
         await this.infraService.CopyAttachmentsFromStandardJobToSpecification(
             token,
@@ -151,13 +146,19 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
             request.createdBy,
         );
 
-        const attachmentsPromises: Promise<void>[] = specificationsData.map((specification) => {
-            return this.processTaskManagerIntegration(
-                specification.specification.Subject,
-                vessel,
-                request.token,
-                specification.standardJob.uid,
-                specification.specification.TecTaskManagerUid,
+        const attachmentsPromises: Promise<void>[] = specificationsData.map((specification, i) => {
+            return new Promise((res, rej) =>
+                setTimeout(
+                    () =>
+                        this.processTaskManagerIntegration(
+                            specification.specification.Subject,
+                            vessel,
+                            request.token,
+                            specification.standardJob.uid,
+                            specification.specification.TecTaskManagerUid,
+                        ).then(res, rej),
+                    1000 * Math.floor(i / 5),
+                ),
             );
         });
 
@@ -228,6 +229,6 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
                 this.auditSpecificationDetails(specificationAuditData, vessel, request.createdBy, queryRunner),
                 Promise.all(attachmentsPromises),
             ]).then((result) => result[0]);
-        }, Math.min(4 * (1 + Math.round(specificationsData.length / 100)), 10));
+        }, Math.min(4 * (1 + Math.round(specificationsData.length / 100)), 2));
     }
 }
