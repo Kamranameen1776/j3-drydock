@@ -1,6 +1,6 @@
 {
   "name": "@j3-drydock/api",
-  "version": "3.242.121",
+  "version": "3.242.122",
   "description": "DryDock API",
   "main": "src/index.ts",
   "engines": {
@@ -54,7 +54,7 @@
     "express": "4.18.2",
     "htmlparser2": "9.1.0",
     "http-status-codes": "1.4.0",
-    "j2utils": "3.2309.205",
+    "j2utils": "3.2309.233",
     "j3-express-auto-routes": "22.12.1",
     "lodash": "4.17.21",
     "moment": "2.29.4",

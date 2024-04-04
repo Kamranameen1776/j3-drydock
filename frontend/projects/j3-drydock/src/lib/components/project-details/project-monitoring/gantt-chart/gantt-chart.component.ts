@@ -225,6 +225,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
         ValueCode: 'value',
         type: eFieldControlType.Dropdown,
         selectedValues: this.overdue,
+        default: true,
         list: of([
           { label: 'All', value: OverdueStatus.All },
           { label: 'Yes', value: OverdueStatus.True },

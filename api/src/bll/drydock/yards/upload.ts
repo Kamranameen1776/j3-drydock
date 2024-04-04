@@ -1,3 +1,5 @@
+import { plainToClass } from 'class-transformer';
+import { validate, ValidationError } from 'class-validator';
 import * as ExcelJS from 'exceljs';
 import { DataUtilService } from 'j2utils';
 
@@ -13,6 +15,7 @@ import {
     IUploadInvoiceRawDataCreateDto,
     IUploadInvoiceRawDataUpdateDto,
     IUploadRawDataDto,
+    UploadInvoiceRawDataUpdateDto,
 } from './dto/UploadInvoiceDto';
 
 export class UploadInvoiceService {
@@ -30,18 +33,30 @@ export class UploadInvoiceService {
         let index = 16;
         const update: Array<IUploadInvoiceRawDataUpdateDto> = [];
         const create: Array<IUploadInvoiceRawDataCreateDto> = [];
+        let hasErrors = false;
 
         while (worksheet.getCell(`A${index}`).value !== invoiceId) {
             if (!!worksheet.getCell(`A${index}`).value) {
                 if (!!worksheet.getCell(`B${index}`).value) {
-                    update.push({
+                    const item: IUploadInvoiceRawDataUpdateDto = {
                         technicalData: worksheet.getCell(`A${index}`).value as string,
                         qty: worksheet.getCell(`D${index}`).value as number,
                         uom: worksheet.getCell(`E${index}`).value as string,
                         unitPrice: worksheet.getCell(`F${index}`).value as string,
                         discount: worksheet.getCell(`G${index}`).value as string,
                         comments: worksheet.getCell(`I${index}`).value as string,
-                    });
+                    };
+
+                    const validationObject = plainToClass(UploadInvoiceRawDataUpdateDto, item);
+
+                    const errors = await validate(validationObject);
+
+                    if (errors.length > 0) {
+                        this.handleValidationErrors(errors, item);
+                        hasErrors = true;
+                    }
+
+                    update.push(item);
                 } else if (!!worksheet.getCell(`C${index}`).value) {
                     const text = worksheet.getCell(`C${index}`).value as string;
                     const lines = text.split('\n');
@@ -68,8 +83,10 @@ export class UploadInvoiceService {
             invoiceId,
             update,
             create,
+            hasErrors,
         };
     }
+
     public prepareUpdateData(
         data: Array<IUploadInvoiceRawDataUpdateDto>,
         UnitTypes: Array<UnitTypeEntity>,
@@ -155,5 +172,22 @@ export class UploadInvoiceService {
             flag = flag || obj[key] != item[key];
         });
         return flag;
+    }
+
+    private handleValidationErrors(errors: ValidationError[], item: IUploadInvoiceRawDataUpdateDto) {
+        errors.forEach((error) => {
+            const property = error.property as keyof IUploadInvoiceRawDataUpdateDto;
+            switch (property) {
+                case 'qty':
+                    item.qty = 0;
+                    break;
+                case 'unitPrice':
+                    item.unitPrice = '';
+                    break;
+                case 'discount':
+                    item.discount = '0';
+                    break;
+            }
+        });
     }
 }

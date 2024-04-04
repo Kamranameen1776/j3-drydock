@@ -41,6 +41,14 @@ export class GrowlMessageService {
     });
   }
 
+  setWarnMessage(detailMsg: string) {
+    this._growlMessage$.next({
+      ...this.defaultMsg,
+      severity: 'warn',
+      summary: detailMsg
+    });
+  }
+
   setMessage(msg: IJbGrowl) {
     this._growlMessage$.next({
       ...this.defaultMsg,

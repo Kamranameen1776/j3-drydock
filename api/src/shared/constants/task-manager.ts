@@ -1,3 +1,5 @@
+import { TaskManagerStatus } from '../enum/task-manager-status.enum';
+
 export const TaskManagerConstants = {
     project: {
         wlType: 'dry_dock',
@@ -15,11 +17,11 @@ export const TaskManagerConstants = {
         module_code: 'project',
         function_code: 'specification_details',
         status: {
-            Raised: 'RAISE',
-            InProgress: 'IN PROGRESS',
-            Planned: 'COMPLETE',
-            Closed: 'CLOSE',
-            Canceled: 'CANCEL',
+            Raised: TaskManagerStatus.Raised,
+            InProgress: TaskManagerStatus.InProgress,
+            Planned: TaskManagerStatus.Planned,
+            Closed: TaskManagerStatus.Closed,
+            Canceled: TaskManagerStatus.Canceled,
         },
     },
     standardJob: {
