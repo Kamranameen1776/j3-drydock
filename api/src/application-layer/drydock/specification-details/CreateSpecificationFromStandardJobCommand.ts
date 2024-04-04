@@ -147,6 +147,7 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
         );
 
         const attachmentsPromises: Promise<void>[] = specificationsData.map((specification, i) => {
+            // Delay is needed because task manager is overloaded with big amount of requests
             return new Promise((res, rej) =>
                 setTimeout(
                     () =>
