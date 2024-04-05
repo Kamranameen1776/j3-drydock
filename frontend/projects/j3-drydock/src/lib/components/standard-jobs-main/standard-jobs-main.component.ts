@@ -1,7 +1,7 @@
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
 import { StandardJobResult } from '../../models/interfaces/standard-jobs';
 import { Component, OnInit } from '@angular/core';
-import { eGridRefreshType, eGridRowActions, GridAction, GridRowActions, GridService } from 'jibe-components';
+import { eGridRefreshType, eGridRowActions, GridAction, GridRowActions, GridService, IPdfSettings } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { StandardJobsGridService } from './standard-jobs-grid.service';
 import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../models/interfaces/functions-tree-node';
@@ -55,6 +55,21 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
   private canEditJob = false;
 
   private canDeleteJob = false;
+
+  /**
+   * PDF settings for export
+   */
+  pdfSettings: IPdfSettings = {
+    headerInfo: [
+      {header: 'Item No.', doNotSplitByWords: true},
+      {header: 'Vessel Type', doNotSplitByWords: true},
+      {header: 'Inspection / Survey', doNotSplitByWords: true},
+      {header: 'Done By', doNotSplitByWords: true},
+      {header: 'Material Supplied By', doNotSplitByWords: true},
+    ],
+    headerHalign: 'left',
+    headerValign: 'middle',
+  };
 
   constructor(
     private standardJobsGridService: StandardJobsGridService,
