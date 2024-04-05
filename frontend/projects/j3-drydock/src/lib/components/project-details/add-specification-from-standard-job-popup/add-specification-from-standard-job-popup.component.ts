@@ -10,6 +10,8 @@ import { StandardJobsService } from '../../../services/standard-jobs.service';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { finalize } from 'rxjs/operators';
+import * as _ from 'lodash';
+import { GrowlMessageService } from '../../../services/growl-message.service';
 
 export enum eAddSpecificationFromStandardJobPopupType {
   Specification = 'Specification',
@@ -44,11 +46,14 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   functionUIDs: string[] = [];
   gridData: GridInputsWithRequest;
   selected = [];
+  // eslint-disable-next-line dot-notation
+  private maxJobsNum = window['environment']?.['maxStandardJobsNum'] || 75;
 
   constructor(
     private standardJobsService: StandardJobsService,
     private gridService: GridService,
-    private specificationService: SpecificationDetailsService
+    private specificationService: SpecificationDetailsService,
+    private growlMessageService: GrowlMessageService
   ) {
     super();
   }
@@ -91,17 +96,15 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
 
   private save() {
     const selectedUids = this.selected.map((row) => row.uid);
+
+    if (selectedUids.length > this.maxJobsNum) {
+      this.growlMessageService.setErrorMessage(`You can select up to ${this.maxJobsNum} standard jobs`);
+      return;
+    }
+
     switch (this.type) {
       case eAddSpecificationFromStandardJobPopupType.Specification:
-        this.isSaving$.next(true);
-        this.specificationService
-          .createSpecificationFromStandardJob(this.projectUid, selectedUids)
-          .pipe(
-            finalize(() => {
-              this.isSaving$.next(false);
-            })
-          )
-          .subscribe(() => this.closePopup());
+        this.saveCreateSpecificationsFromStandardJobs(selectedUids);
         break;
 
       case eAddSpecificationFromStandardJobPopupType.ProjectTemplate:
@@ -115,5 +118,17 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
 
   private getData() {
     return this.standardJobsService.getStandardJobPopupGridData(this.vesselType, this.functionUIDs, this.excludeUids);
+  }
+
+  private saveCreateSpecificationsFromStandardJobs(selectedUids: string[]) {
+    this.isSaving$.next(true);
+    this.specificationService
+      .createSpecificationFromStandardJob(this.projectUid, selectedUids)
+      .pipe(
+        finalize(() => {
+          this.isSaving$.next(false);
+        })
+      )
+      .subscribe(() => this.closePopup());
   }
 }

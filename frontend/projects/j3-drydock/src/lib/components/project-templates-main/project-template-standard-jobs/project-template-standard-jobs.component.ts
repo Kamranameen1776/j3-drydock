@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../../models/interfaces/functions-tree-node';
 import { FunctionsService } from '../../../services/functions.service';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
+import { GrowlMessageService } from '../../../services/growl-message.service';
 
 @Component({
   selector: 'jb-drydock-project-template-standard-jobs',
@@ -50,6 +51,9 @@ export class ProjectTemplateStandardJobsComponent extends UnsubscribeComponent i
 
   linkedUids: string[];
 
+  // eslint-disable-next-line dot-notation
+  private maxJobsNum = window['environment']?.['maxStandardJobsNum'] || 75;
+
   private vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name' | 'expanded'> = {
     uid: 'vesselParent',
     name: 'Functions',
@@ -60,7 +64,8 @@ export class ProjectTemplateStandardJobsComponent extends UnsubscribeComponent i
   constructor(
     private standardJobsGridService: ProjectTemplateStandardJobsGridService,
     private gridService: GridService,
-    private functionsService: FunctionsService
+    private functionsService: FunctionsService,
+    private growlMessageService: GrowlMessageService
   ) {
     super();
   }
@@ -98,6 +103,13 @@ export class ProjectTemplateStandardJobsComponent extends UnsubscribeComponent i
 
   onCloseAddPopup(selected: StandardJobResult[]) {
     const hasSaved = !!selected?.length;
+
+    const linkedNum = this.linked?.length || 0;
+    if (hasSaved && linkedNum + selected.length > this.maxJobsNum) {
+      this.growlMessageService.setErrorMessage(`Project template cannot contain more than ${this.maxJobsNum} standard jobs`);
+      return;
+    }
+
     if (hasSaved) {
       this.add(selected.map((item) => this.mapStandardJobTOProjectTemplateStandardJob(item)));
     }

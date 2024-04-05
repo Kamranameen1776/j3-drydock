@@ -104,25 +104,25 @@ export class SpecificationsComponent extends UnsubscribeComponent implements OnI
   onCloseStandardJobPopup(selected: StandardJobResult[]) {
     this.addFromStandardJobPopupVisible = false;
     if (selected.length > 0) {
-      this.onCloseCreatePopup();
+      this.specificationsCreated();
     }
   }
 
   onCloseCreateFromProjectTemplatePopup(isSaved: boolean) {
     this.isCreateFromProjectTemplatePopupVisible = false;
     if (isSaved) {
-      this.onCloseCreatePopup();
+      this.specificationsCreated();
     }
   }
 
   onCloseCreateSpecificationPopup(isSaved: boolean) {
     this.isCreatePopupVisible = false;
     if (isSaved) {
-      this.onCloseCreatePopup();
+      this.specificationsCreated();
     }
   }
 
-  private onCloseCreatePopup() {
+  private specificationsCreated() {
     this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
     this.growlService.setSuccessMessage('Specification created successfully');
   }
