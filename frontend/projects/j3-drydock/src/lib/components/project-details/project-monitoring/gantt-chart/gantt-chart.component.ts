@@ -55,6 +55,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   @Input() detailsHeight: number;
 
+  @Input() includeWeekend = true;
+
   @ViewChild('jobOrderForm') jobOrderForm: JobOrdersFormComponent;
 
   @ViewChild('ganttChart') ganttChart: Gantt;

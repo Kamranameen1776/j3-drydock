@@ -7,6 +7,7 @@ import { CreateProjectFromTemplateGridService } from './create-project-from-temp
 import { ProjectTemplatesService } from '../../../services/project-templates.service';
 import { GrowlMessageService } from '../../../services/growl-message.service';
 import { eProjectTemplatesFields } from '../../../models/enums/project-templates.enum';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'jb-create-from-project-template-popup',
@@ -67,18 +68,22 @@ export class CreateFromProjectTemplatePopupComponent implements OnInit {
     const projectTemplateUid = this.selectedProjectTemplate.ProjectTemplateUid;
     this.isSaving$.next(true);
 
-    this.projectTemplatesService.createSpecificationFromProjectTemplate(this.projectUid, projectTemplateUid).subscribe({
-      next: () => {
-        this.closePopup(true);
-        this.showLoader = false;
-        this.isSaving$.next(false);
-      },
-      error: (error) => {
-        this.growlMessageService.errorHandler(error);
-        this.showLoader = false;
-        this.isSaving$.next(false);
-      }
-    });
+    this.projectTemplatesService
+      .createSpecificationFromProjectTemplate(this.projectUid, projectTemplateUid)
+      .pipe(
+        finalize(() => {
+          this.showLoader = false;
+          this.isSaving$.next(false);
+        })
+      )
+      .subscribe(
+        () => {
+          this.closePopup(true);
+        },
+        (error) => {
+          this.growlMessageService.errorHandler(error);
+        }
+      );
   }
 
   private getData() {
