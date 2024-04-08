@@ -22,7 +22,7 @@ import {
 } from '../../../../shared/status-css.json';
 
 import { Filter, IJbDialog, JmsService, UserService, eFieldControlType, eJMSWorkflowAction } from 'jibe-components';
-import { UTCAsLocal, currentLocalAsUTC } from '../../../../utils/date';
+import { UTCAsLocal, currentLocalAsUTC, localToUTC } from '../../../../utils/date';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
@@ -278,15 +278,15 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
     if (project?.StartDate) {
       eventMarkers.push({
-        day: new Date(project?.StartDate),
+        day: moment(project.StartDate).startOf('day').toDate(),
         label: '',
         cssClass: 'overdue-line'
       });
     }
 
-    if (project.EndDate) {
+    if (project?.EndDate) {
       eventMarkers.push({
-        day: new Date(project?.EndDate),
+        day: moment(project.EndDate).endOf('day').toDate(),
         label: '',
         cssClass: 'overdue-line'
       });
@@ -342,8 +342,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
     const dto: IUpdateJobOrderDurationDto = {
       SpecificationUid: event.data.SpecificationUid,
-      SpecificationStartDate: newStartDate,
-      SpecificationEndDate: newEndDate,
+      SpecificationStartDate: localToUTC(newStartDate),
+      SpecificationEndDate: localToUTC(newEndDate),
       Progress: newProgress,
       LastUpdated: currentLocalAsUTC()
     };
@@ -387,8 +387,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       LastUpdated: currentLocalAsUTC(),
       Progress: jobOrder.Progress,
 
-      SpecificationStartDate: jobOrder.SpecificationStartDate,
-      SpecificationEndDate: jobOrder.SpecificationEndDate,
+      SpecificationStartDate: localToUTC(jobOrder.SpecificationStartDate),
+      SpecificationEndDate: localToUTC(jobOrder.SpecificationEndDate),
 
       Status: jobOrder.Status,
       Subject: jobOrder.Subject,
