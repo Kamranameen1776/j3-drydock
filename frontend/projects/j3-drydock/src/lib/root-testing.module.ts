@@ -4,7 +4,6 @@ import { JiBeTheme, JibeComponentsModule, UserRightsService } from 'jibe-compone
 import { Directive, Input, NgModule } from '@angular/core';
 import { winEnv } from './drydock.module';
 import { DatePipe } from '@angular/common';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
