@@ -13,7 +13,7 @@
   <div class="button-list">
     <span class="col-md-8 filter-btn-label">{{ projectStatus.GroupProjectDisplayName }}</span>
     <span
-      *ngIf="projectStatus.ProjectWithStatusCount; else loader"
+      *ngIf="projectStatus.ProjectWithStatusCount !== undefined; else loader"
       class="col-md-4 filter-btn-info"
     >
       {{ projectStatus.ProjectWithStatusCount }}

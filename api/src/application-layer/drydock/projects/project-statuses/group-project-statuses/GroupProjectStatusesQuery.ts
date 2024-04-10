@@ -2,8 +2,9 @@ import { ProjectsRepository } from '../../../../../dal/drydock/projects/Projects
 import { Cache } from '../../../../../external-services/drydock/Cache';
 import { SlfAccessor } from '../../../../../external-services/drydock/SlfAccessor';
 import { Query } from '../../../core/cqrs/Query';
+import { GroupProjectStatusesCountsRequestModel } from './dtos/GroupProjectStatusesCountsRequestModel';
 import { IGroupProjectStatusDto, IGroupProjectStatusesDto, IGroupResponseDto } from './dtos/IGroupProjectStatusDto';
-export class GroupProjectStatusesQuery extends Query<string, IGroupResponseDto> {
+export class GroupProjectStatusesQuery extends Query<GroupProjectStatusesCountsRequestModel, IGroupResponseDto> {
     readonly allProjectsProjectTypeId = 'all_projects';
 
     readonly allProjectsName = 'All Projects';
@@ -19,20 +20,17 @@ export class GroupProjectStatusesQuery extends Query<string, IGroupResponseDto> 
         this.slfAccessor = new SlfAccessor();
     }
 
-    protected async AuthorizationHandlerAsync(): Promise<void> {
-        return;
-    }
-
-    protected async ValidationHandlerAsync(): Promise<void> {
-        return;
-    }
-
     /**
      * Get group project statuses, like "Complete", "In Progress", "Planned", "Closed", etc.
      * @returns Group project statuses
      */
-    protected async MainHandlerAsync(request: string): Promise<IGroupResponseDto> {
-        const assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(request);
+    protected async MainHandlerAsync(request: GroupProjectStatusesCountsRequestModel): Promise<IGroupResponseDto> {
+        let assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(request.Token);
+
+        if (request.VesselsIds != null && request.VesselsIds.length > 0) {
+            assignedVessels = assignedVessels.filter((vesselId) => request.VesselsIds!.includes(vesselId));
+        }
+
         const cacheKey = assignedVessels.join('|');
         const cacheValue = await this.cache.get(cacheKey);
         if (cacheValue) {
@@ -87,7 +85,9 @@ export class GroupProjectStatusesQuery extends Query<string, IGroupResponseDto> 
                 StatusOrder,
             });
         }
+
         await this.cache.put(result, cacheKey, 300);
+
         return result;
     }
 }

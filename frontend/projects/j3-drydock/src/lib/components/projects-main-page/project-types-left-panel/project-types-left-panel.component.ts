@@ -5,6 +5,7 @@ import { IGroupProjectStatusesDto } from '../../../services/dtos/IGroupProjectSt
 import { LeftPanelFilterService } from '../services/LeftPanelFilterService';
 import { takeUntil } from 'rxjs/operators';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
+import { IGroupProjectStatusesCountsRequestDto } from '../../../services/dtos/IGroupProjectStatusesCountsRequestDto';
 
 @Component({
   selector: 'jb-project-types-left-panel',
@@ -45,11 +46,17 @@ export class ProjectTypesLeftPanelComponent extends UnsubscribeComponent impleme
         this.groupProjectStatusesCounts();
         this.vesselsSelectDropdownList.registerOnChange(this.onVesselsSelected.bind(this));
       });
+    this.leftPanelFilterService.vesselsChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((vesselsIds) => {
+      this.groupProjectStatusesCounts(vesselsIds);
+    });
   }
 
-  private groupProjectStatusesCounts() {
+  private groupProjectStatusesCounts(vesselsIds: number[] | null = null) {
+    const requestDto: IGroupProjectStatusesCountsRequestDto = {
+      VesselsIds: vesselsIds
+    };
     this.projectsService
-      .groupProjectStatusesCounts()
+      .groupProjectStatusesCounts(requestDto)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((groupProjectStatusesRes) => {
         this.setProjectStatusFilters(groupProjectStatusesRes);
