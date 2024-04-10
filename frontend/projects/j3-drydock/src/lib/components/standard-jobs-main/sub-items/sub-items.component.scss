@@ -3,5 +3,21 @@
     .ui-table-scrollable-body {
       height: 250px !important;
     }
+
+    .standardjobs-subitems-grid .ui-paginator-bottom {
+
+      .paginator-dropdown {
+        pointer-events: none;
+
+        .ui-dropdown-label {
+          padding-left: 11px;
+        }
+      }
+
+      div.ui-dropdown-trigger {
+        display: none ;
+      }
+
+    }
   }
 }

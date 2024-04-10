@@ -5,5 +5,5 @@ export interface IGroupProjectStatusDto {
 
   GroupProjectDisplayName: string;
 
-  ProjectWithStatusCount: number;
+  ProjectWithStatusCount: number | undefined;
 }

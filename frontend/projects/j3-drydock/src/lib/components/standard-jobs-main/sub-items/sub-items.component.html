@@ -1,4 +1,5 @@
 <jb-grid
+  class="standardjobs-subitems-grid"
   [gridName]="gridInputs.gridName"
   [colData]="gridInputs.columns"
   [tableData]="subItems | staticGridSearch: (searchTerm$ | async) : searchFn"

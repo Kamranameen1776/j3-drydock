@@ -1,6 +1,7 @@
 import * as express from 'express';
-import { Controller, Get, Request, Route } from 'tsoa';
+import { Body, Controller, Get, Request, Route } from 'tsoa';
 
+import { GroupProjectStatusesCountsRequestModel } from '../../../../application-layer/drydock/projects/project-statuses/group-project-statuses/dtos/GroupProjectStatusesCountsRequestModel';
 import { IGroupResponseDto } from '../../../../application-layer/drydock/projects/project-statuses/group-project-statuses/dtos/IGroupProjectStatusDto';
 import { GroupProjectStatusesQuery } from '../../../../application-layer/drydock/projects/project-statuses/group-project-statuses/GroupProjectStatusesQuery';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
@@ -8,17 +9,22 @@ import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 @Route('drydock/projects/group-project-statuses')
 export class GetGroupProjectStatusesActionController extends Controller {
     @Get()
-    public async getGroupProjectStatusesAction(@Request() request: express.Request): Promise<IGroupResponseDto> {
+    public async getGroupProjectStatusesAction(
+        @Request() request: express.Request,
+        @Body() body: GroupProjectStatusesCountsRequestModel,
+    ): Promise<IGroupResponseDto> {
         const token: string = request.headers.authorization as string;
+
+        body.Token = token;
 
         const query = new GroupProjectStatusesQuery();
 
-        const result = await query.ExecuteAsync(token);
+        const result = await query.ExecuteRequestAsync(body, GroupProjectStatusesCountsRequestModel);
 
         return result;
     }
 }
 
-exports.get = new MiddlewareHandler().ExecuteHandlerAsync(
-    new GetGroupProjectStatusesActionController().getGroupProjectStatusesAction,
-);
+exports.post = new MiddlewareHandler().ExecuteHandlerAsync(async (request: express.Request) => {
+    return new GetGroupProjectStatusesActionController().getGroupProjectStatusesAction(request, request.body);
+});

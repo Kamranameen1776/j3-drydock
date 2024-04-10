@@ -11,6 +11,7 @@ import { eProjectsAccessActions } from '../models/enums/access-actions.enum';
 import { FileService } from './file.service';
 import { UpdateCostsDto } from '../models/dto/specification-details/ISpecificationCostUpdateDto';
 import { eApiBaseDryDockAPI } from '../models/constants/constants';
+import { IGroupProjectStatusesCountsRequestDto } from './dtos/IGroupProjectStatusesCountsRequestDto';
 
 @Injectable({
   providedIn: 'root'
@@ -172,12 +173,15 @@ export class ProjectsService {
     return this.apiRequestService.sendApiReq(apiRequest);
   }
 
-  public groupProjectStatusesCounts(): Observable<{ [key: string]: IGroupProjectStatusesDto }> {
+  public groupProjectStatusesCounts(
+    requestDto: IGroupProjectStatusesCountsRequestDto
+  ): Observable<{ [key: string]: IGroupProjectStatusesDto }> {
     const apiRequest: WebApiRequest = {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
       action: 'projects/group-project-statuses',
-      crud: eCrud.Get
+      crud: eCrud.Post,
+      body: requestDto
     };
 
     return this.apiRequestService.sendApiReq(apiRequest);
