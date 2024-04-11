@@ -71,7 +71,8 @@ export class SpecificationSubItemEditService extends FormServiceBase {
             gridRowEnd: 3,
             gridColStart: 1,
             gridColEnd: 2,
-            validatorMin: 0
+            validatorMin: 0,
+            validatorMax: 9999
           },
           [`${eSpecificationDetailsSubItemsFields.UnitPrice}`]: {
             label: eSpecificationDetailsSubItemsLabels.UnitPrice,
@@ -83,7 +84,8 @@ export class SpecificationSubItemEditService extends FormServiceBase {
             gridRowEnd: 3,
             gridColStart: 2,
             gridColEnd: 3,
-            validatorMin: 0
+            validatorMin: 0,
+            validatorMax: 999999.99
           },
           [`${eSpecificationDetailsSubItemsFields.Discount}`]: {
             label: eSpecificationDetailsSubItemsLabels.Discount,
