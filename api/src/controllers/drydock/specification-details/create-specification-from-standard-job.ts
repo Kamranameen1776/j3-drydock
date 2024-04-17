@@ -4,18 +4,17 @@ import { Body, Controller, Post, Request, Route } from 'tsoa';
 
 import { CreateSpecificationFromStandardJobsCommand } from '../../../application-layer/drydock/specification-details/CreateSpecificationFromStandardJobCommand';
 import { CreateSpecificationFromStandardJobDto } from '../../../dal/drydock/specification-details/dtos/ICreateSpecificationFromStandardJobDto';
+import { SpecificationDetailsEntity } from '../../../entity/drydock';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
 async function createSpecificationFromStandardJobs(req: express.Request, res: express.Response) {
     const middlewareHandler = new MiddlewareHandler('standard_jobs');
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: express.Request) => {
-        const result = await new CreateSpecificationFromStandardJobsController().createSpecificationFromStandardJobs(
+        return new CreateSpecificationFromStandardJobsController().createSpecificationFromStandardJobs(
             request.body,
             request,
         );
-
-        return result;
     });
 }
 
@@ -27,10 +26,7 @@ export class CreateSpecificationFromStandardJobsController extends Controller {
     public async createSpecificationFromStandardJobs(
         @Body() dto: CreateSpecificationFromStandardJobDto,
         @Request() request: express.Request,
-
-        // TODO: check if newer version of tsoa supports this
-        // ): Promise<SpecificationDetailsEntity[]> {
-    ): Promise<unknown> {
+    ): Promise<SpecificationDetailsEntity[]> {
         const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
 
         dto.createdBy = createdBy;
@@ -38,8 +34,6 @@ export class CreateSpecificationFromStandardJobsController extends Controller {
 
         const query = new CreateSpecificationFromStandardJobsCommand();
 
-        const result = await query.ExecuteAsync(dto);
-
-        return result;
+        return query.ExecuteAsync(dto);
     }
 }

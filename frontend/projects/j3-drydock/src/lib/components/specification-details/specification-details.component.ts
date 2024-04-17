@@ -42,6 +42,7 @@ import { Subscription } from 'rxjs';
 import { UTCAsLocal, localDateJbStringAsUTC } from '../../utils/date';
 import { DetailsService } from '../../services/details.service';
 import { SpecificationUpdatesComponent } from './specification-updates/specification-updates.component';
+import { eSpecificationDetailsGeneralInformationFields } from '../../models/enums/specification-details-general-information.enum';
 
 @Component({
   selector: 'jb-specification-details',
@@ -77,7 +78,9 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   topSectionConfig: ITopSectionFieldSet;
   accessRights: SpecificationDetailAccessRights;
   editingSection = '';
-  showLoader = false;
+  isSaving = false;
+  isGettingDetails = false;
+  isGettingReCalculatedDetails = false;
   selectedItems: { [key in eSpecificationDetailsPageMenuIds]?: TmLinkedRecords[] } = {
     [eSpecificationDetailsPageMenuIds.PMSJobs]: [],
     [eSpecificationDetailsPageMenuIds.Findings]: []
@@ -88,6 +91,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   } as CreateSpecificationSubItemData;
   pmsWlType = ePmsWlType;
   menu = cloneDeep(specificationDetailsMenuData);
+  fieldValuesToRefresh: { [key: string]: unknown };
   readonly eSideMenuId = eSpecificationDetailsPageMenuIds;
   eSpecificationDetailsPageMenuIds = eSpecificationDetailsPageMenuIds;
   isUpdatesEditable = false;
@@ -241,6 +245,13 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     this.jbTMDtlSrv.closeDialog.next(true);
   }
 
+  handleChangedSubItems() {
+    if (this.isGettingReCalculatedDetails) {
+      return;
+    }
+    this.getCalculatedDetails();
+  }
+
   public async save(event): Promise<void> {
     this.sectionActions({ type: eJMSActionTypes.Edit, secName: '' });
 
@@ -275,24 +286,36 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
 
     this.jbTMDtlSrv.isAllSectionsValid.next(true);
 
-    this.showLoader = true;
+    this.isSaving = true;
 
     // if user can't edit OR view - send values from specification model
     const detailForm = this.detailForm?.value.generalInformation || {
       accountCode: this.specificationDetailsInfo.AccountCode,
       doneBy: this.specificationDetailsInfo.DoneByUid,
       priorityUid: this.specificationDetailsInfo.PriorityUid,
-      inspectionId: this.specificationDetailsInfo.Inspections.map((inspection) => inspection.InspectionId)
+      inspectionId: this.specificationDetailsInfo.Inspections.map((inspection) => inspection.InspectionId),
+      duration: this.specificationDetailsInfo.Duration,
+      bufferTime: this.specificationDetailsInfo.BufferTime,
+      glAccountUid: this.specificationDetailsInfo.GlAccountUid,
+      jobRequired: this.specificationDetailsInfo.JobRequired,
+      estimatedBudget: this.specificationDetailsInfo.EstimatedBudget,
+      jobExecutionUid: this.specificationDetailsInfo.JobExecutionUid
     };
 
     const data: UpdateSpecificationDetailsDto = {
       uid: this.specificationDetailsInfo.uid,
       Subject: headerFormValue.Job_Short_Description,
-      AccountCode: detailForm?.accountCode,
-      Description: this.detailForm?.value.editors.description,
-      DoneByUid: detailForm?.doneBy,
-      PriorityUid: detailForm?.priorityUid,
-      Inspections: detailForm?.inspectionId
+      AccountCode: detailForm.accountCode,
+      Description: this.detailForm ? this.detailForm.value.editors.description : this.specificationDetailsInfo.Description,
+      DoneByUid: detailForm.doneBy,
+      PriorityUid: detailForm.priorityUid,
+      Inspections: detailForm.inspectionId,
+      Duration: detailForm.duration,
+      BufferTime: detailForm.bufferTime,
+      GlAccountUid: detailForm.glAccountUid,
+      JobRequired: detailForm.jobRequired,
+      EstimatedBudget: detailForm.estimatedBudget,
+      JobExecutionUid: detailForm.jobExecutionUid
     };
 
     if (headerFormValue.StartDate) {
@@ -307,15 +330,16 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
       data.Completion = +headerFormValue.Completion;
     }
 
-    if (headerFormValue.Duration != null) {
-      data.Duration = +headerFormValue.Duration;
-    }
+    // if (headerFormValue.Duration != null) {
+    //   data.Duration = +headerFormValue.Duration;
+    // }
 
     this.specificationDetailService
       .updateSpecification(data)
       .pipe(
         finalize(() => {
           this.jbTMDtlSrv.isUnsavedChanges.next(false);
+          this.isSaving = false;
         })
       )
       .subscribe(
@@ -325,7 +349,6 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
           this.savePayload = null;
         },
         (err) => {
-          this.showLoader = false;
           if (err?.status === 422 && err?.error?.message) {
             this.growlMessageService.setErrorMessage(err.error.message);
           } else {
@@ -339,9 +362,12 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
     this.selectedItems[type] = items;
   }
 
-  closeDialog() {
+  closeDialog(isSaved: boolean) {
     this.showEditSubItem = false;
-    this.refreshSubItems();
+    if (isSaved) {
+      this.handleChangedSubItems();
+      this.refreshSubItems();
+    }
   }
 
   private refreshSubItems() {
@@ -349,7 +375,7 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
   }
 
   private getDetails(refresh = false) {
-    this.showLoader = true;
+    this.isGettingDetails = true;
 
     this.specificationDetailService
       .getSpecificationDetails(this.specificationUid)
@@ -378,31 +404,52 @@ export class SpecificationDetailsComponent extends UnsubscribeComponent implemen
         }),
         takeUntil(this.unsubscribe$)
       )
-      .subscribe((workflow) => {
-        this.tmDetails = { ...this.specificationDetailsInfo, ...workflow, isTaskManagerJob: true };
+      .subscribe(
+        (workflow) => {
+          this.tmDetails = { ...this.specificationDetailsInfo, ...workflow, isTaskManagerJob: true };
 
-        this.accessRights = this.specificationDetailService.setupAccessRights(this.tmDetails);
-        this.topSectionConfig = this.specificationDetailService.getTopSecConfig(this.tmDetails);
-        this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig(
-          this.tmDetails,
-          this.isSpecificationEditable,
-          this.isUpdatesEditable
-        );
+          this.accessRights = this.specificationDetailService.setupAccessRights(this.tmDetails);
+          this.topSectionConfig = this.specificationDetailService.getTopSecConfig(this.tmDetails);
+          this.sectionsConfig = this.specificationDetailService.getSpecificationStepSectionsConfig(
+            this.tmDetails,
+            this.isSpecificationEditable,
+            this.isUpdatesEditable
+          );
 
-        this.setMenu();
-        this.setIsForceDisableClose(this.tmDetails.StatusId);
+          this.setMenu();
+          this.setIsForceDisableClose(this.tmDetails.StatusId);
 
-        // TODO add here more to init view if needed
-        if (refresh) {
-          this.jbTMDtlSrv.refreshTaskManager.next({
-            refresh: true,
-            tmDetails: this.tmDetails,
-            topSecConfig: this.topSectionConfig
-          });
+          // TODO add here more to init view if needed
+          if (refresh) {
+            this.jbTMDtlSrv.refreshTaskManager.next({
+              refresh: true,
+              tmDetails: this.tmDetails,
+              topSecConfig: this.topSectionConfig
+            });
+          }
+          this.isGettingDetails = false;
+        },
+        () => {
+          this.isGettingDetails = false;
         }
-      });
+      );
+  }
 
-    this.showLoader = false;
+  private getCalculatedDetails() {
+    this.isGettingReCalculatedDetails = true;
+    this.specificationDetailService
+      .getSpecificationDetails(this.specificationUid)
+      .pipe(
+        finalize(() => {
+          this.isGettingReCalculatedDetails = false;
+        })
+      )
+      .subscribe((specificationDetailsInfo) => {
+        this.fieldValuesToRefresh = {
+          [eSpecificationDetailsGeneralInformationFields.EstimatedCost]: specificationDetailsInfo.EstimatedCost,
+          [eSpecificationDetailsGeneralInformationFields.OverallCost]: specificationDetailsInfo.OverallCost
+        };
+      });
   }
 
   private sectionActions(res: { type?: string; secName?: string; event?: unknown; checkValidation?: boolean }) {

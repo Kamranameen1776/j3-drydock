@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { SpecificationGeneralInformationInputservice } from './specification-general-information-inputs';
+import { SpecificationGeneralInformationInputService } from './specification-general-information-inputs';
 import { FormModel, FormValues, UserService } from 'jibe-components';
 import { SpecificationDetails } from '../../../models/interfaces/specification-details';
 import { EditorConfig } from '../../../models/interfaces/EditorConfig';
@@ -8,11 +8,12 @@ import { EditorConfig } from '../../../models/interfaces/EditorConfig';
   selector: 'jb-specification-general-information',
   templateUrl: './specification-general-information.component.html',
   styleUrls: ['./specification-general-information.component.scss'],
-  providers: [SpecificationGeneralInformationInputservice]
+  providers: [SpecificationGeneralInformationInputService]
 })
-export class SpecificationGeneralInformationComponent implements OnInit {
+export class SpecificationGeneralInformationComponent implements OnInit, OnChanges {
   @Input() specificationDetailsInfo: SpecificationDetails;
   @Input() isEditable: boolean;
+  @Input() fieldValuesToRefresh: { [key: string]: unknown}
   @Output() formValue = new EventEmitter<FormGroup>();
 
   public formGroup: FormGroup;
@@ -31,11 +32,17 @@ export class SpecificationGeneralInformationComponent implements OnInit {
   vesselId: number;
 
   constructor(
-    private specificationInformationInputService: SpecificationGeneralInformationInputservice,
+    private specificationInformationInputService: SpecificationGeneralInformationInputService,
     private userService: UserService
   ) {}
 
-  async ngOnInit(): Promise<void> {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.fieldValuesToRefresh && this.fieldValuesToRefresh && this.formGroup) {
+      this.formGroup.get('generalInformation')?.patchValue(this.fieldValuesToRefresh);
+    }
+  }
+
+  ngOnInit() {
     const { formModel, formValues } = this.specificationInformationInputService.getFormModelAndInitialValues(
       this.specificationDetailsInfo,
       this.isEditable

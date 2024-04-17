@@ -143,13 +143,88 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             validatorRequired: true,
             gridRowStart: 5,
             gridRowEnd: 6,
-            gridColStart: 2,
-            gridColEnd: 3,
+            gridColStart: 1,
+            gridColEnd: 2,
             listRequest: {
               labelKey: 'VesselTypes',
               valueKey: 'ID',
               webApiRequest: this.standardJobsService.getVesselTypesRequest()
             }
+          },
+          [eStandardJobsMainFields.EstimatedDuration]: {
+            type: eFieldControlType.Number,
+            label: eStandardJobsMainLabels.EstimatedDuration,
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 5,
+            gridRowEnd: 6,
+            gridColStart: 2,
+            gridColEnd: 3,
+            format: { afterDecimal: 2 },
+            validatorMin: 0
+          },
+          [eStandardJobsMainFields.BufferTime]: {
+            type: eFieldControlType.Number,
+            label: eStandardJobsMainLabels.BufferTime,
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 6,
+            gridRowEnd: 7,
+            gridColStart: 1,
+            gridColEnd: 2,
+            format: { afterDecimal: 2 },
+            validatorMin: 0
+          },
+          [eStandardJobsMainFields.GLAccount]: {
+            type: eFieldControlType.Dropdown,
+            label: eStandardJobsMainLabels.GLAccount,
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 6,
+            gridRowEnd: 7,
+            gridColStart: 2,
+            gridColEnd: 3,
+            list: []
+          },
+          [eStandardJobsMainFields.EstimatedBudget]: {
+            type: eFieldControlType.Number,
+            label: eStandardJobsMainLabels.EstimatedBudget,
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 7,
+            gridRowEnd: 8,
+            gridColStart: 1,
+            gridColEnd: 2,
+            format: { afterDecimal: 2 },
+            validatorMin: 0
+          },
+          [eStandardJobsMainFields.JobExecution]: {
+            type: eFieldControlType.Dropdown,
+            label: eStandardJobsMainLabels.JobExecution,
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 7,
+            gridRowEnd: 8,
+            gridColStart: 2,
+            gridColEnd: 3,
+            list: []
+          },
+          [eStandardJobsMainFields.JobRequired]: {
+            type: eFieldControlType.Dropdown,
+            label: eStandardJobsMainLabels.JobRequired,
+            sectionID: this.formId,
+            enabled: true,
+            validatorRequired: false,
+            gridRowStart: 8,
+            gridRowEnd: 9,
+            gridColStart: 1,
+            gridColEnd: 2,
+            list: this.standardJobsService.getJobRequiredList()
           }
         }
       }
@@ -168,7 +243,13 @@ export class StandardJobUpsertFormService extends FormServiceBase {
         [eStandardJobsMainFields.VesselSpecific]: 0,
         [eStandardJobsMainFields.VesselTypeID]: null,
         [eStandardJobsMainFields.Description]: null,
-        [eStandardJobsMainFields.Scope]: null
+        [eStandardJobsMainFields.Scope]: null,
+        [eStandardJobsMainFields.EstimatedDuration]: 0,
+        [eStandardJobsMainFields.BufferTime]: 0,
+        [eStandardJobsMainFields.GLAccount]: null,
+        [eStandardJobsMainFields.EstimatedBudget]: 0,
+        [eStandardJobsMainFields.JobExecution]: null,
+        [eStandardJobsMainFields.JobRequired]: 'Yes'
       }
     }
   };

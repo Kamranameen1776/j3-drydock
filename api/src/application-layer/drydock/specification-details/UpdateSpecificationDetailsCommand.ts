@@ -8,6 +8,7 @@ import { SpecificationDetailsRepository } from '../../../dal/drydock/specificati
 import { VesselsRepository } from '../../../dal/drydock/vessels/VesselsRepository';
 import { SpecificationDetailsEntity, SpecificationInspectionEntity } from '../../../entity/drydock';
 import { J2FieldsHistoryEntity } from '../../../entity/drydock/dbo/J2FieldsHistoryEntity';
+import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
 import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateSpecificationDetailsDto } from './dtos/UpdateSpecificationDetailsDto';
@@ -65,8 +66,17 @@ export class UpdateSpecificationDetailsCommand extends Command<UpdateSpecificati
             entity.StartDate = request.StartDate ?? null;
             entity.EndDate = request.EndDate ?? null;
             entity.Completion = request.Completion ?? 0;
+            entity.EstimatedBudget = request.EstimatedBudget ?? 0;
+            entity.EstimatedDays = request.EstimatedDays ?? 0;
+            entity.JobExecutionUid = request.JobExecutionUid!;
+            entity.EstimatedCost = request.EstimatedCost ?? 0;
+            entity.BufferTime = request.BufferTime ?? 0;
+            entity.GlAccountUid = request.GlAccountUid!;
+            entity.JobRequired = request.JobRequired || QueryStrings.Yes;
 
             await this.specificationDetailsRepository.UpdateSpecificationDetailsByEntity(entity, queryRunner);
+
+            await this.specificationDetailsRepository.updateEstimatedCost(entity.uid, queryRunner);
 
             await SynchronizerService.dataSynchronizeManager(
                 queryRunner.manager,

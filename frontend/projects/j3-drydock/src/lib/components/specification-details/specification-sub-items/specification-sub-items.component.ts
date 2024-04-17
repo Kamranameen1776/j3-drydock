@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { SpecificationDetailsSubItemsGridService } from '../../../services/specification-details/specification-details-sub-item.service';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { eGridRefreshType, eGridRowActions, GridService } from 'jibe-components';
@@ -10,6 +10,7 @@ import { SpecificationSubItemEditService } from './specification-sub-item-edit.s
 import { GrowlMessageService } from '../../../services/growl-message.service';
 import { BehaviorSubject } from 'rxjs';
 import { eSubItemsDialog } from '../../../models/enums/sub-items.enum';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'jb-specification-sub-items',
@@ -19,6 +20,9 @@ import { eSubItemsDialog } from '../../../models/enums/sub-items.enum';
 export class SpecificationSubItemsComponent implements OnInit {
   @Input() isEditable: boolean;
   @Input() specificationDetailsInfo: SpecificationDetails;
+
+  @Output() changed = new EventEmitter<void>();
+
   gridData: GridInputsWithRequest;
 
   selectedSubItem: SpecificationSubItem;
@@ -71,25 +75,31 @@ export class SpecificationSubItemsComponent implements OnInit {
 
   confirmDelete() {
     this.deleteLoading$.next(true);
-    this.specificationSubItemService.deleteSubItem(this.selectedDeleteSubItem.uid, this.specificationDetailsInfo.uid).subscribe(
-      () => {
-        this.gridData = this.getData(this.isEditable);
-        this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
-        this.selectedDeleteSubItem = null;
-        this.deleteLoading$.next(false);
-      },
-      (err) => {
-        this.growlService.errorHandler(err);
-        this.selectedDeleteSubItem = null;
-        this.deleteLoading$.next(false);
-      }
-    );
+    this.specificationSubItemService
+      .deleteSubItem(this.selectedDeleteSubItem.uid, this.specificationDetailsInfo.uid)
+      .pipe(
+        finalize(() => {
+          this.selectedDeleteSubItem = null;
+          this.deleteLoading$.next(false);
+        })
+      )
+      .subscribe(
+        () => {
+          this.gridData = this.getData(this.isEditable);
+          this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+          this.changed.emit();
+        },
+        (err) => {
+          this.growlService.errorHandler(err);
+        }
+      );
   }
 
   closeDialog(isSaved: boolean) {
     if (isSaved) {
       this.gridData = this.getData(this.isEditable);
       this.gridService.refreshGrid(eGridRefreshType.Table, this.gridData.gridName);
+      this.changed.emit();
     }
 
     this.selectedSubItem = null;

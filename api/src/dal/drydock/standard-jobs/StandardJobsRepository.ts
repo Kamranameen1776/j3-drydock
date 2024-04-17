@@ -56,6 +56,12 @@ export class StandardJobsRepository {
             .select(
                 'distinct sj.uid as uid,' +
                     'sj.subject as subject,' +
+                    'sj.estimated_budget as estimatedBudget,' +
+                    'sj.estimated_duration as estimatedDuration,' +
+                    'sj.buffer_time as bufferTime,' +
+                    'sj.job_required as jobRequired,' +
+                    'sj.gl_account_uid as glAccountUid,' +
+                    'sj.job_execution_uid as jobExecutionUid,' +
                     'sj.scope as scope,' +
                     'sj."function" as "function",' +
                     'sj."function_uid" as "functionUid",' +
@@ -116,6 +122,12 @@ export class StandardJobsRepository {
                 `sj.uid` +
                     `,sj.subject` +
                     `,sj.scope` +
+                    `,sj.estimated_budget` +
+                    `,sj.estimated_duration` +
+                    `,sj.buffer_time` +
+                    `,sj.job_required` +
+                    `,sj.gl_account_uid` +
+                    `,sj.job_execution_uid` +
                     `,sj."function"` +
                     ',sj."function_uid"' +
                     `,sj.code` +

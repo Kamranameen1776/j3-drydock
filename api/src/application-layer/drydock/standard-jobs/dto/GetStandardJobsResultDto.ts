@@ -29,6 +29,12 @@ export interface GetStandardJobsQueryData {
     subItemDescription: string;
     hasInspection: string;
     hasSubItems: string;
+    estimatedDuration: number;
+    estimatedBudget: number;
+    bufferTime: number;
+    glAccountUid: string;
+    jobRequired: string;
+    jobExecutionUid: string;
 }
 
 export interface GetStandardJobsResult

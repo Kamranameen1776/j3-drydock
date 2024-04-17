@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
     IsArray,
     IsDate,
+    IsIn,
     IsInt,
     IsNumber,
     IsOptional,
@@ -13,11 +14,14 @@ import {
     MinLength,
 } from 'class-validator';
 
+import { SpecificationDetailsEntity } from '../../../../entity/drydock';
+import { QueryStrings } from '../../../../shared/enum/queryStrings.enum';
+
 export const startDateInvalidMessage = 'Invalid specification start date';
 
 export const endDateInvalidMessage = 'Invalid specification end date';
 
-export class UpdateSpecificationDetailsDto {
+export class UpdateSpecificationDetailsDto implements Partial<SpecificationDetailsEntity> {
     @IsUUID()
     uid: string;
 
@@ -72,6 +76,39 @@ export class UpdateSpecificationDetailsDto {
     @IsInt()
     @Min(0)
     Duration?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    EstimatedBudget?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    EstimatedCost?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    BufferTime?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    EstimatedDays?: number;
+
+    @IsOptional()
+    @IsUUID('4')
+    JobExecutionUid?: string;
+
+    @IsOptional()
+    @IsUUID('4')
+    GlAccountUid?: string;
+
+    @IsOptional()
+    @IsString()
+    @IsIn([QueryStrings.Yes, QueryStrings.No])
+    JobRequired?: string;
 
     UserId: string;
 }

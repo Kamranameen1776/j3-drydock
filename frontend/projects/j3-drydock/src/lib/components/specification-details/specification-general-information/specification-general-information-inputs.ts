@@ -15,10 +15,11 @@ import { eFunction } from '../../../models/enums/function.enum';
 import { eModule } from '../../../models/enums/module.enum';
 
 @Injectable()
-export class SpecificationGeneralInformationInputservice extends FormServiceBase {
-  public generalInformationFormId = 'generalInformation';
-  public sectionId = 'generalInformation';
+export class SpecificationGeneralInformationInputService extends FormServiceBase {
+  generalInformationFormId = 'generalInformation';
+  sectionId = 'generalInformation';
   functionsFlatTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
+
   readonly formId = this.generalInformationFormId;
   protected readonly _formStructure: FormModel = this.getFormModel(true);
   protected readonly _formValues: FormValues = this.getInitialFormValues(null);
@@ -27,7 +28,7 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
     super();
   }
 
-  public getFormModelAndInitialValues(specificationDetailsInfo: SpecificationDetails, isEnabled: boolean) {
+  getFormModelAndInitialValues(specificationDetailsInfo: SpecificationDetails, isEnabled: boolean) {
     const formModel: FormModel = this.getFormModel(isEnabled);
     const formValues: FormValues = this.getInitialFormValues(specificationDetailsInfo);
 
@@ -77,6 +78,25 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
           webApiRequest: this.specificationDetailService.getItemSourceRequest()
         }
       },
+      [eSpecificationDetailsGeneralInformationFields.InspectionID]: {
+        type: eFieldControlType.MultiSelect,
+        label: eSpecificationDetailsGeneralInformationLabels.Inspection,
+        sectionID: this.sectionId,
+        enabled: isEnabled,
+        validatorRequired: false,
+        gridRowStart: 2,
+        gridRowEnd: 2,
+        gridColStart: 2,
+        gridColEnd: 2,
+        placeHolder: 'Select Inspection',
+        listRequest: {
+          labelKey: 'displayName',
+          valueKey: 'uid',
+          webApiRequest: this.specificationDetailService.getStandardJobsFiltersRequest(
+            eSpecificationDetailsGeneralInformationFields.Inspection
+          )
+        }
+      },
       [eSpecificationDetailsGeneralInformationFields.ItemNumber]: {
         type: eFieldControlType.Text,
         sectionID: this.sectionId,
@@ -106,38 +126,6 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
           webApiRequest: this.specificationDetailService.getStandardJobsFiltersRequest(eSpecificationDetailsGeneralInformationFields.DoneBy)
         }
       },
-      [eSpecificationDetailsGeneralInformationFields.InspectionID]: {
-        type: eFieldControlType.MultiSelect,
-        label: eSpecificationDetailsGeneralInformationLabels.Inspection,
-        sectionID: this.sectionId,
-        enabled: isEnabled,
-        validatorRequired: false,
-        gridRowStart: 2,
-        gridRowEnd: 2,
-        gridColStart: 2,
-        gridColEnd: 2,
-        placeHolder: 'Select Inspection',
-        listRequest: {
-          labelKey: 'displayName',
-          valueKey: 'uid',
-          webApiRequest: this.specificationDetailService.getStandardJobsFiltersRequest(
-            eSpecificationDetailsGeneralInformationFields.Inspection
-          )
-        }
-      },
-      [eSpecificationDetailsGeneralInformationFields.EquipmentDescription]: {
-        type: eFieldControlType.Text,
-        sectionID: this.sectionId,
-        label: eSpecificationDetailsGeneralInformationLabels.EquipmentDescription,
-        enabled: false,
-        validatorRequired: false,
-        gridRowStart: 4,
-        gridRowEnd: 4,
-        gridColStart: 1,
-        gridColEnd: 1,
-        placeHolder: 'Equipment Description',
-        maxLength: 200
-      },
       [eSpecificationDetailsGeneralInformationFields.Priority]: {
         type: eFieldControlType.Dropdown,
         sectionID: this.sectionId,
@@ -154,6 +142,120 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
           valueKey: 'uid',
           webApiRequest: this.specificationDetailService.getPriorityRequest()
         }
+      },
+      [eSpecificationDetailsGeneralInformationFields.EquipmentDescription]: {
+        type: eFieldControlType.Text,
+        sectionID: this.sectionId,
+        label: eSpecificationDetailsGeneralInformationLabels.EquipmentDescription,
+        enabled: false,
+        validatorRequired: false,
+        gridRowStart: 4,
+        gridRowEnd: 4,
+        gridColStart: 1,
+        gridColEnd: 1,
+        placeHolder: 'Equipment Description',
+        maxLength: 200
+      },
+      [eSpecificationDetailsGeneralInformationFields.EstimatedDuration]: {
+        type: eFieldControlType.Number,
+        label: eSpecificationDetailsGeneralInformationLabels.EstimatedDuration,
+        sectionID: this.formId,
+        enabled: true,
+        validatorRequired: false,
+        gridRowStart: 4,
+        gridRowEnd: 4,
+        gridColStart: 2,
+        gridColEnd: 2,
+        format: { afterDecimal: 2 },
+        validatorMin: 0
+      },
+      [eSpecificationDetailsGeneralInformationFields.BufferTime]: {
+        type: eFieldControlType.Number,
+        label: eSpecificationDetailsGeneralInformationLabels.BufferTime,
+        sectionID: this.formId,
+        enabled: true,
+        validatorRequired: false,
+        gridRowStart: 5,
+        gridRowEnd: 5,
+        gridColStart: 1,
+        gridColEnd: 1,
+        format: { afterDecimal: 2 },
+        validatorMin: 0
+      },
+      [eSpecificationDetailsGeneralInformationFields.GLAccount]: {
+        type: eFieldControlType.Dropdown,
+        label: eSpecificationDetailsGeneralInformationLabels.GLAccount,
+        sectionID: this.formId,
+        enabled: true,
+        validatorRequired: false,
+        gridRowStart: 5,
+        gridRowEnd: 5,
+        gridColStart: 2,
+        gridColEnd: 2,
+        list: []
+      },
+      [eSpecificationDetailsGeneralInformationFields.JobExecution]: {
+        type: eFieldControlType.Dropdown,
+        label: eSpecificationDetailsGeneralInformationLabels.JobExecution,
+        sectionID: this.formId,
+        enabled: true,
+        validatorRequired: false,
+        gridRowStart: 6,
+        gridRowEnd: 6,
+        gridColStart: 1,
+        gridColEnd: 1,
+        list: []
+      },
+      [eSpecificationDetailsGeneralInformationFields.JobRequired]: {
+        type: eFieldControlType.Dropdown,
+        label: eSpecificationDetailsGeneralInformationLabels.JobRequired,
+        sectionID: this.formId,
+        enabled: true,
+        validatorRequired: false,
+        gridRowStart: 6,
+        gridRowEnd: 6,
+        gridColStart: 2,
+        gridColEnd: 2,
+        list: this.specificationDetailService.getJobRequiredList()
+      },
+      [eSpecificationDetailsGeneralInformationFields.EstimatedBudget]: {
+        type: eFieldControlType.Number,
+        label: eSpecificationDetailsGeneralInformationLabels.EstimatedBudget,
+        sectionID: this.formId,
+        enabled: true,
+        validatorRequired: false,
+        gridRowStart: 7,
+        gridRowEnd: 7,
+        gridColStart: 1,
+        gridColEnd: 1,
+        format: { afterDecimal: 2 },
+        validatorMin: 0
+      },
+      [eSpecificationDetailsGeneralInformationFields.EstimatedCost]: {
+        type: eFieldControlType.Number,
+        label: eSpecificationDetailsGeneralInformationLabels.EstimatedCost,
+        sectionID: this.formId,
+        enabled: true,
+        readOnly: true,
+        validatorRequired: false,
+        gridRowStart: 7,
+        gridRowEnd: 7,
+        gridColStart: 2,
+        gridColEnd: 2,
+        format: { afterDecimal: 2 }
+      },
+      [eSpecificationDetailsGeneralInformationFields.OverallCost]: {
+        type: eFieldControlType.Number,
+        label: eSpecificationDetailsGeneralInformationLabels.OverallCost,
+        sectionID: this.formId,
+        enabled: true,
+        readOnly: true,
+        validatorRequired: false,
+        gridRowStart: 8,
+        gridRowEnd: 8,
+        gridColStart: 1,
+        gridColEnd: 1,
+        format: { afterDecimal: 2 }
       }
     };
 
@@ -179,7 +281,16 @@ export class SpecificationGeneralInformationInputservice extends FormServiceBase
           ),
           [eSpecificationDetailsGeneralInformationFields.EquipmentDescription]: specificationDetailsInfo.EquipmentDescription,
           [eSpecificationDetailsGeneralInformationFields.Priority]: specificationDetailsInfo.PriorityUid,
-          [eSpecificationDetailsGeneralInformationFields.Description]: specificationDetailsInfo.Description
+          [eSpecificationDetailsGeneralInformationFields.Description]: specificationDetailsInfo.Description,
+
+          [eSpecificationDetailsGeneralInformationFields.EstimatedDuration]: specificationDetailsInfo.Duration,
+          [eSpecificationDetailsGeneralInformationFields.BufferTime]: specificationDetailsInfo.BufferTime,
+          [eSpecificationDetailsGeneralInformationFields.GLAccount]: specificationDetailsInfo.GlAccountUid,
+          [eSpecificationDetailsGeneralInformationFields.JobExecution]: specificationDetailsInfo.JobExecutionUid,
+          [eSpecificationDetailsGeneralInformationFields.JobRequired]: specificationDetailsInfo.JobRequired,
+          [eSpecificationDetailsGeneralInformationFields.EstimatedBudget]: specificationDetailsInfo.EstimatedBudget,
+          [eSpecificationDetailsGeneralInformationFields.EstimatedCost]: specificationDetailsInfo.EstimatedCost,
+          [eSpecificationDetailsGeneralInformationFields.OverallCost]: specificationDetailsInfo.OverallCost
         }
       }
     };

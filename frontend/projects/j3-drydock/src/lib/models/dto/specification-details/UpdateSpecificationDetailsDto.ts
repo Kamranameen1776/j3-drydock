@@ -10,4 +10,9 @@ export interface UpdateSpecificationDetailsDto {
   EndDate?: Date;
   Completion?: number;
   Duration?: number;
+  BufferTime?: number;
+  GlAccountUid?: string;
+  JobRequired?: 'Yes' | 'No';
+  EstimatedBudget?: number;
+  JobExecutionUid?: string;
 }

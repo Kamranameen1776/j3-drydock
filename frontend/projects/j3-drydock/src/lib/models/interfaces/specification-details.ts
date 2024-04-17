@@ -35,5 +35,13 @@ export interface SpecificationDetails {
   VesselId: number;
   ProjectUid: string;
   ProjectStatusId?: string;
+
+  BufferTime?: number;
+  GlAccountUid?: string;
+  JobExecutionUid?: string;
+  JobRequired?: 'Yes' | 'No';
+  EstimatedBudget?: number;
+  EstimatedCost?: number;
+  OverallCost?: number;
 }
 export interface SpecificationDetailsFull extends SpecificationDetails, ITMDetails {}

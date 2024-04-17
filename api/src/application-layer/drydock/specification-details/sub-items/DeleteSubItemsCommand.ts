@@ -1,6 +1,6 @@
 import { SynchronizerService } from 'j2utils';
 
-import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
+import { ApplicationException } from '../../../../bll/drydock/core/exceptions';
 import { type EntityExistenceMap } from '../../../../common/drydock/ts-helpers/calculate-entity-existence-map';
 import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
@@ -8,6 +8,7 @@ import { SpecificationDetailsRepository } from '../../../../dal/drydock/specific
 import { DeleteManyParams } from '../../../../dal/drydock/specification-details/sub-items/dto/DeleteManyParams';
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
+import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import { SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { Command } from '../../core/cqrs/Command';
 import { UnitOfWork } from '../../core/uof/UnitOfWork';
@@ -44,6 +45,20 @@ export class DeleteSubItemsCommand extends Command<DeleteManyParams, EntityExist
                 vessel.VesselId,
                 condition,
             );
+
+            await this.specificationDetailsRepository.updateEstimatedCost(
+                this.params.specificationDetailsUid,
+                queryRunner,
+            );
+
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                getTableName(SpecificationDetailsEntity),
+                'uid',
+                this.params.specificationDetailsUid,
+                vessel.VesselId,
+            );
+
             return res;
         });
     }

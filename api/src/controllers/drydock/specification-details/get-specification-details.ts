@@ -15,12 +15,7 @@ export async function getSpecificationDetails(req: express.Request, res: express
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: express.Request) => {
-        const result = await new GetSpecificationDetailsController().getSpecificationDetails(
-            request.query.uid as string,
-            request,
-        );
-
-        return result;
+        return new GetSpecificationDetailsController().getSpecificationDetails(request.query.uid as string, request);
     });
 }
 
@@ -39,8 +34,6 @@ export class GetSpecificationDetailsController extends Controller {
         dto.uid = uid;
         dto.token = request.headers.authorization as string;
 
-        const result = await query.ExecuteAsync(dto);
-
-        return result;
+        return query.ExecuteAsync(dto);
     }
 }
