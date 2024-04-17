@@ -111,9 +111,12 @@ export class VesselsRepository {
                 value: string;
             }>();
 
-        return vesselFieldValues.reduce((acc, curr) => ({
-            ...acc,
-            [curr.name]: curr.value,
-        }));
+        const fields: Record<string, string> = {};
+
+        vesselFieldValues.forEach((field) => {
+            fields[field.name] = field.value;
+        });
+
+        return fields;
     }
 }
