@@ -2,6 +2,7 @@ import { Request } from 'express';
 import { DataUtilService, ODataService } from 'j2utils';
 import { getConnection, getManager, In, QueryRunner } from 'typeorm';
 
+import { QueryRunnerManager } from '../../../application-layer/drydock/core/uof/ParallelUnitOfWork';
 import { DeleteSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/DeleteSpecificationRequisitionsRequestDto';
 import { GetRequisitionsResponseDto } from '../../../application-layer/drydock/specification-details/dtos/GetRequisitionsResponseDto';
 import { GetSpecificationRequisitionsRequestDto } from '../../../application-layer/drydock/specification-details/dtos/GetSpecificationRequisitionsRequestDto';
@@ -437,6 +438,7 @@ export class SpecificationDetailsRepository {
             specification.DoneByUid = standardJob.doneBy?.uid!;
             specification.ItemSourceUid = standardJobsItemSource.uid;
             specification.ProjectUid = data.ProjectUid;
+            specification.TecTaskManagerUid = new DataUtilService().newUid();
             specification.inspections = (inspectionsHashmap[standardJob.uid]?.map(
                 (inspection: LibSurveyCertificateAuthority) => {
                     const item = new LibSurveyCertificateAuthority();
@@ -460,12 +462,18 @@ export class SpecificationDetailsRepository {
 
     public async createSpecificationsFromStandardJob(
         specifications: SpecificationDetailsEntity[],
-        queryRunner: QueryRunner,
+        queryRunner: QueryRunnerManager,
     ) {
-        return this.simpleOperations.insertMany(SpecificationDetailsEntity, specifications, queryRunner, {
-            chunk: 15,
-            reload: false,
-        });
+        return this.simpleOperations.insertManyTasks(
+            SpecificationDetailsEntity,
+            specifications,
+            queryRunner,
+            (entity) => entity.uid as string,
+            {
+                chunk: 15,
+                reload: false,
+            },
+        );
     }
 
     public async updateSpecificationTmUid(specificationUid: string, taskManagerUid: string, queryRunner: QueryRunner) {
@@ -479,6 +487,22 @@ export class SpecificationDetailsRepository {
             chunk: 5,
             reload: false,
         });
+    }
+
+    public async CreateSpecificationInspectionTasks(
+        data: Array<CreateInspectionsDto>,
+        queryRunner: QueryRunnerManager,
+    ) {
+        return this.simpleOperations.insertManyTasks(
+            SpecificationInspectionEntity,
+            data,
+            queryRunner,
+            (entity) => entity.uid as string,
+            {
+                chunk: 5,
+                reload: false,
+            },
+        );
     }
 
     public async UpdateSpecificationInspection(
