@@ -56,6 +56,7 @@
     "http-status-codes": "1.4.0",
     "j2utils": "3.2309.237",
     "j3-express-auto-routes": "22.12.1",
+    "j3-mq": "3.4.1",
     "lodash": "4.17.21",
     "moment": "2.29.4",
     "mssql": "6.4.1",
