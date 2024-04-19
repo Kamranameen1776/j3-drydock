@@ -3,6 +3,7 @@ import { validate } from 'class-validator';
 import { Request } from 'express';
 import { SynchronizerService } from 'j2utils';
 
+import { ApplicationException, BusinessException } from '../../../bll/drydock/core/exceptions';
 import { UploadInvoiceService } from '../../../bll/drydock/yards/upload';
 import { ExceptionLogDataDto } from '../../../controllers/drydock/core/middleware/ExceptionLogDataDto';
 import { SpecificationDetailsSubItemsRepository } from '../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
@@ -24,6 +25,12 @@ export class UploadYardsInvoiceCommand extends Command<Request, boolean> {
      * @returns All yard details
      */
     protected async ValidationHandlerAsync(request: Request): Promise<void> {
+        if (!request.file || !request.file.buffer || request.file.buffer.length === 0) {
+            throw new ApplicationException(
+                'The provided Excel file can not be imported: The file is empty. Please check the file and try again.',
+            );
+        }
+
         const validationRequest: UploadRequest = { file: request.file, body: request.body };
         const query: UploadRequest = plainToClass(UploadRequest, validationRequest);
         const result = await validate(query);
@@ -34,6 +41,16 @@ export class UploadYardsInvoiceCommand extends Command<Request, boolean> {
         return;
     }
     protected async MainHandlerAsync(request: Request): Promise<boolean> {
+        try {
+            return await this.uploadInvoice(request);
+        } catch (error) {
+            throw new BusinessException(
+                'The provided Excel file can not be imported: The file contains invalid data. Please check the file and try again.',
+            );
+        }
+    }
+
+    private async uploadInvoice(request: Request): Promise<boolean> {
         return this.uow.ExecuteAsync(async (queryRunner) => {
             const buffer = request.file?.buffer as Buffer;
             const ProjectUid = request.body.ProjectUid as string;
