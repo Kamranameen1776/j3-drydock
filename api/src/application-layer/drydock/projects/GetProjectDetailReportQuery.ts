@@ -3,8 +3,10 @@ import { ProjectDetailReport } from '../../../bll/drydock/projects/ProjectReport
 import { Req } from '../../../common/drydock/ts-helpers/req-res';
 import { ODataBodyDto } from '../../../shared/dto';
 import { Query } from '../core/cqrs/Query';
+import { UnitOfWork } from '../core/uof/UnitOfWork';
 
 export class GetProjectDetailReportQuery extends Query<Req<ODataBodyDto>, unknown> {
+    uow = new UnitOfWork();
     service = new ProjectDetailReport();
     projectUid: string;
 
@@ -22,6 +24,12 @@ export class GetProjectDetailReportQuery extends Query<Req<ODataBodyDto>, unknow
     }
 
     protected async MainHandlerAsync(request: Req<ODataBodyDto>) {
-        return this.service.getProjectDetailReport(this.projectUid, request.headers.authorization as string);
+        return this.uow.ExecuteAsync(async (queryRunner) => {
+            return this.service.getProjectDetailReport(
+                this.projectUid,
+                request.headers.authorization as string,
+                queryRunner,
+            );
+        });
     }
 }

@@ -55,6 +55,7 @@ import {
     SpecificationCostUpdateQueryResult,
     SpecificationCostUpdateRequestDto,
 } from './dtos/ISpecificationCostUpdateDto';
+import { SpecificationDetailsSubItemsRepository } from './sub-items/SpecificationDetailsSubItemsRepository';
 
 export class SpecificationDetailsRepository {
     private simpleOperations = new SimpleOperationsRepository();
@@ -164,6 +165,14 @@ export class SpecificationDetailsRepository {
                 'spec.AccountCode as AccountCode',
                 'spec.TecTaskManagerUid as TaskManagerUid',
                 'spec.ItemSourceUid as ItemSourceUid',
+                'spec.JobExecutionUid as JobExecutionUid',
+                'spec.GlAccountUid as GlAccountUid',
+                'spec.EstimatedDays as EstimatedDays',
+                'spec.BufferTime as BufferTime',
+                'spec.EstimatedBudget as EstimatedBudget',
+                'spec.EstimatedCost as EstimatedCost',
+                'spec.OverallCost as OverallCost',
+                'spec.JobRequired as JobRequired',
                 'its.DisplayName as ItemSourceText',
                 'spec.ItemNumber as ItemNumber',
                 'spec.DoneByUid as DoneByUid',
@@ -398,7 +407,6 @@ export class SpecificationDetailsRepository {
                 where: {
                     uid: In(data.StandardJobUid),
                 },
-                select: ['uid', 'functionUid', 'description', 'subject', 'function'],
                 relations: ['doneBy', 'materialSuppliedBy'],
             }),
             subItemsRepository
@@ -423,20 +431,13 @@ export class SpecificationDetailsRepository {
             {} as Record<string, LibSurveyCertificateAuthority[]>,
         );
 
-        const specifications = standardJobs.map((standardJob) => {
-            const specification = new SpecificationDetailsEntity();
-            specification.uid = new DataUtilService().newUid();
-            specification.FunctionUid = standardJob.functionUid;
-            specification.Function = standardJob.function;
-            specification.Description = standardJob.description;
-            specification.Subject = standardJob.subject;
-            specification.CreatedByUid = createdBy;
-            specification.CreatedAt = new Date();
-            specification.ActiveStatus = true;
-            specification.MaterialSuppliedByUid = standardJob.materialSuppliedBy?.uid!;
-            specification.DoneByUid = standardJob.doneBy?.uid!;
-            specification.ItemSourceUid = standardJobsItemSource.uid;
-            specification.ProjectUid = data.ProjectUid;
+        return standardJobs.map((standardJob) => {
+            const specification = this.mapStandardJobToSpecificationDetails(
+                standardJob,
+                createdBy,
+                data.ProjectUid,
+                standardJobsItemSource.uid,
+            );
             specification.inspections = (inspectionsHashmap[standardJob.uid]?.map(
                 (inspection: LibSurveyCertificateAuthority) => {
                     const item = new LibSurveyCertificateAuthority();
@@ -454,8 +455,6 @@ export class SpecificationDetailsRepository {
             }) || []) as SpecificationDetailsSubItemEntity[];
             return { specification, standardJob };
         });
-
-        return specifications;
     }
 
     public async createSpecificationsFromStandardJob(
@@ -651,6 +650,25 @@ export class SpecificationDetailsRepository {
         return res;
     }
 
+    public async updateEstimatedCost(specificationUid: string, queryRunner: QueryRunner) {
+        const subItemsRepository = new SpecificationDetailsSubItemsRepository();
+
+        const subItems = await subItemsRepository.getBySpecificationDetailsUid([specificationUid], queryRunner);
+
+        const estimatedCost = this.calculateEstimatedCost(subItems);
+
+        const specificationRepository = queryRunner.manager.getRepository(SpecificationDetailsEntity);
+
+        return specificationRepository.update(specificationUid, {
+            EstimatedCost: estimatedCost,
+            OverallCost: estimatedCost,
+        });
+    }
+
+    private calculateEstimatedCost(subItems: SpecificationDetailsSubItemEntity[]): number {
+        return subItems.reduce((acc, subItem) => acc + +(subItem.cost || 0), 0);
+    }
+
     private async fetchFunctionByUID(uid: string): Promise<J3PmsLibFunction | undefined> {
         return getManager().createQueryBuilder(J3PmsLibFunction, 'pms_fn').where('pms_fn.uid = :uid', { uid }).getOne();
     }
@@ -698,6 +716,34 @@ export class SpecificationDetailsRepository {
             rootFunction: rootFunction,
             functionPath: functionPath.join(', '),
         };
+    }
+
+    private mapStandardJobToSpecificationDetails(
+        standardJob: StandardJobs,
+        createdBy: string,
+        projectUid: string,
+        itemSourceUid: string,
+    ): SpecificationDetailsEntity {
+        const specification = new SpecificationDetailsEntity();
+        specification.uid = new DataUtilService().newUid();
+        specification.FunctionUid = standardJob.functionUid;
+        specification.Function = standardJob.function;
+        specification.Description = standardJob.description;
+        specification.Subject = standardJob.subject;
+        specification.CreatedByUid = createdBy;
+        specification.CreatedAt = new Date();
+        specification.ActiveStatus = true;
+        specification.MaterialSuppliedByUid = standardJob.materialSuppliedBy?.uid!;
+        specification.DoneByUid = standardJob.doneBy?.uid!;
+        specification.ItemSourceUid = itemSourceUid;
+        specification.ProjectUid = projectUid;
+        specification.BufferTime = standardJob.bufferTime;
+        specification.Duration = standardJob.estimatedDuration;
+        specification.EstimatedBudget = standardJob.estimatedBudget;
+        specification.JobRequired = standardJob.jobRequired;
+        specification.GlAccountUid = standardJob.glAccountUid;
+        specification.JobExecutionUid = standardJob.jobExecutionUid;
+        return specification;
     }
 }
 

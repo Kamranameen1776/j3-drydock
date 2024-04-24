@@ -27,4 +27,6 @@ export class SpecificationDetailsResultDto {
     EndDate: Date;
     Completion: number;
     Duration: number;
+    EstimatedCost: number;
+    OverallCost: number;
 }

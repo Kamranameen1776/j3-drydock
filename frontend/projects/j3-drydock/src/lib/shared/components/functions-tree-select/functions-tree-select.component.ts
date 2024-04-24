@@ -13,6 +13,7 @@ export class FunctionsTreeSelectComponent {
   @Input() treeData: FunctionsFlatTreeNode[] = [];
   @Input() formId!: string;
   @Input() fieldName!: string;
+  @Input() scrollHeight = '70vh';
 
   @ViewChild('treeRef') treeRef: JbTreeComponent;
 

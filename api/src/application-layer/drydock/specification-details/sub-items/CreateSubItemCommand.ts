@@ -1,12 +1,13 @@
 import { SynchronizerService } from 'j2utils';
 
-import { ApplicationException } from '../../../../bll/drydock/core/exceptions/ApplicationException';
+import { ApplicationException } from '../../../../bll/drydock/core/exceptions';
 import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';
 import { CreateSubItemParams } from '../../../../dal/drydock/specification-details/sub-items/dto/CreateSubItemParams';
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
+import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import { SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { SpecificationSubItemFindingEntity } from '../../../../entity/drydock/SpecificationSubItemFindingEntity';
 import { SpecificationSubItemPmsEntity } from '../../../../entity/drydock/SpecificationSubItemPmsJobEntity';
@@ -47,6 +48,19 @@ export class CreateSubItemCommand extends Command<CreateSubItemParams, Specifica
                 this.tableName,
                 'uid',
                 res.uid,
+                vessel.VesselId,
+            );
+
+            await this.specificationDetailsRepository.updateEstimatedCost(
+                this.params.specificationDetailsUid,
+                queryRunner,
+            );
+
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                getTableName(SpecificationDetailsEntity),
+                'uid',
+                this.params.specificationDetailsUid,
                 vessel.VesselId,
             );
 

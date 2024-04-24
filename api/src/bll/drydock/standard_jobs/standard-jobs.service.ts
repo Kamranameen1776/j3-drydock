@@ -8,6 +8,7 @@ import {
     GetStandardJobSubItemsResultDto,
 } from '../../../application-layer/drydock/standard-jobs/dto';
 import { StandardJobs, StandardJobsSubItems } from '../../../entity/drydock';
+import { QueryStrings } from '../../../shared/enum/queryStrings.enum';
 
 export class StandardJobsService {
     notSelectedValueLabel = '-';
@@ -23,6 +24,12 @@ export class StandardJobsService {
                 functionUid: standardJob.functionUid,
                 code: standardJob.code,
                 number: standardJob.number,
+                estimatedBudget: standardJob.estimatedBudget,
+                estimatedDuration: standardJob.estimatedDuration,
+                bufferTime: standardJob.bufferTime,
+                jobRequired: standardJob.jobRequired,
+                jobExecutionUid: standardJob.jobExecutionUid,
+                glAccountUid: standardJob.glAccountUid,
                 scope: standardJob.scope,
                 category: standardJob.category || this.notSelectedValueLabel,
                 categoryUid: standardJob.categoryUid,
@@ -113,6 +120,13 @@ export class StandardJobsService {
         standardJob.description = data.description;
         standardJob.number = data.number;
         standardJob.code = data.code;
+        standardJob.jobRequired = data.jobRequired;
+        standardJob.estimatedBudget = data.estimatedBudget;
+        standardJob.estimatedDuration = data.estimatedDuration;
+        standardJob.bufferTime = data.bufferTime;
+        standardJob.jobExecutionUid = data.jobExecutionUid;
+        standardJob.glAccountUid = data.glAccountUid;
+
         if ('doneByUid' in data) {
             standardJob.doneBy = {
                 uid: data.doneByUid,

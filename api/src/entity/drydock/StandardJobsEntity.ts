@@ -10,6 +10,7 @@ import {
     RelationId,
 } from 'typeorm';
 
+import { QueryStrings } from '../../shared/enum/queryStrings.enum';
 import { BaseDatesEntity } from '../baseDatesEntity';
 import { LibSurveyCertificateAuthority, LibVesseltypes, TmDdLibDoneBy, TmDdLibMaterialSuppliedBy } from './dbo';
 import { ProjectTemplateStandardJobEntity } from './ProjectTemplate/ProjectTemplateStandardJobEntity';
@@ -47,6 +48,33 @@ export class StandardJobs extends BaseDatesEntity {
     })
     code: string;
 
+    @Column({
+        name: 'estimated_duration',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        default: 0,
+    })
+    estimatedDuration: number;
+
+    @Column({
+        name: 'buffer_time',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        default: 0,
+    })
+    bufferTime: number;
+
+    @Column({
+        name: 'estimated_budget',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        default: 0,
+    })
+    estimatedBudget: number;
+
     @Column('int', {
         nullable: false,
         name: 'number',
@@ -59,6 +87,23 @@ export class StandardJobs extends BaseDatesEntity {
         length: 'max',
     })
     scope: string;
+
+    @Column('varchar', {
+        nullable: false,
+        name: 'job_required',
+        default: QueryStrings.Yes,
+    })
+    jobRequired: string;
+
+    @Column('uniqueidentifier', {
+        name: 'gl_account_uid',
+    })
+    glAccountUid: string;
+
+    @Column('uniqueidentifier', {
+        name: 'job_execution_uid',
+    })
+    jobExecutionUid: string;
 
     @ManyToOne(() => TmDdLibDoneBy)
     @JoinColumn({

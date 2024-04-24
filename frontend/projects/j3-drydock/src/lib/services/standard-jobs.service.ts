@@ -20,6 +20,7 @@ import { eModule } from '../models/enums/module.enum';
 import { eFunction } from '../models/enums/function.enum';
 import { GridInputsWithRequest } from '../models/interfaces/grid-inputs';
 import { eApiBaseDryDockAPI } from '../models/constants/constants';
+import { getYesNoList } from '../models/constants/lists';
 
 @Injectable({ providedIn: 'root' })
 export class StandardJobsService {
@@ -94,31 +95,13 @@ export class StandardJobsService {
 
   private filtersLists: FilterListSet = {
     hasSubItems: {
-      list: [
-        {
-          label: 'Yes',
-          value: 'Yes'
-        },
-        {
-          label: 'No',
-          value: 'No'
-        }
-      ],
+      list: getYesNoList(),
       type: eFieldControlType.Dropdown,
       odataKey: 'hasSubItems',
       includeFilter: true
     },
     hasInspection: {
-      list: [
-        {
-          label: 'Yes',
-          value: 'Yes'
-        },
-        {
-          label: 'No',
-          value: 'No'
-        }
-      ],
+      list: getYesNoList(),
       type: eFieldControlType.Dropdown,
       odataKey: 'hasInspection',
       includeFilter: true
@@ -274,6 +257,10 @@ export class StandardJobsService {
         value: 0
       }
     ];
+  }
+
+  getJobRequiredList() {
+    return getYesNoList();
   }
 
   hasAccess(action: string) {

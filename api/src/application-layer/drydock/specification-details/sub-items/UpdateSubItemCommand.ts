@@ -7,6 +7,7 @@ import { SpecificationDetailsRepository } from '../../../../dal/drydock/specific
 import { UpdateSubItemParams } from '../../../../dal/drydock/specification-details/sub-items/dto/UpdateSubItemParams';
 import { SpecificationDetailsSubItemsRepository } from '../../../../dal/drydock/specification-details/sub-items/SpecificationDetailsSubItemsRepository';
 import { VesselsRepository } from '../../../../dal/drydock/vessels/VesselsRepository';
+import { SpecificationDetailsEntity } from '../../../../entity/drydock';
 import { SpecificationDetailsSubItemEntity } from '../../../../entity/drydock/SpecificationDetailsSubItemEntity';
 import { SpecificationSubItemFindingEntity } from '../../../../entity/drydock/SpecificationSubItemFindingEntity';
 import { SpecificationSubItemPmsEntity } from '../../../../entity/drydock/SpecificationSubItemPmsJobEntity';
@@ -46,6 +47,19 @@ export class UpdateSubItemCommand extends Command<UpdateSubItemParams, Specifica
                 this.tableName,
                 'uid',
                 this.params.uid,
+                vessel.VesselId,
+            );
+
+            await this.specificationDetailsRepository.updateEstimatedCost(
+                this.params.specificationDetailsUid,
+                queryRunner,
+            );
+
+            await SynchronizerService.dataSynchronizeManager(
+                queryRunner.manager,
+                getTableName(SpecificationDetailsEntity),
+                'uid',
+                this.params.specificationDetailsUid,
                 vessel.VesselId,
             );
 

@@ -28,6 +28,7 @@ import { eSpecificationAccessActions } from '../../models/enums/access-actions.e
 import { eSubItemsDialog } from '../../models/enums/sub-items.enum';
 import { eApiBaseDryDockAPI } from '../../models/constants/constants';
 import { eProjectWorkflowStatusAction } from '../../models/enums/project-details.enum';
+import { getYesNoList } from '../../models/constants/lists';
 
 export interface SpecificationDetailAccessRights extends BaseAccessRight {
   generalInformation: { view: boolean };
@@ -159,23 +160,23 @@ export class SpecificationDetailsService {
             apiRequest: this.getProjectsManagersRequest()
           }
         },
-        {
-          id: 'Duration',
-          label: 'Estimated Duration (Days)',
-          type: eFieldControlType.Text,
-          isRequired: false,
-          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.StatusId),
-          getFieldName: 'Duration',
-          saveFieldName: 'Duration',
-          controlContent: {
-            value: '',
-            id: 'Duration',
-            type: eFieldControlType.Text,
-            pattern: /[0-9]/,
-            disabled: false,
-            maxTextLength: 3
-          }
-        },
+        // {
+        //   id: 'Duration',
+        //   label: 'Estimated Duration (Days)',
+        //   type: eFieldControlType.Text,
+        //   isRequired: false,
+        //   isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.StatusId),
+        //   getFieldName: 'Duration',
+        //   saveFieldName: 'Duration',
+        //   controlContent: {
+        //     value: '',
+        //     id: 'Duration',
+        //     type: eFieldControlType.Text,
+        //     pattern: /[0-9]/,
+        //     disabled: false,
+        //     maxTextLength: 3
+        //   }
+        // },
         {
           id: 'StartDate',
           label: 'Start Date',
@@ -534,6 +535,10 @@ export class SpecificationDetailsService {
       crud: eCrud.Post,
       body: { uid: specificationUid }
     };
+  }
+
+  getJobRequiredList() {
+    return getYesNoList();
   }
 
   private setAccessRights(rights: SpecificationDetailAccessRights) {

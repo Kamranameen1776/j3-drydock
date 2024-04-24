@@ -33,7 +33,7 @@ import { SelectLinkYardGridComponent } from './components/project-details/yard/r
 import { SpecificationDetailsComponent } from './components/specification-details/specification-details.component';
 import { SpecificationDetailsService } from './services/specification-details/specification-details.service';
 import { SpecificationGeneralInformationComponent } from './components/specification-details/specification-general-information/specification-general-information.component';
-import { SpecificationGeneralInformationInputservice } from './components/specification-details/specification-general-information/specification-general-information-inputs';
+import { SpecificationGeneralInformationInputService } from './components/specification-details/specification-general-information/specification-general-information-inputs';
 import { SpecificationRequisitionsComponent } from './components/specification-details/specification-requisitions/specification-requisitions.component';
 import { SpecificationSubItemsComponent } from './components/specification-details/specification-sub-items/specification-sub-items.component';
 import { SpecificationDetailsSubItemsGridService } from './services/specification-details/specification-details-sub-item.service';
@@ -157,9 +157,8 @@ export function winEnv(): unknown {
     SpecificationGridService,
     SpecificationDetailsService,
     SpecificationCreateFormService,
-    SpecificationGeneralInformationInputservice,
-    SpecificationDetailsSubItemsGridService,
-    SpecificationGeneralInformationInputservice
+    SpecificationGeneralInformationInputService,
+    SpecificationDetailsSubItemsGridService
   ],
   exports: [],
   entryComponents: []

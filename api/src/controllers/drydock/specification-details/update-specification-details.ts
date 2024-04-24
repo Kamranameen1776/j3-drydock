@@ -11,12 +11,7 @@ async function updateSpecificationDetails(req: express.Request, res: express.Res
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async (request: express.Request) => {
-        const result = await new UpdateSpecificationDetailsController().updateSpecificationDetails(
-            request.body,
-            request,
-        );
-
-        return result;
+        return new UpdateSpecificationDetailsController().updateSpecificationDetails(request.body, request);
     });
 }
 
@@ -35,8 +30,6 @@ export class UpdateSpecificationDetailsController extends Controller {
 
         dto.UserId = authUser.UserID;
 
-        const result = await query.ExecuteAsync(dto);
-
-        return result;
+        return query.ExecuteAsync(dto);
     }
 }

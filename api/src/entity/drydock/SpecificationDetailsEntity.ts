@@ -1,5 +1,6 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
+import { QueryStrings } from '../../shared/enum/queryStrings.enum';
 import { LibSurveyCertificateAuthority } from './dbo';
 import { J3PrcRequisition } from './prc';
 import { SpecificationDetailsSubItemEntity } from './SpecificationDetailsSubItemEntity';
@@ -169,6 +170,50 @@ export class SpecificationDetailsEntity {
         length: 'MAX',
     })
     SafetyInstruction: string;
+
+    @Column({
+        name: 'estimated_budget',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        default: 0,
+    })
+    EstimatedBudget: number;
+
+    @Column({
+        name: 'overall_cost',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        default: 0,
+    })
+    OverallCost: number;
+
+    @Column({
+        name: 'estimated_cost',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        default: 0,
+    })
+    EstimatedCost: number;
+
+    @Column('varchar', {
+        nullable: false,
+        name: 'job_required',
+        default: QueryStrings.Yes,
+    })
+    JobRequired: string;
+
+    @Column('uniqueidentifier', {
+        name: 'gl_account_uid',
+    })
+    GlAccountUid: string;
+
+    @Column('uniqueidentifier', {
+        name: 'job_execution_uid',
+    })
+    JobExecutionUid: string;
 
     @Column('bit', {
         nullable: true,

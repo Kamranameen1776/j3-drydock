@@ -16,12 +16,10 @@ async function createSubItem(req: Req<ReqBody>, res: Res<SpecificationDetailsSub
     const middlewareHandler = new MiddlewareHandler();
 
     await middlewareHandler.ExecuteAsync(req, res, async () => {
-        const result = await new CreateSubItemController().createSubItem({
+        return new CreateSubItemController().createSubItem({
             ...req.body,
             createdBy,
         });
-
-        return result;
     });
 }
 
@@ -30,14 +28,9 @@ exports.post = createSubItem;
 @Route('drydock/specification-details/sub-items/create-sub-item')
 export class CreateSubItemController extends Controller {
     @Post()
-
-    // TODO: check if newer version of tsoa supports async return types
-    // public async createSubItem(@Body() request: CreateSubItemParams): Promise<SpecificationDetailsSubItemEntity> {
-    public async createSubItem(@Body() request: CreateSubItemParams): Promise<unknown> {
+    public async createSubItem(@Body() request: CreateSubItemParams): Promise<SpecificationDetailsSubItemEntity> {
         const query = new CreateSubItemCommand();
 
-        const result = await query.ExecuteAsync(request);
-
-        return result;
+        return query.ExecuteAsync(request);
     }
 }

@@ -8,7 +8,16 @@ export enum eSpecificationDetailsGeneralInformationLabels {
   Inspection = 'Inspection / Survey',
   EquipmentDescription = 'Equipment Description',
   Priority = 'Priority',
-  Description = 'Description'
+  Description = 'Description',
+
+  EstimatedDuration = 'Estimated Duration [Days]',
+  BufferTime = 'Buffer Time',
+  GLAccount = 'GL Account',
+  JobExecution = 'Job Execution',
+  JobRequired = 'Job Required',
+  EstimatedBudget = 'Estimated Budget',
+  EstimatedCost = 'Estimated Cost',
+  OverallCost = 'Overall Cost'
 }
 
 export enum eSpecificationDetailsGeneralInformationFields {
@@ -22,5 +31,14 @@ export enum eSpecificationDetailsGeneralInformationFields {
   InspectionID = 'inspectionId',
   EquipmentDescription = 'equipmentDescription',
   Priority = 'priorityUid',
-  Description = 'description'
+  Description = 'description',
+
+  EstimatedDuration = 'duration',
+  BufferTime = 'bufferTime',
+  GLAccount = 'glAccountUid',
+  JobExecution = 'jobExecutionUid',
+  JobRequired = 'jobRequired',
+  EstimatedBudget = 'estimatedBudget',
+  EstimatedCost = 'estimatedCost',
+  OverallCost = 'overallCost'
 }

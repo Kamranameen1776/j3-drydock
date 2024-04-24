@@ -1,3 +1,4 @@
+import { validateAgainstModel } from '../../../common/drydock/ts-helpers/validate-against-model';
 import { StandardJobsRepository } from '../../../dal/drydock/standard-jobs/StandardJobsRepository';
 import { StandardJobs } from '../../../entity/drydock';
 import { Command } from '../core/cqrs/Command';
@@ -13,6 +14,10 @@ export class CreateStandardJobsCommand extends Command<CreateStandardJobsRequest
 
         this.standardJobsRepository = new StandardJobsRepository();
         this.uow = new UnitOfWork();
+    }
+
+    protected async ValidationHandlerAsync(request: CreateStandardJobsRequestDto): Promise<void> {
+        await validateAgainstModel(CreateStandardJobsRequestDto, request);
     }
 
     protected async MainHandlerAsync(request: CreateStandardJobsRequestDto) {

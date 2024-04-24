@@ -121,12 +121,12 @@ export class SpecificationDetailsSubItemsRepository {
         return odataService.getJoinResult(script, substitutions);
     }
 
-    public async getBySpecificationDetailsUid(specificationDetailsUid: string[]) {
+    public async getBySpecificationDetailsUid(specificationDetailsUid: string[], queryRunner: QueryRunner) {
         if (specificationDetailsUid.length === 0) {
             return [];
         }
 
-        return getManager().find(SpecificationDetailsSubItemEntity, {
+        return queryRunner.manager.find(SpecificationDetailsSubItemEntity, {
             where: {
                 specificationDetails: {
                     uid: In(specificationDetailsUid),

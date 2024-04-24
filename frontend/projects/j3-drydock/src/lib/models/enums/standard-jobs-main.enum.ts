@@ -17,7 +17,14 @@ export enum eStandardJobsMainLabels {
   Description = 'Description',
   Scope = 'Scope',
   HasSubItems = 'Sub Items',
-  HasInspection = 'Inspection / Survey'
+  HasInspection = 'Inspection / Survey',
+
+  EstimatedDuration = 'Estimated Duration [Days]',
+  BufferTime = 'Buffer Time',
+  GLAccount = 'GL Account',
+  EstimatedBudget = 'Estimated Budget',
+  JobExecution = 'Job Execution',
+  JobRequired = 'Job Required'
 }
 
 export enum eStandardJobsMainFields {
@@ -43,7 +50,14 @@ export enum eStandardJobsMainFields {
   Scope = 'scope',
   SubItems = 'subItems',
   HasSubItems = 'hasSubItems',
-  HasInspection = 'hasInspection'
+  HasInspection = 'hasInspection',
+
+  EstimatedDuration = 'duration',
+  BufferTime = 'bufferTime',
+  GLAccount = 'glAccountUid',
+  EstimatedBudget = 'estimatedBudget',
+  JobExecution = 'jobExecutionUid',
+  JobRequired = 'jobRequired'
 }
 
 export enum eStandardJobsMainStatus {

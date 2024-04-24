@@ -25,4 +25,6 @@ export class GetSpecificationDetailsDto {
     EndDate: Date;
     Completion: number;
     Duration: number;
+    EstimatedCost: number;
+    OverallCost: number;
 }
