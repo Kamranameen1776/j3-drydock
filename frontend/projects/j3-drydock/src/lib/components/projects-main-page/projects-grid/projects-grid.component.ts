@@ -312,7 +312,8 @@ export class ProjectsGridComponent extends UnsubscribeComponent implements OnIni
     if (this.canViewDetails) {
       this.gridInputs.actions.push({
         name: eGridRowActions.Edit,
-        label: 'Edit'
+        label: 'Edit',
+        icon: 'icons8-edit'
       });
     }
 
@@ -323,7 +324,8 @@ export class ProjectsGridComponent extends UnsubscribeComponent implements OnIni
         fieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.ProjectStatusName),
         condition: eProjectStatus.Planned,
         actionTrueValue: true,
-        actionFalseValue: false
+        actionFalseValue: false,
+        icon: 'icons8-delete'
       });
     }
   }
