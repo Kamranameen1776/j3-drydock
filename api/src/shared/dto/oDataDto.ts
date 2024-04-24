@@ -2,6 +2,7 @@
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
 
 import { ODataRequest } from '../interfaces';
+import { GridFilter } from '../interfaces/GridFilter';
 
 export class ODataDto implements ODataRequest {
     @IsOptional()
@@ -40,4 +41,11 @@ export class ODataDto implements ODataRequest {
 export class ODataBodyDto {
     @ValidateNested()
     odata: ODataDto;
+}
+
+export class ODataBodyDtoWithFilters {
+    @ValidateNested()
+    odata: ODataRequest;
+    @ValidateNested()
+    gridFilters: GridFilter[];
 }

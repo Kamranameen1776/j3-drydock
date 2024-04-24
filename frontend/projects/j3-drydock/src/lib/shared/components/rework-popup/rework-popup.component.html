@@ -1,0 +1,22 @@
+<jb-dialog
+  [dialogContent]="popupConfig"
+  [(dialogVisible)]="isOpen"
+  (closeDialog)="onClosePopup()"
+>
+  <div jb-dialog-body>
+    <jb-drydock-rework-popup-form
+      (formValid)="onIsFormValid($event)"
+      *ngIf="isOpen"
+    ></jb-drydock-rework-popup-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="!isPopupValid || isSaving"
+      [isCancelBtnDisabled]="isSaving"
+      [okBtnLabel]="okLabel"
+      (ok)="onOkPopup()"
+      (cancel)="onClosePopup()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>

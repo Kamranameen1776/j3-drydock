@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "outDir": "./build",
-        "baseUrl": "./src",
 
         "strict": true,
         "strictPropertyInitialization": false,

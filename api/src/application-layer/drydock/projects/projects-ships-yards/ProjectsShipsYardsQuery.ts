@@ -1,14 +1,17 @@
 import { ProjectsRepository } from '../../../../dal/drydock/projects/ProjectsRepository';
+import { YardsRepository } from '../../../../dal/drydock/yards/YardsRepository';
 import { Query } from '../../core/cqrs/Query';
 import { IProjectsShipsYardsResultDto } from './IProjectsShipsYardsResultDto';
 
 export class ProjectsShipsYardsQuery extends Query<void, IProjectsShipsYardsResultDto[]> {
     projectsRepository: ProjectsRepository;
+    yardsRepository: YardsRepository;
 
     constructor() {
         super();
 
         this.projectsRepository = new ProjectsRepository();
+        this.yardsRepository = new YardsRepository();
     }
 
     protected async AuthorizationHandlerAsync(): Promise<void> {
@@ -20,11 +23,10 @@ export class ProjectsShipsYardsQuery extends Query<void, IProjectsShipsYardsResu
     }
 
     protected async MainHandlerAsync(): Promise<IProjectsShipsYardsResultDto[]> {
-        const dtos: IProjectsShipsYardsResultDto[] = [];
-
-        // TODO: Replace with real data
-        dtos.push({ ShipYardId: '1', ShipYardName: 'Shipyard 1' });
-        dtos.push({ ShipYardId: '2', ShipYardName: 'Shipyard 2' });
+        const dtos: IProjectsShipsYardsResultDto[] = (await this.yardsRepository.getYards()).map((data) => ({
+            ShipYardId: data.uid,
+            ShipYardName: data.yardName,
+        }));
 
         return dtos;
     }

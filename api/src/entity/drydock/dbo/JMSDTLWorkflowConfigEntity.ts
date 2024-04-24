@@ -11,4 +11,11 @@ export class JmsDtlWorkflowConfigEntity {
         length: 50,
     })
     JobType: string;
+
+    @Column('bit', {
+        nullable: false,
+        name: 'active_status',
+        default: true,
+    })
+    ActiveStatus: boolean;
 }

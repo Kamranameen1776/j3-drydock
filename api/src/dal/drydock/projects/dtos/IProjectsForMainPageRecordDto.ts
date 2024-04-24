@@ -15,6 +15,11 @@ export interface IProjectsForMainPageRecordDto {
 
     Subject: string;
 
+    ShipYard: string;
+    ShipYardUid: string;
+
+    Specification: string;
+
     ProjectManager: string;
     ProjectManagerUid?: string;
 
@@ -22,6 +27,7 @@ export interface IProjectsForMainPageRecordDto {
 
     VesselUid: string;
     VesselId?: string;
+    VesselType?: string;
 
     StartDate: Date;
 

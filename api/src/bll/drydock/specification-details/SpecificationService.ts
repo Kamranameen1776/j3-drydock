@@ -13,7 +13,7 @@ export class SpecificationService {
     }
 
     public async TaskManagerIntegration(
-        request: CreateSpecificationDetailsDto,
+        request: Pick<CreateSpecificationDetailsDto, 'Subject'>,
         vessel: LibVesselsEntity,
         token: string,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

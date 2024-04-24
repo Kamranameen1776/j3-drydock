@@ -1,3 +1,4 @@
+@import '../../../../styles/mixins';
 :host {
   ::ng-deep {
     .ui-table-scrollable-body {
@@ -7,5 +8,11 @@
 
   .a-readonly {
     pointer-events: none !important;
+  }
+}
+
+:host {
+  ::ng-deep {
+    @include progress-spinner-fix;
   }
 }

@@ -1,32 +1,16 @@
-<jb-layout-widget
-  [size]="eLayoutWidgetSize.Auto"
-  titleIconClass="icons8-tree-structure"
-  titleText="RFQ"
->
-  <ng-container awidget-header-buttons>
-    <jb-button
-      [disabled]="!linked"
-      type="NoButton"
-      label="Link Yard"
-      (click)="onLinkYard()"
-    ></jb-button>
-  </ng-container>
-  <ng-container awidget-content>
-    <jb-grid
-      [gridName]="gridInputs.gridName"
-      [colData]="gridInputs.columns"
-      [tableData]="linked | staticGridSearch: (searchTerm$ | async) : searchFn"
-      [getStyleByContainer]="true"
-      [setActions]="gridRowActions"
-      [isDisplayAdvancedFilter]="false"
-      [isDisplayAdvancedSettings]="false"
-      (action)="onGridAction($any($event))"
-    ></jb-grid>
-  </ng-container>
-</jb-layout-widget>
+<jb-grid
+  [gridName]="gridInputs.gridName"
+  [colData]="gridInputs.columns"
+  [tableData]="linked | staticGridSearch: (searchTerm$ | async) : searchFn"
+  [getStyleByContainer]="true"
+  [setActions]="gridRowActions"
+  [isDisplayAdvancedFilter]="false"
+  [isDisplayAdvancedSettings]="false"
+  (action)="onGridAction($any($event))"
+></jb-grid>
 
 <ng-template
-  #isSelectedTmpl
+  #isSelectedTemplate
   let-rowData
 >
   <jb-checkbox
@@ -35,9 +19,44 @@
   ></jb-checkbox>
 </ng-template>
 
+<ng-template
+  #exportedDateTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.lastExportedDate | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
+</ng-template>
+
 <jb-drydock-link-yard-popup
   [linked]="linked"
   [projectId]="projectId"
   [isOpen]="isLinkPopupVisible"
   (closeDialog)="onCloseLinkYardPopup($event)"
 ></jb-drydock-link-yard-popup>
+
+<jb-dialog
+  (closeDialog)="showDeleteDialog(false)"
+  [(dialogVisible)]="isShowDeleteDialog"
+  [dialogContent]="deleteRfqDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <div class="p-col-12 left">{{ deleteDialogMessage }}</div>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [okBtnLabel]="deleteBtnLabel"
+      (ok)="onDeleteRfq()"
+      (cancel)="showDeleteDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="isShowLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>

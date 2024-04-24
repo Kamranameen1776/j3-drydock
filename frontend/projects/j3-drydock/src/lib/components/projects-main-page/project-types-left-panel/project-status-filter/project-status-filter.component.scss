@@ -24,3 +24,31 @@
 .delimiter {
   border-color: var(--jbBrandBlue500);
 }
+
+
+:host {
+    .button-list{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+
+      .record-count-loader {
+        height: 15px;
+
+        ::ng-deep {
+        > .ui-progress-spinner {
+          width: 15px;
+          height: 15px;
+          margin: 0 !important;
+
+          .ui-progress-spinner-circle {
+            stroke: var(--jbBrandBlue800) !important;
+            stroke-width: 5px;
+          }
+        }
+      }
+    }
+  }
+}
+

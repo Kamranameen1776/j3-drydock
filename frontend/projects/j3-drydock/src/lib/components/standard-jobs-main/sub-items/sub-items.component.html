@@ -1,4 +1,5 @@
 <jb-grid
+  class="standardjobs-subitems-grid"
   [gridName]="gridInputs.gridName"
   [colData]="gridInputs.columns"
   [tableData]="subItems | staticGridSearch: (searchTerm$ | async) : searchFn"
@@ -7,6 +8,7 @@
   [setActions]="gridRowActions"
   [isDisplayAdvancedFilter]="false"
   (action)="onGridAction($any($event))"
+  [rows]="50"
 ></jb-grid>
 
 <jb-upsert-sub-item-popup
@@ -18,6 +20,7 @@
 <jb-dialog
   [dialogContent]="confirmationPopUp"
   [(dialogVisible)]="isConfirmDeleteVisible"
+  (closeDialog)="onCloseConfirmationDeletePopup()"
 >
   <div
     jb-dialog-body
@@ -27,7 +30,7 @@
       class="popup-text"
       *ngIf="isConfirmDeleteVisible"
     >
-      Are you sure want to delete the sub item?
+      Are you sure you want to delete the sub item?
     </span>
   </div>
 

@@ -4,7 +4,7 @@ The backend part of DryDock application.
 
 **← back to** [Main README](../README.md)
 
-## Quick start 
+## Quick start
 
 1. Rename .env.local to .env and fill the credentials.
 
@@ -30,4 +30,15 @@ $ npm run test
 
 ```sh
 $ npm run test:integration
+```
+
+## Generate API documentation/swagger.json
+```sh
+$ npm run swagger
+```
+
+## healthcheck
+```
+    http://localhost:3034/drydock/actuator/version
+    http://localhost:3034/drydock/actuator/health
 ```

@@ -3,10 +3,19 @@ import { eGrowlPosition, eMessagesSeverityValues, IJbGrowl } from 'jibe-componen
 import { Subject } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 
+interface IGrowlError {
+  status: number;
+  error: {
+    name?: string;
+    message?: string;
+  };
+}
+
 @Injectable()
 export class GrowlMessageService {
   private _growlMessage$ = new Subject<IJbGrowl>();
-
+  // strange jb-growl behavior - doesn't show fist message other way
+  growlMessage$ = this._growlMessage$.asObservable().pipe(startWith({}));
   private readonly defaultMsg: IJbGrowl = {
     position: eGrowlPosition.TopRight,
     sticky: false,
@@ -14,14 +23,12 @@ export class GrowlMessageService {
     baseZIndex: 50000
   };
 
-  // strange jb-growl behavior - doesn't show fist message other way
-  growlMessage$ = this._growlMessage$.asObservable().pipe(startWith({}));
-
-  setErrorMessage(errorMsg: string) {
+  setErrorMessage(errorMsg?: string, detail?: string) {
     this._growlMessage$.next({
       ...this.defaultMsg,
       severity: eMessagesSeverityValues.Error,
-      summary: errorMsg
+      summary: errorMsg,
+      detail
     });
   }
 
@@ -34,10 +41,22 @@ export class GrowlMessageService {
     });
   }
 
+  setWarnMessage(detailMsg: string) {
+    this._growlMessage$.next({
+      ...this.defaultMsg,
+      severity: 'warn',
+      summary: detailMsg
+    });
+  }
+
   setMessage(msg: IJbGrowl) {
     this._growlMessage$.next({
       ...this.defaultMsg,
       ...msg
     });
+  }
+
+  errorHandler(err: IGrowlError) {
+    this.setErrorMessage(err.error.name, err.error.message);
   }
 }

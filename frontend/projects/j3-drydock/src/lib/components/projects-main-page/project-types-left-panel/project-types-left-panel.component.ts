@@ -5,6 +5,7 @@ import { IGroupProjectStatusesDto } from '../../../services/dtos/IGroupProjectSt
 import { LeftPanelFilterService } from '../services/LeftPanelFilterService';
 import { takeUntil } from 'rxjs/operators';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
+import { IGroupProjectStatusesCountsRequestDto } from '../../../services/dtos/IGroupProjectStatusesCountsRequestDto';
 
 @Component({
   selector: 'jb-project-types-left-panel',
@@ -12,8 +13,7 @@ import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
   styleUrls: ['./project-types-left-panel.component.scss']
 })
 export class ProjectTypesLeftPanelComponent extends UnsubscribeComponent implements OnInit {
-  @ViewChild('vesselsSelectDropdownList')
-  vesselsSelectDropdownList: JbMultiSelectDropdownComponent;
+  @ViewChild('vesselsSelectDropdownList') vesselsSelectDropdownList: JbMultiSelectDropdownComponent;
 
   projectsStatusFilters: IGroupProjectStatusesDto[] = null;
 
@@ -39,13 +39,34 @@ export class ProjectTypesLeftPanelComponent extends UnsubscribeComponent impleme
 
   ngOnInit(): void {
     this.projectsService
-      .groupProjectStatuses()
+      .groupProjectStatusesLabels()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((groupProjectStatuses: IGroupProjectStatusesDto[]) => {
-        this.projectsStatusFilters = groupProjectStatuses;
-
+      .subscribe((groupProjectStatuses) => {
+        this.setProjectStatusFilters(groupProjectStatuses);
+        this.groupProjectStatusesCounts();
         this.vesselsSelectDropdownList.registerOnChange(this.onVesselsSelected.bind(this));
       });
+    this.leftPanelFilterService.vesselsChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((vesselsIds) => {
+      this.groupProjectStatusesCounts(vesselsIds);
+    });
+  }
+
+  private groupProjectStatusesCounts(vesselsIds: number[] | null = null) {
+    const requestDto: IGroupProjectStatusesCountsRequestDto = {
+      VesselsIds: vesselsIds
+    };
+    this.projectsService
+      .groupProjectStatusesCounts(requestDto)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((groupProjectStatusesRes) => {
+        this.setProjectStatusFilters(groupProjectStatusesRes);
+      });
+  }
+
+  private setProjectStatusFilters(projectStatuses: { [key: string]: IGroupProjectStatusesDto }) {
+    this.projectsStatusFilters = Object.keys(projectStatuses ?? {}).map((key) => {
+      return { ...projectStatuses[key], ProjectTypeId: key };
+    });
   }
 
   onVesselsSelected(vesselsIds: number[]) {

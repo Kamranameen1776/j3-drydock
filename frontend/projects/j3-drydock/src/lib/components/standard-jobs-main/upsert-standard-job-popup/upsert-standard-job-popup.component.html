@@ -15,20 +15,15 @@
           (formValid)="onIsFormValid($event)"
         ></jb-upsert-standard-job-form>
       </p-tabPanel>
-      <p-tabPanel
-        header="Sub Items"
-        [disabled]="!isEditing"
-      >
+      <p-tabPanel header="Sub Items">
         <jb-drydock-sub-items
           [job]="item"
-          [functionUid]="jobFormValue?.function?.Child_ID"
+          [newUid]="newItemUid"
+          [functionUid]="functionUid"
           (changed)="onSubItemsChanged($event)"
         ></jb-drydock-sub-items>
       </p-tabPanel>
-      <p-tabPanel
-        header="Attachment"
-        [disabled]="!isEditing"
-      >
+      <p-tabPanel header="Attachment">
         <jb-attachments
           class="attachments"
           [attachConfig]="attachmentConfig"
@@ -42,7 +37,7 @@
 
   <ng-container jb-dialog-footer>
     <jb-dialog-footer
-      [isOkBtnDisabled]="!isPopupValid || isSaving"
+      [isOkBtnDisabled]="isSaving"
       [isCancelBtnDisabled]="isSaving"
       [okBtnLabel]="okLabel"
       (ok)="onOkPopup()"
@@ -50,3 +45,9 @@
     ></jb-dialog-footer>
   </ng-container>
 </jb-dialog>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="isSaving"
+  [theme]="'figma'"
+></jb-progress-spinner>

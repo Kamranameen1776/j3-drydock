@@ -6,6 +6,7 @@ export type CreateFieldsHistoryDto = {
     key1: string;
     key2: string;
     key3: string;
+    uid: string;
     moduleCode: string;
     functionCode: string;
     isCurrent: boolean;
@@ -60,6 +61,7 @@ export class FieldsHistoryRepository {
             .createQueryBuilder()
             .insert()
             .into(J2FieldsHistoryEntity)
+            .updateEntity(false)
             .values(
                 fieldsHistories.map((history) => ({
                     key1: history.key1,

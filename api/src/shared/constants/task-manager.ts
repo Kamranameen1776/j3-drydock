@@ -1,24 +1,31 @@
+import { TaskManagerStatus } from '../enum/task-manager-status.enum';
+
 export const TaskManagerConstants = {
     project: {
         wlType: 'dry_dock',
-        module_code: 'tm_drydock',
-        function_code: 'tm_drydock_project',
+        module_code: 'project',
+        function_code: 'dry_dock',
         status: {
             Planned: 'RAISE',
-            InProgress: 'In Porgress',
-            Rejected: 'Rejected',
-            Completed: 'Completeed',
+            InProgress: 'IN PROGRESS',
+            Rejected: 'REJECTED',
+            Completed: 'COMPLETED',
         },
     },
     specification: {
-        wlType: 'dry_dock_spec',
-        module_code: 'tm_drydock_spec',
-        function_code: 'tm_drydock_spec',
+        wlType: 'specification',
+        module_code: 'project',
+        function_code: 'specification_details',
         status: {
-            Raised: 'Raised',
-            Approved: 'Approved',
-            Rejected: 'Rejected',
-            Completed: 'Completed',
+            Raised: TaskManagerStatus.Raised,
+            InProgress: TaskManagerStatus.InProgress,
+            Planned: TaskManagerStatus.Planned,
+            Closed: TaskManagerStatus.Closed,
+            Canceled: TaskManagerStatus.Canceled,
         },
+    },
+    standardJob: {
+        module_code: 'project',
+        function_code: 'standard_job',
     },
 };

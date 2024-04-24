@@ -10,11 +10,11 @@
       background: transparent !important;
     }
 
-    .ui-tabview.ui-tabview-top>.ui-tabview-nav {
+    .ui-tabview.ui-tabview-top > .ui-tabview-nav {
       border-bottom: 1px solid $jibe-grey-blue-200 !important;
     }
 
-    .ui-tabview.ui-tabview-top>.ui-tabview-nav>li {
+    .ui-tabview.ui-tabview-top > .ui-tabview-nav > li {
       border: none;
       background: transparent !important;
       border-bottom: 1px solid transparent !important;
@@ -49,16 +49,7 @@
   }
 }
 
-@mixin details-page-fix {
-  .jb-details-layout-aside-wrapper {
-    overflow: initial !important;
-
-    .discussion-feed {
-      height: 100% !important;
-      padding: 0 16px !important;
-    }
-  }
-
+@mixin attachments-fix {
   .attachments {
     .ui-dialog {
       height: auto !important;
@@ -70,5 +61,98 @@
       min-height: 3.2em;
     }
   }
+}
 
+@mixin grid-cell-text {
+  font-family: $jibe-font-family;
+  font-style: normal;
+  font-size: $jibe-font-small;
+  line-height: $jibe-font-line-height;
+}
+
+@mixin progress-spinner-fix {
+  .progress-spinner {
+    background-color: transparent;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50000;
+  }
+}
+
+@mixin grid-cell-link {
+  cursor: pointer;
+
+  &:focus,
+  &:hover {
+      text-decoration: underline;
+  }
+}
+
+@mixin form-label($required: false) {
+    font-weight: 700;
+    color: #7886a2;
+    text-align: left;
+    text-transform: capitalize;
+    margin-bottom: 5px;
+
+    @if $required {
+        &:after {
+            content: '*';
+            padding-left: 10px;
+            color:  var(--jbRegularRed);
+        }
+    }
+}
+
+@mixin expandable {
+  display: block;
+
+  .hide-when-expanded {
+    display: block;
+  }
+
+  .show-when-expanded {
+    display: none;
+  }
+
+  .expand-button {
+      font-size: 16px !important;
+
+      &:hover {
+        cursor: pointer;
+      }
+  }
+}
+
+@mixin expanded {
+  display: flex;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  align-items: center;
+  background-color: rgba(0, 0, 0, .4);
+
+  .hide-when-expanded {
+    display: none;
+  }
+
+  .show-when-expanded {
+    display: block;
+  }
+}
+
+@mixin expanded-widget {
+  width: 95vw;
+  margin: 0 auto;
+  max-height: 95vh !important;
 }

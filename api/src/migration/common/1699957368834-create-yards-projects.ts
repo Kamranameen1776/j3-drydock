@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 export class createYardsProjects1699957368834 implements MigrationInterface {
     tableName = 'yards_projects';
@@ -27,13 +28,13 @@ export class createYardsProjects1699957368834 implements MigrationInterface {
                 [deleted_by] [uniqueidentifier] NULL,
                 [deleted_at] [datetime] NULL,
                 [yard_uid] [varchar](400) NULL,
-            PRIMARY KEY CLUSTERED 
+            PRIMARY KEY CLUSTERED
             (
                 [uid] ASC
             )
-            ) ON [PRIMARY]            
-            ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (newid()) FOR [uid]            
-            ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT ((1)) FOR [active_status]            
+            ) ON [PRIMARY]
+            ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (newid()) FOR [uid]
+            ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT ((1)) FOR [active_status]
             ALTER TABLE [${this.schemaName}].[${this.tableName}] ADD  DEFAULT (getdate()) FOR [created_at]
             END`);
 
@@ -47,7 +48,7 @@ export class createYardsProjects1699957368834 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createYardsProjects1699957368834',
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'Create yards to projects table',
@@ -56,32 +57,5 @@ export class createYardsProjects1699957368834 implements MigrationInterface {
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF EXISTS (Select * from INFORMATION_SCHEMA.TABLES
-                where TABLE_NAME = '${this.tableName}' AND TABLE_SCHEMA = '${this.schemaName}')
-            BEGIN
-            DROP TABLE [${this.schemaName}].[${this.tableName}]
-            END
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                'createYardsProjects1699957368834',
-                '',
-                'S',
-                'dry_dock',
-                'Drop yards to projects table (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                'createYardsProjects1699957368834',
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                'Drop yards to projects table (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

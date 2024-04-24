@@ -1,0 +1,70 @@
+<jb-dialog
+  [dialogContent]="popupConfig"
+  [(dialogVisible)]="isOpen"
+  (closeDialog)="onClosePopup()"
+>
+  <div jb-dialog-body>
+    <div class="daily-report-header">
+      <form
+        [formGroup]="createReportForm"
+        class="daily-report-form"
+      >
+        <label class="report-label-required">Report Name</label>
+        <div class="jb-fields-crtl">
+          <jb-textbox [content]="reportNameText"></jb-textbox>
+        </div>
+      </form>
+      <jb-button
+        class="add-updates-button"
+        label="Add Updates"
+        type="NoButton"
+        (click)="openJobOrderDialog()"
+      ></jb-button>
+    </div>
+
+    <div class="daily-report-content">
+      <label class="report-label">Body</label>
+
+      <form [formGroup]="bodyForm">
+        <jb-editor
+          #bodyEditor
+          class="drydock-editor"
+          [id]="bodyConfig.id"
+          [maxLength]="bodyConfig.maxLength"
+          [placeholder]="bodyConfig.placeholder"
+          [crtlName]="bodyConfig.crtlName"
+          [moduleCode]="bodyConfig.moduleCode"
+          [functionCode]="bodyConfig.functionCode"
+          [key1]="projectId"
+          [vesselId]="vesselId"
+          [inlineMode]="bodyConfig.inlineMode"
+          [tools]="bodyConfig.tools"
+          (updateParentCtrlValue)="updateEditorCtrlValue($event)"
+        ></jb-editor>
+      </form>
+    </div>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="isSaving"
+      [isCancelBtnDisabled]="isSaving"
+      [okBtnLabel]="saveLabel"
+      (ok)="onSubmit()"
+      (cancel)="onClosePopup()"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<jb-select-job-order-popup
+  #jobOrderPopup
+  [isOpen]="isJobOrderPopupVisible"
+  (closeDialog)="onCloseJobOrderPopup($event)"
+  [projectId]="projectId"
+></jb-select-job-order-popup>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="isSaving"
+  [theme]="'figma'"
+></jb-progress-spinner>

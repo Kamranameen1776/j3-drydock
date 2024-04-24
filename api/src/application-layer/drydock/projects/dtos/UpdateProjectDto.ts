@@ -1,16 +1,38 @@
-// TODO: check that all fields can be updated
+import { Type } from 'class-transformer';
+import { IsDate, IsOptional, IsUUID, MaxLength } from 'class-validator';
+
+export const startDateInvalidMessage = 'Invalid project start date';
+
+export const endDateInvalidMessage = 'Invalid project end date';
+
 export class UpdateProjectDto {
-    public uid: string;
+    @IsUUID()
+    public ProjectUid: string;
 
-    public VesselUid: string;
-
-    public ProjectTypeUid: string;
-
+    @MaxLength(200)
     public Subject: string;
 
     public ProjectManagerUid: string;
 
-    public StartDate: Date;
+    @IsOptional()
+    @Type(() => Date)
+    @IsDate({
+        message: startDateInvalidMessage,
+    })
+    public StartDate?: Date;
 
-    public EndDate: Date;
+    @IsOptional()
+    @Type(() => Date)
+    @IsDate({
+        message: endDateInvalidMessage,
+    })
+    public EndDate?: Date;
+
+    public ShipYardId: string;
+
+    @Type(() => Date)
+    @IsDate()
+    public LastUpdated: Date;
+
+    public UpdatedBy: string;
 }

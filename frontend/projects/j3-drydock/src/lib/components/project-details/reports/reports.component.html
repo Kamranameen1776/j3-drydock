@@ -1,0 +1,58 @@
+<jb-grid
+  *ngIf="gridData"
+  [gridName]="gridData.gridName"
+  [colData]="gridData.columns"
+  [tableDataReq]="gridData.request"
+  [setActions]="gridData.actions"
+  [filterData]="gridData.filters"
+  [searchFields]="gridData.searchFields"
+  [filterListsSet]="gridData.filtersLists"
+  [isDisplayAdvancedSettings]="false"
+  [isDisplayAdvancedFilter]="false"
+  [getStyleByContainer]="true"
+  (action)="onActionClick($event)"
+  (cellPlainTextClick)="onCellPlainTextClick($event)"
+></jb-grid>
+
+<jb-dialog
+  (closeDialog)="showDeleteDialog(false)"
+  [(dialogVisible)]="isShowDeleteDialog"
+  [dialogContent]="deleteReportDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <div class="p-col-12 left">{{ deleteDialogMessage }}</div>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [okBtnLabel]="deleteBtnLabel"
+      (ok)="onDeleteReport()"
+      (cancel)="showDeleteDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<ng-template
+  #reportDateTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.reportDate | UTCAsLocal | jbDate"></jb-drydock-grid-cell-popover>
+</ng-template>
+
+<jb-drydock-create-report-popup
+  *ngIf="isShowReportDialog"
+  [isOpen]="isShowReportDialog"
+  (closeDialog)="onCloseCreatePopup($event)"
+  [reportUid]="reportInfo?.uid"
+  [projectId]="projectId"
+></jb-drydock-create-report-popup>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="isShowLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>

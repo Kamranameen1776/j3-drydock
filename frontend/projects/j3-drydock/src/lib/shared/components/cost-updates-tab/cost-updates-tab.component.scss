@@ -1,0 +1,9 @@
+@import '../../../styles/mixins';
+
+:host ::ng-deep {
+    @include jbTextInput;
+
+    .cost-update-read-field {
+        font-size: 14px !important;
+    }
+}

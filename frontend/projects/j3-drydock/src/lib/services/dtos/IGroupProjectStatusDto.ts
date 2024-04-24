@@ -1,5 +1,9 @@
-export interface IGroupProjectStatusDto {
-  GroupProjectStatusId: string;
+import { eProjectStatus } from '../../models/enums/project-details.enum';
 
-  ProjectWithStatusCount: number;
+export interface IGroupProjectStatusDto {
+  GroupProjectStatusId: eProjectStatus;
+
+  GroupProjectDisplayName: string;
+
+  ProjectWithStatusCount: number | undefined;
 }

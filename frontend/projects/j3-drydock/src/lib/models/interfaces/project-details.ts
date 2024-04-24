@@ -1,5 +1,4 @@
-import { eFunction } from '../enums/function.enum';
-import { eModule } from '../enums/module.enum';
+import { ITMDetails } from 'j3-task-manager-ng';
 import { eRfqFields } from '../enums/rfq.enum';
 
 export interface YardLink {
@@ -8,7 +7,6 @@ export interface YardLink {
   [eRfqFields.Uid]: string;
   [eRfqFields.YardUid]: string;
   [eRfqFields.ExportedDate]: string;
-  [eRfqFields.IsSelected]: boolean;
 }
 
 export interface YardToLink {
@@ -33,19 +31,28 @@ export interface ProjectDetails {
   ProjectState: string;
   VesselName: string;
   VesselUid: string;
+  VesselType: number;
+  ShipYardId?: string;
   Subject: string;
-  StartDate: string;
-  EndDate: string;
+  StartDate: string | Date;
+  EndDate: string | Date;
   TaskManagerUid: string;
   ProjectTypeCode: string;
   VesselId: number;
 }
 
-export interface ProjectTopHeaderDetails extends ProjectDetails {
-  taskManager: { status: { code: string } };
-  officeId: number;
-  vessel: { uid: string };
-  _id: string;
-  functionCode: eFunction;
-  moduleCode: eModule;
+export interface ProjectDetailsFull extends ProjectDetails, ITMDetails {}
+
+export interface DailyReportCreate {
+  ProjectUid: string;
+  ReportName: string;
+  ReportDate: string;
+  Body: string;
+}
+
+export interface DailyReportUpdate {
+  DailyReportUid: string;
+  ProjectUid: string;
+  ReportName: string;
+  Body: string;
 }

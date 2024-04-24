@@ -1,16 +1,5 @@
-import { Max, Min, validate } from 'class-validator';
-import {
-    BeforeInsert,
-    BeforeUpdate,
-    Column,
-    Entity,
-    Index,
-    JoinColumn,
-    ManyToOne,
-    OneToOne,
-    PrimaryGeneratedColumn,
-    RelationId,
-} from 'typeorm';
+import { Decimal } from 'decimal.js';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
 import { BaseDatesEntity } from '../baseDatesEntity';
 import { SpecificationDetailsEntity } from './SpecificationDetailsEntity';
@@ -21,14 +10,30 @@ export const DISCOUNT_MIN = 0;
 export const DISCOUNT_MAX = 1;
 export const DISCOUNT_DEFAULT = DISCOUNT_MIN;
 
-/** @private Depends on {@link SUBJECT_MAX_LENGTH} */
+/** Depends on {@link SUBJECT_MAX_LENGTH} */
 const SUBJECT_COLUMN_LENGTH = 512; // next power of 2
+
+export const costFactorsKeys = ['quantity', 'unitPrice', 'discount', 'estimatedCost'] satisfies Array<
+    keyof SpecificationDetailsSubItemEntity
+>;
+
+export type SubItemCostFactorsExcerpt = Pick<SpecificationDetailsSubItemEntity, (typeof costFactorsKeys)[number]>;
+
+export function calculateCost(subItem: Partial<SubItemCostFactorsExcerpt>): Decimal {
+    const quantity = new Decimal(subItem.quantity || 0);
+    const unitPrice = new Decimal(subItem.unitPrice || 0);
+    const discount = new Decimal(subItem.discount || 0);
+    const discountQuotient = new Decimal(1).minus(discount);
+
+    // quantity * unitPrice * (1 - discount)
+    return quantity.times(unitPrice).times(discountQuotient);
+}
 
 @Entity('specification_details_sub_item', { schema: 'dry_dock' })
 @Index('idx_specification_details_sub_item_subject', ['subject'])
 export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     @PrimaryGeneratedColumn('uuid')
-    readonly uid: string;
+    uid: string;
 
     @Column({
         name: 'number',
@@ -37,7 +42,7 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         generated: 'increment',
         update: false,
     })
-    readonly number: number;
+    number: number;
 
     @Column({
         name: 'subject',
@@ -48,20 +53,28 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     subject: string;
 
     @Column({
+        name: 'description',
+        type: 'nvarchar',
+        length: 'max',
+        nullable: true,
+    })
+    description?: string;
+
+    @Column({
         name: 'quantity',
         type: 'int',
-        nullable: false,
+        nullable: true,
     })
-    quantity: number;
+    quantity?: number | null;
 
     @Column({
         name: 'unit_price',
         type: 'decimal',
         precision: 10,
         scale: 2,
-        nullable: false,
+        nullable: true,
     })
-    unitPrice: number;
+    unitPrice?: string | null;
 
     @Column({
         name: 'discount',
@@ -69,26 +82,9 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
         precision: 5,
         scale: 4,
         nullable: true,
-        default: DISCOUNT_DEFAULT,
+        default: () => `(${DISCOUNT_DEFAULT})`,
     })
-    @Min(DISCOUNT_MIN)
-    @Max(DISCOUNT_MAX)
-    discount: number;
-
-    /**
-     * `cost` is supposed to be set only by an internal hook, never externally.
-     * To read the value externally, use {@link getCost} or {@link calculateCost}.
-     */
-    @Column({
-        name: 'cost',
-        type: 'decimal',
-        precision: 10,
-        scale: 4,
-        nullable: false,
-    })
-    protected cost: number;
-
-    // Relations
+    discount: string;
 
     @ManyToOne(() => SpecificationDetailsEntity, (specificationDetails) => specificationDetails.SubItems)
     @JoinColumn({
@@ -97,42 +93,52 @@ export class SpecificationDetailsSubItemEntity extends BaseDatesEntity {
     })
     specificationDetails: SpecificationDetailsEntity;
 
+    // Relations
     @RelationId<SpecificationDetailsSubItemEntity>((subItem) => subItem.specificationDetails)
-    readonly specificationDetailsUid: string;
+    specificationDetailsUid: string;
 
     @OneToOne(() => UnitTypeEntity, (unitType) => unitType.specificationDetailsSubItem)
     @JoinColumn({
         name: 'unit_type_uid',
         referencedColumnName: 'uid',
     })
-    readonly unitType: UnitTypeEntity;
+    unitType: UnitTypeEntity;
 
     @RelationId<SpecificationDetailsSubItemEntity>((subItem) => subItem.unitType)
-    readonly unitTypeUid: string;
+    unitTypeUid: string;
 
-    // Methods and Hooks
+    @Column({
+        name: 'cost',
+        type: 'decimal',
+        precision: 20,
+        scale: 4,
+        nullable: true,
+    })
+    cost: string | null;
 
-    public getCost(): number {
-        return this.cost;
-    }
+    @Column({
+        name: 'estimated_cost',
+        type: 'decimal',
+        precision: 20,
+        scale: 4,
+        nullable: false,
+        default: 0,
+    })
+    estimatedCost: number | null;
 
-    public calculateCost(): number {
-        return this.quantity * this.unitPrice * (1 - this.discount);
-    }
+    @Column({
+        name: 'yard_comments',
+        type: 'varchar',
+        length: 2048,
+        nullable: true,
+    })
+    yardComments: string;
 
-    @BeforeInsert()
-    @BeforeUpdate()
-    protected updateCost(): void {
-        this.cost = this.calculateCost();
-    }
-
-    @BeforeInsert()
-    @BeforeUpdate()
-    protected async assertValid(): Promise<void> {
-        const errors = await validate(this);
-
-        if (errors.length > 0) {
-            throw errors;
-        }
-    }
+    @Column({
+        name: 'utilized',
+        type: 'decimal',
+        precision: 20,
+        scale: 4,
+    })
+    utilized: string;
 }

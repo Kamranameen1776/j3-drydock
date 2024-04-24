@@ -1,0 +1,22 @@
+<jb-grid
+  #selectJobOrdersGrid
+  [gridName]="gridInputs.gridName"
+  [colData]="gridInputs.columns"
+  [tableDataReq]="gridInputs.request"
+  [searchFields]="gridInputs.searchFields"
+  [getStyleByContainer]="true"
+  [isDisplayAdvancedFilter]="false"
+  [isDisplayAdvancedSettings]="false"
+  [isDisplaySearchField]="false"
+  selectionMode="multiple"
+  [matrixSelectedValue]="selected"
+  (matrixSelection)="onSelect($event)"
+  (matrixRequestChanged)="onMatrixRequestChanged()"
+></jb-grid>
+
+<ng-template
+  #lastUpdatedTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.LastUpdated | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
+</ng-template>

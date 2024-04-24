@@ -5,16 +5,22 @@
     [colData]="gridInputs.columns"
     [tableDataReq]="gridInputs.request"
     [searchFields]="gridInputs.searchFields"
-    [button]="gridInputs.gridButton"
     [setActions]="gridInputs.actions"
     [sortField]="gridInputs.sortField"
     [sortOrder]="gridInputs.sortOrder"
     [getStyleByContainer]="true"
-    [name]="gridInputs.name"
+    [isDisplayAdvancedFilter]="false"
     (action)="onGridAction($any($event), $event?.payload)"
     (matrixRequestChanged)="onMatrixRequestChanged()"
   ></jb-grid>
 </section>
+
+<ng-template
+  #dateAndTimeTemplate
+  let-rowData
+>
+  <jb-drydock-grid-cell-popover [value]="rowData.DateAndTime | UTCAsLocal | jbDate: null : dateTimeFormat"></jb-drydock-grid-cell-popover>
+</ng-template>
 
 <jb-dialog
   (closeDialog)="showDeleteDialog(false)"
@@ -40,6 +46,65 @@
       [okBtnLabel]="deleteBtnLabel"
       (ok)="deleteStatementOfFact()"
       (cancel)="showDeleteDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<jb-dialog
+  (closeDialog)="showCreateDialog(false)"
+  [(dialogVisible)]="createDialogVisible"
+  [dialogContent]="createStatementOfFactDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-form
+      *ngIf="createDialogVisible"
+      (jbFormGroup)="initCreateStatementOfFactFormGroup($any($event))"
+      [formStructure]="createStatementOfFactForm"
+      [isVerticalLabel]="true"
+      class="form-generator-log"
+    ></jb-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="createStatementOfFactButtonDisabled"
+      [okBtnLabel]="createBtnLabel"
+      (ok)="createStatementOfFact()"
+      (cancel)="showCreateDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<jb-dialog
+  (closeDialog)="showUpdateDialog(false)"
+  [(dialogVisible)]="updateDialogVisible"
+  [dialogContent]="updateStatementOfFactDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-form
+      *ngIf="updateDialogVisible"
+      (jbFormGroup)="initUpdateStatementOfFactFormGroup($any($event))"
+      [formStructure]="updateStatementOfFactForm"
+      [formValues]="updateStatementOfFactFormValues"
+      [isVerticalLabel]="true"
+      class="form-generator-log"
+    ></jb-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="updateStatementOfFactButtonDisabled"
+      [okBtnLabel]="updateBtnLabel"
+      (ok)="updateStatementOfFact()"
+      (cancel)="showUpdateDialog(false)"
     ></jb-dialog-footer>
   </ng-container>
 </jb-dialog>

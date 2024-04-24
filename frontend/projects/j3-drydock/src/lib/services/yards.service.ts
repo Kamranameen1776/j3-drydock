@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiRequestService, WebApiRequest, eCrud, eEntities } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { YardLink, YardToLink } from '../models/interfaces/project-details';
+import { eApiBaseDryDockAPI } from '../models/constants/constants';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,8 @@ export class YardsService {
 
   getLinkedYards(projectUid: string): Observable<YardLink[]> {
     const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
       entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       crud: eCrud.Get,
       action: 'projects/project-yards/get-project-yards',
       params: `uid=${projectUid}`
@@ -22,8 +23,8 @@ export class YardsService {
 
   getYardsToLink(projectId: string): Observable<YardToLink[]> {
     const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
       entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       crud: eCrud.Get,
       action: 'yards/get-yards',
       params: `uid=${projectId}`
@@ -33,8 +34,8 @@ export class YardsService {
 
   linkYardsToProject(projectUid: string, yardsUids: string[]) {
     const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
       entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       crud: eCrud.Post,
       action: 'projects/project-yards/create-project-yards',
       body: {
@@ -47,8 +48,8 @@ export class YardsService {
 
   removeYardLink(uid: string): Observable<YardToLink[]> {
     const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
       entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       crud: eCrud.Put,
       action: 'projects/project-yards/delete-project-yards',
       body: { uid }
@@ -58,14 +59,13 @@ export class YardsService {
 
   updateYardLink(yard: YardLink) {
     const apiReq: WebApiRequest = {
-      apiBase: 'dryDockAPI',
       entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       crud: eCrud.Put,
       action: 'projects/project-yards/update-project-yards',
       body: {
         uid: yard.uid,
-        lastExportedDate: yard.lastExportedDate,
-        isSelected: yard.isSelected
+        lastExportedDate: yard.lastExportedDate
       }
     };
     return this.apiRequestService.sendApiReq(apiReq);

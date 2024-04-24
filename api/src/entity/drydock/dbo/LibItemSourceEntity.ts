@@ -1,5 +1,10 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+export enum ItemName {
+    StandardJob = 'Standard job',
+    AdHoc = 'Ad-hoc',
+}
+
 @Entity('lib_itemsource', { schema: 'dbo' })
 export class LibItemSourceEntity {
     @PrimaryGeneratedColumn()
@@ -9,7 +14,7 @@ export class LibItemSourceEntity {
         nullable: true,
         name: 'item_name',
     })
-    ItemName: string;
+    ItemName: ItemName;
 
     @Column('varchar', {
         nullable: true,

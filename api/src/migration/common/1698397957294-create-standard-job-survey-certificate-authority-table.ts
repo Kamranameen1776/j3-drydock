@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class createStandardJobSurveyCertificateAuthorityTable1698397957294 implements MigrationInterface {
@@ -32,7 +33,7 @@ export class createStandardJobSurveyCertificateAuthorityTable1698397957294 imple
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createStandardJobSurveyCertificateAuthorityTable1698397957294',
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'Create standard jobs survey certificate authority table',
@@ -41,32 +42,5 @@ export class createStandardJobSurveyCertificateAuthorityTable1698397957294 imple
         }
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        try {
-            await queryRunner.query(`
-            IF EXISTS (Select * from INFORMATION_SCHEMA.TABLES
-                where TABLE_NAME = '${this.tableName}' AND TABLE_SCHEMA = '${this.schemaName}')
-            BEGIN
-            DROP TABLE [${this.schemaName}].[${this.tableName}]
-            END
-            `);
-
-            await MigrationUtilsService.migrationLog(
-                'createStandardJobSurveyCertificateAuthorityTable1698397957294',
-                '',
-                'S',
-                'dry_dock',
-                'Create standard jobs survey certificate authority table (Down migration)',
-            );
-        } catch (error) {
-            await MigrationUtilsService.migrationLog(
-                'createStandardJobSurveyCertificateAuthorityTable1698397957294',
-                JSON.stringify(error),
-                'E',
-                'dry_dock',
-                'Create standard jobs survey certificate authority table (Down migration)',
-                true,
-            );
-        }
-    }
+    public async down(): Promise<void> {}
 }

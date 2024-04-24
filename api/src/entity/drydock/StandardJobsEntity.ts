@@ -11,13 +11,8 @@ import {
 } from 'typeorm';
 
 import { BaseDatesEntity } from '../baseDatesEntity';
-import {
-    LibSurveyCertificateAuthority,
-    LibVesseltypes,
-    TmDdLibDoneBy,
-    TmDdLibItemCategory,
-    TmDdLibMaterialSuppliedBy,
-} from './dbo';
+import { LibSurveyCertificateAuthority, LibVesseltypes, TmDdLibDoneBy, TmDdLibMaterialSuppliedBy } from './dbo';
+import { ProjectTemplateStandardJobEntity } from './ProjectTemplate/ProjectTemplateStandardJobEntity';
 import { StandardJobsSubItems } from './StandardJobsSubItemsEntity';
 
 @Entity('standard_jobs', { schema: 'dry_dock' })
@@ -55,24 +50,15 @@ export class StandardJobs extends BaseDatesEntity {
     @Column('int', {
         nullable: false,
         name: 'number',
-        generated: 'increment',
     })
     number: number;
 
-    @Column('varchar', {
+    @Column('nvarchar', {
         nullable: true,
         name: 'scope',
-        length: 250,
+        length: 'max',
     })
     scope: string;
-
-    @ManyToOne(() => TmDdLibItemCategory)
-    @JoinColumn({
-        name: 'category_uid',
-    })
-    category: Partial<TmDdLibItemCategory>;
-    @RelationId((entity: StandardJobs) => entity.category)
-    categoryUid: string;
 
     @ManyToOne(() => TmDdLibDoneBy)
     @JoinColumn({
@@ -132,10 +118,17 @@ export class StandardJobs extends BaseDatesEntity {
     })
     inspection: Partial<LibSurveyCertificateAuthority>[];
 
-    @Column('varchar', {
+    @Column('nvarchar', {
         nullable: true,
         name: 'description',
-        length: 5000,
+        length: 'max',
     })
     description: string;
+
+    @OneToMany(() => ProjectTemplateStandardJobEntity, (entity) => entity.StandardJob)
+    @JoinColumn({
+        name: 'uid',
+        referencedColumnName: 'standard_job_uid',
+    })
+    ProjectTemplateStandardJobs: ProjectTemplateStandardJobEntity[];
 }

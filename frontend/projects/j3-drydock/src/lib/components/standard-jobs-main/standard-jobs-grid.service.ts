@@ -12,6 +12,7 @@ export class StandardJobsGridService {
     {
       DisplayText: eStandardJobsMainLabels.ItemNumber,
       FieldName: eStandardJobsMainFields.ItemNumber,
+      hyperlink: true,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -49,7 +50,7 @@ export class StandardJobsGridService {
       DisplayText: eStandardJobsMainLabels.MaterialSuppliedBy,
       FieldName: eStandardJobsMainFields.MaterialSuppliedBy,
       IsActive: true,
-      IsMandatory: true,
+      IsMandatory: false,
       IsVisible: true
     },
     {
@@ -77,7 +78,8 @@ export class StandardJobsGridService {
       ValueCode: 'VesselTypes',
       FieldID: 1,
       gridName: this.gridName,
-      default: false
+      default: false,
+      sendFilterAs: 'gridFilters'
     },
     {
       DisplayText: eStandardJobsMainLabels.Inspection,
@@ -87,7 +89,8 @@ export class StandardJobsGridService {
       DisplayCode: 'displayName',
       FieldID: 3,
       gridName: this.gridName,
-      default: true
+      default: true,
+      sendFilterAs: 'gridFilters'
     },
     {
       DisplayText: eStandardJobsMainLabels.DoneBy,
@@ -125,8 +128,8 @@ export class StandardJobsGridService {
     [eStandardJobsMainFields.VesselType]: {
       webApiRequest: this.standardJobsService.getVesselTypesRequest(),
       type: eFieldControlType.MultiSelect,
-      odataKey: eStandardJobsMainFields.VesselType,
-      listValueKey: 'VesselTypes'
+      odataKey: eStandardJobsMainFields.VesselTypeID,
+      listValueKey: 'ID'
     },
     [eStandardJobsMainFields.Inspection]: {
       webApiRequest: this.standardJobsService.getStandardJobsFiltersRequest(eStandardJobsMainFields.Inspection),
@@ -147,7 +150,7 @@ export class StandardJobsGridService {
       listValueKey: 'uid'
     },
     [eStandardJobsMainFields.VesselSpecific]: {
-      list: this.standardJobsService.getVesselSpevificList(),
+      list: this.standardJobsService.getVesselSpecificList(),
       type: eFieldControlType.Dropdown,
       odataKey: eStandardJobsMainFields.VesselSpecific,
       listValueKey: 'value'

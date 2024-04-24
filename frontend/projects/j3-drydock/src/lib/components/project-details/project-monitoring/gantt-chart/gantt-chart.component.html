@@ -1,0 +1,66 @@
+<div class="gantt-filters-container">
+  <div *ngFor="let filter of overDueFilters">
+    <jb-grid-filter
+      [allFilters]="overDueFilters"
+      [filter]="filter"
+      [appendTo]="'body'"
+      [header]="true"
+      (filterAction)="handleSelectOverdueOption($event)"
+    ></jb-grid-filter>
+  </div>
+</div>
+
+<ejs-gantt
+  #ganttChart
+  id="{{ id }}"
+  [dataSource]="tasks"
+  [taskFields]="taskFields"
+  [timelineSettings]="timelineSettings"
+  [includeWeekend]="includeWeekend"
+  [splitterSettings]="splitterSettings"
+  [eventMarkers]="eventMarkers"
+  [columns]="columns"
+  (queryTaskbarInfo)="queryTaskbarInfo($event)"
+  [height]="isExpanded ? 'calc(100% - 44px)' : defaultHeight"
+  [rowHeight]="20"
+  [editSettings]="editSettings"
+  [tooltipSettings]="tooltipSettings"
+  (taskbarEdited)="taskbarEdited($event)"
+  [dateFormat]="transformToEJ2DateFormat(dateFormat)"
+></ejs-gantt>
+
+<jb-dialog
+  (closeDialog)="showUpdateDialog(false)"
+  [(dialogVisible)]="updateDialogVisible"
+  [dialogContent]="updateJobOrderDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <jb-job-orders-form
+      *ngIf="updateDialogVisible"
+      [isOpen]="updateDialogVisible"
+      [vesselId]="vesselId"
+      [jobOrderFormValue]="jobOrderFormValue"
+      (isChangedAndValid)="jobOrdersChanged($event)"
+      #jobOrderForm
+    ></jb-job-orders-form>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [isOkBtnDisabled]="updateJobOrderButtonDisabled"
+      [okBtnLabel]="updateBtnLabel"
+      (ok)="updateJobOrder()"
+      (cancel)="showUpdateDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showSpinner || isSaving"
+  [theme]="'figma'"
+></jb-progress-spinner>

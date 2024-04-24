@@ -1,7 +1,8 @@
 import { DataUtilService } from 'j2utils';
 import { getManager, QueryRunner } from 'typeorm';
 
-import { YardsProjectsEntity } from '../../../entity/drydock';
+import { className } from '../../../common/drydock/ts-helpers/className';
+import { J3PrcCompanyRegistryEntity, YardsProjectsEntity } from '../../../entity/drydock';
 import { ICreateProjectYardsDto } from './dtos/ICreateProjectYardsDto';
 import { IDeleteProjectYardsDto } from './dtos/IDeleteProjectYardsDto';
 import { IProjectYardsResultDto } from './dtos/IProjectYardsResultDto';
@@ -13,13 +14,13 @@ export class YardsProjectsRepository {
         const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
         return yardProjectsRepository
             .createQueryBuilder('yp')
-            .leftJoinAndSelect('yp.yard', 'y')
+            .leftJoin(className(J3PrcCompanyRegistryEntity), 'cr', 'cr.uid = yp.yard_uid')
             .select(
                 `yp.uid as uid,
                 yp.project_uid as projectUid,
                 yp.yard_uid as yardUid,
-                y.yard_name as yardName,
-                y.yard_location as yardLocation,
+                cr.registeredName as yardName,
+                RTRIM(LTRIM(CONCAT("cr"."country", ' ', "cr"."city"))) as yardLocation,
                 cast(yp.last_exported_date as datetimeoffset) AS lastExportedDate,
                 yp.is_selected as isSelected`,
             )
@@ -43,7 +44,7 @@ export class YardsProjectsRepository {
             .getRawOne();
     }
 
-    public async create(data: ICreateProjectYardsDto, queryRunner: QueryRunner) {
+    public async create(data: ICreateProjectYardsDto, queryRunner: QueryRunner): Promise<string[]> {
         const yardProjects: YardsProjectsEntity[] = data.yardsUids.map((yardUid) =>
             this.createYardProject(yardUid, data),
         );
@@ -54,14 +55,14 @@ export class YardsProjectsRepository {
             .into(YardsProjectsEntity)
             .values(yardProjects)
             .execute();
-        return;
+        return yardProjects.map((item) => item.uid);
     }
 
     private createYardProject(yardUid: string, data: ICreateProjectYardsDto): YardsProjectsEntity {
         const yardProjects = new YardsProjectsEntity();
         yardProjects.uid = new DataUtilService().newUid();
         yardProjects.project_uid = data.projectUid;
-        yardProjects.yard = { uid: yardUid };
+        yardProjects.yard_uid = yardUid;
         yardProjects.is_selected = false;
         yardProjects.created_by = data.createdBy;
         yardProjects.created_at = data.createdAt;
@@ -77,7 +78,6 @@ export class YardsProjectsRepository {
             .update(YardsProjectsEntity)
             .set({
                 last_exported_date: data.lastExportedDate,
-                is_selected: data.isSelected,
                 updated_at: data.updatedAt,
                 updated_by: data.updatedBy,
             })
@@ -98,5 +98,19 @@ export class YardsProjectsRepository {
             })
             .where('uid = :uid', { uid })
             .execute();
+    }
+
+    public async FindProjectYardByProjectUid(projectUid: string): Promise<YardsProjectsEntity | undefined> {
+        const yardProjectsRepository = getManager().getRepository(YardsProjectsEntity);
+        return yardProjectsRepository.findOne({
+            where: {
+                project_uid: projectUid,
+                active_status: true,
+            },
+        });
+    }
+
+    public async SaveProjectYard(yardsProjectsEntity: YardsProjectsEntity, queryRunner: QueryRunner) {
+        await queryRunner.manager.save(yardsProjectsEntity);
     }
 }

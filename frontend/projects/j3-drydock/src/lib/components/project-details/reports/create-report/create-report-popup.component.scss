@@ -1,0 +1,46 @@
+@import '../../../../styles/mixins';
+
+:host {
+  ::ng-deep {
+    @include progress-spinner-fix;
+
+     .e-richtexteditor  {
+      .e-content {
+        min-height: 300px !important;
+      }
+     }
+  }
+
+  .report-label {
+    @include form-label;
+  }
+
+  .report-label-required {
+    @include form-label(true);
+  }
+
+  .daily-report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+
+    .daily-report-form {
+      width: 400px;
+    }
+
+    .add-updates-button {
+      display: block;
+    }
+  }
+
+  .jb-fields-crtl {
+    margin-top: 5px;
+
+    input,
+    ::ng-deep .ui-inputtext {
+      font-size: 14px !important;
+    }
+  }
+}
+

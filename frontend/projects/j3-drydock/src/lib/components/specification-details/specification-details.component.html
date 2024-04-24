@@ -1,39 +1,108 @@
-<jb-details-layout-figma>
-  <jb-specification-details-header
-    alayout-header
-    *ngIf="specificationDetailsInfo"
-    [specificationDetailsInfo]="specificationDetailsInfo"
-    (saveButtonClick)="save()"
-  ></jb-specification-details-header>
-
-  <ng-container alayout-content>
-    <ng-container [ngSwitch]="currentSectionId">
-      <ng-container *ngSwitchCase="eProjectDetailsSideMenuId.SpecificationDetails">
-        <div #specifications>
-          <div #generalInformation>
-            <jb-specification-general-information
-              *ngIf="specificationDetailsInfo"
-              [specificationDetailsInfo]="specificationDetailsInfo"
-            ></jb-specification-general-information>
-          </div>
-          <div #subItems>
-            <jb-specification-sub-items
-              *ngIf="specificationDetailsInfo"
-              [specificationDetailsInfo]="specificationDetailsInfo"
-            ></jb-specification-sub-items>
-          </div>
-          <div #requisition>
-            <jb-specification-requisitions [specificationUid]="specificationUid"></jb-specification-requisitions>
-          </div>
-        </div>
-      </ng-container>
-    </ng-container>
-  </ng-container>
-  <ng-container
-    style="width: 400px"
-    alayout-aside
+<jb-task-manager-details
+  *ngIf="sectionsConfig"
+  [topSectionConfig]="topSectionConfig"
+  [sectionsConfig]="sectionsConfig"
+  [tmDetails]="tmDetails"
+  [moduleCode]="moduleCode"
+  [functionCode]="functionCode"
+  [hideAuditTrail]="true"
+  [hideAttachments]="false"
+  [attachmentRights]="accessRights.attachments"
+  [showExport]="false"
+  [isViewRight]="canView"
+  [templateRefObj]="{
+    specificationDetails: specificationsDetailsTab,
+    generalInformation: generalInformation,
+    subItems: subItems,
+    pmsJobs: pmsJobs,
+    findings: findings,
+    specificationUpdates: specificationUpdates
+  }"
+  [slideMenus]="menu"
+  (onWorkflowActions)="onWorkflowAction($event)"
+>
+  <ng-template
+    #specificationsDetailsTab
+    let-section
   >
-    <jb-discussion-feed></jb-discussion-feed>
-  </ng-container>
-</jb-details-layout-figma>
+    <ng-container [ngSwitch]="section.SectionCode">
+      <div
+        #generalInformation
+        *ngSwitchCase="eSideMenuId.GeneralInformation"
+      >
+        <jb-specification-general-information
+          #SpecificationGeneralInformationComponent
+          *ngIf="specificationDetailsInfo && accessRights.generalInformation.view"
+          [specificationDetailsInfo]="specificationDetailsInfo"
+          [isEditable]="isSpecificationEditable"
+          (formValue)="dispatchGeneralInformationForm($event)"
+        ></jb-specification-general-information>
+      </div>
+      <div
+        #subItems
+        *ngSwitchCase="eSideMenuId.SubItems"
+      >
+        <jb-specification-sub-items
+          #SpecificationSubItemsComponent
+          *ngIf="specificationDetailsInfo && accessRights.subItems.view"
+          [isEditable]="isSpecificationEditable"
+          [specificationDetailsInfo]="specificationDetailsInfo"
+        ></jb-specification-sub-items>
+      </div>
+      <div
+        #pmsJobs
+        *ngSwitchCase="eSideMenuId.PMSJobs"
+      >
+        <jb-linked-pms-jobs-findings
+          #PmsJobsComponent
+          *ngIf="specificationDetailsInfo && accessRights.pmsJobs.view"
+          [isEditable]="isSpecificationEditable"
+          [validTaskType]="pmsWlType.PmsJob"
+          [specificationDetailsInfo]="specificationDetailsInfo"
+          (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.PMSJobs)"
+        ></jb-linked-pms-jobs-findings>
+      </div>
+      <div
+        #findings
+        *ngSwitchCase="eSideMenuId.Findings"
+      >
+        <jb-linked-pms-jobs-findings
+          #FindingsComponent
+          *ngIf="specificationDetailsInfo && accessRights.findings.view"
+          [isEditable]="isSpecificationEditable"
+          [validTaskType]="pmsWlType.Findings"
+          [specificationDetailsInfo]="specificationDetailsInfo"
+          (updateSelectedAmount)="updateSelectedAmount($event, eSpecificationDetailsPageMenuIds.Findings)"
+        ></jb-linked-pms-jobs-findings>
+      </div>
+      <div
+        #specificationUpdates
+        *ngSwitchCase="eSideMenuId.SpecificationUpdates"
+      >
+        <jb-drydock-specification-updates
+          #specificationUpdatesComponent
+          *ngIf="specificationDetailsInfo"
+          [isEditable]="isUpdatesEditable"
+          [specificationDetails]="specificationDetailsInfo"
+          (jobOrderUpdate)="onJobOrderUpdate()"
+        ></jb-drydock-specification-updates>
+      </div>
+    </ng-container>
+  </ng-template>
+</jb-task-manager-details>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="showLoader"
+  [theme]="JibeTheme.Figma"
+></jb-progress-spinner>
+
+<jb-edit-sub-item-popup
+  *ngIf="showEditSubItem"
+  [isOpen]="!!showEditSubItem"
+  [subItemDetails]="subItemDetails"
+  [specificationUid]="specificationDetailsInfo.uid"
+  (closeDialog)="closeDialog()"
+></jb-edit-sub-item-popup>
+
 <jb-growl [content]="growlMessage$ | async"></jb-growl>

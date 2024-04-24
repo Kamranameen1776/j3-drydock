@@ -4,21 +4,30 @@ import * as httpStatus from 'http-status-codes';
 import { AccessRights } from 'j2utils';
 
 import { UserFromToken } from '../../../../application-layer/drydock/core/cqrs/UserDto';
-import {
-    ApplicationException,
-    AuthorizationException,
-    BusinessException,
-} from '../../../../bll/drydock/core/exceptions';
+import { AuthorizationException, BusinessException } from '../../../../bll/drydock/core/exceptions';
 import { log } from '../../../../logger';
 import { ProblemDetails, ProblemDetailsType } from '../ProblemDetails';
 import { ExceptionLogDataDto } from './ExceptionLogDataDto';
 
 type ResultGetterRequestHandler<TResult> = (req: Request, res: Response, user: UserFromToken) => Promise<TResult>;
+
+type ControllerHandler = (request: Request) => Promise<unknown>;
+
 export class MiddlewareHandler {
     functionCode?: string;
 
     constructor(functionCode?: string) {
         this.functionCode = functionCode;
+    }
+
+    public ExecuteHandlerAsync(fn: ControllerHandler) {
+        return async (req: Request, res: Response) => {
+            this.ExecuteAsync(req, res, async () => {
+                const result = await fn(req);
+
+                return result;
+            });
+        };
     }
 
     public async ExecuteAsync<TResult>(req: Request, res: Response, getResult: ResultGetterRequestHandler<TResult>) {
@@ -34,7 +43,12 @@ export class MiddlewareHandler {
             const authUser = AccessRights.authorizationDecode(req) as UserFromToken;
             const result = await getResult(req, res, authUser);
 
-            res.status(httpStatus.OK).json(result);
+            res.status(httpStatus.OK);
+            if (result instanceof Buffer) {
+                res.send(result);
+            } else {
+                res.json(result);
+            }
 
             return;
         } catch (exception: unknown) {
@@ -48,7 +62,6 @@ export class MiddlewareHandler {
             const userId = AccessRights.getUserIdFromReq(req);
             const moduleCode = 'project';
             const functionCode = this.functionCode || 'project';
-            const api = 'DryDockAPI';
             const locationId = null;
             const isClient = null;
 
@@ -64,9 +77,9 @@ export class MiddlewareHandler {
                 logData.Details = details;
 
                 // Business exceptions it is expected behavior
-                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
 
-                res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.params);
+                res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.getJibeError());
 
                 return;
             } else if (exception instanceof AuthorizationException) {
@@ -77,57 +90,51 @@ export class MiddlewareHandler {
 
                 logData.Details = details;
 
-                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
 
-                res.status(httpStatus.FORBIDDEN).json(details.params);
-
-                return;
-            } else if (exception instanceof ApplicationException) {
-                const details = new ProblemDetails({
-                    title: 'Server Error',
-                    type: ProblemDetailsType.ApplicationException,
-                });
-
-                logData.Details = details;
-
-                log.error(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
-
-                res.status(httpStatus.INTERNAL_SERVER_ERROR).json(details.params);
+                res.status(httpStatus.FORBIDDEN).json(details.getJibeError());
 
                 return;
             } else if (exception instanceof Array && exception.length && exception[0] instanceof ValidationError) {
-                //TODO: think how to refactor it;
-                const error = exception[0];
-                let message = 'Valdidation request has failed';
-                let property = 'Something';
-                if (error.constraints && error.property) {
-                    property = error.property;
-                    const keys = Object.keys(error.constraints);
-                    if (keys.length) {
-                        message = error.constraints[keys[0]];
-                    }
-                }
+                const message = this.getExceptionMessage(exception as ValidationError[]);
 
                 //log to DB
                 const details = new ProblemDetails({
                     title: 'Request validation error',
-                    type: ProblemDetailsType.ValdidationException,
+                    detail: message,
+                    type: ProblemDetailsType.ValidationException,
                 });
                 logData.Details = details;
-                log.warn(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+                log.warn(message, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
 
-                res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
-                    title: 'Request validation error',
-                    property,
-                    message,
-                });
+                res.status(httpStatus.UNPROCESSABLE_ENTITY).json(details.getJibeError());
 
                 return;
             }
 
-            log.error(logMessage, logData, method, userId, moduleCode, functionCode, api, locationId, isClient);
+            const details = new ProblemDetails({
+                title: 'Server Error',
+                type: ProblemDetailsType.ApplicationException,
+            });
+            logData.Details = details;
+            log.error(logMessage, logData, method, userId, moduleCode, functionCode, null, locationId, isClient);
+            res.status(httpStatus.INTERNAL_SERVER_ERROR).json(details.getJibeError());
+        }
+    }
 
-            res.status(httpStatus.BAD_REQUEST).send();
+    private getExceptionMessage(errors: ValidationError[]): string {
+        const error = errors[0];
+        const constraints = error.constraints || {};
+        const keys = Object.keys(constraints);
+
+        if (!keys.length && error.children) {
+            return this.getExceptionMessage(error.children);
+        }
+
+        if (keys.length === 1) {
+            return constraints[keys[0]];
+        } else {
+            return error.toString();
         }
     }
 }
