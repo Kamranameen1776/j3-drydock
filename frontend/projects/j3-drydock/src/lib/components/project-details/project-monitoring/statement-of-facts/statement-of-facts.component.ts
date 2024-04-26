@@ -240,12 +240,14 @@ export class StatementOfFactsComponent extends UnsubscribeComponent implements O
 
     this.gridInputs.actions.push({
       name: eGridRowActions.Edit,
-      label: 'Edit'
+      label: 'Edit',
+      icon: 'icons8-edit'
     });
 
     this.gridInputs.actions.push({
       name: eGridRowActions.Delete,
-      label: 'Delete'
+      label: 'Delete',
+      icon: 'icons8-delete'
     });
   }
 
