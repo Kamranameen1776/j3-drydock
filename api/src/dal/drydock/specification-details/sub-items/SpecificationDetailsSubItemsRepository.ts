@@ -29,6 +29,7 @@ import { GetSubItemParams } from './dto/GetSubItemParams';
 import { UpdateSubItemParams } from './dto/UpdateSubItemParams';
 import { ValidateFindingDeleteDto } from './dto/ValidateFindingDeleteDto';
 import { ValidatePmsJobDeleteDto } from './dto/ValidatePmsJobDeleteDto';
+import { QueryRunnerManager } from '../../../../application-layer/drydock/core/uof/ParallelUnitOfWork';
 
 export type FindManyRecord = Pick<
     SpecificationDetailsSubItemEntity,
@@ -219,6 +220,22 @@ export class SpecificationDetailsSubItemsRepository {
             SpecificationDetailsSubItemEntity,
             newSubItems,
             queryRunner,
+            {
+                chunk: 14,
+                reload: false,
+            },
+        );
+    }
+
+    public async createRawSubItemsTasks(
+        subItemsData: SpecificationDetailsSubItemEntity[],
+        queryRunner: QueryRunnerManager,
+    ) {
+        return new SimpleOperationsRepository().insertManyTasks(
+            SpecificationDetailsSubItemEntity,
+            subItemsData,
+            queryRunner,
+            (entity) => entity.uid as string,
             {
                 chunk: 14,
                 reload: false,

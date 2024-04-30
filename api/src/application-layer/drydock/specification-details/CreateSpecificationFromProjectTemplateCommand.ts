@@ -2,13 +2,12 @@ import { validateAgainstModel } from '../../../common/drydock/ts-helpers/validat
 import { ProjectTemplateStandardJobRepository } from '../../../dal/drydock/ProjectTemplate/ProjectTemplateStandardJobRepository';
 import { CreateSpecificationFromProjectTemplateDto } from '../../../dal/drydock/specification-details/dtos/ICreateSpecificationFromProjectTemplateDto';
 import { CreateSpecificationFromStandardJobDto } from '../../../dal/drydock/specification-details/dtos/ICreateSpecificationFromStandardJobDto';
-import { SpecificationDetailsEntity } from '../../../entity/drydock';
 import { Command } from '../core/cqrs/Command';
 import { CreateSpecificationFromStandardJobsCommand } from './CreateSpecificationFromStandardJobCommand';
 
 export class CreateSpecificationFromProjectTemplateCommand extends Command<
     CreateSpecificationFromProjectTemplateDto,
-    SpecificationDetailsEntity[]
+    string
 > {
     projectTemplateStandardJobRepository = new ProjectTemplateStandardJobRepository();
 

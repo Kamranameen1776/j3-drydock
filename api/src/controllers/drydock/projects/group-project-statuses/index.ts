@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { Body, Controller, Get, Request, Route } from 'tsoa';
+import { Body, Controller, Post, Request, Route } from 'tsoa';
 
 import { GroupProjectStatusesCountsRequestModel } from '../../../../application-layer/drydock/projects/project-statuses/group-project-statuses/dtos/GroupProjectStatusesCountsRequestModel';
 import { IGroupResponseDto } from '../../../../application-layer/drydock/projects/project-statuses/group-project-statuses/dtos/IGroupProjectStatusDto';
@@ -8,7 +8,7 @@ import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
 @Route('drydock/projects/group-project-statuses')
 export class GetGroupProjectStatusesActionController extends Controller {
-    @Get()
+    @Post()
     public async getGroupProjectStatusesAction(
         @Request() request: express.Request,
         @Body() body: GroupProjectStatusesCountsRequestModel,

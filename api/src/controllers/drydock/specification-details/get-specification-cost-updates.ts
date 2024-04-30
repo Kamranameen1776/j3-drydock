@@ -27,7 +27,8 @@ export class GetSpecificationCostUpdatesController extends Controller {
     public async getSpecificationCostUpdates(
         @Body() dto: SpecificationCostUpdateRequestDto,
         @Request() request: Req<SpecificationCostUpdateRequestDto>,
-    ): Promise<ODataResult<FoldableGridData<SpecificationCostUpdateDto>>> {
+        // ODataResult<FoldableGridData<SpecificationCostUpdateDto>>
+    ): Promise<unknown> {
         const query = new GetSpecificationCostUpdatesQuery();
 
         return query.ExecuteAsync(request, SpecificationCostUpdateRequestDto);
