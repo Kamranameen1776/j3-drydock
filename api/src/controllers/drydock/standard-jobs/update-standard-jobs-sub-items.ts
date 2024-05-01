@@ -33,8 +33,6 @@ export class UpdateStandardJobsSubItemsController extends Controller {
 
         const query = new UpdateStandardJobSubItemsCommand();
 
-        const result = await query.ExecuteAsync(dto);
-
-        return result;
+        await query.ExecuteAsync(dto);
     }
 }
