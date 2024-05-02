@@ -1,0 +1,89 @@
+@import '../../../../styles/mixins';
+
+@include noGridHeaderBorder();
+
+.grid-header-container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+
+  .grid-header {
+    flex: 1;
+    border-bottom: none;
+
+    /** There are no other ways to set width of the dropdown list for now */
+    ::ng-deep #select .ui-dropdown-panel {
+      width: 210px !important;
+    }
+  }
+}
+
+.comparison-table {
+  font-size: $jibe-font-small;
+  .sticky {
+    width: 150px !important;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    &.collapsed {
+      max-width: 350px !important;
+    }
+  }
+  .comparison-table-column {
+    width: 414px;
+    box-sizing: content-box;
+    padding: 0px 8px 0px 0px;
+    &:last-of-type {
+      padding: 0px;
+    }
+  }
+
+  th {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 112px;
+  }
+}
+:host ::ng-deep {
+  .supplier-table,
+  .items-table {
+    .ui-table {
+      .ui-table-thead,
+      .ui-table-tbody {
+        tr {
+          &.row-highlight,
+          &.ng-star-inserted {
+            height: 52px;
+            td,
+            th {
+              padding: 0 5px;
+            }
+          }
+          &.expansion-row {
+            height: 30px;
+            font-size: $jibe-font-xsmall;
+            td {
+              padding: 5px;
+            }
+          }
+        }
+      }
+      .ui-table-thead {
+        color: var(--jbGreyBlue400);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        font-size: $jibe-font-xsmall;
+      }
+    }
+  }
+
+  .ui-table-scrollable-header-box {
+    padding-right: 0px !important;
+  }
+
+  .cdk-virtual-scroll-viewport {
+    overflow: scroll;
+    margin-right: -16px;
+  }
+}

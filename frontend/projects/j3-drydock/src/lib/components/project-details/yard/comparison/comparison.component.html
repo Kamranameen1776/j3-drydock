@@ -1,1 +1,78 @@
-<p>comparison works!</p>
+<section class="grid-header-container">
+  <!-- <jb-grid-header
+    class="grid-header"
+    [gridName]="gridName"
+    [additionalFilters]="additionalFilters"
+    [isDisplayAdvancedFilter]="false"
+    [isDisplayAdvancedSettings]="false"
+    (filterAction)="onFilterChange($event)"
+  ></jb-grid-header> -->
+</section>
+<p-table
+  class="comparison-table"
+  [columns]="yards"
+  [value]="[1]"
+  [scrollable]="true"
+  scrollHeight="300px"
+  [reorderableColumns]="true"
+  [virtualScroll]="true"
+  [lazy]="true"
+  (onLazyLoad)="loadYards()"
+>
+  <ng-template
+    pTemplate="header"
+    let-columns
+  >
+    <tr>
+      <th
+        class="sticky comparison-table-column"
+        [class.collapsed]="isTableInCollapsedMode"
+      ></th>
+      <th
+        *ngFor="let yard of columns"
+        class="comparison-table-column"
+        pReorderableColumn
+      >
+        <jb-drydock-comparison-table-header [yard]="yard"></jb-drydock-comparison-table-header>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template
+    pTemplate="body"
+    let-columns="columns"
+  >
+    <tr class="row-highlight">
+      <td
+        [class.collapsed]="isReqItemsTableInCollapsedMode"
+        class="sticky comparison-table-column"
+      >
+        <!-- <prc-requisition-items-table
+          (toggleTable)="onToggleReqItemsTableMode($event)"
+          [isCollapsedMode]="isReqItemsTableInCollapsedMode"
+          [expandedRowKeys]="expandedRowKeys"
+          [quotationEvaluationItems]="quotationEvaluationItems"
+          [summaryReqItemsOrderQty]="summaryReqItemsOrderQty"
+        ></prc-requisition-items-table> -->
+      </td>
+      <td
+        *ngFor="let yard of yards"
+        class="comparison-table-column"
+      >
+
+      <jb-drydock-comparison-table-header [yard]="yard"></jb-drydock-comparison-table-header>
+
+        <!-- <prc-supplier-table
+          [quotationUid]="quote.uid"
+          [expandedRowKeys]="expandedRowKeys"
+          [quotationEvaluationItems]="quotationEvaluationItems"
+          [currencyRate]="quote.currencyRate"
+          [currencyMode]="currencyMode$ | async"
+          [quotationDeliveryDate]="quote.deliveryDate"
+          [quotationItemStateMap]="quotationItemStateMap"
+          (rowStateChange)="onRowStateChange($event)"
+          [inActive]="(inActive$ | async) || (quote.po && !quote.po.cancellationAvailable)"
+        ></prc-supplier-table> -->
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

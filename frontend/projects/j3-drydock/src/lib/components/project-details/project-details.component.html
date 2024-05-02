@@ -36,6 +36,7 @@
     technical_specification: technical_specification,
     attachmentss: attachmentss,
     rfq: rfq,
+    comparison: comparison,
     gantt_chart: gantt_chart,
     statement_of_facts: statement_of_facts,
     cost_updates: cost_updates,
@@ -104,6 +105,12 @@
           [projectDetails]="tmDetails"
           #rfqComponent
         ></jb-drydock-rfq>
+      </div>
+      <div
+        #comparison
+        *ngSwitchCase="eSideMenuId.Comparison"
+      >
+        <jb-drydock-comparison id="comparison-component"></jb-drydock-comparison>
       </div>
     </ng-container>
   </ng-template>

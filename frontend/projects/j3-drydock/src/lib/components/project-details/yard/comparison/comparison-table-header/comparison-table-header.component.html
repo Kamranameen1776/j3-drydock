@@ -1,0 +1,66 @@
+<section class="comparison-card-table-header">
+  <div class="yard-details_rating">
+    <div class="yard-details">
+      <div class="title-alert">
+        <label class="title text-ellipsis">Keppel shipyard</label>
+      </div>
+      <div class="title-alert">
+        <i class="icons8-anchor-filled anchor"></i>
+        <label class="text">Singapore</label>
+      </div>
+    </div>
+    <div class="rating-contact">
+      RATING
+      <!--TODO just when the rating will work then the rating will be displayed-->
+      <!-- <jb-rating
+          class="rating"
+          [ratingData]="quotation.supplierRating"
+          [ratingContent]="ratingContent"
+        ></jb-rating> -->
+    </div>
+  </div>
+  <div class="bottom-info">
+    <div class="bottom-info_left bottom-info_section">
+      <jb-drydock-comparison-table-header-label-value
+        [labelText]="'Total Cost:'"
+        [valueText]="'USD 583,000'"
+        [isBig]="true"
+      ></jb-drydock-comparison-table-header-label-value>
+
+      <jb-drydock-comparison-table-header-label-value
+        [labelText]="'General Cost:'"
+        [valueText]="'USD 138,000'"
+      ></jb-drydock-comparison-table-header-label-value>
+
+      <jb-drydock-comparison-table-header-label-value
+        [labelText]="'Yard Cost:'"
+        [valueText]="'USD 325,000'"
+      ></jb-drydock-comparison-table-header-label-value>
+
+      <jb-drydock-comparison-table-header-label-value
+        [labelText]="'Owner Cost:'"
+        [valueText]="'USD 120,000'"
+      ></jb-drydock-comparison-table-header-label-value>
+    </div>
+
+    <div class="bottom-info_middle"></div>
+
+    <div class="bottom-info_right bottom-info_section">
+      <jb-drydock-comparison-table-header-label-value
+        [labelText]="'Yard Stay:'"
+        [valueText]="'15'"
+        [isBig]="true"
+      ></jb-drydock-comparison-table-header-label-value>
+
+      <jb-drydock-comparison-table-header-label-value
+        [labelText]="'Stay in Dock:'"
+        [valueText]="'5'"
+      ></jb-drydock-comparison-table-header-label-value>
+
+      <jb-drydock-comparison-table-header-label-value
+        [labelText]="'Stay in Berth:'"
+        [valueText]="'10'"
+      ></jb-drydock-comparison-table-header-label-value>
+    </div>
+  </div>
+</section>

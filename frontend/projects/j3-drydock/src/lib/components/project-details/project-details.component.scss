@@ -36,6 +36,25 @@
     .jb-section-feed-discussion {
       z-index: 50 !important;
     }
+
+    .comparison-table{
+      .ui-widget-header {
+        border-bottom: none !important;
+      }
+      .comparison-column {
+        padding-top: 0 !important;
+      }
+
+      .ui-widget-header {
+        border-bottom: none !important;
+      }
+      .cdk-virtual-scroll-content-wrapper {
+        contain: unset !important;
+      }
+    }
+    #comparison-component .widget-content {
+      overflow: initial;
+    }
   }
 }
 

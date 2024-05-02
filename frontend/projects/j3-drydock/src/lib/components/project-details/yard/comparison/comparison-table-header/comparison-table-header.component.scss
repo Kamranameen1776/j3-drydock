@@ -1,0 +1,132 @@
+@import '../../../../../styles/mixins';
+
+.text-ellipsis {
+    @include ellipsis-text;
+}
+
+.comparison-card-table-header {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px 16px;
+
+  border: 1px solid var(--jbGreyBlue200);
+  border-radius: 12px 12px 0px 0px;
+  width: 414px;
+  height: 180px;
+
+  .yard-details_rating {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 8px 0px;
+
+    .yard-details {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      .title-alert {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 4px;
+
+        .title {
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 19px;
+          color: var(--jbGreyBlue900);
+          width: 212px;
+        }
+
+        .anchor {
+          color: var(--jbBrandBlue500);
+        }
+
+        .text {
+          font-weight: 400;
+          font-size: 14px;
+          line-height: 16px;
+          color: var(--jbGreyBlue400);
+        }
+      }
+    }
+
+    .rating-contact {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+
+      .icon-button {
+        padding-right: 5px;
+        color: var(--jbGreyBlue700);
+      }
+    }
+  }
+
+  .bottom-info {
+    display: flex;
+    padding: 4px 0px;
+    justify-content: space-between;
+
+    .bottom-info_middle {
+      border-right: 1px solid var(--jbGreyBlue200);
+    }
+
+    .bottom-info_section {
+      &>*:not(:last-child) {
+        margin-bottom: 12px;
+      }
+    }
+
+    .bottom-info-row {
+      display: flex;
+      justify-content: space-between;
+      flex: 1;
+
+      label {
+        font-weight: 400;
+        color: var(--jbGreyBlue400);
+        width: 80px;
+      }
+
+      .bottom-info-row-value {
+        color: var(--jbGreyBlue700);
+      }
+
+      &.row-big {
+        font-size: 16px;
+        line-height: 19px;
+
+        label {
+          font-weight: 500;
+        }
+
+        .bottom-info-row-value {
+          font-weight: 700;
+        }
+      }
+
+    }
+  }
+}
+
+::ng-deep {
+  .rating-contact {
+    .rating {
+      .ui-rating-icon {
+        color: var(--jbYellowRating);
+      }
+    }
+  }
+  .ui-overlaypanel-shifted:before {
+    left: auto;
+    right: auto;
+    margin-left: 5px;
+  }
+  .ui-overlaypanel:after {
+    border-color: var(--jbBlack);
+    border-bottom-color: var(--jbLight);
+  }
+}
