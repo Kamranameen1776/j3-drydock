@@ -3,7 +3,7 @@ import { Command } from '../core/cqrs/Command';
 import { UnitOfWork } from '../core/uof/UnitOfWork';
 import { UpdateStandardJobSubItemsRequestDto } from './dto/UpdateStandardJobSubItemsRequestDto';
 
-export class UpdateStandardJobSubItemsCommand extends Command<UpdateStandardJobSubItemsRequestDto, void> {
+export class UpdateStandardJobSubItemsCommand extends Command<UpdateStandardJobSubItemsRequestDto, boolean> {
     standardJobsRepository: StandardJobsRepository;
     uow: UnitOfWork;
 
@@ -14,7 +14,7 @@ export class UpdateStandardJobSubItemsCommand extends Command<UpdateStandardJobS
         this.uow = new UnitOfWork();
     }
 
-    protected async MainHandlerAsync(request: UpdateStandardJobSubItemsRequestDto) {
+    public async MainHandlerAsync(request: UpdateStandardJobSubItemsRequestDto) {
         return this.uow.ExecuteAsync(async (queryRunner) => {
             return this.standardJobsRepository.updateStandardJobSubItems(request, request.UserUID, queryRunner);
         });

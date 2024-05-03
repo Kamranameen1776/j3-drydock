@@ -16,7 +16,7 @@ export class DeleteStandardJobsCommand extends Command<DeleteStandardJobsRequest
         this.uow = new UnitOfWork();
     }
 
-    protected async MainHandlerAsync(request: DeleteStandardJobsRequestDto) {
+    public async MainHandlerAsync(request: DeleteStandardJobsRequestDto) {
         return this.uow.ExecuteAsync(async (queryRunner) => {
             return this.standardJobsRepository.deleteStandardJob(request.uid, request.UserId, queryRunner);
         });

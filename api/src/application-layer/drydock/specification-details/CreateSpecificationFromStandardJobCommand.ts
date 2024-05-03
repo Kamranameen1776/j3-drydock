@@ -1,6 +1,7 @@
 import { DataUtilService, SynchronizerService } from 'j2utils';
 import { QueryRunner } from 'typeorm';
 
+import { OptimisticQueue, OrderedCalls } from '../../../bll/drydock/core/OrderedCalls';
 import { SpecificationDetailsAuditService } from '../../../bll/drydock/specification-details/specification-details-audit.service';
 import { SpecificationService } from '../../../bll/drydock/specification-details/SpecificationService';
 import { getTableName } from '../../../common/drydock/ts-helpers/tableName';
@@ -132,15 +133,22 @@ export class CreateSpecificationFromStandardJobsCommand extends Command<
             );
 
             const attachmentsPromises: Promise<void>[] = [];
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const orderedCalls = new OrderedCalls<any>();
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const optimisticQueue = new OptimisticQueue<any>();
 
             const specificationsToCreate = specificationsData.map(async (specification) => {
                 const spec = specification.specification;
                 const vesselData = await vessel;
 
-                const tmResult = await this.specificationDetailsService.TaskManagerIntegration(
-                    { Subject: specification.specification.Subject },
-                    vesselData,
-                    request.token,
+                const tmResult = await optimisticQueue.ExecuteAsync(() =>
+                    this.specificationDetailsService.TaskManagerIntegration(
+                        { Subject: specification.specification.Subject },
+                        vesselData,
+                        request.token,
+                    ),
                 );
 
                 spec.TecTaskManagerUid = tmResult.uid;

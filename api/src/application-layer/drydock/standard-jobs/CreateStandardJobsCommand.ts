@@ -15,7 +15,7 @@ export class CreateStandardJobsCommand extends Command<CreateStandardJobsRequest
         this.uow = new UnitOfWork();
     }
 
-    protected async MainHandlerAsync(request: CreateStandardJobsRequestDto) {
+    public async MainHandlerAsync(request: CreateStandardJobsRequestDto) {
         return this.uow.ExecuteAsync(async (queryRunner) => {
             return this.standardJobsRepository.createStandardJob(request, request.UserId, queryRunner);
         });

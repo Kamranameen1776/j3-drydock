@@ -1,6 +1,6 @@
 {
   "name": "j3-drydock-ng",
-  "version": "3.242.222",
+  "version": "3.242.311",
   "publishConfig": {
     "registry": "https://pkgs.dev.azure.com/jibe-erp/_packaging/jibe-npm/npm/registry/"
   }

@@ -197,7 +197,7 @@ export class StandardJobsRepository {
         data: UpdateStandardJobSubItemsRequestDto,
         userUid: string,
         queryRunner: QueryRunner,
-    ): Promise<void> {
+    ): Promise<boolean> {
         const standardJobUid = data.uid;
 
         const standardJob = await queryRunner.manager.findOne(StandardJobs, {
@@ -224,6 +224,7 @@ export class StandardJobsRepository {
                 deleteData,
             );
         }
+        return true;
     }
 
     public async updateStandardJob(
