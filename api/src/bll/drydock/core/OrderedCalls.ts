@@ -25,7 +25,7 @@ class QueueElement<T> {
             const pendingSymbol = Symbol('pending');
             const statusOrValue = await Promise.race([this.previousElement, pendingSymbol]);
 
-            if (statusOrValue === pendingSymbol && this.startTime + this.delay < Date.now()) {
+            if (statusOrValue === pendingSymbol && this.startTime + this.delay > Date.now()) {
                 this.doCheck(res, rej);
             } else {
                 this.request().then(res).catch(rej);
