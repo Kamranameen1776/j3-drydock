@@ -19,7 +19,7 @@ export class createSpecification_details_LIB_Survey_CertificateAuthority16999584
                 IF NOT Exists(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'[dry_dock].[specification_details_LIB_Survey_CertificateAuthority]') AND type in (N'U'))
                 BEGIN
 
-                create table specification_details_LIB_Survey_CertificateAuthority
+                create table [dry_dock].[specification_details_LIB_Survey_CertificateAuthority]
                 (
                     uid                                uniqueidentifier default newid() not null
                         primary key,
