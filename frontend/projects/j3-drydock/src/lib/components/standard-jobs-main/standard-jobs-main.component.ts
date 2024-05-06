@@ -1,18 +1,19 @@
 import { eStandardJobsMainFields } from '../../models/enums/standard-jobs-main.enum';
 import { StandardJobResult } from '../../models/interfaces/standard-jobs';
 import { Component, OnInit } from '@angular/core';
-import { eGridRefreshType, eGridRowActions, GridAction, GridRowActions, GridService } from 'jibe-components';
+import { eGridRefreshType, eGridRowActions, GridAction, GridRowActions, GridService, IPdfSettings } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { StandardJobsGridService } from './standard-jobs-grid.service';
-import { FunctionsFlatTreeNode } from '../../models/interfaces/functions-tree-node';
+import { FunctionsFlatTreeNode, ShellFunctionTreeResponseNode } from '../../models/interfaces/functions-tree-node';
 import { StandardJobUpsertFormService } from './upsert-standard-job-form/standard-job-upsert-form.service';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { getSmallPopup } from '../../models/constants/popup';
 import { StandardJobsService } from '../../services/standard-jobs.service';
 import { GrowlMessageService } from '../../services/growl-message.service';
 import { Title } from '@angular/platform-browser';
 import { eStandardJobsAccessActions } from '../../models/enums/access-actions.enum';
+import { FunctionsService } from '../../services/functions.service';
 
 @Component({
   selector: 'jb-standard-jobs-main',
@@ -42,11 +43,33 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
 
   canView = false;
 
+  vesselNode: Pick<ShellFunctionTreeResponseNode, 'uid' | 'parent_function_uid' | 'name' | 'expanded'> = {
+    uid: 'vesselParent',
+    name: 'Functions',
+    parent_function_uid: '0',
+    expanded: true
+  };
+
   private canCreateJob = false;
 
   private canEditJob = false;
 
   private canDeleteJob = false;
+
+  /**
+   * PDF settings for export
+   */
+  pdfSettings: IPdfSettings = {
+    headerInfo: [
+      { header: 'Item No.', doNotSplitByWords: true },
+      { header: 'Vessel Type', doNotSplitByWords: true },
+      { header: 'Inspection / Survey', doNotSplitByWords: true },
+      { header: 'Done By', doNotSplitByWords: true },
+      { header: 'Material Supplied By', doNotSplitByWords: true }
+    ],
+    headerHalign: 'left',
+    headerValign: 'middle'
+  };
 
   constructor(
     private standardJobsGridService: StandardJobsGridService,
@@ -54,7 +77,8 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     private upsertFormService: StandardJobUpsertFormService,
     private gridService: GridService,
     private growlMessageService: GrowlMessageService,
-    private title: Title
+    private title: Title,
+    private functionsService: FunctionsService
   ) {
     super();
   }
@@ -65,6 +89,12 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
     this.setGridRowActions();
     this.setPageTitle();
     this.loadFunctionsTree();
+  }
+
+  cellPlainTextClick({ cellType, rowData, columnDetail }) {
+    if (cellType === 'hyperlink' && columnDetail.FieldName === eStandardJobsMainFields.ItemNumber) {
+      this.editRow(rowData);
+    }
   }
 
   onGridAction({ type, payload }: GridAction<string, unknown>): void {
@@ -148,9 +178,15 @@ export class StandardJobsMainComponent extends UnsubscribeComponent implements O
   }
 
   private loadFunctionsTree() {
-    this.standardJobsService
-      .getStandardJobFunctions()
-      .pipe(takeUntil(this.unsubscribe$))
+    this.functionsService
+      .getFunctions(this.vesselNode.uid)
+      .pipe(
+        map((functions) => {
+          functions.push(this.functionsService.createFlatNode(this.vesselNode));
+          return functions;
+        }),
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe((flatTree) => {
         this.setFunctionsFlatTree(flatTree);
       });

@@ -12,6 +12,7 @@ export class StandardJobsGridService {
     {
       DisplayText: eStandardJobsMainLabels.ItemNumber,
       FieldName: eStandardJobsMainFields.ItemNumber,
+      hyperlink: true,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -149,7 +150,7 @@ export class StandardJobsGridService {
       listValueKey: 'uid'
     },
     [eStandardJobsMainFields.VesselSpecific]: {
-      list: this.standardJobsService.getVesselSpevificList(),
+      list: this.standardJobsService.getVesselSpecificList(),
       type: eFieldControlType.Dropdown,
       odataKey: eStandardJobsMainFields.VesselSpecific,
       listValueKey: 'value'

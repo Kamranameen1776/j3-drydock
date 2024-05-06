@@ -1,16 +1,19 @@
-import { Request, Response } from 'express';
+import { Controller, Get, Route } from 'tsoa';
 
 import { GetItemSourcesQuery } from '../../../application-layer/drydock/dictionaries/get-item-sources/GetItemSourcesQuery';
+import { LibItemSourceEntity } from '../../../entity/drydock';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
-async function getItemSource(req: Request, res: Response) {
-    const middlewareHandler = new MiddlewareHandler();
+@Route('drydock/dictionaries/item-source')
+export class GetItemSourceController extends Controller {
+    @Get()
+    public async getItemSource(): Promise<LibItemSourceEntity[]> {
+        const query = new GetItemSourcesQuery();
 
-    await middlewareHandler.ExecuteAsync(req, res, async () => {
-        const command = new GetItemSourcesQuery();
+        const result = await query.ExecuteRequestAsync();
 
-        return command.ExecuteAsync();
-    });
+        return result;
+    }
 }
 
-exports.get = getItemSource;
+exports.get = new MiddlewareHandler().ExecuteHandlerAsync(new GetItemSourceController().getItemSource);

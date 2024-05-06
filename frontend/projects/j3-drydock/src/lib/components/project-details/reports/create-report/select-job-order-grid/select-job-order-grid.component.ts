@@ -1,9 +1,9 @@
+import { JobOrder } from './../../../../../models/interfaces/job-orders';
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { IJobOrderDto } from '../../../project-monitoring/job-orders/dtos/IJobOrderDto';
 import { GridInputsWithRequest } from '../../../../../models/interfaces/grid-inputs';
 import { SelectJobOrdersGridService } from './select-job-order-grid.service';
 import { JobOrdersGridOdataKeys } from '../../../../../models/enums/JobOrdersGridOdataKeys';
-import { GridComponent } from 'jibe-components';
+import { GridComponent, UserService } from 'jibe-components';
 import { JobOrdersUpdatesDto } from '../../dto/JobOrdersUpdatesDto';
 
 @Component({
@@ -23,25 +23,30 @@ export class SelectJobOrderGridComponent implements OnInit {
   public gridInputs: GridInputsWithRequest;
   selected: JobOrdersUpdatesDto[] = [];
 
-  constructor(private selectJobOrdersGridService: SelectJobOrdersGridService) {}
+  constructor(
+    private selectJobOrdersGridService: SelectJobOrdersGridService,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.gridInputs = this.selectJobOrdersGridService.getGridInputs();
     this.setCellTemplate(this.lastUpdatedTemplate, 'LastUpdated');
   }
 
-  onSelect(rows: IJobOrderDto[]) {
+  onSelect(rows: JobOrder[]) {
     this.selected = rows.map((row) => {
       return {
-        name: row.Code,
-        remark: '',
+        subject: row.JobOrderSubject,
+        remark: row.JobOrderRemarks,
         specificationUid: row.SpecificationUid,
         specificationCode: row.Code,
-        status: row.SpecificationStatus,
+        status: row.JobOrderStatus,
         progress: row.Progress,
         lastUpdated: row.LastUpdated,
         specificationSubject: row.SpecificationSubject,
-        updatedBy: row.SpecificationSubject
+        updatedBy: this.userService.getUserDetails().User_FullName,
+        specificationStartDate: row.SpecificationStartDate,
+        specificationEndDate: row.SpecificationEndDate
       };
     });
     this.selectedChanged.emit(this.selected);

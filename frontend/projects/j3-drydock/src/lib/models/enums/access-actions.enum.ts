@@ -15,7 +15,8 @@ export enum eProjectsAccessActions {
   viewDetailVessel = 'view_dd_project_details_onb',
   viewTechSpec = 'view_tech_spec',
   addSpecFromStandardJobs = 'add_spec_from_standard_jobs',
-  addSpecFromAdHoc = 'add_spec_from_ad_hoc'
+  addSpecFromAdHoc = 'add_spec_from_ad_hoc',
+  addFromProjectTemplate = 'add_from_project_template'
 }
 
 export enum eSpecificationAccessActions {
@@ -73,4 +74,10 @@ export enum eProjectsDetailsAccessActions {
   addAttachmentsVessel = 'add_dd_project_att_onb',
   editAttachmentsVessel = 'edit_dd_project_att_onb',
   deleteAttachmentsVessel = 'delete_dd_project_att_onb'
+}
+
+export enum eProjectTemplatesAccessActions {
+  viewGrid = 'view_project_templates',
+  edit = 'edit_project_template',
+  delete = 'delete_project_template'
 }

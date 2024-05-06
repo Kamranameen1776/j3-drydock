@@ -4,4 +4,7 @@ export class DeleteProjectYardsDto {
     @IsUUID()
     @IsNotEmpty()
     uid: string;
+
+    @IsNotEmpty()
+    deletedBy: string;
 }

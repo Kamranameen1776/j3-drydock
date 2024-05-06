@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class dryDockGeneralTabTasksAccessRights1701248232629 implements MigrationInterface {
     public className = this.constructor.name;
@@ -12,20 +13,20 @@ export class dryDockGeneralTabTasksAccessRights1701248232629 implements Migratio
             await queryRunner.query(`
             MERGE INTO INF_Lib_Right AS TARGET USING (
             VALUES
-                (N'141B1F01-DC41-42D8-A9E5-F39F44D8F8E2', N'view_dry_dock_project_task', N'View task section in project dry dock', N'b', N'project', N'dry_dock', N'view', 1, GETDATE(), NULL, NULL, 1, N'View Task in Project Dry Dock', NULL, NULL), 
+                (N'141B1F01-DC41-42D8-A9E5-F39F44D8F8E2', N'view_dry_dock_project_task', N'View task section in project dry dock', N'b', N'project', N'dry_dock', N'view', 1, GETDATE(), NULL, NULL, 1, N'View Task in Project Dry Dock', NULL, NULL),
                 (N'C7008D4B-A883-456E-9843-DA9A8D33054D', N'add_dry_dock_project_task', N'Add task access rights for project dry dock', N'b', N'project', N'dry_dock', N'add', 1, GETDATE(), NULL, NULL, 1, N'Add Task in Project Dry Dock', NULL, NULL),
                 (N'A4661803-E008-43FB-943C-2CB6CBB60A87', N'edit_dry_dock_project_task', N'Edit task access rights for project dry dock', N'b', N'project', N'dry_dock', N'edit', 1, GETDATE(), NULL, NULL, 1, N'Edit Task in Project Dry Dock', NULL, NULL),
                 (N'B8BF6904-A894-47A7-91B8-96D755A07ADF', N'delete_dry_dock_project_task', N'Delete task access rights for project dry dock', N'b', N'project', N'dry_dock', N'delete', 1, GETDATE(), NULL, NULL, 1, N'Delete Task in Project Dry Dock', NULL, NULL)
                 )
-            AS SOURCE ([Right_UID],[Right_Code],[Right_Description],[Valid_On],[Module_Code],[Function_Code],[Action],[Created_By],[Date_Of_Creation],[Modified_By],[Date_Of_Modification],[Active_Status],[right_name],[api_url],[is_work_flow])             
-            
-            ON TARGET.[Right_UID] = SOURCE.[Right_UID] 
-        
+            AS SOURCE ([Right_UID],[Right_Code],[Right_Description],[Valid_On],[Module_Code],[Function_Code],[Action],[Created_By],[Date_Of_Creation],[Modified_By],[Date_Of_Modification],[Active_Status],[right_name],[api_url],[is_work_flow])
+
+            ON TARGET.[Right_UID] = SOURCE.[Right_UID]
+
             WHEN MATCHED THEN
                 UPDATE SET TARGET.[Right_Code] = SOURCE.[Right_Code], TARGET.[Right_Description] = SOURCE.[Right_Description],TARGET.[Valid_On] = SOURCE.[Valid_On], TARGET.[Module_Code] = SOURCE.[Module_Code],TARGET.[Function_Code] = SOURCE.[Function_Code],TARGET.[Action] = SOURCE.[Action],
                 TARGET.[Modified_By] = 1,TARGET.[Date_Of_Modification] = GETDATE(),TARGET.[Active_Status] = SOURCE.[Active_Status], TARGET.[right_name] = SOURCE.[right_name],
                 TARGET.[api_url] = SOURCE.[api_url],TARGET.[is_work_flow] = SOURCE.[is_work_flow]
-                
+
             WHEN NOT MATCHED BY TARGET THEN
                 INSERT ([Right_UID],[Right_Code],[Right_Description],[Valid_On],[Module_Code],[Function_Code],[Action],[Created_By],[Date_Of_Creation],[Modified_By],[Date_Of_Modification],[Active_Status],[right_name],[api_url],[is_work_flow])
                 VALUES (SOURCE.[Right_UID],SOURCE.[Right_Code],SOURCE.[Right_Description],SOURCE.[Valid_On],SOURCE.[Module_Code],SOURCE.[Function_Code],SOURCE.[Action], SOURCE.[Created_By], SOURCE.[Date_Of_Creation],SOURCE.[Modified_By],
@@ -44,15 +45,15 @@ export class dryDockGeneralTabTasksAccessRights1701248232629 implements Migratio
                 (N'269844BE-FE14-4131-B712-45666100F458', N'delete_dry_dock_project_task', N'3C084885-783B-46B8-9635-B2F70CC49218', 1, 1, getdate(), NULL, NULL),
                 (N'C00F9FA3-B063-40FF-AC62-7777CF5A2A1E', N'delete_dry_dock_project_task', N'0F3613B9-9FB5-40E6-8763-FC4941136598', 1, 1, getdate(), NULL, NULL)
                 )
-            
+
             AS SOURCE ( [uid], [right_code], [user_type_uid], [active_status],[created_by],[date_of_creation],[modified_by],[date_of_modification])
-            
-            ON TARGET.[uid] = SOURCE.[uid] 
-            
+
+            ON TARGET.[uid] = SOURCE.[uid]
+
             WHEN MATCHED THEN
                 UPDATE SET TARGET.[right_code] = SOURCE.[right_code],TARGET.[user_type_uid] = SOURCE.[user_type_uid],
                 TARGET.[active_status] = SOURCE.[active_status],TARGET.[modified_by] = 1,TARGET.[date_of_modification] = GETDATE()
-            
+
             WHEN NOT MATCHED BY TARGET THEN
                 INSERT ([uid], [right_code], [user_type_uid], [active_status],[created_by],[date_of_creation],[modified_by],[date_of_modification])
                 VALUES (SOURCE.[uid], SOURCE.[right_code], SOURCE.[user_type_uid], SOURCE.[active_status], SOURCE.[created_by],
@@ -72,16 +73,16 @@ export class dryDockGeneralTabTasksAccessRights1701248232629 implements Migratio
                 ( N'08384433-75D6-4898-BF3E-FBACB79E72D1', N'edit_dry_dock_porject_detail_onboard', N'delete_dry_dock_project_task', 1, GETDATE(), NULL, NULL, 1 )
                 )
             AS SOURCE ( [GR_UID], [GR_Group_Code], [GR_Right_Code], [Created_By], [Date_Of_Creation], [Modified_By], [Date_Of_Modification], [Active_Status] )
-                
-            ON TARGET.[GR_UID] = SOURCE.[GR_UID] 
-                
+
+            ON TARGET.[GR_UID] = SOURCE.[GR_UID]
+
             WHEN MATCHED THEN
                     UPDATE SET TARGET.[GR_Group_Code] = SOURCE.[GR_Group_Code], TARGET.[GR_Right_Code] = SOURCE.[GR_Right_Code],TARGET.[Modified_By] = 1 ,
                     TARGET.[Date_Of_Modification] = GETDATE(),TARGET.[Active_Status] = SOURCE.[Active_Status]
-                
+
             WHEN NOT MATCHED BY TARGET THEN
                     INSERT ( [GR_UID], [GR_Group_Code], [GR_Right_Code], [Created_By], [Date_Of_Creation], [Active_Status] )
-                    VALUES ( SOURCE.[GR_UID], SOURCE.[GR_Group_Code], SOURCE.[GR_Right_Code], SOURCE.[Created_By], SOURCE.[Date_Of_Creation], 
+                    VALUES ( SOURCE.[GR_UID], SOURCE.[GR_Group_Code], SOURCE.[GR_Right_Code], SOURCE.[Created_By], SOURCE.[Date_Of_Creation],
                     SOURCE.[Active_Status]);
             `);
 
@@ -96,7 +97,7 @@ export class dryDockGeneralTabTasksAccessRights1701248232629 implements Migratio
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'dry dock detail tasks access rights',

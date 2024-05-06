@@ -1,7 +1,41 @@
 @import '../../styles/mixins';
 
 :host {
+  &.expanded-gantt {
+    ::ng-deep {
+
+      #gantt_chart {
+        @include expanded;
+
+        &>jb-layout-widget {
+          @include expanded-widget;
+
+          display: flex !important;
+          height: 95vh !important;
+
+          .widget-content {
+            position: relative;
+
+            &>div {
+              height: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
   ::ng-deep {
     @include attachments-fix;
+
+    @include progress-spinner-fix;
+
+    #gantt_chart {
+      @include expandable;
+    }
+
+    .jb-section-feed-discussion {
+      z-index: 50 !important;
+    }
   }
 }
+

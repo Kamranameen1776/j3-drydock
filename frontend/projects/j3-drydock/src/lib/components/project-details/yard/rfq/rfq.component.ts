@@ -1,14 +1,18 @@
 import { YardsService } from '../../../../services/yards.service';
-import { YardLink } from '../../../../models/interfaces/project-details';
+import { ProjectDetailsFull, YardLink } from '../../../../models/interfaces/project-details';
 import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { RfqGridService } from './rfq-grid.service';
 import { GridInputsWithData } from '../../../../models/interfaces/grid-inputs';
-import { eRfqFields } from '../../../../models/enums/rfq.enum';
-import { DispatchAction, GridAction, GridRowActions, GridService, eGridEvents, eGridRowActions, eLayoutWidgetSize } from 'jibe-components';
-import { concatMap, filter, finalize, map, takeUntil } from 'rxjs/operators';
+import { eRfqActions, eRfqFields } from '../../../../models/enums/rfq.enum';
+import { DispatchAction, eGridEvents, eLayoutWidgetSize, GridAction, GridRowActions, GridService, IJbDialog } from 'jibe-components';
+import { concatMap, filter, map, takeUntil } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { Subscription } from 'rxjs';
+import { ProjectDetailsService } from '../../project-details.service';
+import { getFileNameDate } from '../../../../shared/functions/file-name';
+import { currentLocalAsUTC } from '../../../../utils/date';
+import { getSmallPopup } from '../../../../models/constants/popup';
 
 @Component({
   selector: 'jb-drydock-rfq',
@@ -17,17 +21,25 @@ import { Subscription } from 'rxjs';
 })
 export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @Input() projectId: string;
+  @Input() projectDetails: ProjectDetailsFull;
 
-  @ViewChild('isSelectedTmpl', { static: true }) isSelectedTmpl: TemplateRef<unknown>;
+  @ViewChild('isSelectedTemplate', { static: true }) isSelectedTemplate: TemplateRef<unknown>;
   @ViewChild('exportedDateTemplate', { static: true }) exportedDateTemplate: TemplateRef<HTMLElement>;
 
   gridInputs: GridInputsWithData<YardLink> = this.rfqGridService.getGridInputs();
 
   isLinkPopupVisible = false;
-
+  selectedRfqInfo: YardLink;
   gridRowActions: GridRowActions[] = [];
+  isShowDeleteDialog = false;
+  isShowLoader = false;
 
-  eRfqFields = eRfqFields;
+  deleteRfqDialog: IJbDialog = {
+    ...getSmallPopup(),
+    dialogHeader: 'Delete RFQ'
+  };
+  deleteBtnLabel = 'Delete';
+  deleteDialogMessage = 'Are you sure you want to delete this RFQ record?';
 
   public linked: YardLink[];
 
@@ -43,7 +55,8 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
   constructor(
     private rfqGridService: RfqGridService,
     private gridService: GridService,
-    private yardsService: YardsService
+    private yardsService: YardsService,
+    private projectService: ProjectDetailsService
   ) {
     super();
   }
@@ -63,18 +76,16 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
     this.isLinkPopupVisible = true;
   }
 
-  onGridAction({ type, payload }: GridAction<string, YardLink>): void {
+  onGridAction({ type, payload }: GridAction<eRfqActions, YardLink>): void {
+    this.selectedRfqInfo = payload;
+
     switch (type) {
-      case 'Export':
+      case eRfqActions.Export:
         this.export(payload);
         break;
 
-      case eGridRowActions.Select:
-        this.select(payload);
-        break;
-
-      case eGridRowActions.Delete:
-        this.delete(payload);
+      case eRfqActions.Delete:
+        this.showDeleteDialog(true);
         break;
 
       default:
@@ -104,59 +115,55 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
 
   private setGridRowActions(): void {
     this.gridRowActions.length = 0;
-    // TODO Access rigths
-    this.gridRowActions.push({ name: 'Export' });
-    // TODO Access rigths
-    this.gridRowActions.push({ name: eGridRowActions.Select });
-    // TODO Access rigths
-    this.gridRowActions.push({ name: eGridRowActions.Delete });
+    // TODO Access rights
+    this.gridRowActions.push({ name: eRfqActions.Export, icon: 'icons8-microsoft-excel-2' });
+    // TODO Access rights
+    this.gridRowActions.push({ name: eRfqActions.Delete, icon: 'icons8-delete' });
   }
 
-  private select(row: YardLink) {
-    const uid = row.uid;
-    const previousSelected: YardLink = this.linked.find((yard) => yard.isSelected);
-    const newSelected = this.linked.find((yard) => yard.uid === uid);
-
-    if (!newSelected) {
-      return;
-    }
-
-    this.unselectPreviousAndSelectNew(previousSelected, row)
-      .pipe(
-        finalize(() => {
-          this.linked = cloneDeep(this.linked);
-        }),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(() => {
-        row.isSelected = true;
-      });
+  showDeleteDialog(value: boolean) {
+    this.isShowDeleteDialog = value;
   }
 
-  private delete(row: YardLink) {
-    const uid = row.uid;
+  onDeleteRfq() {
+    this.isShowLoader = true;
+    const uid = this.selectedRfqInfo.uid;
 
     this.yardsService
       .removeYardLink(uid)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         this.linked = this.linked.filter((yard) => yard.uid !== uid);
+        this.isShowDeleteDialog = false;
+        this.isShowLoader = false;
       });
   }
 
   private export(row: YardLink) {
-    const lastExportedDate = new Date().toISOString();
-    this.yardsService
-      .updateYardLink({ ...row, lastExportedDate })
-      .pipe(takeUntil(this.unsubscribe$))
+    const lastExportedDate = currentLocalAsUTC().toISOString();
+    this.projectService
+      .exportExcel(this.projectId, row.yardUid, this.getExcelFilename(row[eRfqFields.Yard]))
+      .pipe(
+        concatMap(() => this.updateLastExportedDate(row, lastExportedDate)),
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe(() => {
         row.lastExportedDate = lastExportedDate;
         this.linked = cloneDeep(this.linked);
       });
   }
 
+  private getExcelFilename(yard: string) {
+    return `${this.projectDetails.VesselName}-${yard}-${new Date(this.projectDetails.StartDate).getFullYear()}-${getFileNameDate()}.xlsx`;
+  }
+
+  private updateLastExportedDate(row: YardLink, lastExportedDate: string) {
+    const updatedRow = cloneDeep(row);
+    updatedRow.lastExportedDate = lastExportedDate;
+    return this.yardsService.updateYardLink(updatedRow);
+  }
+
   private setCellTemplates() {
-    this.setCellTemplate(this.isSelectedTmpl, eRfqFields.IsSelected);
     this.setCellTemplate(this.exportedDateTemplate, eRfqFields.ExportedDate);
   }
 
@@ -166,21 +173,5 @@ export class RfqComponent extends UnsubscribeComponent implements OnInit, OnDest
       return;
     }
     col.cellTemplate = template;
-  }
-
-  private unselectPreviousAndSelectNew(previousSelected: YardLink, newSelected: YardLink) {
-    if (previousSelected) {
-      return this.sendSelect(previousSelected, false).pipe(
-        concatMap(() => {
-          previousSelected.isSelected = false;
-          return this.sendSelect(newSelected, true);
-        })
-      );
-    }
-    return this.sendSelect(newSelected, true);
-  }
-
-  private sendSelect(yard: YardLink, isSelected: boolean) {
-    return this.yardsService.updateYardLink({ ...yard, isSelected });
   }
 }

@@ -3,7 +3,7 @@ export enum ProjectsGridOdataKeys {
 
   ProjectManagerUid = 'ProjectManagerUid',
 
-  ShipYardId = 'ShipYardId',
+  ShipYardId = 'ShipYardUid',
 
   ProjectStatusId = 'ProjectStatusId',
 

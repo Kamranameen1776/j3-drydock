@@ -9,4 +9,26 @@
     [isSinglePage]="true"
     [isVerticalLabel]="verticalLabel"
   ></jb-form>
+
+  <label class="specs-description-label">Description</label>
+
+  <form [formGroup]="editorsFormGroup">
+    <ng-container *ngIf="formGroup">
+      <jb-editor
+        class="drydock-editor"
+        [id]="descriptionEditorConfig.id"
+        [maxLength]="descriptionEditorConfig.maxLength"
+        [placeholder]="descriptionEditorConfig.placeholder"
+        [crtlName]="descriptionEditorConfig.crtlName"
+        [moduleCode]="descriptionEditorConfig.moduleCode"
+        [functionCode]="descriptionEditorConfig.functionCode"
+        [key1]="specificationUid"
+        [vesselId]="vesselId"
+        [inlineMode]="descriptionEditorConfig.inlineMode"
+        [tools]="descriptionEditorConfig.tools"
+        (updateParentCtrlValue)="updateEditorCtrlValue($event)"
+        [readonly]="!isEditable"
+      ></jb-editor>
+    </ng-container>
+  </form>
 </div>

@@ -1,25 +1,30 @@
-import { Request, Response } from 'express';
+import * as express from 'express';
+import { Controller, Get, Query, Request, Route } from 'tsoa';
 
+import { GetProjectByUidDto } from '../../../application-layer/drydock/projects/dtos/GetProjectByUidDto';
 import { GetProjectQuery } from '../../../application-layer/drydock/projects/GetProjectQuery';
+import { IProjectsFromMainPageRecordDto } from '../../../application-layer/drydock/projects/projects-for-main-page/dtos/IProjectsFromMainPageRecordDto';
 import { MiddlewareHandler } from '../../../controllers/drydock/core/middleware/MiddlewareHandler';
 
-/**
- * This handler returns all available shipments
- * GET /drydock/example-projects
- * @exports
- * @param {Request} req Express request
- * @param {Response} res Express response
- */
-async function getProject(req: Request, res: Response) {
-    const middlewareHandler = new MiddlewareHandler();
-
-    await middlewareHandler.ExecuteAsync(req, res, async (request) => {
+@Route('drydock/projects/get-project')
+export class GetProjectController extends Controller {
+    @Get()
+    public async getProject(
+        @Request() request: express.Request,
+        @Query() uid: string,
+    ): Promise<IProjectsFromMainPageRecordDto> {
         const query = new GetProjectQuery();
 
-        // Execute query
-        const projects = await query.ExecuteAsync(request);
+        const dto = new GetProjectByUidDto();
+        dto.uid = uid;
+        dto.token = request.headers.authorization as string;
 
-        return projects;
-    });
+        const result = await query.ExecuteAsync(dto);
+
+        return result;
+    }
 }
-exports.get = getProject;
+
+exports.get = new MiddlewareHandler().ExecuteHandlerAsync(async (request: express.Request) => {
+    return new GetProjectController().getProject(request, request.query.uid as string);
+});

@@ -1,26 +1,34 @@
-import { Request, Response } from 'express';
+import * as express from 'express';
+import { Body, Controller, Post, Request, Route } from 'tsoa';
 
 import { CreateProjectCommand } from '../../../application-layer/drydock/projects';
 import { CreateProjectDataDto } from '../../../application-layer/drydock/projects/create-project/CreateProjectDataDto';
 import { CreateProjectDto } from '../../../bll/drydock/projects/dtos/ICreateProjectDto';
+import { IProjectsForMainPageRecordDto } from '../../../dal/drydock/projects/dtos/IProjectsForMainPageRecordDto';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
-async function createProject(req: Request, res: Response) {
-    const middlewareHandler = new MiddlewareHandler();
-
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
+@Route('drydock/projects/create-project')
+export class CreateProjectController extends Controller {
+    @Post()
+    public async createProject(
+        @Request() request: express.Request,
+        @Body() createProjectDto: CreateProjectDto,
+    ): Promise<IProjectsForMainPageRecordDto[]> {
         const token: string = request.headers.authorization as string;
-        const createProjectDto: CreateProjectDto = request.body as CreateProjectDto;
 
-        const createProjectDataDto: CreateProjectDataDto = {
+        const query = new CreateProjectCommand();
+
+        const dto: CreateProjectDataDto = {
             Token: token,
             ProjectDto: createProjectDto,
         };
 
-        const command: CreateProjectCommand = new CreateProjectCommand();
+        const result = await query.ExecuteAsync(dto);
 
-        return command.ExecuteAsync(createProjectDataDto);
-    });
+        return result;
+    }
 }
 
-exports.post = createProject;
+exports.post = new MiddlewareHandler().ExecuteHandlerAsync(async (request: express.Request) => {
+    return new CreateProjectController().createProject(request, request.body);
+});

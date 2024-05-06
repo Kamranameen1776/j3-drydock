@@ -1,14 +1,11 @@
-import { plainToClass } from 'class-transformer';
-import { validate } from 'class-validator';
-import { Request } from 'express';
-
 import { Query } from '../../../../application-layer/drydock/core/cqrs/Query';
+import { Req } from '../../../../common/drydock/ts-helpers/req-res';
 import { IJobOrderDto } from '../../../../dal/drydock/projects/job-orders/IJobOrderDto';
 import { JobOrdersRepository } from '../../../../dal/drydock/projects/job-orders/JobOrdersRepository';
+import { ODataBodyDto } from '../../../../shared/dto';
 import { ODataResult } from '../../../../shared/interfaces';
-import { GetJobOrdersDto } from './dtos/GetJobOrdersDto';
 
-export class GetJobOrdersQuery extends Query<Request, ODataResult<IJobOrderDto>> {
+export class GetJobOrdersQuery extends Query<Req<ODataBodyDto>, ODataResult<IJobOrderDto>> {
     repository: JobOrdersRepository;
 
     constructor() {
@@ -20,24 +17,10 @@ export class GetJobOrdersQuery extends Query<Request, ODataResult<IJobOrderDto>>
         return;
     }
 
-    protected async ValidationHandlerAsync(request: Request): Promise<void> {
-        if (!request) {
-            throw new Error('Request is null');
-        }
-
-        const createProjectDto: GetJobOrdersDto = plainToClass(GetJobOrdersDto, request.body);
-
-        const result = await validate(createProjectDto);
-
-        if (result.length) {
-            throw result;
-        }
-    }
-
     /**
      * @returns All Job Orders(specifications) by project
      */
-    protected async MainHandlerAsync(request: Request): Promise<ODataResult<IJobOrderDto>> {
+    protected async MainHandlerAsync(request: Req<ODataBodyDto>): Promise<ODataResult<IJobOrderDto>> {
         const data = await this.repository.GetJobOrders(request);
 
         return data;

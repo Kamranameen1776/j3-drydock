@@ -13,11 +13,10 @@ export class CreateSpecificationDetailsDto {
     Function: string;
 
     @MinLength(1)
-    @MaxLength(100)
+    @MaxLength(200)
     Subject: string;
 
     @MinLength(1)
-    @MaxLength(1000)
     Description: string;
 
     @IsArray()

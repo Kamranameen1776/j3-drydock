@@ -1,83 +1,93 @@
-import { GroupProjectStatusId } from '../../../../../bll/drydock/projects/Project/GroupProjectStatusId';
 import { ProjectsRepository } from '../../../../../dal/drydock/projects/ProjectsRepository';
+import { Cache } from '../../../../../external-services/drydock/Cache';
+import { SlfAccessor } from '../../../../../external-services/drydock/SlfAccessor';
 import { Query } from '../../../core/cqrs/Query';
-import { IGroupProjectStatusDto } from './dtos/IGroupProjectStatusDto';
-import { IGroupProjectStatusesDto } from './dtos/IGroupProjectStatusesDto';
-
-export class GroupProjectStatusesQuery extends Query<void, IGroupProjectStatusesDto[]> {
+import { GroupProjectStatusesCountsRequestModel } from './dtos/GroupProjectStatusesCountsRequestModel';
+import { IGroupProjectStatusDto, IGroupProjectStatusesDto, IGroupResponseDto } from './dtos/IGroupProjectStatusDto';
+export class GroupProjectStatusesQuery extends Query<GroupProjectStatusesCountsRequestModel, IGroupResponseDto> {
     readonly allProjectsProjectTypeId = 'all_projects';
 
     readonly allProjectsName = 'All Projects';
 
     readonly projectsRepository: ProjectsRepository;
+    readonly slfAccessor: SlfAccessor;
+    readonly cache = new Cache('project', 'dry_dock', '.groupStatuses');
 
     constructor() {
         super();
 
         this.projectsRepository = new ProjectsRepository();
-    }
-
-    protected async AuthorizationHandlerAsync(): Promise<void> {
-        return;
-    }
-
-    protected async ValidationHandlerAsync(): Promise<void> {
-        return;
+        this.slfAccessor = new SlfAccessor();
     }
 
     /**
      * Get group project statuses, like "Complete", "In Progress", "Planned", "Closed", etc.
      * @returns Group project statuses
      */
-    protected async MainHandlerAsync(): Promise<IGroupProjectStatusesDto[]> {
-        const all_ProjectsWithGroupStatusCount = await this.projectsRepository.GetGroupProjectStatuses();
+    protected async MainHandlerAsync(request: GroupProjectStatusesCountsRequestModel): Promise<IGroupResponseDto> {
+        let assignedVessels: number[] = await this.slfAccessor.getUserAssignedVessels(request.Token);
 
-        const projectsWithGroupStatusCount = await this.projectsRepository.GetGroupProjectStatusesByProjectType();
+        if (request.VesselsIds != null && request.VesselsIds.length > 0) {
+            assignedVessels = assignedVessels.filter((vesselId) => request.VesselsIds!.includes(vesselId));
+        }
 
-        const projectTypes = await this.projectsRepository.GetProjectTypes();
+        const cacheKey = assignedVessels.join('|');
+        const cacheValue = await this.cache.get(cacheKey);
+        if (cacheValue) {
+            return cacheValue;
+        }
 
-        const all_projects: IGroupProjectStatusesDto = {
-            ProjectTypeId: this.allProjectsProjectTypeId,
-            ProjectTypeName: this.allProjectsName,
-            GroupProjectStatuses: this.populateGroupStatuses(all_ProjectsWithGroupStatusCount),
+        const rawData = await this.projectsRepository.GetGroupStatusesRawData(assignedVessels);
+
+        const result: IGroupResponseDto = {
+            [this.allProjectsProjectTypeId]: {
+                ProjectTypeName: this.allProjectsName,
+                GroupProjectStatuses: [],
+            },
         };
+        for (let i = 0; i < rawData.length; i++) {
+            const {
+                GroupProjectStatusId,
+                ProjectTypeId,
+                GroupProjectDisplayName,
+                ProjectWithStatusCount,
+                ProjectTypeName,
+                StatusOrder,
+            } = rawData[i];
 
-        const groupStatusesByType: IGroupProjectStatusesDto[] = projectTypes.map((projectType) => {
-            const groupStatuses: IGroupProjectStatusDto[] = projectsWithGroupStatusCount
-                .filter((project) => project.ProjectTypeId === projectType.ProjectTypeCode)
-                .map((project) => {
-                    return {
-                        GroupProjectStatusId: project.GroupProjectStatusId,
-                        ProjectWithStatusCount: project.ProjectWithStatusCount,
-                    };
+            //Populate "all" projects
+            const all: IGroupProjectStatusesDto = result[this.allProjectsProjectTypeId];
+            let index = all.GroupProjectStatuses.findIndex(
+                (t: IGroupProjectStatusDto) => t.GroupProjectStatusId === GroupProjectStatusId,
+            );
+            if (index === -1) {
+                index = all.GroupProjectStatuses.length;
+                all.GroupProjectStatuses.push({
+                    GroupProjectStatusId,
+                    GroupProjectDisplayName,
+                    ProjectWithStatusCount: 0,
+                    StatusOrder,
                 });
-
-            return {
-                ProjectTypeId: projectType.ProjectTypeCode,
-                ProjectTypeName: projectType.ProjectTypeName,
-                GroupProjectStatuses: this.populateGroupStatuses(groupStatuses),
-            };
-        });
-
-        return [...[all_projects], ...groupStatusesByType];
-    }
-
-    public populateGroupStatuses(projectStatuses: IGroupProjectStatusDto[]): IGroupProjectStatusDto[] {
-        const groupProjectStatusesIds = Object.keys(GroupProjectStatusId);
-
-        return groupProjectStatusesIds.map((groupStatus) => {
-            const data: IGroupProjectStatusDto = {
-                GroupProjectStatusId: groupStatus,
-                ProjectWithStatusCount: 0,
-            };
-
-            const project = projectStatuses.find((project) => project.GroupProjectStatusId === groupStatus);
-
-            if (project) {
-                data.ProjectWithStatusCount = project.ProjectWithStatusCount;
             }
+            all.GroupProjectStatuses[index].ProjectWithStatusCount += ProjectWithStatusCount;
 
-            return data;
-        });
+            //Populate project type
+            if (!result[ProjectTypeId]) {
+                result[ProjectTypeId] = {
+                    ProjectTypeName,
+                    GroupProjectStatuses: [],
+                };
+            }
+            result[ProjectTypeId].GroupProjectStatuses.push({
+                GroupProjectStatusId,
+                GroupProjectDisplayName,
+                ProjectWithStatusCount,
+                StatusOrder,
+            });
+        }
+
+        await this.cache.put(result, cacheKey, 300);
+
+        return result;
     }
 }

@@ -9,6 +9,7 @@
     [sortField]="gridInputs.sortField"
     [sortOrder]="gridInputs.sortOrder"
     [getStyleByContainer]="true"
+    [isDisplayAdvancedFilter]="false"
     (action)="onGridAction($any($event), $event?.payload)"
     (matrixRequestChanged)="onMatrixRequestChanged()"
   ></jb-grid>

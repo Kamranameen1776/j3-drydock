@@ -1,31 +1,57 @@
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-base/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-buttons/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-calendars/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-dropdowns/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-inputs/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-lists/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-layouts/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-navigations/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-popups/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-grids/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-treegrid/styles/material.css';
-// @import '../../../../../../../../node_modules/@syncfusion/ej2-gantt/styles/material.css';
+@import '../../../../styles/mixins';
+
+.gantt-filters-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+:host {
+  ::ng-deep {
+    .e-rowcell {
+      font-size: 10px !important;
+    }
+
+    .status-field {
+      line-height: 7px;
+      display: inline-flex;
+      justify-content: center;
+
+      .m-1 {
+        margin-right: 4px;
+      }
+    }
+
+    .gantt-grid-link {
+      cursor: pointer;
+      color: var(--jbBrandBlue700) !important;
+      font-weight: 500;
+
+      &:focus,
+      &:hover {
+          text-decoration: underline;
+      }
+    }
+  }
+}
 
 ::ng-deep {
-  .status-field {
-    line-height: 7px;
-    display: inline-flex;
-    justify-content: center;
 
-    .m-1 {
-      margin-right: 4px;
-    }
+  .gantt-day-of-month{
+    font-weight: bold;
+    padding-right: 3px;
+  }
+
+  .gantt-day-of-week{
+    font-size: 9px;
   }
 
   .e-gantt .e-gantt-chart .e-event-markers {
     border-left-color: #616aff;
     border-left-width: 2px;
+
+    &.overdue-line {
+      border-left-color: #F75F82;
+    }
   }
 
   .e-none {
@@ -42,7 +68,7 @@
   }
 
   .e-grid .e-rowcell {
-    padding: 8px 12px;
+    padding: 0 12px;
   }
 
   .e-grid .e-rowcell:first-child,
@@ -97,5 +123,24 @@
 
   .e-gantt .e-gantt-chart .e-weekend-header-cell {
     background: #fff;
+  }
+
+  th>.e-headercelldiv>.gantt-grid-header{
+    padding-top: 35px;
+  }
+
+  .e-gantt-chart-pane{
+    border-top: 1px solid #d8d8d8;
+  }
+}
+
+::ng-deep {
+  .e-tooltip-wrap.e-popup.e-gantt-tooltip {
+      background-color: $jibe-grey-800;
+      border-color: $jibe-grey-800;
+
+      .e-tip-content {
+        padding: 10px 15px;
+      }
   }
 }

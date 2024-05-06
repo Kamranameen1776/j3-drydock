@@ -1,0 +1,5 @@
+@import '../../../styles/mixins';
+
+.specs-description-label{
+    @include form-label;
+}

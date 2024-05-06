@@ -12,6 +12,9 @@ export interface CreateStandardJobsRequestDto
         | 'doneBy'
         | 'inspectionId'
     > {
+    uid?: string;
     vesselTypeId: number[];
     inspectionId: number[];
+
+    UserId: string;
 }

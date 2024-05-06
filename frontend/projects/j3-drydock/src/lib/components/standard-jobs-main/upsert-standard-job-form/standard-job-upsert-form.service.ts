@@ -7,12 +7,18 @@ import { FormServiceBase } from '../../../shared/classes/form-service.base';
 import { eStandardJobsMainFields, eStandardJobsMainLabels } from '../../../models/enums/standard-jobs-main.enum';
 import { BehaviorSubject } from 'rxjs';
 import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree-node';
+import { EditorConfig } from '../../../models/interfaces/EditorConfig';
+import { ToolbarModule } from 'primeng';
+import { eFunction } from '../../../models/enums/function.enum';
+import { eModule } from '../../../models/enums/module.enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StandardJobUpsertFormService extends FormServiceBase {
   readonly formId = standardJobsUpsertFormId;
+
+  readonly editors = 'editors';
 
   functionsFlatTree$ = new BehaviorSubject<FunctionsFlatTreeNode[]>([]);
 
@@ -111,7 +117,7 @@ export class StandardJobUpsertFormService extends FormServiceBase {
             gridRowEnd: 5,
             gridColStart: 1,
             gridColEnd: 2,
-            list: this.standardJobsService.getVesselSpevificList()
+            list: this.standardJobsService.getVesselSpecificList()
           },
           [eStandardJobsMainFields.DoneByID]: {
             type: eFieldControlType.Dropdown,
@@ -144,30 +150,6 @@ export class StandardJobUpsertFormService extends FormServiceBase {
               valueKey: 'ID',
               webApiRequest: this.standardJobsService.getVesselTypesRequest()
             }
-          },
-          [eStandardJobsMainFields.Description]: {
-            type: eFieldControlType.TextAreaType,
-            label: eStandardJobsMainLabels.Description,
-            sectionID: this.formId,
-            enabled: true,
-            validatorRequired: true,
-            maxTextLength: 1000,
-            gridRowStart: 6,
-            gridRowEnd: 7,
-            gridColStart: 1,
-            gridColEnd: 3
-          },
-          [eStandardJobsMainFields.Scope]: {
-            type: eFieldControlType.TextAreaType,
-            label: eStandardJobsMainLabels.Scope,
-            sectionID: this.formId,
-            enabled: true,
-            validatorRequired: false,
-            maxTextLength: 1000,
-            gridRowStart: 7,
-            gridRowEnd: 8,
-            gridColStart: 1,
-            gridColEnd: 3
           }
         }
       }
@@ -193,5 +175,56 @@ export class StandardJobUpsertFormService extends FormServiceBase {
 
   constructor(private standardJobsService: StandardJobsService) {
     super();
+  }
+
+  getDescriptionEditorConfig(): EditorConfig {
+    return {
+      id: 'description',
+      maxLength: 10000,
+      placeholder: '',
+      crtlName: 'description',
+      moduleCode: eModule.Project,
+      functionCode: eFunction.StandardJob,
+      tools: this.getEditorTools(),
+      inlineMode: {
+        enable: false,
+        onSelection: true
+      }
+    };
+  }
+
+  getScopeEditorConfig(): EditorConfig {
+    return {
+      id: 'scope',
+      maxLength: 10000,
+      placeholder: '',
+      crtlName: 'scope',
+      moduleCode: eModule.Project,
+      functionCode: eFunction.StandardJob,
+      inlineMode: {
+        enable: false,
+        onSelection: true
+      },
+      tools: this.getEditorTools()
+    };
+  }
+
+  private getEditorTools(): ToolbarModule {
+    return {
+      items: [
+        'Bold',
+        'Italic',
+        'Underline',
+        'StrikeThrough',
+        'FontName',
+        'FontSize',
+        'FontColor',
+        'Formats',
+        'Alignments',
+        'Image',
+        'ClearFormat',
+        'FullScreen'
+      ]
+    };
   }
 }

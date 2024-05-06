@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class AddJobOrdersTable1702646766378 implements MigrationInterface {
@@ -28,12 +29,12 @@ export class AddJobOrdersTable1702646766378 implements MigrationInterface {
 					[last_updated] [datetimeoffset] NOT NULL,
                     [created_at] [datetimeoffset] NOT NULL,
                     [active_status] [bit] NOT NULL,
-                 CONSTRAINT [PK_job_orders] PRIMARY KEY CLUSTERED 
+                 CONSTRAINT [PK_job_orders] PRIMARY KEY CLUSTERED
                 (
                     [uid] ASC
                 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
                 ) ON [PRIMARY];
-                
+
                 ALTER TABLE [dry_dock].[job_orders] ADD  CONSTRAINT [DF_job_orders_active_status]  DEFAULT ((1)) FOR [active_status];
                 ALTER TABLE [dry_dock].[job_orders] ADD  CONSTRAINT [DF_job_orders_created_at]  DEFAULT ((GETUTCDATE())) FOR [created_at];
 
@@ -51,7 +52,7 @@ export class AddJobOrdersTable1702646766378 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                error as string,
+                errorLikeToString(error),
                 'E',
                 this.moduleName,
                 'Add Job Orders table',

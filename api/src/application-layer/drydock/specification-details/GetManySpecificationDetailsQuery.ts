@@ -1,8 +1,7 @@
-import { Request } from 'express';
-
+import { Req } from '../../../common/drydock/ts-helpers/req-res';
 import { SpecificationDetailsRepository } from '../../../dal/drydock/specification-details/SpecificationDetailsRepository';
-import { SpecificationDetailsEntity } from '../../../entity/drydock/SpecificationDetailsEntity';
-import { GridFilter } from '../../../shared/interfaces/GridFilter';
+import { SpecificationDetailsEntity } from '../../../entity/drydock';
+import { GridRequestBody } from '../core/cqrs/jbGrid/GridRequestBody';
 import { Query } from '../core/cqrs/Query';
 import {
     SpecificationDetailsGridFiltersKeys,
@@ -10,7 +9,7 @@ import {
 } from './SpecificationDetailsConstants';
 
 export class GetManySpecificationDetailsQuery extends Query<
-    Request,
+    Req<GridRequestBody>,
     { records: SpecificationDetailsEntity[]; count?: number }
 > {
     specificationDetailsRepository: SpecificationDetailsRepository = new SpecificationDetailsRepository();
@@ -19,17 +18,12 @@ export class GetManySpecificationDetailsQuery extends Query<
         return;
     }
 
-    protected async ValidationHandlerAsync(): Promise<void> {
-        return;
-    }
-
     /**
      *
      * @returns All specification details
      */
-    protected async MainHandlerAsync(request: Request) {
-        const gridFilter = request.body.gridFilters as GridFilter[];
-        const filters = gridFilter.reduce(
+    protected async MainHandlerAsync(request: Req<GridRequestBody>) {
+        const filters = request.body.gridFilters.reduce(
             (acc, { odataKey, selectedValues }) =>
                 specificationDetailsGridFiltersKeys.includes(odataKey as SpecificationDetailsGridFiltersKeys) &&
                 Array.isArray(selectedValues) &&

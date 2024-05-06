@@ -3,10 +3,10 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
+import fs from 'fs';
 import { AccessRights } from 'j2utils';
 import path from 'path';
-
-import { options } from './express-swagger.config';
+import * as swaggerUi from 'swagger-ui-express';
 
 /**
  * Extends the Express Request interface to include the 'user' object
@@ -25,9 +25,21 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const expressSwagger = require('express-swagger-generator')(app); // exposes web api's help page
-expressSwagger(options(3020)); // http://localhost:3020/api-docs/#/
+const swaggerJsonPath = 'build/swagger.json';
+
+if (fs.existsSync(swaggerJsonPath)) {
+    // http://localhost:3034/api-docs/#/
+    const swaggerDoc = JSON.parse(fs.readFileSync('build/swagger.json', 'utf8'));
+    app.use(
+        '/api-docs',
+        swaggerUi.serve,
+        swaggerUi.setup(swaggerDoc, {
+            swaggerOptions: {
+                persistAuthorization: true,
+            },
+        }),
+    );
+}
 
 app.use(AccessRights.accessRightsMiddleware);
 

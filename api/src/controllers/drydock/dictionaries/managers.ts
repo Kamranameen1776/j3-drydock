@@ -1,16 +1,19 @@
-import { Request, Response } from 'express';
+import { Controller, Get, Route } from 'tsoa';
 
 import { GetManagersQuery } from '../../../application-layer/drydock/dictionaries';
+import { LibUserEntity } from '../../../entity/drydock';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
-async function getManagers(req: Request, res: Response) {
-    const middlewareHandler = new MiddlewareHandler();
+@Route('drydock/dictionaries/managers')
+export class GetManagersController extends Controller {
+    @Get()
+    public async getManagers(): Promise<LibUserEntity[]> {
+        const query = new GetManagersQuery();
 
-    await middlewareHandler.ExecuteAsync(req, res, async () => {
-        const command = new GetManagersQuery();
+        const result = await query.ExecuteAsync();
 
-        return command.ExecuteAsync();
-    });
+        return result;
+    }
 }
 
-exports.get = getManagers;
+exports.get = new MiddlewareHandler().ExecuteHandlerAsync(new GetManagersController().getManagers);

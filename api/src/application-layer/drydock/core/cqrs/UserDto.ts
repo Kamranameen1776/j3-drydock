@@ -1,1 +1,4 @@
-export type UserFromToken = { UserID: string };
+export interface UserFromToken {
+    UserID: string;
+    UserUID: string;
+}

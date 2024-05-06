@@ -26,10 +26,10 @@ export class JobOrderEntity {
     })
     Subject: string;
 
-    @Column('varchar', {
+    @Column('nvarchar', {
         nullable: true,
         name: 'remarks',
-        length: 5000,
+        length: 'max',
     })
     Remarks: string;
 
@@ -58,6 +58,12 @@ export class JobOrderEntity {
         default: () => 'getutcdate()()',
     })
     CreatedAt: Date | null;
+
+    @Column('uuid', {
+        nullable: false,
+        name: 'created_by',
+    })
+    CreatedBy: string;
 
     @Column('bit', {
         nullable: false,

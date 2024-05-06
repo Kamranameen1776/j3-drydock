@@ -1,16 +1,30 @@
-import { Request, Response } from 'express';
+import * as express from 'express';
+import { AccessRights } from 'j2utils';
+import { Body, Controller, Post, Request, Route } from 'tsoa';
 
 import { CreateProjectYardsCommand } from '../../../../application-layer/drydock/projects/project-yards/CreateProjectYardsCommand';
+import { CreateProjectYardsDto } from '../../../../application-layer/drydock/projects/project-yards/dtos/CreateProjectYardsDto';
 import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
-async function CreateProjectYards(req: Request, res: Response) {
-    const middlewareHandler = new MiddlewareHandler();
+@Route('drydock/projects/project-yards/create-project-yards')
+export class CreateProjectYardsController extends Controller {
+    @Post()
+    public async CreateProjectYards(
+        @Request() request: express.Request,
+        @Body() dto: CreateProjectYardsDto,
+    ): Promise<void> {
+        const query = new CreateProjectYardsCommand();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        const command = new CreateProjectYardsCommand();
+        const { UserUID: createdBy } = AccessRights.authorizationDecode(request);
 
-        return command.ExecuteAsync(request);
-    });
+        dto.createdBy = createdBy;
+
+        const result = await query.ExecuteAsync(dto);
+
+        return result;
+    }
 }
 
-exports.post = CreateProjectYards;
+exports.post = new MiddlewareHandler().ExecuteHandlerAsync(async (request: express.Request) => {
+    return new CreateProjectYardsController().CreateProjectYards(request, request.body);
+});
