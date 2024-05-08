@@ -1,6 +1,6 @@
 {
   "name": "@j3-drydock/frontend",
-  "version": "3.242.231",
+  "version": "3.242.311",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -64,13 +64,13 @@
     "file-saver": "1.3.8",
     "font-awesome": "4.7.0",
     "fullcalendar": "4.0.0-alpha.4",
-    "html2pdf.js": "0.9.3",
+    "html2pdf.js": "0.10.1",
     "j3-task-manager-ng": "3.241.331",
     "jibe-components": "3.242.123-2",
     "jquery": "3.7.1",
     "js2xmlparser": "3.0.0",
     "json-to-table": "4.2.1",
-    "jspdf": "1.5.3",
+    "jspdf": "^2.0.0",
     "jspdf-autotable": "3.6.0",
     "lodash": "4.17.21",
     "moment": "2.29.4",

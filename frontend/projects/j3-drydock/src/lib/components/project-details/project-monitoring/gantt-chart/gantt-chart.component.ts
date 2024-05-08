@@ -271,7 +271,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     const eventMarkers = [
       {
         day: new Date(),
-        label: 'Current Date',
+        label: '',
         cssClass: ''
       }
     ];
@@ -282,7 +282,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
       eventMarkers.push({
         day: startOfTheCurrentDay,
-        label: 'Project Start Date: ' + moment(startOfTheCurrentDay).format(this.dateFormat),
+        label: '',
         cssClass: 'overdue-line'
       });
     }
@@ -293,7 +293,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
       eventMarkers.push({
         day: endOfCurrentDayMinusHour,
-        label: 'Project End Date: ' + moment(endOfCurrentDayMinusHour).format(this.dateFormat),
+        label: '',
         cssClass: 'overdue-line'
       });
     }
