@@ -3,5 +3,5 @@ export class CreateDailyReportsDto {
     ReportName: string;
     ReportDate: Date;
     CreatedBy: string;
-    JobOrdersUpdate: [];
+    Body: string;
 }

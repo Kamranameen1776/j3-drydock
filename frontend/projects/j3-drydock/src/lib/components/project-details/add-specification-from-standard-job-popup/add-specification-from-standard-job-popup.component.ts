@@ -8,6 +8,15 @@ import { FunctionsFlatTreeNode } from '../../../models/interfaces/functions-tree
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { StandardJobsService } from '../../../services/standard-jobs.service';
 import { SpecificationDetailsService } from '../../../services/specification-details/specification-details.service';
+import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
+import { finalize } from 'rxjs/operators';
+import * as _ from 'lodash';
+import { GrowlMessageService } from '../../../services/growl-message.service';
+
+export enum eAddSpecificationFromStandardJobPopupType {
+  Specification = 'Specification',
+  ProjectTemplate = 'ProjectTemplate'
+}
 
 @Component({
   selector: 'jb-add-specification-from-standard-job-popup',
@@ -19,12 +28,15 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   @Input() vesselType: number;
   @Input() projectUid: string;
   @Input() treeData: FunctionsFlatTreeNode[];
+  @Input() excludeUids: string[];
 
-  @Output() closeDialog = new EventEmitter<boolean>();
+  @Input() type = eAddSpecificationFromStandardJobPopupType.Specification;
+
+  @Output() closeDialog = new EventEmitter<StandardJobResult[]>();
 
   @ViewChild(SpecificationFormComponent) popupForm: SpecificationFormComponent;
 
-  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, closableIcon: false, dialogHeader: 'Standard Jobs' };
+  readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, dialogHeader: 'Standard Jobs' };
 
   eventsList = [eJbTreeEvents.NodeSelect, eJbTreeEvents.Select, eJbTreeEvents.UnSelect];
 
@@ -34,11 +46,14 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   functionUIDs: string[] = [];
   gridData: GridInputsWithRequest;
   selected = [];
+  // eslint-disable-next-line dot-notation
+  private maxJobsNum = window['environment']?.['maxStandardJobsNum'] || 75;
 
   constructor(
     private standardJobsService: StandardJobsService,
     private gridService: GridService,
-    private specificationService: SpecificationDetailsService
+    private specificationService: SpecificationDetailsService,
+    private growlMessageService: GrowlMessageService
   ) {
     super();
   }
@@ -48,6 +63,7 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   }
 
   onCancel() {
+    this.selected = [];
     this.closePopup();
   }
 
@@ -72,22 +88,47 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
     this.isPopupValid$.next(rows.length > 0);
   }
 
-  private closePopup(isSaved = false) {
-    this.closeDialog.emit(isSaved);
+  private closePopup() {
+    this.closeDialog.emit(this.selected);
     this.isPopupValid$.next(false);
     this.popupForm?.formGroup.reset();
   }
 
   private save() {
     const selectedUids = this.selected.map((row) => row.uid);
-    this.isSaving$.next(true);
-    this.specificationService.createSpecificationFromStandardJob(this.projectUid, selectedUids).subscribe(() => {
-      this.isSaving$.next(false);
-      this.closePopup(true);
-    });
+
+    if (selectedUids.length > this.maxJobsNum) {
+      this.growlMessageService.setErrorMessage(`You can select up to ${this.maxJobsNum} standard jobs`);
+      return;
+    }
+
+    switch (this.type) {
+      case eAddSpecificationFromStandardJobPopupType.Specification:
+        this.saveCreateSpecificationsFromStandardJobs(selectedUids);
+        break;
+
+      case eAddSpecificationFromStandardJobPopupType.ProjectTemplate:
+        this.closePopup();
+        break;
+
+      default:
+        break;
+    }
   }
 
   private getData() {
-    return this.standardJobsService.getStandardJobPopupGridData(this.vesselType, this.functionUIDs);
+    return this.standardJobsService.getStandardJobPopupGridData(this.vesselType, this.functionUIDs, this.excludeUids);
+  }
+
+  private saveCreateSpecificationsFromStandardJobs(selectedUids: string[]) {
+    this.isSaving$.next(true);
+    this.specificationService
+      .createSpecificationFromStandardJob(this.projectUid, selectedUids)
+      .pipe(
+        finalize(() => {
+          this.isSaving$.next(false);
+        })
+      )
+      .subscribe(() => this.closePopup());
   }
 }

@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
+import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
 export class deactivateJobOrderWorkflow1702275716808 implements MigrationInterface {
     public className = this.constructor.name;
@@ -25,7 +26,7 @@ export class deactivateJobOrderWorkflow1702275716808 implements MigrationInterfa
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 this.className,
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'deactivate job order workflow',

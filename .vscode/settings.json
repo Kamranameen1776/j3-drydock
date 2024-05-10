@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "columnproperty",
         "cqrs",
         "crtl",
         "Datasource",
@@ -9,18 +10,26 @@
         "dtos",
         "endregion",
         "exceljs",
+        "gantt",
         "hemant",
         "Inputservice",
         "isslfapplied",
         "isslfsession",
         "itemsource",
         "JMSDTL",
+        "Lables",
+        "Loadline",
+        "nvarchar",
         "odata",
         "officedocument",
         "openxmlformats",
         "primeng",
+        "SMTWTFS",
+        "syncfusion",
         "TECLIB",
+        "tsoa",
         "typeorm",
+        "Uids",
         "uniqueidentifier",
         "wdetails",
         "Worklist"
@@ -28,5 +37,7 @@
     "files.trimTrailingWhitespace": true,
     "editor.rulers": [
         120
-    ]
+    ],
+    "git.autofetch": true,
+    "git.fetchOnPull": true
 }

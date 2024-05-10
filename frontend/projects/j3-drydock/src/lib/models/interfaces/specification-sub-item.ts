@@ -10,4 +10,11 @@ export interface SpecificationSubItem {
   activeStatus: boolean;
   discount: number;
   description: string;
+  dialogHeader: string;
+  cost?: string | number;
+}
+
+export interface CreateSpecificationSubItemData extends SpecificationSubItem {
+  pmsJobUid: string[];
+  findingUid: string[];
 }

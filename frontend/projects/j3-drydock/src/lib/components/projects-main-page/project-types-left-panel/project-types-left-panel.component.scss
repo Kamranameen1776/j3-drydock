@@ -6,4 +6,10 @@
 .vessels-select-dropdown {
   padding-top: 20px;
   padding-bottom: 20px;
+
+  ::ng-deep {
+    .ui-multiselect-header {
+      display: flex !important;
+    }
+  }
 }

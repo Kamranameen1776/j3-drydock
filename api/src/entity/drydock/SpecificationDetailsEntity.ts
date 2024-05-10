@@ -1,7 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { LibSurveyCertificateAuthority } from './dbo/LibSurveyCertificateAuthorityEntity';
-import { J3PrcRequisition } from './prc/J3PrcRequisitionEntity';
+import { LibSurveyCertificateAuthority } from './dbo';
+import { J3PrcRequisition } from './prc';
 import { SpecificationDetailsSubItemEntity } from './SpecificationDetailsSubItemEntity';
 
 @Entity('specification_details', { schema: 'dry_dock' })
@@ -33,7 +33,7 @@ export class SpecificationDetailsEntity {
         name: 'account_code',
         length: 200,
     })
-    AccountCode: string;
+    AccountCode?: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
@@ -52,13 +52,7 @@ export class SpecificationDetailsEntity {
         nullable: true,
         name: 'done_by_uid',
     })
-    DoneByUid: string;
-
-    @Column('uniqueidentifier', {
-        nullable: false,
-        name: 'item_category_uid',
-    })
-    ItemCategoryUid: string;
+    DoneByUid?: string;
 
     @Column('uniqueidentifier', {
         nullable: true,
@@ -77,12 +71,12 @@ export class SpecificationDetailsEntity {
         nullable: true,
         name: 'priority_uid',
     })
-    PriorityUid: string;
+    PriorityUid?: string;
 
-    @Column('varchar', {
+    @Column('nvarchar', {
         nullable: false,
         name: 'description',
-        length: 1000,
+        length: 'MAX',
     })
     Description: string;
 
@@ -104,6 +98,18 @@ export class SpecificationDetailsEntity {
         name: 'end_date',
     })
     EndDate: Date | null;
+
+    @Column('int', {
+        nullable: true,
+        name: 'completion',
+    })
+    Completion: number;
+
+    @Column('int', {
+        nullable: true,
+        name: 'duration',
+    })
+    Duration: number;
 
     @Column('int', {
         nullable: true,
@@ -153,14 +159,14 @@ export class SpecificationDetailsEntity {
     @Column('varchar', {
         nullable: true,
         name: 'ppe',
-        length: 1000,
+        length: 'MAX',
     })
     Ppe: string;
 
     @Column('varchar', {
         nullable: true,
         name: 'safety_instruction',
-        length: 1000,
+        length: 'MAX',
     })
     SafetyInstruction: string;
 

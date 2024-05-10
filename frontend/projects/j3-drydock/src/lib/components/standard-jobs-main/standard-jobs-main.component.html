@@ -9,7 +9,9 @@
   [filterData]="gridInputs.filters"
   [filterListsSet]="gridInputs.filtersLists"
   [searchFields]="gridInputs.searchFields"
+  [pdfSettings]="pdfSettings"
   (action)="onGridAction($any($event))"
+  (cellPlainTextClick)="cellPlainTextClick($event)"
 ></jb-grid>
 
 <jb-upsert-standard-job-popup
@@ -30,7 +32,7 @@
       class="popup-text"
       *ngIf="isConfirmDeleteVisible"
     >
-      Are you sure want to delete the standard job?
+      Are you sure you want to delete the standard job?
     </span>
   </div>
 

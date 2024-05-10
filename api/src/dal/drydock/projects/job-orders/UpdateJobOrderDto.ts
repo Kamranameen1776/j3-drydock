@@ -1,8 +1,25 @@
-import { IsDateString, IsNotEmpty, IsUUID, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+    IsDateString,
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    IsUUID,
+    Max,
+    MaxLength,
+    Min,
+    MinLength,
+    ValidateNested,
+} from 'class-validator';
 
+import { SubItemEditDto } from '../../specification-details/sub-items/dto/SubItemEditableProps';
 import { JobOrderStatus } from './JobOrderStatus';
 
 export class UpdateJobOrderDto {
+    @IsUUID('4')
+    @IsOptional()
+    uid?: string;
+
     @IsUUID()
     @IsNotEmpty()
     SpecificationUid: string;
@@ -32,6 +49,15 @@ export class UpdateJobOrderDto {
     @IsNotEmpty()
     LastUpdated: Date;
 
-    @MaxLength(5000)
+    @IsUUID('4')
+    CreatedBy: string;
+
+    @IsString()
+    @IsOptional()
     Remarks: string;
+
+    @Type(() => SubItemEditDto)
+    @ValidateNested({ each: true })
+    @IsOptional()
+    UpdatesChanges: SubItemEditDto[];
 }

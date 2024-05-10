@@ -10,7 +10,7 @@
 ></jb-grid>
 
 <ng-template
-  #isSelectedTmpl
+  #isSelectedTemplate
   let-rowData
 >
   <jb-checkbox
@@ -32,3 +32,31 @@
   [isOpen]="isLinkPopupVisible"
   (closeDialog)="onCloseLinkYardPopup($event)"
 ></jb-drydock-link-yard-popup>
+
+<jb-dialog
+  (closeDialog)="showDeleteDialog(false)"
+  [(dialogVisible)]="isShowDeleteDialog"
+  [dialogContent]="deleteRfqDialog"
+  class="dialog"
+>
+  <div
+    class="dialog-body"
+    jb-dialog-body
+  >
+    <div class="p-col-12 left">{{ deleteDialogMessage }}</div>
+  </div>
+
+  <ng-container jb-dialog-footer>
+    <jb-dialog-footer
+      [okBtnLabel]="deleteBtnLabel"
+      (ok)="onDeleteRfq()"
+      (cancel)="showDeleteDialog(false)"
+    ></jb-dialog-footer>
+  </ng-container>
+</jb-dialog>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="isShowLoader"
+  [theme]="'figma'"
+></jb-progress-spinner>

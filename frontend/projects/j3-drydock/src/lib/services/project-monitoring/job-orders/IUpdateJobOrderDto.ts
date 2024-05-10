@@ -1,3 +1,5 @@
+import { SpecificationSubItem } from '../../../models/interfaces/specification-sub-item';
+
 export interface IUpdateJobOrderDto {
   SpecificationUid: string;
 
@@ -14,4 +16,8 @@ export interface IUpdateJobOrderDto {
   LastUpdated: Date;
 
   Remarks: string;
+
+  UpdatesChanges?: SpecificationSubItem[];
+
+  uid?: string;
 }

@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class createStandardJobSurveyCertificateAuthorityTable1698397957294 implements MigrationInterface {
@@ -32,7 +33,7 @@ export class createStandardJobSurveyCertificateAuthorityTable1698397957294 imple
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createStandardJobSurveyCertificateAuthorityTable1698397957294',
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'Create standard jobs survey certificate authority table',

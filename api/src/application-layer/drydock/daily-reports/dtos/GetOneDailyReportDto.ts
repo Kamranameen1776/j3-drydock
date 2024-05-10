@@ -1,6 +1,4 @@
-import { ArrayMinSize, IsDateString, IsDefined, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
-
-import { JobOrdersUpdatesDto } from './JobOrdersUpdatesDto';
+import { IsDateString, IsDefined, IsNotEmpty, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class GetOneDailyReportDto {
     @IsNotEmpty()
@@ -25,6 +23,5 @@ export class GetOneDailyReportDto {
     @IsDateString()
     reportDate: Date;
 
-    @ArrayMinSize(0)
-    jobOrdersUpdate: Array<JobOrdersUpdatesDto>;
+    Body: string;
 }

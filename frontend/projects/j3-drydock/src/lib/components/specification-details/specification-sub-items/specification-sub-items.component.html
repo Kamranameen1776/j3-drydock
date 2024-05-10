@@ -1,8 +1,10 @@
 <div
   class="grid-container"
   awidget-content
+  [ngClass]="{ 'not-editable': !isEditable }"
 >
   <jb-grid
+    class="specification-sub-items-grid"
     *ngIf="gridData"
     [gridName]="gridData.gridName"
     [colData]="gridData.columns"
@@ -35,7 +37,7 @@
     jb-dialog-body
     class="dialog-body"
   >
-    <div class="p-col-12 left">Are you sure want to delete this sub item?</div>
+    <div class="p-col-12 left">Are you sure you want to delete this sub item?</div>
   </div>
 
   <ng-container jb-dialog-footer>

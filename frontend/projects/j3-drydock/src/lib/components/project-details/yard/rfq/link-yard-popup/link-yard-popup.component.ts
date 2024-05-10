@@ -29,7 +29,7 @@ export class LinkYardPopupComponent extends UnsubscribeComponent implements OnIn
 
   allYardsToLink: YardToLink[];
 
-  private guidsToLink: string[];
+  guidsToLink: string[];
 
   private linkedGuids: string[];
 

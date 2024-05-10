@@ -1,4 +1,5 @@
 import { DataUtilService } from 'j2utils';
+import { chunk } from 'lodash';
 import { QueryRunner } from 'typeorm';
 
 import { UpdateSpecificationDetailsDto } from '../../../application-layer/drydock/specification-details/dtos/UpdateSpecificationDetailsDto';
@@ -7,6 +8,7 @@ import {
     FieldsHistoryRepository,
 } from '../../../dal/drydock/fields-history/FieldsHistoryRepository';
 import { TaskManagerConstants } from '../../../shared/constants';
+import { getChunkSize } from '../../../shared/utils/get-chunk-size';
 
 export class SpecificationDetailsAuditService {
     private readonly fieldsHistoryRepository = new FieldsHistoryRepository();
@@ -32,7 +34,16 @@ export class SpecificationDetailsAuditService {
             fields.push(...this.generateFieldsData(specification, createdById));
         });
 
-        await this.fieldsHistoryRepository.insertMany(fields.flat() as CreateFieldsHistoryDto[], queryRunner);
+        const flatFields = fields.flat();
+
+        await Promise.all(
+            chunk(
+                flatFields,
+                getChunkSize(Math.max(...flatFields.map((fields) => Object.keys(fields).length)) + 1),
+            ).map((batchedFields) => {
+                return this.fieldsHistoryRepository.insertMany(batchedFields as CreateFieldsHistoryDto[], queryRunner);
+            }),
+        );
 
         return fields.map((i) => i.uid);
     }

@@ -1,23 +1,37 @@
-import { IsDateString, IsUUID, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsOptional, IsUUID, MaxLength } from 'class-validator';
+
+export const startDateInvalidMessage = 'Invalid project start date';
+
+export const endDateInvalidMessage = 'Invalid project end date';
 
 export class UpdateProjectDto {
     @IsUUID()
     public ProjectUid: string;
 
-    @MaxLength(250)
+    @MaxLength(200)
     public Subject: string;
 
     public ProjectManagerUid: string;
 
-    @IsDateString()
-    public StartDate: Date;
+    @IsOptional()
+    @Type(() => Date)
+    @IsDate({
+        message: startDateInvalidMessage,
+    })
+    public StartDate?: Date;
 
-    @IsDateString()
-    public EndDate: Date;
+    @IsOptional()
+    @Type(() => Date)
+    @IsDate({
+        message: endDateInvalidMessage,
+    })
+    public EndDate?: Date;
 
     public ShipYardId: string;
 
-    @IsDateString()
+    @Type(() => Date)
+    @IsDate()
     public LastUpdated: Date;
 
     public UpdatedBy: string;

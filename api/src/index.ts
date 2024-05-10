@@ -1,3 +1,5 @@
+import './tracer'; // must come before importing any instrumented module.
+
 import { Server } from 'http';
 import { MssqlDBConnection } from 'j2utils';
 import { Connection, createConnection, getConnectionOptions } from 'typeorm';
@@ -5,7 +7,7 @@ import { Connection, createConnection, getConnectionOptions } from 'typeorm';
 import app from './app';
 import { log } from './logger';
 
-const PORT = process.env.PORT || 3020;
+const PORT = process.env.PORT || 3034;
 console.log(PORT);
 process.env.basedir = __dirname;
 
@@ -34,7 +36,7 @@ const startServer = async () => {
             console.log(`Node server listening on http://localhost:${PORT}`);
         });
     } catch (error) {
-        await log.error(error);
+        await log.error(error, 'Error starting server');
 
         await databaseConnection?.close();
 
@@ -45,11 +47,11 @@ const startServer = async () => {
 startServer();
 
 process.on('uncaughtException', (err) => {
-    log.error('Caught exception:', err);
+    log.error(err, 'Uncaught exception');
 });
 
 process.on('unhandledRejection', (err) => {
-    log.error('Unhandled rejection:', err);
+    log.error(err, 'Unhandled rejection');
 });
 
 export = { app, server };

@@ -1,8 +1,9 @@
+import { eGridRowActions } from 'jibe-components';
+
 export enum eRfqLabels {
   Yard = 'Yard',
   Location = 'Location',
   ExportedDate = 'Last Exported Date',
-  IsSelected = 'Is Selected',
   YardName = 'Yard Name'
 }
 
@@ -11,6 +12,13 @@ export enum eRfqFields {
   Location = 'yardLocation',
   Uid = 'uid',
   YardUid = 'yardUid',
-  ExportedDate = 'lastExportedDate',
-  IsSelected = 'isSelected'
+  ExportedDate = 'lastExportedDate'
 }
+
+// Extend enum hack
+export const eRfqActions = {
+  Export: 'Export',
+  ...eGridRowActions
+};
+
+export type eRfqActions = (typeof eRfqActions)[keyof typeof eRfqActions];

@@ -8,8 +8,6 @@ import { getSmallPopup } from '../../../models/constants/popup';
 import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { cloneDeep } from 'lodash';
 import { filter, map } from 'rxjs/operators';
-import { GrowlMessageService } from '../../../services/growl-message.service';
-import { StandardJobsService } from '../../../services/standard-jobs.service';
 
 @Component({
   selector: 'jb-drydock-sub-items',
@@ -19,6 +17,8 @@ import { StandardJobsService } from '../../../services/standard-jobs.service';
 })
 export class SubItemsComponent extends UnsubscribeComponent implements OnChanges, OnInit {
   @Input() job: StandardJobResult;
+
+  @Input() newUid: string;
 
   @Input() functionUid: string;
 
@@ -46,15 +46,11 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
 
   isConfirmDeleteVisible = false;
 
-  showLoader = false;
-
   private editingSubItemIdx: number;
 
   constructor(
     private subItemsGridService: SubItemsGridService,
-    private gridService: GridService,
-    private growlMessageService: GrowlMessageService,
-    private standardJobsService: StandardJobsService
+    private gridService: GridService
   ) {
     super();
   }
@@ -109,6 +105,10 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
     this.isConfirmDeleteVisible = false;
   }
 
+  onCloseConfirmationDeletePopup() {
+    this.currentRow = undefined;
+  }
+
   searchFn = (record: SubItem, term: string) => {
     term = term ?? '';
     return record.subject?.toLowerCase().includes(term.toLowerCase());
@@ -124,24 +124,12 @@ export class SubItemsComponent extends UnsubscribeComponent implements OnChanges
     this.isConfirmDeleteVisible = true;
   }
 
-  private delete(record) {
-    this.showLoader = true;
-
+  private delete(record: SubItem) {
     const idx = this.subItems.findIndex((item) => item === record);
     if (idx > -1) {
       this.subItems = [...this.subItems];
       this.subItems.splice(idx, 1);
     }
-
-    this.standardJobsService.updateJobSubItems(record.standardJobUid, this.subItems).subscribe(
-      () => {
-        this.growlMessageService.setSuccessMessage('Sub item removed successfully.');
-        this.showLoader = false;
-      },
-      (err) => {
-        this.growlMessageService.errorHandler(err);
-      }
-    );
 
     this.changed.emit(this.subItems);
   }

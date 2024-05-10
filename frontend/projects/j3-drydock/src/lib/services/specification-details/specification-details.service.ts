@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import {
   ApiRequestService,
   ITopSectionFieldSet,
-  JbButtonType,
   UserRightsService,
   WebApiRequest,
   eApiBase,
   eCrud,
-  eEntities
+  eEntities,
+  eFieldControlType
 } from 'jibe-components';
 import { Observable } from 'rxjs';
 import { UpdateSpecificationDetailsDto } from '../../models/dto/specification-details/UpdateSpecificationDetailsDto';
@@ -25,7 +25,12 @@ import { eModule } from '../../models/enums/module.enum';
 import { eFunction } from '../../models/enums/function.enum';
 import { ITMDetailTabFields } from 'j3-task-manager-ng';
 import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
+import { eSubItemsDialog } from '../../models/enums/sub-items.enum';
+import { eApiBaseDryDockAPI } from '../../models/constants/constants';
+import { eProjectWorkflowStatusAction } from '../../models/enums/project-details.enum';
+
 export interface SpecificationDetailAccessRights extends BaseAccessRight {
+  generalInformation: { view: boolean };
   attachments: BaseAccessRight & { add: boolean };
   subItems: BaseAccessRight;
   requisitions: { view: boolean; edit: boolean };
@@ -37,6 +42,9 @@ export const DEFAULT_PROJECT_DETAILS_ACCESS_RIGHTS: SpecificationDetailAccessRig
   view: false,
   edit: false,
   delete: false,
+  generalInformation: {
+    view: false
+  },
   attachments: {
     view: false,
     edit: false,
@@ -77,11 +85,11 @@ export class SpecificationDetailsService {
   }
 
   setupAccessRights(tmDetails: SpecificationDetailsFull) {
-    const isEditableStatus = this.isStatusBeforeComplete(tmDetails.task_status);
+    const isEditableStatus = this.isStatusBeforeComplete(tmDetails.task_status as eSpecificationWorkflowStatusAction);
     const canView = this.hasAccess(eSpecificationAccessActions.viewSpecificationDetail);
     const canEdit = this.hasAccess(eSpecificationAccessActions.editGeneralInformation);
     const canDelete = this.hasAccess(eSpecificationAccessActions.deleteSpecificationDetail);
-    const canViewAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.viewAttachmentsSection);
+    const canViewAttachments = this.hasAccess(eSpecificationAccessActions.viewAttachmentsSection);
     const canEditAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.editAttachments);
     const canDeleteAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.deleteAttachments);
     const canAddAttachments = isEditableStatus && this.hasAccess(eSpecificationAccessActions.addAttachments);
@@ -90,6 +98,9 @@ export class SpecificationDetailsService {
       view: canView,
       edit: canEdit,
       delete: canDelete,
+      generalInformation: {
+        view: this.hasAccess(eSpecificationAccessActions.viewGeneralInformationSection)
+      },
       attachments: {
         view: canViewAttachments,
         edit: canEditAttachments,
@@ -136,7 +147,7 @@ export class SpecificationDetailsService {
           label: 'Assigned To',
           isRequired: false,
           isEditable: false,
-          type: 'dropdown',
+          type: eFieldControlType.Dropdown,
           getFieldName: 'ProjectManagerUid',
           saveFieldName: 'ProjectManagerUid',
           controlContent: {
@@ -147,12 +158,83 @@ export class SpecificationDetailsService {
             selectedLabel: details.ProjectManager,
             apiRequest: this.getProjectsManagersRequest()
           }
+        },
+        {
+          id: 'Duration',
+          label: 'Estimated Duration (Days)',
+          type: eFieldControlType.Text,
+          isRequired: false,
+          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.StatusId),
+          getFieldName: 'Duration',
+          saveFieldName: 'Duration',
+          controlContent: {
+            value: '',
+            id: 'Duration',
+            type: eFieldControlType.Text,
+            pattern: /[0-9]/,
+            disabled: false,
+            maxTextLength: 3
+          }
+        },
+        {
+          id: 'StartDate',
+          label: 'Start Date',
+          isRequired: true,
+          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.StatusId),
+          type: eFieldControlType.Date,
+          getFieldName: 'StartDate',
+          saveFieldName: 'StartDate',
+          formatDate: true,
+          controlContent: {
+            id: 'StartDate',
+            type: 'date',
+            placeholder: 'Select',
+            calendarWithInputIcon: true,
+            calendarMax: details.EndDate
+          }
+        },
+        {
+          id: 'EndDate',
+          label: 'End Date',
+          isRequired: true,
+          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.StatusId),
+          type: eFieldControlType.Date,
+          getFieldName: 'EndDate',
+          saveFieldName: 'EndDate',
+          formatDate: true,
+          controlContent: {
+            id: 'EndDate',
+            type: 'date',
+            placeholder: 'Select',
+            calendarWithInputIcon: true,
+            calendarMin: details.StartDate
+          }
+        },
+        {
+          id: 'Completion',
+          label: 'Percentage Completion',
+          type: eFieldControlType.Text,
+          isRequired: false,
+          isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.StatusId),
+          getFieldName: 'Completion',
+          saveFieldName: 'Completion',
+          controlContent: {
+            value: '',
+            id: 'Completion',
+            type: eFieldControlType.Text,
+            pattern: /[0-9]/,
+            disabled: false
+          }
         }
       ]
     };
   }
 
-  getSpecificationStepSectionsConfig(): ITMDetailTabFields {
+  getSpecificationStepSectionsConfig(
+    details: SpecificationDetailsFull,
+    isEditable: boolean,
+    isUpdatesEditable: boolean
+  ): ITMDetailTabFields {
     return {
       [eSpecificationDetailsPageMenuIds.SpecificationDetails]: {
         id: eSpecificationDetailsPageMenuIds.SpecificationDetails,
@@ -182,7 +264,8 @@ export class SpecificationDetailsService {
             active_status: true,
             SectionCode: eSpecificationDetailsPageMenuIds.SubItems,
             SectionLabel: eSpecificationDetailsPageMenuLabels.SubItems,
-            isAddNewButton: false
+            isAddNewButton: isEditable,
+            buttonLabel: eSubItemsDialog.AddText
           },
           {
             GridRowStart: 3,
@@ -190,37 +273,75 @@ export class SpecificationDetailsService {
             GridColStart: 1,
             GridColEnd: 3,
             active_status: true,
-            SectionCode: eSpecificationDetailsPageMenuIds.Requisitions,
-            SectionLabel: eSpecificationDetailsPageMenuLabels.Requisitions,
-            isAddNewButton: this.accessRights.requisitions.edit,
-            buttonLabel: 'Link Requisitions',
-            addNewButtonType: JbButtonType.NoButton
-          }
+            SectionCode: eSpecificationDetailsPageMenuIds.PMSJobs,
+            SectionLabel: eSpecificationDetailsPageMenuLabels.PMSJobs,
+            isAddNewButton: isEditable,
+            buttonLabel: 'Convert to sub item'
+          },
+          {
+            GridRowStart: 4,
+            GridRowEnd: 5,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
+            SectionCode: eSpecificationDetailsPageMenuIds.Findings,
+            SectionLabel: eSpecificationDetailsPageMenuLabels.Findings,
+            isAddNewButton: isEditable,
+            buttonLabel: 'Convert to sub item'
+          },
+          ...(this.isInExecutionPhase(details.ProjectStatusId)
+            ? [
+                {
+                  GridRowStart: 5,
+                  GridRowEnd: 6,
+                  GridColStart: 1,
+                  GridColEnd: 3,
+                  active_status: true,
+                  SectionCode: eSpecificationDetailsPageMenuIds.SpecificationUpdates,
+                  SectionLabel: eSpecificationDetailsPageMenuLabels.SpecificationUpdates,
+                  isAddNewButton: isUpdatesEditable,
+                  buttonLabel: 'Add Update'
+                }
+              ]
+            : [])
         ]
       }
     };
   }
 
-  public getProjectsManagersRequest(): WebApiRequest {
+  getProjectsManagersRequest(): WebApiRequest {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'projects/projects-managers',
-      crud: eCrud.Get,
-      entity: 'drydock'
+      crud: eCrud.Get
     };
     return apiRequest;
   }
 
+  getCostUpdates(specificationUid: string) {
+    const apiRequest: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'specification-details/sub-items/find-sub-items',
+      crud: eCrud.Post,
+      body: {
+        specificationDetailsUid: specificationUid,
+        hideTotal: true
+      },
+      odata: {
+        skip: '0',
+        top: '10000000'
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(apiRequest);
+  }
+
   getSpecificationDetails(specificationUid: string): Observable<SpecificationDetails> {
     const request: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      // entity: eEntities.DryDock,
-      // action: eAction.GetSpecificationDetails,
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/get-specification-details',
       crud: eCrud.Get,
       params: `uid=${specificationUid}`
@@ -234,8 +355,8 @@ export class SpecificationDetailsService {
    **/
   updateSpecification(data: UpdateSpecificationDetailsDto): Observable<string> {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/update-specification-details',
       crud: eCrud.Put,
       body: data
@@ -243,7 +364,7 @@ export class SpecificationDetailsService {
     return this.apiRequestService.sendApiReq(request);
   }
 
-  public getPriorityRequest() {
+  getPriorityRequest() {
     const apiRequest: WebApiRequest = {
       apiBase: eApiBase.MasterAPI,
       entity: eEntities.Library,
@@ -258,7 +379,7 @@ export class SpecificationDetailsService {
     return apiRequest;
   }
 
-  public getItemSourceRequest() {
+  getItemSourceRequest() {
     const apiRequest: WebApiRequest = {
       apiBase: eApiBase.MasterAPI,
       entity: eEntities.Library,
@@ -273,7 +394,7 @@ export class SpecificationDetailsService {
     return apiRequest;
   }
 
-  public getLibraryDataRequest(libraryCode: string) {
+  getLibraryDataRequest(libraryCode: string) {
     const apiRequest: WebApiRequest = {
       apiBase: eApiBase.MasterAPI,
       entity: eEntities.Library,
@@ -288,14 +409,12 @@ export class SpecificationDetailsService {
     return apiRequest;
   }
 
-  public getStandardJobsFiltersRequest(fieldName: eSpecificationDetailsGeneralInformationFields) {
+  getStandardJobsFiltersRequest(fieldName: eSpecificationDetailsGeneralInformationFields) {
     const apiRequest: WebApiRequest = {
-      // TODO:update jibe lib
-      // apiBase: eApiBase.DryDockAPI,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'standard-jobs/get-standard-jobs-filters',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: {
         key: fieldName
       }
@@ -305,8 +424,8 @@ export class SpecificationDetailsService {
 
   deleteSpecification(data: { uid: string }) {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/delete-specification-details',
       crud: eCrud.Put,
       body: data
@@ -316,8 +435,8 @@ export class SpecificationDetailsService {
 
   deleteSpecificationRequisition(specificationUid: string, requisitionUid: string) {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/delete-specification-requisition',
       crud: eCrud.Post,
       body: {
@@ -331,8 +450,8 @@ export class SpecificationDetailsService {
 
   createSpecificationFromStandardJob(ProjectUid: string, StandardJobUid: string[]) {
     const request: WebApiRequest = {
-      apiBase: 'dryDockAPI',
-      entity: 'drydock',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/create-specification-from-standard-job',
       crud: eCrud.Post,
       body: {
@@ -343,19 +462,78 @@ export class SpecificationDetailsService {
     return this.apiRequestService.sendApiReq(request);
   }
 
-  isStatusBeforeComplete(status: string) {
+  isInExecutionPhase(projectStatus: string) {
+    return (
+      !this.areStatusesSame(projectStatus, eProjectWorkflowStatusAction.Raise) &&
+      !this.areStatusesSame(projectStatus, eProjectWorkflowStatusAction['In Progress'])
+    );
+  }
+
+  isProjectInExecutionStatus(projectStatus: string) {
+    return this.areStatusesSame(projectStatus, eProjectWorkflowStatusAction.Complete);
+  }
+
+  isStatusBeforeComplete(status: eSpecificationWorkflowStatusAction) {
     return (
       this.areStatusesSame(status, eSpecificationWorkflowStatusAction.Raise) ||
       this.areStatusesSame(status, eSpecificationWorkflowStatusAction['In Progress'])
     );
   }
 
+  isStatusClosed(status: string) {
+    return this.areStatusesSame(status, eSpecificationWorkflowStatusAction.Close);
+  }
+
+  isStatusComplete(status: string) {
+    return this.areStatusesSame(status, eSpecificationWorkflowStatusAction.Complete);
+  }
+
   areStatusesSame(status: string, statusToCompare: string): boolean {
-    return status.toLowerCase() === statusToCompare.toLowerCase();
+    return (status ?? '').toLowerCase() === statusToCompare.toLowerCase();
   }
 
   hasAccess(action: string, module = eModule.Project, func = eFunction.SpecificationDetails) {
     return !!this.userRights.getUserRights(module, func, action);
+  }
+
+  validatePmsJobDeletion(pmsJobUid: string, specificationUid: string): Observable<boolean> {
+    const request: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'specification-details/sub-items/validate-pms-job-deletion',
+      crud: eCrud.Post,
+      body: {
+        pmsJobUid,
+        specificationUid
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(request);
+  }
+
+  validateFindingDeletion(findingUid: string, specificationUid: string): Observable<boolean> {
+    const request: WebApiRequest = {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'specification-details/sub-items/validate-finding-deletion',
+      crud: eCrud.Post,
+      body: {
+        findingUid,
+        specificationUid
+      }
+    };
+
+    return this.apiRequestService.sendApiReq(request);
+  }
+
+  getSpecificationUpdatesRequest(specificationUid: string): WebApiRequest {
+    return {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'projects/job-orders/get-updates',
+      crud: eCrud.Post,
+      body: { uid: specificationUid }
+    };
   }
 
   private setAccessRights(rights: SpecificationDetailAccessRights) {

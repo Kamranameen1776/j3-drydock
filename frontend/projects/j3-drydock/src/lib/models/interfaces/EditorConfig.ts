@@ -1,3 +1,5 @@
+import { ToolbarModule } from 'primeng';
+
 export interface EditorConfig {
   id: string;
 
@@ -9,6 +11,9 @@ export interface EditorConfig {
 
   moduleCode: string;
 
+  /**
+   * Can be found in the `dbo.INF_Lib_Function` table
+   */
   functionCode: string;
 
   inlineMode: object;
@@ -16,4 +21,6 @@ export interface EditorConfig {
   vesselId?: number;
 
   key1?: string;
+
+  tools?: ToolbarModule;
 }

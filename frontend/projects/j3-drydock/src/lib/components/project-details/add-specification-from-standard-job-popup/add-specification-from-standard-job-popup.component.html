@@ -14,8 +14,8 @@
           (nodeData)="setNodeData($event)"
           [eventsList]="eventsList"
           treeName="addFromStandardJobsTree"
+          scrollHeight="300px"
           [virtualScroll]="true"
-          scrollHeight="544px"
         ></jb-tree>
       </div>
 
@@ -47,3 +47,9 @@
     ></jb-dialog-footer>
   </ng-container>
 </jb-dialog>
+
+<jb-progress-spinner
+  class="progress-spinner"
+  *ngIf="isSaving$ | async"
+  [theme]="'figma'"
+></jb-progress-spinner>

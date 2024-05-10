@@ -1,9 +1,7 @@
 import { YardLink } from './../../../../models/interfaces/project-details';
 import { GridInputsWithData } from './../../../../models/interfaces/grid-inputs';
 import { eRfqFields, eRfqLabels } from './../../../../models/enums/rfq.enum';
-
 import { Injectable } from '@angular/core';
-import { UserService } from 'jibe-components';
 
 @Injectable({
   providedIn: 'root'
@@ -31,13 +29,6 @@ export class RfqGridService {
         {
           DisplayText: eRfqLabels.ExportedDate,
           FieldName: eRfqFields.ExportedDate,
-          IsActive: true,
-          IsMandatory: true,
-          IsVisible: true
-        },
-        {
-          DisplayText: eRfqLabels.IsSelected,
-          FieldName: eRfqFields.IsSelected,
           IsActive: true,
           IsMandatory: true,
           IsVisible: true

@@ -1,12 +1,24 @@
 import { Injectable } from '@angular/core';
-import { Column, Filter, FilterListSet, GridRowActions, WebApiRequest, eColor, eCrud, eGridRowActions, eIconNames } from 'jibe-components';
+import {
+  Column,
+  Filter,
+  FilterListSet,
+  GridRowActions,
+  WebApiRequest,
+  eColor,
+  eCrud,
+  eEntities,
+  eGridRowActions,
+  eIconNames
+} from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import {
   eSpecificationDetailsSubItemsFields,
   eSpecificationDetailsSubItemsLabels
 } from '../../models/enums/specification-details-sub-items.enum';
 import { SpecificationDetailsService } from './specification-details.service';
-import { eProjectsDetailsAccessActions, eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
+import { eSpecificationAccessActions } from '../../models/enums/access-actions.enum';
+import { eApiBaseDryDockAPI } from '../../models/constants/constants';
 
 @Injectable()
 export class SpecificationDetailsSubItemsGridService {
@@ -15,7 +27,6 @@ export class SpecificationDetailsSubItemsGridService {
   public readonly gridName: string = 'specificationSubItemGrid';
   private readonly columns: Column[] = [
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Number,
       FieldName: eSpecificationDetailsSubItemsFields.Number,
       IsActive: true,
@@ -25,7 +36,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '70px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Subject,
       FieldName: eSpecificationDetailsSubItemsFields.Subject,
       IsActive: true,
@@ -35,7 +45,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '324px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Unit,
       FieldName: eSpecificationDetailsSubItemsFields.Unit,
       IsActive: true,
@@ -45,7 +54,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '83px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Quantity,
       FieldName: eSpecificationDetailsSubItemsFields.Quantity,
       IsActive: true,
@@ -55,7 +63,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '84px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.UnitPrice,
       FieldName: eSpecificationDetailsSubItemsFields.UnitPrice,
       IsActive: true,
@@ -65,7 +72,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '130px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Discount,
       FieldName: eSpecificationDetailsSubItemsFields.Discount,
       IsActive: true,
@@ -75,7 +81,6 @@ export class SpecificationDetailsSubItemsGridService {
       width: '182px'
     },
     {
-      DisableSort: true,
       DisplayText: eSpecificationDetailsSubItemsLabels.Cost,
       FieldName: eSpecificationDetailsSubItemsFields.Cost,
       IsActive: true,
@@ -86,10 +91,10 @@ export class SpecificationDetailsSubItemsGridService {
     }
   ];
 
-  private getGridRowActions(): GridRowActions[] {
+  private getGridRowActions(enabled: boolean): GridRowActions[] {
     const res = [];
 
-    if (this.specificationDetailService.hasAccess(eSpecificationAccessActions.editSubItems)) {
+    if (this.specificationDetailService.hasAccess(eSpecificationAccessActions.editSubItems) && enabled) {
       res.push({
         name: eGridRowActions.Edit,
         label: eGridRowActions.Edit,
@@ -101,7 +106,7 @@ export class SpecificationDetailsSubItemsGridService {
         actionFalseValue: true
       });
     }
-    if (this.specificationDetailService.hasAccess(eSpecificationAccessActions.deleteSubItems)) {
+    if (this.specificationDetailService.hasAccess(eSpecificationAccessActions.deleteSubItems) && enabled) {
       res.push({
         name: eGridRowActions.Delete,
         label: eGridRowActions.Delete,
@@ -122,22 +127,21 @@ export class SpecificationDetailsSubItemsGridService {
 
   public getApiRequest(specificationUid): WebApiRequest {
     return {
-      // apiBase: eApiBase.DryDockApi,
-      apiBase: 'dryDockAPI',
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
       action: 'specification-details/sub-items/find-sub-items',
       crud: eCrud.Post,
-      entity: 'drydock',
       body: {
         specificationDetailsUid: specificationUid
       }
     };
   }
 
-  getGridData(specificationUid): GridInputsWithRequest {
+  getGridData(specificationUid, enabled: boolean): GridInputsWithRequest {
     return {
       columns: this.columns,
       gridName: this.gridName,
-      actions: this.getGridRowActions(),
+      actions: this.getGridRowActions(enabled),
       filters: this.filters,
       filtersLists: this.filtersLists,
       request: this.getApiRequest(specificationUid),

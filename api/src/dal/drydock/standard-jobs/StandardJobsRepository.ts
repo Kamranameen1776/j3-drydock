@@ -26,11 +26,18 @@ import { FiltersDataResponse, RequestWithOData } from '../../../shared/interface
 import { RepoUtils } from '../utils/RepoUtils';
 
 export class StandardJobsRepository {
-    private standardJobsService = new StandardJobsService();
+    protected readonly startingNumber: number = 10000;
+    protected readonly codePrefix: string = 'SJ';
+    protected readonly standardJobsService = new StandardJobsService();
 
     public async getStandardJobs(
         data: RequestWithOData,
         filters: Record<StandardJobsGridFiltersKeys, string[]>,
+        additionalFilters:
+            | {
+                  uidsNin?: string[];
+              }
+            | undefined,
     ): Promise<GetStandardJobsQueryResult> {
         const oDataService = new ODataService(data, getConnection);
         const innerQuery = getManager()
@@ -53,7 +60,6 @@ export class StandardJobsRepository {
                     'sj."function" as "function",' +
                     'sj."function_uid" as "functionUid",' +
                     'sj.code as code,' +
-                    'sj.category_uid as categoryUid,' +
                     'sj.done_by_uid as doneByUid,' +
                     'db.displayName as doneBy,' +
                     'sj.vessel_type_specific as vesselTypeSpecific,' +
@@ -133,20 +139,35 @@ export class StandardJobsRepository {
             innerQuery.andWhere(`vt.ID IN (:...vesselTypeId)`, { vesselTypeId: filters.vesselTypeId });
         }
 
+        if (additionalFilters?.uidsNin?.length) {
+            innerQuery.andWhere(`sj.uid NOT IN (:...uidsNin)`, { uidsNin: additionalFilters.uidsNin });
+        }
+
         innerQuery.getSql();
 
         const [sql, params] = innerQuery.getQueryAndParameters();
         return oDataService.getJoinResult(sql, params);
     }
 
-    public async getStandardJobRunningNumber(functionUid: string): Promise<number | undefined> {
+    private async getNextStandardJobNumber(): Promise<number> {
+        // we consider inactive records too
         const result = await getManager()
             .createQueryBuilder(StandardJobs, 'sj')
-            .select('MAX(sj.number)', 'maxNumber')
-            .where('sj.active_status = :activeStatus', { activeStatus: 1 })
-            .andWhere('sj.function_uid = :function', { function: functionUid })
-            .getRawOne();
-        return result.maxNumber;
+            .select('max(sj.number) as maxNumber')
+            .getRawOne<{ readonly maxNumber?: number }>();
+
+        if (result.maxNumber == null) {
+            return this.startingNumber;
+        }
+
+        return result.maxNumber + 1;
+    }
+
+    protected async getNextStandardJobNumberAndCode(): Promise<Pick<StandardJobs, 'number' | 'code'>> {
+        const number = await this.getNextStandardJobNumber();
+        const code = `${this.codePrefix}-${number}`;
+
+        return { number, code };
     }
 
     public async createStandardJob(
@@ -154,9 +175,14 @@ export class StandardJobsRepository {
         createdBy: string,
         queryRunner: QueryRunner,
     ): Promise<StandardJobs> {
+        const { number, code } = await this.getNextStandardJobNumberAndCode();
+
+        data.number = number;
+        data.code = code;
+
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         standardJob.created_by = createdBy;
-        standardJob.uid = new DataUtilService().newUid();
+        standardJob.uid = data.uid ?? new DataUtilService().newUid();
 
         const entity: StandardJobs = queryRunner.manager.create(StandardJobs, standardJob);
 
@@ -171,7 +197,7 @@ export class StandardJobsRepository {
         data: UpdateStandardJobSubItemsRequestDto,
         userUid: string,
         queryRunner: QueryRunner,
-    ): Promise<void> {
+    ): Promise<boolean> {
         const standardJobUid = data.uid;
 
         const standardJob = await queryRunner.manager.findOne(StandardJobs, {
@@ -198,6 +224,7 @@ export class StandardJobsRepository {
                 deleteData,
             );
         }
+        return true;
     }
 
     public async updateStandardJob(
@@ -210,8 +237,11 @@ export class StandardJobsRepository {
         const standardJob = this.standardJobsService.mapStandardJobsDtoToEntity(data);
         const updateStandardJobData = this.standardJobsService.addUpdateStandardJobsFields(standardJob, updatedBy);
 
+        delete standardJob.number;
+        delete standardJob.code;
+
         const entity: StandardJobs = queryRunner.manager.create(StandardJobs, updateStandardJobData);
-        entity.uid = uid;
+        entity.uid = uid as string;
 
         const result = await queryRunner.manager.save(StandardJobs, entity);
 
@@ -264,18 +294,17 @@ export class StandardJobsRepository {
     }
 
     public getStandardJobSubItems(uids: string[]): Promise<StandardJobsSubItems[]> {
-        const uidString = uids.map((uid) => `'${uid}'`).join(',');
         return getManager()
             .createQueryBuilder(StandardJobsSubItems, 'sub_items')
-            .select(
-                'sub_items.uid as uid,' +
-                    'CONCAT(sub_items.code, sub_items.number) as code,' +
-                    'sub_items.subject as subject,' +
-                    'sub_items.description as description,' +
-                    'sub_items.standard_job_uid as standardJobUid',
-            )
+            .select([
+                'sub_items.uid as uid',
+                'sub_items.number as code',
+                'sub_items.subject as subject',
+                'sub_items.description as description',
+                'sub_items.standard_job_uid as standardJobUid',
+            ])
             .where('sub_items.active_status = 1')
-            .andWhere(`sub_items.standard_job_uid IN (${uidString})`)
+            .andWhere(`sub_items.standard_job_uid IN (:...uids)`, { uids })
             .getRawMany();
     }
 
@@ -344,5 +373,21 @@ export class StandardJobsRepository {
                 await queryRunner.manager.save(StandardJobsVesselTypeEntity, vesselTypes);
             }
         }
+    }
+
+    public async exists(standardJobUid: string | string[]): Promise<string[]> {
+        const repository = getManager().getRepository(StandardJobs);
+
+        let query = repository.createQueryBuilder('sj').select('sj.uid');
+
+        if (Array.isArray(standardJobUid)) {
+            query = query.where('sj.uid IN (:...standardJobUid)', { standardJobUid: standardJobUid });
+        } else {
+            query = query.where('sj.uid = :standardJobUid', { standardJobUid: standardJobUid });
+        }
+
+        query = query.andWhere('sj.active_status = 1').groupBy('sj.uid');
+
+        return query.execute();
     }
 }

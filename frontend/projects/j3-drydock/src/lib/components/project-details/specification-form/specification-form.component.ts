@@ -1,10 +1,10 @@
-/* eslint-disable no-console */
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormModel, FormValues } from 'jibe-components';
 import { SpecificationCreateFormService } from './specification-create-form-service';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { takeUntil } from 'rxjs/operators';
+import { EditorConfig } from '../../../models/interfaces/EditorConfig';
 
 @Component({
   selector: 'jb-specification-form',
@@ -13,6 +13,8 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class SpecificationFormComponent extends UnsubscribeComponent implements OnInit {
   @Input() formStructure: FormModel;
+  @Input() projectId: string;
+  @Input() vesselId: string;
 
   @ViewChild('treeTemplate', { static: true }) treeTemplate: TemplateRef<unknown>;
 
@@ -26,18 +28,32 @@ export class SpecificationFormComponent extends UnsubscribeComponent implements 
 
   functionsFlatTree$ = this.popupFormService.functionsFlatTree$;
 
+  editorsFormGroup: FormGroup = new FormGroup({
+    description: new FormControl('', Validators.required)
+  });
+
+  descriptionEditorConfig: EditorConfig;
+
   constructor(private popupFormService: SpecificationCreateFormService) {
     super();
   }
 
   ngOnInit(): void {
     this.setFunctionConfig();
+
+    this.descriptionEditorConfig = this.popupFormService.getDescriptionEditorConfig();
   }
 
   dispatchForm(event: FormGroup) {
     this.formGroup = event;
 
     this.listenFormValid();
+
+    this.setEditorsForm();
+  }
+
+  updateEditorCtrlValue(event) {
+    this.editorsFormGroup.get('description').setValue(event.value);
   }
 
   private listenFormValid() {
@@ -54,5 +70,9 @@ export class SpecificationFormComponent extends UnsubscribeComponent implements 
       return;
     }
     field.inputWithDlgConfig.dlgTemplate = this.treeTemplate;
+  }
+
+  private setEditorsForm() {
+    this.formGroup.addControl(this.popupFormService.editors, this.editorsFormGroup);
   }
 }

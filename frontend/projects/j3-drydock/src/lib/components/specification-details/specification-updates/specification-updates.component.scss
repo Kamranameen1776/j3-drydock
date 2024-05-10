@@ -1,0 +1,13 @@
+@import '../../../styles/mixins';
+
+:host {
+  ::ng-deep {
+    @include progress-spinner-fix;
+
+    .host-grid-container,
+    jb-grid {
+      max-height: 422px;
+      display: block;
+    }
+  }
+}

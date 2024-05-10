@@ -1,14 +1,14 @@
 import { cloneDeep } from 'lodash';
 import { Injectable } from '@angular/core';
 import { ITopSectionFieldSet, JbButtonType, UserRightsService } from 'jibe-components';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ProjectsService } from '../../services/ProjectsService';
 import { ProjectDetails, ProjectDetailsFull } from '../../models/interfaces/project-details';
 
 import {
   eProjectDetailsSideMenuId,
   eProjectDetailsSideMenuLabel,
-  eProjectWorklowStatusAction
+  eProjectWorkflowStatusAction
 } from '../../models/enums/project-details.enum';
 import { ITMDetailTabFields } from 'j3-task-manager-ng';
 import { AttachmentsAccessRight, BaseAccessRight } from '../../models/interfaces/access-rights';
@@ -17,9 +17,14 @@ import { eFunction } from '../../models/enums/function.enum';
 import { eProjectsDetailsAccessActions, eProjectsAccessActions } from '../../models/enums/access-actions.enum';
 import { currentLocalAsUTC, localDateJbStringAsUTC } from '../../utils/date';
 import { ProjectEdit } from '../../models/interfaces/projects';
+import { saveAs } from 'file-saver';
+import { concatMap } from 'rxjs/operators';
 
 export interface ProjectDetailsAccessRights extends BaseAccessRight {
   attachments: AttachmentsAccessRight;
+  specificationDetails: {
+    view: boolean;
+  };
 }
 
 export const DEFAULT_PROJECT_DETAILS_ACCESS_RIGHTS: ProjectDetailsAccessRights = {
@@ -31,6 +36,9 @@ export const DEFAULT_PROJECT_DETAILS_ACCESS_RIGHTS: ProjectDetailsAccessRights =
     edit: false,
     delete: false,
     add: false
+  },
+  specificationDetails: {
+    view: false
   }
 };
 
@@ -57,9 +65,7 @@ export class ProjectDetailsService {
       this.hasAccess(eProjectsDetailsAccessActions.editHeader) || this.hasAccess(eProjectsDetailsAccessActions.editHeaderVessel);
     const canDelete = this.hasAccess(eProjectsAccessActions.deleteProject);
     const canViewAttachments =
-      isEditableStatus &&
-      (this.hasAccess(eProjectsDetailsAccessActions.viewAttachments) ||
-        this.hasAccess(eProjectsDetailsAccessActions.viewAttachmentsVessel));
+      this.hasAccess(eProjectsDetailsAccessActions.viewAttachments) || this.hasAccess(eProjectsDetailsAccessActions.viewAttachmentsVessel);
     const canEditAttachments =
       isEditableStatus &&
       (this.hasAccess(eProjectsDetailsAccessActions.editAttachments) ||
@@ -81,6 +87,9 @@ export class ProjectDetailsService {
         edit: canEditAttachments,
         delete: canDeleteAttachments,
         add: canAddAttachments
+      },
+      specificationDetails: {
+        view: this.hasAccess(eProjectsAccessActions.viewTechSpec)
       }
     });
 
@@ -127,7 +136,7 @@ export class ProjectDetailsService {
         {
           id: 'StartDate',
           label: 'Start Date',
-          isRequired: true,
+          isRequired: false,
           isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'StartDate',
@@ -137,13 +146,14 @@ export class ProjectDetailsService {
             id: 'StartDate',
             type: 'date',
             placeholder: 'Select',
-            calendarWithInputIcon: true
+            calendarWithInputIcon: true,
+            calendarMax: details.EndDate
           }
         },
         {
           id: 'EndDate',
           label: 'End Date',
-          isRequired: true,
+          isRequired: false,
           isEditable: this.accessRights.edit && this.isStatusBeforeComplete(details.ProjectStatusId),
           type: 'date',
           getFieldName: 'EndDate',
@@ -153,7 +163,8 @@ export class ProjectDetailsService {
             id: 'EndDate',
             type: 'date',
             placeholder: 'Select',
-            calendarWithInputIcon: true
+            calendarWithInputIcon: true,
+            calendarMin: details.StartDate
           }
         },
         {
@@ -177,35 +188,29 @@ export class ProjectDetailsService {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getSectionsConfig(status: string) {
-    // TODO return sections config depending on status
-    return this.getSpecificationStepSectionsConfig();
-  }
-
-  getSpecificationStepSectionsConfig(): ITMDetailTabFields {
+  getSectionsConfig(): ITMDetailTabFields {
     return {
-      [eProjectDetailsSideMenuId.General]: {
-        id: eProjectDetailsSideMenuId.General,
-        menuDisplayName: eProjectDetailsSideMenuLabel.General,
-        menuIcon: '',
-        showDiscussion: true,
-        isClosedDiscussion: true,
-        activeStatus: true,
-        index: 1,
-        sections: [
-          {
-            GridRowStart: 1,
-            GridRowEnd: 2,
-            GridColStart: 1,
-            GridColEnd: 3,
-            active_status: true,
-            SectionCode: 'tasks',
-            SectionLabel: 'Tasks',
-            isAddNewButton: false
-          }
-        ]
-      },
+      // [eProjectDetailsSideMenuId.General]: {
+      //   id: eProjectDetailsSideMenuId.General,
+      //   menuDisplayName: eProjectDetailsSideMenuLabel.General,
+      //   menuIcon: '',
+      //   showDiscussion: true,
+      //   isClosedDiscussion: true,
+      //   activeStatus: true,
+      //   index: 1,
+      //   sections: [
+      //     {
+      //       GridRowStart: 1,
+      //       GridRowEnd: 2,
+      //       GridColStart: 1,
+      //       GridColEnd: 3,
+      //       active_status: true,
+      //       SectionCode: 'tasks',
+      //       SectionLabel: 'Tasks',
+      //       isAddNewButton: false
+      //     }
+      //   ]
+      // },
       [eProjectDetailsSideMenuId.Specifications]: {
         id: eProjectDetailsSideMenuId.Specifications,
         menuDisplayName: eProjectDetailsSideMenuLabel.Specifications,
@@ -215,7 +220,7 @@ export class ProjectDetailsService {
         activeStatus: true,
         index: 2,
         sections: [
-          ...(this.hasAccess(eProjectsAccessActions.viewTechSpec)
+          ...(this.accessRights.specificationDetails.view
             ? [
                 {
                   GridRowStart: 1,
@@ -244,40 +249,40 @@ export class ProjectDetailsService {
           }
         ]
       },
-      [eProjectDetailsSideMenuId.YardSelection]: {
-        id: eProjectDetailsSideMenuId.YardSelection,
-        menuDisplayName: eProjectDetailsSideMenuLabel.YardSelection,
-        menuIcon: '',
-        showDiscussion: true,
-        isClosedDiscussion: true,
-        activeStatus: true,
-        index: 3,
-        sections: [
-          {
-            GridRowStart: 1,
-            GridRowEnd: 2,
-            GridColStart: 1,
-            GridColEnd: 3,
-            active_status: true,
-            SectionCode: eProjectDetailsSideMenuId.RFQ,
-            SectionLabel: eProjectDetailsSideMenuLabel.RFQ,
-            IconClass: 'icons8-more-details-2',
-            isAddNewButton: true,
-            buttonLabel: 'Link Yard',
-            addNewButtonType: JbButtonType.NoButton
-          },
-          {
-            GridRowStart: 2,
-            GridRowEnd: 3,
-            GridColStart: 1,
-            GridColEnd: 3,
-            active_status: true,
-            SectionCode: eProjectDetailsSideMenuId.Comparison,
-            SectionLabel: eProjectDetailsSideMenuLabel.Comparison,
-            isAddNewButton: false
-          }
-        ]
-      },
+      // [eProjectDetailsSideMenuId.YardSelection]: {
+      //   id: eProjectDetailsSideMenuId.YardSelection,
+      //   menuDisplayName: eProjectDetailsSideMenuLabel.YardSelection,
+      //   menuIcon: '',
+      //   showDiscussion: true,
+      //   isClosedDiscussion: true,
+      //   activeStatus: true,
+      //   index: 3,
+      //   sections: [
+      //     {
+      //       GridRowStart: 1,
+      //       GridRowEnd: 2,
+      //       GridColStart: 1,
+      //       GridColEnd: 3,
+      //       active_status: true,
+      //       SectionCode: eProjectDetailsSideMenuId.RFQ,
+      //       SectionLabel: eProjectDetailsSideMenuLabel.RFQ,
+      //       IconClass: 'icons8-more-details-2',
+      //       isAddNewButton: true,
+      //       buttonLabel: 'Link Yard',
+      //       addNewButtonType: JbButtonType.NoButton
+      //     }
+      //     // {
+      //     //   GridRowStart: 2,
+      //     //   GridRowEnd: 3,
+      //     //   GridColStart: 1,
+      //     //   GridColEnd: 3,
+      //     //   active_status: true,
+      //     //   SectionCode: eProjectDetailsSideMenuId.Comparison,
+      //     //   SectionLabel: eProjectDetailsSideMenuLabel.Comparison,
+      //     //   isAddNewButton: false
+      //     // }
+      //   ]
+      // },
       [eProjectDetailsSideMenuId.ProjectMonitoring]: {
         id: eProjectDetailsSideMenuId.ProjectMonitoring,
         menuDisplayName: eProjectDetailsSideMenuLabel.ProjectMonitoring,
@@ -304,12 +309,10 @@ export class ProjectDetailsService {
             GridColStart: 1,
             GridColEnd: 3,
             active_status: true,
-            SectionCode: eProjectDetailsSideMenuId.StatementOfFacts,
-            SectionLabel: eProjectDetailsSideMenuLabel.StatementOfFacts,
+            SectionCode: eProjectDetailsSideMenuId.CostUpdates,
+            SectionLabel: eProjectDetailsSideMenuLabel.CostUpdates,
             IconClass: 'icons8-more-details-2',
-            isAddNewButton: true,
-            buttonLabel: 'Add Fact',
-            addNewButtonType: JbButtonType.NoButton
+            isAddNewButton: false
           },
           {
             GridRowStart: 3,
@@ -317,10 +320,12 @@ export class ProjectDetailsService {
             GridColStart: 1,
             GridColEnd: 3,
             active_status: true,
-            SectionCode: eProjectDetailsSideMenuId.JobOrders,
-            SectionLabel: eProjectDetailsSideMenuLabel.JobOrders,
+            SectionCode: eProjectDetailsSideMenuId.StatementOfFacts,
+            SectionLabel: eProjectDetailsSideMenuLabel.StatementOfFacts,
             IconClass: 'icons8-more-details-2',
-            isAddNewButton: false
+            isAddNewButton: true,
+            buttonLabel: 'Add Fact',
+            addNewButtonType: JbButtonType.NoButton
           }
         ]
       },
@@ -342,7 +347,8 @@ export class ProjectDetailsService {
             SectionCode: eProjectDetailsSideMenuId.DailyReports,
             SectionLabel: eProjectDetailsSideMenuLabel.DailyReports,
             IconClass: 'icons8-more-details-2',
-            isAddNewButton: false
+            buttonLabel: 'Add New',
+            isAddNewButton: true
           }
         ]
       }
@@ -363,10 +369,14 @@ export class ProjectDetailsService {
     return this.projectsService.updateProject(data);
   }
 
+  saveCostUpdates(payload) {
+    return this.projectsService.updateCosts(payload);
+  }
+
   isStatusBeforeComplete(status: string) {
     return (
-      this.areStatusesSame(status, eProjectWorklowStatusAction.Raise) ||
-      this.areStatusesSame(status, eProjectWorklowStatusAction['In Progress'])
+      this.areStatusesSame(status, eProjectWorkflowStatusAction.Raise) ||
+      this.areStatusesSame(status, eProjectWorkflowStatusAction['In Progress'])
     );
   }
 
@@ -376,6 +386,15 @@ export class ProjectDetailsService {
 
   hasAccess(action: string, module = eModule.Project, func = eFunction.DryDock) {
     return !!this.userRights.getUserRights(module, func, action);
+  }
+
+  exportExcel(projectId: string, yardId: string, fileName: string) {
+    return this.projectsService.exportExcel(projectId, yardId).pipe(
+      concatMap((data) => {
+        saveAs(data, fileName);
+        return of(data);
+      })
+    );
   }
 
   private setAccessRights(rights: ProjectDetailsAccessRights) {

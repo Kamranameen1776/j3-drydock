@@ -1,7 +1,30 @@
 .ui-dialog-content,
 .grid-container {
-  overflow: hidden;
-  flex-grow: 1;
-  height: 60vh;
-  white-space: nowrap;
+    overflow: hidden;
+    flex-grow: 1;
+    white-space: nowrap;
+}
+
+:host {
+    ::ng-deep {
+        .host-grid-container,
+        jb-grid {
+            max-height: 422px;
+            display: block;
+        }
+
+        .not-editable {
+            .ui-table-tbody {
+                pointer-events: none;
+            }
+        }
+
+        .specification-sub-items-grid {
+            .ui-table-scrollable-body {
+                tr.no-actions {
+                    pointer-events: none !important;
+                }
+            }
+        }
+    }
 }

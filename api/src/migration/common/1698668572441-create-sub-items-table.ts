@@ -1,5 +1,6 @@
 import { MigrationUtilsService } from 'j2utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { errorLikeToString } from '../../common/drydock/ts-helpers/error-like-to-string';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class createSubItemsTable1698668572441 implements MigrationInterface {
@@ -43,7 +44,7 @@ export class createSubItemsTable1698668572441 implements MigrationInterface {
         } catch (error) {
             await MigrationUtilsService.migrationLog(
                 'createSubItemsTable1698668572441',
-                JSON.stringify(error),
+                errorLikeToString(error),
                 'E',
                 'dry_dock',
                 'Create standard jobs sub items table',

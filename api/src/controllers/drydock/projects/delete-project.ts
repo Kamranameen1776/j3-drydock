@@ -1,16 +1,22 @@
-import { Request, Response } from 'express';
+import { Request } from 'express';
+import { Body, Controller, Post, Route } from 'tsoa';
 
 import { DeleteProjectCommand } from '../../../application-layer/drydock/projects';
+import { IDeleteProjectDto } from '../../../application-layer/drydock/projects/dtos/IDeleteProjectDto';
 import { MiddlewareHandler } from '../core/middleware/MiddlewareHandler';
 
-async function deleteProject(req: Request, res: Response) {
-    const middlewareHandler = new MiddlewareHandler();
+@Route('drydock/projects/delete-project')
+export class DeleteProjectController extends Controller {
+    @Post()
+    public async deleteProject(@Body() dto: IDeleteProjectDto): Promise<void> {
+        const query = new DeleteProjectCommand();
 
-    await middlewareHandler.ExecuteAsync(req, res, async (request: Request) => {
-        const command = new DeleteProjectCommand();
+        const result = await query.ExecuteAsync(dto);
 
-        return command.ExecuteAsync(request.body);
-    });
+        return result;
+    }
 }
 
-exports.post = deleteProject;
+exports.post = new MiddlewareHandler().ExecuteHandlerAsync(async (request: Request) => {
+    return new DeleteProjectController().deleteProject(request.body as IDeleteProjectDto);
+});
