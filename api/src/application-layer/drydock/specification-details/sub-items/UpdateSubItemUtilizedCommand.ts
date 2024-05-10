@@ -23,10 +23,6 @@ export class UpdateSubItemUtilizedCommand extends Command<UpdateSubItemUtilizedD
     }
 
     protected async MainHandlerAsync(request: UpdateSubItemUtilizedDto): Promise<void> {
-        if (await this.specificationDetailsRepository.isSpecificationIsCompleted(request.specificationDetailsUid)) {
-            throw new ApplicationException('Specification is completed, cannot be updated');
-        }
-
         return this.uow.ExecuteAsync(async (queryRunner) => {
             const vessel = await this.vesselsRepository.GetVesselBySpecification(
                 request.specificationDetailsUid,

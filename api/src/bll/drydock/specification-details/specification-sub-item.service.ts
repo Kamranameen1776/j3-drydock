@@ -72,15 +72,14 @@ export class SpecificationSubItemService {
             const rowSubItems: FoldableGridData<SpecificationCostUpdateDto>[] = [];
 
             for (const subItem of subItems) {
-                const estimatedCost = new Decimal(subItem.estimatedCost ?? 0);
                 const subItemUtilized = new Decimal(subItem.subItemUtilized ?? 0);
                 const subItemCost = new Decimal(subItem.subItemCost ?? 0);
 
-                totalEstimated = totalEstimated.add(estimatedCost);
+                totalEstimated = totalEstimated.add(subItemCost);
                 totalUtilized = totalUtilized.add(subItemUtilized);
                 totalCost = totalCost.add(subItemCost);
 
-                specificationEstimatedCost = specificationEstimatedCost.add(estimatedCost);
+                specificationEstimatedCost = specificationEstimatedCost.add(subItemCost);
                 specificationUtilizedCost = specificationUtilizedCost.add(subItemUtilized);
                 specificationTotalCost = specificationTotalCost.add(subItemCost);
 
@@ -90,7 +89,7 @@ export class SpecificationSubItemService {
                     specificationUid: specificationKey,
                     subItemUid: subItem.subItemUid,
                     subItemSubject: subItem.subItemSubject,
-                    estimatedCost: new Decimal(estimatedCost).toFixed(2),
+                    estimatedCost: new Decimal(subItemCost).toFixed(2),
                     utilizedCost: new Decimal(subItemUtilized).toFixed(2),
                     variance: this.mapCostUpdateVariance(variance),
                     rowCssClass: 'child-row',
