@@ -15,7 +15,7 @@ export class UpdateStandardJobsCommand extends Command<UpdateStandardJobsRequest
         this.uow = new UnitOfWork();
     }
 
-    protected async MainHandlerAsync(request: UpdateStandardJobsRequestDto) {
+    public async MainHandlerAsync(request: UpdateStandardJobsRequestDto) {
         return this.uow.ExecuteAsync(async (queryRunner) => {
             return this.standardJobsRepository.updateStandardJob(request, request.UserId, queryRunner);
         });

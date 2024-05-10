@@ -22,7 +22,8 @@ import {
   eGridRefreshType,
   eJMSActionTypes,
   eJMSSectionNames,
-  JiBeTheme
+  JiBeTheme,
+  gridShareDataServiceProvider
 } from 'jibe-components';
 import { UnsubscribeComponent } from '../../shared/classes/unsubscribe.base';
 import { concatMap, filter, map, takeUntil, finalize } from 'rxjs/operators';
@@ -47,7 +48,7 @@ import { SpecificationUpdatesComponent } from './specification-updates/specifica
   selector: 'jb-specification-details',
   templateUrl: './specification-details.component.html',
   styleUrls: ['./specification-details.component.scss'],
-  providers: [JbDatePipe, GrowlMessageService]
+  providers: [JbDatePipe, GrowlMessageService, gridShareDataServiceProvider(true)]
 })
 export class SpecificationDetailsComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @ViewChild('specificationUpdatesComponent') specificationUpdatesComponent: SpecificationUpdatesComponent;

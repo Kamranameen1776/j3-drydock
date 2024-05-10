@@ -52,3 +52,11 @@ export function localToUTC(date: Date): Date {
   const userTimezoneOffset = date.getTimezoneOffset() * 60000;
   return new Date(date.getTime() - userTimezoneOffset);
 }
+
+export function startOfCurrentDay(date: Date): Date {
+  return new Date(date.setHours(0, 0, 0, 0));
+}
+
+export function endOfCurrentDay(date: Date): Date {
+  return new Date(date.setHours(23, 59, 59, 0));
+}

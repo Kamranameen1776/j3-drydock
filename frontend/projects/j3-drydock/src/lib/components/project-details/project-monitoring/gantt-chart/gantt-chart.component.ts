@@ -22,7 +22,7 @@ import {
 } from '../../../../shared/status-css.json';
 
 import { Filter, IJbDialog, JmsService, UserService, eFieldControlType, eJMSWorkflowAction } from 'jibe-components';
-import { UTCAsLocal, currentLocalAsUTC, localToUTC } from '../../../../utils/date';
+import { startOfCurrentDay, UTCAsLocal, currentLocalAsUTC, localToUTC, endOfCurrentDay } from '../../../../utils/date';
 import { JobOrdersService } from '../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { GrowlMessageService } from '../../../../services/growl-message.service';
 import { IUpdateJobOrderDto } from '../../../../services/project-monitoring/job-orders/IUpdateJobOrderDto';
@@ -277,16 +277,22 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
     ];
 
     if (project?.StartDate) {
+      const startDate = new Date(project.StartDate);
+      const startOfTheCurrentDay = startOfCurrentDay(startDate);
+
       eventMarkers.push({
-        day: moment(project.StartDate).startOf('day').toDate(),
+        day: startOfTheCurrentDay,
         label: '',
         cssClass: 'overdue-line'
       });
     }
 
     if (project?.EndDate) {
+      const endDate = new Date(project.EndDate);
+      const endOfCurrentDayMinusHour = new Date(endDate.setHours(23, 0, 0, 0));
+
       eventMarkers.push({
-        day: moment(project.EndDate).endOf('day').toDate(),
+        day: endOfCurrentDayMinusHour,
         label: '',
         cssClass: 'overdue-line'
       });
@@ -327,8 +333,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       newProgress = event.editingFields.progress;
     }
 
-    const newStartDate = event.editingFields.startDate;
-    const newEndDate = event.editingFields.endDate;
+    let newStartDate = event.editingFields.startDate;
+    let newEndDate = event.editingFields.endDate;
 
     if (
       oldProgress === newProgress &&
@@ -336,6 +342,14 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       oldEndDate?.getTime() === newEndDate.getTime()
     ) {
       return;
+    }
+
+    if (oldStartDate?.getTime() !== newStartDate.getTime()) {
+      newStartDate = startOfCurrentDay(newStartDate);
+    }
+
+    if (oldEndDate?.getTime() !== newEndDate.getTime()) {
+      newEndDate = endOfCurrentDay(newEndDate);
     }
 
     this.showSpinner = true;
@@ -387,8 +401,8 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       LastUpdated: currentLocalAsUTC(),
       Progress: jobOrder.Progress,
 
-      SpecificationStartDate: localToUTC(jobOrder.SpecificationStartDate),
-      SpecificationEndDate: localToUTC(jobOrder.SpecificationEndDate),
+      SpecificationStartDate: jobOrder.SpecificationStartDate,
+      SpecificationEndDate: jobOrder.SpecificationEndDate,
 
       Status: jobOrder.Status,
       Subject: jobOrder.Subject,
@@ -510,8 +524,9 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       .pipe(
         map((data) =>
           data.records.map((jobOrder) => {
-            const specificationStartDate = UTCAsLocal(jobOrder.SpecificationStartDate);
-            const specificationEndDate = UTCAsLocal(jobOrder.SpecificationEndDate);
+            const specificationStartDate = startOfCurrentDay(UTCAsLocal(jobOrder.SpecificationStartDate));
+            const specificationEndDate = endOfCurrentDay(UTCAsLocal(jobOrder.SpecificationEndDate));
+
             const obj = {
               ...jobOrder,
               JobOrderUid: jobOrder.JobOrderUid,
@@ -528,7 +543,7 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
               SpecificationStartDate: specificationStartDate,
               SpecificationEndDate: specificationEndDate,
 
-              DurationInDays: this.calculateCountOfDays(specificationStartDate, specificationEndDate),
+              DurationInDays: this.calculateCountOfWholeDays(specificationStartDate, specificationEndDate),
 
               Progress: jobOrder.Progress || 0,
               SpecificationStatus: {
@@ -553,13 +568,13 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
       });
   }
 
-  private calculateCountOfDays(startDate: Date, endDate: Date): number {
+  private calculateCountOfWholeDays(startDate: Date, endDate: Date): number {
     const msInOneDay = 1000 * 60 * 60 * 24;
 
     if (!startDate || !endDate) {
       return 0;
     }
 
-    return Math.abs(Math.ceil((endDate.getTime() - startDate.getTime()) / msInOneDay));
+    return 1 + Math.abs(Math.ceil((endDate.getTime() - startDate.getTime()) / msInOneDay));
   }
 }
