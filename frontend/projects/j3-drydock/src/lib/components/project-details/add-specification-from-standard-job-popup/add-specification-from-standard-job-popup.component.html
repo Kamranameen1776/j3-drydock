@@ -48,6 +48,19 @@
   </ng-container>
 </jb-dialog>
 
+<ng-template
+  #codeTemplate
+  let-rowData
+>
+  <span
+    class="standardJob-code jb_grid_topCellValue"
+    (click)="onCodeClick(rowData)"
+  >
+    <i class="icons8-document-4"></i>
+    <span>{{ rowData.code }}</span>
+  </span>
+</ng-template>
+
 <jb-progress-spinner
   class="progress-spinner"
   *ngIf="isSaving$ | async"
