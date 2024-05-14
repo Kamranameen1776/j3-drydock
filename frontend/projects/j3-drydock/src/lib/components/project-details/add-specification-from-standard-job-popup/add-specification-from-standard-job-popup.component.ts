@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { getSmallPopup } from '../../../models/constants/popup';
 import { eGridRefreshType, eJbTreeEvents, GridService, IJbDialog } from 'jibe-components';
 import { SpecificationFormComponent } from '../specification-form/specification-form.component';
@@ -12,6 +12,7 @@ import { StandardJobResult } from '../../../models/interfaces/standard-jobs';
 import { finalize } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { GrowlMessageService } from '../../../services/growl-message.service';
+import { eStandardJobsMainFields } from '../../../models/enums/standard-jobs-main.enum';
 
 export enum eAddSpecificationFromStandardJobPopupType {
   Specification = 'Specification',
@@ -35,6 +36,8 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
   @Output() closeDialog = new EventEmitter<StandardJobResult[]>();
 
   @ViewChild(SpecificationFormComponent) popupForm: SpecificationFormComponent;
+
+  @ViewChild('codeTemplate', { static: true }) codeTemplate: TemplateRef<unknown>;
 
   readonly popupConfig: IJbDialog = { ...getSmallPopup(), dialogWidth: 1000, dialogHeader: 'Standard Jobs' };
 
@@ -60,6 +63,8 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
 
   ngOnInit() {
     this.gridData = this.getData();
+
+    this.setCellTemplate(this.gridData, this.codeTemplate, eStandardJobsMainFields.Code);
   }
 
   onCancel() {
@@ -130,5 +135,28 @@ export class AddSpecificationFromStandardJobPopupComponent extends UnsubscribeCo
         })
       )
       .subscribe(() => this.closePopup());
+  }
+
+  private onCodeClick(standardJob) {
+    debugger;
+
+    // TODO: navigate to standard job details page : https://dev.azure.com/jibe-erp/JiBe/_workitems/edit/799222
+    // What exact page should be navigated to?
+    //
+    // this.navigateToDetails(standardJob.uid, ...);
+  }
+
+  private setCellTemplate(gridData: GridInputsWithRequest, template: TemplateRef<unknown>, fieldName: string) {
+    if (!gridData || !gridData.columns || !template || !fieldName) {
+      return;
+    }
+
+    const col = gridData.columns.find((col) => col.FieldName === fieldName);
+
+    if (!col) {
+      return;
+    }
+
+    col.cellTemplate = template;
   }
 }

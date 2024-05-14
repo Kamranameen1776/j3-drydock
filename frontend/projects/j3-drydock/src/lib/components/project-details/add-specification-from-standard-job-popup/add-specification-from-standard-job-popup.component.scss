@@ -4,6 +4,13 @@
     ::ng-deep {
       @include progress-spinner-fix;
     }
+
+    .standardJob-code {
+      @include grid-cell-link;
+
+      display: inline-flex;
+      gap: 6px;
+    }
 }
 
 .dialog-body {
