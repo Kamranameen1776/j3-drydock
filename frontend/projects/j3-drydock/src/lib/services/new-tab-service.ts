@@ -14,15 +14,15 @@ export class NewTabService {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public navigate(commands: any[], extras?: NavigationExtras, title?: string): boolean {
+  public navigate(commands: any[], extras?: NavigationExtras, title?: string, target = '_blank'): boolean {
     if (this.isOfficeWithUrlToken && extras?.queryParams && Object.hasOwnProperty.call(extras.queryParams, 'tab_title')) {
       delete extras.queryParams.tab_title;
     }
     const urlTree = this.router.createUrlTree(commands, extras);
-    return this.navigateByUrl(urlTree, title);
+    return this.navigateByUrl(urlTree, title, target);
   }
 
-  public navigateByUrl(url: string | UrlTree, title?: string): boolean {
+  public navigateByUrl(url: string | UrlTree, title?: string, target = '_blank'): boolean {
     if (!url) {
       return false;
     }
@@ -38,7 +38,7 @@ export class NewTabService {
       ? `${j2base}account/jibe2App.aspx?url=${officeHref}${officeTitle}`
       : this.location.prepareExternalUrl(href);
 
-    window.open(externalUrl, '_blank', 'noopener');
+    window.open(externalUrl, target, 'noopener');
 
     return true;
   }
