@@ -1,5 +1,5 @@
 import { ODataService } from 'j2utils';
-import { getConnection, getManager, QueryRunner } from 'typeorm';
+import { getConnection, getManager, QueryRunner, SelectQueryBuilder } from 'typeorm';
 
 import { className } from '../../../common/drydock/ts-helpers/className';
 import { Req } from '../../../common/drydock/ts-helpers/req-res';
@@ -74,12 +74,17 @@ export class ProjectTemplateStandardJobRepository {
         request: Req<ODataBodyDto>,
     ): Promise<IGetProjectTemplateStandardJobsGridQueryResult> {
         const oDataService = new ODataService(request, getConnection);
+        const query = this.getSpecificationItemCountQuery();
+        const [sql, parameters] = query.getQueryAndParameters();
+        const result = oDataService.getJoinResult(sql, parameters);
 
-        const repository = getManager().getRepository(ProjectTemplateStandardJobEntity);
+        return result;
+    }
 
-        const query = repository
-            .createQueryBuilder('prtsj')
-            .select(
+    public getSpecificationItemCountQuery(qb?: SelectQueryBuilder<any>) {
+        const repository = qb? qb.from(className(ProjectTemplateStandardJobEntity),'prtsj')
+                      : getManager().createQueryBuilder(ProjectTemplateStandardJobEntity,'prtsj');
+        const query = repository.select(
                 `sj.uid AS StandardJobUid,
             prtsj.ProjectTemplateUid as ProjectTemplateUid,
             sj.code as ItemNumber,
@@ -143,11 +148,6 @@ export class ProjectTemplateStandardJobRepository {
                 ].join(','),
             )
             .where('prtsj.active_status = 1');
-
-        const [sql, parameters] = query.getQueryAndParameters();
-
-        const result = oDataService.getJoinResult(sql, parameters);
-
-        return result;
+            return query;
     }
 }
