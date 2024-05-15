@@ -1,7 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
-import { SynchronizerService } from 'j2utils';
 
 import { ApplicationException, BusinessException } from '../../../bll/drydock/core/exceptions';
 import { UploadInvoiceService } from '../../../bll/drydock/yards/upload';
@@ -40,7 +39,7 @@ export class UploadYardsInvoiceCommand extends Command<Request, boolean> {
 
         return;
     }
-  protected async MainHandlerAsync(request: Request): Promise<boolean> {
+    protected async MainHandlerAsync(request: Request): Promise<boolean> {
         try {
             return await this.uploadInvoice(request);
         } catch (error) {
