@@ -2,7 +2,7 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class specificationWorkflowConfiguration1706679366069 implements MigrationInterface {
+export class specificationWorkflowConfiguration1706679366061 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -102,7 +102,7 @@ export class specificationWorkflowConfiguration1706679366069 implements Migratio
                     {"wfstatus":"Close","mandatory":"Yes","rework":"Yes","delete":"No","save":"No"},
                     {"wfstatus":"Unclose","mandatory":"No","rework":"No","delete":"No","save":"No"},
 					{"wfstatus":"Cancel","mandatory":"No","rework":"No","delete":"No","save":"No"}
-					]}'
+					], "is_additional_steps_visible": "1"}'
                     SELECT @MaxID = ISNULL(MAX(ID),0)+1 FROM JMS_DTL_Workflow_config
                     IF(@MaxID > 0)
                     BEGIN
