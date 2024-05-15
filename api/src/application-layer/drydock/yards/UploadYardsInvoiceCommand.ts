@@ -40,13 +40,11 @@ export class UploadYardsInvoiceCommand extends Command<Request, boolean> {
 
         return;
     }
-    protected async MainHandlerAsync(request: Request): Promise<boolean> {
+  protected async MainHandlerAsync(request: Request): Promise<boolean> {
         try {
             return await this.uploadInvoice(request);
         } catch (error) {
-            throw new BusinessException(
-                'The provided Excel file can not be imported: The file contains invalid data. Please check the file and try again.',
-            );
+            throw new BusinessException('The file you are about to import is not related to the project.');
         }
     }
 
