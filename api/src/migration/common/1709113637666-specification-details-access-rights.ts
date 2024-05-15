@@ -2,7 +2,7 @@ import { MigrationUtilsService } from "j2utils";
 import {MigrationInterface, QueryRunner} from "typeorm";
 import { errorLikeToString } from "../../common/drydock/ts-helpers/error-like-to-string";
 
-export class specificationDetailsAccessRights1709113637665 implements MigrationInterface {
+export class specificationDetailsAccessRights1709113637666 implements MigrationInterface {
     public className = this.constructor.name;
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
@@ -373,7 +373,7 @@ export class specificationDetailsAccessRights1709113637665 implements MigrationI
 
             Declare @view_spec_detail_groupcode varchar(150),@edit_spec_detail_groupcode varchar(150),@delete_spec_groupcode varchar(150)
 
-            select @view_spec_detail_groupcode=Group_Code from inf_lib_group where group_name='View Specification Detail - Office' and active_status=1
+            select @view_spec_detail_groupcode=Group_Code from inf_lib_group where group_name='View Specification Detail' and active_status=1
             select @edit_spec_detail_groupcode=Group_Code from inf_lib_group where group_name='Edit Specification Detail' and active_status=1
             select @delete_spec_groupcode=Group_Code from inf_lib_group where group_name='Delete Specification' and active_status=1
 
