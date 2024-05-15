@@ -1,13 +1,16 @@
+import { BroadcastChannelService } from './../../../services/broadcast-channel.service';
 import { cloneDeep } from 'lodash';
-import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ProjectsGridService } from './projects-grid.service';
 import {
   eDropdownLabels,
   eDropdownValues,
+  eGridRefreshType,
   eGridRowActions,
   FormModel,
   GridAction,
   GridComponent,
+  GridService,
   GridShareDataService,
   IJbDialog,
   JmsService,
@@ -44,7 +47,7 @@ import { nameOf } from '../../../utils/nameOf';
   styleUrls: ['./projects-grid.component.scss'],
   providers: [ProjectsGridService, GrowlMessageService]
 })
-export class ProjectsGridComponent extends UnsubscribeComponent implements OnInit, AfterViewInit {
+export class ProjectsGridComponent extends UnsubscribeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('projectsGrid') projectsGrid: GridComponent;
 
   @ViewChild('statusTemplate', { static: true }) statusTemplate: TemplateRef<unknown>;
@@ -119,7 +122,9 @@ export class ProjectsGridComponent extends UnsubscribeComponent implements OnIni
     private fleetService: FleetService,
     private vesselService: VesselService,
     private jmsSvc: JmsService,
-    private gridSharedService: GridShareDataService
+    private gridSharedService: GridShareDataService,
+    private gridService: GridService,
+    private broadcastChannelService: BroadcastChannelService
   ) {
     super();
   }
@@ -132,6 +137,7 @@ export class ProjectsGridComponent extends UnsubscribeComponent implements OnIni
 
     this.getFleetList();
     this.getVesselList();
+    this.listenRefreshGridFromOutside();
   }
 
   ngAfterViewInit(): void {
@@ -147,6 +153,11 @@ export class ProjectsGridComponent extends UnsubscribeComponent implements OnIni
       this.selectGridDefaultStatuses(newFilters);
       this.gridSharedService.refreshGridSLoad();
     });
+  }
+
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.broadcastChannelService.projectChannel.removeEventListener('message', this.refreshProjectListener);
   }
 
   onMatrixRequestChanged() {
@@ -451,4 +462,14 @@ export class ProjectsGridComponent extends UnsubscribeComponent implements OnIni
     this.projectsGridService.filters.find((filter) => filter.FieldName === this.projectsGridService.vesselsFilterName).selectedValues =
       vesselIds || [];
   }
+
+  private listenRefreshGridFromOutside() {
+    this.broadcastChannelService.projectChannel.addEventListener('message', this.refreshProjectListener);
+  }
+
+  private refreshProjectListener = (event) => {
+    if (event.data) {
+      this.gridService.refreshGrid(eGridRefreshType.Table, this.gridInputs.gridName);
+    }
+  };
 }
