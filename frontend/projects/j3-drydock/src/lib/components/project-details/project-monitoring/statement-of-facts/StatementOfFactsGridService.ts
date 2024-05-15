@@ -5,10 +5,6 @@ import { nameOf } from '../../../../utils/nameOf';
 import { StatementOfFactsService } from '../../../../services/project-monitoring/statement-of-facts/StatementOfFactsService';
 import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
 import {
-  eStatementOfFactsDeleteDisplayNames,
-  eStatementOfFactsDeleteFieldNames
-} from '../../../../models/enums/statement-of-fact-delete.enum';
-import {
   eStatementOfFactsCreateDisplayNames,
   eStatementOfFactsCreateFieldNames
 } from '../../../../models/enums/statement-of-fact-create.enum';
@@ -28,8 +24,6 @@ export class StatementOfFactsGridService {
   public readonly createStatementOfFactFormId = 'statementOfFactCreate';
 
   public readonly updateStatementOfFactFormId = 'statementOfFactUpdate';
-
-  public readonly deleteStatementOfFactFormId = 'statementOfFactDelete';
 
   private readonly columns: Column[] = [
     {
@@ -177,36 +171,6 @@ export class StatementOfFactsGridService {
               gridRowEnd: 7,
               gridColStart: 1,
               gridColEnd: 3
-            }
-          }
-        }
-      }
-    };
-  }
-
-  public getDeleteStatementOfFactForm(): FormModel {
-    return {
-      id: 'deleteStatementOfFact',
-      label: '',
-      type: 'form',
-      sections: {
-        [this.deleteStatementOfFactFormId]: {
-          type: 'grid',
-          label: '',
-          formID: this.deleteStatementOfFactFormId,
-          gridRowStart: 1,
-          gridRowEnd: 1,
-          gridColStart: 1,
-          gridColEnd: 1,
-          fields: {
-            [eStatementOfFactsDeleteFieldNames.AreYouSureYouWantToDeleteThisStatementOfFact]: {
-              label: eStatementOfFactsDeleteDisplayNames.AreYouSureYouWantToDeleteThisStatementOfFact,
-              type: eFieldControlType.String,
-              sectionID: this.deleteStatementOfFactFormId,
-              gridRowStart: 1,
-              gridRowEnd: 1,
-              gridColStart: 1,
-              gridColEnd: 1
             }
           }
         }
