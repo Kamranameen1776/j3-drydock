@@ -8,3 +8,5 @@ export const projectTemplateUpsertFormId = 'projectTemplateUpsertFormId';
 export const eApiBaseDryDockAPI = 'dryDockAPI';
 
 export const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
+
+export const PROJECTS_MAIN_TITLE = 'Projects Main';

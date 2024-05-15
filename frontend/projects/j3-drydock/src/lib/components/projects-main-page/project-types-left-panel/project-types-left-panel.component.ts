@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Datasource, IMultiSelectDropdown, JbMultiSelectDropdownComponent, SystemLevelFiltersService } from 'jibe-components';
 import { ProjectsService } from '../../../services/ProjectsService';
 import { IGroupProjectStatusesDto } from '../../../services/dtos/IGroupProjectStatusesDto';
@@ -6,13 +6,14 @@ import { LeftPanelFilterService } from '../services/LeftPanelFilterService';
 import { takeUntil } from 'rxjs/operators';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { IGroupProjectStatusesCountsRequestDto } from '../../../services/dtos/IGroupProjectStatusesCountsRequestDto';
+import { BroadcastChannelService } from '../../../services/broadcast-channel.service';
 
 @Component({
   selector: 'jb-project-types-left-panel',
   templateUrl: './project-types-left-panel.component.html',
   styleUrls: ['./project-types-left-panel.component.scss']
 })
-export class ProjectTypesLeftPanelComponent extends UnsubscribeComponent implements OnInit {
+export class ProjectTypesLeftPanelComponent extends UnsubscribeComponent implements OnInit, OnDestroy {
   @ViewChild('vesselsSelectDropdownList') vesselsSelectDropdownList: JbMultiSelectDropdownComponent;
 
   projectsStatusFilters: IGroupProjectStatusesDto[] = null;
@@ -20,7 +21,8 @@ export class ProjectTypesLeftPanelComponent extends UnsubscribeComponent impleme
   constructor(
     private slfService: SystemLevelFiltersService,
     private projectsService: ProjectsService,
-    private leftPanelFilterService: LeftPanelFilterService
+    private leftPanelFilterService: LeftPanelFilterService,
+    private broadcastChannelService: BroadcastChannelService
   ) {
     super();
   }
@@ -38,17 +40,22 @@ export class ProjectTypesLeftPanelComponent extends UnsubscribeComponent impleme
   };
 
   ngOnInit(): void {
-    this.projectsService
-      .groupProjectStatusesLabels()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((groupProjectStatuses) => {
-        this.setProjectStatusFilters(groupProjectStatuses);
-        this.groupProjectStatusesCounts();
-        this.vesselsSelectDropdownList.registerOnChange(this.onVesselsSelected.bind(this));
-      });
+    this.load();
+
+    this.listenRefreshGridFromOutside();
+
     this.leftPanelFilterService.vesselsChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((vesselsIds) => {
       this.groupProjectStatusesCounts(vesselsIds);
     });
+  }
+
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.broadcastChannelService.projectChannel.removeEventListener('message', this.refreshProjectListener);
+  }
+
+  onVesselsSelected(vesselsIds: number[]) {
+    this.leftPanelFilterService.setVesselsSelected(vesselsIds);
   }
 
   private groupProjectStatusesCounts(vesselsIds: number[] | null = null) {
@@ -69,7 +76,24 @@ export class ProjectTypesLeftPanelComponent extends UnsubscribeComponent impleme
     });
   }
 
-  onVesselsSelected(vesselsIds: number[]) {
-    this.leftPanelFilterService.setVesselsSelected(vesselsIds);
+  private load() {
+    this.projectsService
+      .groupProjectStatusesLabels()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((groupProjectStatuses) => {
+        this.setProjectStatusFilters(groupProjectStatuses);
+        this.groupProjectStatusesCounts();
+        this.vesselsSelectDropdownList.registerOnChange(this.onVesselsSelected.bind(this));
+      });
   }
+
+  private listenRefreshGridFromOutside() {
+    this.broadcastChannelService.projectChannel.addEventListener('message', this.refreshProjectListener);
+  }
+
+  private refreshProjectListener = (event) => {
+    if (event.data) {
+      this.load();
+    }
+  };
 }

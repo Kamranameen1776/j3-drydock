@@ -40,6 +40,9 @@ import { UpdateCostsDto } from '../../models/dto/specification-details/ISpecific
 import { DailyReportsComponent } from './reports/reports.component';
 import { FileUploadEvent } from '../../models/interfaces/file-upload';
 import { getFileNameDate } from '../../shared/functions/file-name';
+import { BroadcastChannelService } from '../../services/broadcast-channel.service';
+import { NewTabService } from '../../services/new-tab-service';
+import { PROJECTS_MAIN_TITLE } from '../../models/constants/constants';
 
 @Component({
   selector: 'jb-project-details',
@@ -138,7 +141,9 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
     private projectsService: ProjectsService,
     private detailsService: DetailsService,
     private growlMessageService: GrowlMessageService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private broadcastChannelService: BroadcastChannelService,
+    private newTabService: NewTabService
   ) {
     super();
   }
@@ -470,7 +475,17 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   private deleteRecord() {
     this.projectsService.deleteProject(this.projectUid).subscribe(() => {
       this.jbTMDtlSrv.closeDialog.next(true);
-      this.router.navigate(['dry-dock/projects-main-page']);
+      this.broadcastChannelService.postRefreshProjectsMain(true);
+
+      const tab_title = PROJECTS_MAIN_TITLE;
+      this.newTabService.navigate(
+        ['dry-dock/projects-main-page'],
+        {
+          queryParams: { tab_title }
+        },
+        tab_title,
+        '_self'
+      );
     });
   }
 
