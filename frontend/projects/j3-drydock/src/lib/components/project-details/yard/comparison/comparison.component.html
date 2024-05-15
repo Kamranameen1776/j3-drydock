@@ -1,13 +1,14 @@
 <section class="grid-header-container">
-  <!-- <jb-grid-header
+  <jb-grid-header
     class="grid-header"
     [gridName]="gridName"
     [additionalFilters]="additionalFilters"
     [isDisplayAdvancedFilter]="false"
     [isDisplayAdvancedSettings]="false"
     (filterAction)="onFilterChange($event)"
-  ></jb-grid-header> -->
+  ></jb-grid-header>
 </section>
+
 <p-table
   class="comparison-table"
   [columns]="yards"
@@ -27,8 +28,15 @@
       <th
         class="sticky comparison-table-column"
         [class.collapsed]="isTableInCollapsedMode"
-      ></th>
+      >
+        <tr>
+          <th colspan="4">
+            <jb-drydock-comparison-table-header class="visibility-hidden"></jb-drydock-comparison-table-header>
+          </th>
+        </tr>
+      </th>
       <th
+        colspan="4"
         *ngFor="let yard of columns"
         class="comparison-table-column"
         pReorderableColumn
@@ -41,37 +49,118 @@
     pTemplate="body"
     let-columns="columns"
   >
-    <tr class="row-highlight">
+    <tr class="comparison-body">
       <td
-        [class.collapsed]="isReqItemsTableInCollapsedMode"
+        [class.collapsed]="isTableInCollapsedMode"
         class="sticky comparison-table-column"
       >
-        <!-- <prc-requisition-items-table
-          (toggleTable)="onToggleReqItemsTableMode($event)"
-          [isCollapsedMode]="isReqItemsTableInCollapsedMode"
-          [expandedRowKeys]="expandedRowKeys"
-          [quotationEvaluationItems]="quotationEvaluationItems"
-          [summaryReqItemsOrderQty]="summaryReqItemsOrderQty"
-        ></prc-requisition-items-table> -->
+        <!-- TODO move to separate component -->
+        <p-treeTable
+          [value]="yardFunctions"
+          [columns]="baseColumns"
+          [rows]="20"
+          (onNodeExpand)="onNodeExpand($event)"
+          (onNodeCollapse)="onNodeCollapse($event)"
+        >
+          <ng-template
+            pTemplate="colgroup"
+            let-columns
+          >
+            <colgroup>
+              <col
+                *ngFor="let col of columns"
+                [style.width]="col.width"
+              />
+            </colgroup>
+          </ng-template>
+
+          <ng-template
+            pTemplate="header"
+            let-columns
+          >
+            <tr [ttRow]="rowNode">
+              <th
+                *ngFor="let col of columns; let i = index"
+                class="comparison-th"
+              >
+                <span>{{ col.header }}</span>
+                <i
+                  *ngIf="i === columns.length - 1"
+                  [class]="isTableInCollapsedMode ? 'icons8-circled-chevron-right-filled' : 'icons8-circled-chevron-left-filled'"
+                  (click)="onToggleTableMode()"
+                ></i>
+              </th>
+            </tr>
+          </ng-template>
+
+          <ng-template
+            pTemplate="body"
+            let-rowNode
+            let-rowData="rowData"
+            let-columns="columns"
+          >
+            <tr style="height: 52px">
+              <td *ngFor="let col of columns; let i = index">
+                <p-treeTableToggler
+                  [rowNode]="rowNode"
+                  *ngIf="i === 0"
+                ></p-treeTableToggler>
+                <span>{{ rowData[col.field] }}</span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-treeTable>
       </td>
       <td
-        *ngFor="let yard of yards"
+        *ngFor="let yard of yards;"
         class="comparison-table-column"
       >
+        <!-- TODO move to separate component-->
+        <div class="comparison-table-card">
+          <p-table
+            [value]="yard.rows | comparisonRows: expandedRowsSet : 'number'"
+            [columns]="cardColumns"
+            [rows]="20"
+          >
+            <ng-template
+              pTemplate="colgroup"
+              let-columns
+            >
+              <colgroup>
+                <col
+                  *ngFor="let col of columns"
+                  [style.width]="col.width"
+                />
+              </colgroup>
+            </ng-template>
 
-      <jb-drydock-comparison-table-header [yard]="yard"></jb-drydock-comparison-table-header>
+            <ng-template
+              pTemplate="header"
+              let-columns
+            >
+              <tr>
+                <th *ngFor="let col of columns; let i = index">
+                  <span>{{ col.header }}</span>
+                </th>
+              </tr>
+            </ng-template>
 
-        <!-- <prc-supplier-table
-          [quotationUid]="quote.uid"
-          [expandedRowKeys]="expandedRowKeys"
-          [quotationEvaluationItems]="quotationEvaluationItems"
-          [currencyRate]="quote.currencyRate"
-          [currencyMode]="currencyMode$ | async"
-          [quotationDeliveryDate]="quote.deliveryDate"
-          [quotationItemStateMap]="quotationItemStateMap"
-          (rowStateChange)="onRowStateChange($event)"
-          [inActive]="(inActive$ | async) || (quote.po && !quote.po.cancellationAvailable)"
-        ></prc-supplier-table> -->
+            <ng-template
+              pTemplate="body"
+              let-rowData
+              let-columns="columns"
+            >
+              <tr
+                style="height: 52px"
+                class="row-highlight"
+              >
+                <td *ngFor="let col of columns; let i = index">
+                  <span>{{ rowData[col.field] + yard?.uid }}</span>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
       </td>
     </tr>
   </ng-template>

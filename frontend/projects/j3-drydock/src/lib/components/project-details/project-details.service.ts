@@ -278,7 +278,7 @@ export class ProjectDetailsService {
             GridColEnd: 3,
             active_status: true,
             SectionCode: eProjectDetailsSideMenuId.Comparison,
-            SectionLabel: eProjectDetailsSideMenuLabel.Comparison,
+            SectionLabel: 'Dry Dock Comparison',
             isAddNewButton: false
           }
         ]

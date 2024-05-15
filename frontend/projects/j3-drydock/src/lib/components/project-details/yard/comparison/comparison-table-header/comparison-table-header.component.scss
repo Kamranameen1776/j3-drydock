@@ -14,6 +14,11 @@
   width: 414px;
   height: 180px;
 
+  th {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
   .yard-details_rating {
     display: flex;
     flex-direction: row;
@@ -113,7 +118,7 @@
 }
 
 ::ng-deep {
-  .rating-contact {
+  .rating-comparison {
     .rating {
       .ui-rating-icon {
         color: var(--jbYellowRating);
