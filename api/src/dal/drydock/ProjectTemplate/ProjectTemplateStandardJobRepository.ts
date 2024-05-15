@@ -82,9 +82,11 @@ export class ProjectTemplateStandardJobRepository {
     }
 
     public getSpecificationItemCountQuery(qb?: SelectQueryBuilder<any>) {
-        const repository = qb? qb.from(className(ProjectTemplateStandardJobEntity),'prtsj')
-                      : getManager().createQueryBuilder(ProjectTemplateStandardJobEntity,'prtsj');
-        const query = repository.select(
+        const repository = qb
+            ? qb.from(className(ProjectTemplateStandardJobEntity), 'prtsj')
+            : getManager().createQueryBuilder(ProjectTemplateStandardJobEntity, 'prtsj');
+        const query = repository
+            .select(
                 `sj.uid AS StandardJobUid,
             prtsj.ProjectTemplateUid as ProjectTemplateUid,
             sj.code as ItemNumber,
@@ -148,6 +150,6 @@ export class ProjectTemplateStandardJobRepository {
                 ].join(','),
             )
             .where('prtsj.active_status = 1');
-            return query;
+        return query;
     }
 }
