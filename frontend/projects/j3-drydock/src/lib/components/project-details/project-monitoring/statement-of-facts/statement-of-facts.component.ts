@@ -3,7 +3,7 @@ import { eGridEvents, eGridRowActions, FormModel, FormValues, GridAction, GridCo
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { StatementOfFactsGridService } from './StatementOfFactsGridService';
 import { FormGroup } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
 import { GridInputsWithRequest } from '../../../../models/interfaces/grid-inputs';
 import { getSmallPopup } from '../../../../models/constants/popup';
