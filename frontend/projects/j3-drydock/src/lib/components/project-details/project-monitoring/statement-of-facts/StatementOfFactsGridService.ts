@@ -153,7 +153,7 @@ export class StatementOfFactsGridService {
               sectionID: this.updateStatementOfFactFormId,
               enabled: true,
               minLength: 1,
-              maxLength: 300,
+              maxLength: 350,
               validatorRequired: true,
               gridRowStart: 4,
               gridRowEnd: 5,
