@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
-export class GetLatestJobOrderBySpecificationDto {
+export class GetJobOrderBySpecificationDto {
     @IsUUID()
     @IsNotEmpty()
     specificationUid: string;

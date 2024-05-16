@@ -25,11 +25,62 @@
     line-height: 14px;
   }
 
+  .summary {
+    padding: 1px;
+  }
+
   .summary-desc {
     display: block;
   }
 
-  .selected-summary {
-    background-color: #0063a6;
+  .summary-details {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid var(--jbGreyBlue200);
+  }
+
+  .selected-row {
+    background-color: var(--jibeGreyBlue600);
+
+    .summary-name {
+      color: var(--jbWhite);
+    }
+
+    .status-icn {
+
+      .green-icon, .red-icon, .orange-icon {
+        color: var(--jbWhite);
+      }
+    }
+  }
+
+  .avatar-wrapper {
+    width: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+
+  .content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .status-icn {
+    font-size: 27px;
+
+
+    .green-icon {
+      color: var(--jbClassGreen);
+    }
+
+    .red-icon {
+      color: var(--jibeRed600)
+    }
+
+    .orange-icon {
+      color: var(--jbDarkOrange);
+    }
   }
 }
+

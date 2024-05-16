@@ -1,0 +1,8 @@
+<div class="history-list">
+  <jb-item-card
+    *ngFor="let item of data"
+    [selectable]="true"
+    [data]="item"
+    (changeSelected)="onSelect($event)"
+  ></jb-item-card>
+</div>

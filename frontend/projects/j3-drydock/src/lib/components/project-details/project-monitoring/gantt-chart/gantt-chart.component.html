@@ -43,8 +43,9 @@
       *ngIf="updateDialogVisible"
       [isOpen]="updateDialogVisible"
       [vesselId]="vesselId"
-      [jobOrderFormValue]="jobOrderFormValue"
       (isChangedAndValid)="jobOrdersChanged($event)"
+      [jobOrders]="jobOrders"
+      [emptyForm]="true"
       #jobOrderForm
     ></jb-job-orders-form>
   </div>

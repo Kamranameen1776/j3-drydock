@@ -1,6 +1,5 @@
 import { SynchronizerService } from 'j2utils';
 
-import { ApplicationException } from '../../../../bll/drydock/core/exceptions';
 import { getTableName } from '../../../../common/drydock/ts-helpers/tableName';
 import { validateAgainstModel } from '../../../../common/drydock/ts-helpers/validate-against-model';
 import { SpecificationDetailsRepository } from '../../../../dal/drydock/specification-details/SpecificationDetailsRepository';

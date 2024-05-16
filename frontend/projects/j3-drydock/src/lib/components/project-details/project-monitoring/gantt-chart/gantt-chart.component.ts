@@ -65,7 +65,9 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   public updateDialogVisible = false;
 
-  updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Job Order' };
+  public jobOrders: JobOrderDto[] = [];
+
+  updateJobOrderDialog: IJbDialog = { dialogHeader: 'Update Job Order', dialogWidth: 1000 };
   isSaving = false;
   defaultHeight: string;
   dateFormat: string;
@@ -466,23 +468,17 @@ export class GanttChartComponent extends UnsubscribeComponent implements OnInit,
 
   private showJobOrderForm(specificationUid: string, code: string) {
     this.jobOrdersService
-      .getJobOrderBySpecificationUid({
+      .getAllJobOrdersBySpecificationUid({
         specificationUid
       })
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((jobOrder) => {
-        this.jobOrderFormValue = {};
-        this.jobOrderFormValue.SpecificationUid = specificationUid;
-        this.jobOrderFormValue.Code = code;
-
-        if (jobOrder) {
-          this.jobOrderFormValue.Remarks = jobOrder.Remarks;
-          this.jobOrderFormValue.Progress = jobOrder.Progress;
-          this.jobOrderFormValue.Subject = jobOrder.Subject;
-          this.jobOrderFormValue.Status = jobOrder.Status;
-          this.jobOrderFormValue.SpecificationStartDate = jobOrder.SpecificationStartDate;
-          this.jobOrderFormValue.SpecificationEndDate = jobOrder.SpecificationEndDate;
-        }
+      .subscribe((jobOrders) => {
+        this.jobOrders = jobOrders.map((jobOrder) => {
+          return {
+            ...jobOrder,
+            Code: code
+          };
+        });
 
         this.showUpdateDialog(true);
       });
