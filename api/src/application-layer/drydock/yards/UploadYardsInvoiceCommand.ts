@@ -1,7 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
-import { SynchronizerService } from 'j2utils';
 
 import { ApplicationException, BusinessException } from '../../../bll/drydock/core/exceptions';
 import { UploadInvoiceService } from '../../../bll/drydock/yards/upload';
@@ -44,9 +43,7 @@ export class UploadYardsInvoiceCommand extends Command<Request, boolean> {
         try {
             return await this.uploadInvoice(request);
         } catch (error) {
-            throw new BusinessException(
-                'The provided Excel file can not be imported: The file contains invalid data. Please check the file and try again.',
-            );
+            throw new BusinessException('The file you are about to import is not related to the project.');
         }
     }
 

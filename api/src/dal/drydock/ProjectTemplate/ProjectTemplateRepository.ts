@@ -6,10 +6,10 @@ import { className } from '../../../common/drydock/ts-helpers/className';
 import { Req } from '../../../common/drydock/ts-helpers/req-res';
 import { LibVesseltypes, ProjectTypeEntity, TecLibWorklistTypeEntity } from '../../../entity/drydock';
 import { ProjectTemplateEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateEntity';
-import { ProjectTemplateStandardJobEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateStandardJobEntity';
 import { ProjectTemplateVesselTypeEntity } from '../../../entity/drydock/ProjectTemplate/ProjectTemplateVesselTypeEntity';
 import { ODataBodyDto } from '../../../shared/dto';
 import { getChunkSize } from '../../../shared/utils/get-chunk-size';
+import { ProjectTemplateStandardJobRepository } from '../ProjectTemplate/ProjectTemplateStandardJobRepository';
 import { RepoUtils } from '../utils/RepoUtils';
 import { IGetProjectTemplateGridQueryResult } from './IGetProjectTemplateGridDto';
 
@@ -74,17 +74,18 @@ export class ProjectTemplateRepository {
                 alias: 'ptvt',
                 on: 'ptvt.project_template_uid = prt.uid AND aliased.ID = ptvt.vessel_type_id',
             })},
-            COUNT(DISTINCT sj.standard_job_uid) as NoOfSpecItems,
+            COUNT(DISTINCT sjc.StandardJobUid) as NoOfSpecItems,
             COALESCE(prt.updated_at, prt.created_at) as LastUpdated
             `,
             )
+
             .innerJoin(ProjectTypeEntity, 'pt', 'prt.ProjectTypeUid = pt.uid')
             .innerJoin(TecLibWorklistTypeEntity, 'wt', 'pt.WorklistType = wt.WorklistType')
             .leftJoin(ProjectTemplateVesselTypeEntity, 'ptvt', 'prt.uid = ptvt.project_template_uid')
             .leftJoin(
-                ProjectTemplateStandardJobEntity,
-                'sj',
-                'prt.uid = sj.ProjectTemplateUid AND sj.active_status = 1',
+                (qb) => new ProjectTemplateStandardJobRepository().getSpecificationItemCountQuery(qb),
+                'sjc',
+                'prt.uid = sjc.ProjectTemplateUid',
             )
             .leftJoin(LibVesseltypes, 'vt', `vt.ID = ptvt.vessel_type_id and vt.Active_Status = 1`)
             .groupBy(
