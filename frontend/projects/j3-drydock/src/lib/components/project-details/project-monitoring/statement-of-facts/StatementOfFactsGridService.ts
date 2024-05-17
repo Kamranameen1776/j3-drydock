@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Column, GridRowActions, UserService, eGridColumnsWidth, FormModel, eFieldControlType } from 'jibe-components';
+import { Column, GridRowActions, UserService, eGridColumnsWidth, FormModel, eFieldControlType, eGridCellType } from 'jibe-components';
 import { IStatementOfFactDto } from './dtos/IStatementOfFactDto';
 import { nameOf } from '../../../../utils/nameOf';
 import { StatementOfFactsService } from '../../../../services/project-monitoring/statement-of-facts/StatementOfFactsService';
@@ -37,6 +37,7 @@ export class StatementOfFactsGridService {
     {
       DisplayText: 'Date & Time',
       FieldName: nameOf<IStatementOfFactDto>((prop) => prop.DateAndTime),
+      FieldType: eGridCellType.Date,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,

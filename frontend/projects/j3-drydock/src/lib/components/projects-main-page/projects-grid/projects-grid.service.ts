@@ -11,7 +11,8 @@ import {
   FormModel,
   SystemLevelFiltersService,
   Datasource,
-  VesselService
+  VesselService,
+  eGridCellType
 } from 'jibe-components';
 import { IProjectsForMainPageGridDto } from './dtos/IProjectsForMainPageGridDto';
 import { nameOf } from '../../../utils/nameOf';
@@ -262,6 +263,7 @@ export class ProjectsGridService {
     {
       DisplayText: 'Start Date',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.StartDate),
+      FieldType: eGridCellType.Date,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
@@ -271,6 +273,7 @@ export class ProjectsGridService {
     {
       DisplayText: 'End Date',
       FieldName: nameOf<IProjectsForMainPageGridDto>((prop) => prop.EndDate),
+      FieldType: eGridCellType.Date,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
