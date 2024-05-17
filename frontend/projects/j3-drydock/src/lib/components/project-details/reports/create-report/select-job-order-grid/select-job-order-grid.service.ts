@@ -1,5 +1,5 @@
 import { JobOrder } from './../../../../../models/interfaces/job-orders';
-import { Column, GridRowActions, UserService, eGridColumnsWidth } from 'jibe-components';
+import { Column, GridRowActions, UserService, eGridCellType, eGridColumnsWidth } from 'jibe-components';
 import { nameOf } from '../../../../../utils/nameOf';
 import { JobOrdersService } from '../../../../../services/project-monitoring/job-orders/JobOrdersService';
 import { GridInputsWithRequest } from '../../../../../models/interfaces/grid-inputs';
@@ -53,6 +53,7 @@ export class SelectJobOrdersGridService {
     {
       DisplayText: 'Update Date',
       FieldName: nameOf<JobOrder>((prop) => prop.LastUpdated),
+      FieldType: eGridCellType.Date,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,

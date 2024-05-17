@@ -7,6 +7,7 @@ import {
   eCrud,
   eEntities,
   eGridAction,
+  eGridCellType,
   eGridColumnsWidth
 } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
@@ -25,6 +26,7 @@ export class DailyReportsGridService {
       DisableSort: false,
       DisplayText: 'Report Date',
       FieldName: 'reportDate',
+      FieldType: eGridCellType.Date,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true,
