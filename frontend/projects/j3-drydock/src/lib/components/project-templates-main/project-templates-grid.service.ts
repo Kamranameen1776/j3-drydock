@@ -1,6 +1,6 @@
 import { StandardJobsService } from '../../services/standard-jobs.service';
 import { Injectable } from '@angular/core';
-import { Column, Filter, GridButton, FilterListSet, eFieldControlType, UserRightsService } from 'jibe-components';
+import { Column, Filter, GridButton, FilterListSet, eFieldControlType, UserRightsService, eGridCellType } from 'jibe-components';
 import { GridInputsWithRequest } from '../../models/interfaces/grid-inputs';
 import { eProjectTemplatesFields, eProjectTemplatesLabels } from '../../models/enums/project-templates.enum';
 import { ProjectsService } from '../../services/ProjectsService';
@@ -52,6 +52,7 @@ export class ProjectTemplatesGridService {
     {
       DisplayText: eProjectTemplatesLabels.LastUpdated,
       FieldName: eProjectTemplatesFields.LastUpdated,
+      FieldType: eGridCellType.Date,
       IsActive: true,
       IsMandatory: true,
       IsVisible: true
