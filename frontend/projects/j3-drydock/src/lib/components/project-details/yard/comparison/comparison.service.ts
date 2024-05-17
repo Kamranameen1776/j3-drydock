@@ -1,524 +1,148 @@
+import { cloneDeep } from 'lodash';
+import { of } from 'rxjs';
+import { ComparisonFunction, ComparisonFunctionTree, ComparisonYard, ComparisonYardRow } from './../../../../models/interfaces/comparison';
 import { Injectable } from '@angular/core';
 
-export const stubFunctionsTree = [
+export const leftRowsFlatTree: ComparisonFunction[] = [
   {
-    data: {
-      name: 'Ship General',
-      number: '1',
-      uom: '',
-      quantity: ''
-    },
-    children: [
-      {
-        data: {
-          name: 'Ship General Sub 1',
-          number: '1.1',
-          uom: '',
-          quantity: ''
-        }
-      },
-      {
-        data: {
-          name: 'Ship General Sub 2',
-          number: '1.2',
-          uom: '33',
-          quantity: '111'
-        }
-      },
-      {
-        data: {
-          name: 'Ship General Sub 3',
-          number: '1.3',
-          uom: '',
-          quantity: ''
-        }
-      }
-    ]
+    uid: '1',
+    specification: 'Ship General',
+    parent_uid: null,
+    quantity: null,
+    uom: null
   },
   {
-    data: {
-      name: 'Ship General 1',
-      number: '2',
-      uom: '',
-      quantity: ''
-    },
-    children: [
-      {
-        data: {
-          name: 'Ship General 1 Sub 1',
-          number: '2.1',
-          uom: '',
-          quantity: ''
-        }
-      },
-      {
-        data: {
-          name: 'Ship General  1 Sub 2',
-          number: '2.2',
-          uom: '',
-          quantity: ''
-        }
-      }
-    ]
+    uid: '11',
+    specification: 'Ship General child 1',
+    parent_uid: '1',
+    quantity: null,
+    uom: null
   },
   {
-    data: {
-      name: 'Ship General 2',
-      number: '3',
-      uom: '',
-      quantity: ''
-    },
-    children: [
-      {
-        data: {
-          name: 'Ship General 2 Sub 1',
-          number: '3.1',
-          uom: '',
-          quantity: ''
-        }
-      },
-      {
-        data: {
-          name: 'Ship General 2 Sub 2',
-          number: '3.2',
-          uom: '',
-          quantity: ''
-        }
-      }
-    ]
+    uid: '11_1',
+    specification: 'Ship General child 1 child 1',
+    parent_uid: '11',
+    quantity: 11,
+    uom: 11
   },
   {
-    data: {
-      name: 'Ship General 3',
-      number: '4',
-      uom: '',
-      quantity: ''
-    },
-    children: [
-      {
-        data: {
-          name: 'Ship General 3 Sub 1',
-          number: '4.1',
-          uom: '',
-          quantity: ''
-        }
-      },
-      {
-        data: {
-          name: 'Ship General 3 Sub 2',
-          number: '4.2',
-          uom: '',
-          quantity: ''
-        }
-      }
-    ]
+    uid: '11_2',
+    specification: 'Ship General child 1 child 2',
+    parent_uid: '11',
+    quantity: 22,
+    uom: 22
   },
   {
-    data: {
-      name: 'Ship General 4',
-      number: '5',
-      uom: '',
-      quantity: ''
-    },
-    children: [
-      {
-        data: {
-          name: 'Ship General 4 Sub 1',
-          number: '5.1',
-          uom: '',
-          quantity: ''
-        }
-      },
-      {
-        data: {
-          name: 'Ship General 4 Sub 2',
-          number: '5.2',
-          uom: '',
-          quantity: ''
-        }
-      }
-    ]
+    uid: '11_3',
+    specification: 'Ship General child 1 child 3',
+    parent_uid: '11',
+    quantity: 33,
+    uom: 44
   },
   {
-    data: {
-      name: 'Ship General 5',
-      number: '6',
-      uom: '',
-      quantity: ''
-    },
-    children: [
-      {
-        data: {
-          name: 'Ship General 5 Sub 1',
-          number: '6.1',
-          uom: '',
-          quantity: ''
-        }
-      },
-      {
-        data: {
-          name: 'Ship General 5 Sub 2',
-          number: '6.2',
-          uom: '',
-          quantity: ''
-        }
-      }
-    ]
+    uid: '111',
+    specification: 'Ship General child 2',
+    parent_uid: '1',
+    quantity: null,
+    uom: null
   },
   {
-    data: {
-      name: 'Ship General',
-      number: '7',
-      uom: '',
-      quantity: ''
-    },
-    children: [
-      {
-        data: {
-          name: 'Ship General 6 Sub 1',
-          number: '7.1',
-          uom: '',
-          quantity: ''
-        }
-      },
-      {
-        data: {
-          name: 'Ship General 6 Sub 2',
-          number: '7.2',
-          uom: '',
-          quantity: ''
-        }
-      }
-    ]
+    uid: '3_1',
+    specification: 'Ship General 3 child 1',
+    parent_uid: '3',
+    quantity: null,
+    uom: null
   },
   {
-    data: {
-      name: 'Ship General 7',
-      number: '8',
-      uom: '',
-      quantity: ''
-    },
-    children: [
-      {
-        data: {
-          name: 'Ship General 7 Sub 1',
-          number: '8.1',
-          uom: '',
-          quantity: ''
-        }
-      },
-      {
-        data: {
-          name: 'Ship General 7 Sub 2',
-          number: '8.2',
-          uom: '',
-          quantity: ''
-        }
-      }
-    ]
+    uid: '2',
+    specification: 'Ship General 2',
+    parent_uid: null,
+    quantity: null,
+    uom: null
   },
   {
-    data: {
-      name: 'Ship General 8',
-      number: '9',
-      uom: '',
-      quantity: ''
-    },
-    children: [
-      {
-        data: {
-          name: 'Ship General 8 Sub 1',
-          number: '9.1',
-          uom: '',
-          quantity: ''
-        }
-      },
-      {
-        data: {
-          name: 'Ship General 8 Sub 2',
-          number: '9.2',
-          uom: '',
-          quantity: ''
-        }
-      }
-    ]
+    uid: '3',
+    specification: 'Ship General 3',
+    parent_uid: null,
+    quantity: null,
+    uom: null
   },
   {
-    data: {
-      name: 'Ship General 9',
-      number: '10',
-      uom: '',
-      quantity: ''
-    },
-    children: [
-      {
-        data: {
-          name: 'Ship General 9 Sub 1',
-          number: '10.1',
-          uom: '',
-          quantity: ''
-        }
-      },
-      {
-        data: {
-          name: 'Ship General 9 Sub 2',
-          number: '10.2',
-          uom: '',
-          quantity: ''
-        }
-      }
-    ]
+    uid: '2_1_1',
+    specification: 'Ship General child 2 child 1',
+    parent_uid: '2_1',
+    quantity: null,
+    uom: null
+  },
+  {
+    uid: '111_1',
+    specification: 'Ship General child 1 child 1',
+    parent_uid: '111',
+    quantity: 110,
+    uom: 110
+  },
+  {
+    uid: '111_2',
+    specification: 'Ship General child 1 child 2',
+    parent_uid: '111',
+    quantity: 220,
+    uom: 220
+  },
+  {
+    uid: '2_1',
+    specification: 'Ship General child 2',
+    parent_uid: '2',
+    quantity: null,
+    uom: null
+  },
+  {
+    uid: '2_2',
+    specification: 'Ship General child 2',
+    parent_uid: '2',
+    quantity: null,
+    uom: null
   }
 ];
 
-export const stubYardRows = [
+export const stubYards: ComparisonYard[] = [
   {
-    number: '1',
-    header: 'Ship General',
-    uom: '',
-    quantity: '',
-    amount: '1',
-    unitPrice: '2'
+    name: 'yard1',
+    uid: 'GUID1'
   },
   {
-    number: '1.1',
-    header: 'Ship General Sub 1',
-    uom: '',
-    quantity: '200',
-    amount: '104',
-    unitPrice: '124'
+    name: 'yard2',
+    uid: 'GUID2'
   },
   {
-    number: '1.2',
-    header: 'Ship General Sub 2',
-    uom: '',
-    quantity: '',
-    amount: '100',
-    unitPrice: '100'
+    name: 'yard3',
+    uid: 'GUID3'
+  }
+];
+
+export const stubYardsRows: ComparisonYardRow[] = [
+  {
+    spec_uid: '11_3',
+    yard_uid: 'GUID1',
+    amount: 111,
+    unit_price: 111
   },
   {
-    number: '1.3',
-    header: 'Ship General Sub 3',
-    uom: '',
-    quantity: '',
-    amount: '1020',
-    unitPrice: '100'
+    spec_uid: '11_3',
+    yard_uid: 'GUID2',
+    amount: 222,
+    unit_price: 222
   },
   {
-    number: '2',
-    header: 'Ship General',
-    uom: '',
-    quantity: '300',
-    amount: '10026',
-    unitPrice: '10026'
+    spec_uid: '111_2',
+    yard_uid: 'GUID3',
+    amount: 333,
+    unit_price: 333
   },
   {
-    number: '2.1',
-    header: 'Ship General Sub 1',
-    uom: '',
-    quantity: '1',
-    amount: '10025',
-    unitPrice: '10025'
-  },
-  {
-    number: '2.2',
-    header: 'Ship General Sub 2',
-    uom: '',
-    quantity: '400',
-    amount: '10024',
-    unitPrice: '10024'
-  },
-  {
-    number: '3',
-    header: 'Ship General',
-    uom: '',
-    quantity: '100',
-    amount: '10023',
-    unitPrice: '10023'
-  },
-  {
-    number: '3.1',
-    header: 'Ship General Sub 1',
-    uom: '',
-    quantity: '10022',
-    amount: '10022',
-    unitPrice: '10022'
-  },
-  {
-    number: '3.2',
-    header: 'Ship General Sub 2',
-    uom: '',
-    quantity: '10021',
-    amount: '10021',
-    unitPrice: '10021'
-  },
-  {
-    number: '4',
-    header: 'Ship General',
-    uom: '',
-    quantity: '10020',
-    amount: '10020',
-    unitPrice: '10020'
-  },
-  {
-    number: '4.1',
-    header: 'Ship General Sub 1',
-    uom: '',
-    quantity: '10019',
-    amount: '10019',
-    unitPrice: '10019'
-  },
-  {
-    number: '4.2',
-    header: 'Ship General Sub 2',
-    uom: '',
-    quantity: '10018',
-    amount: '10018',
-    unitPrice: '10018'
-  },
-  {
-    number: '5',
-    header: 'Ship General',
-    uom: '',
-    quantity: '10017',
-    amount: '10017',
-    unitPrice: '10017'
-  },
-  {
-    number: '5.1',
-    header: 'Ship General Sub 1',
-    uom: '',
-    quantity: '10016',
-    amount: '10016',
-    unitPrice: '10016'
-  },
-  {
-    number: '5.2',
-    header: 'Ship General Sub 2',
-    uom: '',
-    quantity: '10015',
-    amount: '10015',
-    unitPrice: '10015'
-  },
-  {
-    number: '6',
-    header: 'Ship General',
-    uom: '',
-    quantity: '10014',
-    amount: '10014',
-    unitPrice: '10014'
-  },
-  {
-    number: '6.1',
-    header: 'Ship General Sub 1',
-    uom: '',
-    quantity: '10013',
-    amount: '10013',
-    unitPrice: '10013'
-  },
-  {
-    number: '6.2',
-    header: 'Ship General Sub 2',
-    uom: '',
-    quantity: '10012',
-    amount: '10012',
-    unitPrice: '10012'
-  },
-  {
-    number: '7',
-    header: 'Ship General',
-    uom: '',
-    quantity: '10011',
-    amount: '10011',
-    unitPrice: '10011'
-  },
-  {
-    number: '7.1',
-    header: 'Ship General Sub 1',
-    uom: '',
-    quantity: '10010',
-    amount: '10010',
-    unitPrice: '10010'
-  },
-  {
-    number: '7.2',
-    header: 'Ship General Sub 2',
-    uom: '',
-    quantity: '1009',
-    amount: '1009',
-    unitPrice: '1009'
-  },
-  {
-    number: '8',
-    header: 'Ship General',
-    uom: '',
-    quantity: '1008',
-    amount: '1008',
-    unitPrice: '1008'
-  },
-  {
-    number: '8.1',
-    header: 'Ship General Sub 1',
-    uom: '',
-    quantity: '1007',
-    amount: '1007',
-    unitPrice: '1007'
-  },
-  {
-    number: '8.2',
-    header: 'Ship General Sub 2',
-    uom: '',
-    quantity: '1006',
-    amount: '1006',
-    unitPrice: '1006'
-  },
-  {
-    number: '9',
-    header: 'Ship General',
-    uom: '',
-    quantity: '1005',
-    amount: '1005',
-    unitPrice: '1005'
-  },
-  {
-    number: '9.1',
-    header: 'Ship General Sub 1',
-    uom: '',
-    quantity: '1004',
-    amount: '1004',
-    unitPrice: '1004'
-  },
-  {
-    number: '9.2',
-    header: 'Ship General Sub 2',
-    uom: '',
-    quantity: '1003',
-    amount: '1003',
-    unitPrice: '1003'
-  },
-  {
-    number: '10',
-    header: 'Ship General',
-    uom: '',
-    quantity: '1002',
-    amount: '1002',
-    unitPrice: '1003'
-  },
-  {
-    number: '10.1',
-    header: 'Ship General Sub 1',
-    uom: '',
-    quantity: '1001',
-    amount: '1001',
-    unitPrice: '1001'
-  },
-  {
-    number: '10.2',
-    header: 'Ship General Sub 2',
-    uom: '',
-    quantity: '1000',
-    amount: '1000',
-    unitPrice: '1000'
+    spec_uid: '3',
+    yard_uid: 'GUID1',
+    amount: 2233,
+    unit_price: 3333
   }
 ];
 
@@ -527,15 +151,15 @@ export const comparisonGridName = 'comparisonGridName';
 @Injectable({ providedIn: 'root' })
 export class ComparisonService {
   private readonly baseColumns = [
+    // {
+    //   field: 'number',
+    //   header: '#',
+    //   width: '100px'
+    // },
     {
-      field: 'number',
-      header: '#',
-      width: '100px'
-    },
-    {
-      field: 'name',
+      field: 'specification',
       header: 'Specification',
-      width: '250px'
+      width: '350px'
     },
     {
       field: 'uom',
@@ -561,7 +185,7 @@ export class ComparisonService {
       width: '60px'
     },
     {
-      field: `unitPrice`,
+      field: `unit_price`,
       header: 'Un.Price',
       width: '60px'
     },
@@ -573,12 +197,94 @@ export class ComparisonService {
   ];
 
   constructor() {}
-  // fixme type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getFunctionsTree(loadedYards = [], functions = []) {
-    return stubFunctionsTree.map((item) => {
-      return { ...item, isRoot: true };
+
+  loadLeftRowsTree() {
+    return of(leftRowsFlatTree);
+  }
+
+  loadYards() {
+    return of(stubYards);
+  }
+
+  loadYardsRows() {
+    return of(stubYardsRows);
+  }
+
+  getMappedYardsByYardsAndFunctions(yardRows, yards, sortedFunctionsTree) {
+    const groupedYardRows = this.groupYardRowsByYards(yardRows, yards);
+    const sortedFlatTree = this.createFlatTreeFromTree(sortedFunctionsTree);
+
+    const result = yards.map((yard) => {
+      return {
+        ...yard,
+        rows: sortedFlatTree.map((item) => this.createYardRow(item, yard.uid, groupedYardRows[yard.uid] || []))
+      };
     });
+    return result;
+  }
+
+  createSortedTreeFromArray(array: ComparisonFunction[]): ComparisonFunctionTree[] {
+    const map = new Map();
+    const tree: ComparisonFunctionTree[] = (cloneDeep(array) as ComparisonFunction[]).map((item, index) => {
+      map.set(item.uid, index);
+      return { data: { ...item }, children: [], isRoot: false };
+    });
+    tree.forEach((item) => {
+      if (item.data.parent_uid) {
+        tree[map.get(item.data.parent_uid)].children.push(item);
+      }
+    });
+    const roots: ComparisonFunctionTree[] = tree
+      .filter((item) => !item.data.parent_uid)
+      .map((item) => {
+        return { ...item, isRoot: true };
+      });
+    this.sortTreeRecursive(roots);
+    return roots;
+  }
+
+  private sortTreeRecursive(tree: ComparisonFunctionTree[]) {
+    tree.sort((a, b) => a.data.specification.localeCompare(b.data.specification));
+    tree.forEach((aTree) => {
+      if (aTree.children) {
+        this.sortTreeRecursive(aTree.children);
+      }
+    });
+  }
+
+  private groupYardRowsByYards(yardRows, yards) {
+    const yardUidsSet = new Set(yards.map((yard) => yard.uid));
+    const result: { [uid: string]: ComparisonYardRow[] } = {};
+    yardRows.forEach((row) => {
+      if (yardUidsSet.has(row.yard_uid)) {
+        result[row.yard_uid] = result[row.yard_uid] || [];
+        result[row.yard_uid].push(row);
+      }
+    });
+    return result;
+  }
+
+  private createFlatTreeFromTree(tree: ComparisonFunctionTree[]) {
+    const result: ComparisonFunction[] = [];
+    tree.forEach((item) => {
+      result.push(item.data);
+      if (item.children && item.children.length > 0) {
+        result.push(...this.createFlatTreeFromTree(item.children));
+      }
+    });
+    return result;
+  }
+
+  private createYardRow(comparisonRow: ComparisonFunction, yardUid: string, yardRows: ComparisonYardRow[]) {
+    const yardRow = yardRows.find((row) => row.spec_uid === comparisonRow.uid && row.yard_uid === yardUid);
+    return {
+      spec_uid: comparisonRow.uid,
+      yard_uid: yardUid,
+      amount: yardRow?.amount || null,
+      unit_price: yardRow?.unit_price || null,
+      uom: yardRow?.uom || null,
+      quantity: yardRow?.quantity || null
+    };
   }
 
   getBaseColumns() {
@@ -589,19 +295,13 @@ export class ComparisonService {
     return this.cardColumns;
   }
 
-  getYardsWithYardRows(yards = []) {
-    return yards.map((yard) => {
-      return { ...yard, rows: stubYardRows };
-    });
-  }
-
   getExpandedRowsSet(leftRowsTree) {
     const rowsSet = new Set();
     return this.getRowsSet(rowsSet, leftRowsTree);
   }
 
   getGridFilters() {}
-  // TODO fixme type and logix
+  // TODO fixme type and logic
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sortYardsBy(yards: any[], sortBy: string) {
     return yards;
@@ -610,12 +310,12 @@ export class ComparisonService {
   private getRowsSet(rowsSet, leftRowsTree) {
     leftRowsTree.forEach((row) => {
       if (row.isRoot) {
-        rowsSet.add(row.data.number);
+        rowsSet.add(row.data.uid);
       }
       if (row.expanded) {
-        rowsSet.add(row.data.number);
+        rowsSet.add(row.data.uid);
         row.children?.forEach((child) => {
-          rowsSet.add(child.data.number);
+          rowsSet.add(child.data.uid);
         });
       }
       if (row.children) {

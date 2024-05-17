@@ -1,9 +1,11 @@
+import { ComparisonFunctionTree, ComparisonYard } from './../../../../models/interfaces/comparison';
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ComparisonService, comparisonGridName } from './comparison.service';
 import { Filter, GridAction, GridService, eGridEvents } from 'jibe-components';
 import { comparisonFilters, comparisonFiltersLists } from './comparison-grid-inputs';
 import { takeUntil } from 'rxjs/operators';
 import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.base';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'jb-drydock-comparison',
@@ -11,16 +13,17 @@ import { UnsubscribeComponent } from '../../../../shared/classes/unsubscribe.bas
   styleUrls: ['./comparison.component.scss']
 })
 export class ComparisonComponent extends UnsubscribeComponent implements OnInit, OnChanges {
-  yards = []; // fixme type
+  yards: ComparisonYard[] = []; // fixme type
 
   isTableInCollapsedMode = false;
-  yardFunctions;
+  yardFunctions: ComparisonFunctionTree[];
   baseColumns = this.comparisonService.getBaseColumns();
   cardColumns = this.comparisonService.getCardColumns();
 
   expandedRowsSet = new Set(); // fixme type
   gridName = comparisonGridName;
   additionalFilters: Filter[];
+  isLoading = false;
 
   private gridSearch: string;
 
@@ -33,9 +36,7 @@ export class ComparisonComponent extends UnsubscribeComponent implements OnInit,
 
   ngOnInit(): void {
     this.additionalFilters = this.gridService.getFilterLists(comparisonFilters, comparisonFiltersLists);
-    this.yardFunctions = this.comparisonService.getFunctionsTree(this.yards);
-    this.expandedRowsSet = this.comparisonService.getExpandedRowsSet(this.yardFunctions);
-
+    this.load();
     this.listenComparisonSearchChanged();
   }
 
@@ -44,21 +45,15 @@ export class ComparisonComponent extends UnsubscribeComponent implements OnInit,
     console.log('Method not implemented.');
   }
 
-  loadYards(): void {
-    this.yards = this.comparisonService.getYardsWithYardRows([
-      {
-        name: 'yard1',
-        uid: 'GUID1'
-      },
-      {
-        name: 'yard2',
-        uid: 'GUID2'
-      },
-      {
-        name: 'yard3',
-        uid: 'GUID3'
-      }
-    ]);
+  load(): void {
+    forkJoin([this.comparisonService.loadYards(), this.comparisonService.loadLeftRowsTree(), this.comparisonService.loadYardsRows()])
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(([yards, leftRows, yardRows]) => {
+        this.yardFunctions = this.comparisonService.createSortedTreeFromArray(leftRows);
+        this.yards = this.comparisonService.getMappedYardsByYardsAndFunctions(yardRows, yards, this.yardFunctions);
+        this.expandedRowsSet = this.comparisonService.getExpandedRowsSet(this.yardFunctions);
+        debugger;
+      });
   }
 
   onToggleTableMode() {
@@ -89,8 +84,8 @@ export class ComparisonComponent extends UnsubscribeComponent implements OnInit,
   private listenComparisonSearchChanged() {
     this.gridService.storeState$
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(({ gridName: name, payload, type }: GridAction<eGridEvents, unknown>) => {
-        if (name === this.gridName && type === eGridEvents.SearchTable) {
+      .subscribe(({ gridName, payload, type }: GridAction<eGridEvents, unknown>) => {
+        if (gridName === this.gridName && type === eGridEvents.SearchTable) {
           this.onSearch(payload as string);
         }
       });
@@ -98,6 +93,6 @@ export class ComparisonComponent extends UnsubscribeComponent implements OnInit,
 
   private onSearch(searchText: string): void {
     this.gridSearch = searchText;
-    // this.loadYards();
+    // this.load();
   }
 }

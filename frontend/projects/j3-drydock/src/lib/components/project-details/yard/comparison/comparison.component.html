@@ -17,8 +17,6 @@
   scrollHeight="300px"
   [reorderableColumns]="true"
   [virtualScroll]="true"
-  [lazy]="true"
-  (onLazyLoad)="loadYards()"
 >
   <ng-template
     pTemplate="header"
@@ -112,13 +110,13 @@
         </p-treeTable>
       </td>
       <td
-        *ngFor="let yard of yards;"
+        *ngFor="let yard of yards"
         class="comparison-table-column"
       >
         <!-- TODO move to separate component-->
         <div class="comparison-table-card">
           <p-table
-            [value]="yard.rows | comparisonRows: expandedRowsSet : 'number'"
+            [value]="yard.rows | comparisonRows: expandedRowsSet : 'spec_uid'"
             [columns]="cardColumns"
             [rows]="20"
           >
@@ -155,7 +153,7 @@
                 class="row-highlight"
               >
                 <td *ngFor="let col of columns; let i = index">
-                  <span>{{ rowData[col.field] + yard?.uid }}</span>
+                  <span>{{ rowData[col.field] === null ? '' : rowData[col.field] }}</span>
                 </td>
               </tr>
             </ng-template>
