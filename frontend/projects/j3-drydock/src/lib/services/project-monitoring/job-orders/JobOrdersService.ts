@@ -45,19 +45,31 @@ export class JobOrdersService {
   }
 
   getJobOrderBySpecificationUidRequest(getJobOrderBySpecificationDto: GetJobOrderByUidDto): WebApiRequest {
-    const request: WebApiRequest = {
+    return {
       entity: eEntities.DryDock,
       apiBase: eApiBaseDryDockAPI,
       action: 'projects/job-orders/get-job-order-by-specification-uid',
       crud: eCrud.Post,
       body: getJobOrderBySpecificationDto
     };
+  }
 
-    return request;
+  getAllJobOrdersBySpecificationUidRequest(getJobOrderBySpecificationDto: GetJobOrderByUidDto): WebApiRequest {
+    return {
+      entity: eEntities.DryDock,
+      apiBase: eApiBaseDryDockAPI,
+      action: 'projects/job-orders/get-all-job-orders-by-specification-uid',
+      crud: eCrud.Post,
+      body: getJobOrderBySpecificationDto
+    };
   }
 
   getJobOrderBySpecificationUid(getJobOrderByUidDto: GetJobOrderByUidDto): Observable<JobOrderDto> {
     return this.apiRequestService.sendApiReq(this.getJobOrderBySpecificationUidRequest(getJobOrderByUidDto));
+  }
+
+  getAllJobOrdersBySpecificationUid(getJobOrderByUidDto: GetJobOrderByUidDto): Observable<JobOrderDto[]> {
+    return this.apiRequestService.sendApiReq(this.getAllJobOrdersBySpecificationUidRequest(getJobOrderByUidDto));
   }
 
   getJobOrderStatusesRequest(): WebApiRequest {

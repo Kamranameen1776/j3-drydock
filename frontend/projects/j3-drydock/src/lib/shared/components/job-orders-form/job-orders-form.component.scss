@@ -32,3 +32,13 @@ jb-form {
   padding: 0;
   margin-bottom: 0;
 }
+
+.main-wrapper {
+  display: flex;
+  border: 1px solid var(--jbDarkGray);
+}
+
+.history-wrapper {
+  border-right: 1px solid var(--jbDarkGray);
+  width: 40%;
+}

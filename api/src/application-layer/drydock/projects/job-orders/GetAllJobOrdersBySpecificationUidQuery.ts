@@ -6,7 +6,7 @@ import { Query } from '../../core/cqrs/Query';
 import { GetJobOrderBySpecificationDto } from './dtos/GetJobOrderBySpecificationDto';
 import { JobOrderDto } from './dtos/JobOrderDto';
 
-export class GetJobOrderBySpecificationUidQuery extends Query<GetJobOrderBySpecificationDto, JobOrderDto | null> {
+export class GetAllJobOrdersBySpecificationUidQuery extends Query<GetJobOrderBySpecificationDto, JobOrderDto[] | null> {
     jobOrderRepository: JobOrdersRepository;
     specificationDetailsRepository: SpecificationDetailsRepository;
     projectsRepository: ProjectsRepository;
@@ -21,7 +21,7 @@ export class GetJobOrderBySpecificationUidQuery extends Query<GetJobOrderBySpeci
     /**
      * @returns Job Order data by specification
      */
-    protected async MainHandlerAsync(request: GetJobOrderBySpecificationDto): Promise<JobOrderDto | null> {
+    protected async MainHandlerAsync(request: GetJobOrderBySpecificationDto): Promise<JobOrderDto[] | null> {
         const specification = await this.specificationDetailsRepository.TryGetSpecification(request.specificationUid);
 
         if (!specification) {
@@ -34,12 +34,12 @@ export class GetJobOrderBySpecificationUidQuery extends Query<GetJobOrderBySpeci
             throw new ApplicationException(`Project ${specification.ProjectUid} not found`);
         }
 
-        const jobOrder = await this.jobOrderRepository.getLatestJobOrderBySpecificationUid(request.specificationUid);
+        const jobOrders = await this.jobOrderRepository.getAllJobOrdersBySpecificationUid(request.specificationUid);
 
-        if (!jobOrder) {
+        if (!jobOrders || !jobOrders.length) {
             return null;
         }
 
-        return this.jobOrderRepository.mapJobOrderToDto(jobOrder, specification, project);
+        return jobOrders.map((jobOrder) => this.jobOrderRepository.mapJobOrderToDto(jobOrder, specification, project));
     }
 }

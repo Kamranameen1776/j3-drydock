@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { FormModel, JbEditorComponent, UserService } from 'jibe-components';
+import { FormModel, JbEditorComponent } from 'jibe-components';
 import { ToolbarModule } from 'primeng';
 
 import { JobOrdersFormService } from './JobOrdersFormService';
@@ -14,6 +14,8 @@ import { KeyValuePair } from '../../../utils/KeyValuePair';
 import { NewTabService } from '../../../services/new-tab-service';
 import { UTCAsLocal, localDateJbStringAsUTC } from '../../../utils/date';
 import { CostUpdatesTabComponent } from '../cost-updates-tab/cost-updates-tab.component';
+import { JobOrderDto } from '../../../services/project-monitoring/job-orders/JobOrderDto';
+import { ICard, ICardStatus } from '../item-card/item-card.component';
 
 @Component({
   selector: 'jb-job-orders-form',
@@ -22,25 +24,24 @@ import { CostUpdatesTabComponent } from '../cost-updates-tab/cost-updates-tab.co
   providers: [JobOrdersFormService]
 })
 export class JobOrdersFormComponent extends UnsubscribeComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input()
-  hideSpecificationStartEndDate = false;
-
+  @Input() hideSpecificationStartEndDate = false;
   @Input() vesselId: number;
-
   @Input() isOpen: boolean;
-  @Input() jobOrderFormValue: IJobOrderFormDto;
+  @Input() jobOrders: JobOrderDto[];
+  @Input() disableForm = false;
+  @Input() emptyForm = false;
+  @Input() selectedRow: Pick<JobOrderDto, 'JobOrderUid'>;
+
+  jobOrderFormValue: IJobOrderFormDto;
 
   @Output() isChangedAndValid = new EventEmitter<boolean>();
 
-  @ViewChild('remarksEditor')
-  remarksEditor: JbEditorComponent;
+  @ViewChild('remarksEditor') remarksEditor: JbEditorComponent;
 
   @ViewChild('updatesTab') updatesTab: CostUpdatesTabComponent;
 
   updateJobOrderForm: FormModel;
-
   updateJobOrderFormGroup: FormGroup;
-
   tools: ToolbarModule = {
     items: [
       'Bold',
@@ -69,24 +70,24 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
       // 'Redo'
     ]
   };
-
   remarksEditorFormGroup: FormGroup = new FormGroup({
     RemarksCtrl: new FormControl('', Validators.required)
   });
-
   remarksEditorConfig: EditorConfig;
-
   selectedSpecification: KeyValuePair<string, string> = { Key: '', Value: '' };
-
   uid: string;
+  jobOrderHistoryList: ICard<JobOrderDto>[];
 
   constructor(
     private jobOrdersFormService: JobOrdersFormService,
-    private userService: UserService,
     private newTabService: NewTabService,
     private activatedRoute: ActivatedRoute
   ) {
     super();
+  }
+
+  private get jobOrderUpdateFormGroup() {
+    return this.updateJobOrderFormGroup?.controls.jobOrderUpdate as FormGroup;
   }
 
   ngAfterViewInit(): void {
@@ -94,8 +95,10 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
   }
 
   ngOnInit(): void {
-    this.init(this.jobOrderFormValue);
+    this.init(this.jobOrders[0]);
     this.remarksEditorConfig = this.jobOrdersFormService.getRemarksEditorConfig();
+    this.setJobOrderHistory();
+    this.selectRow(this.selectedRow);
   }
 
   ngOnDestroy(): void {
@@ -157,6 +160,11 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
     this.updateJobOrderFormGroup?.valueChanges.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       this.isChangedAndValid.next(this.updateJobOrderFormGroup.valid);
     });
+
+    if (this.disableForm) {
+      this.jobOrderUpdateFormGroup?.disable();
+      this.remarksEditorFormGroup.disable();
+    }
   }
 
   navigateToSpecificationDetails(specification: KeyValuePair<string, string>) {
@@ -177,23 +185,90 @@ export class JobOrdersFormComponent extends UnsubscribeComponent implements OnIn
     }
   }
 
-  private init(jobOrderFormDto: IJobOrderFormDto) {
-    this.selectedSpecification.Key = jobOrderFormDto.SpecificationUid;
-    this.selectedSpecification.Value = jobOrderFormDto.Code;
+  onHistorySelected(event: ICard<JobOrderDto>) {
+    this.clearJobOrderHistorySelection();
+    event.selected = true;
+    this.init(event.data);
+  }
 
-    this.uid = jobOrderFormDto.uid;
+  private setJobOrderHistory(): void {
+    this.jobOrderHistoryList = this.jobOrders.map((jobOrder) => {
+      let status: ICardStatus;
+
+      switch (jobOrder.Status) {
+        case 'Completed':
+          status = ICardStatus.Completed;
+          break;
+        case 'Cancelled':
+          status = ICardStatus.Cancelled;
+          break;
+        default:
+          status = ICardStatus.InProgress;
+          break;
+      }
+
+      return {
+        title: jobOrder.CreatedBy,
+        description: status,
+        date: new Date(jobOrder.SpecificationStartDate),
+        status: status,
+        data: jobOrder,
+        selected: false
+      };
+    });
+  }
+
+  private clearJobOrderHistorySelection() {
+    this.jobOrderHistoryList.forEach((item) => {
+      item.selected = false;
+    });
+  }
+
+  private init(jobOrder: JobOrderDto) {
+    this.jobOrderFormValue = {};
+    this.jobOrderFormValue.SpecificationUid = jobOrder.SpecificationUid;
+    this.jobOrderFormValue.Code = jobOrder.Code;
+
+    this.selectedSpecification.Key = this.jobOrderFormValue.SpecificationUid;
+    this.selectedSpecification.Value = this.jobOrderFormValue.Code;
 
     if (this.remarksEditor) {
-      this.remarksEditor.key1 = jobOrderFormDto.SpecificationUid;
+      this.remarksEditor.key1 = this.jobOrderFormValue.SpecificationUid;
       this.remarksEditor.vesselId = this.vesselId;
     }
 
-    this.remarksEditorFormGroup?.controls.RemarksCtrl.setValue(jobOrderFormDto.Remarks ?? '');
+    if (this.emptyForm) {
+      return;
+    }
+
+    if (jobOrder) {
+      this.jobOrderFormValue.Remarks = jobOrder.Remarks;
+      this.jobOrderFormValue.Progress = jobOrder.Progress;
+      this.jobOrderFormValue.Subject = jobOrder.Subject;
+      this.jobOrderFormValue.Status = jobOrder.Status;
+      this.jobOrderFormValue.SpecificationStartDate = jobOrder.SpecificationStartDate;
+      this.jobOrderFormValue.SpecificationEndDate = jobOrder.SpecificationEndDate;
+    }
+
+    this.updateJobOrderFormValues();
+
+    this.uid = this.jobOrderFormValue.uid;
+
+    this.remarksEditorFormGroup?.controls.RemarksCtrl.setValue(this.jobOrderFormValue.Remarks ?? '');
+  }
+
+  private selectRow(selectedRow?: Pick<JobOrderDto, 'JobOrderUid'>) {
+    this.clearJobOrderHistorySelection();
+    if (selectedRow) {
+      const row = this.jobOrderHistoryList.find((jobOrder) => jobOrder.data.JobOrderUid === selectedRow.JobOrderUid);
+      row.selected = true;
+    } else {
+      this.jobOrderHistoryList[0].selected = true;
+    }
   }
 
   private updateJobOrderFormValues() {
-    const group = this.updateJobOrderFormGroup?.controls.jobOrderUpdate as FormGroup;
-    const controls = group?.controls;
+    const controls = this.jobOrderUpdateFormGroup?.controls;
 
     controls?.SpecificationUid.setValue(this.jobOrderFormValue.SpecificationUid);
     controls?.Progress.setValue(this.jobOrderFormValue.Progress);

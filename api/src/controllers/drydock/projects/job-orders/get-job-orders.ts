@@ -3,10 +3,10 @@ import { Body, Controller, Post, Request, Route } from 'tsoa';
 
 import { GetJobOrdersQuery } from '../../../../application-layer/drydock/projects/job-orders/GetJobOrdersQuery';
 import { Req } from '../../../../common/drydock/ts-helpers/req-res';
-import { MiddlewareHandler } from '../../../../controllers/drydock/core/middleware/MiddlewareHandler';
 import { IJobOrderDto } from '../../../../dal/drydock/projects/job-orders/IJobOrderDto';
 import { ODataBodyDto } from '../../../../shared/dto';
 import { ODataResult } from '../../../../shared/interfaces';
+import { MiddlewareHandler } from '../../core/middleware/MiddlewareHandler';
 
 @Route('drydock/projects/job-orders/get-job-orders')
 export class GetJobOrdersController extends Controller {
@@ -17,8 +17,7 @@ export class GetJobOrdersController extends Controller {
     ): Promise<ODataResult<IJobOrderDto>> {
         const query = new GetJobOrdersQuery();
 
-        const result = await query.ExecuteAsync(request, ODataBodyDto);
-        return result;
+        return query.ExecuteAsync(request, ODataBodyDto);
     }
 }
 

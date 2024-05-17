@@ -3,6 +3,7 @@ import { ODataService } from 'j2utils';
 import { getConnection, getManager, QueryRunner } from 'typeorm';
 
 import { GetJobOrdersDto } from '../../../../application-layer/drydock/projects/job-orders/dtos/GetJobOrdersDto';
+import { JobOrderDto } from '../../../../application-layer/drydock/projects/job-orders/dtos/JobOrderDto';
 import { className } from '../../../../common/drydock/ts-helpers/className';
 import { Req } from '../../../../common/drydock/ts-helpers/req-res';
 import {
@@ -174,7 +175,7 @@ export class JobOrdersRepository {
             .leftJoin(
                 className(LibUserEntity),
                 'createdByUsr',
-                'jo.CreatedBy = createdByUsr.uid and createdByUsr.ActiveStatus = 1',
+                'jo.created_by = createdByUsr.uid and createdByUsr.ActiveStatus = 1',
             )
             .distinct();
 
@@ -192,13 +193,11 @@ export class JobOrdersRepository {
     public async TryGetJobOrderBySpecification(specificationUid: string): Promise<JobOrderEntity | undefined> {
         const jobOrdersRepository = getManager().getRepository(JobOrderEntity);
 
-        const jobOrder = await jobOrdersRepository.findOne({
+        return jobOrdersRepository.findOne({
             where: {
                 SpecificationUid: specificationUid,
             },
         });
-
-        return jobOrder;
     }
 
     public async UpdateJobOrder(jobOrder: JobOrderEntity, queryRunner: QueryRunner): Promise<void> {
@@ -216,5 +215,44 @@ export class JobOrdersRepository {
                 LastUpdated: 'DESC',
             },
         });
+    }
+
+    public getAllJobOrdersBySpecificationUid(specificationUid: string): Promise<JobOrderEntity[] | undefined> {
+        const jobOrdersRepository = getManager().getRepository(JobOrderEntity);
+
+        return jobOrdersRepository
+            .createQueryBuilder('jo')
+            .select([
+                'jo.uid as uid',
+                'jo.Remarks as Remarks',
+                'jo.Progress as Progress',
+                'jo.Status as Status',
+                'jo.Subject as Subject',
+                'jo.LastUpdated as LastUpdated',
+                'jo.SpecificationUid as SpecificationUid',
+                `CONCAT(usr.FirstName, ' ', usr.LastName) as CreatedBy`,
+            ])
+            .where('jo.SpecificationUid = :specificationUid', { specificationUid })
+            .innerJoin(LibUserEntity, 'usr', 'jo.CreatedBy = usr.uid')
+            .orderBy('jo.LastUpdated', 'DESC')
+            .execute();
+    }
+
+    public mapJobOrderToDto(
+        jobOrder: JobOrderEntity,
+        specification: SpecificationDetailsEntity,
+        project: ProjectEntity,
+    ): JobOrderDto {
+        return {
+            JobOrderUid: jobOrder.uid,
+            SpecificationUid: jobOrder.SpecificationUid,
+            Remarks: jobOrder.Remarks,
+            Progress: jobOrder.Progress,
+            Status: jobOrder.Status,
+            Subject: jobOrder.Subject,
+            SpecificationEndDate: specification.EndDate ?? project.EndDate,
+            SpecificationStartDate: specification.StartDate ?? project.StartDate,
+            CreatedBy: jobOrder.CreatedBy,
+        };
     }
 }

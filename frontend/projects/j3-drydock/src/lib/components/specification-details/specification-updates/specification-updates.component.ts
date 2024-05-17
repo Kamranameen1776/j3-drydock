@@ -1,5 +1,5 @@
-import { Component, EventEmitter, OnChanges, Input, OnInit, Output, TemplateRef, ViewChild, SimpleChanges } from '@angular/core';
-import { GridService, IGridAction, IJbDialog, eGridRefreshType, JmsService, eJMSWorkflowAction } from 'jibe-components';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { eGridRefreshType, eJMSWorkflowAction, GridService, IGridAction, IJbDialog, JmsService } from 'jibe-components';
 import { GridInputsWithRequest } from '../../../models/interfaces/grid-inputs';
 import { UnsubscribeComponent } from '../../../shared/classes/unsubscribe.base';
 import { SpecificationUpdatesService } from './specification-updates.service';
@@ -14,6 +14,7 @@ import { eSpecificationUpdatesFields } from '../../../models/enums/specification
 import { IJobOrderFormDto } from '../../../shared/components/job-orders-form/dtos/IJobOrderFormDto';
 import { IJobOrderFormResultDto } from '../../../shared/components/job-orders-form/dtos/IJobOrderFormResultDto';
 import { JobOrdersFormComponent } from '../../../shared/components/job-orders-form/job-orders-form.component';
+import { JobOrderDto } from '../../../services/project-monitoring/job-orders/JobOrderDto';
 
 @Component({
   selector: 'jb-drydock-specification-updates',
@@ -34,7 +35,7 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
   isShowDialog = false;
 
-  dialogContent: IJbDialog = { dialogHeader: 'Update Job Order' };
+  dialogContent: IJbDialog = { dialogHeader: 'Update Job Order', dialogWidth: 1000 };
 
   okBtnLabel = 'Update';
 
@@ -43,7 +44,12 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
   isJobOrdersChanged = false;
 
   isSaving = false;
+
+  public jobOrders: JobOrderDto[] = [];
+  public selectedRow: Pick<JobOrderDto, 'JobOrderUid'>;
+
   readonly dateTimeFormat = this.specificationUpdatesService.dateTimeFormat;
+
   private row: JobOrder;
 
   constructor(
@@ -58,25 +64,6 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
   get isDialogOkButtonDisabled() {
     return this.isSaving || !this.isJobOrdersChanged;
-  }
-
-  public showJobOrderForm(row?: JobOrder) {
-    this.jobOrderFormValue = {};
-    this.jobOrderFormValue.SpecificationUid = this.specificationDetails.uid;
-    this.jobOrderFormValue.Code = this.specificationDetails.SpecificationCode;
-
-    this.row = row;
-
-    if (row) {
-      this.jobOrderFormValue.Remarks = row.JobOrderRemarks;
-      this.jobOrderFormValue.Progress = row.Progress;
-      this.jobOrderFormValue.Subject = row.JobOrderSubject;
-      this.jobOrderFormValue.Status = row.JobOrderStatus;
-      this.jobOrderFormValue.SpecificationStartDate = row.SpecificationStartDate;
-      this.jobOrderFormValue.SpecificationEndDate = row.SpecificationEndDate;
-    }
-
-    this.showDialog(true);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -177,6 +164,34 @@ export class SpecificationUpdatesComponent extends UnsubscribeComponent implemen
 
   jobOrdersChanged(value: boolean) {
     this.isJobOrdersChanged = value;
+  }
+
+  public showJobOrderForm(row?: JobOrder) {
+    this.jobOrdersService
+      .getAllJobOrdersBySpecificationUid({
+        specificationUid: this.specificationDetails.uid
+      })
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((jobOrders) => {
+        this.jobOrders = jobOrders.map((jobOrder) => {
+          return {
+            ...jobOrder,
+            Code: this.specificationDetails.SpecificationCode
+          };
+        });
+
+        this.row = row;
+
+        if (row) {
+          this.selectedRow = {
+            JobOrderUid: row.uid
+          };
+        } else {
+          this.selectedRow = null;
+        }
+
+        this.showDialog(true);
+      });
   }
 
   private showDialog(value: boolean) {

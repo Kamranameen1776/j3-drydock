@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { IAvatar } from 'jibe-components/lib/interfaces/avatar.interface';
 
 export enum ICardStatus {
@@ -7,27 +7,35 @@ export enum ICardStatus {
   Completed = 'Completed'
 }
 
-export interface ICard {
+export interface ICard<T extends object = object> {
   title: string;
   description: string;
   date: Date;
   avatar?: IAvatar;
   status?: ICardStatus;
   selected?: boolean;
+  data?: T;
 }
 
 @Component({
-  selector: 'jb-drydock-item-card',
+  selector: 'jb-item-card',
   templateUrl: './item-card.component.html',
   styleUrls: ['./item-card.component.scss']
 })
-export class ItemCardComponent {
-  @Input() data: ICard;
+export class ItemCardComponent<T extends object> {
+  @Input() data: ICard<T>;
   @Input() selectable = false;
+  @Output() changeSelected = new EventEmitter<ICard<T>>();
+
+  cardStatus = ICardStatus;
 
   get selected() {
     return this.selectable && this.data.selected;
   }
 
   constructor(private element: ElementRef) {}
+
+  onSelect() {
+    this.changeSelected.emit(this.data);
+  }
 }

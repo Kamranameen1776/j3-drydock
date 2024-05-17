@@ -33,8 +33,11 @@
       *ngIf="isShowDialog"
       [isOpen]="isShowDialog"
       [vesselId]="specificationDetails?.VesselId"
-      [jobOrderFormValue]="jobOrderFormValue"
       (isChangedAndValid)="jobOrdersChanged($event)"
+      [jobOrders]="jobOrders"
+      [disableForm]="!!selectedRow"
+      [emptyForm]="!selectedRow"
+      [selectedRow]="selectedRow"
       #jobOrderForm
     ></jb-job-orders-form>
   </div>

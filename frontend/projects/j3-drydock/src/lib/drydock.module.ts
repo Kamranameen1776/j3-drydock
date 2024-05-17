@@ -68,6 +68,7 @@ import { UpsertProjectTemplatePopupComponent } from './components/project-templa
 import { UpsertProjectTemplateFormComponent } from './components/project-templates-main/upsert-project-template-form/upsert-project-template-form.component';
 import { CreateFromProjectTemplatePopupComponent } from './components/project-details/create-from-project-template-popup/create-from-project-template-popup.component';
 import { ProjectTemplateStandardJobsComponent } from './components/project-templates-main/project-template-standard-jobs/project-template-standard-jobs.component';
+import { HistoryListComponent } from './shared/components/history-list/history-list.component';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -131,7 +132,8 @@ export function winEnv(): unknown {
     UpsertProjectTemplatePopupComponent,
     UpsertProjectTemplateFormComponent,
     CreateFromProjectTemplatePopupComponent,
-    ProjectTemplateStandardJobsComponent
+    ProjectTemplateStandardJobsComponent,
+    HistoryListComponent
   ],
   imports: [
     CommonModule,
