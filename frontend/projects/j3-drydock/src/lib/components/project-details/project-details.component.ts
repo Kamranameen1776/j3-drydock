@@ -61,6 +61,7 @@ export class ProjectDetailsComponent extends UnsubscribeComponent implements OnI
   @ViewChild('technical_specification') technical_specification: ElementRef;
   @ViewChild('attachmentss') attachmentss: ElementRef;
   @ViewChild('rfq') rfq: ElementRef;
+  @ViewChild('comparison') comparison: ElementRef;
   @ViewChild('statement_of_facts') statement_of_facts: ElementRef;
   @ViewChild('cost_updates') cost_updates: ElementRef;
   @ViewChild('daily_reports') daily_reports: ElementRef;

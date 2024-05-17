@@ -20,15 +20,15 @@ export const projectDetailsMenuData: IJbMenuItem[] = [
       { label: eProjectDetailsSideMenuLabel.Attachments, id: eProjectDetailsSideMenuId.Attachments }
     ]
   },
-  // {
-  //   label: eProjectDetailsSideMenuLabel.YardSelection,
-  //   id: eProjectDetailsSideMenuId.YardSelection,
-  //   icon: 'icons8-water-transportation',
-  //   items: [
-  //     { label: eProjectDetailsSideMenuLabel.RFQ, id: eProjectDetailsSideMenuId.RFQ }
-  //     // { label: eProjectDetailsSideMenuLabel.Comparison, id: eProjectDetailsSideMenuId.Comparison }
-  //   ]
-  // },
+  {
+    label: eProjectDetailsSideMenuLabel.YardSelection,
+    id: eProjectDetailsSideMenuId.YardSelection,
+    icon: 'icons8-water-transportation',
+    items: [
+      { label: eProjectDetailsSideMenuLabel.RFQ, id: eProjectDetailsSideMenuId.RFQ },
+      { label: eProjectDetailsSideMenuLabel.Comparison, id: eProjectDetailsSideMenuId.Comparison }
+    ]
+  },
   {
     label: eProjectDetailsSideMenuLabel.ProjectMonitoring,
     id: eProjectDetailsSideMenuId.ProjectMonitoring,

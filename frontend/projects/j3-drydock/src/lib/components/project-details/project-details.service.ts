@@ -249,40 +249,40 @@ export class ProjectDetailsService {
           }
         ]
       },
-      // [eProjectDetailsSideMenuId.YardSelection]: {
-      //   id: eProjectDetailsSideMenuId.YardSelection,
-      //   menuDisplayName: eProjectDetailsSideMenuLabel.YardSelection,
-      //   menuIcon: '',
-      //   showDiscussion: true,
-      //   isClosedDiscussion: true,
-      //   activeStatus: true,
-      //   index: 3,
-      //   sections: [
-      //     {
-      //       GridRowStart: 1,
-      //       GridRowEnd: 2,
-      //       GridColStart: 1,
-      //       GridColEnd: 3,
-      //       active_status: true,
-      //       SectionCode: eProjectDetailsSideMenuId.RFQ,
-      //       SectionLabel: eProjectDetailsSideMenuLabel.RFQ,
-      //       IconClass: 'icons8-more-details-2',
-      //       isAddNewButton: true,
-      //       buttonLabel: 'Link Yard',
-      //       addNewButtonType: JbButtonType.NoButton
-      //     }
-      //     // {
-      //     //   GridRowStart: 2,
-      //     //   GridRowEnd: 3,
-      //     //   GridColStart: 1,
-      //     //   GridColEnd: 3,
-      //     //   active_status: true,
-      //     //   SectionCode: eProjectDetailsSideMenuId.Comparison,
-      //     //   SectionLabel: eProjectDetailsSideMenuLabel.Comparison,
-      //     //   isAddNewButton: false
-      //     // }
-      //   ]
-      // },
+      [eProjectDetailsSideMenuId.YardSelection]: {
+        id: eProjectDetailsSideMenuId.YardSelection,
+        menuDisplayName: eProjectDetailsSideMenuLabel.YardSelection,
+        menuIcon: '',
+        showDiscussion: true,
+        isClosedDiscussion: true,
+        activeStatus: true,
+        index: 3,
+        sections: [
+          {
+            GridRowStart: 1,
+            GridRowEnd: 2,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
+            SectionCode: eProjectDetailsSideMenuId.RFQ,
+            SectionLabel: eProjectDetailsSideMenuLabel.RFQ,
+            IconClass: 'icons8-more-details-2',
+            isAddNewButton: true,
+            buttonLabel: 'Link Yard',
+            addNewButtonType: JbButtonType.NoButton
+          },
+          {
+            GridRowStart: 2,
+            GridRowEnd: 3,
+            GridColStart: 1,
+            GridColEnd: 3,
+            active_status: true,
+            SectionCode: eProjectDetailsSideMenuId.Comparison,
+            SectionLabel: 'Dry Dock Comparison',
+            isAddNewButton: false
+          }
+        ]
+      },
       [eProjectDetailsSideMenuId.ProjectMonitoring]: {
         id: eProjectDetailsSideMenuId.ProjectMonitoring,
         menuDisplayName: eProjectDetailsSideMenuLabel.ProjectMonitoring,

@@ -1,0 +1,35 @@
+@import '../../../../../../styles/mixins';
+
+.text-ellipsis {
+    @include ellipsis-text;
+}
+:host {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  font-size: 12px;
+
+  label {
+    font-weight: 400;
+    color: var(--jbGreyBlue400);
+    width: 90px;
+  }
+
+  .bottom-info-row-value {
+    font-weight: 500;
+    color: var(--jbGreyBlue700);
+  }
+
+  &.row-big {
+    font-size: 16px;
+    line-height: 19px;
+
+    label {
+      font-weight: 500;
+    }
+
+    .bottom-info-row-value {
+      font-weight: 700;
+    }
+  }
+}

@@ -68,6 +68,9 @@ import { UpsertProjectTemplatePopupComponent } from './components/project-templa
 import { UpsertProjectTemplateFormComponent } from './components/project-templates-main/upsert-project-template-form/upsert-project-template-form.component';
 import { CreateFromProjectTemplatePopupComponent } from './components/project-details/create-from-project-template-popup/create-from-project-template-popup.component';
 import { ProjectTemplateStandardJobsComponent } from './components/project-templates-main/project-template-standard-jobs/project-template-standard-jobs.component';
+import { ComparisonTableHeaderComponent } from './components/project-details/yard/comparison/comparison-table-header/comparison-table-header.component';
+import { ComparisonTableHeaderLabelValueComponent } from './components/project-details/yard/comparison/comparison-table-header/comparison-table-header-label-value/comparison-table-header-label-value.component';
+import { ComparisonRowsPipe } from './components/project-details/yard/comparison/comparison-rows.pipe';
 
 export function winEnv(): unknown {
   const winEnv = 'environment';
@@ -131,7 +134,10 @@ export function winEnv(): unknown {
     UpsertProjectTemplatePopupComponent,
     UpsertProjectTemplateFormComponent,
     CreateFromProjectTemplatePopupComponent,
-    ProjectTemplateStandardJobsComponent
+    ProjectTemplateStandardJobsComponent,
+    ComparisonTableHeaderComponent,
+    ComparisonTableHeaderLabelValueComponent,
+    ComparisonRowsPipe
   ],
   imports: [
     CommonModule,

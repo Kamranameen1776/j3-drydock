@@ -29,12 +29,22 @@
 
     @include progress-spinner-fix;
 
+    #comparison {
+      .widget-content {
+        overflow: initial !important;
+      }
+    }
+
     #gantt_chart {
       @include expandable;
     }
 
     .jb-section-feed-discussion {
       z-index: 50 !important;
+    }
+
+    #comparison-component .widget-content {
+      overflow: initial;
     }
   }
 }
