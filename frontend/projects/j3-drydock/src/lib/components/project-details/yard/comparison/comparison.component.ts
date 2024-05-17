@@ -1,5 +1,5 @@
 import { ComparisonFunctionTree, ComparisonYard } from './../../../../models/interfaces/comparison';
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ComparisonService, comparisonGridName } from './comparison.service';
 import { Filter, GridAction, GridService, eGridEvents } from 'jibe-components';
 import { comparisonFilters, comparisonFiltersLists } from './comparison-grid-inputs';
@@ -10,7 +10,8 @@ import { forkJoin } from 'rxjs';
 @Component({
   selector: 'jb-drydock-comparison',
   templateUrl: './comparison.component.html',
-  styleUrls: ['./comparison.component.scss']
+  styleUrls: ['./comparison.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ComparisonComponent extends UnsubscribeComponent implements OnInit, OnChanges {
   yards: ComparisonYard[] = []; // fixme type
@@ -29,7 +30,8 @@ export class ComparisonComponent extends UnsubscribeComponent implements OnInit,
 
   constructor(
     private comparisonService: ComparisonService,
-    private gridService: GridService
+    private gridService: GridService,
+    private cd: ChangeDetectorRef
   ) {
     super();
   }
@@ -52,7 +54,6 @@ export class ComparisonComponent extends UnsubscribeComponent implements OnInit,
         this.yardFunctions = this.comparisonService.createSortedTreeFromArray(leftRows);
         this.yards = this.comparisonService.getMappedYardsByYardsAndFunctions(yardRows, yards, this.yardFunctions);
         this.expandedRowsSet = this.comparisonService.getExpandedRowsSet(this.yardFunctions);
-        debugger;
       });
   }
 
@@ -87,6 +88,7 @@ export class ComparisonComponent extends UnsubscribeComponent implements OnInit,
       .subscribe(({ gridName, payload, type }: GridAction<eGridEvents, unknown>) => {
         if (gridName === this.gridName && type === eGridEvents.SearchTable) {
           this.onSearch(payload as string);
+          this.cd.markForCheck();
         }
       });
   }
